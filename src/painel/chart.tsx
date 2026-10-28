@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import type { ECharts, EChartsOption } from 'echarts';
 
 /** Cores dos gráficos lidas dos tokens CSS, para seguir o tema claro/escuro do visualizador. */
-export interface Tokens { ink: string; muted: string; line: string; surface: string; brand: string; blue: string; accent: string; good: string; bad: string; soft: string; heat: string[] }
+export interface Tokens { ink: string; muted: string; line: string; surface: string; brand: string; blue: string; accent: string; good: string; bad: string; soft: string; warn: string; heat: string[]; cat: string[] }
 function read(): Tokens {
   const style = getComputedStyle(document.documentElement), get = (name: string) => style.getPropertyValue(name).trim();
-  return { ink: get('--ink'), muted: get('--muted'), line: get('--line'), surface: get('--surface'), brand: get('--brand'), blue: get('--blue'), accent: get('--accent'), good: get('--good'), bad: get('--bad'), soft: get('--soft'), heat: [get('--heat-0'), get('--heat-1'), get('--heat-2'), get('--heat-3')] };
+  return { ink: get('--ink'), muted: get('--muted'), line: get('--line'), surface: get('--surface'), brand: get('--brand'), blue: get('--blue'), accent: get('--accent'), good: get('--good'), bad: get('--bad'), soft: get('--soft'), warn: get('--warn'), heat: [get('--heat-0'), get('--heat-1'), get('--heat-2'), get('--heat-3')], cat: [get('--cat-1'), get('--cat-2'), get('--cat-3'), get('--cat-4'), get('--cat-5')] };
 }
 export function useTokens(): Tokens {
   const [tokens, setTokens] = useState(read);
