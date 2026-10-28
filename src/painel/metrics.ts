@@ -3,7 +3,7 @@ import type { CaseStatus, Establishment } from '../domain/types';
 import type { EnterpriseModel } from '../enterprise-v10/types';
 import { averageAnnualTicket, median, stockBridge } from '../gestao-v14/metrics';
 
-/** V15 · página única: só os indicadores que levam a uma decisão da administração. */
+/** Painel de página única (V15/V16): só os indicadores que levam a uma decisão da administração. */
 export type IndicatorId = 'base' | 'receipts' | 'debt' | 'gap' | 'noRt' | 'cases';
 const DAY = 86400000;
 const day = (date: string) => Math.floor(Date.parse(`${date.slice(0, 10)}T00:00:00Z`) / DAY);
@@ -14,7 +14,7 @@ export interface AreaRow {
   id: string; name: string;
   active: number; growth: number | null; receipts: number; receiptsPrevious: number | null;
   overdue: number; debtors: number; charged: number; defaultRate: number | null;
-  gap: number; noRt: number; noRtRate: number | null; openCases: number; oldCases: number;
+  gap: number; eligible: number; coverage: number | null; noRt: number; noRtRate: number | null; openCases: number; oldCases: number; oldRate: number | null;
   companyIds: string[];
 }
 export interface Indicator { id: IndicatorId; value: number | null; delta: number | null; spark: number[]; secondary: string }
@@ -42,7 +42,8 @@ export function buildPanel(scope: Scope, model: EnterpriseModel, history: Enterp
   const charged = new Set(model.metrics.compliance.denominatorCompanyIds ?? []), compliant = new Set(model.metrics.compliance.companyIds);
   const withRt = new Set(model.metrics.rtCoverage.companyIds);
   const activeEligible = new Set(model.metadata.activeEligibleEstablishmentIds);
-  const gapEstablishments = model.metadata.eligibleEstablishmentIds.filter(id => !activeEligible.has(id)).map(id => establishments.get(id)).filter((row): row is Establishment => Boolean(row));
+  const eligibleEstablishments = model.metadata.eligibleEstablishmentIds.map(id => establishments.get(id)).filter((row): row is Establishment => Boolean(row));
+  const gapEstablishments = eligibleEstablishments.filter(row => !activeEligible.has(row.id));
   const open = scope.cases.filter(row => openStatuses.has(row.status));
   const paymentsByCompany = new Map<string, number>();
   const previousStart = history.monthly.length >= 12 + period ? history.monthly[history.monthly.length - 12 - period].month : null;
@@ -59,11 +60,14 @@ export function buildPanel(scope: Scope, model: EnterpriseModel, history: Enterp
     const noRt = nowActive.filter(companyId => !withRt.has(companyId)).length;
     const cases = open.filter(row => { const place = establishments.get(row.establishmentId); return place ? establishmentMember(place) : false; });
     const receiptsPrevious = previousStart ? sum(companies.map(companyId => paymentsByCompany.get(companyId) ?? 0)) : null;
+    const eligible = eligibleEstablishments.filter(establishmentMember).length, gapHere = gapEstablishments.filter(establishmentMember).length;
+    const oldCases = cases.filter(row => day(scope.anchor) - day(row.createdAt) > 365).length;
     return { id, name, active: nowActive.length, growth: wasActive ? (nowActive.length - wasActive) / wasActive * 100 : null,
       receipts: sum(companies.map(companyId => facts.get(companyId)?.receipts ?? 0)), receiptsPrevious,
       overdue: sum(companies.map(companyId => facts.get(companyId)?.overdue ?? 0)), debtors, charged: chargedHere.length, defaultRate: chargedHere.length ? debtors / chargedHere.length * 100 : null,
-      gap: gapEstablishments.filter(establishmentMember).length, noRt, noRtRate: nowActive.length ? noRt / nowActive.length * 100 : null,
-      openCases: cases.length, oldCases: cases.filter(row => day(scope.anchor) - day(row.createdAt) > 365).length, companyIds: companies };
+      gap: gapEstablishments.filter(establishmentMember).length, eligible, coverage: eligible ? (eligible - gapHere) / eligible * 100 : null,
+      noRt, noRtRate: nowActive.length ? noRt / nowActive.length * 100 : null,
+      openCases: cases.length, oldCases, oldRate: cases.length ? oldCases / cases.length * 100 : null, companyIds: companies };
   };
   const areas = scope.dataset.gres.map(gre => aggregate(gre.id, gre.name, companyId => rep.get(companyId)?.greId === gre.id, row => row.greId === gre.id)).filter(row => row.companyIds.length || row.gap || row.openCases);
   const cities = scope.dataset.cities.map(city => aggregate(city.id, city.name, companyId => rep.get(companyId)?.cityId === city.id, row => row.cityId === city.id)).filter(row => row.companyIds.length || row.gap);

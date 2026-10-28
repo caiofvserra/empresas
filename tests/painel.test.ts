@@ -4,7 +4,7 @@ import { dataset } from '../src/domain/dataset.ts';
 import { defaultFilters } from '../src/domain/types.ts';
 import { selectEnterpriseScope } from '../src/enterprise-v10/filters.ts';
 import { buildEnterpriseModel } from '../src/enterprise-v10/model.ts';
-import { actionList, buildPanel, caseStages, debtAging, gapByCnae } from '../src/painel-v15/metrics.ts';
+import { actionList, buildPanel, caseStages, debtAging, gapByCnae } from '../src/painel/metrics.ts';
 
 const scope = selectEnterpriseScope(dataset, defaultFilters);
 const model = buildEnterpriseModel(scope);
@@ -13,9 +13,15 @@ const panel = buildPanel(scope, model, history);
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 
 test('regionais somam o total em empresas, lacuna, sem RT, fiscalização e dinheiro', () => {
-  for (const key of ['active', 'gap', 'noRt', 'openCases', 'debtors', 'charged'] as const) assert.equal(sum(panel.areas.map(row => row[key])), panel.total[key], key);
+  for (const key of ['active', 'gap', 'eligible', 'noRt', 'openCases', 'oldCases', 'debtors', 'charged'] as const) assert.equal(sum(panel.areas.map(row => row[key])), panel.total[key], key);
   assert.ok(Math.abs(sum(panel.areas.map(row => row.overdue)) - panel.total.overdue) < 0.01);
   assert.ok(Math.abs(sum(panel.areas.map(row => row.receipts)) - panel.total.receipts) < 0.01);
+});
+
+test('cobertura por área fecha com elegíveis e lacuna', () => {
+  assert.equal(panel.total.eligible, model.metadata.eligibleEstablishmentIds.length);
+  assert.ok(Math.abs(panel.total.coverage! - model.metrics.coverage.value!) < 1e-9);
+  for (const row of panel.areas) if (row.eligible) assert.ok(Math.abs(row.coverage! - (row.eligible - row.gap) / row.eligible * 100) < 1e-9);
 });
 
 test('indicadores batem com o modelo empresarial V13', () => {

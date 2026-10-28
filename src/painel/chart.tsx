@@ -18,16 +18,28 @@ export function useTokens(): Tokens {
   return tokens;
 }
 
-let mapReady: Promise<void> | null = null;
-export function useSpMap(): boolean {
-  const [ready, setReady] = useState(false);
+/** Malha IBGE dos municípios paulistas e o centro aproximado de cada um (média do maior anel), para posicionar bolhas. */
+type Centroids = Map<string, [number, number]>;
+let mapReady: Promise<Centroids> | null = null;
+export function useSpMap(): Centroids | null {
+  const [centroids, setCentroids] = useState<Centroids | null>(null);
   useEffect(() => {
     let alive = true;
-    mapReady ??= Promise.all([import('../services/echarts'), import('../domain/sp-municipios.json')]).then(([echarts, geometry]) => { echarts.registerMap('spPainel', geometry.default as Parameters<typeof echarts.registerMap>[1]); });
-    mapReady.then(() => { if (alive) setReady(true); });
+    mapReady ??= Promise.all([import('../services/echarts'), import('../domain/sp-municipios.json')]).then(([echarts, geometry]) => {
+      const geo = geometry.default as unknown as { features: { properties: { name: string }; geometry: { type: string; coordinates: number[][][] | number[][][][] } }[] };
+      echarts.registerMap('spPainel', geometry.default as Parameters<typeof echarts.registerMap>[1]);
+      const result: Centroids = new Map();
+      for (const feature of geo.features) {
+        const rings = feature.geometry.type === 'MultiPolygon' ? (feature.geometry.coordinates as number[][][][]).map(polygon => polygon[0]) : [(feature.geometry.coordinates as number[][][])[0]];
+        const ring = rings.reduce((largest, current) => current.length > largest.length ? current : largest, rings[0]);
+        result.set(feature.properties.name, [ring.reduce((total, point) => total + point[0], 0) / ring.length, ring.reduce((total, point) => total + point[1], 0) / ring.length]);
+      }
+      return result;
+    });
+    mapReady.then(value => { if (alive) setCentroids(value); });
     return () => { alive = false; };
   }, []);
-  return ready;
+  return centroids;
 }
 
 export function Chart({ option, tokens, onPick, label }: { option: Record<string, unknown>; tokens: Tokens; onPick?: (params: any) => void; label: string }) {
