@@ -1,0 +1,12 @@
+.r7-detailAction { flex: 0 0 auto; align-self: center; border: 0; background: #edf2fc; color: #3662e2; border-radius: 4px; padding: 4px 6px; font-size: 10px; cursor: pointer; }
+.r7-detailAction:hover { background: #dfe9fc; }
+.r7-detailAction:focus-visible { outline: 2px solid #3662e2; outline-offset: 2px; }
+.r6-empty { height: 100%; display: flex; align-items: center; justify-content: center; padding: 12px; font-size: 11px; color: #60708a; text-align: center; }
+.r6-cohortNote { font-size: 9px; color: #72829b; text-align: right; margin: 0; }
+.r6-recordsNote { margin: 0; padding: 10px 20px; color: #60708a; font-size: 11px; line-height: 1.5; border-top: 1px solid #e5ebf5; }
+.r6-recordButton { display: inline-flex; align-items: center; gap: 4px; padding: 3px 6px; font: inherit; font-size: 11px; color: #3662e2; background: #edf2fc; border: 0; border-radius: 4px; cursor: pointer; }
+.r6-recordButton:disabled { cursor: not-allowed; opacity: .5; }
+.r6-numeric { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.r6-recordModes { display: flex; padding: 0 20px; gap: 6px; border-bottom: 1px solid #e4eaf4; }
+.r6-recordModes button { padding: 8px 12px; color: #687b99; border: 0; background: transparent; font-size: 12px; cursor: pointer; border-bottom: 2px solid transparent; }
+.r6-recordModes button.active { color: #15265c; border-bottom-color: #3662e2; background: #f2f5fb; }

@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "dataset": "populacao-uf",
+    "titulo": "População residente estimada por UF (2025)",
+    "unidade": "habitantes",
+    "fonteId": "ibge-agregados-6579",
+    "notas": [
+      "27 UFs completas — total do Brasil 213.421.037 habitantes (2025).",
+      "Uso no site: denominador da métrica M2 do mapa (profissionais ativos por 100 mil habitantes) e métrica de contexto M4; a chamada ao vivo usePopulacaoUf() usa esta mesma consulta e cai neste arquivo quando o IBGE não responde.",
+      "Arquivo DERIVADO — não editar à mão. Regerar com `node scripts/derivar-confea.mjs` a partir de docs/research/assets/ (recoleta: scripts/fetch-confea.mjs / scripts/fetch-ibge.mjs, fora do container)."
+    ],
+    "atualizadoEm": "2026-08-30",
+    "snapshot": {
+      "consultaUrl": "https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/2025/variaveis/9324?localidades=N3[all]",
+      "capturadoEm": "2026-08-30"
+    }
+  },
+  "data": {
+    "ano": "2025",
+    "valores": [
+      {
+        "ufCodigo": "11",
+        "valor": 1751950
+      },
+      {
+        "ufCodigo": "12",
+        "valor": 884372
+      },
+      {
+        "ufCodigo": "13",
+        "valor": 4321616
+      },
+      {
+        "ufCodigo": "14",
+        "valor": 738772
+      },
+      {
+        "ufCodigo": "15",
+        "valor": 8711196
+      },
+      {
+        "ufCodigo": "16",
+        "valor": 806517
+      },
+      {
+        "ufCodigo": "17",
+        "valor": 1586859
+      },
+      {
+        "ufCodigo": "21",
+        "valor": 7018211
+      },
+      {
+        "ufCodigo": "22",
+        "valor": 3384547
+      },
+      {
+        "ufCodigo": "23",
+        "valor": 9268836
+      },
+      {
+        "ufCodigo": "24",
+        "valor": 3455236
+      },
+      {
+        "ufCodigo": "25",
+        "valor": 4164468
+      },
+      {
+        "ufCodigo": "26",
+        "valor": 9562007
+      },
+      {
+        "ufCodigo": "27",
+        "valor": 3220848
+      },
+      {
+        "ufCodigo": "28",
+        "valor": 2299425
+      },
+      {
+        "ufCodigo": "29",
+        "valor": 14870907
+      },
+      {
+        "ufCodigo": "31",
+        "valor": 21393441
+      },
+      {
+        "ufCodigo": "32",
+        "valor": 4126854
+      },
+      {
+        "ufCodigo": "33",
+        "valor": 17223547
+      },
+      {
+        "ufCodigo": "35",
+        "valor": 46081801
+      },
+      {
+        "ufCodigo": "41",
+        "valor": 11890517
+      },
+      {
+        "ufCodigo": "42",
+        "valor": 8187029
+      },
+      {
+        "ufCodigo": "43",
+        "valor": 11233263
+      },
+      {
+        "ufCodigo": "50",
+        "valor": 2924631
+      },
+      {
+        "ufCodigo": "51",
+        "valor": 3893659
+      },
+      {
+        "ufCodigo": "52",
+        "valor": 7423629
+      },
+      {
+        "ufCodigo": "53",
+        "valor": 2996899
+      }
+    ],
+    "completo": true
+  }
+}

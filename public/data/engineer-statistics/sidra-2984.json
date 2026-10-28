@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "dataset": "sidra-2984",
+    "titulo": "Censo 2010 — diplomados em Engenharia, produção e construção por UF",
+    "unidade": "pessoas",
+    "fonteId": "ibge-sidra-2984",
+    "notas": [
+      "dado de 2010 — único censo com área de formação por UF",
+      "PENDÊNCIA (pré-condição §4.0 do plano): data está VAZIO porque a captura da t/2984 exige rede aberta (o container bloqueia IBGE). NENHUM valor foi inventado. Preencher rodando scripts/fetch-ibge.mjs na máquina do usuário: o script consulta /agregados/2984/metadados para descobrir a variável e o código da classificação/categoria 'Engenharia, produção e construção' e grava aqui a resposta do apisidra VERBATIM ([cabeçalho, ...linhas]), atualizando snapshot.consultaUrl com a URL exata.",
+      "O parser (parseSidra, §9.3) aceita data vazio e devolve [] — o slug lógico diplomados-uf-2010 fica com 0 UFs e o gate do mapa decide 'painel-regional' até a captura.",
+      "Formato esperado após captura: data[0] = objeto-cabeçalho SIDRA; linhas com valor em 'V' (string; '...'/'-'/'X' → null) e UF em 'D1C'/'D1N'."
+    ],
+    "atualizadoEm": "2026-08-30",
+    "snapshot": {
+      "consultaUrl": "https://servicodados.ibge.gov.br/api/v3/agregados/2984/metadados",
+      "capturadoEm": "2026-08-30"
+    }
+  },
+  "data": []
+}

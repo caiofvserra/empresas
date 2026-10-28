@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "dataset": "contrapontos",
+    "titulo": "O outro lado — contrapontos com o mesmo peso visual (V13)",
+    "fonteId": "confea-quaest",
+    "notas": [
+      "Quem discorda tem números também — e eles estão aqui, na mesma tipografia da tese. Este ato é o que dá autoridade ao resto do site.",
+      "NÚCLEO (Tier 1, N-4): os quatro cards marcados \"NÚCLEO\" — os três do contraditório e a declaração per capita — NÃO caem com o ato. Se o ato for cortado, migram para o fim do Ato 1 como bloco \"O outro lado\", com a mesma tipografia dos cards de evidência. Não existe versão do site sem eles.",
+      "§7 item 1: o card \"4,8 engenheiros por 10 mil habitantes vs >20 na Coreia\" (OCDE, 2014) SAIU — 12 anos, taxonomia não declarada, fonte secundária. A remoção só é honesta acompanhada da declaração obrigatória que está no card `sem-comparacao-per-capita`: remover a única evidência per capita que contrariava a tese sem dizer nada é indefensável por omissão.",
+      "§7 item 6: o card \"payback do curso em 2–3 anos\" SAIU — usava R$ 2.178 de 2024 contra faixa júnior de 2025 (janelas trocadas) e era estimativa simplificada que não descontava os anos de estudo. O +148% da OCDE faz o mesmo trabalho com fonte melhor e ano declarado.",
+      "§7 item 16 / C-2: o déficit da CNI e a projeção do Confea deixaram de ser um card só. São números de NATUREZAS DIFERENTES — um déficit medido no presente e uma projeção condicional futura — e a régua aritmética é diferente para cada um, com a mesma régua valendo para todo emissor.",
+      "N-10: nenhuma das entidades publicou memorial de cálculo. A classificação de cada número é feita pelo que a PRÓPRIA FONTE declara sobre ele. Se a apuração da CNI se revelar também uma projeção de necessidade futura, os 75 mil saem da régua pelo mesmo critério.",
+      "N-8: os valores per capita usam a MESMA população, escrita na tela — os 203.080.756 residentes do Censo 2022, que é o ano dos dois numeradores. O \"~113\" que circulava no material de pesquisa foi calculado com o estoque arredondado e não vale mais.",
+      "CONTRADITÓRIO (bloco `contraditorio` por card): cada número do outro lado carrega a POSTURA do site diante dele. Só existem duas em uso — `limite` (o número é sólido ou inauditável, e o que se aponta é o que ele NÃO estabelece) e `aceito` (o site concorda e usa o número). A postura `falha` está implementada e SEM NENHUMA INSTÂNCIA, de propósito: nenhuma das onze críticas levantadas nesta apuração sobreviveu à verificação adversarial, e para os déficits alegados a formulação correta é a que o próprio repositório já fixava — metodologia não publicada torna o número INAUDITÁVEL, não falso. Apontar falha em método que ninguém publicou seria inventar o que não se apurou."
+    ],
+    "atualizadoEm": "2026-08-31"
+  },
+  "data": {
+    "cards": [
+      {
+        "id": "salario-vs-media",
+        "rotulo": "Engenheiro empregado ganha muito acima da média nacional",
+        "valor": null,
+        "valorTexto": "≈4,8×",
+        "detalhe": "Mediana de admissão do engenheiro civil (R$ 10.360, Novo CAGED jul/25–jun/26) contra a média de admissão do país (R$ 2.178, CAGED 2024). MEDIANA × MÉDIA, JANELAS DIFERENTES (2026 × 2024): publicado sem o segundo decimal, porque \"4,76\" sugere uma precisão que a comparação não tem. Enquanto a média de admissão de 2025 não for coletada, fica \"≈4,8×\".",
+        "ano": "2024–2026",
+        "fonteId": "ncm-buscador-2142",
+        "contraditorio": {
+          "postura": "limite",
+          "frase": "Compara mediana com média, em janelas diferentes — daí a razão sair como \"≈4,8×\", sem o segundo decimal.",
+          "evidencia": "Mediana de admissão do engenheiro civil (Novo CAGED, jul/2025–jun/2026) contra a média de admissão do país (CAGED, 2024).",
+          "oQueNaoProva": "Que o salário cumpra o piso. Ganhar acima da média nacional e estar abaixo da régua da Lei 4.950-A/66 são coisas que convivem."
+        }
+      },
+      {
+        "id": "confea-quaest",
+        "rotulo": "Confea/Quaest: o registrado ativo está bem",
+        "valor": 92,
+        "valorTexto": "92% / 78%",
+        "unidade": "%",
+        "detalhe": "92% dos registrados em exercício; destes, 78% atuam na área de formação; 92% ganham acima da média nacional (48 mil entrevistas, set/2024–fev/2025). VIÉS DE SELEÇÃO DECLARADO: o universo são só os registrados ativos — quem abandona a profissão tipicamente cancela ou nunca faz o registro.",
+        "ano": "2024–2025",
+        "fonteId": "confea-quaest",
+        "contraditorio": {
+          "postura": "limite",
+          "frase": "Viés de seleção declarado pela própria pesquisa: o universo são só os registrados ativos.",
+          "evidencia": "48 mil entrevistas com profissionais REGISTRADOS (set/2024–fev/2025). O Confea mediu, em 2021, que 54,5% dos graduados em engenharia a partir de 2011 não efetuaram registro profissional.",
+          "oQueNaoProva": "A situação de quem saiu da profissão. Quem abandona tipicamente cancela o registro ou nunca o faz — e por construção não é ouvido."
+        }
+      },
+      {
+        "id": "firjan",
+        "rotulo": "Firjan: engenharias dominam o topo da admissão",
+        "valor": null,
+        "valorTexto": "7 de 10",
+        "detalhe": "7 das 10 maiores médias salariais de admissão são engenharias (Novo CAGED 2024, divulgado em fev/2025); engenharia da computação lidera com R$ 13.794.",
+        "ano": "2024",
+        "fonteId": "firjan-admissao",
+        "contraditorio": {
+          "postura": "aceito",
+          "frase": "Sólido. É média de admissão no topo da distribuição.",
+          "evidencia": "7 das 10 maiores médias de admissão são engenharias; engenharia da computação lidera com R$ 13.794 (Novo CAGED 2024).",
+          "oQueNaoProva": "Que a porta de entrada pague o piso. Um topo alto convive com uma base abaixo da régua — são pontos diferentes da mesma distribuição."
+        }
+      },
+      {
+        "id": "premio-diploma",
+        "rotulo": "O diploma superior ainda paga muito no Brasil",
+        "valor": 148,
+        "valorTexto": "+148%",
+        "unidade": "%",
+        "detalhe": "Quem tem ensino superior ganha +148% sobre o ensino médio no Brasil (média OCDE: +54%) — o maior prêmio entre os países comparados. RÓTULO OBRIGATÓRIO: EAG 2025, DADOS DE 2023. O \"~4×\" do IPEA (TD 2861) que acompanhava este card SAIU: estava sem ano e sob o fonteId de outra fonte (C12).",
+        "ano": "2023 (EAG 2025)",
+        "fonteId": "ocde-eag2025-brasil",
+        "contraditorio": {
+          "postura": "aceito",
+          "frase": "Sólido. Mede o retorno do diploma superior no agregado do país.",
+          "evidencia": "+148% sobre o ensino médio no Brasil, contra +54% na média da OCDE (Education at a Glance 2025, dados de 2023).",
+          "oQueNaoProva": "Que falte engenheiro. É o prêmio de QUALQUER diploma superior, de todas as áreas — não diz nada sobre a engenharia em particular."
+        }
+      },
+      {
+        "id": "deficit-cni",
+        "rotulo": "Déficit divulgado — MEDIDO NO PRESENTE",
+        "valor": 75000,
+        "unidade": "engenheiros",
+        "detalhe": "A CNI estima um déficit de 75 mil engenheiros, em levantamento de 2023 divulgado em 19/12/2024. POSIÇÃO DE ENTIDADE, METODOLOGIA NÃO PUBLICADA — o que não a torna falsa, torna-a inauditável. Confrontado com o estoque: 75.000 ÷ 2,37 milhões = ≈3,2% dos diplomados e 75.000 ÷ 95.607 concluintes de 2023 = 0,78 de uma safra anual.",
+        "ano": "2023",
+        "fonteId": "cni-confea-deficit",
+        "contraditorio": {
+          "postura": "limite",
+          "frase": "A conta não foi publicada: posso citar o número, não posso conferi-lo. Isso não o torna falso — torna-o inauditável.",
+          "evidencia": "Levantamento de 2023, divulgado em 19/12/2024. Confrontado com o estoque: 75.000 equivalem a ≈3,2% dos 2,37 milhões de diplomados na área CINE 07 \"Engenharia, produção e construção\" (Censo 2022) e a 0,78 de uma safra de 95.607 concluintes (INEP, 2023).",
+          "oQueNaoProva": "Que haja escassez. Um déficit menor que uma safra anual de formados é compatível com excedente de profissionais e falta de vagas que paguem o piso."
+        }
+      },
+      {
+        "id": "projecao-confea",
+        "rotulo": "Projeção divulgada — CONDICIONAL E FUTURA",
+        "valor": null,
+        "valorTexto": "até 1 milhão até 2030",
+        "detalhe": "A presidência do Confea projeta até 1 milhão de profissionais da ENGENHARIA E TECNOLOGIA em falta até 2030, \"se nada for feito\" (declaração de jun/2025, repetida em out/2025, com \"~500 mil já em 2025\"). POSIÇÃO DE ENTIDADE, METODOLOGIA NÃO PUBLICADA. Este site NÃO faz nenhuma divisão aritmética em cima dela: projeção condicional para horizonte futuro não se divide por estoque medido, e o universo declarado pela fonte é mais amplo que qualquer denominador disponível. A régua é técnica e simétrica: se a CNI publicar uma projeção para 2030, recebe o mesmo tratamento; se o Confea publicar um déficit medido no presente, ele entra na régua exatamente como o da CNI.",
+        "ano": "2025",
+        "fonteId": "cni-confea-deficit",
+        "contraditorio": {
+          "postura": "limite",
+          "frase": "É projeção condicional para 2030 (\"se nada for feito\"), não contagem do que falta hoje — e o universo declarado é mais amplo que qualquer denominador disponível.",
+          "evidencia": "Declaração de jun/2025, repetida em out/2025: até 1 milhão de profissionais da ENGENHARIA E TECNOLOGIA. Metodologia não publicada. Por isso não divido esse número por nada.",
+          "oQueNaoProva": "Nada sobre o presente. Projeção futura condicional não se compara com estoque medido, e aplico esse mesmo critério a todo emissor."
+        }
+      },
+      {
+        "id": "dieese-decada-de-alta",
+        "rotulo": "Houve década de alta real — há década pior documentada",
+        "valor": null,
+        "valorTexto": "−8% (1995–2005) · +17% (2003–2013)",
+        "detalhe": "Salário real dos engenheiros com vínculo formal em São Paulo: −8% entre 1995 e 2005 e +17% entre 2003 e 2013 (DIEESE/SEESP sobre a RAIS-SP). É por isso que NÃO escrevo \"a profissão nunca esteve tão desvalorizada\" sem a formulação delimitada — e não uso nenhum superlativo histórico sobre 1966–2022 sem checagem documental da série de 1986–1994, que ainda não fiz.",
+        "ano": "1995–2013",
+        "fonteId": "dieese-seesp-salario-real",
+        "contraditorio": {
+          "postura": "aceito",
+          "frase": "Sólido, e subscrevo — é por isso que aqui NÃO se diz \"a profissão nunca esteve tão desvalorizada\".",
+          "evidencia": "Salário real dos engenheiros com vínculo formal em São Paulo: −8% entre 1995 e 2005 e +17% entre 2003 e 2013 (DIEESE/SEESP sobre a RAIS-SP).",
+          "oQueNaoProva": "Que a desvalorização seja inédita. Houve década de alta real e há década pior documentada — o superlativo histórico não se sustenta."
+        }
+      },
+      {
+        "id": "participacao-diplomas",
+        "rotulo": "O Brasil forma pouco EM PARTICIPAÇÃO — e muito em volume",
+        "valor": 8.9,
+        "valorTexto": "8,9% · 39º de 44",
+        "unidade": "%",
+        "detalhe": "8,9% dos diplomados brasileiros vêm de \"engenharia, produção e construção\" — 39º lugar entre 44 países no EAG 2025 (dados de 2023); em STEM, ~17% contra 24% na média da OCDE. AS DUAS METADES ANDAM JUNTAS OU NENHUMA VAI AO AR: no mesmo ano, o INEP registrou 95.607 concluintes só no recorte estrito de engenharia.",
+        "ano": "2023 (EAG 2025)",
+        "fonteId": "ocde-eag2025-brasil",
+        "contraditorio": {
+          "postura": "aceito",
+          "frase": "Sólido em PARTICIPAÇÃO — e as duas metades andam juntas ou nenhuma vai ao ar.",
+          "evidencia": "8,9% dos diplomados brasileiros vêm de \"engenharia, produção e construção\", 39º de 44 países; em STEM ~17% contra 24% na OCDE (EAG 2025, dados de 2023). No mesmo ano o INEP registrou 95.607 concluintes só no recorte estrito de engenharia.",
+          "oQueNaoProva": "Que falte engenheiro em volume. Participação baixa num sistema de ensino grande convive com volume absoluto alto."
+        }
+      },
+      {
+        "id": "falta-senior-sobra-junior",
+        "rotulo": "NÚCLEO · \"Pode faltar sênior e sobrar júnior ao mesmo tempo\"",
+        "valor": null,
+        "valorTexto": "sem número — nenhuma fonte pública mede",
+        "detalhe": "O Radar 32 do IPEA — o mesmo estudo que uso como âncora antiescassez — lista o HIATO GERACIONAL e os DÉFICITS DE COMPETÊNCIAS ESPECÍFICAS entre as quatro razões pelas quais a percepção de falta é legítima (as outras duas são qualidade da formação e regiões específicas; subscrevo as quatro). Um mercado pode ter excedente de júnior e falta de sênior ao mesmo tempo, e nada nos dados que apurei contradiz isso. DECLARAÇÃO OBRIGATÓRIA, SEM NÚMERO PORQUE NÃO EXISTE NÚMERO: nenhuma fonte pública mede o déficit de engenheiros sêniores no Brasil. Não tenho como medi-lo nem como negá-lo.",
+        "ano": "2014",
+        "fonteId": "ipea-radar32",
+        "contraditorio": {
+          "postura": "aceito",
+          "frase": "Subscrevo as quatro razões do Radar 32 do IPEA, e não tenho como medir nem negar esta.",
+          "evidencia": "O hiato geracional e os déficits de competências específicas estão entre as quatro razões pelas quais a percepção de falta é legítima (IPEA, Radar nº 32, 2014). Nenhuma fonte pública mede déficit de sênior.",
+          "oQueNaoProva": "Nem o contrário. Um mercado pode ter excedente de júnior e falta de sênior ao mesmo tempo — e nenhum dado disponível separa os dois."
+        }
+      },
+      {
+        "id": "sobra-nao-e-uniforme",
+        "rotulo": "NÚCLEO · \"Sobra no país não é sobra em toda parte\"",
+        "valor": 65,
+        "unidade": "%",
+        "detalhe": "65% dos engenheiros que atuam na área estão concentrados no Sudeste (CNI, dados de 2014 — dado histórico). \"Sobra no Brasil\" e \"falta em Rondônia\" convivem, e a escassez regional é real. Ao lado disso, com dado próprio e fresco: a concentração de profissionais ativos por UF que o mapa do site mostra, com captura do SIC de 30/08/2026.",
+        "ano": "2014",
+        "fonteId": "cni-42",
+        "contraditorio": {
+          "postura": "aceito",
+          "frase": "Subscrevo: a escassez regional é real. O número é de participação e é dado histórico.",
+          "evidencia": "65% dos engenheiros que atuam na área estão no Sudeste (CNI, dados de 2014).",
+          "oQueNaoProva": "Que a distribuição de hoje seja essa, nem que exista vaga aberta onde há menos profissional. Participação de estoque não mede demanda."
+        }
+      },
+      {
+        "id": "entrada-encolheu",
+        "rotulo": "NÚCLEO · \"A entrada encolheu de verdade\"",
+        "valor": -23.6,
+        "valorTexto": "−23,6%",
+        "unidade": "%",
+        "detalhe": "Ingressantes em engenharia caíram 23,6% entre 2014 e 2023 (469,4 mil → 358,4 mil); as matrículas caíram 30% desde 2015 (~1,2 milhão → 887 mil em 2024) e a engenharia civil, 52%. O que isso significa, dito com todas as letras: se a demanda voltar, o funil de entrada está mais estreito do que estava.",
+        "ano": "2014–2023",
+        "fonteId": "inep-ingressantes-revista-ensino",
+        "contraditorio": {
+          "postura": "aceito",
+          "frase": "Subscrevo: se a demanda voltar, o funil de entrada está mais estreito do que estava.",
+          "evidencia": "Ingressantes em engenharia caíram 23,6% entre 2014 e 2023 (469,4 mil → 358,4 mil); matrículas caíram 30% desde 2015 e a engenharia civil, 52%. Fonte secundária única, selo `citado`.",
+          "oQueNaoProva": "Que falte engenheiro hoje. O estoque formado nos anos de pico continua vivo no mercado — entrada menor não é estoque menor."
+        }
+      },
+      {
+        "id": "sem-comparacao-per-capita",
+        "rotulo": "NÚCLEO · O que NÃO afirmo sobre engenheiros por habitante",
+        "valor": null,
+        "valorTexto": "24,9 ocupados · 116,8 diplomados por 10 mil hab.",
+        "detalhe": "Não localizei uma comparação internacional confiável de engenheiros por habitante. O número que circula — 4,8 por 10 mil habitantes, contra mais de 20 na Coreia — é de 2014, de fonte secundária e com taxonomia não declarada; por isso NÃO FOI PUBLICADO. Não afirmo, portanto, que o Brasil tem muitos nem que tem poucos engenheiros por habitante: o que afirmo é sobre o estoque brasileiro comparado ao emprego brasileiro. Se um número per capita for necessário para contexto, é o do próprio Censo 2022, com a aritmética exposta e o MESMO denominador escrito na tela — os 203.080.756 residentes recenseados em 2022: 505.000 ÷ 203.080.756 × 10.000 = 24,9 ocupados como engenheiros e 2.371.066 ÷ 203.080.756 × 10.000 = 116,8 diplomados na área, por 10 mil habitantes — e NUNCA como prova de falta nem de sobra.",
+        "ano": "2022",
+        "fonteId": "ibge-censo2022-trabalho",
+        "contraditorio": {
+          "postura": "aceito",
+          "frase": "Declaração própria: NÃO afirmo que o Brasil tem muitos nem que tem poucos engenheiros por habitante.",
+          "evidencia": "O número que circula — 4,8 por 10 mil habitantes contra mais de 20 na Coreia — é de 2014, de fonte secundária e com taxonomia não declarada; por isso não foi publicado. O que publico é o próprio: 24,9 ocupados e 116,8 diplomados por 10 mil habitantes, sobre 203.080.756 recenseados (Censo 2022).",
+          "oQueNaoProva": "Nada, em nenhuma direção. Sem taxonomia comparável, per capita internacional não prova falta nem sobra."
+        }
+      }
+    ]
+  }
+}

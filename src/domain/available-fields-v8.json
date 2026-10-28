@@ -1,0 +1,559 @@
+{
+  "schemaVersion": "1.0",
+  "reviewedAt": "2026-10-13",
+  "scope": "CREA-SP / Estado de São Paulo",
+  "purpose": "Campos observados nos anexos e contratos propostos; sem valores extraídos para medidas",
+  "numericFactsIncluded": false,
+  "productionConnectionValidated": false,
+  "evidence": [
+    {
+      "id": "P1",
+      "filename": "Microsoft Power BI.PDF",
+      "physicalPage": 1,
+      "sha256": "318aba487c1de51166c9c8e52af2275c73a7a72ef0ce59b3321f4122091e7293"
+    },
+    {
+      "id": "P2",
+      "filename": "Microsoft Power BI(1).PDF",
+      "physicalPage": 1,
+      "sha256": "631727c9542ff530e04a668a8dda935cd8d20e4464fadbff1b4f69c5b03e150b"
+    },
+    {
+      "id": "I1",
+      "filename": "79968.jpg",
+      "sha256": "db213b068c77600f9d2fae949566add470ccf6a97a4873dd97c229ac52ce27ac"
+    },
+    {
+      "id": "I2",
+      "filename": "79969.jpg",
+      "sha256": "a59febb884596953b984581c5e464c4075d8aad76f3e7dfea530b042326eabce"
+    },
+    {
+      "id": "I3",
+      "filename": "79970.jpg",
+      "sha256": "d6186576451a66632702b4c22b8f1b158f225744abe7c3fe1ae082deebbd46da"
+    },
+    {
+      "id": "I4",
+      "filename": "79971.jpg",
+      "sha256": "6c2463a542e44958771b5ab55fece4d587e48f5cb9af12067ad271905dd1c9c1"
+    },
+    {
+      "id": "I5",
+      "filename": "79967.jpg",
+      "sha256": "7547522e8805170422e2dd6d9075cead1a57701d45c4b9554b6ef0944d148060"
+    }
+  ],
+  "domains": [
+    {
+      "id": "protocol",
+      "label": "Serviços e protocolos",
+      "evidence": [
+        "I1",
+        "I2"
+      ],
+      "observedGrains": [
+        "Protocolo",
+        "Evento de protocolo"
+      ],
+      "observedFields": [
+        "Data de abertura",
+        "Unidade",
+        "GRE",
+        "Tipo",
+        "Subtipo",
+        "Status",
+        "Status completo",
+        "Colaborador",
+        "SLA",
+        "Mediana SLA"
+      ],
+      "requiredSourceFields": [
+        "ProtocolId",
+        "ApplicantEntityType",
+        "ApplicantId",
+        "OpenedAt",
+        "ClosedAt",
+        "StatusEventId",
+        "StatusSince",
+        "ServiceCode",
+        "SlaRuleId",
+        "PausedFrom",
+        "PausedTo",
+        "SourceBatchId"
+      ],
+      "decisionUses": [
+        "Demanda por serviço",
+        "Pendências maduras",
+        "Disponibilidade documental"
+      ],
+      "limitations": [
+        "Protocolo fechado não comprova deferimento ou emissão",
+        "Não avalia desempenho de fiscalização",
+        "Prazo e pausas dependem de regra homologada"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    },
+    {
+      "id": "professional",
+      "label": "Pessoas, registros e títulos",
+      "evidence": [
+        "P2",
+        "I3",
+        "I5"
+      ],
+      "observedGrains": [
+        "Profissional distinto",
+        "Registro ou visto",
+        "Título ou modalidade"
+      ],
+      "observedFields": [
+        "Status de registro",
+        "Tipo de registro",
+        "Visto definitivo ou provisório",
+        "Grupo",
+        "Câmara",
+        "Modalidade",
+        "Nível de formação",
+        "Faixa etária",
+        "Sexo",
+        "Cidade",
+        "GRE"
+      ],
+      "requiredSourceFields": [
+        "ProfessionalId",
+        "ProfessionalRegistrationId",
+        "RegistrationType",
+        "ValidFrom",
+        "ValidTo",
+        "StatusEventId",
+        "TitleId",
+        "ModalityId",
+        "ChamberId",
+        "ResidenceMunicipalityCode",
+        "ResidenceValidFrom",
+        "SourceBatchId"
+      ],
+      "decisionUses": [
+        "Base técnica ativa",
+        "Participação observada nas ARTs",
+        "Vistos separados de ingresso",
+        "Perfil e qualidade cadastral"
+      ],
+      "limitations": [
+        "Modalidades e títulos são multivalorados",
+        "Registro não equivale a pessoa",
+        "Status atual não permite retenção histórica",
+        "Autoria técnica não equivale a vínculo de emprego"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    },
+    {
+      "id": "company",
+      "label": "Empresas, estabelecimentos e registros",
+      "evidence": [
+        "I3",
+        "I4",
+        "I5"
+      ],
+      "observedGrains": [
+        "Empresa distinta",
+        "Estabelecimento",
+        "Registro ou visto"
+      ],
+      "observedFields": [
+        "Ativos",
+        "Inativos",
+        "Novos registros",
+        "Vistos ativos",
+        "Adimplência",
+        "Cidade",
+        "GRE"
+      ],
+      "requiredSourceFields": [
+        "CompanyId",
+        "RootCnpj",
+        "EstablishmentId",
+        "FullCnpj",
+        "RegistrationId",
+        "RegistrationType",
+        "ValidFrom",
+        "ValidTo",
+        "MovementId",
+        "MovementType",
+        "MunicipalityCode",
+        "SourceBatchId"
+      ],
+      "decisionUses": [
+        "Dinamismo cadastral",
+        "Cobertura de correspondência externa",
+        "Continuidade técnica"
+      ],
+      "limitations": [
+        "Empresa, estabelecimento e registro não são contagens equivalentes",
+        "CNAE externo não determina obrigação de registro",
+        "Correspondência por raiz não certifica o estabelecimento"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    },
+    {
+      "id": "rt",
+      "label": "Responsabilidade técnica",
+      "evidence": [
+        "I3",
+        "I5"
+      ],
+      "observedGrains": [
+        "Vínculo empresa–profissional"
+      ],
+      "observedFields": [
+        "RTS ativos",
+        "RTS inativos",
+        "Profissionais no quadro técnico"
+      ],
+      "requiredSourceFields": [
+        "TechnicalLinkId",
+        "CompanyId",
+        "EstablishmentId",
+        "ProfessionalId",
+        "ModalityId",
+        "ValidFrom",
+        "ValidTo",
+        "LinkType",
+        "SourceBatchId"
+      ],
+      "decisionUses": [
+        "Empresas ativas com vínculo identificado",
+        "Mudanças no suporte técnico empresarial"
+      ],
+      "limitations": [
+        "Vínculos não são pessoas",
+        "Ausência na base não comprova infração",
+        "RT vigente não identifica autor de ART"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    },
+    {
+      "id": "art",
+      "label": "ART e atividade técnica observada",
+      "evidence": [
+        "I3",
+        "I5",
+        "P2"
+      ],
+      "observedGrains": [
+        "Documento ART",
+        "Autoria explícita",
+        "Evento documental"
+      ],
+      "observedFields": [
+        "ART total",
+        "ART inicial",
+        "Obra e serviço",
+        "Cargo e função",
+        "Profissionais emissores",
+        "Mês"
+      ],
+      "requiredSourceFields": [
+        "ArtId",
+        "DocumentType",
+        "PurposeType",
+        "StatusEventId",
+        "RegisteredAt",
+        "ExecutionFrom",
+        "ExecutionTo",
+        "InitialArtId",
+        "ReplacementArtId",
+        "ProfessionalId",
+        "ExecutorCnpj",
+        "ContractorId",
+        "WorkMunicipalityCode",
+        "WorkAddress",
+        "ContractReference",
+        "SourceBatchId"
+      ],
+      "decisionUses": [
+        "Autores distintos e ARTs iniciais",
+        "Produção técnica por local de execução",
+        "Correspondência com contratos sob cobertura adequada"
+      ],
+      "limitations": [
+        "Complementações e substituições não são novas obras necessariamente",
+        "Documento não equivale a pessoa",
+        "ART não mede emprego",
+        "Local de obra difere do domicílio do autor ou fornecedor"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    },
+    {
+      "id": "acervo",
+      "label": "CAT e CAO",
+      "evidence": [
+        "I2",
+        "P2"
+      ],
+      "observedGrains": [
+        "Certidão",
+        "Solicitação",
+        "Ponte certidão–ART"
+      ],
+      "observedFields": [
+        "CAT",
+        "CAO",
+        "Subtipo",
+        "Status do pedido",
+        "SLA"
+      ],
+      "requiredSourceFields": [
+        "CertificateId",
+        "CertificateType",
+        "HolderEntityType",
+        "HolderId",
+        "ProtocolId",
+        "RequestedAt",
+        "IssuedAt",
+        "RevokedAt",
+        "ArtId",
+        "ActivityCode",
+        "SourceBatchId"
+      ],
+      "decisionUses": [
+        "Disponibilidade de acervo",
+        "Consistência titular–ART",
+        "Pendências documentais maduras"
+      ],
+      "limitations": [
+        "CAT é profissional e CAO é empresarial",
+        "Pedido não equivale a emissão",
+        "Ausência de relação não deve aparecer como zero certo"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    },
+    {
+      "id": "finance",
+      "label": "Obrigações, recebimentos, protestos e metas",
+      "evidence": [
+        "P1",
+        "I4",
+        "I3",
+        "I5"
+      ],
+      "observedGrains": [
+        "Obrigação PF ou PJ",
+        "Recebimento",
+        "Protesto",
+        "Meta aprovada"
+      ],
+      "observedFields": [
+        "Meta",
+        "Realizado",
+        "Anuidade",
+        "ART",
+        "Dívidas",
+        "Outros",
+        "Origem",
+        "Lançamento",
+        "Categoria",
+        "Tipo",
+        "Subtipo",
+        "Data",
+        "Adimplência",
+        "Valor de protestos"
+      ],
+      "requiredSourceFields": [
+        "ObligationId",
+        "HolderEntityType",
+        "HolderId",
+        "DueDate",
+        "ReceivableStatus",
+        "PaymentId",
+        "ReceivedAt",
+        "ReversalId",
+        "ProtestId",
+        "ProtestedAt",
+        "SettledAt",
+        "ValueAtCut",
+        "AccountingRegime",
+        "RevenueCategory",
+        "TargetVersion",
+        "TargetPeriod",
+        "SourceBatchId"
+      ],
+      "decisionUses": [
+        "Sustentabilidade de receita",
+        "Inadimplência com denominador elegível",
+        "Recuperação da mesma coorte de obrigações"
+      ],
+      "limitations": [
+        "Estoque de protesto não é recebimento",
+        "Meta precisa do mesmo corte do realizado",
+        "Percentuais totais são recalculados",
+        "Financeiro PJ não é atribuído a RT ou sócio",
+        "Financeiro PF ainda exige view real"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    },
+    {
+      "id": "territory",
+      "label": "Território, estrutura e contexto",
+      "evidence": [
+        "P2",
+        "I3",
+        "I5"
+      ],
+      "observedGrains": [
+        "Município × competência estatística",
+        "Unidade × vigência"
+      ],
+      "observedFields": [
+        "Cidade",
+        "GRE",
+        "Unidade",
+        "Inspetoria",
+        "Posto avançado",
+        "Escritório",
+        "População",
+        "Área urbanizada",
+        "PIB",
+        "Renda per capita",
+        "TCV ou fomento"
+      ],
+      "requiredSourceFields": [
+        "MunicipalityCode",
+        "TerritorialRole",
+        "GreId",
+        "GreValidFrom",
+        "GreValidTo",
+        "StatisticCode",
+        "StatisticUnit",
+        "ReferencePeriod",
+        "SourceEdition",
+        "UnitId",
+        "UnitValidFrom",
+        "UnitValidTo",
+        "SourceBatchId"
+      ],
+      "decisionUses": [
+        "Prioridades territoriais",
+        "Contexto econômico com séries compatíveis",
+        "Cobertura de fontes"
+      ],
+      "limitations": [
+        "Domicílio, oferta, execução e órgão contratante são papéis diferentes",
+        "PIB/população não justificam denominador arbitrário",
+        "Fomento exige fato financeiro homologado"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    },
+    {
+      "id": "digital-evidence",
+      "label": "Evidência para fiscalização digital",
+      "evidence": [
+        "Diretriz do usuário; requer fontes externas"
+      ],
+      "observedGrains": [
+        "Evidência versionada",
+        "Contrato PNCP",
+        "Estabelecimento externo",
+        "Emprego agregado"
+      ],
+      "observedFields": [
+        "CNPJ",
+        "CNAE",
+        "Objeto de contratação",
+        "Competência de emprego"
+      ],
+      "requiredSourceFields": [
+        "EvidenceId",
+        "SourceId",
+        "SourceBatchId",
+        "EstablishmentId",
+        "FullCnpj",
+        "SourceFactId",
+        "MatchMethod",
+        "MatchStatus",
+        "RuleVersion",
+        "ReferencePeriod",
+        "TerritorialRole",
+        "CoverageStatus",
+        "EvidenceStrength",
+        "Limitation"
+      ],
+      "decisionUses": [
+        "Selecionar conjuntos para verificação humana",
+        "Correlacionar atividade e cobertura territorial"
+      ],
+      "limitations": [
+        "CNAE e classificação de objeto não comprovam infração",
+        "RAIS/CAGED agregado não identifica CNPJ ou trabalhador",
+        "Nome aproximado apenas sugere correspondência",
+        "Não criar tratativas operacionais no BI"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    },
+    {
+      "id": "source-load",
+      "label": "Atualização e rastreabilidade",
+      "evidence": [
+        "P1",
+        "P2",
+        "I1",
+        "I2",
+        "I4"
+      ],
+      "observedGrains": [
+        "Lote de origem",
+        "Atualização semântica"
+      ],
+      "observedFields": [
+        "Última atualização",
+        "Dados INET",
+        "Dados SISCONT"
+      ],
+      "requiredSourceFields": [
+        "SourceId",
+        "SourceBatchId",
+        "LastAttemptAt",
+        "LastSuccessAt",
+        "ReferenceFrom",
+        "ReferenceTo",
+        "RowsReceived",
+        "RowsPublished",
+        "RowsRejected",
+        "CoverageStatus",
+        "SemanticRefreshAt",
+        "RuleVersion"
+      ],
+      "decisionUses": [
+        "Saber se a informação suporta a decisão",
+        "Interromper conclusões sob cobertura insuficiente"
+      ],
+      "limitations": [
+        "Atualização da tela não é atualização de todas as origens",
+        "Falha não substitui dado por zero",
+        "PDF e imagem não são fontes de medidas ativas"
+      ],
+      "sourceAccessConfirmed": false,
+      "productionEligible": false,
+      "productionOrigin": "Views homologadas SQL Server ou IBM Db2 via gateway; APIs ou staging externo onde aplicável"
+    }
+  ]
+}

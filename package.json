@@ -1,0 +1,37 @@
+{
+  "name": "crea-inteligencia",
+  "private": true,
+  "version": "13.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "data:export": "node --import tsx scripts/export-demo.ts",
+    "test:browser": "node --import tsx scripts/qa-enterprise-v13.mjs",
+    "test:production": "node --import tsx scripts/qa-enterprise-v13.mjs",
+    "data:institutional": "node --import tsx scripts/export-institutional.ts",
+    "data:archive": "node --import tsx scripts/export-public-sources.ts",
+    "sources:refresh": "node --import tsx scripts/refresh-sources.ts",
+    "test:integrations": "node --import tsx --test tests/integrations.test.ts",
+    "test:visual": "node --import tsx scripts/qa-enterprise-v13.mjs",
+    "test:enterprise": "node --import tsx --test tests/enterprise*.test.ts",
+    "data:enterprise": "node --import tsx scripts/export-enterprise-v13.ts"
+  },
+  "dependencies": {
+    "echarts": "^6.1.0",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0"
+  }
+}

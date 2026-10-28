@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "dataset": "salarios-carreiras",
+    "titulo": "Carreiras vizinhas — salário médio CLT na mesma base (V8)",
+    "unidade": "R$/mês",
+    "fonteId": "portal-salario-eng-civil",
+    "notas": [
+      "Mesma base e metodologia para todas as carreiras: Novo CAGED/eSocial tabulado pelo Portal Salário, média das MOVIMENTAÇÕES (admitidos+desligados) CLT nos últimos 12 meses, janela fixada na coleta (ref. ago/2026).",
+      "Só CLT — subestima medicina (PJ/plantão/estatutário), TI sênior PJ e advocacia liberal; a comparação por hora subestima a distância real (plano §7.3).",
+      "salarioHora NÃO é armazenado: derivado por lib/calculos/salario.ts (mensal ÷ (jornada × 52 ÷ 12)) e testado — §9.4.",
+      "Nota-espelho I5: o R$ 9.733,56 daqui é média de movimentações; a mediana de admissões do Ato 4 é R$ 10.360 (Buscador NCM) — medidas diferentes, ambas corretas (ver pisos.notaDoisSalarios e /metodologia#dois-salarios)."
+    ],
+    "atualizadoEm": "2026-08-30"
+  },
+  "data": {
+    "carreiras": [
+      {
+        "cbo": "2142-05",
+        "ocupacao": "Engenheiro civil",
+        "salarioMensal": 9733.56,
+        "jornadaSemanal": 42,
+        "movimentacoes": 26022,
+        "periodoRef": "12m ref. ago/2026",
+        "fonteId": "portal-salario-eng-civil",
+        "urlEspecifica": "https://www.salario.com.br/profissao/engenheiro-civil-cbo-214205/"
+      },
+      {
+        "cbo": "2251-25",
+        "ocupacao": "Médico clínico",
+        "salarioMensal": 10017.54,
+        "jornadaSemanal": 24,
+        "movimentacoes": 16416,
+        "periodoRef": "12m ref. ago/2026",
+        "fonteId": "portal-salario-medico",
+        "urlEspecifica": "https://www.salario.com.br/profissao/medico-clinico-cbo-225125/"
+      },
+      {
+        "cbo": "2124-05",
+        "ocupacao": "Analista de desenvolvimento de sistemas",
+        "salarioMensal": 8423.54,
+        "jornadaSemanal": 42,
+        "movimentacoes": 137639,
+        "periodoRef": "12m ref. ago/2026",
+        "fonteId": "portal-salario-dev",
+        "urlEspecifica": "https://www.salario.com.br/profissao/analista-de-desenvolvimento-de-sistemas-cbo-212405/"
+      },
+      {
+        "cbo": "2410-05",
+        "ocupacao": "Advogado",
+        "salarioMensal": 5670.33,
+        "jornadaSemanal": 41,
+        "movimentacoes": 27462,
+        "periodoRef": "12m ref. ago/2026",
+        "fonteId": "portal-salario-advogado",
+        "urlEspecifica": "https://www.salario.com.br/profissao/advogado-cbo-241005/"
+      },
+      {
+        "cbo": "2521-05",
+        "ocupacao": "Administrador",
+        "salarioMensal": 5081.07,
+        "jornadaSemanal": 42,
+        "movimentacoes": 144393,
+        "periodoRef": "12m ref. ago/2026",
+        "fonteId": "portal-salario-administrador",
+        "urlEspecifica": "https://www.salario.com.br/profissao/administrador-cbo-252105/"
+      }
+    ]
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "dataset": "apagao-evidencias",
+    "titulo": "O apagão que os números não confirmam — déficits divulgados, estoque, safra e as evidências (V15)",
+    "unidade": "engenheiros · % · posição de entidade",
+    "fonteId": "cni-confea-deficit",
+    "notas": [
+      "§3.2 — REGRA SIMÉTRICA E TÉCNICA: todo déficit divulgado recebe O MESMO RÓTULO DE CLASSIFICAÇÃO, venha de quem vier. O campo `rotuloDeClassificacao` é idêntico em todos os itens por construção, e o esquema Zod rejeita o dataset se deixar de ser.",
+      "§3.2 + T-13(b) — o que decide a entrada na régua aritmética NÃO é o emissor, é a natureza do número: um déficit MEDIDO NO PRESENTE é divisível por um estoque presente e por uma safra anual; uma PROJEÇÃO CONDICIONAL para horizonte futuro não é. Se a CNI publicar uma projeção para 2030, ela sai da régua pelo mesmo critério; se o Confea publicar um déficit medido no presente, ele entra exatamente como o da CNI.",
+      "N-10 — nenhuma das duas entidades publicou memorial de cálculo. Isso não torna os números falsos: torna-os inauditáveis. A classificação de cada um é feita pelo que A PRÓPRIA FONTE declara sobre ele.",
+      "Regra C2 sem exceção (C-10): enquanto 2.371.066 for `citado` de fonte única secundária, o site exibe \"2,37 milhões\" em toda parte — por isso `valorExibicao` é o campo que vai à tela, nunca os sete dígitos.",
+      "N-5 — o card de dezembro de 2013 do Confea é FATO DATADO E CITÁVEL, publicado com duas datas, duas citações e zero adjetivos. O site não escreve a conclusão pelo leitor, e o §3.4 continua inteiro: nenhuma imputação de má-fé, nenhuma ironia, nenhum uso do card como pegadinha.",
+      "C-5 — a citação do Radar 32 do IPEA nunca vai à tela sem as quatro concessões do mesmo parágrafo (qualidade da formação, hiato geracional, competências específicas e regiões específicas), que subscrevo.",
+      "§8 pendência 3 — a quebra por área da CNI (engenharia 77%, operadores ~96%) tem ANO EM DISPUTA e NÃO está neste dataset: o card sai com os 23,1% e sem a quebra."
+    ],
+    "atualizadoEm": "2026-08-31"
+  },
+  "data": {
+    "referencias": [
+      {
+        "id": "diplomados-area-2022",
+        "rotulo": "Diplomados na área \"Engenharia, produção e construção\"",
+        "papel": "estoque",
+        "valor": 2371066,
+        "valorExibicao": "2,37 milhões",
+        "oQueMede": "Pessoas vivas com diploma superior na área CINE 07 — inclui arquitetura, produção e construção, além das engenharias.",
+        "ano": "2022",
+        "fonteId": "ibge-censo2022-educacao"
+      },
+      {
+        "id": "ocupados-engenheiros-2022",
+        "rotulo": "Pessoas ocupadas COMO engenheiras (ocupação declarada)",
+        "papel": "ocupacao",
+        "valor": 505000,
+        "valorExibicao": "505 mil",
+        "oQueMede": "Ocupação declarada no Censo 2022 — recorte estrito, e por isso menor que a área de formação. A razão 505.000 ÷ 2,37 milhões = 21,3% mede a distância entre uma ÁREA DE FORMAÇÃO ampla e uma OCUPAÇÃO estrita, não \"a proporção de engenheiros que exercem\".",
+        "ano": "2022",
+        "fonteId": "ibge-censo2022-trabalho"
+      },
+      {
+        "id": "concluintes-ano-2023",
+        "rotulo": "Concluintes de engenharia em um ano (recorte estrito)",
+        "papel": "safra",
+        "valor": 95607,
+        "valorExibicao": "95.607",
+        "oQueMede": "Formados em cursos de engenharia registrados pelo Censo INEP de 2023 — é a safra anual contra a qual o déficit alegado é medido.",
+        "ano": "2023",
+        "fonteId": "inep-seesp-concluintes"
+      }
+    ],
+    "deficitsAlegados": [
+      {
+        "id": "deficit-cni-75-mil",
+        "emissor": "CNI — Confederação Nacional da Indústria",
+        "rotulo": "Déficit de 75 mil engenheiros",
+        "valor": 75000,
+        "natureza": "deficit-medido-no-presente",
+        "universoDeclarado": "engenheiros",
+        "horizonte": "levantamento de 2023, divulgado em 19/12/2024",
+        "rotuloDeClassificacao": "posição de entidade — metodologia não publicada",
+        "entraNaReguaAritmetica": true,
+        "motivoDaClassificacao": "A própria fonte apresenta o número como um déficit apurado em levantamento de 2023 — um déficit medido no presente. Por isso ele é comparável a um estoque presente e a uma safra anual, e entra na régua. Se a apuração se revelar também uma projeção de necessidade futura, os 75 mil saem desta régua pelo mesmo critério.",
+        "razoes": [
+          {
+            "id": "cni-vs-safra",
+            "rotulo": "Contra a safra anual de concluintes",
+            "valorTexto": "0,78 de uma safra anual",
+            "formulaExposta": "75.000 ÷ 95.607 concluintes (2023) = 0,78 safra",
+            "ano": "2023",
+            "fonteId": "cni-confea-deficit"
+          },
+          {
+            "id": "cni-vs-estoque",
+            "rotulo": "Contra o estoque de diplomados na área",
+            "valorTexto": "≈3,2% do estoque",
+            "formulaExposta": "75.000 ÷ 2,37 milhões ≈ 3,2% (3,163%, arredondado para uma casa)",
+            "ano": "2022",
+            "fonteId": "cni-confea-deficit"
+          }
+        ],
+        "ano": "2023",
+        "fonteId": "cni-confea-deficit"
+      },
+      {
+        "id": "projecao-confea-1-milhao",
+        "emissor": "Confea — presidência do conselho",
+        "rotulo": "Até 1 milhão de profissionais em falta até 2030, \"se nada for feito\"",
+        "valor": null,
+        "valorTexto": "até 1 milhão até 2030",
+        "natureza": "projecao-condicional-futura",
+        "universoDeclarado": "profissionais da engenharia E TECNOLOGIA — universo mais amplo que o denominador disponível",
+        "horizonte": "até 2030, condicionada a \"se nada for feito\" (declaração de jun/2025)",
+        "rotuloDeClassificacao": "posição de entidade — metodologia não publicada",
+        "entraNaReguaAritmetica": false,
+        "motivoDaClassificacao": "A própria fonte apresenta o número como uma projeção condicional para um horizonte futuro. Uma projeção condicional não admite divisão aritmética contra um estoque de 2022: misturaria um acumulado futuro hipotético com um estoque medido, e o universo declarado pela fonte é mais amplo que o denominador disponível. O critério é técnico e vale para qualquer emissor — nenhum número deste site é dividido por um denominador de outro universo e de outro tempo. A projeção é publicada INTEIRA, com o horizonte e a condicionante, e SEM nenhuma divisão aritmética própria do site em cima dela.",
+        "razoes": [],
+        "ano": "2025",
+        "fonteId": "cni-confea-deficit"
+      }
+    ],
+    "cards": [
+      {
+        "id": "ipea-radar32-2014",
+        "rotulo": "IPEA, Radar nº 32 (Maciente & Nascimento) — a citação e as quatro concessões, juntas",
+        "valor": null,
+        "valorTexto": "sem escassez generalizada",
+        "detalhe": "Citação literal do estudo: \"as evidências empíricas não parecem corroborar a tese de escassez generalizada de engenheiros\". Publicado NA MESMA TELA, por regra (C-5): o mesmo estudo lista quatro razões pelas quais a percepção de falta é real — qualidade da formação, hiato geracional (falta de sênior), competências específicas e regiões específicas. Subscrevo as quatro. O que os dados não sustentam é a quinta: falta de gente formada.",
+        "ano": "2014",
+        "fonteId": "ipea-radar32"
+      },
+      {
+        "id": "confea-2013-e-2025",
+        "rotulo": "A leitura \"não falta\" tem precedente dentro do próprio Sistema — dois fatos datados",
+        "valor": null,
+        "valorTexto": "dez/2013 · jun/2025",
+        "detalhe": "Dezembro de 2013, Confea: \"Mercado de trabalho: cai o mito da escassez de engenheiros\" — o conselho e o IPEA convergiam em que não havia déficit quantitativo, e o problema era a qualidade da formação. Junho de 2025, presidência do Confea: até 1 milhão de profissionais da engenharia e tecnologia em falta até 2030, \"se nada for feito\". Duas datas, duas citações, zero adjetivos — e não escrevo a conclusão pelo leitor. A leitura que faço é de continuidade, e vai publicada junto e com o mesmo peso: o diagnóstico de 2013 é atualizado pelo Mini-Censo de 2024-25, que mede 82% dos registrados considerando condições e salários pouco atrativos — de \"não falta gente\" para \"falta condição\". As duas leituras cabem nos mesmos dois fatos datados.",
+        "ano": "2013–2025",
+        "fonteId": "confea-2013-mito-escassez"
+      },
+      {
+        "id": "cni-entrave-2025",
+        "rotulo": "O que a sondagem da CNI mede — dificuldade de contratar, o 4º maior entrave da indústria",
+        "valor": 23.1,
+        "unidade": "%",
+        "detalhe": "23,1% dos empresários citaram a falta de trabalhador qualificado como entrave no 4º trimestre de 2025 — maior nível da série iniciada em 2015. É PERCEPÇÃO DE EMPRESÁRIO, não vaga aberta. A quebra por área (em que a falta aperta) tem ano em disputa e por isso não é publicada aqui.",
+        "ano": "2025",
+        "fonteId": "cni-sondesp-entraves"
+      },
+      {
+        "id": "usp-2026",
+        "rotulo": "USP, fev/2026 — docentes das quatro escolas de engenharia e o Pró-Reitor de Graduação",
+        "valor": null,
+        "valorTexto": "fev/2026",
+        "detalhe": "\"Não é apagão de engenheiros(as): é apagão de condições para fazer engenharia no Brasil\" — artigo assinado por docentes da EESC, da Poli, da EEL e da Esalq com o Pró-Reitor de Graduação: o país forma profissionais qualificados, mas não assegurou as condições para a engenharia se sustentar como escolha de carreira. O texto ancora-se nos 82% do Mini-Censo Confea.",
+        "ano": "2026",
+        "fonteId": "usp-jornal-2026"
+      },
+      {
+        "id": "minicenso-82",
+        "rotulo": "O dado que fecha o diagnóstico, e é do próprio Sistema — condições e salários pouco atrativos",
+        "valor": 82,
+        "unidade": "%",
+        "detalhe": "82% dos profissionais registrados consideram as condições de trabalho e os salários pouco atrativos (Mini-Censo Confea/Quaest, 48 mil entrevistas, set/2024–fev/2025). É o mesmo levantamento que mede 92% em exercício e 78% na área — os três números dizem a mesma coisa: quem ficou está empregado; o problema é o preço. A redação exata depende do PDF do Mini-Censo.",
+        "ano": "2024–2025",
+        "fonteId": "confea-quaest"
+      }
+    ],
+    "criterioDaRegua": "O critério de entrada na régua aritmética é técnico, está publicado na /metodologia e vale para qualquer emissor: um DÉFICIT MEDIDO NO PRESENTE é comparável a um estoque presente e a uma safra anual; uma PROJEÇÃO CONDICIONAL para um horizonte futuro não admite divisão aritmética contra um estoque de 2022. Nenhum número deste site é dividido por um denominador de outro universo e de outro tempo, venha ele de quem vier.",
+    "notaSimetria": "Nenhuma das duas entidades publicou memorial de cálculo. A classificação de cada número é feita pelo que a própria fonte declara sobre ele: a CNI apresenta um déficit apurado em levantamento de 2023; o Confea apresenta uma projeção condicional para 2030. Se a apuração da CNI se revelar também uma projeção de necessidade futura, os 75 mil saem desta régua pelo mesmo critério."
+  }
+}

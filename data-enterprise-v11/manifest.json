@@ -1,0 +1,22 @@
+{
+  "version": "11.0.0",
+  "synthetic": true,
+  "sourceConnectionsConfigured": false,
+  "seed": 20260930,
+  "period": 12,
+  "start": "2025-10-01",
+  "end": "2026-09-30",
+  "baseline": "2025-09-30",
+  "companies": 3000,
+  "tables": {
+    "indicadores": 17,
+    "serie-mensal": 12,
+    "territorios-gre": 14,
+    "territorios-municipios": 24,
+    "cnaes-nao-aditivos": 12,
+    "fatos-empresariais": 3000,
+    "ponte-documental-contrato-art": 101,
+    "observacoes-externas-baseline": 844
+  },
+  "note": "Extração demonstrativa do mesmo modelo do painel. Os agregados não substituem os fatos e relacionamentos de produção. CSV numérico usa ponto decimal, exceto empresas-raiz.csv que usa vírgula nos campos financeiros."
+}

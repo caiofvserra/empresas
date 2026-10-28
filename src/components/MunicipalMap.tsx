@@ -1,0 +1,15 @@
+import { useEffect, useMemo, useState } from 'react';
+import Chart from './Chart';
+type MapMetric = 'coverage' | 'companies' | 'employment';
+export type MunicipalMapRow = { id: string; label: string } & Partial<Record<MapMetric, number>>;
+export default function MunicipalMap({ groups, metric = 'coverage', onCity }: { groups: MunicipalMapRow[]; metric?: MapMetric; onCity: (id: string) => void }) {
+  const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const options = useMemo(() => ({
+    tooltip: { trigger: 'item', formatter: (p: { name: string; value: number }) => `${p.name}<br/>${Number.isFinite(p.value) ? `${p.value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}${metric === 'coverage' ? '% de cobertura por empresa' : metric === 'employment' ? ' empregos agregados' : ' empresas'}` : 'Município sem dados no cenário demonstrativo'}` },
+    visualMap: { min: 0, max: metric === 'coverage' ? 100 : Math.max(1, ...groups.map(g => g[metric] ?? 0)), calculable: false, left: 0, bottom: 0, orient: 'horizontal', inRange: { color: ['#E9EFFB', '#8FA7DF', '#3662E2', '#15265C'] }, text: [metric === 'coverage' ? '100%' : 'Maior', '0'], textStyle: { color: '#566685', fontSize: 12 }, itemWidth: 12, itemHeight: 135 },
+    series: [{ name: metric === 'coverage' ? 'Cobertura municipal' : metric === 'companies' ? 'Empresas' : 'Empregos', type: 'map', map: 'spMunicipal', roam: false, left: 16, right: 16, top: 6, bottom: 35, selectedMode: false, itemStyle: { areaColor: '#F1F3F7', borderColor: '#D1D9E7', borderWidth: .45 }, emphasis: { itemStyle: { areaColor: '#B4C6ED' }, label: { show: true, fontSize: 12, color: '#0E1732' } }, data: groups.map(g => ({ name: g.label, value: g[metric], id: g.id })) }],
+  }), [groups, metric]);
+  useEffect(() => { let cancelled = false; Promise.all([import('../services/echarts'), import('../domain/sp-municipios.json')]).then(([e, geometry]) => { e.registerMap('spMunicipal', geometry.default as Parameters<typeof e.registerMap>[1]); if (!cancelled) setReady(true); }).catch(() => { if (!cancelled) setFailed(true); }); return () => { cancelled = true; }; }, []);
+  return <><div className="p-map">{ready ? <Chart option={options} height={320} ariaLabel="Mapa coroplético dos municípios paulistas. Malha oficial IBGE; valores demonstrativos nos municípios da amostra." onPick={p => { const item = groups.find(g => g.label === p.name); if (item) onCity(item.id); }} /> : <div className="p-loading">{failed ? 'Malha indisponível. Use a seleção de municípios abaixo.' : 'Preparando malha municipal…'}</div>}</div><div className="p-map-options">{groups.slice(0, 10).map(g => <button key={g.id} onClick={() => onCity(g.id)}>{g.label}<strong>{g[metric] === undefined ? 'Sem observação' : metric === 'coverage' ? `${g.coverage?.toFixed(1)}%` : g[metric]?.toLocaleString('pt-BR')}</strong></button>)}</div><p className="p-source">Geometria IBGE · 645 municípios. Valores fictícios em 24 municípios; cinza indica ausência de amostra. Atribuição às GREs demonstrativa.</p></>;
+}

@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "dataset": "fomento-produtivo",
+    "titulo": "Instrumentos públicos de fomento à atividade produtiva e o quanto são usados",
+    "fonteId": "mcti-lei-do-bem",
+    "notas": [
+      "Este conjunto sustenta a proposta de empreendedorismo: os instrumentos de fomento existem e são pouco usados, e a distância entre o programa e a empresa é de informação, não de recurso.",
+      "Nenhum número aqui é do Sistema Confea/Crea. São dados do Ministério da Ciência, Tecnologia e Inovação, do Mapa de Empresas e de pesquisa do Sebrae.",
+      "A razão entre empresas que usaram a Lei do Bem e empresas ativas é cálculo próprio sobre os dois valores publicados, e vai com a fórmula exposta. Os dois lados vêm de bases distintas, com recortes distintos: é ordem de grandeza, não precisão decimal.",
+      "O catálogo do EmpreendeGov é obra do autor deste site, publicada e aberta; entra aqui como instrumento existente, não como fonte de estatística oficial."
+    ],
+    "atualizadoEm": "2026-09-19"
+  },
+  "data": {
+    "itens": [
+      {
+        "id": "empresas-ativas-2025",
+        "rotulo": "Empresas ativas no Brasil",
+        "valor": 24213445,
+        "valorTexto": "24,2 milhões",
+        "unidade": "empresas",
+        "ano": "2025",
+        "bloco": "descompasso",
+        "detalhe": "Mapa de Empresas, 2º quadrimestre de 2025. É o universo de empresas ativas no país, todas as naturezas jurídicas e portes.",
+        "fonteId": "mapa-de-empresas"
+      },
+      {
+        "id": "lei-do-bem-empresas-2023",
+        "rotulo": "Empresas que usaram a Lei do Bem",
+        "valor": 3878,
+        "valorTexto": "3.878 empresas",
+        "unidade": "empresas",
+        "ano": "2023",
+        "bloco": "descompasso",
+        "detalhe": "Ano-base 2023, dado do MCTI. A Lei do Bem alcança apenas empresas tributadas pelo Lucro Real: MEI, Simples Nacional e Lucro Presumido ficam fora do instrumento por desenho.",
+        "fonteId": "mcti-lei-do-bem"
+      },
+      {
+        "id": "lei-do-bem-alcance-2023",
+        "rotulo": "Parcela das empresas ativas que usou a Lei do Bem",
+        "valor": 0.016,
+        "valorTexto": "0,016%",
+        "unidade": "%",
+        "ano": "2023 (uso) · 2025 (universo)",
+        "bloco": "descompasso",
+        "detalhe": "Cálculo próprio: 3.878 ÷ 24.213.445. Os dois lados vêm de bases e anos distintos, e o universo inclui empresas que o instrumento não alcança por desenho — a razão é ordem de grandeza, não medida exata de subutilização.",
+        "formulaExposta": "3.878 ÷ 24.213.445 = 0,016%",
+        "fonteId": "mcti-lei-do-bem"
+      },
+      {
+        "id": "lei-do-bem-dispendio-2023",
+        "rotulo": "Dispêndio em pesquisa declarado por quem usou a Lei do Bem",
+        "valor": 41930000000,
+        "valorTexto": "R$ 41,93 bilhões",
+        "unidade": "R$",
+        "ano": "2023",
+        "bloco": "descompasso",
+        "detalhe": "Ano-base 2023, MCTI: o que as 3.878 empresas declararam ter gasto em pesquisa, desenvolvimento e inovação.",
+        "fonteId": "mcti-lei-do-bem"
+      },
+      {
+        "id": "lei-do-bem-renuncia-2023",
+        "rotulo": "Renúncia fiscal correspondente",
+        "valor": 9820000000,
+        "valorTexto": "cerca de R$ 9,82 bilhões",
+        "unidade": "R$",
+        "ano": "2023",
+        "bloco": "descompasso",
+        "detalhe": "Ano-base 2023, MCTI: o valor que o instrumento devolveu às empresas que o usaram.",
+        "fonteId": "mcti-lei-do-bem"
+      },
+      {
+        "id": "credito-negado-mei",
+        "rotulo": "Microempreendedores que tentaram crédito e tiveram o pedido negado",
+        "valor": 67.0,
+        "valorTexto": "67%",
+        "unidade": "%",
+        "ano": "2024",
+        "bloco": "credito",
+        "detalhe": "Pesquisa “Financiamento dos Pequenos Negócios no Brasil”, Sebrae, 11ª edição, com mais de 7 mil empreendedores ouvidos.",
+        "fonteId": "sebrae-financiamento"
+      },
+      {
+        "id": "credito-integral-mei",
+        "rotulo": "Microempreendedores que conseguiram o valor integral pedido",
+        "valor": 12.0,
+        "valorTexto": "12%",
+        "unidade": "%",
+        "ano": "2024",
+        "bloco": "credito",
+        "detalhe": "Mesma pesquisa do Sebrae, 11ª edição. A causa mais citada da negativa é a falta de garantia, não a taxa de juros.",
+        "fonteId": "sebrae-financiamento"
+      },
+      {
+        "id": "programas-catalogados",
+        "rotulo": "Programas federais, estaduais e municipais catalogados no EmpreendeGov",
+        "valor": 63,
+        "valorTexto": "63 programas",
+        "unidade": "programas",
+        "ano": "2026",
+        "bloco": "plataforma",
+        "detalhe": "Catálogo de programas públicos de fomento, incentivo e financiamento à atividade produtiva, explicados em português comum, com triagem de elegibilidade por perfil de empresa. Cada programa declara também quem NÃO pode usar, e por quê.",
+        "fonteId": "empreendegov",
+        "urlEspecifica": "https://empreendegov.com.br"
+      }
+    ],
+    "lacunasDeclaradas": [
+      "Quantas empresas de engenharia usam os instrumentos de fomento: o MCTI publica o total de empresas beneficiadas pela Lei do Bem, não o recorte por atividade econômica do beneficiário.",
+      "Quanto do fomento chega a empresa registrada no Sistema Confea/Crea: não localizei cruzamento público entre o cadastro de pessoas jurídicas do Sistema e as bases de beneficiários de programas federais.",
+      "Quantos pedidos de fomento saem de uma consulta ao catálogo: o desfecho do pedido junto ao órgão não é acompanhado, e por isso o catálogo não mede o que acontece depois da consulta."
+    ]
+  }
+}

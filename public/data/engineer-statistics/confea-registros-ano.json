@@ -1,0 +1,486 @@
+{
+  "meta": {
+    "dataset": "confea-registros-ano",
+    "titulo": "Registros novos por ano no Sistema Confea/Crea",
+    "unidade": "registros/ano",
+    "fonteId": "confea-sic-usuario",
+    "notas": [
+      "Série nacional COMPLETA: 90 pontos, de 1937 a 2026, sem interpolação — todos os anos vêm do endpoint RegistrosPorAno.",
+      "2026 é PARCIAL (46.650 registros até 2026-08-30): o ponto usa o período \"2026-parcial\" e nunca deve ser comparado com anos cheios; o último ano cheio da série é 2025.",
+      "Fluxo (registros novos no ano), não estoque: o estoque de ativos está em data/confea-uf.json.",
+      "Quebras de série a exibir junto do gráfico: saída dos arquitetos para o CAU (2011) e dos técnicos industriais para o CFT (2018–19) reduzem o fluxo por mudança de escopo do Sistema, não só por queda de demanda.",
+      "A série \"crea-sp-decada\" vem do endpoint ProfissionaisDecada (registros novos por Crea e ano, 2010 em diante); anos sem dado no retorno são omitidos, jamais plotados como zero.",
+      "Não sobrepor com a série CONTECC só-engenheiros (~74 mil em 2014 → ~43 mil em 2020): recortes diferentes (plano V14).",
+      "Arquivo DERIVADO — não editar à mão. Regerar com `node scripts/derivar-confea.mjs` a partir de docs/research/assets/ (recoleta: scripts/fetch-confea.mjs / scripts/fetch-ibge.mjs, fora do container)."
+    ],
+    "atualizadoEm": "2026-08-30",
+    "snapshot": {
+      "consultaUrl": "https://relatorio.confea.org.br/Profissional/RegistrosPorAno/Buscar",
+      "capturadoEm": "2026-08-30"
+    }
+  },
+  "data": {
+    "series": [
+      {
+        "id": "nacional",
+        "rotulo": "Brasil — registros novos por ano (todas as profissões do Sistema)",
+        "fonteId": "confea-sic-usuario",
+        "valores": [
+          {
+            "periodo": "1937",
+            "valor": 1
+          },
+          {
+            "periodo": "1938",
+            "valor": 2
+          },
+          {
+            "periodo": "1939",
+            "valor": 6
+          },
+          {
+            "periodo": "1940",
+            "valor": 2
+          },
+          {
+            "periodo": "1941",
+            "valor": 4
+          },
+          {
+            "periodo": "1942",
+            "valor": 9
+          },
+          {
+            "periodo": "1943",
+            "valor": 8
+          },
+          {
+            "periodo": "1944",
+            "valor": 16
+          },
+          {
+            "periodo": "1945",
+            "valor": 20
+          },
+          {
+            "periodo": "1946",
+            "valor": 21
+          },
+          {
+            "periodo": "1947",
+            "valor": 45
+          },
+          {
+            "periodo": "1948",
+            "valor": 61
+          },
+          {
+            "periodo": "1949",
+            "valor": 91
+          },
+          {
+            "periodo": "1950",
+            "valor": 78
+          },
+          {
+            "periodo": "1951",
+            "valor": 128
+          },
+          {
+            "periodo": "1952",
+            "valor": 146
+          },
+          {
+            "periodo": "1953",
+            "valor": 163
+          },
+          {
+            "periodo": "1954",
+            "valor": 236
+          },
+          {
+            "periodo": "1955",
+            "valor": 236
+          },
+          {
+            "periodo": "1956",
+            "valor": 244
+          },
+          {
+            "periodo": "1957",
+            "valor": 217
+          },
+          {
+            "periodo": "1958",
+            "valor": 229
+          },
+          {
+            "periodo": "1959",
+            "valor": 310
+          },
+          {
+            "periodo": "1960",
+            "valor": 421
+          },
+          {
+            "periodo": "1961",
+            "valor": 488
+          },
+          {
+            "periodo": "1962",
+            "valor": 501
+          },
+          {
+            "periodo": "1963",
+            "valor": 585
+          },
+          {
+            "periodo": "1964",
+            "valor": 664
+          },
+          {
+            "periodo": "1965",
+            "valor": 766
+          },
+          {
+            "periodo": "1966",
+            "valor": 833
+          },
+          {
+            "periodo": "1967",
+            "valor": 1357
+          },
+          {
+            "periodo": "1968",
+            "valor": 1843
+          },
+          {
+            "periodo": "1969",
+            "valor": 2344
+          },
+          {
+            "periodo": "1970",
+            "valor": 2896
+          },
+          {
+            "periodo": "1971",
+            "valor": 3206
+          },
+          {
+            "periodo": "1972",
+            "valor": 3862
+          },
+          {
+            "periodo": "1973",
+            "valor": 5393
+          },
+          {
+            "periodo": "1974",
+            "valor": 6498
+          },
+          {
+            "periodo": "1975",
+            "valor": 8636
+          },
+          {
+            "periodo": "1976",
+            "valor": 9341
+          },
+          {
+            "periodo": "1977",
+            "valor": 10464
+          },
+          {
+            "periodo": "1978",
+            "valor": 11870
+          },
+          {
+            "periodo": "1979",
+            "valor": 12953
+          },
+          {
+            "periodo": "1980",
+            "valor": 13433
+          },
+          {
+            "periodo": "1981",
+            "valor": 15260
+          },
+          {
+            "periodo": "1982",
+            "valor": 14901
+          },
+          {
+            "periodo": "1983",
+            "valor": 13937
+          },
+          {
+            "periodo": "1984",
+            "valor": 14034
+          },
+          {
+            "periodo": "1985",
+            "valor": 15143
+          },
+          {
+            "periodo": "1986",
+            "valor": 16384
+          },
+          {
+            "periodo": "1987",
+            "valor": 15771
+          },
+          {
+            "periodo": "1988",
+            "valor": 13285
+          },
+          {
+            "periodo": "1989",
+            "valor": 12668
+          },
+          {
+            "periodo": "1990",
+            "valor": 12842
+          },
+          {
+            "periodo": "1991",
+            "valor": 12100
+          },
+          {
+            "periodo": "1992",
+            "valor": 12614
+          },
+          {
+            "periodo": "1993",
+            "valor": 14447
+          },
+          {
+            "periodo": "1994",
+            "valor": 14724
+          },
+          {
+            "periodo": "1995",
+            "valor": 13555
+          },
+          {
+            "periodo": "1996",
+            "valor": 14881
+          },
+          {
+            "periodo": "1997",
+            "valor": 16318
+          },
+          {
+            "periodo": "1998",
+            "valor": 16925
+          },
+          {
+            "periodo": "1999",
+            "valor": 18157
+          },
+          {
+            "periodo": "2000",
+            "valor": 20315
+          },
+          {
+            "periodo": "2001",
+            "valor": 23858
+          },
+          {
+            "periodo": "2002",
+            "valor": 25397
+          },
+          {
+            "periodo": "2003",
+            "valor": 25433
+          },
+          {
+            "periodo": "2004",
+            "valor": 29665
+          },
+          {
+            "periodo": "2005",
+            "valor": 39322
+          },
+          {
+            "periodo": "2006",
+            "valor": 52390
+          },
+          {
+            "periodo": "2007",
+            "valor": 60229
+          },
+          {
+            "periodo": "2008",
+            "valor": 71710
+          },
+          {
+            "periodo": "2009",
+            "valor": 72959
+          },
+          {
+            "periodo": "2010",
+            "valor": 81981
+          },
+          {
+            "periodo": "2011",
+            "valor": 89752
+          },
+          {
+            "periodo": "2012",
+            "valor": 94715
+          },
+          {
+            "periodo": "2013",
+            "valor": 101509
+          },
+          {
+            "periodo": "2014",
+            "valor": 99074
+          },
+          {
+            "periodo": "2015",
+            "valor": 94371
+          },
+          {
+            "periodo": "2016",
+            "valor": 87316
+          },
+          {
+            "periodo": "2017",
+            "valor": 94536
+          },
+          {
+            "periodo": "2018",
+            "valor": 94379
+          },
+          {
+            "periodo": "2019",
+            "valor": 79500
+          },
+          {
+            "periodo": "2020",
+            "valor": 67061
+          },
+          {
+            "periodo": "2021",
+            "valor": 75043
+          },
+          {
+            "periodo": "2022",
+            "valor": 71350
+          },
+          {
+            "periodo": "2023",
+            "valor": 70466
+          },
+          {
+            "periodo": "2024",
+            "valor": 64712
+          },
+          {
+            "periodo": "2025",
+            "valor": 65245
+          },
+          {
+            "periodo": "2026-parcial",
+            "valor": 46650
+          }
+        ]
+      },
+      {
+        "id": "crea-sp-decada",
+        "rotulo": "Crea-SP — registros novos por ano (2010–2022; o endpoint ProfissionaisDecada não retornou anos posteriores)",
+        "fonteId": "confea-sic-usuario",
+        "valores": [
+          {
+            "periodo": "2010",
+            "valor": 20480
+          },
+          {
+            "periodo": "2011",
+            "valor": 21684
+          },
+          {
+            "periodo": "2012",
+            "valor": 22448
+          },
+          {
+            "periodo": "2013",
+            "valor": 23636
+          },
+          {
+            "periodo": "2014",
+            "valor": 23434
+          },
+          {
+            "periodo": "2015",
+            "valor": 19782
+          },
+          {
+            "periodo": "2016",
+            "valor": 20101
+          },
+          {
+            "periodo": "2017",
+            "valor": 22107
+          },
+          {
+            "periodo": "2018",
+            "valor": 21031
+          },
+          {
+            "periodo": "2019",
+            "valor": 18245
+          },
+          {
+            "periodo": "2020",
+            "valor": 15603
+          },
+          {
+            "periodo": "2021",
+            "valor": 16966
+          },
+          {
+            "periodo": "2022",
+            "valor": 14917
+          }
+        ]
+      }
+    ],
+    "anotacoes": [
+      {
+        "periodo": "1966",
+        "texto": "Lei 4.950-A/66 cria o piso salarial da engenharia — 833 registros novos no ano"
+      },
+      {
+        "periodo": "1981",
+        "texto": "Auge do II PND: 15.260 registros novos, marca só superada em 1986"
+      },
+      {
+        "periodo": "2011",
+        "texto": "Quebra de série: arquitetos saem do Sistema para o CAU"
+      },
+      {
+        "periodo": "2013",
+        "texto": "Pico histórico absoluto: 101.509 registros novos"
+      },
+      {
+        "periodo": "2018",
+        "texto": "Quebra de série: técnicos industriais saem para o CFT (Lei 13.639/2018, efeitos em 2018–19)"
+      },
+      {
+        "periodo": "2020",
+        "texto": "Pandemia de covid-19: 67.061 registros novos, o menor volume anual desde 2007"
+      },
+      {
+        "periodo": "2025",
+        "texto": "65.245 registros novos — −35,7% em relação ao pico de 2013 (101.509)"
+      },
+      {
+        "periodo": "2026-parcial",
+        "texto": "Ano em curso: 46.650 registros até a captura (2026-08-30) — nunca comparável a um ano cheio"
+      }
+    ]
+  }
+}

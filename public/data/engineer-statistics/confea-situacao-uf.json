@@ -1,0 +1,332 @@
+{
+  "meta": {
+    "dataset": "confea-situacao-uf",
+    "titulo": "Situação dos registros no Sistema Confea/Crea por UF",
+    "unidade": "registros",
+    "fonteId": "confea-sic-estoque-2026",
+    "notas": [
+      "Brasil: 1.674.263 registros já feitos no Sistema, dos quais 1.217.708 ativos (72,7%) e 456.555 não ativos.",
+      "\"Interrompido\" é o profissional que pediu para parar de exercer: deixa de pagar anuidade e de poder assinar ART. \"Cancelado\" inclui cancelamentos a pedido, por falecimento e por decisão administrativa.",
+      "A taxa de registros ativos varia de 62,4% (CREA-PR) a 81,5% (CREA-MS) — é a métrica temática de evasão do registro por estado.",
+      "Metodologia: o endpoint devolve 28 linhas — 27 Creas + uma linha agregada \"TOTAL:\". A linha de total é FILTRADA antes de qualquer soma; feito isso, a soma das 27 UFs bate exatamente com o total do Confea. Somar as 28 linhas dá o dobro do valor real — era essa a origem da suposta \"duplicidade de vistos/títulos\" (ver docs/research/confea-sic-analise.md).",
+      "percentualAtivos = ativos ÷ total do próprio Crea × 100, arredondado a 1 casa decimal.",
+      "Arquivo DERIVADO — não editar à mão. Regerar com `node scripts/derivar-confea.mjs` a partir de docs/research/assets/ (recoleta: scripts/fetch-confea.mjs / scripts/fetch-ibge.mjs, fora do container)."
+    ],
+    "atualizadoEm": "2026-08-30",
+    "snapshot": {
+      "consultaUrl": "https://relatorio.confea.org.br/Profissional/SituacaoRegistro/Buscar",
+      "capturadoEm": "2026-08-30"
+    }
+  },
+  "data": {
+    "valores": [
+      {
+        "ufCodigo": "11",
+        "crea": "CREA-RO",
+        "ativos": 8048,
+        "interrompidos": 1207,
+        "cancelados": 567,
+        "suspensos": 2,
+        "outros": 1416,
+        "total": 11240,
+        "percentualAtivos": 71.6
+      },
+      {
+        "ufCodigo": "12",
+        "crea": "CREA-AC",
+        "ativos": 2742,
+        "interrompidos": 729,
+        "cancelados": 190,
+        "suspensos": 0,
+        "outros": 438,
+        "total": 4099,
+        "percentualAtivos": 66.9
+      },
+      {
+        "ufCodigo": "13",
+        "crea": "CREA-AM",
+        "ativos": 16888,
+        "interrompidos": 3586,
+        "cancelados": 2027,
+        "suspensos": 0,
+        "outros": 1662,
+        "total": 24163,
+        "percentualAtivos": 69.9
+      },
+      {
+        "ufCodigo": "14",
+        "crea": "CREA-RR",
+        "ativos": 1795,
+        "interrompidos": 348,
+        "cancelados": 165,
+        "suspensos": 1,
+        "outros": 347,
+        "total": 2656,
+        "percentualAtivos": 67.6
+      },
+      {
+        "ufCodigo": "15",
+        "crea": "CREA-PA",
+        "ativos": 36583,
+        "interrompidos": 5090,
+        "cancelados": 257,
+        "suspensos": 7,
+        "outros": 3852,
+        "total": 45789,
+        "percentualAtivos": 79.9
+      },
+      {
+        "ufCodigo": "16",
+        "crea": "CREA-AP",
+        "ativos": 1879,
+        "interrompidos": 356,
+        "cancelados": 434,
+        "suspensos": 0,
+        "outros": 294,
+        "total": 2963,
+        "percentualAtivos": 63.4
+      },
+      {
+        "ufCodigo": "17",
+        "crea": "CREA-TO",
+        "ativos": 7755,
+        "interrompidos": 1721,
+        "cancelados": 481,
+        "suspensos": 1,
+        "outros": 814,
+        "total": 10772,
+        "percentualAtivos": 72
+      },
+      {
+        "ufCodigo": "21",
+        "crea": "CREA-MA",
+        "ativos": 17034,
+        "interrompidos": 2343,
+        "cancelados": 81,
+        "suspensos": 0,
+        "outros": 2390,
+        "total": 21848,
+        "percentualAtivos": 78
+      },
+      {
+        "ufCodigo": "22",
+        "crea": "CREA-PI",
+        "ativos": 10580,
+        "interrompidos": 1065,
+        "cancelados": 122,
+        "suspensos": 1,
+        "outros": 1245,
+        "total": 13013,
+        "percentualAtivos": 81.3
+      },
+      {
+        "ufCodigo": "23",
+        "crea": "CREA-CE",
+        "ativos": 25279,
+        "interrompidos": 6439,
+        "cancelados": 2197,
+        "suspensos": 5,
+        "outros": 1568,
+        "total": 35488,
+        "percentualAtivos": 71.2
+      },
+      {
+        "ufCodigo": "24",
+        "crea": "CREA-RN",
+        "ativos": 15190,
+        "interrompidos": 3917,
+        "cancelados": 322,
+        "suspensos": 0,
+        "outros": 1253,
+        "total": 20682,
+        "percentualAtivos": 73.4
+      },
+      {
+        "ufCodigo": "25",
+        "crea": "CREA-PB",
+        "ativos": 14137,
+        "interrompidos": 2881,
+        "cancelados": 1816,
+        "suspensos": 1,
+        "outros": 684,
+        "total": 19519,
+        "percentualAtivos": 72.4
+      },
+      {
+        "ufCodigo": "26",
+        "crea": "CREA-PE",
+        "ativos": 28626,
+        "interrompidos": 7299,
+        "cancelados": 4047,
+        "suspensos": 2,
+        "outros": 2044,
+        "total": 42018,
+        "percentualAtivos": 68.1
+      },
+      {
+        "ufCodigo": "27",
+        "crea": "CREA-AL",
+        "ativos": 9382,
+        "interrompidos": 1924,
+        "cancelados": 271,
+        "suspensos": 0,
+        "outros": 974,
+        "total": 12551,
+        "percentualAtivos": 74.8
+      },
+      {
+        "ufCodigo": "28",
+        "crea": "CREA-SE",
+        "ativos": 7970,
+        "interrompidos": 2668,
+        "cancelados": 336,
+        "suspensos": 21,
+        "outros": 694,
+        "total": 11689,
+        "percentualAtivos": 68.2
+      },
+      {
+        "ufCodigo": "29",
+        "crea": "CREA-BA",
+        "ativos": 54481,
+        "interrompidos": 11504,
+        "cancelados": 7596,
+        "suspensos": 9,
+        "outros": 6705,
+        "total": 80295,
+        "percentualAtivos": 67.9
+      },
+      {
+        "ufCodigo": "31",
+        "crea": "CREA-MG",
+        "ativos": 161214,
+        "interrompidos": 49599,
+        "cancelados": 7143,
+        "suspensos": 3,
+        "outros": 7043,
+        "total": 225002,
+        "percentualAtivos": 71.7
+      },
+      {
+        "ufCodigo": "32",
+        "crea": "CREA-ES",
+        "ativos": 25300,
+        "interrompidos": 4429,
+        "cancelados": 3187,
+        "suspensos": 2,
+        "outros": 1995,
+        "total": 34913,
+        "percentualAtivos": 72.5
+      },
+      {
+        "ufCodigo": "33",
+        "crea": "CREA-RJ",
+        "ativos": 119957,
+        "interrompidos": 36587,
+        "cancelados": 7345,
+        "suspensos": 4,
+        "outros": 1483,
+        "total": 165376,
+        "percentualAtivos": 72.5
+      },
+      {
+        "ufCodigo": "35",
+        "crea": "CREA-SP",
+        "ativos": 346824,
+        "interrompidos": 86413,
+        "cancelados": 3890,
+        "suspensos": 94,
+        "outros": 8325,
+        "total": 445546,
+        "percentualAtivos": 77.8
+      },
+      {
+        "ufCodigo": "41",
+        "crea": "CREA-PR",
+        "ativos": 76749,
+        "interrompidos": 32056,
+        "cancelados": 10081,
+        "suspensos": 2,
+        "outros": 4050,
+        "total": 122938,
+        "percentualAtivos": 62.4
+      },
+      {
+        "ufCodigo": "42",
+        "crea": "CREA-SC",
+        "ativos": 50887,
+        "interrompidos": 12365,
+        "cancelados": 4976,
+        "suspensos": 8,
+        "outros": 3669,
+        "total": 71905,
+        "percentualAtivos": 70.8
+      },
+      {
+        "ufCodigo": "43",
+        "crea": "CREA-RS",
+        "ativos": 69604,
+        "interrompidos": 16139,
+        "cancelados": 6164,
+        "suspensos": 7,
+        "outros": 13004,
+        "total": 104918,
+        "percentualAtivos": 66.3
+      },
+      {
+        "ufCodigo": "50",
+        "crea": "CREA-MS",
+        "ativos": 18033,
+        "interrompidos": 2102,
+        "cancelados": 206,
+        "suspensos": 0,
+        "outros": 1776,
+        "total": 22117,
+        "percentualAtivos": 81.5
+      },
+      {
+        "ufCodigo": "51",
+        "crea": "CREA-MT",
+        "ativos": 29253,
+        "interrompidos": 5224,
+        "cancelados": 265,
+        "suspensos": 3,
+        "outros": 4135,
+        "total": 38880,
+        "percentualAtivos": 75.2
+      },
+      {
+        "ufCodigo": "52",
+        "crea": "CREA-GO",
+        "ativos": 37988,
+        "interrompidos": 13734,
+        "cancelados": 759,
+        "suspensos": 1,
+        "outros": 2249,
+        "total": 54731,
+        "percentualAtivos": 69.4
+      },
+      {
+        "ufCodigo": "53",
+        "crea": "CREA-DF",
+        "ativos": 23530,
+        "interrompidos": 4572,
+        "cancelados": 343,
+        "suspensos": 4,
+        "outros": 703,
+        "total": 29152,
+        "percentualAtivos": 80.7
+      }
+    ],
+    "completo": true,
+    "brasil": {
+      "ativos": 1217708,
+      "interrompidos": 316297,
+      "cancelados": 65268,
+      "suspensos": 178,
+      "outros": 74812,
+      "total": 1674263,
+      "percentualAtivos": 72.7
+    }
+  }
+}

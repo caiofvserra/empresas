@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "dataset": "pisos",
+    "titulo": "O piso da Lei 4.950-A/66 — três leituras em disputa (V6, V7, V9)",
+    "unidade": "R$/mês",
+    "fonteId": "planalto-lei4950a",
+    "notas": [
+      "Três leituras convivem em 2026: STF congelado (R$ 10.302, base de 03/03/2022), Confea 8,5 SM vigente (R$ 13.778,50) e sindical 9 SM (R$ 14.589). Todo gráfico declara qual usa.",
+      "RÉGUA DECLARADA (N-3, §9 item 31): a régua VIVA é a lei como escrita sobre o salário mínimo de hoje (6 h = R$ 9.726; 8,5 SM = R$ 13.778,50); a régua CONGELADA é o mesmo múltiplo sobre R$ 1.212 (6 h = R$ 7.272; 8,5 SM = R$ 10.302) e é a ÚNICA hoje juridicamente exigível. Toda razão publicada declara contra qual régua mede, e as duas aparecem juntas sempre que a diferença muda o sinal do argumento — inclusive no subtítulo do site e no og:description.",
+      "T-3: NENHUMA marca visual de descumprimento (hachura, limiar, cor de alerta) é desenhada contra régua suspensa. O limiar é R$ 10.302.",
+      "calcularPiso() deriva fator e base DOS CAMPOS deste dataset: fator = fatorFixo ?? fatoresPorJornada[jornada]; base = baseCongelada ? baseCongeladaValor : salário mínimo vigente.",
+      "O SM vigente vem ao vivo do BCB (SGS 1619) com fallback em salarioMinimoFallback (R$ 1.621, Decreto 12.797/2025).",
+      "§9 item 18: os −25,23% do piso são perda frente ao SALÁRIO MÍNIMO, não perda de poder de compra. A perda pelo IPCA/INPC é MENOR e não foi medida — nenhuma frase de \"perda real\" vai ao ar enquanto o índice não estiver disponível (§8, pendência 8).",
+      "valorJornada8h é o valor de referência de cada leitura para exibição estática, com o ANO do valor no próprio item; os valores exatos das fórmulas são testados em tests/unit/piso.test.ts."
+    ],
+    "atualizadoEm": "2026-08-31"
+  },
+  "data": {
+    "leituras": [
+      {
+        "id": "stf-congelado",
+        "rotulo": "Piso congelado (STF, ADPFs 2022)",
+        "formulaTexto": "8,5 × R$ 1.212 (SM de 2022)",
+        "fatoresPorJornada": {
+          "6": 6,
+          "7": 7.25,
+          "8": 8.5
+        },
+        "baseCongelada": true,
+        "baseCongeladaValor": 1212,
+        "valorJornada8h": 10302.0,
+        "ano": "2022",
+        "fonteId": "stf-adpf"
+      },
+      {
+        "id": "confea-8_5sm",
+        "rotulo": "Leitura CONFEA — 8,5 SM vigente",
+        "formulaTexto": "8,5 × salário mínimo vigente",
+        "fatoresPorJornada": {
+          "6": 6,
+          "7": 7.25,
+          "8": 8.5
+        },
+        "baseCongelada": false,
+        "valorJornada8h": 13778.5,
+        "ano": "2026",
+        "fonteId": "crea-sp-smp"
+      },
+      {
+        "id": "sindical-9sm",
+        "rotulo": "Leitura sindical — 9 SM (hora extra a 50%, CF/88)",
+        "formulaTexto": "9 × salário mínimo vigente",
+        "fatorFixo": 9,
+        "baseCongelada": false,
+        "valorJornada8h": 14589.0,
+        "ano": "2026",
+        "fonteId": "seesp-piso"
+      }
+    ],
+    "salarioMinimoFallback": {
+      "valor": 1621,
+      "referencia": "2026",
+      "fonteId": "decreto-12797-2025"
+    },
+    "admissao": [
+      {
+        "id": "mediana-eng-civil",
+        "rotulo": "Mediana de admissões — eng. civil (jornada ≥40h)",
+        "valor": 10360,
+        "unidade": "R$/mês",
+        "detalhe": "Novo CAGED, jul/2025–jun/2026. Mediana quer dizer que metade das admissões fica ABAIXO dela. Como o piso congelado (R$ 10.302) está só R$ 58 abaixo desta mediana, praticamente metade das contratações se dá abaixo do piso hoje exigível. Contra a lei como está escrita (R$ 13.778,50), a mediana é 75,2% do devido.",
+        "ano": "jul/2025–jun/2026",
+        "fonteId": "ncm-buscador-2142"
+      },
+      {
+        "id": "faixa-junior",
+        "rotulo": "Faixa do engenheiro civil júnior",
+        "valor": null,
+        "valorTexto": "R$ 3.500–6.000",
+        "unidade": "R$/mês",
+        "detalhe": "Faixa de entrada de recém-formado em 2025 — abaixo do piso congelado pelo STF (R$ 10.302), que é a leitura hoje exigível.",
+        "ano": "2025",
+        "fonteId": "contabilizei-junior"
+      },
+      {
+        "id": "fiscalizacao-valoriza",
+        "rotulo": "Confea Valoriza — fiscalização do piso",
+        "valor": null,
+        "valorTexto": "563 denúncias",
+        "detalhe": "563 denúncias acumuladas desde outubro de 2025, divulgadas pelo Confea em meados de 2026 — cerca de 10 meses, a um ritmo aproximado de 56 por mês.",
+        "ano": "2025–2026",
+        "fonteId": "confea-valoriza",
+        "urlEspecifica": "https://www.confeavaloriza.com.br/"
+      }
+    ],
+    "marcos": [
+      {
+        "id": "lei-1966",
+        "data": "1966",
+        "titulo": "Lei 4.950-A/66",
+        "descricao": "Fixa o salário mínimo profissional: 6 SM para 6 h/dia (art. 5º), horas excedentes com acréscimo de 25% (art. 6º) → 8,5 SM para 8 h/dia na leitura consolidada do Sistema Confea/Crea.",
+        "fonteId": "planalto-lei4950a"
+      },
+      {
+        "id": "sv4-2008",
+        "data": "2008",
+        "titulo": "Súmula Vinculante 4",
+        "descricao": "STF veda o uso do salário mínimo como INDEXADOR de base de cálculo. Editada em 30/04/2008 — 14 anos antes do congelamento: a discussão sobre a base de cálculo é anterior a ele, e por isso nenhuma frase deste site usa \"sempre\", \"nunca\" ou \"primeira vez\" para o período 1966–2022.",
+        "fonteId": "stf-adpf"
+      },
+      {
+        "id": "adpf-2022",
+        "data": "2022-03-03",
+        "titulo": "STF congela a base em R$ 1.212",
+        "descricao": "Julgamento conjunto das ADPFs 53, 149 e 171: a lei segue válida, mas a base de cálculo fica congelada no SM de 03/03/2022 (R$ 1.212) — piso 8h parado em R$ 10.302; correção só por negociação coletiva.",
+        "fonteId": "stf-adpf"
+      },
+      {
+        "id": "valoriza-2024",
+        "data": "2024-02",
+        "titulo": "Confea Valoriza (Frente de Valorização Profissional)",
+        "descricao": "Programa de fiscalização do piso (Portaria Confea nº 487/2024), lançado em 31/01/2024: 142 denúncias no primeiro dia. Acumulado DESDE OUT/2025, divulgado em meados de 2026: 563 denúncias, 275 processos administrativos e 199 ações judiciais com liminares deferidas, em 25 UFs. O instrumento é anterior ao programa: desde 1995 a Resolução Confea nº 397/95 prevê auto de infração e multa ao empregador e condiciona o registro e o recadastramento anual da empresa à comprovação do pagamento do salário mínimo profissional.",
+        "fonteId": "confea-valoriza"
+      },
+      {
+        "id": "mp-1334-2026",
+        "data": "2026",
+        "titulo": "MP 1.334/2026 — emenda propõe atualizar o piso (situação em 31/08/2026: em tramitação)",
+        "descricao": "Emenda propõe R$ 9.726,00 (6 h, cursos de 4+ anos) e R$ 8.105,00 (cursos de menos de 4 anos), com correção pelo INPC e adicional de até 25% para horas excedentes. SITUAÇÃO EM 31/08/2026: em tramitação. O valor de 8 h da MP é divergente entre as fontes e NÃO é publicado. As três leituras seguem em disputa.",
+        "fonteId": "confea-mp1334"
+      }
+    ],
+    "notaDoisSalarios": "R$ 10.360 é a MEDIANA DE ADMISSÕES de engenheiro civil em jornada ≥40h (Novo CAGED via Buscador NCM, jul/2025–jun/2026). R$ 9.733,56, exibido em Carreiras vizinhas, é a MÉDIA DE TODAS AS MOVIMENTAÇÕES em 12 meses (Portal Salário, ref. ago/2026). Agregadores, medidas e janelas diferentes — ambos corretos. Detalhes na metodologia (#dois-salarios)."
+  }
+}

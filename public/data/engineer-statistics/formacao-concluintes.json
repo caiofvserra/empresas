@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "dataset": "formacao-concluintes",
+    "titulo": "Concluintes de cursos de engenharia",
+    "unidade": "pessoas/ano",
+    "fonteId": "inep-seesp-concluintes",
+    "notas": [
+      "Duas séries NUNCA sobrepostas (toggle): recorte estrito 'cursos de engenharia' ≠ área CINE 07 'Engenharia, produção e construção' (inclui produção, construção e arquitetura) — plano §7.6.",
+      "Anos sem fonte ficam AUSENTES da série; nunca interpolados. Anos faltantes (2011–13, 2015–17, 2020–21) podem ser preenchidos com as sinopses estatísticas do INEP (XLSX, fora do container) — ver data/README.md.",
+      "O Censo INEP registra a conclusão no ano seguinte ao término do curso (IQC): o 'pico de 2018' reflete formados no fim de 2017.",
+      "C12: o Censo da Educação Superior 2024 já foi publicado (17/09/2025), mas os concluintes de 2024 NO RECORTE ESTRITO de engenharia dependem da Sinopse Estatística 2024 (XLSX) ou dos microdados, que ainda não foram coletados (P2.2). A série termina em 2023 por falta de coleta, não por falta de dado — declarado aqui para que ninguém a leia como \"o INEP não publicou\"."
+    ],
+    "atualizadoEm": "2026-08-31"
+  },
+  "data": {
+    "series": [
+      {
+        "id": "estrito",
+        "rotulo": "Cursos de engenharia (recorte estrito)",
+        "fonteId": "inep-seesp-concluintes",
+        "valores": [
+          {
+            "periodo": "2010",
+            "valor": 41291,
+            "fonteId": "inep-iqc"
+          },
+          {
+            "periodo": "2014",
+            "valor": 67205,
+            "fonteId": "inep-lgi-usp"
+          },
+          {
+            "periodo": "2018",
+            "valor": 128871,
+            "fonteId": "inep-seesp-noticia"
+          },
+          {
+            "periodo": "2019",
+            "valor": 126932,
+            "fonteId": "inep-iqc"
+          },
+          {
+            "periodo": "2022",
+            "valor": 97672,
+            "fonteId": "inep-seesp-noticia"
+          },
+          {
+            "periodo": "2023",
+            "valor": 95607,
+            "fonteId": "inep-seesp-concluintes"
+          }
+        ]
+      },
+      {
+        "id": "cine07",
+        "rotulo": "Área CINE 07 (inclui produção e construção)",
+        "fonteId": "inep-cine07",
+        "valores": [
+          {
+            "periodo": "2018",
+            "valor": 163311
+          },
+          {
+            "periodo": "2024",
+            "valor": 110596
+          }
+        ]
+      }
+    ],
+    "anotacoes": [
+      {
+        "periodo": "2014",
+        "texto": "Auge do FIES e do ciclo de obras (pré-sal/PAC/Copa)"
+      },
+      {
+        "periodo": "2018",
+        "texto": "Pico histórico de concluintes"
+      },
+      {
+        "periodo": "2025",
+        "texto": "MEC proíbe a graduação em engenharia 100% EaD e anuncia reformulação da avaliação"
+      }
+    ]
+  }
+}

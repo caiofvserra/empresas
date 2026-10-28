@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "dataset": "confea-uf",
+    "titulo": "Profissionais ativos no Sistema Confea/Crea por UF",
+    "unidade": "profissionais ativos",
+    "fonteId": "confea-sic-estoque-2026",
+    "notas": [
+      "27 UFs completas — Brasil 1.217.708 profissionais ativos (estoque em 2026-08-30).",
+      "Metodologia: o endpoint devolve 28 linhas — 27 Creas + uma linha agregada \"TOTAL:\". A linha de total é FILTRADA antes de qualquer soma; feito isso, a soma das 27 UFs bate exatamente com o total do Confea. Somar as 28 linhas dá o dobro do valor real — era essa a origem da suposta \"duplicidade de vistos/títulos\" (ver docs/research/confea-sic-analise.md).",
+      "Recorte: TODAS as profissões do Sistema Confea/Crea (engenharia, agronomia, geociências, especiais) — não é o número de engenheiros. Para o recorte de engenharia, ver data/confea-engenharia-uf.json.",
+      "Métrica M1 do mapa; cruzada com data/populacao-uf.json vira a métrica M2 (ativos por 100 mil habitantes).",
+      "Arquivo DERIVADO — não editar à mão. Regerar com `node scripts/derivar-confea.mjs` a partir de docs/research/assets/ (recoleta: scripts/fetch-confea.mjs / scripts/fetch-ibge.mjs, fora do container)."
+    ],
+    "atualizadoEm": "2026-08-30",
+    "snapshot": {
+      "consultaUrl": "https://relatorio.confea.org.br/Profissional/ProfissionaisPorGenero/Buscar",
+      "capturadoEm": "2026-08-30"
+    }
+  },
+  "data": {
+    "valores": [
+      {
+        "ufCodigo": "11",
+        "crea": "CREA-RO",
+        "valor": 8048
+      },
+      {
+        "ufCodigo": "12",
+        "crea": "CREA-AC",
+        "valor": 2742
+      },
+      {
+        "ufCodigo": "13",
+        "crea": "CREA-AM",
+        "valor": 16888
+      },
+      {
+        "ufCodigo": "14",
+        "crea": "CREA-RR",
+        "valor": 1795
+      },
+      {
+        "ufCodigo": "15",
+        "crea": "CREA-PA",
+        "valor": 36583
+      },
+      {
+        "ufCodigo": "16",
+        "crea": "CREA-AP",
+        "valor": 1879
+      },
+      {
+        "ufCodigo": "17",
+        "crea": "CREA-TO",
+        "valor": 7755
+      },
+      {
+        "ufCodigo": "21",
+        "crea": "CREA-MA",
+        "valor": 17034
+      },
+      {
+        "ufCodigo": "22",
+        "crea": "CREA-PI",
+        "valor": 10580
+      },
+      {
+        "ufCodigo": "23",
+        "crea": "CREA-CE",
+        "valor": 25279
+      },
+      {
+        "ufCodigo": "24",
+        "crea": "CREA-RN",
+        "valor": 15190
+      },
+      {
+        "ufCodigo": "25",
+        "crea": "CREA-PB",
+        "valor": 14137
+      },
+      {
+        "ufCodigo": "26",
+        "crea": "CREA-PE",
+        "valor": 28626
+      },
+      {
+        "ufCodigo": "27",
+        "crea": "CREA-AL",
+        "valor": 9382
+      },
+      {
+        "ufCodigo": "28",
+        "crea": "CREA-SE",
+        "valor": 7970
+      },
+      {
+        "ufCodigo": "29",
+        "crea": "CREA-BA",
+        "valor": 54481
+      },
+      {
+        "ufCodigo": "31",
+        "crea": "CREA-MG",
+        "valor": 161214
+      },
+      {
+        "ufCodigo": "32",
+        "crea": "CREA-ES",
+        "valor": 25300
+      },
+      {
+        "ufCodigo": "33",
+        "crea": "CREA-RJ",
+        "valor": 119957
+      },
+      {
+        "ufCodigo": "35",
+        "crea": "CREA-SP",
+        "valor": 346824
+      },
+      {
+        "ufCodigo": "41",
+        "crea": "CREA-PR",
+        "valor": 76749
+      },
+      {
+        "ufCodigo": "42",
+        "crea": "CREA-SC",
+        "valor": 50887
+      },
+      {
+        "ufCodigo": "43",
+        "crea": "CREA-RS",
+        "valor": 69604
+      },
+      {
+        "ufCodigo": "50",
+        "crea": "CREA-MS",
+        "valor": 18033
+      },
+      {
+        "ufCodigo": "51",
+        "crea": "CREA-MT",
+        "valor": 29253
+      },
+      {
+        "ufCodigo": "52",
+        "crea": "CREA-GO",
+        "valor": 37988
+      },
+      {
+        "ufCodigo": "53",
+        "crea": "CREA-DF",
+        "valor": 23530
+      }
+    ],
+    "completo": true,
+    "ressalvaDuplicidade": "Sobre a suposta duplicidade entre Creas: ela NÃO existe. A lista do SIC traz 28 linhas — as 27 UFs mais uma linha agregada \"TOTAL:\". Somando as 28 chega-se a 2.435.416, exatamente o dobro do valor real; filtrada a linha de total, a soma das 27 UFs dá 1.217.708 — idêntica ao total publicado pelo Confea. A ressalva que PERMANECE é de outra natureza: a contagem por título/modalidade soma 1.373.447 títulos para 1.217.708 profissionais ativos, porque um profissional pode ter mais de um título — títulos nunca devem ser lidos como pessoas (ver data/confea-modalidades.json)."
+  }
+}

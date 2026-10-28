@@ -1,0 +1,266 @@
+{
+  "meta": {
+    "dataset": "ead-expansao",
+    "titulo": "A formação mudou de canal — EaD, vagas, qualidade e regulação (V17, V18)",
+    "unidade": "vagas · ingressantes · %",
+    "fonteId": "confea-ead-marco",
+    "notas": [
+      "ÂNCORA COM RESSALVA PRESA (§8, pendência 5 — Tier 1): o par 55%/45% de 2023 vem do recorte do Confea sobre o Censo da Educação Superior e NÃO fecha com a série de ingressantes deste site (~323,5 mil implícitos). A ressalva viaja com o número em todo lugar, e o par NUNCA entra no mesmo gráfico da série de ingressantes.",
+      "§9 item 19: quatro definições de evasão convivem neste dataset e NUNCA vão ao mesmo gráfico — 68,74% (coorte de engenharia, INEP/ABENGE, em formacao-cards), 65,2% (engenharia na rede privada, Semesp), 41,6% (anual EaD, todas as áreas) e 64,1% (acumulada EaD 2019–2023).",
+      "§9 item 21: Inep 66,8% e Semesp 73,5% para ingressantes EaD em 2024 são DENOMINADORES diferentes.",
+      "T-11: 23,6 milhões e 3,9 milhões são valores ARREDONDADOS; a razão entre os dois exibidos dá 16,5%, e 16,6% é o percentual publicado pelo Semesp sobre os valores cheios.",
+      "§8, pendências 6 e 7: o Decreto 9.057/2017 NÃO é anotado (sem confirmação documental) e o texto do Decreto 12.456/2025 não é citado por artigo (articulado não lido).",
+      "Todos os itens desta frente são `citado`: o acesso direto às páginas primárias esteve bloqueado na apuração e o que se leu foi o conteúdo indexado devolvido pela busca."
+    ],
+    "atualizadoEm": "2026-08-31"
+  },
+  "data": {
+    "ingressos": [
+      {
+        "id": "ingresso-engenharia-2023",
+        "rotulo": "Ingressantes em engenharia por modalidade — o ano em que a EaD passou o presencial",
+        "recorte": "Cursos ligados ao Sistema Confea/Crea (recorte do Confea sobre o Censo da Educação Superior)",
+        "presencial": 145200,
+        "ead": 178300,
+        "percentualPresencial": 45.0,
+        "percentualEad": 55.0,
+        "ano": "2023",
+        "fonteId": "confea-ead-marco",
+        "ressalvaRecorte": "RECORTE NÃO CONCILIADO (§8, pendência 5 — bloqueante de Tier 1): o par 55/45 vem do recorte do Confea sobre o Censo da Educação Superior, \"nos cursos ligados ao Sistema Confea/Crea\". O total implícito (~323,5 mil ingressantes em 2023) NÃO fecha com a série de ingressantes deste site e o recorte provavelmente inclui agronomia, arquitetura, geologia e tecnólogos. Esta ressalva acompanha o número EM TODO LUGAR, inclusive na frase-tese — sem ela, a frase erra no sujeito. O par NUNCA entra no mesmo gráfico da série de ingressantes."
+      },
+      {
+        "id": "ingresso-graduacao-2024",
+        "rotulo": "Ingressantes em EaD no total da graduação (todas as áreas)",
+        "recorte": "Todas as áreas, Censo da Educação Superior — denominador do Inep",
+        "presencial": null,
+        "ead": null,
+        "percentualPresencial": 33.2,
+        "percentualEad": 66.8,
+        "ano": "2024",
+        "fonteId": "inep-censo2024",
+        "ressalvaRecorte": "§9 item 21: dois percentuais diferentes para \"ingressantes EaD em 2024\" — Inep 66,8% e Semesp 73,5%. Os DENOMINADORES são diferentes; os dois nunca vão ao mesmo gráfico."
+      },
+      {
+        "id": "matriculas-modalidade-2024",
+        "rotulo": "Matrículas na graduação por modalidade — a EaD passa a presencial",
+        "recorte": "Todas as áreas, Censo da Educação Superior 2024",
+        "presencial": 5037482,
+        "ead": 5189391,
+        "percentualPresencial": 49.3,
+        "percentualEad": 50.7,
+        "ano": "2024",
+        "fonteId": "inep-censo2024",
+        "ressalvaRecorte": "Todas as áreas, não só engenharia. Na década: EaD +286,7% e presencial −22,3% (2014–2024)."
+      }
+    ],
+    "vagas": [
+      {
+        "id": "vagas-superior-2023",
+        "rotulo": "Vagas ofertadas × vagas ocupadas no ensino superior",
+        "modalidade": "todas",
+        "ofertadas": 23600000,
+        "ocupadas": 3900000,
+        "taxaOcupacao": 16.6,
+        "ano": "2023",
+        "fonteId": "semesp-mapa-2024",
+        "ressalva": "T-11: os milhões exibidos são ARREDONDADOS — a razão entre os dois valores exibidos dá 16,5%, e o 16,6% é o percentual publicado pelo Semesp sobre os valores cheios. Publicar os dois arredondamentos com esta linha, ou publicar só o percentual da fonte."
+      },
+      {
+        "id": "vagas-ead-privada-2023",
+        "rotulo": "Vagas EaD ofertadas na rede privada e taxa de ocupação",
+        "modalidade": "ead",
+        "ofertadas": 19000000,
+        "ocupadas": null,
+        "taxaOcupacao": 14.3,
+        "ano": "2023",
+        "fonteId": "semesp-mapa-2024",
+        "ressalva": "\"Mais de 19 milhões\" é o valor publicado pela fonte — não é um total fechado, e nenhuma subtração é feita em cima dele."
+      }
+    ],
+    "indicadores": [
+      {
+        "id": "crescimento-ead-engenharia",
+        "rotulo": "Crescimento do ingresso em engenharia a distância",
+        "valor": 2100,
+        "unidade": "%",
+        "detalhe": "Recorte do Confea sobre o Censo da Educação Superior, cursos ligados ao Sistema Confea/Crea. Base implícita de 2013: ≈8,1 mil ingressantes EaD.",
+        "ano": "2013–2023",
+        "fonteId": "confea-ead-marco"
+      },
+      {
+        "id": "evasao-engenharia-privada",
+        "rotulo": "Evasão em engenharia na rede privada — a maior de todas as áreas",
+        "valor": 65.2,
+        "unidade": "%",
+        "detalhe": "Coorte 2019–2023 (15º Mapa do Ensino Superior, 2025). Esta definição de evasão não é comparável às outras três e não vai ao mesmo gráfico.",
+        "ano": "2019–2023",
+        "fonteId": "semesp-mapa-15"
+      },
+      {
+        "id": "evasao-ead-privada",
+        "rotulo": "Evasão geral na EaD privada (todas as áreas)",
+        "valor": 64.1,
+        "unidade": "%",
+        "detalhe": "Abandono acumulado entre 2019 e 2023. Definição distinta da evasão de engenharia e da evasão anual.",
+        "ano": "2019–2023",
+        "fonteId": "semesp-mapa-15"
+      },
+      {
+        "id": "evasao-ead-anual",
+        "rotulo": "Evasão anual na EaD — recorde da série",
+        "valor": 41.6,
+        "unidade": "%",
+        "detalhe": "Medida ANUAL, não acumulada (16º Mapa do Ensino Superior, lançado em 19/03/2026). Todas as áreas.",
+        "ano": "2024",
+        "fonteId": "semesp-mapa-16"
+      },
+      {
+        "id": "enade-cpc-ead",
+        "rotulo": "Cursos com CPC 4 ou 5 no Enade 2023 — a distância",
+        "valor": 14.45,
+        "unidade": "%",
+        "detalhe": "100 de 692 cursos EaD avaliados no ciclo das engenharias. Resultados divulgados em 11/04/2025. Universo do Enade 2023: 9.812 cursos, 93% presenciais e 7% EaD.",
+        "ano": "2023",
+        "fonteId": "inep-enade2023-cpc"
+      },
+      {
+        "id": "enade-cpc-presencial",
+        "rotulo": "Cursos com CPC 4 ou 5 no Enade 2023 — presencial",
+        "valor": 41.54,
+        "unidade": "%",
+        "detalhe": "Mesmo ciclo, mesma avaliação: a diferença entre 41,54% e 14,45% é de QUALIDADE MEDIDA, não de opinião sobre a modalidade.",
+        "ano": "2023",
+        "fonteId": "inep-enade2023-cpc"
+      },
+      {
+        "id": "retorno-renda-presencial",
+        "rotulo": "Retorno de renda de quem já trabalhava — egressos do presencial",
+        "valor": 95.2,
+        "unidade": "%",
+        "detalhe": "IV Pesquisa de Empregabilidade do Semesp (5.681 egressos, 178 IES). Todas as áreas, não só engenharia.",
+        "ano": "2024",
+        "fonteId": "semesp-empregabilidade-2024"
+      },
+      {
+        "id": "retorno-renda-ead",
+        "rotulo": "Retorno de renda de quem já trabalhava — egressos da EaD",
+        "valor": 51.1,
+        "unidade": "%",
+        "detalhe": "Mesma pesquisa, mesma janela — a comparação é interna à fonte.",
+        "ano": "2024",
+        "fonteId": "semesp-empregabilidade-2024"
+      },
+      {
+        "id": "cursos-ead-total",
+        "rotulo": "Cursos de graduação a distância no país (todas as áreas)",
+        "valor": 10554,
+        "unidade": "cursos",
+        "detalhe": "1.148 (2012) → 9.186 (2022) → 10.554 (2023); +232% sobre 2018.",
+        "ano": "2023",
+        "fonteId": "inep-abmes-cursos-ead"
+      },
+      {
+        "id": "vagas-ead-crescimento",
+        "rotulo": "Vagas EaD ofertadas — crescimento quinquenal",
+        "valor": 167.5,
+        "unidade": "%",
+        "detalhe": "Sem valor absoluto publicado pela fonte: só a variação. Nada foi estimado para preencher a lacuna.",
+        "ano": "2018–2023",
+        "fonteId": "inep-abmes-cursos-ead"
+      },
+      {
+        "id": "tecnologos-ead",
+        "rotulo": "Matrículas em cursos tecnológicos já ofertadas a distância",
+        "valor": 82.6,
+        "unidade": "%",
+        "detalhe": "Proxy do vetor EaD: onde a regulação não restringiu, a modalidade já é majoritária.",
+        "ano": "2024",
+        "fonteId": "inep-censo2024"
+      },
+      {
+        "id": "cobertura-enade-engenharia",
+        "rotulo": "Cursos de engenharia nunca avaliados pelo Enade",
+        "valor": null,
+        "valorTexto": "sem número público",
+        "detalhe": "O Confea protocolou a Proposta CDEN 10/2025 pedindo à CONAES/Inep a ampliação dos cursos de engenharia no Enade 2026, com a justificativa de que \"alguns cursos nunca foram avaliados\". Não há número público — a lacuna é declarada, não estimada.",
+        "ano": "2025",
+        "fonteId": "confea-cden-enade2026"
+      },
+      {
+        "id": "reacao-mercado-cogna",
+        "rotulo": "Reação do mercado no dia seguinte ao decreto — Cogna (COGN3)",
+        "valor": -7.79,
+        "unidade": "%",
+        "detalhe": "Fechamento de 20/05/2025 em R$ 2,84. Yduqs (YDUQ3) caiu 5,07%, a R$ 14,97. É medida de expectativa do mercado, não de qualidade de curso.",
+        "ano": "2025",
+        "fonteId": "infomoney-ead-mercado"
+      }
+    ],
+    "marcosRegulacao": [
+      {
+        "id": "portaria-2041-2023",
+        "data": "2023-12",
+        "ano": "2023",
+        "titulo": "Portaria MEC 2.041/2023 — moratória em 17 áreas",
+        "descricao": "Suspende a autorização de novos cursos EaD em 17 áreas, entre elas geologia/engenharia geológica, direito, medicina, enfermagem e todas as licenciaturas.",
+        "tipo": "portaria",
+        "fonteId": "mec-portaria-2041-2023"
+      },
+      {
+        "id": "portaria-528-2024",
+        "data": "2024",
+        "ano": "2024",
+        "titulo": "Portaria MEC 528/2024 — congelamento da expansão",
+        "descricao": "Veda novos credenciamentos, polos, cursos e ampliação de vagas EaD até 10/03/2025.",
+        "tipo": "portaria",
+        "fonteId": "mec-portaria-2041-2023"
+      },
+      {
+        "id": "decreto-12456-2025",
+        "data": "2025-05-19",
+        "ano": "2025",
+        "titulo": "Decreto nº 12.456, de 19/05/2025 — veda engenharia 100% a distância",
+        "descricao": "Publicado em 20/05/2025. Cria a modalidade semipresencial e veda a oferta 100% EaD para as engenharias. Na área \"Engenharia, produção e construção\" o semipresencial exige ≥40% presencial + ≥20% presencial ou síncrona mediada — logo, até 60% pode ser a distância. Direito, medicina, enfermagem, odontologia e psicologia ficam exclusivamente presenciais. Nenhum artigo é citado aqui: não li o articulado na íntegra, e não afirmo a ausência de contestação judicial.",
+        "tipo": "decreto",
+        "fonteId": "planalto-decreto-12456"
+      },
+      {
+        "id": "portarias-378-381-506",
+        "data": "2025-05-19",
+        "ano": "2025",
+        "titulo": "Portarias MEC 378, 381 e 506/2025 — operacionalização e transição",
+        "descricao": "378 (19/05/2025) fixa os formatos de oferta; 381 (20/05/2025) as regras de transição e o calendário e-MEC; 506 (10/07/2025) trata de docentes, tutores, polos e avaliações. Cursos vedados passam a \"em extinção\" no e-MEC 90 dias após 20/05/2025, com até 2 anos para adaptação; o aluno já matriculado conclui no formato de origem.",
+        "tipo": "portaria",
+        "fonteId": "mec-portarias-ead-2025"
+      },
+      {
+        "id": "posicao-confea-2025",
+        "data": "2025-05",
+        "ano": "2025",
+        "titulo": "O Sistema Confea/Crea levou os dados ao MEC e ao CNE",
+        "descricao": "O Confea pediu que os cursos ligados ao Sistema não fossem ofertados integralmente a distância, e registra que o MEC atendeu demanda histórica do Sistema. É o Sistema agindo sobre o canal de formação — fato datado, de quem pediu a regra.",
+        "tipo": "proposta",
+        "fonteId": "confea-mec-100ead"
+      },
+      {
+        "id": "reacao-mercado-2025",
+        "data": "2025-05-20",
+        "ano": "2025",
+        "titulo": "Reação do mercado no dia seguinte ao decreto",
+        "descricao": "Cogna (COGN3) −7,79% e Yduqs (YDUQ3) −5,07% em 20/05/2025. O impacto estimado por casa de análise na receita das mantenedoras vai de −4,9% (Cogna) a −0,1% (Ânima) — projeção de banco, rotulada como tal.",
+        "tipo": "reacao-de-mercado",
+        "fonteId": "infomoney-ead-mercado"
+      },
+      {
+        "id": "cden-10-2025",
+        "data": "2025-04",
+        "ano": "2025",
+        "titulo": "Proposta CDEN 10/2025 — ampliar os cursos de engenharia no Enade 2026",
+        "descricao": "O Confea solicita à CONAES/Inep a ampliação dos cursos de engenharia avaliados, com a justificativa de que \"alguns cursos nunca foram avaliados\". É a lacuna de cobertura da avaliação, apontada pelo próprio Sistema — e por isso registrada aqui como lacuna, não como estimativa.",
+        "tipo": "proposta",
+        "fonteId": "confea-cden-enade2026"
+      }
+    ],
+    "notaEvasoes": "Quatro definições de evasão convivem no site e nunca vão ao mesmo gráfico: 68,74% (desistência acumulada da coorte de engenharia de 2012 até 2019, INEP/ABENGE) · 65,2% (engenharia na rede privada, coorte 2019–2023, Semesp) · 64,1% (EaD privada, todas as áreas, 2019–2023, Semesp) · 41,6% (taxa ANUAL da EaD em 2024, todas as áreas, Semesp). Cada uma responde a uma pergunta diferente, e todas estão corretas nas suas definições."
+  }
+}

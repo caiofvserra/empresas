@@ -1,0 +1,344 @@
+{
+  "meta": {
+    "dataset": "ciclos-governo",
+    "titulo": "Vinte e três anos em cinco ciclos — faixas de período e marcos datados (V22)",
+    "unidade": "marcos datados",
+    "fonteId": "casacivil-novo-pac",
+    "notas": [
+      "A faixa de governo é RÓTULO DE PERÍODO, não explicação. Este site não atribui resultados a governos (§5.2).",
+      "Três naturezas com SÍMBOLOS DISTINTOS (§5.3.1 + T-10): `ato-de-governo` (norma em vigor no período em que está plotada), `fora-do-poder-executivo` (decisão judicial, ato de conselho profissional e proposição em tramitação — contorno sem preenchimento) e `anotacao-de-serie` (pico da própria série que o gráfico desenha). A faixa presidencial em que um marco de natureza `fora-do-poder-executivo` cai é CRONOLOGIA, NÃO AUTORIA.",
+      "Critério (b) — todo marco declara o CANAL nomeado em `relacaoComEngenharia`. Marco cuja ficha não fecha essa linha NÃO VAI AO AR (N-11).",
+      "NÃO são marcos: resultados macroeconômicos (PIB, desemprego), eventos (pandemia, Copa, Lava Jato), recordes de série e pontos de indicador — esses vivem na tabela de demanda do Ato 7 e nas próprias séries.",
+      "A camada é DESLIGÁVEL: se a apuração dos três candidatos de 2016–2022 não confirmar nenhum deles com data, valor e relação nomeável, ficam apenas as faixas e os marcos viram uma lista datada em texto neutro abaixo do gráfico (§5.3.4). A decisão está tomada e não volta à mesa na implementação.",
+      "A camada de faixas é `aria-hidden`, com tabela alternativa em texto — e a mesma distinção de natureza aparece em texto, porque a forma não viaja para o leitor de tela."
+    ],
+    "atualizadoEm": "2026-08-31"
+  },
+  "data": {
+    "periodos": [
+      {
+        "id": "lula-1-2",
+        "rotulo": "Lula I e II",
+        "inicio": "2003-01-01",
+        "fim": "2010-12-31",
+        "ano": "2003–2010",
+        "fonteId": "planalto-prouni"
+      },
+      {
+        "id": "dilma-1-2",
+        "rotulo": "Dilma I e II",
+        "inicio": "2011-01-01",
+        "fim": "2016-08-31",
+        "ano": "2011–2016",
+        "observacao": "Dilma II vai de 01/01/2015 a 31/08/2016: afastada em 12/05/2016, impeachment concluído em 31/08/2016.",
+        "fonteId": "tcu-pac2"
+      },
+      {
+        "id": "temer",
+        "rotulo": "Temer",
+        "inicio": "2016-08-31",
+        "fim": "2018-12-31",
+        "ano": "2016–2018",
+        "observacao": "Exerceu interinamente desde 12/05/2016; a faixa começa na conclusão do impeachment.",
+        "fonteId": "planalto-ec95"
+      },
+      {
+        "id": "bolsonaro",
+        "rotulo": "Bolsonaro",
+        "inicio": "2019-01-01",
+        "fim": "2022-12-31",
+        "ano": "2019–2022",
+        "fonteId": "planalto-lei14375"
+      },
+      {
+        "id": "lula-3",
+        "rotulo": "Lula III",
+        "inicio": "2023-01-01",
+        "fim": "2026-12-31",
+        "ano": "2023–2026",
+        "observacao": "Em curso — a faixa termina no fim do mandato, não na data da última coleta.",
+        "fonteId": "casacivil-novo-pac"
+      }
+    ],
+    "marcos": [
+      {
+        "id": "prouni-2005",
+        "data": "2005-01-13",
+        "ano": "2005",
+        "titulo": "ProUni — Lei 11.096/2005",
+        "descricao": "Programa Universidade para Todos: bolsa em curso privado.",
+        "categoria": "formacao",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Bolsa em curso privado — vagas de engenharia na rede privada.",
+        "fonteId": "planalto-prouni"
+      },
+      {
+        "id": "pac1-2007",
+        "data": "2007-01-28",
+        "ano": "2007",
+        "titulo": "PAC 1",
+        "descricao": "Programa de Aceleração do Crescimento, R$ 503,9 bilhões (nominais) previstos para 2007–2010.",
+        "valorTexto": "R$ 503,9 bi (nominais)",
+        "categoria": "demanda",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Obra pública contratada.",
+        "fonteId": "dieese-pac1"
+      },
+      {
+        "id": "reuni-2007",
+        "data": "2007-04-24",
+        "ano": "2007",
+        "titulo": "REUNI — Decreto 6.096/2007",
+        "descricao": "Reestruturação e expansão das universidades federais.",
+        "categoria": "formacao",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Expansão de vagas presenciais nas federais.",
+        "fonteId": "planalto-reuni"
+      },
+      {
+        "id": "mcmv-2009",
+        "data": "2009-07-07",
+        "ano": "2009",
+        "titulo": "Minha Casa Minha Vida — Lei 11.977/2009",
+        "descricao": "Programa habitacional. Nenhum total histórico de unidades entregues é publicado aqui — as fontes divergem.",
+        "categoria": "demanda",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Obra pública contratada.",
+        "fonteId": "planalto-mcmv"
+      },
+      {
+        "id": "pac2-2010",
+        "data": "2010-01-01",
+        "ano": "2010",
+        "titulo": "PAC 2",
+        "descricao": "~R$ 955 bilhões (nominais) previstos para 2011–2014.",
+        "valorTexto": "~R$ 955 bi (nominais)",
+        "categoria": "demanda",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Obra pública contratada.",
+        "fonteId": "tcu-pac2"
+      },
+      {
+        "id": "fies-2010-2014",
+        "data": "2010-01-01",
+        "ano": "2010–2014",
+        "titulo": "FIES — expansão dos contratos novos",
+        "descricao": "76,1 mil contratos novos em 2010 → 559,8 mil em 2013 → 732 mil em 2014 (pico), com queda a cada ano depois de 2015.",
+        "valorTexto": "76,1 mil → 732 mil contratos",
+        "categoria": "formacao",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Crédito estudantil que financia a matrícula.",
+        "fonteId": "fnde-fies-contratos"
+      },
+      {
+        "id": "csf-2011-2017",
+        "data": "2011-01-01",
+        "ano": "2011–2017",
+        "titulo": "Ciência sem Fronteiras",
+        "descricao": "R$ 13,2 bilhões (nominais); encerrado em abril/2017. Os ~45,1 mil bolsistas são da área agregada \"Engenharias e demais áreas tecnológicas\", não de engenharia isoladamente.",
+        "valorTexto": "R$ 13,2 bi (nominais)",
+        "categoria": "formacao",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Bolsas de formação, com as engenharias na área agregada majoritária.",
+        "fonteId": "sbpc-csf"
+      },
+      {
+        "id": "inova-empresa-2013",
+        "data": "2013-03-14",
+        "ano": "2013",
+        "titulo": "Plano Inova Empresa",
+        "descricao": "R$ 32,9 bilhões (nominais) para 2013–2014 (BNDES + Finep).",
+        "valorTexto": "R$ 32,9 bi (nominais)",
+        "categoria": "demanda",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Financiamento a P&D industrial.",
+        "fonteId": "finep-inova-empresa"
+      },
+      {
+        "id": "ec95-2016",
+        "data": "2016-12-15",
+        "ano": "2016",
+        "titulo": "EC 95 — teto de gastos",
+        "descricao": "Emenda constitucional que limita o crescimento da despesa primária da União.",
+        "categoria": "demanda",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Limite da despesa primária da União, de que depende o investimento público em obras.",
+        "fonteId": "planalto-ec95"
+      },
+      {
+        "id": "lei13429-2017",
+        "data": "2017-03-31",
+        "ano": "2017",
+        "titulo": "Lei 13.429/2017 — terceirização",
+        "descricao": "Amplia as hipóteses de terceirização.",
+        "categoria": "relacao-de-trabalho",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Forma de contratação do profissional de engenharia.",
+        "fonteId": "planalto-lei13429"
+      },
+      {
+        "id": "lei13467-2017",
+        "data": "2017-07-13",
+        "ano": "2017",
+        "titulo": "Lei 13.467/2017 — reforma trabalhista",
+        "descricao": "Reforma da CLT.",
+        "categoria": "relacao-de-trabalho",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Forma de contratação do profissional de engenharia.",
+        "fonteId": "planalto-lei13467"
+      },
+      {
+        "id": "stf-piso-2022",
+        "data": "2022-03-03",
+        "ano": "2022",
+        "titulo": "STF congela a base do piso (ADPFs 53, 149 e 171)",
+        "descricao": "Julgamento conjunto encerrado em 18/02/2022: a Lei 4.950-A/66 é recepcionada, com a base de cálculo congelada no salário mínimo de 03/03/2022 (R$ 1.212).",
+        "valorTexto": "base R$ 1.212",
+        "categoria": "piso",
+        "natureza": "fora-do-poder-executivo",
+        "relacaoComEngenharia": "Piso salarial. DECISÃO JUDICIAL — não é ato do Poder Executivo; a faixa presidencial em que cai no eixo do tempo é cronologia, não autoria.",
+        "fonteId": "stf-adpf"
+      },
+      {
+        "id": "lei14375-2022",
+        "data": "2022-06-21",
+        "ano": "2022",
+        "titulo": "Lei 14.375/2022 — transação e cobrança de créditos do FIES",
+        "descricao": "Reformula as regras de renegociação dos contratos do FIES.",
+        "categoria": "formacao",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Crédito estudantil (renegociação dos contratos).",
+        "fonteId": "planalto-lei14375"
+      },
+      {
+        "id": "novo-pac-2023",
+        "data": "2023-08-01",
+        "ano": "2023",
+        "titulo": "Novo PAC",
+        "descricao": "R$ 1,7 trilhão anunciado (nominais), dos quais R$ 320,5 bilhões previstos para depois de 2026 — sem essa separação, a execução do programa aparece subestimada.",
+        "valorTexto": "R$ 1,7 tri anunciado · R$ 944,8 bi executados",
+        "categoria": "demanda",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Obra pública contratada.",
+        "fonteId": "casacivil-novo-pac"
+      },
+      {
+        "id": "confea-valoriza-2024",
+        "data": "2024-01-31",
+        "ano": "2024",
+        "titulo": "Confea Valoriza — Portaria Confea 487/2024",
+        "descricao": "Frente de Valorização Profissional e do salário mínimo, com canal de denúncia. 142 denúncias no primeiro dia (02/02/2024).",
+        "categoria": "piso",
+        "natureza": "fora-do-poder-executivo",
+        "relacaoComEngenharia": "Piso salarial. ATO DE CONSELHO PROFISSIONAL — não é ato do Poder Executivo; a faixa presidencial é cronologia, não autoria.",
+        "fonteId": "confea-fvp-lancamento"
+      },
+      {
+        "id": "nova-industria-2024",
+        "data": "2024-01-01",
+        "ano": "2024",
+        "titulo": "Nova Indústria Brasil",
+        "descricao": "R$ 300 bilhões (nominais) de financiamento até 2026; 6 missões até 2033.",
+        "valorTexto": "R$ 300 bi (nominais)",
+        "categoria": "demanda",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Encomenda industrial.",
+        "fonteId": "mdic-nova-industria"
+      },
+      {
+        "id": "decreto-12456-2025",
+        "data": "2025-05-20",
+        "ano": "2025",
+        "titulo": "Decreto 12.456/2025 veda engenharia 100% EaD",
+        "descricao": "Cria a modalidade semipresencial e veda a oferta 100% a distância para as engenharias.",
+        "categoria": "formacao",
+        "natureza": "ato-de-governo",
+        "relacaoComEngenharia": "Modalidade de oferta dos cursos de engenharia.",
+        "fonteId": "planalto-decreto-12456"
+      },
+      {
+        "id": "pl626-casp-2026",
+        "data": "2026-02-24",
+        "ano": "2026",
+        "titulo": "PL 626/2020 aprovado na CASP da Câmara",
+        "descricao": "\"Engenheiro, sim. Analista, não\" — proíbe contratar profissional do Sistema Confea/Crea sob denominação genérica ao exercer atribuição privativa. Aguarda designação de relator na CCJC; situação consultada em 31/08/2026.",
+        "categoria": "relacao-de-trabalho",
+        "natureza": "fora-do-poder-executivo",
+        "relacaoComEngenharia": "Nomenclatura do cargo. PROPOSIÇÃO EM TRAMITAÇÃO — não é ato do Poder Executivo e ainda não é norma em vigor: até aqui, não produz efeito jurídico.",
+        "fonteId": "camara-pl626"
+      },
+      {
+        "id": "emenda-mp1334-2026",
+        "data": "2026-01-01",
+        "ano": "2026",
+        "titulo": "Emenda à MP 1.334/2026 — piso corrigido pelo INPC",
+        "descricao": "Fixa o piso em reais, corrigido pelo INPC, sem vinculação ao salário mínimo: R$ 9.726,00 (6 h, cursos de 4+ anos) e R$ 8.105,00 (cursos de menos de 4 anos), com adicional de até 25% para horas excedentes. O valor de 8 h da MP é DIVERGENTE entre as fontes e não é publicado (pendência 1). Situação em 31/08/2026: em tramitação.",
+        "valorTexto": "R$ 9.726 (6 h)",
+        "categoria": "piso",
+        "natureza": "fora-do-poder-executivo",
+        "relacaoComEngenharia": "Piso salarial. TRAMITAÇÃO LEGISLATIVA (T-10) — não é ato do Poder Executivo; se for aprovada e convertida em lei, muda de símbolo e passa a valer pela DATA DA CONVERSÃO, não pela da apresentação.",
+        "fonteId": "confea-mp1334"
+      },
+      {
+        "id": "pico-registros-2013",
+        "data": "2013-01-01",
+        "ano": "2013",
+        "titulo": "Pico de registros novos no Sistema: 101.509",
+        "descricao": "Máximo absoluto da série nacional de registros novos do Sistema Confea/Crea (1937–2026).",
+        "valorTexto": "101.509 registros",
+        "categoria": "formacao",
+        "natureza": "anotacao-de-serie",
+        "relacaoComEngenharia": "Anotação da própria série que o gráfico desenha — NÃO é ato de governo e nunca compartilha o símbolo dos atos normativos.",
+        "fonteId": "confea-sic-usuario"
+      },
+      {
+        "id": "pico-concluintes-2018",
+        "data": "2018-01-01",
+        "ano": "2018",
+        "titulo": "Pico de concluintes de engenharia: 128.871",
+        "descricao": "Máximo da série de concluintes do Censo da Educação Superior no recorte estrito.",
+        "valorTexto": "128.871 concluintes",
+        "categoria": "formacao",
+        "natureza": "anotacao-de-serie",
+        "relacaoComEngenharia": "Anotação da própria série que o gráfico desenha — NÃO é ato de governo e nunca compartilha o símbolo dos atos normativos.",
+        "fonteId": "inep-seesp-concluintes"
+      }
+    ],
+    "candidatosNaoApurados": [
+      {
+        "id": "lei-13530-2017",
+        "titulo": "Lei 13.530/2017 (Novo Fies)",
+        "periodo": "2016–2022",
+        "motivo": "Identifiquei-a como candidata com relação direta e nomeável com formação em engenharia; ainda não a apurei com data, valor e canal. Enquanto não for apurada, o inventário está declaradamente incompleto neste período (§8, pendência 16)."
+      },
+      {
+        "id": "lei-14026-2020",
+        "titulo": "Lei 14.026/2020 (marco legal do saneamento)",
+        "periodo": "2016–2022",
+        "motivo": "Candidata a marco de demanda (obra pública contratada); não apurada (§8, pendência 16)."
+      },
+      {
+        "id": "lei-14133-2021",
+        "titulo": "Lei 14.133/2021 (nova lei de licitações)",
+        "periodo": "2016–2022",
+        "motivo": "Candidata a marco de demanda (obra pública contratada); não apurada (§8, pendência 16)."
+      },
+      {
+        "id": "matriz-copa-2014",
+        "titulo": "Matriz de Responsabilidades da Copa 2014",
+        "periodo": "2010–2014",
+        "motivo": "A Copa é EVENTO, não ato normativo nem programa: o que seria marco é a Matriz de Responsabilidades, o ato com data e valores publicados por trás dos R$ 25,5 bi em obras consolidados pelo TCU — não apurada neste projeto (§8, pendência 18). Falta o ATO, não a relação com engenharia."
+      },
+      {
+        "id": "decreto-9057-2017",
+        "titulo": "Decreto 9.057/2017 (flexibilização do EaD)",
+        "periodo": "2016–2022",
+        "motivo": "Candidato vetado — NÃO ANOTAR enquanto não houver confirmação documental (§8, pendência 6). Fica registrado aqui para que ninguém o reintroduza de boa-fé."
+      }
+    ],
+    "notaDeComposicao": "Este inventário NÃO é uma avaliação de governos e NÃO é balanceado por período. Ele é o resultado da regra de seleção publicada, aplicada ao material que apurei. Os períodos não têm o mesmo número de marcos, e há razões conhecidas para isso, ditas aqui: (a) a minha cobertura documental é mais densa para 2023–2026, que é o período que apurei em primeira mão; (b) identifiquei três atos de 2016–2022 com relação direta e nomeável com demanda por engenharia como candidatos, e ainda não os apurei — Lei 13.530/2017 (Novo Fies), Lei 14.026/2020 (saneamento) e Lei 14.133/2021 (licitações); (c) um quarto candidato, de 2010–2014, está na mesma condição — a Matriz de Responsabilidades da Copa 2014. Enquanto não forem apurados, o inventário está declaradamente incompleto nesses dois períodos.",
+    "notaDeCausalidade": "A faixa de governo é rótulo de período, não explicação: coincidência temporal não é causa. Este site não atribui resultados a governos — nem os bons nem os ruins. Um marco plotado dentro de uma faixa indica QUANDO a regra passou a valer, não quem produziu o que veio depois. Séries de formação, registro e emprego respondem a crédito, demanda internacional, preço de commodities, ciclo de crédito privado e decisões de milhares de agentes; nenhum recorte deste site isola o efeito de um ato.",
+    "regraDeSelecao": "Um marco entra se, e somente se, (a) é um ato normativo ou um programa com data e valor publicados, e (b) tem relação direta e nomeável com formação, registro ou emprego de engenharia — relação declarada em uma linha na ficha do próprio marco, com o CANAL nomeado (crédito estudantil, vaga em curso, obra pública contratada, encomenda industrial, forma de contratação, piso salarial). Atos de alcance geral entram quando a ficha nomeia o canal; se a ficha não consegue nomear o canal em uma linha, o marco não entra. Entra como ATO DE GOVERNO a norma EM VIGOR que produziu efeito no período em que está plotada — lei sancionada, emenda promulgada, decreto, portaria, programa lançado —, porque o que o eixo do tempo marca é quando a regra passou a valer, não quem a assinou. Entra com SÍMBOLO PRÓPRIO o ato que não é do Poder Executivo e ainda não é norma em vigor: decisão judicial, ato de conselho profissional e proposição em tramitação.",
+    "regraDeDesligamento": "Se a apuração dos três candidatos de 2016–2022 (§8, pendência 16) não confirmar nenhum deles com data, valor e relação nomeável, a camada de marcos é DESLIGADA e ficam apenas as faixas. Os marcos viram então uma lista datada em texto neutro abaixo do gráfico — exatamente a mesma informação, sem a hierarquia visual que a seleção produz. Esta decisão está tomada."
+  }
+}

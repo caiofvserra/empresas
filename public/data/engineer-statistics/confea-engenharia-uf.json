@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "dataset": "confea-engenharia-uf",
+    "titulo": "Títulos ativos do grupo Engenharia por UF",
+    "unidade": "títulos ativos de engenharia",
+    "fonteId": "confea-sic-estoque-2026",
+    "notas": [
+      "27 UFs completas — Brasil 1.070.469 títulos ativos do grupo ENGENHARIA (de 1.373.447 títulos do Sistema).",
+      "TÍTULOS ≠ PESSOAS: um profissional pode ter mais de um título (ex.: Engenheiro Civil e Engenheiro de Segurança do Trabalho). Por isso a contagem por título/modalidade soma mais que o total de profissionais ativos e NUNCA deve ser lida como número de pessoas distintas.",
+      "Diferença de recorte em relação a data/confea-uf.json: lá são profissionais ativos de TODAS as profissões do Sistema; aqui são títulos do grupo ENGENHARIA — os dois números não se dividem um pelo outro.",
+      "Metodologia: o endpoint devolve 28 linhas — 27 Creas + uma linha agregada \"TOTAL:\". A linha de total é FILTRADA antes de qualquer soma; feito isso, a soma das 27 UFs bate exatamente com o total do Confea. Somar as 28 linhas dá o dobro do valor real — era essa a origem da suposta \"duplicidade de vistos/títulos\" (ver docs/research/confea-sic-analise.md).",
+      "Arquivo DERIVADO — não editar à mão. Regerar com `node scripts/derivar-confea.mjs` a partir de docs/research/assets/ (recoleta: scripts/fetch-confea.mjs / scripts/fetch-ibge.mjs, fora do container)."
+    ],
+    "atualizadoEm": "2026-08-30",
+    "snapshot": {
+      "consultaUrl": "https://relatorio.confea.org.br/Profissional/RegistrosPorGrupo/Buscar",
+      "capturadoEm": "2026-08-30"
+    }
+  },
+  "data": {
+    "valores": [
+      {
+        "ufCodigo": "11",
+        "crea": "CREA-RO",
+        "valor": 5362
+      },
+      {
+        "ufCodigo": "12",
+        "crea": "CREA-AC",
+        "valor": 1959
+      },
+      {
+        "ufCodigo": "13",
+        "crea": "CREA-AM",
+        "valor": 15407
+      },
+      {
+        "ufCodigo": "14",
+        "crea": "CREA-RR",
+        "valor": 1083
+      },
+      {
+        "ufCodigo": "15",
+        "crea": "CREA-PA",
+        "valor": 28270
+      },
+      {
+        "ufCodigo": "16",
+        "crea": "CREA-AP",
+        "valor": 1465
+      },
+      {
+        "ufCodigo": "17",
+        "crea": "CREA-TO",
+        "valor": 5493
+      },
+      {
+        "ufCodigo": "21",
+        "crea": "CREA-MA",
+        "valor": 13595
+      },
+      {
+        "ufCodigo": "22",
+        "crea": "CREA-PI",
+        "valor": 8091
+      },
+      {
+        "ufCodigo": "23",
+        "crea": "CREA-CE",
+        "valor": 23067
+      },
+      {
+        "ufCodigo": "24",
+        "crea": "CREA-RN",
+        "valor": 13185
+      },
+      {
+        "ufCodigo": "25",
+        "crea": "CREA-PB",
+        "valor": 12790
+      },
+      {
+        "ufCodigo": "26",
+        "crea": "CREA-PE",
+        "valor": 25164
+      },
+      {
+        "ufCodigo": "27",
+        "crea": "CREA-AL",
+        "valor": 8343
+      },
+      {
+        "ufCodigo": "28",
+        "crea": "CREA-SE",
+        "valor": 7010
+      },
+      {
+        "ufCodigo": "29",
+        "crea": "CREA-BA",
+        "valor": 45940
+      },
+      {
+        "ufCodigo": "31",
+        "crea": "CREA-MG",
+        "valor": 146027
+      },
+      {
+        "ufCodigo": "32",
+        "crea": "CREA-ES",
+        "valor": 23328
+      },
+      {
+        "ufCodigo": "33",
+        "crea": "CREA-RJ",
+        "valor": 118309
+      },
+      {
+        "ufCodigo": "35",
+        "crea": "CREA-SP",
+        "valor": 332663
+      },
+      {
+        "ufCodigo": "41",
+        "crea": "CREA-PR",
+        "valor": 58649
+      },
+      {
+        "ufCodigo": "42",
+        "crea": "CREA-SC",
+        "valor": 43574
+      },
+      {
+        "ufCodigo": "43",
+        "crea": "CREA-RS",
+        "valor": 53404
+      },
+      {
+        "ufCodigo": "50",
+        "crea": "CREA-MS",
+        "valor": 11997
+      },
+      {
+        "ufCodigo": "51",
+        "crea": "CREA-MT",
+        "valor": 16289
+      },
+      {
+        "ufCodigo": "52",
+        "crea": "CREA-GO",
+        "valor": 29027
+      },
+      {
+        "ufCodigo": "53",
+        "crea": "CREA-DF",
+        "valor": 20978
+      }
+    ],
+    "completo": true,
+    "ressalvaDuplicidade": "Unidade = TÍTULO, não pessoa. TÍTULOS ≠ PESSOAS: um profissional pode ter mais de um título (ex.: Engenheiro Civil e Engenheiro de Segurança do Trabalho). Por isso a contagem por título/modalidade soma mais que o total de profissionais ativos e NUNCA deve ser lida como número de pessoas distintas. Não há aqui duplicidade entre Creas: a linha agregada \"TOTAL:\" do SIC é filtrada antes de somar, e nenhum profissional é contado em dois Creas."
+  }
+}

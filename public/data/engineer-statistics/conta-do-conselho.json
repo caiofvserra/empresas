@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "dataset": "conta-do-conselho",
+    "titulo": "Despesa do Crea-SP publicada no Portal da Transparência do próprio conselho",
+    "unidade": "reais",
+    "fonteId": "crea-sp-transparencia",
+    "notas": [
+      "Anexo de dados: reproduz agregados da API pública do Portal da Transparência do Crea-SP, sem classificação, ranqueamento de mérito ou leitura interpretativa acrescentada.",
+      "Só entram valores que o portal publica e somas sobre campos dele. Nenhuma categoria foi criada aqui.",
+      "Os nomes de contas e de subgrupos são reproduzidos exatamente como a API os devolve, sem correção de grafia, de acentuação ou de prefixo.",
+      "Agregados de endpoints diferentes não são a mesma medida e não devem ser somados nem comparados entre si.",
+      "A base é acumulada de coletas sucessivas; a última foi em 08/09/2026. O exercício de 2026 não estava encerrado nessa data e não entra em comparação de ano cheio.",
+      "Onde o plano de contas do portal separa quem recebe — diárias e locomoção de funcionários, conselheiros e inspetores —, esta página reproduz a separação com os nomes das contas. Onde ele não separa, isso está dito no bloco do que não foi possível apurar."
+    ],
+    "atualizadoEm": "2026-09-19"
+  },
+  "data": {
+    "periodo": "2013–2026",
+    "itens": [
+      {
+        "id": "execucao-2013",
+        "rotulo": "Despesa do exercício de 2013",
+        "valor": 165752333.87,
+        "valorTexto": "R$ 165.752.333,87",
+        "ano": "2013",
+        "bloco": "execucao",
+        "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço orçamentário do exercício, como o portal a publica.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "execucao-2025",
+        "rotulo": "Despesa do exercício de 2025",
+        "valor": 465454771.48,
+        "valorTexto": "R$ 465.454.771,48",
+        "ano": "2025",
+        "bloco": "execucao",
+        "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço orçamentário do exercício, como o portal a publica. É o último exercício encerrado na data da coleta.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "subgrupo-servicos-terceiros",
+        "rotulo": "SERVICOS TERCEIROS - PESSOAS JURÍDICAS",
+        "valor": 1235348949.17,
+        "valorTexto": "R$ 1,24 bilhão",
+        "ano": "2013–2026",
+        "bloco": "subgrupos",
+        "detalhe": "Subgrupo 6.2.2.1.1.01.04.09: 78.898 lançamentos, em 46 contas e 14 exercícios. Grupo OUTRAS DESPESAS CORRENTES. Valor exato publicado: R$ 1.235.348.949,17.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "subgrupo-remuneracao-pessoal",
+        "rotulo": "REMUNERAÇÃO PESSOAL",
+        "valor": 1045352873.77,
+        "valorTexto": "R$ 1,05 bilhão",
+        "ano": "2013–2026",
+        "bloco": "subgrupos",
+        "detalhe": "Subgrupo 6.2.2.1.1.01.01.01: 2.490 lançamentos, em 17 contas e 14 exercícios. Grupo PESSOAL E ENCARGOS SOCIAIS. Valor exato publicado: R$ 1.045.352.873,77.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "subgrupo-diarias",
+        "rotulo": "DIÁRIAS",
+        "valor": 160362325.0,
+        "valorTexto": "R$ 160.362.325,00",
+        "ano": "2013–2026",
+        "bloco": "subgrupos",
+        "detalhe": "Subgrupo 6.2.2.1.1.01.04.05: 230.687 lançamentos, em 5 contas e 14 exercícios. Grupo OUTRAS DESPESAS CORRENTES.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "subgrupo-locomocao",
+        "rotulo": "DESPESA COM LOCOMOÇÃO",
+        "valor": 95975132.54,
+        "valorTexto": "R$ 95.975.132,54",
+        "ano": "2013–2026",
+        "bloco": "subgrupos",
+        "detalhe": "Subgrupo 6.2.2.1.1.01.04.08: 169.977 lançamentos, em 6 contas e 14 exercícios. Grupo OUTRAS DESPESAS CORRENTES.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "diarias-conselheiros",
+        "rotulo": "Diarias com Conselheiros",
+        "valor": 73055508.16,
+        "valorTexto": "R$ 73.055.508,16",
+        "ano": "2013–2026",
+        "bloco": "diarias-e-locomocao",
+        "detalhe": "Conta 6.2.2.1.1.01.04.05.002, subgrupo DIÁRIAS. Nome reproduzido como o portal o publica.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "locomocao-conselheiros",
+        "rotulo": "Locomoção de Conselheiros",
+        "valor": 58236390.04,
+        "valorTexto": "R$ 58.236.390,04",
+        "ano": "2013–2026",
+        "bloco": "diarias-e-locomocao",
+        "detalhe": "Conta 6.2.2.1.1.01.04.08.002, subgrupo DESPESA COM LOCOMOÇÃO.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "diarias-funcionarios",
+        "rotulo": "Diarias com Funcionários",
+        "valor": 35440171.84,
+        "valorTexto": "R$ 35.440.171,84",
+        "ano": "2013–2026",
+        "bloco": "diarias-e-locomocao",
+        "detalhe": "Conta 6.2.2.1.1.01.04.05.001, subgrupo DIÁRIAS.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "diarias-inspetores",
+        "rotulo": "Diarias com Inspetores",
+        "valor": 30424173.15,
+        "valorTexto": "R$ 30.424.173,15",
+        "ano": "2013–2026",
+        "bloco": "diarias-e-locomocao",
+        "detalhe": "Conta 6.2.2.1.1.01.04.05.004, subgrupo DIÁRIAS. O inspetor é quem vai a campo na estrutura do conselho.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "locomocao-inspetores",
+        "rotulo": "Locomoção de Inspetores",
+        "valor": 20245050.26,
+        "valorTexto": "R$ 20.245.050,26",
+        "ano": "2013–2026",
+        "bloco": "diarias-e-locomocao",
+        "detalhe": "Conta 6.2.2.1.1.01.04.08.008, subgrupo DESPESA COM LOCOMOÇÃO.",
+        "fonteId": "crea-sp-transparencia"
+      },
+      {
+        "id": "jeton",
+        "rotulo": "Pagamento de Jeton",
+        "valor": 10332296.49,
+        "valorTexto": "R$ 10.332.296,49",
+        "ano": "2013–2026",
+        "bloco": "diarias-e-locomocao",
+        "detalhe": "Conta 6.2.2.1.1.01.04.05.005, subgrupo DIÁRIAS. Jeton é a remuneração por sessão de que participa o conselheiro.",
+        "fonteId": "crea-sp-transparencia"
+      }
+    ],
+    "naoApurado": [
+      "O subgrupo PASSAGENS (6.2.2.1.1.01.04.06) devolve R$ 0,00 em 45 registros, e o subgrupo HOSPEDAGENS E ALIMENTAÇÃO (6.2.2.1.1.01.04.07) também: pelos endpoints consultados não foi possível apurar esses valores.",
+      "Os endpoints QuadrosPessoas e Conselheiros devolveram lista sem registros na coleta de 2026: por eles não foi possível apurar quadro de pessoal nem composição do plenário.",
+      "A despesa por centro de custo só existe a partir do exercício de 2021: os exercícios anteriores não têm esse eixo no portal, e por isso não foi possível apurar a série longa por área.",
+      "O portal publica a despesa, não o resultado que ela produziu: não há, na base, um indicador de entrega associado a cada rubrica — e é exatamente isso que a proposta desta seção pede."
+    ],
+    "enquadramento": [
+      "O Crea-SP publica esta base por API aberta, sem pedido e sem cadastro. Publicar é obrigação da Lei de Acesso à Informação, não mérito de gestão — e é a razão de esta seção existir: só é possível propor sobre o que está publicado.",
+      "Nenhum número desta seção sustenta conclusão sobre conduta, mérito ou intenção de quem quer que seja. São agregados do próprio portal, reproduzidos com o nome de conta que ele usa."
+    ]
+  }
+}

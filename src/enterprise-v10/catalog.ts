@@ -1,0 +1,345 @@
+import type { EnterpriseIndicator } from './types';
+export { metricIds } from './types';
+export type { MetricId } from './types';
+
+/** Operational metadata are proposals, not declarations of production ownership or active refresh. */
+export interface EnterpriseIndicatorDefinition extends EnterpriseIndicator {
+  question: string;
+  periodicity: string;
+  validation: string;
+  origin: string;
+  countLabel: string;
+}
+
+/** Names identify the source/state; supporting questions and didactic examples belong in the definition. */
+export const enterpriseIndicators: EnterpriseIndicatorDefinition[] = [
+  {
+    "id": "base",
+    "name": "Empresas com registro CREA-SP",
+    "meaning": "Estoque de pessoas jurídicas distintas com registro vigente no CREA-SP, com mudança reconciliada entre entradas, reativações e saídas do cadastro do conselho. Um novo registro ou filial não cria automaticamente uma nova empresa-raiz.",
+    "formula": "Empresas-raiz com ao menos um registro vigente no corte; saldo = estoque final − estoque inicial. Entradas/saídas contam transições do estado empresarial, sem duplicar vários registros simultâneos.",
+    "decision": "Distinguir expansão, reposição de saídas e concentração territorial/setorial da carteira.",
+    "example": "Exemplo didático: 4.000 empresas iniciais + 800 entradas − 300 saídas = 4.500 finais; as 800 entradas não devem ocultar as 300 saídas.",
+    "sources": [
+      "Cadastro empresarial SQL Server/Db2 via gateway",
+      "Histórico de registros/vistos e movimentações"
+    ],
+    "limits": "Empresa-raiz, estabelecimento, registro e visto têm unidades diferentes. Saneamento de duplicidade não é crescimento. Histórico real exige fatos datados, não retroprojeção de snapshot.",
+    "unit": "Empresas e variação (%)",
+    "question": "Quantas empresas têm registro vigente no CREA-SP e como essa base evolui?",
+    "periodicity": "Diária, após carga interna validada; comparação mensal/trimestral/anual com o mesmo corte.",
+    "validation": "Gestão do cadastro e inteligência de dados: homologar identidade empresarial, vigência, reativação e reconciliação estoque–fluxo.",
+    "origin": "CREA-SP",
+    "countLabel": "empresas distintas"
+  },
+  {
+    "id": "retention",
+    "name": "Permanência no CREA-SP",
+    "meaning": "Permanência no CREA-SP das empresas com registro vigente no conselho na abertura, condicionada à situação cadastral ativa na fotografia da Receita disponível ao corte. Situação cadastral na Receita e vigência de registro no CREA-SP são estados diferentes.",
+    "formula": "Empresas da coorte inicial com algum estabelecimento RFB ativo na fotografia disponível e registro vigente ao fim / empresas da coorte inicial com algum estabelecimento RFB ativo nessa fotografia × 100.",
+    "decision": "Investigar saída cadastral entre empresas com situação cadastral ativa na Receita, distinguindo-a da redução do universo externo.",
+    "example": "Exemplo didático: das 4.000 empresas iniciais, 3.800 aparecem ativas na fotografia cadastral da Receita mais recente e 3.700 permanecem com registro: retenção condicional de 97,4%.",
+    "sources": [
+      "Histórico de registro empresarial",
+      "Receita Federal/CNPJ por ingestão automatizada ou integração autorizada"
+    ],
+    "limits": "Situação ativa na Receita não prova exercício de atividade técnica. O filtro usa a fotografia RFB disponível ao corte, não o histórico cadastral da Receita inexistente. Mudanças de pessoa jurídica exigem conciliação.",
+    "unit": "% de empresas da coorte elegível",
+    "question": "As empresas da base inicial que aparecem ativas na Receita permanecem com registro no CREA-SP?",
+    "periodicity": "Diária para o cadastro; fotografia RFB na competência disponível, explícita no indicador.",
+    "validation": "Gestão do cadastro: validar coorte inicial e situação cadastral RFB; não tratar situação ativa como regularidade tributária.",
+    "origin": "Receita × CREA-SP",
+    "countLabel": "empresas da base inicial"
+  },
+  {
+    "id": "coverage",
+    "name": "Cobertura de registro CREA-SP",
+    "meaning": "Proporção dos estabelecimentos do universo externo da Receita que têm correspondência exata e registro vigente no CREA-SP. O universo externo depende de CNPJ completo, situação cadastral na Receita e CNAEs selecionados; registro antigo ou de outra filial não satisfaz o numerador.",
+    "formula": "Estabelecimentos elegíveis com registro exato vigente no corte / estabelecimentos externos elegíveis distintos × 100. Decompor em nunca localizado, identificado sem vigência e vigente.",
+    "decision": "Escolher territórios e setores para ampliar a conciliação de informações, orientar empresas e estudar a abrangência institucional.",
+    "example": "Exemplo didático: de 10.000 CNPJs completos elegíveis, 4.500 têm registro exato vigente: 45%. Os demais devem ser separados entre nunca identificados e identificados sem vigência.",
+    "sources": [
+      "Receita Federal/CNPJ por ETL oficial ou integração autorizada",
+      "Cadastro e vigência de estabelecimentos CREA",
+      "Classificação CNAE fornecida pelo usuário"
+    ],
+    "limits": "CNAE relacionado ou dependente de análise não comprova obrigação. O universo é de estabelecimentos, não empresas-raiz; a matriz não cobre automaticamente a filial. Somente raiz não é correspondência exata.",
+    "unit": "% de estabelecimentos elegíveis",
+    "question": "Qual parcela dos CNPJs elegíveis da Receita tem registro exato vigente no CREA-SP?",
+    "periodicity": "A cada competência oficial CNPJ e carga interna conciliada; Conecta conforme autorização e quotas.",
+    "validation": "Cadastro e área técnica competente: homologar universo CNAE, correspondência exata e alcance de registro/visto por estabelecimento.",
+    "origin": "Receita × CREA-SP",
+    "countLabel": "CNPJs completos"
+  },
+  {
+    "id": "newMarket",
+    "name": "Novos CNPJs sem registro CREA",
+    "meaning": "Estabelecimentos recentemente abertos na Receita, pertencentes ao universo externo selecionado, sem qualquer registro exato identificado no histórico do CREA-SP até o corte. A leitura ajuda a estudar orientação e conciliação próximas ao início da atividade.",
+    "formula": "Contar CNPJs completos elegíveis abertos na janela e sem registro exato identificado até o corte. Um registro histórico inativo já identificado não entra neste conjunto.",
+    "decision": "Definir parcerias e estudos setoriais a partir das novas aberturas e de sua localização, sem confundir filial nova com nova pessoa jurídica.",
+    "example": "Exemplo didático: 1.100 CNPJs elegíveis abertos em 24 meses ainda não têm registro exato identificado; a concentração em instalações elétricas e três municípios orienta um estudo específico.",
+    "sources": [
+      "Abertura, situação, CNAEs e município do CNPJ",
+      "Histórico de registros por estabelecimento"
+    ],
+    "limits": "Abertura não prova início efetivo de atividade sujeita ao CREA. A métrica conta estabelecimentos; a ficha empresarial deduplica suas raízes e pode mostrar menos empresas que CNPJs.",
+    "unit": "Estabelecimentos (CNPJ completo)",
+    "question": "Quais CNPJs recém-abertos na Receita ainda não têm registro exato identificado no CREA-SP?",
+    "periodicity": "Por competência oficial de CNPJ, com data de abertura e histórico interno atualizado.",
+    "validation": "Cadastro e inteligência de dados: distinguir abertura de filial, primeira identificação e registro histórico inativo.",
+    "origin": "Receita × CREA-SP",
+    "countLabel": "CNPJs abertos na Receita"
+  },
+  {
+    "id": "rtCoverage",
+    "name": "Empresas com RT no CREA-SP",
+    "meaning": "Proporção de empresas com registro vigente no CREA-SP que possuem ao menos um vínculo de responsável técnico vigente identificado no cadastro do conselho. Relaciona empresa, profissional e período de vigência.",
+    "formula": "Empresas-raiz com registro vigente e ao menos um vínculo RT vigente identificado / empresas-raiz com registro vigente × 100.",
+    "decision": "Investigar ausência de vínculos na integração e a distribuição da cobertura por atividade, porte e território.",
+    "example": "Exemplo didático: 4.100 de 4.500 empresas vigentes têm RT identificado: cobertura observada de 91,1%. As outras 400 precisam de validação de fonte e vigência.",
+    "sources": [
+      "Cadastro empresarial",
+      "Vínculos RT com profissional, modalidade, início e fim no banco interno"
+    ],
+    "limits": "Não identificado não equivale a ausência real de RT ou infração. Profissionais distintos, vínculos e empresas não podem ser somados como uma mesma unidade.",
+    "unit": "% de empresas vigentes",
+    "question": "Qual parcela das empresas com registro CREA-SP vigente tem responsável técnico identificado?",
+    "periodicity": "Diária, após cargas de registros e vínculos técnicos reconciliadas.",
+    "validation": "Área técnica competente: confirmar vigência, atribuição e abrangência do vínculo; cadastro valida identidade empresarial/profissional.",
+    "origin": "CREA-SP",
+    "countLabel": "empresas com registro CREA"
+  },
+  {
+    "id": "rtContinuity",
+    "name": "Continuidade de RT no CREA-SP",
+    "meaning": "Continuidade do responsável técnico identificado no CREA-SP durante os dias em que a empresa manteve registro vigente no conselho. A interseção dos intervalos históricos distingue continuidade de uma fotografia da situação atual.",
+    "formula": "Dias-empresa com registro vigente e ao menos um RT vigente / dias-empresa com registro vigente, dentro da janela histórica qualificada, × 100. Sobreposições de vínculos não duplicam dias.",
+    "decision": "Distinguir lacunas históricas já resolvidas de ausência ainda observada e orientar validação da continuidade técnica.",
+    "example": "Exemplo didático: uma empresa passa 20 de 730 dias registrados sem RT identificado; a troca entre dois RTs sem intervalo não gera lacuna.",
+    "sources": [
+      "Intervalos históricos de registros",
+      "Intervalos históricos de vínculos RT"
+    ],
+    "limits": "Na ficção o histórico é qualificado desde o primeiro registro da empresa; esse marco demonstrativo não certifica cobertura histórica real. Lacuna de fonte não é ausência real e não existe prazo tolerado presumido.",
+    "unit": "% de dias-empresa registrados",
+    "question": "A empresa manteve RT identificado durante sua vigência no CREA-SP?",
+    "periodicity": "Diária ou mensal, com reprocessamento de intervalos alterados retroativamente.",
+    "validation": "Área técnica competente: homologar início/fim dos intervalos e qualidade histórica; não presumir prazo de tolerância legal.",
+    "origin": "CREA-SP",
+    "countLabel": "dias-empresa"
+  },
+  {
+    "id": "corporateActivity",
+    "name": "Empresas com ART no CREA-SP",
+    "meaning": "Participação de empresas com ART vinculada no CREA-SP entre aquelas que tiveram registro vigente no conselho em algum dia da janela, incluindo as que já saíram antes do corte. Evita selecionar somente as sobreviventes.",
+    "formula": "Empresas-raiz com ao menos um dia de registro vigente e ao menos uma ART vinculada na janela / empresas-raiz com ao menos um dia de registro vigente na mesma janela × 100.",
+    "decision": "Identificar ampliação ou concentração da participação empresarial na produção documental e aprofundar o perfil dos vínculos.",
+    "example": "Exemplo didático: 2.800 de 4.800 empresas com algum dia de vigência na janela têm ART vinculada: 58,3%, ainda que somente 4.500 sigam vigentes ao fim. O distinto da janela não é soma de distintos mensais.",
+    "sources": [
+      "ART e ponte empresarial declarada",
+      "Cadastro empresarial vigente"
+    ],
+    "limits": "A participação usa a coorte de todo o período. A partição RT × ART da base vigente no corte é outro aprofundamento, com denominador próprio. A fonte demonstra vínculo empresarial, não execução/autoria; a taxa não testa vigência na data de cada ART. Documentos não são faturamento ou obras concluídas.",
+    "unit": "% de empresas com vigência em algum dia da janela",
+    "question": "Qual parcela das empresas com vigência no CREA-SP na janela tem ART vinculada no período?",
+    "periodicity": "Diária para documentos; consolidação por competência, incluindo cancelamentos/retificações homologados.",
+    "validation": "Área de ART/acervo e cadastro: validar ponte empresarial explícita, elegibilidade documental e população com vigência em algum dia da janela.",
+    "origin": "CREA-SP",
+    "countLabel": "empresas registradas no período"
+  },
+  {
+    "id": "economicContext",
+    "name": "Emprego formal no setor",
+    "meaning": "Variação do estoque formal agregado dos territórios e CNAEs selecionados, como contexto econômico da carteira empresarial.",
+    "formula": "(Estoque agregado do último mês / estoque agregado do primeiro mês disponível na janela − 1) × 100; base inicial zero retorna ausência de taxa. Admissões/desligamentos são fluxos e estoques mensais não são somados.",
+    "decision": "Dimensionar crescimento/retração setorial e avaliar presença institucional em mercados economicamente relevantes.",
+    "example": "Exemplo didático: o estoque setorial passa de 200 mil para 220 mil vínculos: +10%. É contexto do mercado, não prova de 20 mil empregos criados pelo CREA.",
+    "sources": [
+      "Novo CAGED/RAIS em carga oficial homologada",
+      "Dimensões município, CNAE, CBO e competência"
+    ],
+    "limits": "Emprego agregado não identifica trabalhador ou CNPJ. Filtros nominais de empresa, porte ou subconjunto empresarial tornam essa comparação indisponível quando não existem na fonte. Os cortes mensais inicial/final devem ser informados.",
+    "unit": "% de variação do estoque agregado",
+    "question": "Como evolui o emprego nos mercados em que as empresas atuam?",
+    "periodicity": "Novo CAGED mensal e RAIS anual, nas respectivas competências; reprocessar revisões oficiais.",
+    "validation": "Inteligência de dados: validar recortes publicados, método do estoque, compatibilidade entre edições e revisão com o produtor.",
+    "origin": "RAIS / CAGED",
+    "countLabel": "empregos agregados"
+  },
+  {
+    "id": "publicDemand",
+    "name": "Valor técnico publicado no PNCP",
+    "meaning": "Valor e composição das publicações de contratações com objetos potencialmente técnicos, usando categorias e identidade do fornecedor.",
+    "formula": "Somar o valor dos contratos técnicos únicos publicados na janela, com regra textual explícita de classificação; manter contratos, fornecedores e valores em unidades separadas.",
+    "decision": "Identificar segmentos, órgãos e territórios para intercâmbio de dados e conhecer mercados relevantes para a carteira empresarial.",
+    "example": "Exemplo didático: mil contratações potencialmente técnicas somam R$ 2 bilhões, concentradas em saneamento e manutenção elétrica; isso dimensiona demanda publicada.",
+    "sources": [
+      "PNCP/API e identificadores de contratação/fornecedor",
+      "Classificação textual versionada",
+      "Convênios para execução contratual quando disponíveis"
+    ],
+    "limits": "Na demonstração a data contratual representa publicação. Valor publicado/contratado não é pagamento ou obra entregue. Território do fornecedor não comprova local de execução; aditivos/cancelamentos precisam de tratamento produtivo próprio.",
+    "unit": "R$ contratados/publicados",
+    "question": "Onde se concentra a demanda pública por serviços técnicos?",
+    "periodicity": "API PNCP diariamente, com paginação, revisões e contrato/versionamento homologados.",
+    "validation": "Inteligência de dados e área técnica competente: validar objetos, unicidade, conceito de valor e distinção entre sede e execução.",
+    "origin": "PNCP",
+    "countLabel": "R$ publicados em contratos"
+  },
+  {
+    "id": "supplierCoverage",
+    "name": "Fornecedores PNCP com CREA",
+    "meaning": "Proporção de CNPJs fornecedores do PNCP com registro exato vigente no CREA-SP na data da publicação técnica mais recente de cada fornecedor dentro da janela. A situação atual no CREA-SP ou na Receita não substitui a verificação nessa data.",
+    "formula": "Fornecedores distintos por CNPJ completo com registro exato vigente na sua publicação técnica mais recente selecionada / fornecedores distintos por CNPJ completo no universo técnico selecionado × 100.",
+    "decision": "Conectar demanda pública e vigência cadastral com uma data explícita, selecionando conjuntos para conciliação e verificação.",
+    "example": "Exemplo didático: entre 500 CNPJs fornecedores, 300 têm registro vigente na sua última publicação técnica observada: 60%. Isso não informa vigência de cada contrato anterior nem da execução.",
+    "sources": [
+      "PNCP/fornecedor e data de publicação",
+      "CNPJ do estabelecimento",
+      "Histórico de registro/visto"
+    ],
+    "limits": "A referência é publicação mais recente por fornecedor, não assinatura, execução ou situação atual. Registro de matriz/raiz não confirma outra filial. Classificação de objeto, jurisdição e papéis contratuais precisam de validação.",
+    "unit": "% de fornecedores (CNPJ completo)",
+    "question": "Os fornecedores do PNCP tinham registro vigente no CREA-SP na última publicação selecionada?",
+    "periodicity": "Diária após conciliar PNCP e histórico de registro; referência na última publicação selecionada de cada fornecedor.",
+    "validation": "Cadastro e área técnica competente: validar fornecedor por CNPJ completo, data da publicação, jurisdição e papel contratual.",
+    "origin": "PNCP × CREA-SP",
+    "countLabel": "CNPJs fornecedores"
+  },
+  {
+    "id": "contractTrace",
+    "name": "Contratos PNCP ligados a ART",
+    "meaning": "Parcela dos contratos técnicos selecionados do PNCP com referência documental confirmada a uma ART no CREA-SP. Mede rastreabilidade disponível, sem presumir que a simples existência de ART da empresa se refira àquele contrato.",
+    "formula": "Contratos técnicos selecionados com ao menos uma ponte documental explícita contrato–ART / todos os contratos técnicos selecionados na janela × 100.",
+    "decision": "Avaliar a rastreabilidade do portfólio e pactuar campos e intercâmbios necessários para sua ampliação.",
+    "example": "Exemplo didático: 190 de 1.000 contratos têm ponte explícita: 19% do portfólio com rastreabilidade disponível. Os outros 810 são contratos sem ponte na fonte, não contratos comprovadamente sem ART.",
+    "sources": [
+      "ART e referência contratual interna",
+      "PNCP e contrato identificado",
+      "Ponte documental por convênio ou camada curada homologada"
+    ],
+    "limits": "A ponte demonstrativa é documento fictício explícito, não uma inferência real por CNPJ/texto. ART da mesma empresa não comprova ART do contrato. Sem ponte não equivale a falta de ART, infração, execução ou universo já analisado.",
+    "unit": "% de contratos técnicos",
+    "question": "Quais contratos técnicos do PNCP possuem referência documental explícita a ART no CREA-SP?",
+    "periodicity": "Após cargas de contratos, ARTs e pontes documentais autorizadas; meta diária quando as fontes permitirem.",
+    "validation": "Área de ART/acervo e cedente do contrato: homologar referência documental e abrangência; ausência de ponte não comprova ausência de ART.",
+    "origin": "PNCP × CREA-SP",
+    "countLabel": "contratos técnicos"
+  },
+  {
+    "id": "convergentEvidence",
+    "name": "Empresas para análise digital",
+    "meaning": "Empresas com estabelecimento elegível na Receita/CNAE, sem registro exato vigente no CREA-SP no corte, que também aparece como fornecedor de contrato técnico publicado no PNCP na janela. A combinação usa fatos verificáveis do mesmo estabelecimento e orienta verificação humana.",
+    "formula": "Contar empresas-raiz distintas com ao menos um estabelecimento RFB ativo e CNAE elegível, sem registro exato vigente no corte, e com contrato técnico publicado na janela associado àquele estabelecimento.",
+    "decision": "Selecionar estudos e verificações digitais rastreáveis, sem criar score de culpa ou uma fila operacional de autuação.",
+    "example": "Exemplo didático: de 5.500 CNPJs sem registro vigente, um subconjunto de 120 empresas também apresenta objeto técnico e identidade comprovada; o interesse está na combinação explicável.",
+    "sources": [
+      "Receita Federal/CNPJ e CNAEs",
+      "Cadastro e vigência de registros por CNPJ completo",
+      "PNCP/objeto, estabelecimento fornecedor e publicação"
+    ],
+    "limits": "A regra implementada cruza CNAE elegível, falta de vigência exata no corte e contrato técnico do mesmo estabelecimento na janela. Não mede RT, divergência territorial, probabilidade de infração ou vigência durante execução. CAGED agregado não é evidência individual por CNPJ.",
+    "unit": "Empresas-raiz com evidências",
+    "question": "Quais empresas combinam contrato técnico no PNCP e CNPJ sem registro exato vigente no CREA-SP?",
+    "periodicity": "A cada conciliação válida de CNPJ, registro e PNCP; explicitar as três competências.",
+    "validation": "Área técnica competente e inteligência de dados: revisar a regra booleana, o mesmo estabelecimento e a atividade efetiva antes de qualquer conclusão.",
+    "origin": "Receita / PNCP × CREA-SP",
+    "countLabel": "empresas distintas"
+  },
+  {
+    "id": "compliance",
+    "name": "Adimplência PJ no CREA-SP",
+    "meaning": "Cumprimento das obrigações financeiras empresariais perante o CREA-SP entre empresas com títulos elegíveis. Não é situação cadastral na Receita nem comprovação de regularidade técnica.",
+    "formula": "Empresas-raiz com títulos de valor não negativo e vencimento até o corte, sem saldo vencido positivo / empresas-raiz com títulos nessas condições × 100. Título que vence no próprio corte ainda não é atraso.",
+    "decision": "Planejar relacionamento e sustentabilidade financeira por porte, atividade e território, com denominador explícito.",
+    "example": "Exemplo didático: 3.400 de 4.000 empresas com obrigações elegíveis estão adimplentes: 85%. Dividir pelo total de empresas cadastradas responderia a outra pergunta.",
+    "sources": [
+      "Títulos empresariais, vencimentos e pagamentos",
+      "Estados de exigibilidade homologados no financeiro"
+    ],
+    "limits": "O universo financeiro é o dos títulos observados com vencimento até o corte, não toda a base vigente. Dívida não comprova infração técnica. Exigibilidade legal, parcelamento, contestação e prescrição precisam de homologação; produção deve restringir microdados e exportações.",
+    "unit": "% de empresas com obrigações elegíveis",
+    "question": "Qual é a adimplência das empresas com obrigações financeiras elegíveis perante o CREA-SP?",
+    "periodicity": "Diária após conciliação financeira, respeitando vencimentos, compensações e ajustes.",
+    "validation": "Financeiro e cadastro: homologar exigibilidade, parcelamentos, contestações, identidade PJ e denominador de empresas elegíveis.",
+    "origin": "Financeiro CREA-SP",
+    "countLabel": "empresas com títulos elegíveis"
+  },
+  {
+    "id": "receipts",
+    "name": "Recebimentos de PJ no CREA-SP",
+    "meaning": "Fluxo de caixa do CREA-SP efetivamente recebido de pessoas jurídicas na janela, pela data de pagamento. Recursos recuperados da carteira vencida integram esse total, sem nova soma.",
+    "formula": "Somar pagamentos elegíveis vinculados à pessoa jurídica pela data efetiva de pagamento, sem duplicar recuperação, estornos ou repasses.",
+    "decision": "Planejar sustentabilidade e explicar a composição dos recursos empresariais efetivamente recebidos.",
+    "example": "Exemplo didático: R$ 24 milhões de recebimentos, dos quais R$ 3 milhões vêm da coorte vencida anterior; a recuperação não transforma o total em R$ 27 milhões.",
+    "sources": [
+      "Pagamento–título–empresa no financeiro SQL Server/Db2",
+      "Plano de contas e estornos quando disponíveis"
+    ],
+    "limits": "Não representa a receita geral do CREA-SP. Valor de ART/PNCP não é receita do conselho. Pagamento de pessoa física não vira receita PJ por associação indireta a uma empresa.",
+    "unit": "R$ recebidos",
+    "question": "Quanto o CREA-SP efetivamente recebeu de pessoas jurídicas na janela?",
+    "periodicity": "Diária após conciliação dos pagamentos; contabilização por data efetiva, com fechamento de competência.",
+    "validation": "Financeiro/contabilidade: reconciliar caixa, vínculo pagamento–título–empresa, estornos e classificação de pessoa jurídica.",
+    "origin": "Financeiro CREA-SP",
+    "countLabel": "R$ recebidos"
+  },
+  {
+    "id": "overdue",
+    "name": "Dívida PJ vencida no CREA-SP",
+    "meaning": "Estoque de obrigações empresariais vencidas perante o CREA-SP na data de corte, com faixas de atraso e concentração empresarial. Não representa dívida tributária na Receita Federal.",
+    "formula": "Somar saldo exigível vencido líquido de pagamentos/ajustes válidos até o corte; faixas de atraso reconciliam com o total. Contar devedores distintos separadamente.",
+    "decision": "Distinguir dívida antiga concentrada de atraso recente pulverizado e planejar relacionamento/provisão.",
+    "example": "Exemplo didático: R$ 9 milhões vencidos em 600 empresas exigem leituras diferentes quando concentrados em títulos antigos ou em atrasos recentes.",
+    "sources": [
+      "Títulos, saldo, vencimentos, pagamentos e ajustes",
+      "Identidade empresarial e exigibilidade"
+    ],
+    "limits": "Estoque não é fluxo recebido. Sem eventos produtivos de ajuste/exigibilidade, a demonstração não certifica cobrança legal. Não expor dívida nominal em versão pública nem inventar previsão de perda.",
+    "unit": "R$ vencidos no corte",
+    "question": "Quanto as empresas devem ao CREA-SP em títulos vencidos e há quanto tempo?",
+    "periodicity": "Diária no corte financeiro; reconstrução histórica apenas com eventos/saldos confiáveis.",
+    "validation": "Financeiro e área jurídica competente: validar saldo exigível, pagamentos, ajustes, parcelamentos, prescrição e uso permitido de dados nominais.",
+    "origin": "Financeiro CREA-SP",
+    "countLabel": "R$ vencidos no corte"
+  },
+  {
+    "id": "recovery",
+    "name": "Recuperação da dívida inicial",
+    "meaning": "Recebimento efetivo pelo CREA-SP sobre uma carteira fixa de títulos empresariais vencidos na abertura da janela. Distingue entrada de caixa de baixa contábil ou cancelamento.",
+    "formula": "Pagamentos na janela aplicados a títulos vencidos com saldo reconstruível na abertura / saldo inicial reconstruível dessa mesma coorte × 100. Baixas sem caixa não entram no numerador.",
+    "decision": "Comparar coortes e segmentos com denominadores equivalentes e demonstrar recuperação observada de recursos.",
+    "example": "Exemplo didático: R$ 3 milhões pagos sobre uma coorte inicial de R$ 12 milhões significam 25% de recuperação; cancelar R$ 1 milhão não eleva esse recebimento.",
+    "sources": [
+      "Saldo histórico de abertura por título",
+      "Ponte pagamento–título e datas efetivas"
+    ],
+    "limits": "Recuperação é subconjunto dos recebimentos. Pagamentos sem data ficam fora do fluxo e da reconstrução histórica da coorte; isso exige qualificar a cobertura em produção. Sem saldo inicial e vínculo pagamento–título, a taxa não é calculável. Atribuição a uma ação exige avaliação adicional.",
+    "unit": "% do saldo vencido de abertura",
+    "question": "Quanto o CREA-SP recebeu da dívida empresarial vencida que já existia na abertura?",
+    "periodicity": "Diária para pagamentos; coorte de abertura fixa e comparação em janelas de maturação equivalentes.",
+    "validation": "Financeiro/contabilidade: reconciliar saldo inicial e pagamentos da mesma coorte; excluir baixa sem caixa e tratar histórico incompleto.",
+    "origin": "Financeiro CREA-SP",
+    "countLabel": "R$ da carteira inicial"
+  },
+  {
+    "id": "observedEntry",
+    "name": "Ingresso de CNPJs no CREA-SP",
+    "meaning": "Primeiro ingresso no cadastro do CREA-SP de estabelecimentos observados sem registro exato em fotografia externa anterior à janela. A transição documental não presume permanência no corte nem causa institucional.",
+    "formula": "CNPJs completos da coorte externa pré-janela cujo primeiro registro exato ocorreu após a observação e até o corte / CNPJs completos dessa coorte fixa × 100.",
+    "decision": "Demonstrar mudanças cadastrais verificáveis em um universo previamente identificado, preservando a situação inicial e os fatos posteriores.",
+    "example": "Exemplo didático: de 600 CNPJs observados sem registro, 180 ingressam posteriormente: 30%. Parte pode já estar sem vigência no fim; a entrada observada não é regularização atual nem efeito comprovado da gestão.",
+    "sources": [
+      "Snapshot externo longitudinal com competência e IDs próprios",
+      "Primeiro registro exato por estabelecimento",
+      "Histórico cadastral posterior"
+    ],
+    "limits": "A ficção usa snapshots reproduzíveis anteriores às janelas de 3/6/12/24 meses. Conta estabelecimentos; uma filial nova não é necessariamente nova empresa-raiz. Ingresso pode estar encerrado no corte. Sem intervenção documentada e avaliação, não atribuir causalidade à gestão.",
+    "unit": "% de estabelecimentos da coorte externa",
+    "question": "Quais CNPJs previamente observados sem registro tiveram ingresso posterior no CREA-SP?",
+    "periodicity": "Por fotografia externa preservada e carga interna; acompanhar a mesma coorte em marcos temporais definidos.",
+    "validation": "Cadastro e inteligência de dados: homologar identidade, observação prévia, primeiro ingresso e maturação da coorte; gestão valida qualquer alegação de resultado.",
+    "origin": "Receita × CREA-SP",
+    "countLabel": "CNPJs da coorte inicial"
+  }
+];

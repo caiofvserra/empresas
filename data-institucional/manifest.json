@@ -1,0 +1,182 @@
+{
+  "synthetic": true,
+  "seed": 20260930,
+  "seedLabel": "20260930+v6",
+  "snapshotDate": "2026-09-30",
+  "updatedAt": "2026-09-30",
+  "ruleVersion": "resultados-institucionais-demo-6.0",
+  "currencyUnit": "Centavos inteiros de BRL",
+  "territorialUnit": "Município de oferta da atividade, unidade de coworking ou atendimento; domicílio profissional é outra dimensão.",
+  "source": "Base relacional demonstrativa local; não corresponde a dados, gastos ou beneficiários da administração real do CREA-SP.",
+  "limitations": [
+    "Programas, custos, participantes e resultados são inteiramente fictícios; não evidenciam superfaturamento, favorecimento ou desempenho da gestão atual.",
+    "GRE dos municípios segue o mapeamento demonstrativo do protótipo; requer validação territorial institucional.",
+    "Inscrição e presença são ocorrências. Pessoas distintas só podem ser contadas quando existe identificador validado; registros sem identificador ficam explícitos.",
+    "Custo médio por pessoa identificada inclui o custo integral de formação/orientação, inclusive ações sem identificação completa; não é gasto individual nem retorno causal.",
+    "Seguimento após 90 dias é autodeclarado e sujeito a não resposta; aplicação relatada não comprova emprego ou efeito do programa.",
+    "Horas observadas de uso não equivalem a benefício profissional; capacidade contabiliza somente horários de abertura demonstrativos.",
+    "Filtros empresariais não se aplicam ao universo institucional. Selecionar pessoas/atividades não reparte orçamento ou capacidade entre beneficiários.",
+    "Dados de solicitações demonstram análise de serviço; não criam tratativas operacionais no BI. A meta de 14 dias é ilustrativa, não um prazo oficial."
+  ],
+  "applicationVersion": "6.0.0",
+  "delimiter": ";",
+  "encoding": "UTF-8 BOM",
+  "dateFormat": "ISO 8601",
+  "decimalCulture": "en-US",
+  "budgetValues": "Centavos inteiros; dividir por 100 apenas nas medidas de BRL.",
+  "relatedDimensions": [
+    "data-demo/municipios.csv",
+    "data-demo/gres.csv",
+    "data-demo/profissionais.csv",
+    "data-demo/empresas.csv"
+  ],
+  "tables": [
+    {
+      "file": "programas.csv",
+      "rows": 4,
+      "columns": [
+        "id",
+        "name",
+        "purpose",
+        "participationMode"
+      ],
+      "grain": "Um programa demonstrativo",
+      "primaryKey": "id",
+      "sha256": "7d9fde55063cf4a44a73ecbc7a024cd0a108decf13a5a9beba5e7fb2ca8805e6"
+    },
+    {
+      "file": "atividades.csv",
+      "rows": 384,
+      "columns": [
+        "id",
+        "programId",
+        "name",
+        "date",
+        "cityId",
+        "greId",
+        "kind",
+        "costCents",
+        "capacity"
+      ],
+      "grain": "Uma atividade em um local/data",
+      "primaryKey": "id",
+      "sha256": "8dba2fa929cb362497c10d6097982b85b7c93f7db15e37fa4d3acb93113be622"
+    },
+    {
+      "file": "participacoes.csv",
+      "rows": 7946,
+      "columns": [
+        "id",
+        "activityId",
+        "professionalId",
+        "registeredAt",
+        "attended",
+        "identityStatus"
+      ],
+      "grain": "Uma inscrição em uma atividade; professionalId pode estar ausente",
+      "primaryKey": "id",
+      "sha256": "c941ac29759db6b94f12473f7c0b857cca0ade0408d02fd5610fba452e7f9649"
+    },
+    {
+      "file": "orcamento.csv",
+      "rows": 2304,
+      "columns": [
+        "id",
+        "programId",
+        "month",
+        "cityId",
+        "greId",
+        "plannedCents",
+        "executedCents",
+        "activityCostCents",
+        "otherExecutedCents"
+      ],
+      "grain": "Programa × município × mês; plano e executado não se somam como despesa",
+      "primaryKey": "id",
+      "sha256": "c679ac9e19244bd4bc375e1d5d2984209544c0dcda72a9bd3fea132e32dc3de5"
+    },
+    {
+      "file": "unidades_cowork.csv",
+      "rows": 6,
+      "columns": [
+        "id",
+        "name",
+        "cityId",
+        "greId",
+        "openedAt",
+        "desks"
+      ],
+      "grain": "Uma unidade demonstrativa",
+      "primaryKey": "id",
+      "sha256": "494922028323027ed0c37f2034a393e2690bab594929664a541e591f36a7363d"
+    },
+    {
+      "file": "capacidade_cowork.csv",
+      "rows": 144,
+      "columns": [
+        "id",
+        "unitId",
+        "activityId",
+        "month",
+        "availableDeskHours",
+        "executedCents"
+      ],
+      "grain": "Unidade × mês; horas de posição de trabalho disponíveis",
+      "primaryKey": "id",
+      "sha256": "e4b41ed91bee024d2049d1c5664cbf571c1a2f9bdccbed4471f082e4de182d65"
+    },
+    {
+      "file": "uso_cowork.csv",
+      "rows": 2678,
+      "columns": [
+        "id",
+        "coworkMonthId",
+        "professionalId",
+        "usedDeskHours",
+        "evidence"
+      ],
+      "grain": "Unidade-mês × profissional; horas observadas de uso",
+      "primaryKey": "id",
+      "sha256": "ee0a9d62762de65a3753a20da3192a2a19b7918006ee41bc5186c4ecbca2b436"
+    },
+    {
+      "file": "acompanhamento.csv",
+      "rows": 6433,
+      "columns": [
+        "id",
+        "activityId",
+        "professionalId",
+        "dueAt",
+        "eligibleAtSnapshot",
+        "responded",
+        "method",
+        "respondedAt",
+        "outcome"
+      ],
+      "grain": "Atividade × profissional com presença identificada; maturação de 90 dias",
+      "primaryKey": "id",
+      "sha256": "41c5c54bb6740df7b789cd5795b16b7ec06812dc887125ae1767378f37c7312b"
+    },
+    {
+      "file": "solicitacoes_servico.csv",
+      "rows": 1080,
+      "columns": [
+        "id",
+        "programId",
+        "cityId",
+        "greId",
+        "createdAt",
+        "resolvedAt",
+        "userType",
+        "professionalId",
+        "category",
+        "status",
+        "targetDays",
+        "companyId"
+      ],
+      "grain": "Uma solicitação de cadastro/orientação; uma identidade empresarial OU profissional",
+      "primaryKey": "id",
+      "sha256": "1e5c4a391227a626332f48cbae308757d2f85515ef51b177d1039c8f013e6458"
+    }
+  ]
+}

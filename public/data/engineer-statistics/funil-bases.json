@@ -1,0 +1,218 @@
+{
+  "meta": {
+    "dataset": "funil-bases",
+    "titulo": "Compare as bases — o funil da profissão (V4 + hero V1)",
+    "unidade": "pessoas",
+    "fonteId": "ibge-censo2022-educacao",
+    "notas": [
+      "Cada degrau vem de uma base pública DIFERENTE; os degraus não são perfeitamente comparáveis — as lacunas (lacunaAposEste) explicam por quê.",
+      "T-8/N-9/I-13: o arquivo distingue DEGRAU de ANOTAÇÃO LATERAL. Item com `foraDoAfunilamento: true` NUNCA é desenhado como degrau do afunilamento, e toda anotação lateral carrega a `unidade` em CAIXA ALTA dentro da própria forma. O teste de esquema rejeita as duas violações — é o teste que impede a regressão, não o texto do plano.",
+      "Regra C2 (pendência 19, Tier 1): enquanto o degrau de diplomados for `citado` de fonte única secundária, todo display usa valorExibicao (\"2,37 milhões\"); os sete dígitos só aparecem depois da verificação na tabela SIDRA primária.",
+      "Regra I1 (§7.8): a anotação lateral do Sistema Confea/Crea (1.217.708, todas as profissões) NUNCA entra como numerador de razão sobre os diplomados — proibidoComoNumerador, testado.",
+      "TÍTULOS ≠ PESSOAS: a anotação de 1.070.469 títulos do grupo Engenharia jamais é dividida por um denominador de pessoas — a razão de 45% que sairia dessa conta misturaria unidades, e é exatamente o que os outros atos deste site recusam.",
+      "Os dois degraus heroDestaque alimentam o hero (V1): 2,37 milhões de diplomados vs 505 mil ocupados como engenheiros.",
+      "Estoque do Sistema Confea/Crea capturado em 30/08/2026 por mim, direto dos relatórios SIC — é o dado mais fresco do site (C7: a data de captura vai VISÍVEL na tela)."
+    ],
+    "atualizadoEm": "2026-08-31"
+  },
+  "data": {
+    "degraus": [
+      {
+        "id": "diplomados-censo2022",
+        "modo": "estoque",
+        "ordem": 1,
+        "rotulo": "Diplomados na área de engenharia, produção e construção",
+        "valor": 2371066,
+        "valorExibicao": "2,37 milhões",
+        "baseNome": "IBGE — Censo 2022 (amostra-educação)",
+        "ano": "2022",
+        "oQueMede": "Pessoas vivas com diploma superior na área CINE 'Engenharia, produção e construção' — inclui quem se formou há décadas, quem veio de fora e cursos de produção/construção/arquitetura.",
+        "oQueNaoMede": "Não diz se a pessoa trabalha, em quê, nem se mantém registro profissional; a área CINE 07 é mais larga que 'cursos de engenharia'.",
+        "fonteId": "ibge-censo2022-educacao",
+        "tipo": "degrau",
+        "foraDoAfunilamento": false,
+        "heroDestaque": true,
+        "lacunaAposEste": {
+          "titulo": "Diploma ≠ registro",
+          "explicacao": "Quem vai trabalhar em outra área tipicamente não se registra no CREA (ou cancela o registro). A área CINE inclui arquitetos (CAU) e cursos fora do Sistema Confea/Crea — os conjuntos não se aninham perfeitamente."
+        }
+      },
+      {
+        "id": "ocupados-censo2022",
+        "modo": "estoque",
+        "ordem": 2,
+        "rotulo": "Ocupados COMO engenheiros (ocupação declarada)",
+        "valor": 505000,
+        "valorExibicao": "505 mil",
+        "baseNome": "IBGE — Censo 2022 (Trabalho e Rendimento, amostra)",
+        "ano": "2022",
+        "oQueMede": "Pessoas cuja ocupação declarada no Censo 2022 é 'engenheiro' — cresceu 64,1% desde 2010 (308 mil).",
+        "oQueNaoMede": "Não captura formados em engenharia trabalhando como gerentes, analistas, PJ em outra CBO — exatamente a evasão que o funil mede.",
+        "fonteId": "ibge-censo2022-trabalho",
+        "tipo": "degrau",
+        "foraDoAfunilamento": false,
+        "heroDestaque": true
+      },
+      {
+        "id": "ingressantes-pico",
+        "modo": "fluxo",
+        "ordem": 1,
+        "rotulo": "Ingressantes em cursos de engenharia (pico)",
+        "valor": 380000,
+        "valorExibicao": "~380 mil",
+        "baseNome": "INEP — Censo da Educação Superior",
+        "ano": "2014",
+        "oQueMede": "Entradas anuais em cursos de engenharia no auge do boom FIES/pré-sal (valor aproximado divulgado pelo IQC).",
+        "oQueNaoMede": "Não são formados: a desistência acumulada leva ~69% da coorte; ingressantes de 2024 já são ~49% menores que os de 2015.",
+        "fonteId": "inep-iqc",
+        "tipo": "degrau",
+        "foraDoAfunilamento": false,
+        "lacunaAposEste": {
+          "titulo": "Entrar ≠ formar",
+          "explicacao": "A desistência acumulada da coorte de 2012 chegou a 68,74% até 2019 (INEP/ABENGE); a taxa de conclusão é inferior a 40% (CONTECC 2025)."
+        }
+      },
+      {
+        "id": "concluintes-ano",
+        "modo": "fluxo",
+        "ordem": 2,
+        "rotulo": "Concluintes de engenharia por ano",
+        "valor": 95607,
+        "valorExibicao": "95,6 mil",
+        "baseNome": "INEP (tabulação SEESP/Mira)",
+        "ano": "2023",
+        "oQueMede": "Formados em cursos de engenharia (recorte estrito) registrados pelo Censo INEP em 2023.",
+        "oQueNaoMede": "Não diz quantos vão se registrar no CREA nem quantos vão trabalhar na área; ano difere do degrau de ingressantes (coortes distintas).",
+        "fonteId": "inep-seesp-concluintes",
+        "tipo": "degrau",
+        "foraDoAfunilamento": false,
+        "lacunaAposEste": {
+          "titulo": "Formado ≠ registrado — e 54,5% nunca se registram",
+          "explicacao": "54,5% dos graduados em engenharia a partir de 2011 NÃO efetuaram registro profissional (Confea, CONTECC 2021). Além disso, registro novo ≠ formado do mesmo ano: há defasagem (muitos se registram anos depois) e não-registro (quem vai para outra área tipicamente nunca se registra)."
+        }
+      },
+      {
+        "id": "registros-novos-2025",
+        "modo": "fluxo",
+        "ordem": 3,
+        "rotulo": "Registros novos no Sistema por ano (todas as profissões)",
+        "valor": 65245,
+        "valorExibicao": "65,2 mil",
+        "baseNome": "CONFEA — RegistrosPorAno (coleta própria, ago/2026)",
+        "ano": "2025",
+        "oQueMede": "Registros novos de TODAS as profissões do Sistema Confea/Crea em 2025 — série nacional dos relatórios SIC, coletada por mim. E 46.650 nos oito primeiros meses de 2026 (PARCIAL — nunca comparável a ano cheio).",
+        "oQueNaoMede": "Não é só engenheiros (inclui agrônomos, geocientistas, tecnólogos); série com quebras (CAU 2011, CFT 2018–19). O parcial de 2026 não entra em nenhuma razão contra ano cheio.",
+        "fonteId": "confea-sic-usuario",
+        "tipo": "degrau",
+        "foraDoAfunilamento": false,
+        "lacunaAposEste": {
+          "titulo": "Sistema inteiro ≠ engenheiros",
+          "explicacao": "A última série pública só de engenheiros (CONTECC) apontava ~43 mil registros novos/ano em 2020, contra ~96–127 mil formados/ano no período — o funil aperta antes do registro."
+        }
+      },
+      {
+        "id": "registros-engenheiros-2020",
+        "modo": "fluxo",
+        "ordem": 4,
+        "rotulo": "Registros novos por ano — só engenheiros",
+        "valor": 43000,
+        "valorExibicao": "~43 mil",
+        "baseNome": "CONFEA/CONTECC 2021",
+        "ano": "2020",
+        "oQueMede": "Registros novos de engenheiros (todas as modalidades) em 2020, no recorte só-engenheiros do estudo CONTECC (valor aproximado; pico ~74 mil em 2014).",
+        "oQueNaoMede": "Ano difere do degrau anterior (2020 vs 2024); não diz se o registrado exerce a profissão.",
+        "fonteId": "contecc2021",
+        "tipo": "degrau",
+        "foraDoAfunilamento": false,
+        "rotuloDeIdade": "CONTECC 2021, dado de 2020. A captura do SIC de 30/08/2026 conta TÍTULOS por modalidade e PESSOAS apenas no total do Sistema — não há contagem mais recente publicada só de engenheiros."
+      },
+      {
+        "id": "sistema-confea-total",
+        "modo": "estoque",
+        "ordem": 4,
+        "rotulo": "Profissionais ativos no Sistema Confea/Crea (todas as profissões)",
+        "valor": 1217708,
+        "valorExibicao": "1,22 milhão",
+        "baseNome": "CONFEA — SIC (30/08/2026)",
+        "ano": "2026",
+        "oQueMede": "Registros ativos de TODAS as profissões do Sistema em 30/08/2026: engenheiros, agrônomos, geólogos, geógrafos, meteorologistas, tecnólogos e técnicos remanescentes.",
+        "oQueNaoMede": "Não é o número de engenheiros nem de quem exerce a profissão; inclui quem só mantém a anuidade em dia. Por isso NUNCA entra como numerador de razão sobre os diplomados.",
+        "fonteId": "confea-sic-estoque-2026",
+        "tipo": "anotacaoLateral",
+        "foraDoAfunilamento": true,
+        "unidade": "TODAS AS PROFISSÕES DO SISTEMA",
+        "proibidoComoNumerador": true,
+        "lacunaAposEste": {
+          "titulo": "Profissionais do Sistema ≠ engenheiros",
+          "explicacao": "O total do Sistema soma outras profissões além da engenharia. Por isso este degrau nunca entra como numerador de razão sobre os diplomados (regra I1): CINE 07 inclui arquitetos/CAU e cursos fora do Sistema — conjuntos não aninhados."
+        }
+      },
+      {
+        "id": "engenheiros-ativos-2020",
+        "modo": "estoque",
+        "ordem": 5,
+        "rotulo": "Engenheiros com registro ativo (todas as modalidades)",
+        "valor": 931838,
+        "valorExibicao": "932 mil",
+        "baseNome": "CONFEA/CONTECC 2021",
+        "ano": "2020",
+        "oQueMede": "Engenheiros (todas as modalidades) com registro ativo no Sistema em 2020 — recorte só-engenheiros do estudo CONTECC 2021.",
+        "oQueNaoMede": "Registro ativo ≠ exercício da profissão. O ano (2020) difere dos demais itens do estoque, e é por isso que este valor não é degrau do afunilamento: dividi-lo por um denominador de 2022 cruza anos distintos.",
+        "fonteId": "contecc2021",
+        "tipo": "anotacaoLateral",
+        "foraDoAfunilamento": true,
+        "unidade": "PESSOAS (ENGENHEIROS, 2020)",
+        "rotuloDeIdade": "CONTECC 2021, dado de 2020. A captura do SIC de 30/08/2026 conta TÍTULOS por modalidade e PESSOAS apenas no total do Sistema — não há contagem mais recente publicada só de engenheiros.",
+        "lacunaAposEste": {
+          "titulo": "Registro ativo ≠ trabalhar como engenheiro",
+          "explicacao": "Manter o registro (e a anuidade) não significa exercer a ocupação de engenheiro. O Censo 2022 conta a OCUPAÇÃO declarada — e a CBO é declarada pelo empregador: engenheiro contratado como 'analista' ou 'gerente' some desta conta."
+        }
+      },
+      {
+        "id": "saldo-caged",
+        "modo": "fluxo",
+        "ordem": 5,
+        "rotulo": "Saldo CAGED do engenheiro civil em 12 meses",
+        "valor": -812,
+        "valorExibicao": "−812",
+        "baseNome": "Novo CAGED/MTE (Buscador NCM)",
+        "ano": "jul/2025–jun/2026",
+        "oQueMede": "Saldo de vagas formais CLT do engenheiro civil (CBO 2142-05) nos 12 meses até jun/2026: 13.332 admissões vs 14.144 desligamentos — enquanto o país criou +1,28 milhão de vagas em 2025.",
+        "oQueNaoMede": "Só CLT (PJ e informal invisíveis); é FLUXO de vagas, não estoque de pessoas — por isso fica fora da escada do funil.",
+        "fonteId": "ncm-buscador-2142",
+        "tipo": "anotacaoLateral",
+        "foraDoAfunilamento": true,
+        "unidade": "VAGAS FORMAIS CLT (FLUXO)",
+        "foraDaEscada": true
+      },
+      {
+        "id": "titulos-engenharia-2026",
+        "modo": "estoque",
+        "ordem": 6,
+        "rotulo": "Títulos ativos do grupo Engenharia no Sistema Confea/Crea",
+        "valor": 1070469,
+        "valorExibicao": "1,07 milhão",
+        "baseNome": "CONFEA — SIC (30/08/2026)",
+        "ano": "2026",
+        "oQueMede": "Títulos ativos do grupo ENGENHARIA no Sistema, na captura de 30/08/2026 — o recorte de engenharia dentro do Sistema.",
+        "oQueNaoMede": "TÍTULOS ≠ PESSOAS: um profissional pode ter mais de um título (ex.: Engenheiro Civil e Engenheiro de Segurança do Trabalho). Este valor NUNCA é dividido por um denominador de pessoas — a razão resultante misturaria unidades.",
+        "fonteId": "confea-sic-estoque-2026",
+        "tipo": "anotacaoLateral",
+        "foraDoAfunilamento": true,
+        "unidade": "TÍTULOS"
+      }
+    ],
+    "sinteses": [
+      {
+        "modo": "estoque",
+        "texto": "Do estoque de 2,37 milhões de diplomados na área \"Engenharia, produção e construção\", 505 mil pessoas declaram a ocupação de engenheiro — 21,3%. São dois recortes DECLARADAMENTE DIFERENTES do mesmo Censo 2022: a área de formação é ampla (inclui arquitetura, produção e construção além das engenharias) e a ocupação é estrita. Os conjuntos NÃO são aninhados: a razão mede a distância entre o diploma da área e o cargo de engenharia, não \"a proporção de engenheiros que exercem\".",
+        "formulaExposta": "505.000 ÷ 2.371.066 = 21,30% (os dois valores são do Censo 2022; o denominador é exibido como \"2,37 milhões\")"
+      },
+      {
+        "modo": "fluxo",
+        "texto": "No pico (2014), ~380 mil pessoas entraram em cursos de engenharia; em 2023 formaram-se 95.607; em 2025 o Sistema registrou 65.245 profissionais novos de TODAS as profissões — e a última série pública só de engenheiros apontava ~43 mil registros novos por ano (2020). Entre formar e registrar há a lacuna medida pelo próprio Confea: 54,5% dos graduados a partir de 2011 nunca efetuaram registro. Coortes e anos distintos — as bases não são comparáveis 1:1.",
+        "formulaExposta": "95.607 ÷ 380.000 ≈ 25% (coortes distintas: concluintes de 2023 vs ingressantes de 2014) · 43.000 ÷ 95.607 ≈ 45% (anos distintos: 2020 vs 2023)"
+      }
+    ]
+  }
+}

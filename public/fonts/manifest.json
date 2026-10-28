@@ -1,0 +1,45 @@
+{
+  "format": "WOFF",
+  "subsets": [
+    "Latin",
+    "Latin Extended"
+  ],
+  "fontDisplay": "swap",
+  "families": {
+    "Lato": [
+      400,
+      700
+    ],
+    "Raleway": "variable 100–900"
+  },
+  "assets": [
+    {
+      "file": "Lato-Regular.woff",
+      "bytes": 140152,
+      "sha256": "a7fbeacc37f9074a01ac0f14e853bb74184dec5c1d570c5baaae0a2caf5e5d23",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/lato/Lato-Regular.ttf",
+      "variableAxes": []
+    },
+    {
+      "file": "Lato-Bold.woff",
+      "bytes": 136440,
+      "sha256": "a4943e8a355475e80fdb44fa5c48e9fec2f68b9154800af34eb38118a0ce4cd9",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/lato/Lato-Bold.ttf",
+      "variableAxes": []
+    },
+    {
+      "file": "Raleway-Variable.woff",
+      "bytes": 84812,
+      "sha256": "3f7f80b587ec3d48138f5ba31db9568df614cab29979cb5e754d89e5121061e3",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/raleway/Raleway%5Bwght%5D.ttf",
+      "variableAxes": [
+        {
+          "tag": "wght",
+          "min": 100.0,
+          "default": 100.0,
+          "max": 900.0
+        }
+      ]
+    }
+  ]
+}

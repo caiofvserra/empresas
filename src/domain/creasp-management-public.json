@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "title": "Resultados publicados pelo CREA-SP — exercício 2025",
+    "publisher": "Conselho Regional de Engenharia e Agronomia de São Paulo",
+    "geography": "Estado de São Paulo",
+    "uf": "SP",
+    "referenceYear": 2025,
+    "retrievedAt": "2026-10-11",
+    "sourceUrl": "https://www.creasp.org.br/wp-content/uploads/2026/03/sumario_executivo2025.pdf",
+    "sourceTitle": "Sumário Executivo — Relatório de Gestão 2025",
+    "sourceSha256": "85b617205d8c1a9d4d2ae41330abf3cc3a29ebfce02997b56cdc4f3d4ee5ed4e",
+    "sourceBytes": 12394601,
+    "sourcePhysicalPages": 32,
+    "sourcePrintedPaginationNote": "As referências usam a página física do PDF; a página física 28 corresponde à seção após a página impressa 23, e a página física 29 traz a página impressa 25.",
+    "extraction": "Leitura do PDF oficial obtido por HTTP GET e extração local de texto; transcrição dos agregados apresentados, sem executar código de repositórios externos.",
+    "status": "publicado pelo CREA-SP; não constitui auditoria dos registros de origem",
+    "synthetic": false,
+    "seed": null,
+    "grain": "Um agregado publicado por indicador e exercício; sem identificadores de pessoas, empresas, eventos ou processos.",
+    "deduplicationMethod": "Não informado nas seções consultadas para espectadores, certificados e usuários dos programas.",
+    "limitations": [
+      "Os números são resultados declarados pelo próprio Conselho. A leitura fiel não valida sua completude, identidade, deduplicação ou efeito causal.",
+      "Espectadores, certificados emitidos, usuários, cursos e unidades físicas são unidades de contagem diferentes; não formam um funil de pessoas distintas.",
+      "O símbolo > preserva o limite inferior publicado. Não tratar o número-base como total exato.",
+      "Autos publicados como 201 mil preservam aproximação. Não exibir 201.000 como contagem auditada exata.",
+      "Ações fiscalizatórias, autos e processos analisados não são etapas deduplicadas de uma mesma coorte. Não dividir esses agregados para inferir taxa de infração, conclusão ou regularização.",
+      "Novos registros profissionais abrangem as profissões do Sistema na circunscrição paulista; não equivalem apenas a engenheiros ou a ingressos no mercado de trabalho.",
+      "ARTs são documentos emitidos, não necessariamente obras, serviços, contratos, profissionais distintos ou atividades concluídas.",
+      "A publicação distingue 37 unidades CreaLab Coworking de dois Espaços CreaLab. Não rotular sua soma como 39 coworkings.",
+      "Os agregados estaduais anuais não recebem filtros municipais, GRE, CNAE, porte, CNPJ ou pessoas fictícias.",
+      "Não há conciliação nominal entre estes números públicos e as entidades demonstrativas da aplicação.",
+      "A avaliação de benefício ao profissional exige participação identificada, custos atribuíveis, seguimento e resultados documentados; estes agregados não fornecem esses dados.",
+      "O corpo do relatório menciona cerca de 30 cursos; o quadro final explicita 32. Esta transcrição usa o quadro final e registra a diferença de precisão, sem concluir erro ou superestimação."
+    ]
+  },
+  "facts": [
+    { "id": "creasp-2025-inspection-actions", "label": "Ações fiscalizatórias", "value": 409757, "displayValue": "409.757", "valueKind": "exact", "unit": "ações reportadas", "year": 2025, "uf": "SP", "domain": "inspection", "sourcePhysicalPage": 28, "sourceNote": "Ações fundamentadas no cruzamento entre bases do CREA-SP e de órgão externo; contagem declarada no quadro de resultados." },
+    { "id": "creasp-2025-infraction-notices", "label": "Autos lavrados", "value": 201000, "displayValue": "cerca de 201 mil", "valueKind": "approximate", "unit": "autos reportados", "year": 2025, "uf": "SP", "domain": "inspection", "sourcePhysicalPage": 28, "sourceNote": "O quadro publica 201 mil autos, sem número inteiro granular; não equivale a processos com decisão definitiva ou entidades distintas." },
+    { "id": "creasp-2025-new-professional-registrations", "label": "Novos profissionais registrados", "value": 25577, "displayValue": "25.577", "valueKind": "exact", "unit": "registros profissionais reportados", "year": 2025, "uf": "SP", "domain": "professionals", "sourcePhysicalPage": 28, "sourceNote": "Todas as profissões abrangidas pelo Sistema na circunscrição paulista; não é contagem de engenheiros ocupados." },
+    { "id": "creasp-2025-new-company-registrations", "label": "Novas empresas formalizadas", "value": 26862, "displayValue": "26.862", "valueKind": "exact", "unit": "empresas reportadas", "year": 2025, "uf": "SP", "domain": "companies", "sourcePhysicalPage": 28, "sourceNote": "Rótulo publicado no quadro do relatório; a transcrição não verifica empresas distintas por raiz CNPJ ou atribuição causal à fiscalização." },
+    { "id": "creasp-2025-arts", "label": "ARTs emitidas", "value": 1899583, "displayValue": "1.899.583", "valueKind": "exact", "unit": "ARTs reportadas", "year": 2025, "uf": "SP", "domain": "professionals", "sourcePhysicalPage": 28, "sourceNote": "Documentos emitidos no exercício; não contar automaticamente como atividades, obras ou autores distintos." },
+    { "id": "creasp-2025-collegiate-processes", "label": "Processos analisados", "value": 6599, "displayValue": "6.599", "valueKind": "exact", "unit": "processos reportados", "year": 2025, "uf": "SP", "domain": "governance", "sourcePhysicalPage": 29, "sourceNote": "Processos analisados pelo Plenário e Câmaras Especializadas; não assumir identidade com os autos do exercício ou decisão definitiva." },
+    { "id": "creasp-2025-capacita-courses", "label": "Cursos Crea-SP Capacita", "value": 32, "displayValue": "32", "valueKind": "exact", "unit": "cursos reportados", "year": 2025, "uf": "SP", "domain": "programs", "sourcePhysicalPage": 29, "sourceNote": "Quadro final: 32 cursos. O texto da página física 22 usa cerca de 30; diferença de precisão preservada no metadado." },
+    { "id": "creasp-2025-capacita-spectators", "label": "Espectadores Crea-SP Capacita", "value": 30000, "displayValue": ">30 mil", "valueKind": "lowerBound", "unit": "espectadores reportados", "year": 2025, "uf": "SP", "domain": "programs", "sourcePhysicalPage": 29, "sourceNote": "Mais de 30 mil espectadores; não foi informado método de deduplicação entre cursos, transmissões ou visualizações." },
+    { "id": "creasp-2025-capacita-content-hours", "label": "Conteúdo técnico disponível", "value": 600, "displayValue": "600 h", "valueKind": "reported", "unit": "horas de conteúdo", "year": 2025, "uf": "SP", "domain": "programs", "sourcePhysicalPage": 29, "sourceNote": "Horas de conteúdo técnico declaradas; não são horas assistidas, pessoa-hora de aprendizagem ou conclusão de curso." },
+    { "id": "creasp-2025-capacita-certificates", "label": "Certificados emitidos", "value": 5000, "displayValue": ">5 mil", "valueKind": "lowerBound", "unit": "certificados reportados", "year": 2025, "uf": "SP", "domain": "programs", "sourcePhysicalPage": 29, "sourceNote": "Mais de 5 mil documentos emitidos; uma pessoa pode receber vários certificados. Não calcular taxa de conclusão dividindo por espectadores." },
+    { "id": "creasp-2025-coworking-units", "label": "Unidades CreaLab Coworking", "value": 37, "displayValue": "37", "valueKind": "exact", "unit": "unidades reportadas", "year": 2025, "uf": "SP", "domain": "programs", "sourcePhysicalPage": 22, "sourceNote": "Rede de unidades coworking declarada no relatório; os dois Espaços CreaLab são outra categoria." },
+    { "id": "creasp-2025-crealab-spaces", "label": "Espaços CreaLab", "value": 2, "displayValue": "2", "valueKind": "exact", "unit": "espaços reportados", "year": 2025, "uf": "SP", "domain": "programs", "sourcePhysicalPage": 22, "sourceNote": "Espaços em ambientes de universidade e empresa; não somar sob o rótulo de unidades coworking." },
+    { "id": "creasp-2025-coworking-users", "label": "Usuários CreaLab", "value": 6000, "displayValue": ">6 mil", "valueKind": "lowerBound", "unit": "usuários reportados", "year": 2025, "uf": "SP", "domain": "programs", "sourcePhysicalPage": 22, "sourceNote": "Mais de seis mil usuários atendidos; método público de deduplicação e distribuição por unidade não consta na seção lida." }
+  ]
+}

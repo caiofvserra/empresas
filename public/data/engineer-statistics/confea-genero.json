@@ -1,0 +1,247 @@
+{
+  "meta": {
+    "dataset": "confea-genero",
+    "titulo": "Profissionais ativos no Sistema Confea/Crea por gênero e UF",
+    "unidade": "profissionais ativos",
+    "fonteId": "confea-sic-estoque-2026",
+    "notas": [
+      "Brasil: 970.342 homens e 247.366 mulheres — 20,3% de mulheres entre os registros ativos.",
+      "O SIC informa apenas duas categorias de gênero (Masculino/Feminino); não há categoria \"não informado\" no retorno do endpoint.",
+      "Comparação editorial possível: a fatia de mulheres no estoque de registros ativos é menor que a fatia de concluintes mulheres em engenharia medida pelo INEP (data/formacao-cards.json).",
+      "Metodologia: o endpoint devolve 28 linhas — 27 Creas + uma linha agregada \"TOTAL:\". A linha de total é FILTRADA antes de qualquer soma; feito isso, a soma das 27 UFs bate exatamente com o total do Confea. Somar as 28 linhas dá o dobro do valor real — era essa a origem da suposta \"duplicidade de vistos/títulos\" (ver docs/research/confea-sic-analise.md).",
+      "Arquivo DERIVADO — não editar à mão. Regerar com `node scripts/derivar-confea.mjs` a partir de docs/research/assets/ (recoleta: scripts/fetch-confea.mjs / scripts/fetch-ibge.mjs, fora do container)."
+    ],
+    "atualizadoEm": "2026-08-30",
+    "snapshot": {
+      "consultaUrl": "https://relatorio.confea.org.br/Profissional/ProfissionaisPorGenero/Buscar",
+      "capturadoEm": "2026-08-30"
+    }
+  },
+  "data": {
+    "valores": [
+      {
+        "ufCodigo": "11",
+        "crea": "CREA-RO",
+        "masculino": 5765,
+        "feminino": 2283,
+        "total": 8048,
+        "percentualFeminino": 28.4
+      },
+      {
+        "ufCodigo": "12",
+        "crea": "CREA-AC",
+        "masculino": 1969,
+        "feminino": 773,
+        "total": 2742,
+        "percentualFeminino": 28.2
+      },
+      {
+        "ufCodigo": "13",
+        "crea": "CREA-AM",
+        "masculino": 12443,
+        "feminino": 4445,
+        "total": 16888,
+        "percentualFeminino": 26.3
+      },
+      {
+        "ufCodigo": "14",
+        "crea": "CREA-RR",
+        "masculino": 1220,
+        "feminino": 575,
+        "total": 1795,
+        "percentualFeminino": 32
+      },
+      {
+        "ufCodigo": "15",
+        "crea": "CREA-PA",
+        "masculino": 26167,
+        "feminino": 10416,
+        "total": 36583,
+        "percentualFeminino": 28.5
+      },
+      {
+        "ufCodigo": "16",
+        "crea": "CREA-AP",
+        "masculino": 1415,
+        "feminino": 464,
+        "total": 1879,
+        "percentualFeminino": 24.7
+      },
+      {
+        "ufCodigo": "17",
+        "crea": "CREA-TO",
+        "masculino": 5749,
+        "feminino": 2006,
+        "total": 7755,
+        "percentualFeminino": 25.9
+      },
+      {
+        "ufCodigo": "21",
+        "crea": "CREA-MA",
+        "masculino": 12902,
+        "feminino": 4132,
+        "total": 17034,
+        "percentualFeminino": 24.3
+      },
+      {
+        "ufCodigo": "22",
+        "crea": "CREA-PI",
+        "masculino": 8500,
+        "feminino": 2080,
+        "total": 10580,
+        "percentualFeminino": 19.7
+      },
+      {
+        "ufCodigo": "23",
+        "crea": "CREA-CE",
+        "masculino": 20308,
+        "feminino": 4971,
+        "total": 25279,
+        "percentualFeminino": 19.7
+      },
+      {
+        "ufCodigo": "24",
+        "crea": "CREA-RN",
+        "masculino": 11731,
+        "feminino": 3459,
+        "total": 15190,
+        "percentualFeminino": 22.8
+      },
+      {
+        "ufCodigo": "25",
+        "crea": "CREA-PB",
+        "masculino": 11039,
+        "feminino": 3098,
+        "total": 14137,
+        "percentualFeminino": 21.9
+      },
+      {
+        "ufCodigo": "26",
+        "crea": "CREA-PE",
+        "masculino": 22454,
+        "feminino": 6172,
+        "total": 28626,
+        "percentualFeminino": 21.6
+      },
+      {
+        "ufCodigo": "27",
+        "crea": "CREA-AL",
+        "masculino": 7564,
+        "feminino": 1818,
+        "total": 9382,
+        "percentualFeminino": 19.4
+      },
+      {
+        "ufCodigo": "28",
+        "crea": "CREA-SE",
+        "masculino": 5955,
+        "feminino": 2015,
+        "total": 7970,
+        "percentualFeminino": 25.3
+      },
+      {
+        "ufCodigo": "29",
+        "crea": "CREA-BA",
+        "masculino": 41669,
+        "feminino": 12812,
+        "total": 54481,
+        "percentualFeminino": 23.5
+      },
+      {
+        "ufCodigo": "31",
+        "crea": "CREA-MG",
+        "masculino": 126664,
+        "feminino": 34550,
+        "total": 161214,
+        "percentualFeminino": 21.4
+      },
+      {
+        "ufCodigo": "32",
+        "crea": "CREA-ES",
+        "masculino": 18931,
+        "feminino": 6369,
+        "total": 25300,
+        "percentualFeminino": 25.2
+      },
+      {
+        "ufCodigo": "33",
+        "crea": "CREA-RJ",
+        "masculino": 95643,
+        "feminino": 24314,
+        "total": 119957,
+        "percentualFeminino": 20.3
+      },
+      {
+        "ufCodigo": "35",
+        "crea": "CREA-SP",
+        "masculino": 291130,
+        "feminino": 55694,
+        "total": 346824,
+        "percentualFeminino": 16.1
+      },
+      {
+        "ufCodigo": "41",
+        "crea": "CREA-PR",
+        "masculino": 62144,
+        "feminino": 14605,
+        "total": 76749,
+        "percentualFeminino": 19
+      },
+      {
+        "ufCodigo": "42",
+        "crea": "CREA-SC",
+        "masculino": 39756,
+        "feminino": 11131,
+        "total": 50887,
+        "percentualFeminino": 21.9
+      },
+      {
+        "ufCodigo": "43",
+        "crea": "CREA-RS",
+        "masculino": 55213,
+        "feminino": 14391,
+        "total": 69604,
+        "percentualFeminino": 20.7
+      },
+      {
+        "ufCodigo": "50",
+        "crea": "CREA-MS",
+        "masculino": 14040,
+        "feminino": 3993,
+        "total": 18033,
+        "percentualFeminino": 22.1
+      },
+      {
+        "ufCodigo": "51",
+        "crea": "CREA-MT",
+        "masculino": 21869,
+        "feminino": 7384,
+        "total": 29253,
+        "percentualFeminino": 25.2
+      },
+      {
+        "ufCodigo": "52",
+        "crea": "CREA-GO",
+        "masculino": 29401,
+        "feminino": 8587,
+        "total": 37988,
+        "percentualFeminino": 22.6
+      },
+      {
+        "ufCodigo": "53",
+        "crea": "CREA-DF",
+        "masculino": 18701,
+        "feminino": 4829,
+        "total": 23530,
+        "percentualFeminino": 20.5
+      }
+    ],
+    "completo": true,
+    "brasil": {
+      "masculino": 970342,
+      "feminino": 247366,
+      "total": 1217708,
+      "percentualFeminino": 20.3
+    }
+  }
+}

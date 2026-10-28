@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "dataset": "caged-saldos",
+    "titulo": "O país contrata. As vagas rotuladas 'engenheiro' ficam paradas — saldos do Novo CAGED (V10)",
+    "unidade": "vagas (saldo)",
+    "fonteId": "mte-caged-saldo",
+    "notas": [
+      "AVISO FIXO: janelas distintas — o saldo do país é por ANO-CALENDÁRIO (2023/2024/2025); os saldos por CBO são JANELAS MÓVEIS de 12 meses fixadas na coleta (ago/2026). As duas nunca são somadas nem plotadas juntas.",
+      "CAGED é FLUXO só de celetistas: PJ, estatutários e informais não aparecem; não somar nem comparar com estoque RAIS.",
+      "§7 item 13: a formulação \"a engenharia demite\" está BANIDA em qualquer lugar do site. −812 em 27.476 movimentações é −3,0% do FLUXO e ~−1,3% do estoque de vínculos da CBO: isso descreve ESTABILIDADE, não demissão. A magnitude relativa é publicada junto do valor absoluto.",
+      "C15/T-13g: os denominadores da manchete têm linha própria com fonte e URL — 13.332 admissões, 14.144 desligamentos, 27.476 movimentações e o estoque de 60.895 vínculos ativos da CBO na RAIS 2024. Sem eles o site publicaria um percentual cujo denominador não existia em dataset nenhum.",
+      "Regra I2: o mecânico industrial (−144) NÃO entra — não há linha com URL própria. O esquema rejeita CBO sem fonteId.",
+      "DECLARAÇÃO DE AMOSTRA obrigatória (§8, pendência 14): foram medidas TRÊS CBOs de engenharia e as três deram negativo; NENHUMA CBO de engenharia com saldo positivo foi medida. A CBO 2122-15 (engenheiro de software), que o Ato 5 cita com salário acima do piso, ainda não foi coletada no Novo CAGED."
+    ],
+    "atualizadoEm": "2026-08-31"
+  },
+  "data": {
+    "saldoPais": [
+      {
+        "periodo": "2023",
+        "valor": 1454124,
+        "fonteId": "mte-caged-saldo"
+      },
+      {
+        "periodo": "2024",
+        "valor": 1693673,
+        "fonteId": "mte-caged-saldo"
+      },
+      {
+        "periodo": "2025",
+        "valor": 1279498,
+        "fonteId": "mte-caged-saldo"
+      }
+    ],
+    "cbos": [
+      {
+        "cbo": "2142-05",
+        "ocupacao": "Engenheiro civil",
+        "valor": -812,
+        "janela": "12m jul/25–jun/26",
+        "fonteId": "ncm-buscador-2142"
+      },
+      {
+        "cbo": "2143-05",
+        "ocupacao": "Engenheiro eletricista",
+        "valor": -152,
+        "janela": "12m ref. ago/2026",
+        "fonteId": "portal-salario-eletricista"
+      },
+      {
+        "cbo": "2149-05",
+        "ocupacao": "Engenheiro de produção",
+        "valor": -71,
+        "janela": "12m ref. ago/2026",
+        "fonteId": "portal-salario-producao"
+      }
+    ],
+    "denominadores": [
+      {
+        "id": "admissoes-2142-05",
+        "rotulo": "Admissões — engenheiro civil (CBO 2142-05)",
+        "valor": 13332,
+        "unidade": "admissões",
+        "detalhe": "Novo CAGED via Buscador NCM, 12 meses até jun/2026.",
+        "ano": "jul/2025–jun/2026",
+        "fonteId": "ncm-buscador-2142",
+        "urlEspecifica": "https://buscadorncm.com.br/cbo/214205"
+      },
+      {
+        "id": "desligamentos-2142-05",
+        "rotulo": "Desligamentos — engenheiro civil (CBO 2142-05)",
+        "valor": 14144,
+        "unidade": "desligamentos",
+        "detalhe": "Novo CAGED via Buscador NCM, 12 meses até jun/2026.",
+        "ano": "jul/2025–jun/2026",
+        "fonteId": "ncm-buscador-2142",
+        "urlEspecifica": "https://buscadorncm.com.br/cbo/214205"
+      },
+      {
+        "id": "movimentacoes-2142-05",
+        "rotulo": "Movimentações — engenheiro civil (CBO 2142-05)",
+        "valor": 27476,
+        "unidade": "movimentações",
+        "detalhe": "13.332 + 14.144 = 27.476. É o DENOMINADOR da magnitude relativa publicada: −812 ÷ 27.476 = −3,0% do fluxo.",
+        "ano": "jul/2025–jun/2026",
+        "fonteId": "ncm-buscador-2142",
+        "urlEspecifica": "https://buscadorncm.com.br/cbo/214205"
+      },
+      {
+        "id": "estoque-rais-2142-05",
+        "rotulo": "Estoque de vínculos ativos — engenheiro civil (CBO 2142-05), RAIS 2024",
+        "valor": 60895,
+        "unidade": "vínculos",
+        "detalhe": "Estoque em 31/12/2024 (total de vínculos formais no país: 57.132.156). É o denominador da leitura de estoque: −812 ÷ 60.895 = −1,3%. Estoque e fluxo nunca são somados.",
+        "ano": "2024",
+        "fonteId": "ncm-buscador-2142",
+        "urlEspecifica": "https://buscadorncm.com.br/cbo/214205"
+      }
+    ]
+  }
+}

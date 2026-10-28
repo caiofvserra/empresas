@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "crea-refresh-1.0",
+  "outputDirectory": "./var/source-ingestion/pncp",
+  "pncp": {
+    "enabled": false,
+    "endpoint": "https://pncp.gov.br/api/consulta/v1/contratos",
+    "lookbackDays": 7,
+    "lagDays": 1,
+    "pageSize": 500,
+    "maxPages": 1000,
+    "categoryIds": [7, 8, 9],
+    "timeoutMs": 30000,
+    "retries": 3,
+    "maxBytes": 20000000
+  }
+}

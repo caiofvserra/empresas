@@ -1,0 +1,13 @@
+{
+  "name": "CREA-SP | Engenharia e inteligência V9",
+  "dataColors": ["#3662E2", "#15265C", "#6077B6", "#0E1732", "#A4B5DA", "#FFB001"],
+  "background": "#F0F4FF",
+  "foreground": "#0E1732",
+  "tableAccent": "#3662E2",
+  "textClasses": {
+    "callout": { "fontFace": "Segoe UI Semibold", "fontSize": 32, "color": "#0E1732" },
+    "title": { "fontFace": "Segoe UI Semibold", "fontSize": 12, "color": "#15265C" },
+    "header": { "fontFace": "Segoe UI Semibold", "fontSize": 12, "color": "#15265C" },
+    "label": { "fontFace": "Segoe UI", "fontSize": 10, "color": "#526684" }
+  }
+}

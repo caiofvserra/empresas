@@ -1,0 +1,2433 @@
+{
+  "metadata": {
+    "territory": "São Paulo",
+    "label": "Engenharias e Agronomia • presencial",
+    "source": "Censo da Educação Superior / INEP — reprodução pública no Observatório Nacional da Educação Superior",
+    "sourceUrl": "https://github.com/esidiao/observatorio-educacao-superior/tree/188e182414c460737f13ca3bc019eeeaf14589df",
+    "officialUrl": "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior",
+    "referenceYear": 2024,
+    "years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+    ],
+    "geography": "SP — local de oferta presencial do curso; município pelo código IBGE",
+    "modality": "Presencial",
+    "modalityCode": 1,
+    "fieldDefinition": "Rótulos CINE cujo nome inicia com Engenharia, mais o rótulo Agronomia. Seleção explícita de 47 códigos no catálogo 2024; 40 com observação em SP em 2024. Não equivale automaticamente ao universo sujeito ao registro CREA.",
+    "countingUnit": "Concluintes, ingressantes e matrículas por curso no ano — não pessoas distintas, registros profissionais ou diplomas individuais",
+    "sourceCommit": "188e182414c460737f13ca3bc019eeeaf14589df",
+    "sourceRepository": "esidiao/observatorio-educacao-superior",
+    "upstreamExtractionDate": "2026-07-27",
+    "extractedAt": "2026-10-10",
+    "methodVersion": "educacao-inep-reproducao-auditada-v1",
+    "realData": true,
+    "seed": null,
+    "license": "Dados estatísticos públicos. O repositório de reprodução não declara licença geral; nenhum código ou redação do projeto foi incorporado. A fonte oficial SEADE equivalente de matrículas está catalogada com CC-BY-4.0 no portal Dados Abertos SP.",
+    "formulas": {
+      "graduates": "SOMA(QT_CONC), UF=SP, TP_MODALIDADE_ENSINO=1, rótulos CINE selecionados",
+      "entrants": "SOMA(QT_ING), mesmo recorte",
+      "enrolled": "SOMA(QT_MAT), mesmo recorte",
+      "yearVariation": "(valor do ano / valor do ano anterior - 1) × 100"
+    },
+    "validation": {
+      "enrollmentComparisons": 240,
+      "enrollmentComparisonsPassed": 240,
+      "officialEnrollmentSource": "https://repositorio.seade.gov.br/dataset/educacao-do-ensino-superior",
+      "officialEnrollmentCsvSha256": "30260d1da68732aac92bb061e75f1fe3371bedbe4b51ee3f64274c5a8c3122bb",
+      "stateFieldCity2024Reconciled": true,
+      "graduatesDirectGovernmentFileVerified": false,
+      "details": "240 comparações CINE × ano de matrículas reconciliadas integralmente com CSV oficial SEADE/INEP. Concluintes e ingressantes conferidos quanto a método e reconciliação interna, sem nova extração direta dos microdados INEP devido a HTTP503."
+    },
+    "limitations": [
+      "Concluintes são contagens por curso/ano, não um cadastro nominal de diplomados nem pessoas distintas.",
+      "Apenas modalidade presencial. EaD não participa destes totais.",
+      "2019–2024 é a série externa; 2024 é o recorte municipal. Não alterar artificialmente a competência para o período demonstrativo CREA de 2026.",
+      "Rótulos CINE inexistentes em uma edição permanecem sem observação. Nenhuma lacuna foi preenchida por interpolação ou valor aleatório.",
+      "O município identifica o local de oferta presencial, não o domicílio atual do concluinte.",
+      "Matrículas constituem estoque; ingressantes e concluintes são fluxos anuais e não compõem a mesma coorte. A relação não mede evasão, empregabilidade ou conversão em registro.",
+      "Não há ligação individual com CPF, profissional CREA, responsável técnico, CNPJ ou vínculo de emprego.",
+      "Os valores de concluintes e ingressantes provêm de reprodução pública de microdados INEP, com código de extração inspecionado e totais internos conciliados. O arquivo bruto governamental não pôde ser baixado nesta sessão; sua validação direta permanece pendente.",
+      "O recorte de cursos é analítico e inclui Engenharia de software; sua presença não determina atribuições ou obrigação de registro profissional.",
+      "O código do repositório engineer-statistics permanece restrito nesta sessão, mas seus dados publicados no GitHub Pages foram lidos e importados separadamente. Os repositórios receita-socios-eng e conselho agora estão acessíveis. Esta série de São Paulo permanece proveniente da outra reprodução pública identificada, com recorte e competência próprios."
+    ]
+  },
+  "outputSha256": "048e2e1dbd21487e2ff8244ccbe20e8554f60acae45ebc4e6a6d101ccb567ec6",
+  "outputFile": "src/domain/external-education.json",
+  "sourceFiles": [
+    {
+      "path": "data/cursos/engenharia-civil/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-civil/serie.json",
+      "sha256": "1bccd77cac7fe0d7b9366bbf11b2acc5b2e8ff5b44b46716d9d5e97e2445dfd4"
+    },
+    {
+      "path": "data/cursos/engenharia-civil/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-civil/nacional.json",
+      "sha256": "8280efe8d047c500733f389d6a820a51b9bea85d8cee3069f96c0f0a398caf28"
+    },
+    {
+      "path": "data/cursos/engenharia-civil/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-civil/municipios/SP.json",
+      "sha256": "2bbedba254688bf4a46eae0217ad5fceebc8b54083456d4f45a500e69a1e4d72"
+    },
+    {
+      "path": "data/cursos/engenharia-de-producao/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-producao/serie.json",
+      "sha256": "d17882fb8255333a89d2845e3c3a197b2c6fb8fbee493d3113428bd3ea54082a"
+    },
+    {
+      "path": "data/cursos/engenharia-de-producao/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-producao/nacional.json",
+      "sha256": "2daa0237fb22f4e456099a1c71cebec992d869947c2b4a252dccf6d02bd67d51"
+    },
+    {
+      "path": "data/cursos/engenharia-de-producao/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-producao/municipios/SP.json",
+      "sha256": "23a788167d18cca0341d451130d2b3c057b49d97b65abba6c99a4047ef6708e8"
+    },
+    {
+      "path": "data/cursos/engenharia-de-software/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-software/serie.json",
+      "sha256": "f8abf5c9441fcd01bea1182224ac0cd679826afa427bc5e38c683bbceee423e6"
+    },
+    {
+      "path": "data/cursos/engenharia-de-software/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-software/nacional.json",
+      "sha256": "42827754fc67d941bce7324ee279d85dc836ebc7e49522f1106eea42eddb904f"
+    },
+    {
+      "path": "data/cursos/engenharia-de-software/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-software/municipios/SP.json",
+      "sha256": "ad4ec6da7022be11f08c39f1f762c8466c38bac47030813ff8a3426c09695310"
+    },
+    {
+      "path": "data/cursos/engenharia-mecanica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-mecanica/serie.json",
+      "sha256": "0ef9045e2dd3d102ec7b26ee909bc6aa993c385b0cc4035e7a46314db079db59"
+    },
+    {
+      "path": "data/cursos/engenharia-mecanica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-mecanica/nacional.json",
+      "sha256": "d07a08a38a478dbc4427c86e17a1777e7cc19495f61f7ef671c91d60fe81975d"
+    },
+    {
+      "path": "data/cursos/engenharia-mecanica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-mecanica/municipios/SP.json",
+      "sha256": "c116bf0126871ad6100f99c2f74323e659240576a779a65d7bea61b614e5c2ca"
+    },
+    {
+      "path": "data/cursos/engenharia-eletrica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-eletrica/serie.json",
+      "sha256": "745634d12c562f1b86482649ffc2292e8827af47c99a6929a9692aa920974a1d"
+    },
+    {
+      "path": "data/cursos/engenharia-eletrica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-eletrica/nacional.json",
+      "sha256": "5fbef11560b63a946635db5328fe025f17ada4897daa941793f888597af7ed6f"
+    },
+    {
+      "path": "data/cursos/engenharia-eletrica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-eletrica/municipios/SP.json",
+      "sha256": "ba5326bd0ad9663efb7c54190a9d225b9c9adfef1e0f618e650225b81a6707c1"
+    },
+    {
+      "path": "data/cursos/agronomia/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/agronomia/serie.json",
+      "sha256": "0d6bfce337a879fbc12243ac33cbbb4d83b46028a2eeac8ea50c740d44dbd350"
+    },
+    {
+      "path": "data/cursos/agronomia/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/agronomia/nacional.json",
+      "sha256": "47845bb0631501fbb32e2270501b28b3616bd9a1a7b55c74f8233fab6d7e1344"
+    },
+    {
+      "path": "data/cursos/agronomia/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/agronomia/municipios/SP.json",
+      "sha256": "f1127787f57de1ca3a586f2dfd3d3dda0a5e3e858426d9b70959d593de89a5a1"
+    },
+    {
+      "path": "data/cursos/engenharia-de-computacao/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-computacao/serie.json",
+      "sha256": "77ce950cc5fb65ba78bed65eb78310ef69d3d3683a38aacadbc096ca58461b99"
+    },
+    {
+      "path": "data/cursos/engenharia-de-computacao/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-computacao/nacional.json",
+      "sha256": "4f7adf97990e8fb7bff4f322735b90a497df5d765fd2e7105fe3fff0b977f2a8"
+    },
+    {
+      "path": "data/cursos/engenharia-de-computacao/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-computacao/municipios/SP.json",
+      "sha256": "bce1a1cd581e45fd8baf981631ee65c665f232547682af38cab927474482de06"
+    },
+    {
+      "path": "data/cursos/engenharia-ambiental-e-sanitaria/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-ambiental-e-sanitaria/serie.json",
+      "sha256": "c42d8235e2d4825ef0e3e017aea9a2088ce0e65a3af615e171023392f7aa209e"
+    },
+    {
+      "path": "data/cursos/engenharia-ambiental-e-sanitaria/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-ambiental-e-sanitaria/nacional.json",
+      "sha256": "57c5056a4ccd72273802b5e793824733a7a405cd8a649f2f5d44e8e78dbfd66f"
+    },
+    {
+      "path": "data/cursos/engenharia-ambiental-e-sanitaria/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-ambiental-e-sanitaria/municipios/SP.json",
+      "sha256": "ffce769976caed27f99bfa7f29996a8abb66b758132cc422d4cae4eb76749d72"
+    },
+    {
+      "path": "data/cursos/engenharia-de-controle-e-automacao/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-controle-e-automacao/serie.json",
+      "sha256": "2a0435afc7c9a47c8fdb984324afadd4325ec2b86a59b1b515d608af6e57d9aa"
+    },
+    {
+      "path": "data/cursos/engenharia-de-controle-e-automacao/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-controle-e-automacao/nacional.json",
+      "sha256": "5bd4591d682c38cbfe0575a62bcdfb38585472b9cafb167ada49d63fd6d5720c"
+    },
+    {
+      "path": "data/cursos/engenharia-de-controle-e-automacao/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-controle-e-automacao/municipios/SP.json",
+      "sha256": "b785b24d6b688690bff901e2abb197e7b7dfb37aad2927fe2878e29522a4a024"
+    },
+    {
+      "path": "data/cursos/engenharia-ambiental/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-ambiental/serie.json",
+      "sha256": "b6cacb01acc4bb5e9387f7a3a23f16ad9d1b34b0bd96e6ec24df3bd54e2d1cbf"
+    },
+    {
+      "path": "data/cursos/engenharia-ambiental/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-ambiental/nacional.json",
+      "sha256": "b2d3c0d36c73ada965d5a71819e7d01903d75e189763fe42b4c745edb82061d9"
+    },
+    {
+      "path": "data/cursos/engenharia-ambiental/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-ambiental/municipios/SP.json",
+      "sha256": "95e7ee231911e577d1ada27023582f36ebbbec07468a919d2df91cc296a63da3"
+    },
+    {
+      "path": "data/cursos/engenharia-quimica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-quimica/serie.json",
+      "sha256": "5fb93ed58310f7a4a9e08cfab2c89aa21191f218131483c1107e6205f99237f4"
+    },
+    {
+      "path": "data/cursos/engenharia-quimica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-quimica/nacional.json",
+      "sha256": "257a9a84cde197b02e74ec425e4cc7a446f5253dc8f06c8bb39f20f9ba61b6f6"
+    },
+    {
+      "path": "data/cursos/engenharia-quimica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-quimica/municipios/SP.json",
+      "sha256": "ec950adcb04b2f4848dc3f7a18fc69367d36c347a27a47c2f71446262528a805"
+    },
+    {
+      "path": "data/cursos/engenharia-de-alimentos/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-alimentos/serie.json",
+      "sha256": "2942b37e807d8047ed20542da50adecb923a24b1cb7d264536f9992388ae4f31"
+    },
+    {
+      "path": "data/cursos/engenharia-de-alimentos/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-alimentos/nacional.json",
+      "sha256": "a760c9f28d4e593b8032685ad1ab8ed6b022594e1e422e9091da7cc4685bbfbe"
+    },
+    {
+      "path": "data/cursos/engenharia-de-alimentos/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-alimentos/municipios/SP.json",
+      "sha256": "e4940530b0bde21b03484fde045ef53e1de6813abf54872cb85c1bd6d5cd54bf"
+    },
+    {
+      "path": "data/cursos/engenharia-mecatronica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-mecatronica/serie.json",
+      "sha256": "252a5e1b3dc1c830d1bf753203fe874fb4b6364550e04d3505e1b209f900f15a"
+    },
+    {
+      "path": "data/cursos/engenharia-mecatronica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-mecatronica/nacional.json",
+      "sha256": "92adddd59d818703d449f975281cf95260d2855c7981a41fe8fa7acfff8d107a"
+    },
+    {
+      "path": "data/cursos/engenharia-mecatronica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-mecatronica/municipios/SP.json",
+      "sha256": "77cf82a695396c024db36bc54f6d83a444d5298600597fd8cca5298ba4be509b"
+    },
+    {
+      "path": "data/cursos/engenharia-florestal/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-florestal/serie.json",
+      "sha256": "79e8567213f35bf0894aa947b3ee48ed8345b928c86f0df4e9f526e7b69c43af"
+    },
+    {
+      "path": "data/cursos/engenharia-florestal/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-florestal/nacional.json",
+      "sha256": "8efc7c28a0de4caef00835a1a2ea5095f2dacd3254418be6ec4ffd79d417baad"
+    },
+    {
+      "path": "data/cursos/engenharia-florestal/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-florestal/municipios/SP.json",
+      "sha256": "efd60a2e8d210ef1c32aab71891b2c2ec73b4a6a98da2b2bc106b33ba141bbb8"
+    },
+    {
+      "path": "data/cursos/engenharia-eletronica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-eletronica/serie.json",
+      "sha256": "a850f8ddb08042c8df6cc0cc980bb81bcb8423e68cacadadf89a5569bf98c9ac"
+    },
+    {
+      "path": "data/cursos/engenharia-eletronica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-eletronica/nacional.json",
+      "sha256": "1d93635128f89830840d7d784229f574b864936a044cc41a9dd70890ed03164e"
+    },
+    {
+      "path": "data/cursos/engenharia-eletronica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-eletronica/municipios/SP.json",
+      "sha256": "b802b29df57252953cf66337e02bd20213bdcc5077fac0f30acf93d237ad1434"
+    },
+    {
+      "path": "data/cursos/engenharia-de-materiais/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-materiais/serie.json",
+      "sha256": "42b3c624eab63b104245de62a3894d2862e55d342c9c0451c204b671e8706119"
+    },
+    {
+      "path": "data/cursos/engenharia-de-materiais/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-materiais/nacional.json",
+      "sha256": "e2507beee1e3f90f684a6c3d0136d217a98acafe7c97ebdec6f3ff991dfa5f55"
+    },
+    {
+      "path": "data/cursos/engenharia-de-materiais/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-materiais/municipios/SP.json",
+      "sha256": "6f2e0a6e86f3e0ae673fcdcf80552fcf13f61829cbcdb1cb10200d24c7aa0d7b"
+    },
+    {
+      "path": "data/cursos/engenharia-agricola/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-agricola/serie.json",
+      "sha256": "2a69f884f18936d9d53d90dde6ec144637fdc7ef8e9460ba9bcc5b1f19840caf"
+    },
+    {
+      "path": "data/cursos/engenharia-agricola/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-agricola/nacional.json",
+      "sha256": "1b3150e8011a269d5e103bcc5e95a88a2dff3495d80836a6e737ccfea08d25f2"
+    },
+    {
+      "path": "data/cursos/engenharia-agricola/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-agricola/municipios/SP.json",
+      "sha256": "3ca3a1353f4e1ce11a3b0d65cab4bc3810f144f723f704e6b9ec5d4bfe600a58"
+    },
+    {
+      "path": "data/cursos/engenharia-biomedica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-biomedica/serie.json",
+      "sha256": "51abe787e29cf48a2b428e5ab0ebe654c2c7b698487f8953b60d18faebb1313f"
+    },
+    {
+      "path": "data/cursos/engenharia-biomedica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-biomedica/nacional.json",
+      "sha256": "d587c1ce1d828652fd6e1bccfbd338abc28f53413dcf0bed0fb500380863d393"
+    },
+    {
+      "path": "data/cursos/engenharia-biomedica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-biomedica/municipios/SP.json",
+      "sha256": "2a833229dfd73fcbda1d79151a1cd3763716799bb914d232ecf17f52572acae2"
+    },
+    {
+      "path": "data/cursos/engenharia-de-petroleo/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-petroleo/serie.json",
+      "sha256": "e1a38332d7241cadd6fd291558ba79385bce704f325d179772c287a22ac98919"
+    },
+    {
+      "path": "data/cursos/engenharia-de-petroleo/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-petroleo/nacional.json",
+      "sha256": "63cccd0276bd64596b87ba9de21c7551ec120d535f11626af52c5611f23d3a29"
+    },
+    {
+      "path": "data/cursos/engenharia-de-petroleo/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-petroleo/municipios/SP.json",
+      "sha256": "32b682b81e9a54fcd8ed2a1517363ddb017eeda80690a8051ac2134bf55ddc25"
+    },
+    {
+      "path": "data/cursos/engenharia-de-telecomunicacoes/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-telecomunicacoes/serie.json",
+      "sha256": "41816fc330d96aabfbf40e283e7e0a88b4434ee4d78b747b530f7c35635fca93"
+    },
+    {
+      "path": "data/cursos/engenharia-de-telecomunicacoes/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-telecomunicacoes/nacional.json",
+      "sha256": "b56f8a9c6c1c543a1fcb990ac6f4efc2608d913a03ab98772e79dde26f08707b"
+    },
+    {
+      "path": "data/cursos/engenharia-de-telecomunicacoes/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-telecomunicacoes/municipios/SP.json",
+      "sha256": "ca49751f118aeb0688fcb4309edf52fc8a528a8b94ad205733f966ed95903050"
+    },
+    {
+      "path": "data/cursos/engenharia-de-bioprocessos/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-bioprocessos/serie.json",
+      "sha256": "a6a3f856a0047ef079f64f0f84a79a3b3ed9b900ac632b2d579ce469280dae8d"
+    },
+    {
+      "path": "data/cursos/engenharia-de-bioprocessos/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-bioprocessos/nacional.json",
+      "sha256": "bec217d50c227ec3ef898cca4671153a65b60afab703895b451c770ac2417895"
+    },
+    {
+      "path": "data/cursos/engenharia-de-bioprocessos/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-bioprocessos/municipios/SP.json",
+      "sha256": "3f18c381c1d7624b8400055413bde47402f45d4c8eb5fe1a445411e9edac8680"
+    },
+    {
+      "path": "data/cursos/engenharia-de-minas/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-minas/serie.json",
+      "sha256": "f0f0c24bfeaec05fda12c3f4f176e3fe49eda4ced1dff357e213efee0403e2a5"
+    },
+    {
+      "path": "data/cursos/engenharia-de-minas/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-minas/nacional.json",
+      "sha256": "582b8a44583c439f48c1b034f3b0a3e13cefd9602aae90c5fc1d698ab94abccf"
+    },
+    {
+      "path": "data/cursos/engenharia-de-minas/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-minas/municipios/SP.json",
+      "sha256": "967ad6bdc39bff3f28d91c5542e3b8aaecd765b81134569c65c5de2a82ebe123"
+    },
+    {
+      "path": "data/cursos/engenharia-de-energia/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-energia/serie.json",
+      "sha256": "d5d08ce47baefb07c2ddd699c818c03d5a4fbd40c528b83d0364a86e4c3107b3"
+    },
+    {
+      "path": "data/cursos/engenharia-de-energia/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-energia/nacional.json",
+      "sha256": "b89b528a990bed76d9c5996031068326abadd09bfd6fe9184f14855d969faceb"
+    },
+    {
+      "path": "data/cursos/engenharia-de-energia/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-energia/municipios/SP.json",
+      "sha256": "2d1209f0133a98986307666b974c811a506840da8196a0d894db6f27865820cd"
+    },
+    {
+      "path": "data/cursos/engenharia-metalurgica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-metalurgica/serie.json",
+      "sha256": "255cd6937c2173f7c7343211c4d7af05fcfd9272ed3bd89c5b7069b37c5f07e0"
+    },
+    {
+      "path": "data/cursos/engenharia-metalurgica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-metalurgica/nacional.json",
+      "sha256": "7e05afb5bdcc05a66effb0abf4e1f6be1d979a2045718411712e45382ce1e515"
+    },
+    {
+      "path": "data/cursos/engenharia-metalurgica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-metalurgica/municipios/SP.json",
+      "sha256": "2e38eae0a708a31687183698ef57f6e6e878f8be5caf840e9078f51b37322df6"
+    },
+    {
+      "path": "data/cursos/engenharia-de-pesca/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-pesca/serie.json",
+      "sha256": "54a93b8cbf672068d8620e52bb3315891695611ad8cdfa4708edc044dd4444cd"
+    },
+    {
+      "path": "data/cursos/engenharia-de-pesca/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-pesca/nacional.json",
+      "sha256": "357ea09df331738e80f3b7b3113dd70ec2d71b9af265a3006c669f0c9ded9f4e"
+    },
+    {
+      "path": "data/cursos/engenharia-de-pesca/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-pesca/municipios/SP.json",
+      "sha256": "12315dfd31abd67287a20844419013a50d6a3958ab4dbdcda508dd3416bf50fd"
+    },
+    {
+      "path": "data/cursos/engenharia-de-transportes/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-transportes/serie.json",
+      "sha256": "f3d41891f2f2dcea45e7f8a58a87ffb90b9d3eb7d1aa651a305e08a84f6372ea"
+    },
+    {
+      "path": "data/cursos/engenharia-de-transportes/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-transportes/nacional.json",
+      "sha256": "c92022a5f81d234aad2d661d25c542ccce8170e5cd6833e91fdcfe63d6c5d14e"
+    },
+    {
+      "path": "data/cursos/engenharia-de-transportes/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-transportes/municipios/SP.json",
+      "sha256": "836d1fc378f16ac2db01c1c6f94076b6bef1f6635471b4b12dba68b6085a7202"
+    },
+    {
+      "path": "data/cursos/engenharia-aeronautica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-aeronautica/serie.json",
+      "sha256": "0f76f31d8ff48dbd411aec408ae68ba37458fa93cb0e60e27727954e0962fde6"
+    },
+    {
+      "path": "data/cursos/engenharia-aeronautica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-aeronautica/nacional.json",
+      "sha256": "da4889a32dc28e73542300bb1b6deb4e226b6a55bdb361d39e9ecc3bd2b93778"
+    },
+    {
+      "path": "data/cursos/engenharia-aeronautica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-aeronautica/municipios/SP.json",
+      "sha256": "e2ee64f62b1aeee4c2baec27a52164d27ac19f59f8f0bcfffefd9cf0137fecb8"
+    },
+    {
+      "path": "data/cursos/engenharia-de-agrimensura-e-cartografica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-agrimensura-e-cartografica/serie.json",
+      "sha256": "bf909a26f4565a83606e95715ba0fbad4751270d4a1a0a46be0445816f8e75fd"
+    },
+    {
+      "path": "data/cursos/engenharia-de-agrimensura-e-cartografica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-agrimensura-e-cartografica/nacional.json",
+      "sha256": "b548b0963d4a2a0d294850e7138c155e0e3d43a8b91e9cd6fb40b5425cb1dbe9"
+    },
+    {
+      "path": "data/cursos/engenharia-de-agrimensura-e-cartografica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-agrimensura-e-cartografica/municipios/SP.json",
+      "sha256": "f4aef7580fa1b4edaaf94d0573ee1768c4bccd1aa759db4f1cd3aa76ebea0582"
+    },
+    {
+      "path": "data/cursos/engenharia-textil/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-textil/serie.json",
+      "sha256": "380750f60b108e1f77385e3f15d7ed90c057720712720212e2007bd90d9df553"
+    },
+    {
+      "path": "data/cursos/engenharia-textil/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-textil/nacional.json",
+      "sha256": "2bff5c239a821da3a655c981a363671c38f050664bea9b8769487a3f136c080b"
+    },
+    {
+      "path": "data/cursos/engenharia-de-recursos-hidricos/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-recursos-hidricos/serie.json",
+      "sha256": "82ced89c849722777907404639257fe3ff08d69361499881ecec007277114dd6"
+    },
+    {
+      "path": "data/cursos/engenharia-de-recursos-hidricos/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-recursos-hidricos/nacional.json",
+      "sha256": "f1b76ae714c99cdfa1663eb97d517bc139673eb2b86ff7ce4f62d62311b3504d"
+    },
+    {
+      "path": "data/cursos/engenharia-fisica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-fisica/serie.json",
+      "sha256": "ccc3b35364a4377a2e1322c4f2a3f48fc519204562db1d5d739c777e841e488b"
+    },
+    {
+      "path": "data/cursos/engenharia-fisica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-fisica/nacional.json",
+      "sha256": "ff7219d633bf9f9c43952b7e6238e4344ed50b8e928822a68b2b7580eba7358a"
+    },
+    {
+      "path": "data/cursos/engenharia-fisica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-fisica/municipios/SP.json",
+      "sha256": "49ae9c6f0f2a9ce76ea36bc188cd4eb491f7253208895e3db3461c2a277332f4"
+    },
+    {
+      "path": "data/cursos/engenharia-de-manufatura/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-manufatura/serie.json",
+      "sha256": "bafa31665f25c8c5e115b7591a03597fe3da2a0b6f4fd781ecd00e39de2b0257"
+    },
+    {
+      "path": "data/cursos/engenharia-de-manufatura/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-manufatura/nacional.json",
+      "sha256": "519ba651ff5d9bfe1a65d787d924f64d193fb58d34dba571c3b0dc132e8a2208"
+    },
+    {
+      "path": "data/cursos/engenharia-de-manufatura/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-manufatura/municipios/SP.json",
+      "sha256": "f86edc31bd7546d6ca1e40e7f865e311b2269cefd76ba67f132b7010501ddc08"
+    },
+    {
+      "path": "data/cursos/engenharia-industrial/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-industrial/serie.json",
+      "sha256": "efc00a8da7f46fe7d9828649b347abbb31212b5055b95394f0b53e86d356ab79"
+    },
+    {
+      "path": "data/cursos/engenharia-industrial/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-industrial/nacional.json",
+      "sha256": "3b43a36dbe728c92eb4efbfc756e2b91b1a691ecdbcb05c18a22daf13e87c87c"
+    },
+    {
+      "path": "data/cursos/engenharia-industrial/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-industrial/municipios/SP.json",
+      "sha256": "cc95e82747abeb294780e0a70577c9b2ed9b3e69a6a532b05c5ce53d08062c95"
+    },
+    {
+      "path": "data/cursos/engenharia-automotiva/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-automotiva/serie.json",
+      "sha256": "a833a0efe25b9c943142d7e0bf11d6e8c6d0b9a6d62229f747c1cd53c5c72a08"
+    },
+    {
+      "path": "data/cursos/engenharia-automotiva/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-automotiva/nacional.json",
+      "sha256": "7465249fb3ea36506ae7958f0f1f937136dd02c10e874be1d410b71fe7c162dd"
+    },
+    {
+      "path": "data/cursos/engenharia-automotiva/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-automotiva/municipios/SP.json",
+      "sha256": "1270333d1f269434fcf4f1e1aa783c02448e5dfc6f05f48c5f2f0e224d94d145"
+    },
+    {
+      "path": "data/cursos/engenharia-naval/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-naval/serie.json",
+      "sha256": "28c35a9860f71c3c582459831c039047babeb4f635290132cfec589072986a26"
+    },
+    {
+      "path": "data/cursos/engenharia-naval/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-naval/nacional.json",
+      "sha256": "1b388bb3bb4a2a3a100fd2809ffd0ca85773fcd72c01078e1cee38bfa8cb34ba"
+    },
+    {
+      "path": "data/cursos/engenharia-naval/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-naval/municipios/SP.json",
+      "sha256": "e728d05b165f913447da674be5ba59579a69a76f1eedacb90ea90d43f3c99a0b"
+    },
+    {
+      "path": "data/cursos/engenharia-de-biossistemas/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-biossistemas/serie.json",
+      "sha256": "190f05a8bbce8c13d05d64b696880189698b1ccbe2193fc9860892aed715e2c3"
+    },
+    {
+      "path": "data/cursos/engenharia-de-biossistemas/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-biossistemas/nacional.json",
+      "sha256": "ef392218f485750e5934b66402b41a0ff7511495646592d271e7e68d87604ccb"
+    },
+    {
+      "path": "data/cursos/engenharia-de-biossistemas/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-biossistemas/municipios/SP.json",
+      "sha256": "62d24f89200f2bd17301dbc1cad2d18af1b56923d91c6a9b773d7d90f5d7e4bd"
+    },
+    {
+      "path": "data/cursos/engenharia-de-agrimensura/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-agrimensura/serie.json",
+      "sha256": "a5232715fb5dbecb1e5ec90b4be0070d356ebd05d02dcccc4a0092553992b383"
+    },
+    {
+      "path": "data/cursos/engenharia-de-agrimensura/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-agrimensura/nacional.json",
+      "sha256": "14c15ff4eac7774f0c4b9ccbc60b63a044c327806873f78c97e22e7eef4c53fe"
+    },
+    {
+      "path": "data/cursos/engenharia-aeroespacial/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-aeroespacial/serie.json",
+      "sha256": "ea7a19784b5e6c82f8b526b98f2879826d576d304e4968473d624bb7ebc74129"
+    },
+    {
+      "path": "data/cursos/engenharia-aeroespacial/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-aeroespacial/nacional.json",
+      "sha256": "3a72a336874e98cc18fdd49a957e705242d0e4c461680cc95a2f508acfbd62bf"
+    },
+    {
+      "path": "data/cursos/engenharia-aeroespacial/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-aeroespacial/municipios/SP.json",
+      "sha256": "6eaed4fe86ff6e382e21a5fdba094eb4678615a00fe43308ff2b5a6ae9ceedc7"
+    },
+    {
+      "path": "data/cursos/engenharia-bioquimica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-bioquimica/serie.json",
+      "sha256": "e2fbfb2c4ed189fb86f2cff4135309ab49df978e672b74da7c05a27b3134b8dc"
+    },
+    {
+      "path": "data/cursos/engenharia-bioquimica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-bioquimica/nacional.json",
+      "sha256": "81e5e162881e5c336d87892eee6232ac6ce4e4c3d05ed5d954c5b105e1849102"
+    },
+    {
+      "path": "data/cursos/engenharia-bioquimica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-bioquimica/municipios/SP.json",
+      "sha256": "029112a8b28692ac2b212d5413bc170b52247fab8f3597e461ecd3b5e495d82b"
+    },
+    {
+      "path": "data/cursos/engenharia-ferroviaria-e-metroviaria/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-ferroviaria-e-metroviaria/serie.json",
+      "sha256": "b0a57fa28afe1ca3529d513a5e9307a0bfa32d2984279b7197dbedf6399384d9"
+    },
+    {
+      "path": "data/cursos/engenharia-ferroviaria-e-metroviaria/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-ferroviaria-e-metroviaria/nacional.json",
+      "sha256": "59bfceba19ae559966545a2580fb8d55d8e1c3337564ede22a8f35dfdf5736ad"
+    },
+    {
+      "path": "data/cursos/engenharia-cartografica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-cartografica/serie.json",
+      "sha256": "7fb14d152ff5e547d97aa29d72600b5a12f389e35e4d79e0661e569d92be3dcd"
+    },
+    {
+      "path": "data/cursos/engenharia-cartografica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-cartografica/nacional.json",
+      "sha256": "77efabcb1406f6e82855681ab35348ec5f0e013b7550d2c9c777420a53e473d0"
+    },
+    {
+      "path": "data/cursos/engenharia-cartografica/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-cartografica/municipios/SP.json",
+      "sha256": "adf1ea158b0a06e906e555d1766eafc4d90f774a720f73547ba826b514e5d5a6"
+    },
+    {
+      "path": "data/cursos/engenharia-acustica/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-acustica/serie.json",
+      "sha256": "e2beee6bac55f1b9e672a69ece6214f05f06be20bcaa83c836e58da800dbe0b7"
+    },
+    {
+      "path": "data/cursos/engenharia-acustica/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-acustica/nacional.json",
+      "sha256": "8b75b828d2e1d25d0415bf1710fa8da2994d3bcadbeaef457ca4741c8871caa9"
+    },
+    {
+      "path": "data/cursos/engenharia-de-biotecnologia/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-biotecnologia/serie.json",
+      "sha256": "99cbbb91edbb97222c3049cd76d73c3b2345f62f649db41ebbf0c85067a1e6c4"
+    },
+    {
+      "path": "data/cursos/engenharia-de-biotecnologia/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-biotecnologia/nacional.json",
+      "sha256": "f65991519d9a5625429f3455b19baf59cfee7fa55373d77827c0253787d32034"
+    },
+    {
+      "path": "data/cursos/engenharia-de-informacao/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-informacao/serie.json",
+      "sha256": "807fe1450a91a3776546cea2e27685bf0925fad4ebae91fe92e1b91796a135ec"
+    },
+    {
+      "path": "data/cursos/engenharia-de-informacao/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-informacao/nacional.json",
+      "sha256": "d93496f9937058a9ffa1a752534e9e7f937f645b964471a0ab67847645709103"
+    },
+    {
+      "path": "data/cursos/engenharia-de-informacao/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-informacao/municipios/SP.json",
+      "sha256": "24ecd1cf6293b75d94024e86e582736134e3b3277e298b70873a4b854e9c5d22"
+    },
+    {
+      "path": "data/cursos/engenharia-nuclear/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-nuclear/serie.json",
+      "sha256": "a7393a089f4f50c1b56a516d3bed1bcf5c51bb1a5f251a523d57c237a60cd5cf"
+    },
+    {
+      "path": "data/cursos/engenharia-nuclear/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-nuclear/nacional.json",
+      "sha256": "a124c4d5ce5dfc9c64da7299e5f53a0746e22b23c999f264dabd4bad7c11a397"
+    },
+    {
+      "path": "data/cursos/engenharia-nuclear/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-nuclear/municipios/SP.json",
+      "sha256": "a9a324f8595477d5c5562010594b26b48b197410291c80ca5dee537433f09679"
+    },
+    {
+      "path": "data/cursos/engenharia-de-nanotecnologia/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-nanotecnologia/serie.json",
+      "sha256": "60a5b403a0fb093a3a90f081b545940eeae235e37ecc7936cc6dd0fc4cb5be35"
+    },
+    {
+      "path": "data/cursos/engenharia-de-nanotecnologia/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia-de-nanotecnologia/nacional.json",
+      "sha256": "564573a241b43dc6cc990346a3ee034f3bef6f360c19365dbf75c2ca938fabba"
+    },
+    {
+      "path": "data/cursos/engenharia/serie.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia/serie.json",
+      "sha256": "f9412c39af4c336d45ab210ce32129d3878fe4b84e0d0b9f28c4b397e63ef49a"
+    },
+    {
+      "path": "data/cursos/engenharia/nacional.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia/nacional.json",
+      "sha256": "dea7578d1caa967c0f50ca3c622b0b6d5cd60a06a4d19c524d0681bfa23477fb"
+    },
+    {
+      "path": "data/cursos/engenharia/municipios/SP.json",
+      "url": "https://raw.githubusercontent.com/esidiao/observatorio-educacao-superior/188e182414c460737f13ca3bc019eeeaf14589df/data/cursos/engenharia/municipios/SP.json",
+      "sha256": "ed4e6c09209336c7700d7a73311ba64a82160823d61738d74cc48ee36c7df7e9"
+    }
+  ],
+  "validation": {
+    "enrollmentChecks": [
+      {
+        "code": "0732E01",
+        "year": 2019,
+        "mirrorEnrollment": 62876,
+        "seadeEnrollment": 62876,
+        "pass": true
+      },
+      {
+        "code": "0732E01",
+        "year": 2020,
+        "mirrorEnrollment": 49754,
+        "seadeEnrollment": 49754,
+        "pass": true
+      },
+      {
+        "code": "0732E01",
+        "year": 2021,
+        "mirrorEnrollment": 38071,
+        "seadeEnrollment": 38071,
+        "pass": true
+      },
+      {
+        "code": "0732E01",
+        "year": 2022,
+        "mirrorEnrollment": 30573,
+        "seadeEnrollment": 30573,
+        "pass": true
+      },
+      {
+        "code": "0732E01",
+        "year": 2023,
+        "mirrorEnrollment": 25494,
+        "seadeEnrollment": 25494,
+        "pass": true
+      },
+      {
+        "code": "0732E01",
+        "year": 2024,
+        "mirrorEnrollment": 21484,
+        "seadeEnrollment": 21484,
+        "pass": true
+      },
+      {
+        "code": "0725E02",
+        "year": 2019,
+        "mirrorEnrollment": 34049,
+        "seadeEnrollment": 34049,
+        "pass": true
+      },
+      {
+        "code": "0725E02",
+        "year": 2020,
+        "mirrorEnrollment": 28712,
+        "seadeEnrollment": 28712,
+        "pass": true
+      },
+      {
+        "code": "0725E02",
+        "year": 2021,
+        "mirrorEnrollment": 23588,
+        "seadeEnrollment": 23588,
+        "pass": true
+      },
+      {
+        "code": "0725E02",
+        "year": 2022,
+        "mirrorEnrollment": 20337,
+        "seadeEnrollment": 20337,
+        "pass": true
+      },
+      {
+        "code": "0725E02",
+        "year": 2023,
+        "mirrorEnrollment": 17646,
+        "seadeEnrollment": 17646,
+        "pass": true
+      },
+      {
+        "code": "0725E02",
+        "year": 2024,
+        "mirrorEnrollment": 15209,
+        "seadeEnrollment": 15209,
+        "pass": true
+      },
+      {
+        "code": "0613E01",
+        "year": 2019,
+        "mirrorEnrollment": 496,
+        "seadeEnrollment": 496,
+        "pass": true
+      },
+      {
+        "code": "0613E01",
+        "year": 2020,
+        "mirrorEnrollment": 557,
+        "seadeEnrollment": 557,
+        "pass": true
+      },
+      {
+        "code": "0613E01",
+        "year": 2021,
+        "mirrorEnrollment": 528,
+        "seadeEnrollment": 528,
+        "pass": true
+      },
+      {
+        "code": "0613E01",
+        "year": 2022,
+        "mirrorEnrollment": 903,
+        "seadeEnrollment": 903,
+        "pass": true
+      },
+      {
+        "code": "0613E01",
+        "year": 2023,
+        "mirrorEnrollment": 2006,
+        "seadeEnrollment": 2006,
+        "pass": true
+      },
+      {
+        "code": "0613E01",
+        "year": 2024,
+        "mirrorEnrollment": 3361,
+        "seadeEnrollment": 3361,
+        "pass": true
+      },
+      {
+        "code": "0715E02",
+        "year": 2019,
+        "mirrorEnrollment": 33009,
+        "seadeEnrollment": 33009,
+        "pass": true
+      },
+      {
+        "code": "0715E02",
+        "year": 2020,
+        "mirrorEnrollment": 28311,
+        "seadeEnrollment": 28311,
+        "pass": true
+      },
+      {
+        "code": "0715E02",
+        "year": 2021,
+        "mirrorEnrollment": 24184,
+        "seadeEnrollment": 24184,
+        "pass": true
+      },
+      {
+        "code": "0715E02",
+        "year": 2022,
+        "mirrorEnrollment": 21319,
+        "seadeEnrollment": 21319,
+        "pass": true
+      },
+      {
+        "code": "0715E02",
+        "year": 2023,
+        "mirrorEnrollment": 18981,
+        "seadeEnrollment": 18981,
+        "pass": true
+      },
+      {
+        "code": "0715E02",
+        "year": 2024,
+        "mirrorEnrollment": 16629,
+        "seadeEnrollment": 16629,
+        "pass": true
+      },
+      {
+        "code": "0713E05",
+        "year": 2019,
+        "mirrorEnrollment": 18730,
+        "seadeEnrollment": 18730,
+        "pass": true
+      },
+      {
+        "code": "0713E05",
+        "year": 2020,
+        "mirrorEnrollment": 16358,
+        "seadeEnrollment": 16358,
+        "pass": true
+      },
+      {
+        "code": "0713E05",
+        "year": 2021,
+        "mirrorEnrollment": 13617,
+        "seadeEnrollment": 13617,
+        "pass": true
+      },
+      {
+        "code": "0713E05",
+        "year": 2022,
+        "mirrorEnrollment": 12227,
+        "seadeEnrollment": 12227,
+        "pass": true
+      },
+      {
+        "code": "0713E05",
+        "year": 2023,
+        "mirrorEnrollment": 11091,
+        "seadeEnrollment": 11091,
+        "pass": true
+      },
+      {
+        "code": "0713E05",
+        "year": 2024,
+        "mirrorEnrollment": 10174,
+        "seadeEnrollment": 10174,
+        "pass": true
+      },
+      {
+        "code": "0811A04",
+        "year": 2019,
+        "mirrorEnrollment": 12325,
+        "seadeEnrollment": 12325,
+        "pass": true
+      },
+      {
+        "code": "0811A04",
+        "year": 2020,
+        "mirrorEnrollment": 11396,
+        "seadeEnrollment": 11396,
+        "pass": true
+      },
+      {
+        "code": "0811A04",
+        "year": 2021,
+        "mirrorEnrollment": 10889,
+        "seadeEnrollment": 10889,
+        "pass": true
+      },
+      {
+        "code": "0811A04",
+        "year": 2022,
+        "mirrorEnrollment": 11094,
+        "seadeEnrollment": 11094,
+        "pass": true
+      },
+      {
+        "code": "0811A04",
+        "year": 2023,
+        "mirrorEnrollment": 11304,
+        "seadeEnrollment": 11304,
+        "pass": true
+      },
+      {
+        "code": "0811A04",
+        "year": 2024,
+        "mirrorEnrollment": 11595,
+        "seadeEnrollment": 11595,
+        "pass": true
+      },
+      {
+        "code": "0714E04",
+        "year": 2024,
+        "mirrorEnrollment": 11661,
+        "seadeEnrollment": 11661,
+        "pass": true
+      },
+      {
+        "code": "0712E02",
+        "year": 2019,
+        "mirrorEnrollment": 1795,
+        "seadeEnrollment": 1795,
+        "pass": true
+      },
+      {
+        "code": "0712E02",
+        "year": 2020,
+        "mirrorEnrollment": 1342,
+        "seadeEnrollment": 1342,
+        "pass": true
+      },
+      {
+        "code": "0712E02",
+        "year": 2021,
+        "mirrorEnrollment": 840,
+        "seadeEnrollment": 840,
+        "pass": true
+      },
+      {
+        "code": "0712E02",
+        "year": 2022,
+        "mirrorEnrollment": 572,
+        "seadeEnrollment": 572,
+        "pass": true
+      },
+      {
+        "code": "0712E02",
+        "year": 2023,
+        "mirrorEnrollment": 454,
+        "seadeEnrollment": 454,
+        "pass": true
+      },
+      {
+        "code": "0712E02",
+        "year": 2024,
+        "mirrorEnrollment": 302,
+        "seadeEnrollment": 302,
+        "pass": true
+      },
+      {
+        "code": "0714E05",
+        "year": 2019,
+        "mirrorEnrollment": 8752,
+        "seadeEnrollment": 8752,
+        "pass": true
+      },
+      {
+        "code": "0714E05",
+        "year": 2020,
+        "mirrorEnrollment": 7912,
+        "seadeEnrollment": 7912,
+        "pass": true
+      },
+      {
+        "code": "0714E05",
+        "year": 2021,
+        "mirrorEnrollment": 7080,
+        "seadeEnrollment": 7080,
+        "pass": true
+      },
+      {
+        "code": "0714E05",
+        "year": 2022,
+        "mirrorEnrollment": 6430,
+        "seadeEnrollment": 6430,
+        "pass": true
+      },
+      {
+        "code": "0714E05",
+        "year": 2023,
+        "mirrorEnrollment": 5777,
+        "seadeEnrollment": 5777,
+        "pass": true
+      },
+      {
+        "code": "0714E05",
+        "year": 2024,
+        "mirrorEnrollment": 5365,
+        "seadeEnrollment": 5365,
+        "pass": true
+      },
+      {
+        "code": "0712E01",
+        "year": 2019,
+        "mirrorEnrollment": 3410,
+        "seadeEnrollment": 3410,
+        "pass": true
+      },
+      {
+        "code": "0712E01",
+        "year": 2020,
+        "mirrorEnrollment": 3057,
+        "seadeEnrollment": 3057,
+        "pass": true
+      },
+      {
+        "code": "0712E01",
+        "year": 2021,
+        "mirrorEnrollment": 2919,
+        "seadeEnrollment": 2919,
+        "pass": true
+      },
+      {
+        "code": "0712E01",
+        "year": 2022,
+        "mirrorEnrollment": 2706,
+        "seadeEnrollment": 2706,
+        "pass": true
+      },
+      {
+        "code": "0712E01",
+        "year": 2023,
+        "mirrorEnrollment": 2540,
+        "seadeEnrollment": 2540,
+        "pass": true
+      },
+      {
+        "code": "0712E01",
+        "year": 2024,
+        "mirrorEnrollment": 2446,
+        "seadeEnrollment": 2446,
+        "pass": true
+      },
+      {
+        "code": "0711E05",
+        "year": 2019,
+        "mirrorEnrollment": 11198,
+        "seadeEnrollment": 11198,
+        "pass": true
+      },
+      {
+        "code": "0711E05",
+        "year": 2020,
+        "mirrorEnrollment": 10637,
+        "seadeEnrollment": 10637,
+        "pass": true
+      },
+      {
+        "code": "0711E05",
+        "year": 2021,
+        "mirrorEnrollment": 9610,
+        "seadeEnrollment": 9610,
+        "pass": true
+      },
+      {
+        "code": "0711E05",
+        "year": 2022,
+        "mirrorEnrollment": 8784,
+        "seadeEnrollment": 8784,
+        "pass": true
+      },
+      {
+        "code": "0711E05",
+        "year": 2023,
+        "mirrorEnrollment": 8125,
+        "seadeEnrollment": 8125,
+        "pass": true
+      },
+      {
+        "code": "0711E05",
+        "year": 2024,
+        "mirrorEnrollment": 7438,
+        "seadeEnrollment": 7438,
+        "pass": true
+      },
+      {
+        "code": "0721E01",
+        "year": 2019,
+        "mirrorEnrollment": 2568,
+        "seadeEnrollment": 2568,
+        "pass": true
+      },
+      {
+        "code": "0721E01",
+        "year": 2020,
+        "mirrorEnrollment": 2645,
+        "seadeEnrollment": 2645,
+        "pass": true
+      },
+      {
+        "code": "0721E01",
+        "year": 2021,
+        "mirrorEnrollment": 2564,
+        "seadeEnrollment": 2564,
+        "pass": true
+      },
+      {
+        "code": "0721E01",
+        "year": 2022,
+        "mirrorEnrollment": 2359,
+        "seadeEnrollment": 2359,
+        "pass": true
+      },
+      {
+        "code": "0721E01",
+        "year": 2023,
+        "mirrorEnrollment": 2193,
+        "seadeEnrollment": 2193,
+        "pass": true
+      },
+      {
+        "code": "0721E01",
+        "year": 2024,
+        "mirrorEnrollment": 2064,
+        "seadeEnrollment": 2064,
+        "pass": true
+      },
+      {
+        "code": "0714E09",
+        "year": 2019,
+        "mirrorEnrollment": 2307,
+        "seadeEnrollment": 2307,
+        "pass": true
+      },
+      {
+        "code": "0714E09",
+        "year": 2020,
+        "mirrorEnrollment": 2088,
+        "seadeEnrollment": 2088,
+        "pass": true
+      },
+      {
+        "code": "0714E09",
+        "year": 2021,
+        "mirrorEnrollment": 1860,
+        "seadeEnrollment": 1860,
+        "pass": true
+      },
+      {
+        "code": "0714E09",
+        "year": 2022,
+        "mirrorEnrollment": 1815,
+        "seadeEnrollment": 1815,
+        "pass": true
+      },
+      {
+        "code": "0714E09",
+        "year": 2023,
+        "mirrorEnrollment": 1811,
+        "seadeEnrollment": 1811,
+        "pass": true
+      },
+      {
+        "code": "0714E09",
+        "year": 2024,
+        "mirrorEnrollment": 1698,
+        "seadeEnrollment": 1698,
+        "pass": true
+      },
+      {
+        "code": "0821E01",
+        "year": 2019,
+        "mirrorEnrollment": 808,
+        "seadeEnrollment": 808,
+        "pass": true
+      },
+      {
+        "code": "0821E01",
+        "year": 2020,
+        "mirrorEnrollment": 753,
+        "seadeEnrollment": 753,
+        "pass": true
+      },
+      {
+        "code": "0821E01",
+        "year": 2021,
+        "mirrorEnrollment": 709,
+        "seadeEnrollment": 709,
+        "pass": true
+      },
+      {
+        "code": "0821E01",
+        "year": 2022,
+        "mirrorEnrollment": 692,
+        "seadeEnrollment": 692,
+        "pass": true
+      },
+      {
+        "code": "0821E01",
+        "year": 2023,
+        "mirrorEnrollment": 662,
+        "seadeEnrollment": 662,
+        "pass": true
+      },
+      {
+        "code": "0821E01",
+        "year": 2024,
+        "mirrorEnrollment": 657,
+        "seadeEnrollment": 657,
+        "pass": true
+      },
+      {
+        "code": "0714E08",
+        "year": 2019,
+        "mirrorEnrollment": 3813,
+        "seadeEnrollment": 3813,
+        "pass": true
+      },
+      {
+        "code": "0714E08",
+        "year": 2020,
+        "mirrorEnrollment": 3265,
+        "seadeEnrollment": 3265,
+        "pass": true
+      },
+      {
+        "code": "0714E08",
+        "year": 2021,
+        "mirrorEnrollment": 2635,
+        "seadeEnrollment": 2635,
+        "pass": true
+      },
+      {
+        "code": "0714E08",
+        "year": 2022,
+        "mirrorEnrollment": 2011,
+        "seadeEnrollment": 2011,
+        "pass": true
+      },
+      {
+        "code": "0714E08",
+        "year": 2023,
+        "mirrorEnrollment": 1414,
+        "seadeEnrollment": 1414,
+        "pass": true
+      },
+      {
+        "code": "0714E08",
+        "year": 2024,
+        "mirrorEnrollment": 1026,
+        "seadeEnrollment": 1026,
+        "pass": true
+      },
+      {
+        "code": "0722E01",
+        "year": 2019,
+        "mirrorEnrollment": 2033,
+        "seadeEnrollment": 2033,
+        "pass": true
+      },
+      {
+        "code": "0722E01",
+        "year": 2020,
+        "mirrorEnrollment": 1875,
+        "seadeEnrollment": 1875,
+        "pass": true
+      },
+      {
+        "code": "0722E01",
+        "year": 2021,
+        "mirrorEnrollment": 1829,
+        "seadeEnrollment": 1829,
+        "pass": true
+      },
+      {
+        "code": "0722E01",
+        "year": 2022,
+        "mirrorEnrollment": 1649,
+        "seadeEnrollment": 1649,
+        "pass": true
+      },
+      {
+        "code": "0722E01",
+        "year": 2023,
+        "mirrorEnrollment": 1486,
+        "seadeEnrollment": 1486,
+        "pass": true
+      },
+      {
+        "code": "0722E01",
+        "year": 2024,
+        "mirrorEnrollment": 1388,
+        "seadeEnrollment": 1388,
+        "pass": true
+      },
+      {
+        "code": "0811E01",
+        "year": 2019,
+        "mirrorEnrollment": 907,
+        "seadeEnrollment": 907,
+        "pass": true
+      },
+      {
+        "code": "0811E01",
+        "year": 2020,
+        "mirrorEnrollment": 890,
+        "seadeEnrollment": 890,
+        "pass": true
+      },
+      {
+        "code": "0811E01",
+        "year": 2021,
+        "mirrorEnrollment": 865,
+        "seadeEnrollment": 865,
+        "pass": true
+      },
+      {
+        "code": "0811E01",
+        "year": 2022,
+        "mirrorEnrollment": 840,
+        "seadeEnrollment": 840,
+        "pass": true
+      },
+      {
+        "code": "0811E01",
+        "year": 2023,
+        "mirrorEnrollment": 843,
+        "seadeEnrollment": 843,
+        "pass": true
+      },
+      {
+        "code": "0811E01",
+        "year": 2024,
+        "mirrorEnrollment": 806,
+        "seadeEnrollment": 806,
+        "pass": true
+      },
+      {
+        "code": "0714E03",
+        "year": 2019,
+        "mirrorEnrollment": 538,
+        "seadeEnrollment": 538,
+        "pass": true
+      },
+      {
+        "code": "0714E03",
+        "year": 2020,
+        "mirrorEnrollment": 604,
+        "seadeEnrollment": 604,
+        "pass": true
+      },
+      {
+        "code": "0714E03",
+        "year": 2021,
+        "mirrorEnrollment": 750,
+        "seadeEnrollment": 750,
+        "pass": true
+      },
+      {
+        "code": "0714E03",
+        "year": 2022,
+        "mirrorEnrollment": 693,
+        "seadeEnrollment": 693,
+        "pass": true
+      },
+      {
+        "code": "0714E03",
+        "year": 2023,
+        "mirrorEnrollment": 656,
+        "seadeEnrollment": 656,
+        "pass": true
+      },
+      {
+        "code": "0714E03",
+        "year": 2024,
+        "mirrorEnrollment": 647,
+        "seadeEnrollment": 647,
+        "pass": true
+      },
+      {
+        "code": "0724E02",
+        "year": 2019,
+        "mirrorEnrollment": 565,
+        "seadeEnrollment": 565,
+        "pass": true
+      },
+      {
+        "code": "0724E02",
+        "year": 2020,
+        "mirrorEnrollment": 448,
+        "seadeEnrollment": 448,
+        "pass": true
+      },
+      {
+        "code": "0724E02",
+        "year": 2021,
+        "mirrorEnrollment": 251,
+        "seadeEnrollment": 251,
+        "pass": true
+      },
+      {
+        "code": "0724E02",
+        "year": 2022,
+        "mirrorEnrollment": 240,
+        "seadeEnrollment": 240,
+        "pass": true
+      },
+      {
+        "code": "0724E02",
+        "year": 2023,
+        "mirrorEnrollment": 237,
+        "seadeEnrollment": 237,
+        "pass": true
+      },
+      {
+        "code": "0724E02",
+        "year": 2024,
+        "mirrorEnrollment": 206,
+        "seadeEnrollment": 206,
+        "pass": true
+      },
+      {
+        "code": "0714E07",
+        "year": 2019,
+        "mirrorEnrollment": 486,
+        "seadeEnrollment": 486,
+        "pass": true
+      },
+      {
+        "code": "0714E07",
+        "year": 2020,
+        "mirrorEnrollment": 483,
+        "seadeEnrollment": 483,
+        "pass": true
+      },
+      {
+        "code": "0714E07",
+        "year": 2021,
+        "mirrorEnrollment": 458,
+        "seadeEnrollment": 458,
+        "pass": true
+      },
+      {
+        "code": "0714E07",
+        "year": 2022,
+        "mirrorEnrollment": 435,
+        "seadeEnrollment": 435,
+        "pass": true
+      },
+      {
+        "code": "0714E07",
+        "year": 2023,
+        "mirrorEnrollment": 426,
+        "seadeEnrollment": 426,
+        "pass": true
+      },
+      {
+        "code": "0714E07",
+        "year": 2024,
+        "mirrorEnrollment": 397,
+        "seadeEnrollment": 397,
+        "pass": true
+      },
+      {
+        "code": "0711E02",
+        "year": 2019,
+        "mirrorEnrollment": 547,
+        "seadeEnrollment": 547,
+        "pass": true
+      },
+      {
+        "code": "0711E02",
+        "year": 2020,
+        "mirrorEnrollment": 564,
+        "seadeEnrollment": 564,
+        "pass": true
+      },
+      {
+        "code": "0711E02",
+        "year": 2021,
+        "mirrorEnrollment": 579,
+        "seadeEnrollment": 579,
+        "pass": true
+      },
+      {
+        "code": "0711E02",
+        "year": 2022,
+        "mirrorEnrollment": 594,
+        "seadeEnrollment": 594,
+        "pass": true
+      },
+      {
+        "code": "0711E02",
+        "year": 2023,
+        "mirrorEnrollment": 809,
+        "seadeEnrollment": 809,
+        "pass": true
+      },
+      {
+        "code": "0711E02",
+        "year": 2024,
+        "mirrorEnrollment": 775,
+        "seadeEnrollment": 775,
+        "pass": true
+      },
+      {
+        "code": "0724E01",
+        "year": 2019,
+        "mirrorEnrollment": 224,
+        "seadeEnrollment": 224,
+        "pass": true
+      },
+      {
+        "code": "0724E01",
+        "year": 2020,
+        "mirrorEnrollment": 212,
+        "seadeEnrollment": 212,
+        "pass": true
+      },
+      {
+        "code": "0724E01",
+        "year": 2021,
+        "mirrorEnrollment": 146,
+        "seadeEnrollment": 146,
+        "pass": true
+      },
+      {
+        "code": "0724E01",
+        "year": 2022,
+        "mirrorEnrollment": 149,
+        "seadeEnrollment": 149,
+        "pass": true
+      },
+      {
+        "code": "0724E01",
+        "year": 2023,
+        "mirrorEnrollment": 129,
+        "seadeEnrollment": 129,
+        "pass": true
+      },
+      {
+        "code": "0724E01",
+        "year": 2024,
+        "mirrorEnrollment": 115,
+        "seadeEnrollment": 115,
+        "pass": true
+      },
+      {
+        "code": "0713E04",
+        "year": 2019,
+        "mirrorEnrollment": 491,
+        "seadeEnrollment": 491,
+        "pass": true
+      },
+      {
+        "code": "0713E04",
+        "year": 2020,
+        "mirrorEnrollment": 503,
+        "seadeEnrollment": 503,
+        "pass": true
+      },
+      {
+        "code": "0713E04",
+        "year": 2021,
+        "mirrorEnrollment": 602,
+        "seadeEnrollment": 602,
+        "pass": true
+      },
+      {
+        "code": "0713E04",
+        "year": 2022,
+        "mirrorEnrollment": 549,
+        "seadeEnrollment": 549,
+        "pass": true
+      },
+      {
+        "code": "0713E04",
+        "year": 2023,
+        "mirrorEnrollment": 432,
+        "seadeEnrollment": 432,
+        "pass": true
+      },
+      {
+        "code": "0713E04",
+        "year": 2024,
+        "mirrorEnrollment": 377,
+        "seadeEnrollment": 377,
+        "pass": true
+      },
+      {
+        "code": "0715E03",
+        "year": 2019,
+        "mirrorEnrollment": 65,
+        "seadeEnrollment": 65,
+        "pass": true
+      },
+      {
+        "code": "0715E03",
+        "year": 2020,
+        "mirrorEnrollment": 55,
+        "seadeEnrollment": 55,
+        "pass": true
+      },
+      {
+        "code": "0715E03",
+        "year": 2021,
+        "mirrorEnrollment": 53,
+        "seadeEnrollment": 53,
+        "pass": true
+      },
+      {
+        "code": "0715E03",
+        "year": 2022,
+        "mirrorEnrollment": 39,
+        "seadeEnrollment": 39,
+        "pass": true
+      },
+      {
+        "code": "0715E03",
+        "year": 2023,
+        "mirrorEnrollment": 25,
+        "seadeEnrollment": 25,
+        "pass": true
+      },
+      {
+        "code": "0715E03",
+        "year": 2024,
+        "mirrorEnrollment": 21,
+        "seadeEnrollment": 21,
+        "pass": true
+      },
+      {
+        "code": "0831E01",
+        "year": 2019,
+        "mirrorEnrollment": 148,
+        "seadeEnrollment": 148,
+        "pass": true
+      },
+      {
+        "code": "0831E01",
+        "year": 2020,
+        "mirrorEnrollment": 109,
+        "seadeEnrollment": 109,
+        "pass": true
+      },
+      {
+        "code": "0831E01",
+        "year": 2021,
+        "mirrorEnrollment": 134,
+        "seadeEnrollment": 134,
+        "pass": true
+      },
+      {
+        "code": "0831E01",
+        "year": 2022,
+        "mirrorEnrollment": 93,
+        "seadeEnrollment": 93,
+        "pass": true
+      },
+      {
+        "code": "0831E01",
+        "year": 2023,
+        "mirrorEnrollment": 77,
+        "seadeEnrollment": 77,
+        "pass": true
+      },
+      {
+        "code": "0831E01",
+        "year": 2024,
+        "mirrorEnrollment": 63,
+        "seadeEnrollment": 63,
+        "pass": true
+      },
+      {
+        "code": "0732E03",
+        "year": 2019,
+        "mirrorEnrollment": 52,
+        "seadeEnrollment": 52,
+        "pass": true
+      },
+      {
+        "code": "0732E03",
+        "year": 2020,
+        "mirrorEnrollment": 97,
+        "seadeEnrollment": 97,
+        "pass": true
+      },
+      {
+        "code": "0732E03",
+        "year": 2021,
+        "mirrorEnrollment": 128,
+        "seadeEnrollment": 128,
+        "pass": true
+      },
+      {
+        "code": "0732E03",
+        "year": 2022,
+        "mirrorEnrollment": 140,
+        "seadeEnrollment": 140,
+        "pass": true
+      },
+      {
+        "code": "0732E03",
+        "year": 2023,
+        "mirrorEnrollment": 143,
+        "seadeEnrollment": 143,
+        "pass": true
+      },
+      {
+        "code": "0732E03",
+        "year": 2024,
+        "mirrorEnrollment": 158,
+        "seadeEnrollment": 158,
+        "pass": true
+      },
+      {
+        "code": "0716E02",
+        "year": 2019,
+        "mirrorEnrollment": 1036,
+        "seadeEnrollment": 1036,
+        "pass": true
+      },
+      {
+        "code": "0716E02",
+        "year": 2020,
+        "mirrorEnrollment": 997,
+        "seadeEnrollment": 997,
+        "pass": true
+      },
+      {
+        "code": "0716E02",
+        "year": 2021,
+        "mirrorEnrollment": 942,
+        "seadeEnrollment": 942,
+        "pass": true
+      },
+      {
+        "code": "0716E02",
+        "year": 2022,
+        "mirrorEnrollment": 995,
+        "seadeEnrollment": 995,
+        "pass": true
+      },
+      {
+        "code": "0716E02",
+        "year": 2023,
+        "mirrorEnrollment": 1022,
+        "seadeEnrollment": 1022,
+        "pass": true
+      },
+      {
+        "code": "0716E02",
+        "year": 2024,
+        "mirrorEnrollment": 1044,
+        "seadeEnrollment": 1044,
+        "pass": true
+      },
+      {
+        "code": "0731E03",
+        "year": 2019,
+        "mirrorEnrollment": 24,
+        "seadeEnrollment": 24,
+        "pass": true
+      },
+      {
+        "code": "0731E03",
+        "year": 2020,
+        "mirrorEnrollment": 20,
+        "seadeEnrollment": 20,
+        "pass": true
+      },
+      {
+        "code": "0731E03",
+        "year": 2021,
+        "mirrorEnrollment": 20,
+        "seadeEnrollment": 20,
+        "pass": true
+      },
+      {
+        "code": "0731E03",
+        "year": 2022,
+        "mirrorEnrollment": 22,
+        "seadeEnrollment": 22,
+        "pass": true
+      },
+      {
+        "code": "0731E03",
+        "year": 2023,
+        "mirrorEnrollment": 21,
+        "seadeEnrollment": 21,
+        "pass": true
+      },
+      {
+        "code": "0731E03",
+        "year": 2024,
+        "mirrorEnrollment": 20,
+        "seadeEnrollment": 20,
+        "pass": true
+      },
+      {
+        "code": "0723E01",
+        "year": 2019,
+        "mirrorEnrollment": 17,
+        "seadeEnrollment": 17,
+        "pass": true
+      },
+      {
+        "code": "0723E01",
+        "year": 2020,
+        "mirrorEnrollment": 13,
+        "seadeEnrollment": 13,
+        "pass": true
+      },
+      {
+        "code": "0723E01",
+        "year": 2021,
+        "mirrorEnrollment": 8,
+        "seadeEnrollment": 8,
+        "pass": true
+      },
+      {
+        "code": "0723E01",
+        "year": 2022,
+        "mirrorEnrollment": 4,
+        "seadeEnrollment": 4,
+        "pass": true
+      },
+      {
+        "code": "0723E01",
+        "year": 2023,
+        "mirrorEnrollment": 0,
+        "seadeEnrollment": 0,
+        "pass": true
+      },
+      {
+        "code": "0715E01",
+        "year": 2019,
+        "mirrorEnrollment": 502,
+        "seadeEnrollment": 502,
+        "pass": true
+      },
+      {
+        "code": "0715E01",
+        "year": 2020,
+        "mirrorEnrollment": 543,
+        "seadeEnrollment": 543,
+        "pass": true
+      },
+      {
+        "code": "0715E01",
+        "year": 2021,
+        "mirrorEnrollment": 521,
+        "seadeEnrollment": 521,
+        "pass": true
+      },
+      {
+        "code": "0715E01",
+        "year": 2022,
+        "mirrorEnrollment": 508,
+        "seadeEnrollment": 508,
+        "pass": true
+      },
+      {
+        "code": "0715E01",
+        "year": 2023,
+        "mirrorEnrollment": 495,
+        "seadeEnrollment": 495,
+        "pass": true
+      },
+      {
+        "code": "0715E01",
+        "year": 2024,
+        "mirrorEnrollment": 471,
+        "seadeEnrollment": 471,
+        "pass": true
+      },
+      {
+        "code": "0725E01",
+        "year": 2019,
+        "mirrorEnrollment": 554,
+        "seadeEnrollment": 554,
+        "pass": true
+      },
+      {
+        "code": "0725E01",
+        "year": 2020,
+        "mirrorEnrollment": 625,
+        "seadeEnrollment": 625,
+        "pass": true
+      },
+      {
+        "code": "0725E01",
+        "year": 2021,
+        "mirrorEnrollment": 654,
+        "seadeEnrollment": 654,
+        "pass": true
+      },
+      {
+        "code": "0725E01",
+        "year": 2022,
+        "mirrorEnrollment": 629,
+        "seadeEnrollment": 629,
+        "pass": true
+      },
+      {
+        "code": "0725E01",
+        "year": 2023,
+        "mirrorEnrollment": 655,
+        "seadeEnrollment": 655,
+        "pass": true
+      },
+      {
+        "code": "0725E01",
+        "year": 2024,
+        "mirrorEnrollment": 606,
+        "seadeEnrollment": 606,
+        "pass": true
+      },
+      {
+        "code": "0725E03",
+        "year": 2019,
+        "mirrorEnrollment": 152,
+        "seadeEnrollment": 152,
+        "pass": true
+      },
+      {
+        "code": "0725E03",
+        "year": 2020,
+        "mirrorEnrollment": 131,
+        "seadeEnrollment": 131,
+        "pass": true
+      },
+      {
+        "code": "0725E03",
+        "year": 2021,
+        "mirrorEnrollment": 148,
+        "seadeEnrollment": 148,
+        "pass": true
+      },
+      {
+        "code": "0725E03",
+        "year": 2022,
+        "mirrorEnrollment": 102,
+        "seadeEnrollment": 102,
+        "pass": true
+      },
+      {
+        "code": "0725E03",
+        "year": 2023,
+        "mirrorEnrollment": 98,
+        "seadeEnrollment": 98,
+        "pass": true
+      },
+      {
+        "code": "0725E03",
+        "year": 2024,
+        "mirrorEnrollment": 90,
+        "seadeEnrollment": 90,
+        "pass": true
+      },
+      {
+        "code": "0716E03",
+        "year": 2019,
+        "mirrorEnrollment": 71,
+        "seadeEnrollment": 71,
+        "pass": true
+      },
+      {
+        "code": "0716E03",
+        "year": 2020,
+        "mirrorEnrollment": 52,
+        "seadeEnrollment": 52,
+        "pass": true
+      },
+      {
+        "code": "0716E03",
+        "year": 2021,
+        "mirrorEnrollment": 0,
+        "seadeEnrollment": 0,
+        "pass": true
+      },
+      {
+        "code": "0716E03",
+        "year": 2022,
+        "mirrorEnrollment": 0,
+        "seadeEnrollment": 0,
+        "pass": true
+      },
+      {
+        "code": "0716E03",
+        "year": 2023,
+        "mirrorEnrollment": 0,
+        "seadeEnrollment": 0,
+        "pass": true
+      },
+      {
+        "code": "0716E03",
+        "year": 2024,
+        "mirrorEnrollment": 0,
+        "seadeEnrollment": 0,
+        "pass": true
+      },
+      {
+        "code": "0716E05",
+        "year": 2019,
+        "mirrorEnrollment": 281,
+        "seadeEnrollment": 281,
+        "pass": true
+      },
+      {
+        "code": "0716E05",
+        "year": 2020,
+        "mirrorEnrollment": 275,
+        "seadeEnrollment": 275,
+        "pass": true
+      },
+      {
+        "code": "0716E05",
+        "year": 2021,
+        "mirrorEnrollment": 252,
+        "seadeEnrollment": 252,
+        "pass": true
+      },
+      {
+        "code": "0716E05",
+        "year": 2022,
+        "mirrorEnrollment": 249,
+        "seadeEnrollment": 249,
+        "pass": true
+      },
+      {
+        "code": "0716E05",
+        "year": 2023,
+        "mirrorEnrollment": 216,
+        "seadeEnrollment": 216,
+        "pass": true
+      },
+      {
+        "code": "0716E05",
+        "year": 2024,
+        "mirrorEnrollment": 191,
+        "seadeEnrollment": 191,
+        "pass": true
+      },
+      {
+        "code": "0811E02",
+        "year": 2019,
+        "mirrorEnrollment": 482,
+        "seadeEnrollment": 482,
+        "pass": true
+      },
+      {
+        "code": "0811E02",
+        "year": 2020,
+        "mirrorEnrollment": 497,
+        "seadeEnrollment": 497,
+        "pass": true
+      },
+      {
+        "code": "0811E02",
+        "year": 2021,
+        "mirrorEnrollment": 514,
+        "seadeEnrollment": 514,
+        "pass": true
+      },
+      {
+        "code": "0811E02",
+        "year": 2022,
+        "mirrorEnrollment": 491,
+        "seadeEnrollment": 491,
+        "pass": true
+      },
+      {
+        "code": "0811E02",
+        "year": 2023,
+        "mirrorEnrollment": 480,
+        "seadeEnrollment": 480,
+        "pass": true
+      },
+      {
+        "code": "0811E02",
+        "year": 2024,
+        "mirrorEnrollment": 469,
+        "seadeEnrollment": 469,
+        "pass": true
+      },
+      {
+        "code": "0731E02",
+        "year": 2019,
+        "mirrorEnrollment": 85,
+        "seadeEnrollment": 85,
+        "pass": true
+      },
+      {
+        "code": "0716E01",
+        "year": 2019,
+        "mirrorEnrollment": 354,
+        "seadeEnrollment": 354,
+        "pass": true
+      },
+      {
+        "code": "0716E01",
+        "year": 2020,
+        "mirrorEnrollment": 336,
+        "seadeEnrollment": 336,
+        "pass": true
+      },
+      {
+        "code": "0716E01",
+        "year": 2021,
+        "mirrorEnrollment": 422,
+        "seadeEnrollment": 422,
+        "pass": true
+      },
+      {
+        "code": "0716E01",
+        "year": 2022,
+        "mirrorEnrollment": 391,
+        "seadeEnrollment": 391,
+        "pass": true
+      },
+      {
+        "code": "0716E01",
+        "year": 2023,
+        "mirrorEnrollment": 295,
+        "seadeEnrollment": 295,
+        "pass": true
+      },
+      {
+        "code": "0716E01",
+        "year": 2024,
+        "mirrorEnrollment": 225,
+        "seadeEnrollment": 225,
+        "pass": true
+      },
+      {
+        "code": "0711E01",
+        "year": 2019,
+        "mirrorEnrollment": 220,
+        "seadeEnrollment": 220,
+        "pass": true
+      },
+      {
+        "code": "0711E01",
+        "year": 2020,
+        "mirrorEnrollment": 218,
+        "seadeEnrollment": 218,
+        "pass": true
+      },
+      {
+        "code": "0711E01",
+        "year": 2021,
+        "mirrorEnrollment": 220,
+        "seadeEnrollment": 220,
+        "pass": true
+      },
+      {
+        "code": "0711E01",
+        "year": 2022,
+        "mirrorEnrollment": 223,
+        "seadeEnrollment": 223,
+        "pass": true
+      },
+      {
+        "code": "0711E01",
+        "year": 2023,
+        "mirrorEnrollment": 235,
+        "seadeEnrollment": 235,
+        "pass": true
+      },
+      {
+        "code": "0711E01",
+        "year": 2024,
+        "mirrorEnrollment": 239,
+        "seadeEnrollment": 239,
+        "pass": true
+      },
+      {
+        "code": "0731E01",
+        "year": 2019,
+        "mirrorEnrollment": 153,
+        "seadeEnrollment": 153,
+        "pass": true
+      },
+      {
+        "code": "0731E01",
+        "year": 2020,
+        "mirrorEnrollment": 148,
+        "seadeEnrollment": 148,
+        "pass": true
+      },
+      {
+        "code": "0731E01",
+        "year": 2021,
+        "mirrorEnrollment": 124,
+        "seadeEnrollment": 124,
+        "pass": true
+      },
+      {
+        "code": "0731E01",
+        "year": 2022,
+        "mirrorEnrollment": 126,
+        "seadeEnrollment": 126,
+        "pass": true
+      },
+      {
+        "code": "0731E01",
+        "year": 2023,
+        "mirrorEnrollment": 125,
+        "seadeEnrollment": 125,
+        "pass": true
+      },
+      {
+        "code": "0731E01",
+        "year": 2024,
+        "mirrorEnrollment": 105,
+        "seadeEnrollment": 105,
+        "pass": true
+      },
+      {
+        "code": "0711E03",
+        "year": 2019,
+        "mirrorEnrollment": 213,
+        "seadeEnrollment": 213,
+        "pass": true
+      },
+      {
+        "code": "0711E03",
+        "year": 2020,
+        "mirrorEnrollment": 225,
+        "seadeEnrollment": 225,
+        "pass": true
+      },
+      {
+        "code": "0711E03",
+        "year": 2021,
+        "mirrorEnrollment": 236,
+        "seadeEnrollment": 236,
+        "pass": true
+      },
+      {
+        "code": "0711E03",
+        "year": 2022,
+        "mirrorEnrollment": 230,
+        "seadeEnrollment": 230,
+        "pass": true
+      },
+      {
+        "code": "0714E06",
+        "year": 2019,
+        "mirrorEnrollment": 223,
+        "seadeEnrollment": 223,
+        "pass": true
+      },
+      {
+        "code": "0714E06",
+        "year": 2020,
+        "mirrorEnrollment": 262,
+        "seadeEnrollment": 262,
+        "pass": true
+      },
+      {
+        "code": "0714E06",
+        "year": 2021,
+        "mirrorEnrollment": 347,
+        "seadeEnrollment": 347,
+        "pass": true
+      },
+      {
+        "code": "0714E06",
+        "year": 2022,
+        "mirrorEnrollment": 333,
+        "seadeEnrollment": 333,
+        "pass": true
+      },
+      {
+        "code": "0714E06",
+        "year": 2023,
+        "mirrorEnrollment": 200,
+        "seadeEnrollment": 200,
+        "pass": true
+      },
+      {
+        "code": "0714E06",
+        "year": 2024,
+        "mirrorEnrollment": 204,
+        "seadeEnrollment": 204,
+        "pass": true
+      },
+      {
+        "code": "0713E06",
+        "year": 2024,
+        "mirrorEnrollment": 22,
+        "seadeEnrollment": 22,
+        "pass": true
+      },
+      {
+        "code": "0710E01",
+        "year": 2019,
+        "mirrorEnrollment": 143,
+        "seadeEnrollment": 143,
+        "pass": true
+      },
+      {
+        "code": "0710E01",
+        "year": 2020,
+        "mirrorEnrollment": 120,
+        "seadeEnrollment": 120,
+        "pass": true
+      },
+      {
+        "code": "0710E01",
+        "year": 2021,
+        "mirrorEnrollment": 92,
+        "seadeEnrollment": 92,
+        "pass": true
+      },
+      {
+        "code": "0710E01",
+        "year": 2022,
+        "mirrorEnrollment": 59,
+        "seadeEnrollment": 59,
+        "pass": true
+      },
+      {
+        "code": "0710E01",
+        "year": 2023,
+        "mirrorEnrollment": 46,
+        "seadeEnrollment": 46,
+        "pass": true
+      },
+      {
+        "code": "0710E01",
+        "year": 2024,
+        "mirrorEnrollment": 1,
+        "seadeEnrollment": 1,
+        "pass": true
+      }
+    ],
+    "reconciliation": {
+      "graduates": {
+        "state": 19859,
+        "cities": 19859,
+        "fields": 19859
+      },
+      "entrants": {
+        "state": 33890,
+        "cities": 33890,
+        "fields": 33890
+      },
+      "enrolled": {
+        "state": 119749,
+        "cities": 119749,
+        "fields": 119749
+      }
+    }
+  }
+}

@@ -1,0 +1,1099 @@
+{
+  "schemaVersion": "public-sources-1.0",
+  "realPublicData": true,
+  "synthetic": false,
+  "seed": null,
+  "exportedAt": "2026-10-11",
+  "delimiter": ";",
+  "encoding": "UTF-8 BOM",
+  "lineEndings": "CRLF",
+  "numericCulture": "en-US",
+  "formulaProtection": "Formula-leading strings are prefixed with an apostrophe; numeric negative values retain their numeric type.",
+  "separation": "Exports contain only public aggregates. No join or sum with the seeded demonstrative company/professional facts.",
+  "rows": 1068,
+  "tables": [
+    {
+      "name": "creasp_entregas_publicadas_2025",
+      "file": "creasp_entregas_publicadas_2025.csv",
+      "rows": 13,
+      "columns": [
+        "id",
+        "label",
+        "value",
+        "displayValue",
+        "valueKind",
+        "unit",
+        "year",
+        "uf",
+        "domain",
+        "sourcePhysicalPage",
+        "sourceNote",
+        "sourceUrl",
+        "sourceSha256",
+        "sourceStatus"
+      ],
+      "grain": "Indicador × exercício × UF; agregado publicado pelo CREA-SP, sem identidade nominal",
+      "keys": [
+        "id",
+        "year",
+        "uf"
+      ],
+      "reference": "Exercício 2025; leitura do sumário oficial em 11/10/2026",
+      "geography": "Estado de São Paulo",
+      "measures": {
+        "value": "valor transcrito: interpretar obrigatoriamente junto a valueKind",
+        "displayValue": "precisão e limites publicados preservados",
+        "valueKind": "exact, lowerBound, approximate ou reported; não é grau de auditoria"
+      },
+      "source": "management",
+      "limitations": [
+        "Os números são resultados declarados pelo próprio Conselho. A leitura fiel não valida sua completude, identidade, deduplicação ou efeito causal.",
+        "Espectadores, certificados emitidos, usuários, cursos e unidades físicas são unidades de contagem diferentes; não formam um funil de pessoas distintas.",
+        "O símbolo > preserva o limite inferior publicado. Não tratar o número-base como total exato.",
+        "Autos publicados como 201 mil preservam aproximação. Não exibir 201.000 como contagem auditada exata.",
+        "Ações fiscalizatórias, autos e processos analisados não são etapas deduplicadas de uma mesma coorte. Não dividir esses agregados para inferir taxa de infração, conclusão ou regularização.",
+        "Novos registros profissionais abrangem as profissões do Sistema na circunscrição paulista; não equivalem apenas a engenheiros ou a ingressos no mercado de trabalho.",
+        "ARTs são documentos emitidos, não necessariamente obras, serviços, contratos, profissionais distintos ou atividades concluídas.",
+        "A publicação distingue 37 unidades CreaLab Coworking de dois Espaços CreaLab. Não rotular sua soma como 39 coworkings.",
+        "Os agregados estaduais anuais não recebem filtros municipais, GRE, CNAE, porte, CNPJ ou pessoas fictícias.",
+        "Não há conciliação nominal entre estes números públicos e as entidades demonstrativas da aplicação.",
+        "A avaliação de benefício ao profissional exige participação identificada, custos atribuíveis, seguimento e resultados documentados; estes agregados não fornecem esses dados.",
+        "O corpo do relatório menciona cerca de 30 cursos; o quadro final explicita 32. Esta transcrição usa o quadro final e registra a diferença de precisão, sem concluir erro ou superestimação."
+      ],
+      "sha256": "0865de85e463b9a99b3e552862fdb5e3f2bdd9056165d4874eed4ac568e76ec7"
+    },
+    {
+      "name": "educacao_sp_ano",
+      "file": "educacao_sp_ano.csv",
+      "rows": 6,
+      "columns": [
+        "year",
+        "graduates",
+        "entrants",
+        "enrolled",
+        "fieldCount",
+        "uf",
+        "modality",
+        "modalityCode",
+        "sourceUrl",
+        "sourceCommit",
+        "extractedAt",
+        "scope"
+      ],
+      "grain": "UF × modalidade presencial × ano × recorte CINE declarado",
+      "keys": [
+        "uf",
+        "modalityCode",
+        "year"
+      ],
+      "reference": "2019–2024, ano do Censo da Educação Superior",
+      "geography": "SP — local de oferta presencial do curso; município pelo código IBGE",
+      "measures": {
+        "graduates": "concluintes por curso/ano (fluxo)",
+        "entrants": "ingressantes por curso/ano (fluxo)",
+        "enrolled": "matrículas por curso/ano (estoque)",
+        "fieldCount": "códigos CINE com observação no ano"
+      },
+      "source": "education",
+      "limitations": [
+        "Concluintes são contagens por curso/ano, não um cadastro nominal de diplomados nem pessoas distintas.",
+        "Apenas modalidade presencial. EaD não participa destes totais.",
+        "2019–2024 é a série externa; 2024 é o recorte municipal. Não alterar artificialmente a competência para o período demonstrativo CREA de 2026.",
+        "Rótulos CINE inexistentes em uma edição permanecem sem observação. Nenhuma lacuna foi preenchida por interpolação ou valor aleatório.",
+        "O município identifica o local de oferta presencial, não o domicílio atual do concluinte.",
+        "Matrículas constituem estoque; ingressantes e concluintes são fluxos anuais e não compõem a mesma coorte. A relação não mede evasão, empregabilidade ou conversão em registro.",
+        "Não há ligação individual com CPF, profissional CREA, responsável técnico, CNPJ ou vínculo de emprego.",
+        "Os valores de concluintes e ingressantes provêm de reprodução pública de microdados INEP, com código de extração inspecionado e totais internos conciliados. O arquivo bruto governamental não pôde ser baixado nesta sessão; sua validação direta permanece pendente.",
+        "O recorte de cursos é analítico e inclui Engenharia de software; sua presença não determina atribuições ou obrigação de registro profissional.",
+        "O código do repositório engineer-statistics permanece restrito nesta sessão, mas seus dados publicados no GitHub Pages foram lidos e importados separadamente. Os repositórios receita-socios-eng e conselho agora estão acessíveis. Esta série de São Paulo permanece proveniente da outra reprodução pública identificada, com recorte e competência próprios."
+      ],
+      "sha256": "fa0e98d8bddf223a8656979e98ab9e901fb6a00315e97f8b9a9e5671ba2fe28f"
+    },
+    {
+      "name": "educacao_sp_cine_ano",
+      "file": "educacao_sp_cine_ano.csv",
+      "rows": 240,
+      "columns": [
+        "code",
+        "name",
+        "year",
+        "graduates",
+        "entrants",
+        "enrolled",
+        "uf",
+        "modality",
+        "modalityCode",
+        "sourceUrl",
+        "sourceCommit",
+        "extractedAt",
+        "scope"
+      ],
+      "grain": "UF × modalidade presencial × código CINE × ano",
+      "keys": [
+        "uf",
+        "modalityCode",
+        "code",
+        "year"
+      ],
+      "reference": "2019–2024; catálogo de campos observado na extração",
+      "geography": "SP — local de oferta presencial do curso; município pelo código IBGE",
+      "measures": {
+        "graduates": "concluintes por curso/ano (fluxo)",
+        "entrants": "ingressantes por curso/ano (fluxo)",
+        "enrolled": "matrículas por curso/ano (estoque)"
+      },
+      "source": "education",
+      "limitations": [
+        "Concluintes são contagens por curso/ano, não um cadastro nominal de diplomados nem pessoas distintas.",
+        "Apenas modalidade presencial. EaD não participa destes totais.",
+        "2019–2024 é a série externa; 2024 é o recorte municipal. Não alterar artificialmente a competência para o período demonstrativo CREA de 2026.",
+        "Rótulos CINE inexistentes em uma edição permanecem sem observação. Nenhuma lacuna foi preenchida por interpolação ou valor aleatório.",
+        "O município identifica o local de oferta presencial, não o domicílio atual do concluinte.",
+        "Matrículas constituem estoque; ingressantes e concluintes são fluxos anuais e não compõem a mesma coorte. A relação não mede evasão, empregabilidade ou conversão em registro.",
+        "Não há ligação individual com CPF, profissional CREA, responsável técnico, CNPJ ou vínculo de emprego.",
+        "Os valores de concluintes e ingressantes provêm de reprodução pública de microdados INEP, com código de extração inspecionado e totais internos conciliados. O arquivo bruto governamental não pôde ser baixado nesta sessão; sua validação direta permanece pendente.",
+        "O recorte de cursos é analítico e inclui Engenharia de software; sua presença não determina atribuições ou obrigação de registro profissional.",
+        "O código do repositório engineer-statistics permanece restrito nesta sessão, mas seus dados publicados no GitHub Pages foram lidos e importados separadamente. Os repositórios receita-socios-eng e conselho agora estão acessíveis. Esta série de São Paulo permanece proveniente da outra reprodução pública identificada, com recorte e competência próprios."
+      ],
+      "sha256": "d3c15757267bce88ff45bbe7353629e36438787f0259a8bc0abc567a46367dc5"
+    },
+    {
+      "name": "educacao_sp_municipio_cine_2024",
+      "file": "educacao_sp_municipio_cine_2024.csv",
+      "rows": 563,
+      "columns": [
+        "code",
+        "name",
+        "ibgeCode",
+        "cityName",
+        "year",
+        "graduates",
+        "entrants",
+        "enrolled",
+        "uf",
+        "modality",
+        "modalityCode",
+        "sourceUrl",
+        "sourceCommit",
+        "extractedAt",
+        "scope"
+      ],
+      "grain": "Município IBGE da oferta presencial × código CINE × ano",
+      "keys": [
+        "uf",
+        "modalityCode",
+        "ibgeCode",
+        "code",
+        "year"
+      ],
+      "reference": "2024; não é domicílio atual do diplomado",
+      "geography": "SP — local de oferta presencial do curso; município pelo código IBGE",
+      "measures": {
+        "graduates": "concluintes por curso/ano (fluxo)",
+        "entrants": "ingressantes por curso/ano (fluxo)",
+        "enrolled": "matrículas por curso/ano (estoque)"
+      },
+      "source": "education",
+      "limitations": [
+        "Concluintes são contagens por curso/ano, não um cadastro nominal de diplomados nem pessoas distintas.",
+        "Apenas modalidade presencial. EaD não participa destes totais.",
+        "2019–2024 é a série externa; 2024 é o recorte municipal. Não alterar artificialmente a competência para o período demonstrativo CREA de 2026.",
+        "Rótulos CINE inexistentes em uma edição permanecem sem observação. Nenhuma lacuna foi preenchida por interpolação ou valor aleatório.",
+        "O município identifica o local de oferta presencial, não o domicílio atual do concluinte.",
+        "Matrículas constituem estoque; ingressantes e concluintes são fluxos anuais e não compõem a mesma coorte. A relação não mede evasão, empregabilidade ou conversão em registro.",
+        "Não há ligação individual com CPF, profissional CREA, responsável técnico, CNPJ ou vínculo de emprego.",
+        "Os valores de concluintes e ingressantes provêm de reprodução pública de microdados INEP, com código de extração inspecionado e totais internos conciliados. O arquivo bruto governamental não pôde ser baixado nesta sessão; sua validação direta permanece pendente.",
+        "O recorte de cursos é analítico e inclui Engenharia de software; sua presença não determina atribuições ou obrigação de registro profissional.",
+        "O código do repositório engineer-statistics permanece restrito nesta sessão, mas seus dados publicados no GitHub Pages foram lidos e importados separadamente. Os repositórios receita-socios-eng e conselho agora estão acessíveis. Esta série de São Paulo permanece proveniente da outra reprodução pública identificada, com recorte e competência próprios."
+      ],
+      "sha256": "8c8d4e02f69682b8e90179ee3d11bcf28c17816219b9e1cb4447259fa010e5f8"
+    },
+    {
+      "name": "pncp_sp_municipio_categoria",
+      "file": "pncp_sp_municipio_categoria.csv",
+      "rows": 92,
+      "columns": [
+        "period",
+        "municipalityId",
+        "municipalityName",
+        "categoryId",
+        "categoryName",
+        "contractCount",
+        "contractValue",
+        "contractsWithValue",
+        "supplierCountWithinCell",
+        "uf",
+        "sourceUrl",
+        "extractedAt",
+        "dateRole",
+        "geographyRole"
+      ],
+      "grain": "Data de publicação × município da unidade contratante × categoria publicada",
+      "keys": [
+        "period",
+        "municipalityId",
+        "categoryId"
+      ],
+      "reference": "2025-09-01 a 2025-09-01; recorte de publicações, não contratos vigentes",
+      "geography": "Município da unidade do órgão contratante; não local de execução nem domicílio do fornecedor",
+      "measures": {
+        "contractCount": "contratos distintos por célula",
+        "contractValue": "valorGlobal, ou valorInicial quando ausente (R$)",
+        "contractsWithValue": "contratos com valor disponível",
+        "supplierCountWithinCell": "fornecedores distintos somente dentro da célula; não aditivo"
+      },
+      "source": "pncp",
+      "limitations": [
+        "Recorte de um dia de publicações; não representa estoque de contratos vigentes nem tendência mensal/anual.",
+        "Categoria publicada pelo órgão; serviços gerais não implica atividade de engenharia.",
+        "Não houve consulta de CNAE, cadastro CREA ou documentos. Não demonstra obrigação, ART, RT ou irregularidade.",
+        "Não somar com a base sintética. Não ligar contratos reais às empresas fictícias.",
+        "supplierCountWithinCell é distinct dentro da célula e não deve ser somado entre células para obter fornecedores distintos totais."
+      ],
+      "sha256": "bea4f5a4fb0d67a7832fbad4219ba06ed97de71b836c26694e0db2c3350f361c"
+    },
+    {
+      "name": "formacao_br_ano",
+      "file": "formacao_br_ano.csv",
+      "rows": 8,
+      "columns": [
+        "year",
+        "graduates",
+        "uf",
+        "scope",
+        "scopeLabel",
+        "kind",
+        "unit",
+        "sourceId",
+        "sourceUrl",
+        "sourceConfidence"
+      ],
+      "grain": "Brasil × ano × recorte de formação",
+      "keys": [
+        "uf",
+        "year",
+        "scope"
+      ],
+      "reference": "2010/2014/2018/2019/2022/2023 estrito; 2018/2024 CINE07 amplo; lacunas preservadas",
+      "geography": "Brasil; não responde a município, GRE, CNPJ ou profissional individual",
+      "measures": {
+        "graduates": "concluintes por ano (fluxo); engenharia estrita e CINE07 amplo são recortes distintos"
+      },
+      "source": "user",
+      "limitations": [
+        "Diplomados do Censo, concluintes do INEP, novos registros do SIC e profissionais ativos têm unidades, universos e competências distintos; não formam um funil de conversão.",
+        "Concluintes de engenharia no recorte estrito não se sobrepõem à área ampla CINE 07; anos ausentes não são zeros nem interpolados.",
+        "A série nacional de registros abrange todas as profissões do Sistema; o período de 2026 é parcial até 30/08/2026.",
+        "A série de novos registros CREA-SP termina em 2022 no retorno coletado pelo autor; anos posteriores não foram estimados.",
+        "Títulos de engenharia não equivalem a profissionais distintos. Os valores estaduais ativos incluem todas as profissões do Sistema.",
+        "O estoque de diplomados CINE 07 de 2022 permanece citado de fonte secundária; mostrar 2,37 milhões e preservar essa ressalva.",
+        "Bases nacionais ou por UF não respondem a filtros locais de município, GRE, CNPJ ou profissional fictício; esses filtros são incompatíveis com o grão disponível.",
+        "As médias salariais por CBO cobrem movimentações CLT declaradas e não determinam remuneração individual nem obrigação automática de registro.",
+        "A amostra CAGED do projeto contém apenas três CBOs selecionadas, com janelas distintas; não representa toda a engenharia.",
+        "Os 600 profissionais e vínculos/empresas do protótipo permanecem demonstrativos e não são identificados nesses agregados públicos."
+      ],
+      "sha256": "7c07afa54d893d074b2bc7a6d7f57da9d53a4bc400f0aed08e40d7b1582589de"
+    },
+    {
+      "name": "registros_profissionais_ano",
+      "file": "registros_profissionais_ano.csv",
+      "rows": 103,
+      "columns": [
+        "year",
+        "registrations",
+        "uf",
+        "partial",
+        "periodEnd",
+        "asOf",
+        "scope",
+        "scopeLabel",
+        "kind",
+        "unit",
+        "sourceId",
+        "sourceUrl",
+        "sourceConfidence"
+      ],
+      "grain": "Brasil ou CREA-SP × ano × universo de profissões do Sistema",
+      "keys": [
+        "uf",
+        "year",
+        "scope"
+      ],
+      "reference": "Brasil 1937–2026, 2026 parcial até 30/08/2026; CREA-SP 2010–2022",
+      "geography": "Agregado nacional ou conselho estadual; não responde a dimensões abaixo da UF",
+      "measures": {
+        "registrations": "novos registros no ano (fluxo), todas as profissões do Sistema; não coorte de egressos"
+      },
+      "source": "user",
+      "limitations": [
+        "Diplomados do Censo, concluintes do INEP, novos registros do SIC e profissionais ativos têm unidades, universos e competências distintos; não formam um funil de conversão.",
+        "Concluintes de engenharia no recorte estrito não se sobrepõem à área ampla CINE 07; anos ausentes não são zeros nem interpolados.",
+        "A série nacional de registros abrange todas as profissões do Sistema; o período de 2026 é parcial até 30/08/2026.",
+        "A série de novos registros CREA-SP termina em 2022 no retorno coletado pelo autor; anos posteriores não foram estimados.",
+        "Títulos de engenharia não equivalem a profissionais distintos. Os valores estaduais ativos incluem todas as profissões do Sistema.",
+        "O estoque de diplomados CINE 07 de 2022 permanece citado de fonte secundária; mostrar 2,37 milhões e preservar essa ressalva.",
+        "Bases nacionais ou por UF não respondem a filtros locais de município, GRE, CNPJ ou profissional fictício; esses filtros são incompatíveis com o grão disponível.",
+        "As médias salariais por CBO cobrem movimentações CLT declaradas e não determinam remuneração individual nem obrigação automática de registro.",
+        "A amostra CAGED do projeto contém apenas três CBOs selecionadas, com janelas distintas; não representa toda a engenharia.",
+        "Os 600 profissionais e vínculos/empresas do protótipo permanecem demonstrativos e não são identificados nesses agregados públicos."
+      ],
+      "sha256": "655e21ed37f87822b11aa3ff63e1f3616f465b25d338dcdd14050c4451c74a74"
+    },
+    {
+      "name": "situacao_profissional_uf",
+      "file": "situacao_profissional_uf.csv",
+      "rows": 28,
+      "columns": [
+        "uf",
+        "ufCode",
+        "professionals",
+        "registeredTotal",
+        "interrupted",
+        "cancelled",
+        "suspended",
+        "other",
+        "activeShare",
+        "year",
+        "asOf",
+        "scope",
+        "kind",
+        "unit",
+        "population",
+        "populationYear",
+        "sourceId",
+        "sourceUrl",
+        "sourceConfidence"
+      ],
+      "grain": "UF ou total Brasil × situação em 30/08/2026",
+      "keys": [
+        "uf",
+        "asOf",
+        "scope"
+      ],
+      "reference": "SIC 30/08/2026; população estimada IBGE 2025 em competência própria",
+      "geography": "27 UFs + linha BR. Filtrar BR antes de somar as UFs; não somar a linha total com as estaduais.",
+      "measures": {
+        "professionals": "profissionais ativos (estoque)",
+        "registeredTotal": "registros históricos em todas as situações",
+        "interrupted": "interrompidos",
+        "cancelled": "cancelados",
+        "suspended": "suspensos",
+        "other": "outras situações",
+        "activeShare": "ativos ÷ total ×100 (%)",
+        "population": "população estimada por UF, referência2025"
+      },
+      "source": "user",
+      "limitations": [
+        "Diplomados do Censo, concluintes do INEP, novos registros do SIC e profissionais ativos têm unidades, universos e competências distintos; não formam um funil de conversão.",
+        "Concluintes de engenharia no recorte estrito não se sobrepõem à área ampla CINE 07; anos ausentes não são zeros nem interpolados.",
+        "A série nacional de registros abrange todas as profissões do Sistema; o período de 2026 é parcial até 30/08/2026.",
+        "A série de novos registros CREA-SP termina em 2022 no retorno coletado pelo autor; anos posteriores não foram estimados.",
+        "Títulos de engenharia não equivalem a profissionais distintos. Os valores estaduais ativos incluem todas as profissões do Sistema.",
+        "O estoque de diplomados CINE 07 de 2022 permanece citado de fonte secundária; mostrar 2,37 milhões e preservar essa ressalva.",
+        "Bases nacionais ou por UF não respondem a filtros locais de município, GRE, CNPJ ou profissional fictício; esses filtros são incompatíveis com o grão disponível.",
+        "As médias salariais por CBO cobrem movimentações CLT declaradas e não determinam remuneração individual nem obrigação automática de registro.",
+        "A amostra CAGED do projeto contém apenas três CBOs selecionadas, com janelas distintas; não representa toda a engenharia.",
+        "Os 600 profissionais e vínculos/empresas do protótipo permanecem demonstrativos e não são identificados nesses agregados públicos.",
+        "A linha BR é total de controle, não uma 28ª UF; medidas de soma estadual devem excluí-la."
+      ],
+      "sha256": "f4d6d0f9b7e688512af0631f6531571e738787d3979762f27f2e2e256ed3ddc6"
+    },
+    {
+      "name": "salarios_cbo",
+      "file": "salarios_cbo.csv",
+      "rows": 12,
+      "columns": [
+        "cbo",
+        "occupation",
+        "cboFamily",
+        "averageMonthlySalary",
+        "weeklyHours",
+        "movements",
+        "period",
+        "uf",
+        "kind",
+        "unit",
+        "scope",
+        "sourceId",
+        "sourceUrl",
+        "sourceConfidence"
+      ],
+      "grain": "Brasil × CBO × janela temporal do levantamento",
+      "keys": [
+        "uf",
+        "cbo",
+        "period",
+        "scope"
+      ],
+      "reference": "Janelas de 12 meses referenciadas em ago/2026; conforme a fonte de cada CBO",
+      "geography": "Brasil; universo de movimentações CLT declaradas",
+      "measures": {
+        "averageMonthlySalary": "média mensal em R$ da amostra de movimentações",
+        "weeklyHours": "jornada semanal média publicada",
+        "movements": "movimentações CLT no levantamento; não pessoas distintas"
+      },
+      "source": "user",
+      "limitations": [
+        "Diplomados do Censo, concluintes do INEP, novos registros do SIC e profissionais ativos têm unidades, universos e competências distintos; não formam um funil de conversão.",
+        "Concluintes de engenharia no recorte estrito não se sobrepõem à área ampla CINE 07; anos ausentes não são zeros nem interpolados.",
+        "A série nacional de registros abrange todas as profissões do Sistema; o período de 2026 é parcial até 30/08/2026.",
+        "A série de novos registros CREA-SP termina em 2022 no retorno coletado pelo autor; anos posteriores não foram estimados.",
+        "Títulos de engenharia não equivalem a profissionais distintos. Os valores estaduais ativos incluem todas as profissões do Sistema.",
+        "O estoque de diplomados CINE 07 de 2022 permanece citado de fonte secundária; mostrar 2,37 milhões e preservar essa ressalva.",
+        "Bases nacionais ou por UF não respondem a filtros locais de município, GRE, CNPJ ou profissional fictício; esses filtros são incompatíveis com o grão disponível.",
+        "As médias salariais por CBO cobrem movimentações CLT declaradas e não determinam remuneração individual nem obrigação automática de registro.",
+        "A amostra CAGED do projeto contém apenas três CBOs selecionadas, com janelas distintas; não representa toda a engenharia.",
+        "Os 600 profissionais e vínculos/empresas do protótipo permanecem demonstrativos e não são identificados nesses agregados públicos."
+      ],
+      "sha256": "f67a2985deef54ec016c7396e578cb8e2009efffb865e37a1a1f9c2dbcb1350b"
+    },
+    {
+      "name": "emprego_saldo_cbo",
+      "file": "emprego_saldo_cbo.csv",
+      "rows": 3,
+      "columns": [
+        "cbo",
+        "occupation",
+        "balance",
+        "period",
+        "uf",
+        "kind",
+        "unit",
+        "scope",
+        "sourceId",
+        "sourceUrl",
+        "sourceConfidence"
+      ],
+      "grain": "Brasil × CBO × janela temporal do levantamento",
+      "keys": [
+        "uf",
+        "cbo",
+        "period",
+        "scope"
+      ],
+      "reference": "Civil jul/2025–jun/2026; elétrica/produção 12 meses ref. ago/2026",
+      "geography": "Brasil; três CBOs selecionadas, não todo o mercado de engenharia",
+      "measures": {
+        "balance": "admissões menos desligamentos (fluxo de vínculos CLT); não estoque RAIS"
+      },
+      "source": "user",
+      "limitations": [
+        "Diplomados do Censo, concluintes do INEP, novos registros do SIC e profissionais ativos têm unidades, universos e competências distintos; não formam um funil de conversão.",
+        "Concluintes de engenharia no recorte estrito não se sobrepõem à área ampla CINE 07; anos ausentes não são zeros nem interpolados.",
+        "A série nacional de registros abrange todas as profissões do Sistema; o período de 2026 é parcial até 30/08/2026.",
+        "A série de novos registros CREA-SP termina em 2022 no retorno coletado pelo autor; anos posteriores não foram estimados.",
+        "Títulos de engenharia não equivalem a profissionais distintos. Os valores estaduais ativos incluem todas as profissões do Sistema.",
+        "O estoque de diplomados CINE 07 de 2022 permanece citado de fonte secundária; mostrar 2,37 milhões e preservar essa ressalva.",
+        "Bases nacionais ou por UF não respondem a filtros locais de município, GRE, CNPJ ou profissional fictício; esses filtros são incompatíveis com o grão disponível.",
+        "As médias salariais por CBO cobrem movimentações CLT declaradas e não determinam remuneração individual nem obrigação automática de registro.",
+        "A amostra CAGED do projeto contém apenas três CBOs selecionadas, com janelas distintas; não representa toda a engenharia.",
+        "Os 600 profissionais e vínculos/empresas do protótipo permanecem demonstrativos e não são identificados nesses agregados públicos."
+      ],
+      "sha256": "24c67b4088d90eb2f98324d07d7a8612770edd0e26630bc3f894baa37fb8d441"
+    }
+  ],
+  "provenance": {
+    "management": {
+      "title": "Resultados publicados pelo CREA-SP — exercício 2025",
+      "publisher": "Conselho Regional de Engenharia e Agronomia de São Paulo",
+      "geography": "Estado de São Paulo",
+      "uf": "SP",
+      "referenceYear": 2025,
+      "retrievedAt": "2026-10-11",
+      "sourceUrl": "https://www.creasp.org.br/wp-content/uploads/2026/03/sumario_executivo2025.pdf",
+      "sourceTitle": "Sumário Executivo — Relatório de Gestão 2025",
+      "sourceSha256": "85b617205d8c1a9d4d2ae41330abf3cc3a29ebfce02997b56cdc4f3d4ee5ed4e",
+      "sourceBytes": 12394601,
+      "sourcePhysicalPages": 32,
+      "sourcePrintedPaginationNote": "As referências usam a página física do PDF; a página física 28 corresponde à seção após a página impressa 23, e a página física 29 traz a página impressa 25.",
+      "extraction": "Leitura do PDF oficial obtido por HTTP GET e extração local de texto; transcrição dos agregados apresentados, sem executar código de repositórios externos.",
+      "status": "publicado pelo CREA-SP; não constitui auditoria dos registros de origem",
+      "synthetic": false,
+      "seed": null,
+      "grain": "Um agregado publicado por indicador e exercício; sem identificadores de pessoas, empresas, eventos ou processos.",
+      "deduplicationMethod": "Não informado nas seções consultadas para espectadores, certificados e usuários dos programas.",
+      "limitations": [
+        "Os números são resultados declarados pelo próprio Conselho. A leitura fiel não valida sua completude, identidade, deduplicação ou efeito causal.",
+        "Espectadores, certificados emitidos, usuários, cursos e unidades físicas são unidades de contagem diferentes; não formam um funil de pessoas distintas.",
+        "O símbolo > preserva o limite inferior publicado. Não tratar o número-base como total exato.",
+        "Autos publicados como 201 mil preservam aproximação. Não exibir 201.000 como contagem auditada exata.",
+        "Ações fiscalizatórias, autos e processos analisados não são etapas deduplicadas de uma mesma coorte. Não dividir esses agregados para inferir taxa de infração, conclusão ou regularização.",
+        "Novos registros profissionais abrangem as profissões do Sistema na circunscrição paulista; não equivalem apenas a engenheiros ou a ingressos no mercado de trabalho.",
+        "ARTs são documentos emitidos, não necessariamente obras, serviços, contratos, profissionais distintos ou atividades concluídas.",
+        "A publicação distingue 37 unidades CreaLab Coworking de dois Espaços CreaLab. Não rotular sua soma como 39 coworkings.",
+        "Os agregados estaduais anuais não recebem filtros municipais, GRE, CNAE, porte, CNPJ ou pessoas fictícias.",
+        "Não há conciliação nominal entre estes números públicos e as entidades demonstrativas da aplicação.",
+        "A avaliação de benefício ao profissional exige participação identificada, custos atribuíveis, seguimento e resultados documentados; estes agregados não fornecem esses dados.",
+        "O corpo do relatório menciona cerca de 30 cursos; o quadro final explicita 32. Esta transcrição usa o quadro final e registra a diferença de precisão, sem concluir erro ou superestimação."
+      ]
+    },
+    "education": {
+      "territory": "São Paulo",
+      "label": "Engenharias e Agronomia • presencial",
+      "source": "Censo da Educação Superior / INEP — reprodução pública no Observatório Nacional da Educação Superior",
+      "sourceUrl": "https://github.com/esidiao/observatorio-educacao-superior/tree/188e182414c460737f13ca3bc019eeeaf14589df",
+      "officialUrl": "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior",
+      "referenceYear": 2024,
+      "years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024
+      ],
+      "geography": "SP — local de oferta presencial do curso; município pelo código IBGE",
+      "modality": "Presencial",
+      "modalityCode": 1,
+      "fieldDefinition": "Rótulos CINE cujo nome inicia com Engenharia, mais o rótulo Agronomia. Seleção explícita de 47 códigos no catálogo 2024; 40 com observação em SP em 2024. Não equivale automaticamente ao universo sujeito ao registro CREA.",
+      "countingUnit": "Concluintes, ingressantes e matrículas por curso no ano — não pessoas distintas, registros profissionais ou diplomas individuais",
+      "sourceCommit": "188e182414c460737f13ca3bc019eeeaf14589df",
+      "sourceRepository": "esidiao/observatorio-educacao-superior",
+      "upstreamExtractionDate": "2026-07-27",
+      "extractedAt": "2026-10-10",
+      "methodVersion": "educacao-inep-reproducao-auditada-v1",
+      "realData": true,
+      "seed": null,
+      "license": "Dados estatísticos públicos. O repositório de reprodução não declara licença geral; nenhum código ou redação do projeto foi incorporado. A fonte oficial SEADE equivalente de matrículas está catalogada com CC-BY-4.0 no portal Dados Abertos SP.",
+      "formulas": {
+        "graduates": "SOMA(QT_CONC), UF=SP, TP_MODALIDADE_ENSINO=1, rótulos CINE selecionados",
+        "entrants": "SOMA(QT_ING), mesmo recorte",
+        "enrolled": "SOMA(QT_MAT), mesmo recorte",
+        "yearVariation": "(valor do ano / valor do ano anterior - 1) × 100"
+      },
+      "validation": {
+        "enrollmentComparisons": 240,
+        "enrollmentComparisonsPassed": 240,
+        "officialEnrollmentSource": "https://repositorio.seade.gov.br/dataset/educacao-do-ensino-superior",
+        "officialEnrollmentCsvSha256": "30260d1da68732aac92bb061e75f1fe3371bedbe4b51ee3f64274c5a8c3122bb",
+        "stateFieldCity2024Reconciled": true,
+        "graduatesDirectGovernmentFileVerified": false,
+        "details": "240 comparações CINE × ano de matrículas reconciliadas integralmente com CSV oficial SEADE/INEP. Concluintes e ingressantes conferidos quanto a método e reconciliação interna, sem nova extração direta dos microdados INEP devido a HTTP503."
+      },
+      "limitations": [
+        "Concluintes são contagens por curso/ano, não um cadastro nominal de diplomados nem pessoas distintas.",
+        "Apenas modalidade presencial. EaD não participa destes totais.",
+        "2019–2024 é a série externa; 2024 é o recorte municipal. Não alterar artificialmente a competência para o período demonstrativo CREA de 2026.",
+        "Rótulos CINE inexistentes em uma edição permanecem sem observação. Nenhuma lacuna foi preenchida por interpolação ou valor aleatório.",
+        "O município identifica o local de oferta presencial, não o domicílio atual do concluinte.",
+        "Matrículas constituem estoque; ingressantes e concluintes são fluxos anuais e não compõem a mesma coorte. A relação não mede evasão, empregabilidade ou conversão em registro.",
+        "Não há ligação individual com CPF, profissional CREA, responsável técnico, CNPJ ou vínculo de emprego.",
+        "Os valores de concluintes e ingressantes provêm de reprodução pública de microdados INEP, com código de extração inspecionado e totais internos conciliados. O arquivo bruto governamental não pôde ser baixado nesta sessão; sua validação direta permanece pendente.",
+        "O recorte de cursos é analítico e inclui Engenharia de software; sua presença não determina atribuições ou obrigação de registro profissional.",
+        "O código do repositório engineer-statistics permanece restrito nesta sessão, mas seus dados publicados no GitHub Pages foram lidos e importados separadamente. Os repositórios receita-socios-eng e conselho agora estão acessíveis. Esta série de São Paulo permanece proveniente da outra reprodução pública identificada, com recorte e competência próprios."
+      ]
+    },
+    "pncp": {
+      "schemaVersion": "pncp-public-aggregate-1.0",
+      "origin": "PNCP — API pública oficial",
+      "kind": "public-observed-aggregate",
+      "source": "https://pncp.gov.br/api/consulta/v1/contratos",
+      "sourceRepository": "https://github.com/caiofvserra/engineering-analytics-pncp",
+      "sourceRepositoryCommit": "88ba1277ea17b779f2c692d99e0520c76fabd752",
+      "extractedAt": "2026-10-10T15:13:55.738459+00:00",
+      "periodStart": "2025-09-01",
+      "periodEnd": "2025-09-01",
+      "dateRole": "Data de publicação no PNCP",
+      "geographyRole": "Município da unidade do órgão contratante; não local de execução nem domicílio do fornecedor",
+      "filters": {
+        "uf": "SP",
+        "categoryIds": [
+          7,
+          8,
+          9
+        ]
+      },
+      "collection": {
+        "pages": 13,
+        "advertisedBrazilRows": 6241,
+        "downloadedBrazilRows": 6241,
+        "uniqueBrazilContractKeys": 6241,
+        "duplicateKeysRemoved": 0,
+        "missingKeyRows": 0,
+        "spRowsAllCategories": 1430,
+        "spRowsByCategory": {
+          "1": 12,
+          "2": 1057,
+          "3": 3,
+          "5": 5,
+          "6": 2,
+          "7": 8,
+          "8": 329,
+          "9": 4,
+          "10": 9,
+          "11": 1
+        },
+        "spSelectedContractRows": 341,
+        "aggregateRows": 92,
+        "selectedRowsMissingValue": 0,
+        "allPagesComplete": true,
+        "rawResponseSha256": "56807820edf2813c0cbc7a12ebb31df1c28079e6a8b5ced3c16cccac16358d7a"
+      },
+      "valueRule": "valorGlobal; na ausência, valorInicial. Sem valor permanece ausente e não é tratado como zero na cobertura.",
+      "limitations": [
+        "Recorte de um dia de publicações; não representa estoque de contratos vigentes nem tendência mensal/anual.",
+        "Categoria publicada pelo órgão; serviços gerais não implica atividade de engenharia.",
+        "Não houve consulta de CNAE, cadastro CREA ou documentos. Não demonstra obrigação, ART, RT ou irregularidade.",
+        "Não somar com a base sintética. Não ligar contratos reais às empresas fictícias.",
+        "supplierCountWithinCell é distinct dentro da célula e não deve ser somado entre células para obter fornecedores distintos totais."
+      ],
+      "privacy": "Somente dimensões territoriais/categorias e contagens/valores agregados; nomes, CNPJs, pessoas e objetos individuais não são exportados."
+    },
+    "user": {
+      "projectUrl": "https://caiofvserra.github.io/engineer-statistics/",
+      "projectName": "Onde estão os engenheiros? — Caio Serra",
+      "retrievedAt": "2026-10-10",
+      "publishedSnapshot": "2026-09-19",
+      "schemaVersion": "1.0",
+      "validation": "Reprodução dos agregados publicados no projeto do usuário; rótulos de confiança pertencem ao projeto de origem, não constituem nova validação primária pelo protótipo.",
+      "dataKind": "public-aggregated",
+      "sources": [
+        {
+          "id": "confea-sic-estoque-2026",
+          "nome": "CONFEA — Relatórios SIC, estoque de registros em ago/2026 (relatorio.confea.org.br)",
+          "url": "https://relatorio.confea.org.br/Home/Profissional",
+          "anoRef": "2026",
+          "confianca": "verificado-pelo-usuario",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Endpoints ProfissionaisPorGenero, SituacaoRegistro e RegistrosPorGrupo (estoque, todas as 27 UFs). Brasil: 1.217.708 profissionais ativos (M 970.342 / F 247.366), 1.674.263 registros históricos (72,7% ativos) e 1.373.447 títulos ativos, dos quais 1.070.469 de engenharia."
+        },
+        {
+          "id": "confea-sic-usuario",
+          "nome": "CONFEA — Relatórios SIC, série histórica de registros novos por ano (relatorio.confea.org.br)",
+          "url": "https://relatorio.confea.org.br/Home/Profissional",
+          "anoRef": "1937–2026",
+          "confianca": "verificado-pelo-usuario",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Endpoint RegistrosPorAno (fluxo): 90 pontos de 1937 a 2026, com 2026 parcial (até ago/2026). Também cobre ProfissionaisDecada (registros novos por Crea e ano). Bruto verbatim em; recoleta por scripts/fetch-confea.mjs (fora do container); datasets regerados por scripts/derivar-confea.mjs."
+        },
+        {
+          "id": "contecc2021",
+          "nome": "Confea — estudo CONTECC 2021 (Monteiro & Afonso), 'Avaliação do quantitativo de engenheiros cadastrados'",
+          "url": "https://www.confea.org.br/midias/uploads-imce/Contecc2021/Experi%C3%AAncia%20Profissional/AVALIACAO%20DO%20QUANTITATIVO%20DE%20ENGENHEIROS%20CADASTRADOS%20EM%20RELACAO%20AOS%20ENGENHEIROS%20FORMADOS%20NO%20SISTEMA%20CONFEA_CREA.pdf",
+          "anoRef": "2020",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "931.838 engenheiros ativos (2020); registros novos ~74 mil (2014) → ~43 mil (2020)."
+        },
+        {
+          "id": "ibge-censo2022-educacao",
+          "nome": "IBGE — Censo Demográfico 2022, Educação (resultados preliminares da amostra; via Jornal Contábil/AMIES)",
+          "url": "https://www.jornalcontabil.com.br/noticia/ibge-revela-os-cursos-de-nivel-superior-mais-procurados/",
+          "anoRef": "2022",
+          "confianca": "citado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "2.371.066 diplomados na área CINE \"Engenharia, produção e construção\". Fonte única secundária: por isso o valor é exibido como \"2,37 milhões\", sem os sete dígitos."
+        },
+        {
+          "id": "ibge-censo2022-trabalho",
+          "nome": "IBGE — Censo Demográfico 2022, Trabalho e Rendimento (amostra, divulgado 09/10/2025; via Jornal do Comércio)",
+          "url": "https://www.jornaldocomercio.com/economia/2025/10/1221562-numero-de-engenheiros-cresce-em-12-anos-no-brasil-e-o-de-domesticos-diminui.html",
+          "anoRef": "2022",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "505 mil pessoas ocupadas COMO engenheiros (ocupação), +64,1% vs 2010."
+        },
+        {
+          "id": "inep-cine07",
+          "nome": "MEC/INEP — área CINE 07 'Engenharia, produção e construção' (via O Tempo)",
+          "url": "https://www.otempo.com.br/economia/2025/10/26/brasil-pode-ter-deficit-de-um-milhao-de-engenheiros-e-obras-estruturantes-ficam-ameacadas",
+          "anoRef": "2015–2024",
+          "confianca": "citado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Concluintes CINE 07: 163.311 (2018) → 110.596 (2024); ingressantes −49% e nº de cursos +52% (2015–2024)."
+        },
+        {
+          "id": "inep-iqc",
+          "nome": "INEP — Censo da Educação Superior (concluintes de engenharia, via IQC 'Precisamos formar mais engenheiros?')",
+          "url": "https://iqc.org.br/observatorio/artigos/educacao/precisamos-formar-mais-engenheiros/",
+          "anoRef": "2010–2019",
+          "confianca": "citado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Concluintes 2010 (41.291) e 2019 (126.932); ingressantes pico ~380 mil (2014)."
+        },
+        {
+          "id": "inep-lgi-usp",
+          "nome": "INEP — Censo da Educação Superior (concluintes 2014, via LGI-USP)",
+          "url": "https://sites.usp.br/lgi/em-tres-anos-numero-de-engenheiros-formados-ja-supera-em-25-vezes-demanda-prevista-para-2020/",
+          "anoRef": "2014",
+          "confianca": "citado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Concluintes 2014 = 67.205."
+        },
+        {
+          "id": "inep-seesp-concluintes",
+          "nome": "INEP — Censo da Educação Superior 2023 (tabulação SEESP/Mira Pesquisa, 'Engenharias')",
+          "url": "https://www.seesp.org.br/site/images/PUBLICACOES/CensoEducacaoSuperior2023Engenharias.pdf",
+          "anoRef": "2023",
+          "confianca": "citado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Concluintes 2023 = 95.607; mulheres 27%."
+        },
+        {
+          "id": "inep-seesp-noticia",
+          "nome": "INEP — Painel do Censo da Educação Superior (via SEESP, 'Menos engenheiros se formando no Brasil')",
+          "url": "https://www.seesp.org.br/site/comunicacao/noticias/item/23091-menos-engenheiros-se-formando-no-brasil",
+          "anoRef": "2018–2022",
+          "confianca": "citado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Concluintes 2018 (128.871, pico) e 2022 (97.672)."
+        },
+        {
+          "id": "ncm-buscador-2142",
+          "nome": "Novo CAGED/MTE — engenheiro civil CBO 2142-05 (tabulação Buscador NCM)",
+          "url": "https://buscadorncm.com.br/cbo/214205",
+          "anoRef": "jul/2025–jun/2026",
+          "confianca": "citado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Mediana de admissões (jornada ≥40h) R$ 10.360; saldo de 12 meses = −812, de 13.332 admissões contra 14.144 desligamentos, num total de 27.476 movimentações (−3,0% do fluxo). Janela fixada na coleta (jul/2025–jun/2026)."
+        },
+        {
+          "id": "portal-salario-administrador",
+          "nome": "Novo CAGED/MTE — Administrador, CBO 2521-05 (tabulação Portal Salário, só CLT)",
+          "url": "https://www.salario.com.br/profissao/administrador-cbo-252105/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "R$ 5.081,07 / 42 h/sem; 144.393 movimentações."
+        },
+        {
+          "id": "portal-salario-analista-automacao",
+          "nome": "Portal Salário — Analista de sistemas de automação (CBO 2124-15), Novo CAGED/MTE",
+          "url": "https://www.salario.com.br/profissao/analista-de-sistemas-de-automacao-cbo-212415/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Média das MOVIMENTAÇÕES (admissões+desligamentos) CLT em 12 meses, janela fixada na coleta., tabela \"analista × piso legal (2026)\"."
+        },
+        {
+          "id": "portal-salario-analista-logistica",
+          "nome": "Portal Salário — Analista de logística (CBO 2527-15), Novo CAGED/MTE",
+          "url": "https://www.salario.com.br/profissao/analista-de-logistica-cbo-252715/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Média das MOVIMENTAÇÕES (admissões+desligamentos) CLT em 12 meses, janela fixada na coleta., tabela \"analista × piso legal (2026)\"."
+        },
+        {
+          "id": "portal-salario-analista-negocios",
+          "nome": "Portal Salário — Analista de negócios (CBO 2531-20), Novo CAGED/MTE",
+          "url": "https://www.salario.com.br/profissao/analista-de-negocios-cbo-253120/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Média das MOVIMENTAÇÕES (admissões+desligamentos) CLT em 12 meses, janela fixada na coleta., tabela \"analista × piso legal (2026)\"."
+        },
+        {
+          "id": "portal-salario-analista-projetos-logisticos",
+          "nome": "Portal Salário — Analista de projetos logísticos (CBO 2527-20), Novo CAGED/MTE",
+          "url": "https://www.salario.com.br/profissao/analista-de-projetos-logisticos-cbo-252720/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Média das MOVIMENTAÇÕES (admissões+desligamentos) CLT em 12 meses, janela fixada na coleta., tabela \"analista × piso legal (2026)\"."
+        },
+        {
+          "id": "portal-salario-apo",
+          "nome": "Portal Salário — Analista de planejamento e orçamento (APO) (CBO 1115-10), Novo CAGED/MTE",
+          "url": "https://www.salario.com.br/profissao/analista-de-planejamento-e-orcamento-apo-cbo-111510/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Média das MOVIMENTAÇÕES (admissões+desligamentos) CLT em 12 meses, janela fixada na coleta., tabela \"analista × piso legal (2026)\"."
+        },
+        {
+          "id": "portal-salario-dev",
+          "nome": "Novo CAGED/MTE — Analista de desenvolvimento de sistemas, CBO 2124-05 (tabulação Portal Salário, só CLT)",
+          "url": "https://www.salario.com.br/profissao/analista-de-desenvolvimento-de-sistemas-cbo-212405/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "R$ 8.423,54 / 42 h/sem; 137.639 movimentações (~5× o volume da eng. civil)."
+        },
+        {
+          "id": "portal-salario-eletricista",
+          "nome": "Novo CAGED/MTE — Engenheiro eletricista, CBO 2143-05 (tabulação Portal Salário)",
+          "url": "https://www.salario.com.br/profissao/engenheiro-eletricista-cbo-214305/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "citado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Saldo 12m = −152 (2.588 admissões vs 2.740 desligamentos)."
+        },
+        {
+          "id": "portal-salario-eng-automacao",
+          "nome": "Portal Salário — Engenheiro de controle e automação (CBO 2021-10), Novo CAGED/MTE",
+          "url": "https://www.salario.com.br/profissao/engenheiro-de-controle-e-automacao-cbo-202110/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Média das MOVIMENTAÇÕES (admissões+desligamentos) CLT em 12 meses, janela fixada na coleta., tabela \"analista × piso legal (2026)\"."
+        },
+        {
+          "id": "portal-salario-eng-civil",
+          "nome": "Novo CAGED/MTE — Engenheiro civil, CBO 2142-05 (tabulação Portal Salário, só CLT)",
+          "url": "https://www.salario.com.br/profissao/engenheiro-civil-cbo-214205/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Média de movimentações R$ 9.733,56 / 42 h/sem; 26.022 movimentações. Janela fixada na coleta."
+        },
+        {
+          "id": "portal-salario-eng-software",
+          "nome": "Portal Salário — Engenheiro de software (CBO 2122-15), Novo CAGED/MTE",
+          "url": "https://www.salario.com.br/profissao/engenheiro-de-software-computacional-basico-cbo-212215/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Média das MOVIMENTAÇÕES (admissões+desligamentos) CLT em 12 meses, janela fixada na coleta., tabela \"analista × piso legal (2026)\"."
+        },
+        {
+          "id": "portal-salario-eng-transportes",
+          "nome": "Portal Salário — Engenheiro civil — transportes e trânsito (= \"analista de projetos viários\") (CBO 2142-70), Novo CAGED/MTE",
+          "url": "https://www.salario.com.br/profissao/analista-de-projetos-viarios-cbo-214270/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Média das MOVIMENTAÇÕES (admissões+desligamentos) CLT em 12 meses, janela fixada na coleta., tabela \"analista × piso legal (2026)\"."
+        },
+        {
+          "id": "portal-salario-producao",
+          "nome": "Novo CAGED/MTE — Engenheiro de produção, CBO 2149-05 (tabulação Portal Salário)",
+          "url": "https://www.salario.com.br/profissao/engenheiro-de-producao-cbo-214905/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "citado",
+          "coletadoEm": "2026-08-30",
+          "observacao": "Saldo 12m = −71 (4.397 admissões vs 4.468 desligamentos)."
+        },
+        {
+          "id": "portal-salario-tecnico-processos",
+          "nome": "Portal Salário — Técnico analista de processos de produção (CBO 3911-05), Novo CAGED/MTE",
+          "url": "https://www.salario.com.br/profissao/tecnico-analista-de-processos-de-producao-cbo-391105/",
+          "anoRef": "12m ref. ago/2026",
+          "confianca": "verificado",
+          "coletadoEm": "2026-08-31",
+          "observacao": "Média das MOVIMENTAÇÕES (admissões+desligamentos) CLT em 12 meses, janela fixada na coleta., tabela \"analista × piso legal (2026)\"."
+        }
+      ],
+      "files": [
+        {
+          "file": "analista-juridico.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/analista-juridico.json",
+          "sha256": "1cf2e5db542e9a63dbda5f6bdce82748eb9a03c616054f4a7c8b9ec0f40a9690",
+          "bytes": 6019,
+          "localDownloadUrl": "/data/engineer-statistics/analista-juridico.json"
+        },
+        {
+          "file": "apagao-evidencias.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/apagao-evidencias.json",
+          "sha256": "a77bb77df53c38762a16c8e9dce43e96d3e96b21902f9571067d027ada8a668b",
+          "bytes": 11534,
+          "localDownloadUrl": "/data/engineer-statistics/apagao-evidencias.json"
+        },
+        {
+          "file": "caged-saldos.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/caged-saldos.json",
+          "sha256": "090e495e07f65d2f8c7288fada3dbbdd363d266f74dc9a398bb22f853673d8a9",
+          "bytes": 4486,
+          "localDownloadUrl": "/data/engineer-statistics/caged-saldos.json"
+        },
+        {
+          "file": "cargos-analista.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/cargos-analista.json",
+          "sha256": "87beb06c99dab8bff7eb2b7139ed887f7e88321813b4139a6564bf15086dbc10",
+          "bytes": 22368,
+          "localDownloadUrl": "/data/engineer-statistics/cargos-analista.json"
+        },
+        {
+          "file": "ciclos-governo.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/ciclos-governo.json",
+          "sha256": "88216614280805e7899e045cafe2fc6cc9612b2e4df113868fe51241b6167abd",
+          "bytes": 19031,
+          "localDownloadUrl": "/data/engineer-statistics/ciclos-governo.json"
+        },
+        {
+          "file": "confea-engenharia-uf.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/confea-engenharia-uf.json",
+          "sha256": "d308d1eb8b3774ba8fbd16380e5daab40af3c2f8fbbac246152dd8625939b9f5",
+          "bytes": 4687,
+          "localDownloadUrl": "/data/engineer-statistics/confea-engenharia-uf.json"
+        },
+        {
+          "file": "confea-genero.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/confea-genero.json",
+          "sha256": "1dab14c47080c88cc3b2a7e696cca52033b45bff79cd15ba81aeecbc661a18d4",
+          "bytes": 6576,
+          "localDownloadUrl": "/data/engineer-statistics/confea-genero.json"
+        },
+        {
+          "file": "confea-modalidades.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/confea-modalidades.json",
+          "sha256": "cabde28e7faf811794c86119cf0bc8d35bd2cbe3dd077e4c1b6ca2e0b220480e",
+          "bytes": 6733,
+          "localDownloadUrl": "/data/engineer-statistics/confea-modalidades.json"
+        },
+        {
+          "file": "confea-registros-ano.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/confea-registros-ano.json",
+          "sha256": "c5e590181ea8b5bbcbdec62e368a64a6a71e19324555e9ec035086e7f3609c37",
+          "bytes": 11681,
+          "localDownloadUrl": "/data/engineer-statistics/confea-registros-ano.json"
+        },
+        {
+          "file": "confea-situacao-uf.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/confea-situacao-uf.json",
+          "sha256": "1d1291aa4192541b4cdca4ed55e9fc97be99fad3707d5295a111f32dcae44128",
+          "bytes": 8810,
+          "localDownloadUrl": "/data/engineer-statistics/confea-situacao-uf.json"
+        },
+        {
+          "file": "confea-uf.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/confea-uf.json",
+          "sha256": "db40d946387c084451f084c0dcbae50c529eef2f0ffcc11df7a1091d744e3095",
+          "bytes": 4610,
+          "localDownloadUrl": "/data/engineer-statistics/confea-uf.json"
+        },
+        {
+          "file": "conta-do-conselho.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/conta-do-conselho.json",
+          "sha256": "db31c28a6000de58d03000c71e7ea98844b3c27c22778f21053df3d3b1b37f6c",
+          "bytes": 7585,
+          "localDownloadUrl": "/data/engineer-statistics/conta-do-conselho.json"
+        },
+        {
+          "file": "contrapontos.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/contrapontos.json",
+          "sha256": "109e897a241b7777d5050efd5759cd8cd3c5af6313a95e7ef1f570427ab072ad",
+          "bytes": 18168,
+          "localDownloadUrl": "/data/engineer-statistics/contrapontos.json"
+        },
+        {
+          "file": "contratacao-formas.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/contratacao-formas.json",
+          "sha256": "0b6760ce58c338019f6ac04bec2232c230221ed06dee9f8c362909f02bc7298e",
+          "bytes": 3760,
+          "localDownloadUrl": "/data/engineer-statistics/contratacao-formas.json"
+        },
+        {
+          "file": "demanda-estrutural.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/demanda-estrutural.json",
+          "sha256": "0e46bb3b03b51c95aec042358f5eb8afda9fff87c751a2264f89286b3939de87",
+          "bytes": 4920,
+          "localDownloadUrl": "/data/engineer-statistics/demanda-estrutural.json"
+        },
+        {
+          "file": "ead-expansao.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/ead-expansao.json",
+          "sha256": "9e180f5e9db7916702ed489b6754bf506f49865423fd4650bc6c7c9293c442c6",
+          "bytes": 14340,
+          "localDownloadUrl": "/data/engineer-statistics/ead-expansao.json"
+        },
+        {
+          "file": "fila-concursos.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/fila-concursos.json",
+          "sha256": "7f8efe502291e078fdeb28116952dc12b54f789462c4b3d6e64235313944b205",
+          "bytes": 4795,
+          "localDownloadUrl": "/data/engineer-statistics/fila-concursos.json"
+        },
+        {
+          "file": "fiscalizacao-piso.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/fiscalizacao-piso.json",
+          "sha256": "fbd091bd06f9d0a4863abdd829676e0dded4b5c10e8f17df31afc32622b2d0e9",
+          "bytes": 24220,
+          "localDownloadUrl": "/data/engineer-statistics/fiscalizacao-piso.json"
+        },
+        {
+          "file": "fomento-produtivo.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/fomento-produtivo.json",
+          "sha256": "088ef8e92c2cd2a60409f73cf10a88337f76ad5c30fdefcd9e1142d88d8d339c",
+          "bytes": 5725,
+          "localDownloadUrl": "/data/engineer-statistics/fomento-produtivo.json"
+        },
+        {
+          "file": "fontes.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/fontes.json",
+          "sha256": "d44f68d2c0427211b0c010616e246946b2ca49257e5e223a623da5c25b9d003d",
+          "bytes": 73396,
+          "localDownloadUrl": "/data/engineer-statistics/fontes.json"
+        },
+        {
+          "file": "formacao-cards.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/formacao-cards.json",
+          "sha256": "3dfd132bce231e60a59cf988155cacac3b723ebbb0ec2add86d45f15571fb4e7",
+          "bytes": 2794,
+          "localDownloadUrl": "/data/engineer-statistics/formacao-cards.json"
+        },
+        {
+          "file": "formacao-concluintes.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/formacao-concluintes.json",
+          "sha256": "dd902fd7ca90a5554cda6cb37478268c67d3cfdecb8e2d9d766776a199fa3e47",
+          "bytes": 2897,
+          "localDownloadUrl": "/data/engineer-statistics/formacao-concluintes.json"
+        },
+        {
+          "file": "funil-bases.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/funil-bases.json",
+          "sha256": "0a984ce7e2f9d1a4d1d054a1a3d5a9c1b4f7adb6c45e9b0af611ba9ca80cf70a",
+          "bytes": 13803,
+          "localDownloadUrl": "/data/engineer-statistics/funil-bases.json"
+        },
+        {
+          "file": "internacional.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/internacional.json",
+          "sha256": "47be343a49f8f20b13dab6763f46f6a909fd4fd1fa74c865feca82da05aab00d",
+          "bytes": 3128,
+          "localDownloadUrl": "/data/engineer-statistics/internacional.json"
+        },
+        {
+          "file": "pisos.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/pisos.json",
+          "sha256": "4fb9767000c179c96030054fd38fcf8d0b7dde7a0ec3f67db0fd050e37b8dcf6",
+          "bytes": 7585,
+          "localDownloadUrl": "/data/engineer-statistics/pisos.json"
+        },
+        {
+          "file": "populacao-uf.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/populacao-uf.json",
+          "sha256": "3b646d3906a15e3cdf0a19a0a46142da6a6d9ba5b7339ff5cf09da36e5134f81",
+          "bytes": 2868,
+          "localDownloadUrl": "/data/engineer-statistics/populacao-uf.json"
+        },
+        {
+          "file": "reguas-fora-da-area.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/reguas-fora-da-area.json",
+          "sha256": "8537ed4681d4ed578e6850f87cb069912be4c2e25806c4918bb7d93764db34fe",
+          "bytes": 5576,
+          "localDownloadUrl": "/data/engineer-statistics/reguas-fora-da-area.json"
+        },
+        {
+          "file": "salarios-carreiras.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/salarios-carreiras.json",
+          "sha256": "dcfd9578930fb9aabc24355dd5cb69a0beee46e768ae24cab46bba80398f4919",
+          "bytes": 2894,
+          "localDownloadUrl": "/data/engineer-statistics/salarios-carreiras.json"
+        },
+        {
+          "file": "sidra-2984.json",
+          "sourceUrl": "https://caiofvserra.github.io/engineer-statistics/dados/sidra-2984.json",
+          "sha256": "6ab9784cb410aa5427c43c279fefcdb5f16156be71d502b279e4106edbb4f5d3",
+          "bytes": 1333,
+          "localDownloadUrl": "/data/engineer-statistics/sidra-2984.json"
+        }
+      ],
+      "limitations": [
+        "Diplomados do Censo, concluintes do INEP, novos registros do SIC e profissionais ativos têm unidades, universos e competências distintos; não formam um funil de conversão.",
+        "Concluintes de engenharia no recorte estrito não se sobrepõem à área ampla CINE 07; anos ausentes não são zeros nem interpolados.",
+        "A série nacional de registros abrange todas as profissões do Sistema; o período de 2026 é parcial até 30/08/2026.",
+        "A série de novos registros CREA-SP termina em 2022 no retorno coletado pelo autor; anos posteriores não foram estimados.",
+        "Títulos de engenharia não equivalem a profissionais distintos. Os valores estaduais ativos incluem todas as profissões do Sistema.",
+        "O estoque de diplomados CINE 07 de 2022 permanece citado de fonte secundária; mostrar 2,37 milhões e preservar essa ressalva.",
+        "Bases nacionais ou por UF não respondem a filtros locais de município, GRE, CNPJ ou profissional fictício; esses filtros são incompatíveis com o grão disponível.",
+        "As médias salariais por CBO cobrem movimentações CLT declaradas e não determinam remuneração individual nem obrigação automática de registro.",
+        "A amostra CAGED do projeto contém apenas três CBOs selecionadas, com janelas distintas; não representa toda a engenharia.",
+        "Os 600 profissionais e vínculos/empresas do protótipo permanecem demonstrativos e não são identificados nesses agregados públicos."
+      ]
+    }
+  },
+  "archiveOnly": true,
+  "activeReportSource": false,
+  "automaticRefresh": false
+}
