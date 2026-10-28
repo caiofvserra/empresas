@@ -1,10 +1,26 @@
-# CREA-SP · Inteligência empresarial — V13
+# CREA-SP · Cockpit de gestão empresarial — V14
 
-Protótipo funcional **React + TypeScript + Vite**, versão 13.0.0, para especificar um futuro relatório Microsoft Power BI de PC, dedicado a **empresas e relações empresariais do CREA-SP**. A experiência mantém **um único canvas**, com oito indicadores essenciais, seis gráficos e nove indicadores complementares. Não há cinco abas de páginas.
+Protótipo funcional **React + TypeScript + Vite** que especifica um relatório Microsoft Power BI para a gestão das **empresas e relações empresariais do CREA-SP**. A V14 reorganiza o painel em um **cockpit de 5 páginas** voltado à decisão: onde a base cresce ou recua, quanto está em jogo em arrecadação e dívida, onde agir primeiro e como a operação (fiscalização, CAO, ART, cadastro) responde. Também traz **dados públicos reais** (Confea, IBGE, PNCP, Banco Central, Portal da Transparência e Relatório de Gestão 2025 do CREA-SP).
 
-A V13 torna os nomes explícitos: registro/vigência **no CREA-SP**, situação cadastral **na Receita Federal**, contratação **no PNCP**, emprego agregado **RAIS/CAGED** e financeiro **do CREA-SP**. Cada medida informa origem e unidade; a pergunta aparece apenas como apoio à interpretação.
+**Dados internos são demonstrativos; dados públicos são reais e exibem fonte e data de captura.** Não há `.pbix` nem conexão institucional validada. Plano e diagnóstico: [PLANO_V14.md](docs/PLANO_V14.md). Reprodução no Power BI: [POWER_BI_V14.md](docs/POWER_BI_V14.md). A V13 continua acessível em `?v=13`.
 
-**Todos os valores e cruzamentos exibidos são demonstrativos.** A entrega não contém `.pbix`, conversão automática do React, gateway configurado ou conexão institucional validada.
+## Páginas do cockpit
+
+| Página | Conteúdo |
+|---|---|
+| 1 · Visão executiva | Cartões com sparkline, variação e meta; projeção da base (Holt, faixa de 95%, anomalias); ponte do estoque; narrativa automática; funil de conformidade (Sankey); scorecard das GREs com formatação condicional |
+| 2 · Território | Mapa municipal com métrica alternável e ranking; quadrante cobertura × emprego das GREs; pequenos múltiplos por GRE |
+| 3 · Carteira e arrecadação | Árvore de decomposição do saldo vencido; recuperação e aging; arrecadação ano contra ano; matriz de prioridade (saldo vencido × dias sem RT) |
+| 4 · Operação | Funil e tempo entre etapas da fiscalização; backlog por idade; prazo de emissão de CAO; ARTs mês × GRE; qualidade cadastral |
+| 5 · Contexto público | Densidade profissional por UF, permanência do registro, registros novos por ano, modalidades, PNCP SP, despesa do CREA-SP; BCB (IPCA, INCC, Selic) e IBGE consultados ao vivo no navegador |
+
+Interações: clique em qualquer barra, nó, célula ou ponto aplica uma **seleção cruzada** a todas as páginas; filtros globais (GRE, município, CNAE, porte em botões, janela, pesquisa) aparecem como pílulas removíveis; **modo foco** em cada visual; tema **claro/escuro**; **metas** ajustáveis (parâmetros what-if); teclas 1–5 trocam de página; exportação CSV, tabela de empresas e ficha empresarial herdadas da V13. Perfis demonstrativos: Administração, GRE2 regional e Consulta (sem financeiro).
+
+Código: `src/gestao-v14/metrics.ts` (medidas puras e testadas), `public-data.ts` (snapshots reais e APIs ao vivo com retorno explícito), `Cockpit.tsx`, páginas e `cockpit.css`. Testes: `tests/gestao-v14.test.ts`.
+
+---
+
+# Histórico — V13
 
 ## Executar e verificar
 
