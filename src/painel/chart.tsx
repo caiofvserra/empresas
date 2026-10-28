@@ -42,11 +42,16 @@ export function useSpMap(): Centroids | null {
   return centroids;
 }
 
+/** Eixos de valor sem formatador próprio recebem separador de milhar pt-BR (o padrão do ECharts usa vírgula). */
+const eixoPtBr = (axis: any) => axis && typeof axis === 'object' && !Array.isArray(axis) && axis.type === 'value' && !axis.axisLabel?.formatter ? { ...axis, axisLabel: { ...(axis.axisLabel ?? {}), formatter: (number: number) => number.toLocaleString('pt-BR') } } : axis;
+const eixos = (axis: unknown) => Array.isArray(axis) ? axis.map(eixoPtBr) : eixoPtBr(axis);
+function comEixosPtBr(option: Record<string, unknown>): Record<string, unknown> { return { ...option, ...(option.xAxis ? { xAxis: eixos(option.xAxis) } : {}), ...(option.yAxis ? { yAxis: eixos(option.yAxis) } : {}) }; }
+
 export function Chart({ option, tokens, onPick, label }: { option: Record<string, unknown>; tokens: Tokens; onPick?: (params: any) => void; label: string }) {
   const host = useRef<HTMLDivElement>(null), chart = useRef<ECharts | null>(null), pick = useRef(onPick);
   pick.current = onPick;
-  const build = (value: Record<string, unknown>) => {
-    const tooltip = (value.tooltip ?? {}) as Record<string, unknown>;
+  const build = (raw: Record<string, unknown>) => {
+    const value = comEixosPtBr(raw), tooltip = (value.tooltip ?? {}) as Record<string, unknown>;
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     return { backgroundColor: 'transparent', animation: !reduced, animationDuration: 400, textStyle: { fontFamily: 'Lato, "Segoe UI", system-ui, sans-serif', color: tokens.muted, fontSize: 11 }, aria: { enabled: true, description: label }, ...value,
       tooltip: { backgroundColor: '#01224D', borderColor: '#FABD07', borderWidth: 1, padding: [8, 12], textStyle: { color: '#FFFFFF', fontSize: 12 }, extraCssText: 'border-radius:8px;box-shadow:0 10px 28px rgba(1,34,77,.3);line-height:1.5;', confine: true, ...tooltip } } as EChartsOption;

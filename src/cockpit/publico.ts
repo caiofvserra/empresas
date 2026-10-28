@@ -63,3 +63,6 @@ const anos = [...new Set(formacao.map(row => row.ano))].sort();
 export const formacaoSp = { fonte: { nome: 'INEP · Censo da Educação Superior (presencial, SP)', url: 'https://www.gov.br/inep', data: '2026-10-10' } as Fonte, anos,
   total: anos.map(ano => ({ ano, concluintes: formacao.filter(row => row.ano === ano).reduce((sum, row) => sum + row.concluintes, 0), ingressantes: formacao.filter(row => row.ano === ano).reduce((sum, row) => sum + row.ingressantes, 0) })),
   cursos: [...new Set(formacao.map(row => row.curso))].map(curso => ({ curso, serie: anos.map(ano => formacao.find(row => row.curso === curso && row.ano === ano)?.concluintes ?? 0) })).sort((a, b) => b.serie.at(-1)! - a.serie.at(-1)!) };
+/** Mediana das admissões de engenheiro civil (Novo CAGED), referência para o piso. */
+const admissao = (pisos.data.admissao as { id: string; rotulo: string; valor: number | null; ano: string }[]).find(row => row.id === 'mediana-eng-civil');
+export const medianaAdmissaoCivil = admissao?.valor ? { valor: admissao.valor, periodo: admissao.ano } : null;
