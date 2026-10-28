@@ -22,4 +22,5 @@ export type Detail =
   | { kind: 'gre'; id: string }
   | { kind: 'empresas'; title: string; what: string; use?: string; ids: string[]; eyebrow?: string }
   | { kind: 'cnpjs'; title: string; what: string; use?: string; ids: string[]; eyebrow?: string; segmento?: SegmentoMercado }
-  | { kind: 'profissionais'; empresas: number; ids: string[] };
+  | { kind: 'profissionais'; empresas: number; ids: string[] }
+  | { kind: 'linhas'; title: string; what: string; use?: string; eyebrow?: string; listTitle: string; summary?: [string, string][]; rows: { key: string; companyId?: string; title: string; subtitle: string; value: string; note: string; sortValue: number }[] };

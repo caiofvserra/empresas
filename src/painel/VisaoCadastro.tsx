@@ -40,7 +40,7 @@ export default function VisaoCadastro({ ctx }: { ctx: Ctx }) {
 }
 
 const corMercado = (tokens: Ctx['tokens']): Record<SegmentoMercado, string> => ({ 'Registro ativo, em dia': tokens.blue, 'Registro ativo, inadimplente': tokens.heat[1], 'Sem registro, com ação': tokens.warn, 'Sem registro, sem ação': tokens.bad });
-function Mekko({ ctx }: { ctx: Ctx }) {
+export function Mekko({ ctx }: { ctx: Ctx }) {
   const rows = useMemo(() => mercadoPorCamara(ctx.scope, ctx.model, ctx.f), [ctx.scope, ctx.model, ctx.f]), colors = corMercado(ctx.tokens);
   const order = [...segmentosMercado].reverse();
   return <div className="mekko">
@@ -54,7 +54,7 @@ function Mekko({ ctx }: { ctx: Ctx }) {
   </div>;
 }
 
-function PorRegional({ ctx }: { ctx: Ctx }) {
+export function PorRegional({ ctx }: { ctx: Ctx }) {
   const { tokens } = ctx, rows = useMemo(() => distribuicaoGre(ctx.scope, ctx.model).sort((a, b) => (b.emDia.length + b.inadimplentes.length) - (a.emDia.length + a.inadimplentes.length)), [ctx.scope, ctx.model]);
   const option = useMemo(() => ({
     grid: { top: 24, right: 34, bottom: 2, left: 2, containLabel: true },
@@ -73,7 +73,7 @@ function PorRegional({ ctx }: { ctx: Ctx }) {
     else ctx.open({ kind: 'empresas', title: `${short(row.name)} · ${params.seriesIndex === 0 ? 'empresas em dia' : 'empresas inadimplentes'}`, what: 'Empresas com registro ativo nesta regional.', ids: params.seriesIndex === 0 ? row.emDia : row.inadimplentes }); }} />;
 }
 
-function PonteChart({ ctx, ponte }: { ctx: Ctx; ponte: ReturnType<typeof ponteBase> }) {
+export function PonteChart({ ctx, ponte }: { ctx: Ctx; ponte: ReturnType<typeof ponteBase> }) {
   const { tokens, model } = ctx;
   const steps = [
     { name: 'Abertura', value: ponte.abertura, base: 0, color: tokens.heat[2], ids: model.metadata.openingCompanyIds, sign: '' },
@@ -94,7 +94,7 @@ function PonteChart({ ctx, ponte }: { ctx: Ctx; ponte: ReturnType<typeof ponteBa
   return <Chart option={option} tokens={tokens} label="Ponte da base de empresas registradas" onPick={params => { const step = steps[params.dataIndex]; if (step) ctx.open({ kind: 'empresas', title: `Base registrada · ${step.name.toLowerCase()}`, what: 'Empresas desta etapa da variação da base no período.', ids: step.ids }); }} />;
 }
 
-function ReceitaChart({ ctx, rec }: { ctx: Ctx; rec: ReturnType<typeof receita> }) {
+export function ReceitaChart({ ctx, rec }: { ctx: Ctx; rec: ReturnType<typeof receita> }) {
   const { tokens } = ctx;
   const option = useMemo(() => ({
     grid: { top: 26, right: 6, bottom: 2, left: 4, containLabel: true },
@@ -112,7 +112,7 @@ function ReceitaChart({ ctx, rec }: { ctx: Ctx; rec: ReturnType<typeof receita> 
   return <Chart option={option} tokens={tokens} label="Arrecadação de empresas por mês" />;
 }
 
-function Quadro({ ctx }: { ctx: Ctx }) {
+export function Quadro({ ctx }: { ctx: Ctx }) {
   const { tokens } = ctx, qt = useMemo(() => quadroTecnico(ctx.scope, ctx.model, ctx.f), [ctx.scope, ctx.model, ctx.f]);
   const acima = qt.distribuicao.filter(row => row.empresas > qt.limite).reduce((sum, row) => sum + row.profissionais.length, 0);
   const option = useMemo(() => ({

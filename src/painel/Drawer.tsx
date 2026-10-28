@@ -86,10 +86,10 @@ function build(ctx: Ctx, detail: Detail): Content {
   switch (detail.kind) {
     case 'alvos': {
       const rows = (detail.tipo ? resumo.abertos[detail.tipo] : [...resumo.abertos.registro, ...resumo.abertos.rt, ...resumo.abertos.art]);
-      return { eyebrow: scopeLabel, title: detail.tipo ? `Alvos em aberto · ${tipoLabel[detail.tipo]}` : 'Alvos em aberto', what: 'Irregularidades identificadas e ainda não resolvidas no corte: CNPJ de engenharia ativo na Receita sem registro no CREA-SP; empresa registrada cujo RT deu baixa sem substituto em 30 dias; obra ou serviço público contratado (PNCP) sem ART em 60 dias.',
+      return { eyebrow: scopeLabel, title: detail.tipo ? `Irregularidades em aberto · ${tipoLabel[detail.tipo]}` : 'Irregularidades em aberto', what: 'Irregularidades identificadas e ainda não resolvidas no corte: CNPJ de engenharia ativo na Receita sem registro no CREA-SP; empresa registrada cujo RT deu baixa sem substituto em 30 dias; obra ou serviço público contratado (PNCP) sem ART em 60 dias.',
         use: 'Priorize os que estão há mais tempo sem nenhuma ação e os de contrato público, que têm prova documental.',
-        summary: [['Falta de registro', int(resumo.abertos.registro.length)], ['RT baixado', int(resumo.abertos.rt.length)], ['Obra pública sem ART', int(resumo.abertos.art.length)], ['Já com ação', pct(rows.filter(row => row.acaoId).length / Math.max(1, rows.length) * 100)]],
-        rows: rows.map(alvoRow).sort((a, b) => Number(b.note.endsWith('sem ação')) - Number(a.note.endsWith('sem ação')) || b.sortValue - a.sortValue), listTitle: 'Alvos, sem ação e mais antigos primeiro' };
+        summary: [['Falta de registro', int(resumo.abertos.registro.length)], ['RT baixado', int(resumo.abertos.rt.length)], ['Obra pública sem ART', int(resumo.abertos.art.length)], ['Já com ação fiscal', pct(rows.filter(row => row.acaoId).length / Math.max(1, rows.length) * 100)]],
+        rows: rows.map(alvoRow).sort((a, b) => Number(b.note.endsWith('sem ação')) - Number(a.note.endsWith('sem ação')) || b.sortValue - a.sortValue), listTitle: 'Empresas, sem ação fiscal e mais antigas primeiro' };
     }
     case 'acoes': return { eyebrow: scopeLabel, title: 'Ações de fiscalização no período', what: 'Notificações e vistorias a empresas no período, por tipo de irregularidade e origem da informação que levou à ação.', summary: [['Ações', int(resumo.acoes.length)], ['Viraram auto', pct(resumo.acoes.filter(row => row.auto).length / Math.max(1, resumo.acoes.length) * 100)], ['Já regularizadas', pct(resumo.taxa ?? 0)]],
       rows: sorted(resumo.acoes.map(acao => acaoRow(acao, data(acao.date), Date.parse(acao.date)))), listTitle: 'Ações, mais recentes primeiro' };
@@ -109,7 +109,7 @@ function build(ctx: Ctx, detail: Detail): Content {
       rows: sorted(resumo.regularizacoes.map(acao => ({ ...acaoRow(acao, `${int(days(acao.date, acao.regularizedAt!))} dias`, days(acao.date, acao.regularizedAt!)), note: `${acao.resolucao ?? ''} · ${tipoLabel[acao.tipo]} · ${acao.auto ? 'após auto' : 'na notificação'}` }))), listTitle: 'Regularizações, mais demoradas primeiro' };
     case 'situacao': {
       const item = resumo.situacao.find(row => row.tipo === detail.tipo)!;
-      return { eyebrow: scopeLabel, title: `${tipoLabel[detail.tipo]} · ${detail.segmento.toLowerCase()}`, what: 'Alvos em aberto no corte e alvos regularizados no período após ação, conforme o ponto em que estão.', summary: segmentos.map(segment => [segment, int(item.partes[segment].length)] as [string, string]),
+      return { eyebrow: scopeLabel, title: `${tipoLabel[detail.tipo]} · ${detail.segmento.toLowerCase()}`, what: 'Irregularidades em aberto no corte e as regularizadas no período após ação fiscal, conforme o ponto do processo em que estão.', summary: segmentos.map(segment => [segment, int(item.partes[segment].length)] as [string, string]),
         rows: sorted(item.partes[detail.segmento].map(alvoRow)), listTitle: 'Empresas, mais antigas primeiro' };
     }
     case 'origem': {
@@ -123,8 +123,8 @@ function build(ctx: Ctx, detail: Detail): Content {
       const gre = ctx.regionais.find(row => row.id === detail.id)!;
       const rows = f.alvos.filter(row => row.greId === detail.id && !row.regularizedAt);
       return { eyebrow: `Regional · ${data(janela.start)} a ${data(janela.end)}`, title: gre.name, greId: detail.id, what: 'Resumo da regional: problema (empresas sem registro), resposta (ações e autos) e resultado (regularizações), com o mercado de engenharia medido pela RAIS/CAGED.',
-        summary: [['CNPJs sem registro', `${int(gre.semRegistro)} · ${gre.pctSemRegistro === null ? '—' : pct(gre.pctSemRegistro)}`], ['Ações no período', `${int(gre.acoes)} · ${gre.acoesPor100 === null ? '—' : int(gre.acoesPor100)}/100 alvos`], ['Autos · multas', `${int(gre.autos)} · ${brl(gre.aplicada)}`], ['Regularizadas', gre.taxa === null ? '—' : pct(gre.taxa)], ['Empregos técnicos (RAIS)', `${int(gre.empregoTecnico)} · ${gre.empregoAnterior ? `${gre.empregoTecnico >= gre.empregoAnterior ? '+' : ''}${pct((gre.empregoTecnico / gre.empregoAnterior - 1) * 100, 1)} em 12 meses` : ''}`], ['Empresas ativas', int(gre.ativas)]],
-        rows: sorted(rows.map(alvoRow)), listTitle: 'Alvos em aberto na regional' };
+        summary: [['CNPJs sem registro', `${int(gre.semRegistro)} · ${gre.pctSemRegistro === null ? '—' : pct(gre.pctSemRegistro)}`], ['Ações no período', `${int(gre.acoes)} · ${gre.acoesPor100 === null ? '—' : int(gre.acoesPor100)}/100 irregulares`], ['Autos · multas', `${int(gre.autos)} · ${brl(gre.aplicada)}`], ['Regularizadas', gre.taxa === null ? '—' : pct(gre.taxa)], ['Empregos técnicos (RAIS)', `${int(gre.empregoTecnico)} · ${gre.empregoAnterior ? `${gre.empregoTecnico >= gre.empregoAnterior ? '+' : ''}${pct((gre.empregoTecnico / gre.empregoAnterior - 1) * 100, 1)} em 12 meses` : ''}`], ['Empresas ativas', int(gre.ativas)]],
+        rows: sorted(rows.map(alvoRow)), listTitle: 'Irregularidades em aberto na regional' };
     }
     case 'empresas': {
       const facts = new Map(ctx.model.companyFacts.map(row => [row.companyId, row]));
@@ -139,6 +139,7 @@ function build(ctx: Ctx, detail: Detail): Content {
         rows: sorted(detail.ids.map(id => { const place = places.get(id), alvo = alvoBy.get(id), acao = alvo?.acaoId ? acoesById.get(alvo.acaoId) : undefined;
           return { key: id, companyId: place?.companyId, title: name(place?.companyId ?? ''), subtitle: where(id), value: `aberta ${data(anchorOpened(id))}`, note: `${place?.cnaeMain ?? ''} · ${acao ? `${statusAuto(acao)} em ${data(acao.date)}` : alvo ? 'sem ação' : 'registro ativo'}`, sortValue: Date.parse(anchorOpened(id)) }; })), listTitle: 'CNPJs, abertura mais recente primeiro' };
     }
+    case 'linhas': return { eyebrow: detail.eyebrow ?? scopeLabel, title: detail.title, what: detail.what, use: detail.use, summary: detail.summary ?? [], rows: [...detail.rows].sort((a, b) => b.sortValue - a.sortValue), listTitle: detail.listTitle };
     case 'profissionais': {
       const anchor = f.anchor, active = new Set(ctx.model.metadata.activeCompanyIds);
       const links = dataset.technicalLinks.filter(row => active.has(row.companyId) && row.startDate <= anchor && (!row.endDate || row.endDate > anchor));

@@ -21,23 +21,23 @@ export default function VisaoFiscalizacao({ ctx }: { ctx: Ctx }) {
   const mensal = resumo.mensal, colors = corTipo(tokens), status = corStatus(tokens);
   return <>
     <section className="chain" aria-label="Cadeia da fiscalização">
-      <Card step="1 · Detectar" label="Alvos em aberto" value={int(abertos)} onOpen={() => ctx.open({ kind: 'alvos' })}
+      <Card label="Irregularidades identificadas" value={int(abertos)} onOpen={() => ctx.open({ kind: 'alvos' })}
         extra={<Segments parts={tipos.map(tipo => ({ label: tipoLabel[tipo], value: resumo.abertos[tipo].length, color: colors[tipo] }))} />}
         sub={<>{tipos.map(tipo => <span key={tipo} className="legend-dot"><i style={{ background: colors[tipo] }} />{int(resumo.abertos[tipo].length)} {tipo === 'registro' ? 'sem registro' : tipo === 'rt' ? 'RT baixado' : 'obra sem ART'}</span>)}<br />{pct(resumo.abertosComAcao / Math.max(1, abertos) * 100)} já tiveram alguma ação</>} />
       <ChevronRight className="chain-arrow" aria-hidden="true" />
-      <Card step="2 · Fiscalizar" label="Ações no período" value={int(resumo.acoes.length)} delta={<Delta value={variacao(resumo.acoes.length, resumo.acoesPrev)} />} spark={mensal.map(row => row.acoes)} sparkColor={tokens.blue} sub={`${int(resumo.acoes.length / ctx.period)} por mês em média`} onOpen={() => ctx.open({ kind: 'acoes' })} />
+      <Card label="Ações fiscalizatórias" value={int(resumo.acoes.length)} delta={<Delta value={variacao(resumo.acoes.length, resumo.acoesPrev)} />} spark={mensal.map(row => row.acoes)} sparkColor={tokens.blue} sub={`${int(resumo.acoes.length / ctx.period)} por mês em média`} onOpen={() => ctx.open({ kind: 'acoes' })} />
       <ChevronRight className="chain-arrow" aria-hidden="true" />
-      <Card step="3 · Autuar" label="Autos de infração" value={int(resumo.autos.length)} delta={<Delta value={variacao(resumo.autos.length, resumo.autosPrev)} />} spark={mensal.map(row => tipos.reduce((sum, tipo) => sum + row.autos[tipo], 0))} sparkColor={tokens.bad} sub={`${pct(resumo.acoes.filter(row => row.auto).length / Math.max(1, resumo.acoes.length) * 100)} das ações viraram auto`} onOpen={() => ctx.open({ kind: 'autos' })} />
+      <Card label="Autos de infração lavrados" value={int(resumo.autos.length)} delta={<Delta value={variacao(resumo.autos.length, resumo.autosPrev)} />} spark={mensal.map(row => tipos.reduce((sum, tipo) => sum + row.autos[tipo], 0))} sparkColor={tokens.bad} sub={`${pct(resumo.acoes.filter(row => row.auto).length / Math.max(1, resumo.acoes.length) * 100)} das ações viraram auto`} onOpen={() => ctx.open({ kind: 'autos' })} />
       <ChevronRight className="chain-arrow" aria-hidden="true" />
-      <Card step="4 · Multar" label="Multas aplicadas" value={brl(resumo.aplicada)} delta={<Delta value={variacao(resumo.aplicada, resumo.aplicadaPrev)} />} onOpen={() => ctx.open({ kind: 'multas' })}
+      <Card label="Multas aplicadas" value={brl(resumo.aplicada)} delta={<Delta value={variacao(resumo.aplicada, resumo.aplicadaPrev)} />} onOpen={() => ctx.open({ kind: 'multas' })}
         extra={<Segments parts={(Object.keys(resumo.multas) as StatusMulta[]).map(key => ({ label: key, value: resumo.multas[key].valor, color: status[key], format: brl }))} />}
         sub={<>{brl(resumo.multas.Paga.valor)} pagas · {brl(resumo.multas['Dívida ativa'].valor)} em dívida ativa<br />{brl(resumo.recebida)} recebidos no período</>} />
       <ChevronRight className="chain-arrow" aria-hidden="true" />
-      <Card step="5 · Regularizar" label="Regularizações" value={int(resumo.regularizacoes.length)} delta={<Delta value={variacao(resumo.regularizacoes.length, resumo.regularizacoesPrev)} />} spark={mensal.map(row => row.regularizacoes)} sparkColor={tokens.good} sub={`${resumo.taxa === null ? '—' : pct(resumo.taxa)} das ações do período · mediana de ${resumo.medianaDias === null ? '—' : int(resumo.medianaDias)} dias`} onOpen={() => ctx.open({ kind: 'regularizacoes' })} />
+      <Card label="Regularizações após ação fiscal" value={int(resumo.regularizacoes.length)} delta={<Delta value={variacao(resumo.regularizacoes.length, resumo.regularizacoesPrev)} />} spark={mensal.map(row => row.regularizacoes)} sparkColor={tokens.good} sub={`${resumo.taxa === null ? '—' : pct(resumo.taxa)} das ações do período · mediana de ${resumo.medianaDias === null ? '—' : int(resumo.medianaDias)} dias`} onOpen={() => ctx.open({ kind: 'regularizacoes' })} />
     </section>
     <div className="grid grid-fisc">
       <MapaBivariado ctx={ctx} />
-      <Tile area="sit" title="Situação dos alvos" question="Quanto de cada problema já foi tratado? Inclui os regularizados no período após ação.">
+      <Tile area="sit" title="Situação das irregularidades" question="Quanto de cada infração já foi tratado: notificada, autuada, regularizada ou ainda sem ação fiscal.">
         <Situacao ctx={ctx} />
       </Tile>
       <Tile area="mes" title="Ações, autos e regularizações por mês" question="O ritmo da fiscalização se mantém? Barra clara: ações; dentro dela, autos por tipo; linha: regularizações.">
@@ -53,7 +53,7 @@ export default function VisaoFiscalizacao({ ctx }: { ctx: Ctx }) {
 /* ---------- Mapa bivariado: território das regionais, cor = problema × resposta ---------- */
 const bivariada = [['#E8E8E8', '#E4ACAC', '#C85A5A'], ['#B0D5DF', '#AD9EA5', '#985356'], ['#64ACBE', '#627F8C', '#574249']];
 const nivel = ['baixo', 'médio', 'alto'];
-function MapaBivariado({ ctx }: { ctx: Ctx }) {
+export function MapaBivariado({ ctx, area = 'map' }: { ctx: Ctx; area?: string }) {
   const [par, setPar] = useState<ParId>('problema');
   const [destaque, setDestaque] = useState<{ cell?: [number, number]; gre?: string } | null>(null);
   const centroids = useSpMap(), config = pares[par], { tokens } = ctx;
@@ -86,7 +86,7 @@ function MapaBivariado({ ctx }: { ctx: Ctx }) {
     };
   }, [territorio, rotulos, classes, config, tokens, destaque, ctx.greId]); // eslint-disable-line react-hooks/exhaustive-deps
   const pick = (params: any) => { const greId = params.componentType === 'geo' ? territorio?.get(params.name) : params.data?.greId; if (greId) ctx.open({ kind: 'gre', id: greId }); };
-  return <Tile area="map" title={config.pergunta} question={config.leitura} className="t-map"
+  return <Tile area={area} title={config.pergunta} question={config.leitura} className="t-map"
     actions={<div className="seg" role="radiogroup" aria-label="Indicadores do mapa">{(Object.keys(pares) as ParId[]).map(id => <button key={id} role="radio" aria-checked={par === id} className={par === id ? 'on' : ''} onClick={() => setPar(id)}>{pares[id].label}</button>)}</div>}>
     <div className="map-layout">
       <div className="map-box">{option ? <Chart option={option} tokens={tokens} label={`Mapa das regionais: ${config.x} e ${config.y}`} onPick={pick} /> : <div className="loading">Carregando mapa…</div>}
@@ -109,25 +109,25 @@ function MapaBivariado({ ctx }: { ctx: Ctx }) {
 }
 
 /* ---------- Situação dos alvos por tipo ---------- */
-function Situacao({ ctx }: { ctx: Ctx }) {
+export function Situacao({ ctx }: { ctx: Ctx }) {
   const colors = corSegmento(ctx.tokens);
   return <div className="situacao">
     <ul className="legend">{segmentos.map(segment => <li key={segment}><i style={{ background: colors[segment] }} />{segment}</li>)}</ul>
     {ctx.resumo.situacao.map(item => {
       const tratados = item.total - item.partes['Sem ação'].length, regularizados = item.partes['Regularizado após auto'].length + item.partes['Regularizado na notificação'].length;
       return <div className="sit-row" key={item.tipo}>
-        <p className="sit-head"><b>{tipoLabel[item.tipo]}</b><span>{int(item.total)} alvos · {pct(tratados / Math.max(1, item.total) * 100)} com ação · {pct(regularizados / Math.max(1, item.total) * 100)} regularizados</span></p>
+        <p className="sit-head"><b>{tipoLabel[item.tipo]}</b><span>{int(item.total)} empresas · {pct(tratados / Math.max(1, item.total) * 100)} com ação · {pct(regularizados / Math.max(1, item.total) * 100)} regularizados</span></p>
         <div className="sit-bar">{segmentos.map(segment => { const count = item.partes[segment].length, width = count / Math.max(1, item.total) * 100;
           return count > 0 && <button key={segment} style={{ width: `${width}%`, background: colors[segment], color: inkOn(colors[segment]) }} onClick={() => ctx.open({ kind: 'situacao', tipo: item.tipo, segmento: segment })} title={`${segment}: ${int(count)} (${pct(width)})`}>{width >= 7 && <span>{int(count)}</span>}</button>; })}</div>
       </div>;
     })}
     <p className="insight">{(() => { const worst = [...ctx.resumo.situacao].filter(item => item.total).sort((a, b) => b.partes['Sem ação'].length / b.total - a.partes['Sem ação'].length / a.total)[0];
-      return worst ? <>Maior lacuna: <b>{pct(worst.partes['Sem ação'].length / worst.total * 100)}</b> dos alvos de {tipoLabel[worst.tipo].toLowerCase()} ainda sem nenhuma ação.</> : null; })()}</p>
+      return worst ? <>Maior lacuna: <b>{pct(worst.partes['Sem ação'].length / worst.total * 100)}</b> das irregularidades de {tipoLabel[worst.tipo].toLowerCase()} ainda sem ação fiscal.</> : null; })()}</p>
   </div>;
 }
 
 /* ---------- Série mensal ---------- */
-function Mensal({ ctx }: { ctx: Ctx }) {
+export function Mensal({ ctx }: { ctx: Ctx }) {
   const { tokens, resumo, janela } = ctx, colors = corTipo(tokens), months = resumo.mensal;
   const option = useMemo(() => ({
     grid: { top: 28, right: 8, bottom: 2, left: 4, containLabel: true },
@@ -147,7 +147,7 @@ function Mensal({ ctx }: { ctx: Ctx }) {
 }
 
 /* ---------- Curvas de regularização por origem ---------- */
-function Curvas({ ctx }: { ctx: Ctx }) {
+export function Curvas({ ctx }: { ctx: Ctx }) {
   const { tokens, resumo } = ctx, colors = corOrigem(tokens);
   const option = useMemo(() => ({
     grid: { top: 10, right: 12, bottom: 22, left: 4, containLabel: true },
