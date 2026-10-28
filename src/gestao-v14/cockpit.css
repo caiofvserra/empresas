@@ -111,7 +111,7 @@
 /* ---------- KPIs ---------- */
 .ck-kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 .ck-kpi { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 46%; grid-template-rows: auto auto 1fr auto auto; grid-template-areas: "origin origin" "label label" "value spark" "delta spark" "ref ref"; align-items: end; column-gap: 8px; min-width: 0; padding: 11px 14px 10px; text-align: left; border: 1px solid var(--ck-line); border-radius: 14px; background: var(--ck-panel); color: var(--ck-ink); box-shadow: var(--ck-shadow); overflow: hidden; transition: transform .18s, box-shadow .18s, border-color .18s; }
-.ck-kpi::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--tertiary); }
+.ck-kpi::before { content: ''; position: absolute; top: 12px; right: 14px; width: 8px; height: 8px; border-radius: 50%; background: var(--tertiary); }
 .ck-kpi[data-kpi="base"]::before { background: var(--primary); } .ck-kpi[data-kpi="receipts"]::before, .ck-kpi[data-kpi="opportunity"]::before { background: var(--secondary); } .ck-kpi[data-kpi="overdue"]::before { background: var(--danger); }
 .ck-kpi[data-kpi="base"] { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: #fff; border-color: transparent; }
 .ck-kpi[data-kpi="base"]::before { background: var(--secondary); }
