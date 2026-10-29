@@ -1,0 +1,1346 @@
+<title>Atlas de Fontes do CREA-SP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;700;800&family=Lato:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: coluna única de leitura (máx. 1120px) com faixa institucional no topo; tabela e grafos rolam dentro do próprio bloco. Identidade CREA-SP do projeto (docs/DESIGN_SYSTEM_V13.md). */
+:root{
+  --bg:#F6F7FA; --surface:#FFFFFF; --sunk:#EDF0F6; --fg:#13213A; --muted:#55627A; --line:#D7DDE8;
+  --primary:#082D74; --primary-dark:#01224D; --yellow:#FABD07; --blue:#3182CE; --on-yellow:#1B1500;
+  --hl:#3182CE; --hl-soft:rgba(49,130,206,.14);
+  --pub:#1E7A4A; --pub-bg:#E3F3EA; --key:#8A5A00; --key-bg:#FDF1D2; --conv:#7A2E8C; --conv-bg:#F2E4F5; --rest:#9A2B2B; --rest-bg:#F8E3E3;
+  --f-display:"Raleway","Segoe UI",system-ui,sans-serif; --f-body:"Lato","Segoe UI",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A1322; --surface:#111D32; --sunk:#0D1728; --fg:#E3E9F3; --muted:#9AA8C0; --line:#24334E;
+  --primary:#9DBBFF; --primary-dark:#06183A; --yellow:#FABD07; --blue:#6FB1FF; --on-yellow:#1B1500;
+  --hl:#6FB1FF; --hl-soft:rgba(111,177,255,.16);
+  --pub:#7FD6A4; --pub-bg:#123324; --key:#F3C85A; --key-bg:#33280B; --conv:#D9A2E6; --conv-bg:#2D1735; --rest:#F09A9A; --rest-bg:#3A1717;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A1322; --surface:#111D32; --sunk:#0D1728; --fg:#E3E9F3; --muted:#9AA8C0; --line:#24334E;
+  --primary:#9DBBFF; --primary-dark:#06183A; --yellow:#FABD07; --blue:#6FB1FF; --on-yellow:#1B1500;
+  --hl:#6FB1FF; --hl-soft:rgba(111,177,255,.16);
+  --pub:#7FD6A4; --pub-bg:#123324; --key:#F3C85A; --key-bg:#33280B; --conv:#D9A2E6; --conv-bg:#2D1735; --rest:#F09A9A; --rest-bg:#3A1717;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--f-body);margin:0}
+a{color:var(--primary)}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.band{background:var(--primary-dark);color:#F3F6FC}
+header.band .wrap{padding-block:40px 32px;display:grid;gap:18px}
+.eyebrow{font:700 12px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--yellow)}
+h1{font:800 clamp(30px,5vw,48px)/1.08 var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+.lead{max-width:70ch;margin:0;color:#C9D4EA;font-size:17px}
+.stats{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:6px}
+.stat{display:grid;gap:2px}
+.stat b{font:800 30px/1 var(--f-display);color:#fff;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:#AEBBD6}
+nav.toc{border-bottom:1px solid var(--line);background:var(--surface)}
+nav.toc .wrap{display:flex;flex-wrap:wrap;gap:4px 18px;padding-block:12px;font-size:14px}
+nav.toc a{text-decoration:none;color:var(--muted);font-weight:700}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--primary)}
+main .wrap{display:grid;gap:56px;padding-block:44px 72px}
+section{display:grid;gap:16px;min-width:0}
+h2{font:800 clamp(22px,3vw,28px)/1.2 var(--f-display);margin:0;color:var(--primary);text-wrap:balance}
+h3{font:700 18px/1.3 var(--f-display);margin:0;text-wrap:balance}
+p{margin:0;max-width:72ch}
+.muted{color:var(--muted)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:10px;min-width:0}
+.panel ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.note{border-left:3px solid var(--yellow);background:var(--sunk);padding:12px 16px;border-radius:0 8px 8px 0;font-size:15px;max-width:none}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px;min-width:0}
+.scroll{overflow-x:auto;min-width:0}
+figure .scroll svg{min-width:760px}
+figcaption{font-size:14px;color:var(--muted);max-width:none}
+svg.graph{width:100%;height:auto;display:block;color:var(--fg);font-family:var(--f-body)}
+.graph .gh{font:700 12px var(--f-body);letter-spacing:.1em;text-transform:uppercase;fill:var(--muted)}
+.graph .e{fill:none;stroke:currentColor;stroke-opacity:.22;stroke-width:1.3}
+.graph .e.hot{stroke:var(--hl);stroke-opacity:.8;stroke-width:1.8}
+.graph .nl{fill:var(--sunk);stroke:var(--line)}
+.graph .nr{fill:var(--surface);stroke:var(--line)}
+.graph .nk{fill:var(--surface);stroke:currentColor;stroke-opacity:.45}
+.graph .nk.hotk{fill:var(--hl-soft);stroke:var(--hl);stroke-opacity:1;stroke-width:1.5}
+.graph .tl{font-size:13.5px;fill:var(--fg)}
+.graph .tk{font:700 14px var(--f-body);fill:var(--fg)}
+.graph .ts{font-size:12px;fill:var(--muted)}
+.graph .fl{fill:none;stroke:currentColor;stroke-opacity:.6;stroke-width:1.6}
+.graph .fl.hotl{stroke:var(--hl);stroke-opacity:1}
+.graph .fl.dash{stroke-dasharray:5 5}
+.graph .ah{fill:currentColor}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:700 13px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--surface)}
+.chip:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
+.tools input[type=search],.tools select{font:15px var(--f-body);padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);min-width:0}
+.tools input[type=search]{flex:1 1 220px}
+.tools label{font-size:14px;display:flex;gap:6px;align-items:center}
+.count{font-size:14px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+.cat{min-width:980px}
+.cat th,.cat td{text-align:left;vertical-align:top;padding:12px 10px;border-bottom:1px solid var(--line)}
+.cat thead th{font:700 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--sunk);position:sticky;top:0}
+.cat tr.grp th{background:var(--surface);font:800 16px var(--f-display);color:var(--primary);padding-top:22px;border-bottom:2px solid var(--primary)}
+.cat tr.grp th span{font:700 13px var(--f-body);color:var(--muted);margin-left:6px}
+.c-nome{width:23%}.c-nome strong{display:block;font-size:15px}
+.org{display:block;color:var(--muted);font-size:13px}
+code{font:12px/1.45 var(--f-mono);color:var(--muted);word-break:break-word;display:block;margin-top:6px}
+.c-traz{width:37%}
+.uso{margin-top:6px;font-size:13.5px;color:var(--fg)}
+.uso b{color:var(--primary)}
+.pill{display:inline-block;font:700 12px var(--f-body);padding:2px 9px;border-radius:999px;white-space:nowrap}
+.a-pub{color:var(--pub);background:var(--pub-bg)}.a-key{color:var(--key);background:var(--key-bg)}.a-conv{color:var(--conv);background:var(--conv-bg)}.a-rest{color:var(--rest);background:var(--rest-bg)}
+.canal{display:block;font-size:12.5px;color:var(--muted);margin-top:6px}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.k{display:inline-block;font:500 11.5px var(--f-mono);border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin:0 4px 4px 0;white-space:nowrap}
+.val{display:block;font-weight:700}
+.v-a{color:var(--hl)}.v-m{color:var(--fg)}.v-b{color:var(--muted)}
+.st{display:block;font-size:12px;margin-top:4px;white-space:nowrap}
+.s-h{color:var(--pub)}.s-r{color:var(--muted)}.s-c{color:var(--key)}
+.tbl{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.plain th,.plain td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+.plain thead th{font:700 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--sunk)}
+.plain tbody tr:last-child td{border-bottom:0}
+.plain td code{display:inline;margin:0;color:var(--fg)}
+.plain{min-width:640px}
+.cross{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.cross article{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:8px;align-content:start}
+.cross .q{font:700 16px/1.35 var(--f-display);color:var(--fg)}
+.cross .meta{font-size:13px;color:var(--muted)}
+.cross .meta b{color:var(--fg)}
+.tag{font:700 11px var(--f-body);letter-spacing:.08em;text-transform:uppercase}
+.tag.pub{color:var(--pub)}.tag.conv{color:var(--conv)}.tag.par{color:var(--key)}
+.novo{display:inline-block;margin-top:6px;font:700 11px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--key);background:var(--key-bg);border-radius:4px;padding:1px 6px}
+.dl{display:flex;flex-wrap:wrap;gap:8px}
+.dl a{font:700 13px var(--f-body);border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;text-decoration:none}
+ol.steps{margin:0;padding-left:22px;display:grid;gap:8px;max-width:76ch}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+footer{border-top:1px solid var(--line)}
+footer .wrap{padding-block:24px;font-size:13px;color:var(--muted)}
+@media (max-width:600px){header.band .wrap{padding-block:28px 24px}.stat b{font-size:24px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<header class="band"><div class="wrap">
+  <div class="eyebrow">CREA-SP · Dados estratégicos · mapeamento de fontes · 29/10/2026 · catálogo unificado</div>
+  <h1>Atlas de fontes públicas para a engenharia paulista</h1>
+  <p class="lead">Quais bases públicas ajudam o CREA-SP a enxergar empresas, obras, profissionais, ensino, emprego, perícias e legislação, como acessar cada uma, com que frequência dá para extrair e por qual chave ela se liga ao que o conselho já tem.</p>
+  <div class="stats">
+    <div class="stat"><b>98</b><span>fontes catalogadas</span></div>
+    <div class="stat"><b>35</b><span>de alto valor</span></div>
+    <div class="stat"><b>74</b><span>abertas sem cadastro</span></div>
+    <div class="stat"><b>6</b><span>com chave gratuita</span></div>
+    <div class="stat"><b>18</b><span>dependem de acordo</span></div>
+  </div>
+</div></header>
+
+<nav class="toc" aria-label="Seções"><div class="wrap">
+  <a href="#resumo">Resumo</a><a href="#grafo">Grafo de chaves</a><a href="#cruzamentos">Cruzamentos de valor</a><a href="#catalogo">Catálogo</a><a href="#dadosgov">dados.gov.br</a><a href="#conecta">Conecta e Chelfo</a><a href="#acordos">Acordos</a><a href="#metodo">Método e limites</a>
+</div></nav>
+
+<main><div class="wrap">
+
+<section id="resumo">
+  <h2>Resumo</h2>
+  <div class="cols">
+    <div class="panel">
+      <h3>O que muda o jogo</h3>
+      <ul>
+        <li><b>Obras visíveis antes da fiscalização chegar:</b> CNO da Receita, AUDESP do TCE-SP, PNCP, DER-SP, alvarás municipais e geração distribuída da ANEEL mostram onde há obra ou instalação. Cruzadas com ART, viram fila de verificação por GRE, separando vínculo confirmado de candidato.</li>
+        <li><b>Universo de empresas obrigadas:</b> a base aberta de CNPJ filtrada pelas 702 subclasses da lista CNAE do CREA-SP (638 com registro obrigatório e 64 passíveis) dá o denominador da cobertura de registro.</li>
+        <li><b>Mercado de trabalho real:</b> CAGED e RAIS por CBO mostram quantos engenheiros estão empregados por município e com que salário, frente ao piso da Lei 4.950-A/66 conforme a jornada contratada. Sempre em agregado: não identificam empresa nem empregado.</li>
+        <li><b>Funil de formação:</b> INEP e e-MEC dão formandos por curso e cidade, para comparar com os registros novos. A taxa real de egressos que chegam ao CREA exige a lista nominal de formandos das IES.</li>
+        <li><b>Demanda pericial:</b> o DataJud permite contar processos com assuntos e movimentos de perícia por tema e comarca. Não identifica o perito nem prova que houve perícia de engenharia.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>O que o CREA-SP já tem para cruzar</h3>
+      <ul>
+        <li>Registro profissional com título, RNP e modalidade das câmaras especializadas (civil, elétrica, mecânica e metalúrgica, química, agronomia, agrimensura, segurança do trabalho, geologia e minas, ambiental e sanitária).</li>
+        <li>Registro e visto de empresas, com responsável técnico e vigência.</li>
+        <li>ART com contratante (CNPJ ou CPF), endereço da obra, contrato, valor, atividade e tipo de contratante (Resolução 1.137/2023, Anexo I), mais CAT e CAO.</li>
+        <li>Fiscalização em 14 GREs e suas UGIs, autos e processos.</li>
+        <li>Anuidades, dívida ativa, cadastro de IES e registro na colação de grau.</li>
+        <li>API pública do próprio Portal da Transparência (Implanta), com contratos, pagamentos e quadro de pessoal.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">Nível de evidência de cada fonte, do mais forte ao mais fraco: <b>amostra</b> (uma consulta devolveu dados válidos), <b>contrato</b> (OpenAPI lido), <b>documentação</b> (página oficial lida), <b>pista</b> (fonte conhecida, endpoint ou layout a homologar), <b>parceria</b> (acesso a negociar) e <b>reuso</b>. Nenhum nível equivale a integração pronta, SLA ou cobertura integral. O dados.gov.br estava em manutenção programada na hora da consulta; o contrato da API foi lido no ambiente de homologação. Em 29/10 o atlas foi unificado com o levantamento complementar do repositório (<code style="display:inline">planejamento-fontes-2026-10/</code>, 104 entradas): entraram 21 fontes, marcadas como “nova na unificação”.</p>
+</section>
+
+<section id="grafo">
+  <h2>Grafo de chaves de cruzamento</h2>
+  <p>Cada linha liga um domínio de dados do CREA-SP a uma chave, e a chave a um grupo de fontes públicas. As linhas em azul passam por CNPJ e por endereço: são as que levam a obras e instalações concretas, onde o cruzamento gera ação de fiscalização. O número em cada grupo é a quantidade de fontes do catálogo.</p>
+  <figure>
+    <div class="scroll"><svg viewBox="0 0 1060 640" role="img" aria-label="Grafo bipartido: dados internos do CREA-SP à esquerda, chaves de cruzamento no centro e grupos de fontes públicas à direita. CNPJ e endereço concentram as ligações com fontes de obras e setores regulados." class="graph">
+<text x="16" y="20" class="gh">Dados que o CREA-SP já tem</text>
+<text x="530.0" y="20" class="gh" text-anchor="middle">Chave de cruzamento</text>
+<text x="1044" y="20" class="gh" text-anchor="end">Fontes públicas</text>
+<path class="e hot" d="M230,74.0 C330,74.0 318,57.0 418,57.0"/>
+<path class="e" d="M230,74.0 C330,74.0 318,189.0 418,189.0"/>
+<path class="e" d="M230,74.0 C330,74.0 318,453.0 418,453.0"/>
+<path class="e hot" d="M230,74.0 C330,74.0 318,519.0 418,519.0"/>
+<path class="e" d="M230,146.0 C330,146.0 318,123.0 418,123.0"/>
+<path class="e" d="M230,146.0 C330,146.0 318,321.0 418,321.0"/>
+<path class="e" d="M230,146.0 C330,146.0 318,387.0 418,387.0"/>
+<path class="e" d="M230,146.0 C330,146.0 318,453.0 418,453.0"/>
+<path class="e" d="M230,218.0 C330,218.0 318,123.0 418,123.0"/>
+<path class="e hot" d="M230,218.0 C330,218.0 318,57.0 418,57.0"/>
+<path class="e hot" d="M230,218.0 C330,218.0 318,519.0 418,519.0"/>
+<path class="e" d="M230,218.0 C330,218.0 318,585.0 418,585.0"/>
+<path class="e" d="M230,218.0 C330,218.0 318,453.0 418,453.0"/>
+<path class="e hot" d="M230,290.0 C330,290.0 318,57.0 418,57.0"/>
+<path class="e" d="M230,290.0 C330,290.0 318,123.0 418,123.0"/>
+<path class="e hot" d="M230,290.0 C330,290.0 318,519.0 418,519.0"/>
+<path class="e" d="M230,290.0 C330,290.0 318,585.0 418,585.0"/>
+<path class="e hot" d="M230,362.0 C330,362.0 318,57.0 418,57.0"/>
+<path class="e" d="M230,362.0 C330,362.0 318,123.0 418,123.0"/>
+<path class="e" d="M230,434.0 C330,434.0 318,387.0 418,387.0"/>
+<path class="e" d="M230,434.0 C330,434.0 318,123.0 418,123.0"/>
+<path class="e" d="M230,434.0 C330,434.0 318,453.0 418,453.0"/>
+<path class="e" d="M230,506.0 C330,506.0 318,321.0 418,321.0"/>
+<path class="e" d="M230,578.0 C330,578.0 318,453.0 418,453.0"/>
+<path class="e hot" d="M642,57.0 C742,57.0 730,74.0 830,74.0"/>
+<path class="e hot" d="M642,57.0 C742,57.0 730,146.0 830,146.0"/>
+<path class="e hot" d="M642,57.0 C742,57.0 730,218.0 830,218.0"/>
+<path class="e hot" d="M642,57.0 C742,57.0 730,290.0 830,290.0"/>
+<path class="e" d="M642,123.0 C742,123.0 730,74.0 830,74.0"/>
+<path class="e" d="M642,123.0 C742,123.0 730,290.0 830,290.0"/>
+<path class="e" d="M642,123.0 C742,123.0 730,218.0 830,218.0"/>
+<path class="e" d="M642,123.0 C742,123.0 730,434.0 830,434.0"/>
+<path class="e" d="M642,189.0 C742,189.0 730,74.0 830,74.0"/>
+<path class="e" d="M642,189.0 C742,189.0 730,290.0 830,290.0"/>
+<path class="e" d="M642,189.0 C742,189.0 730,506.0 830,506.0"/>
+<path class="e" d="M642,255.0 C742,255.0 730,290.0 830,290.0"/>
+<path class="e" d="M642,321.0 C742,321.0 730,290.0 830,290.0"/>
+<path class="e" d="M642,321.0 C742,321.0 730,362.0 830,362.0"/>
+<path class="e" d="M642,321.0 C742,321.0 730,578.0 830,578.0"/>
+<path class="e" d="M642,387.0 C742,387.0 730,362.0 830,362.0"/>
+<path class="e" d="M642,453.0 C742,453.0 730,506.0 830,506.0"/>
+<path class="e" d="M642,453.0 C742,453.0 730,362.0 830,362.0"/>
+<path class="e" d="M642,453.0 C742,453.0 730,290.0 830,290.0"/>
+<path class="e" d="M642,453.0 C742,453.0 730,146.0 830,146.0"/>
+<path class="e" d="M642,453.0 C742,453.0 730,218.0 830,218.0"/>
+<path class="e" d="M642,453.0 C742,453.0 730,434.0 830,434.0"/>
+<path class="e" d="M642,453.0 C742,453.0 730,578.0 830,578.0"/>
+<path class="e hot" d="M642,519.0 C742,519.0 730,218.0 830,218.0"/>
+<path class="e hot" d="M642,519.0 C742,519.0 730,146.0 830,146.0"/>
+<path class="e hot" d="M642,519.0 C742,519.0 730,74.0 830,74.0"/>
+<path class="e" d="M642,585.0 C742,585.0 730,146.0 830,146.0"/>
+<path class="e" d="M642,585.0 C742,585.0 730,434.0 830,434.0"/>
+<rect class="nl" x="16" y="52" width="214" height="44" rx="6"/>
+<text class="tl" x="30" y="79.0">Registro de empresas e vistos</text>
+<rect class="nl" x="16" y="124" width="214" height="44" rx="6"/>
+<text class="tl" x="30" y="151.0">Registro profissional</text>
+<rect class="nl" x="16" y="196" width="214" height="44" rx="6"/>
+<text class="tl" x="30" y="223.0">ART, CAT e CAO</text>
+<rect class="nl" x="16" y="268" width="214" height="44" rx="6"/>
+<text class="tl" x="30" y="295.0">Fiscalização e autos</text>
+<rect class="nl" x="16" y="340" width="214" height="44" rx="6"/>
+<text class="tl" x="30" y="367.0">Anuidades e dívida ativa</text>
+<rect class="nl" x="16" y="412" width="214" height="44" rx="6"/>
+<text class="tl" x="30" y="439.0">IES, cursos e colação</text>
+<rect class="nl" x="16" y="484" width="214" height="44" rx="6"/>
+<text class="tl" x="30" y="511.0">Câmaras especializadas</text>
+<rect class="nl" x="16" y="556" width="214" height="44" rx="6"/>
+<text class="tl" x="30" y="583.0">14 GREs e UGIs</text>
+<rect class="nk hotk" x="418" y="34" width="224" height="46" rx="23"/>
+<text class="tk" x="530.0" y="54" text-anchor="middle">CNPJ</text>
+<text class="ts" x="530.0" y="70" text-anchor="middle">51 fontes</text>
+<rect class="nk" x="418" y="100" width="224" height="46" rx="23"/>
+<text class="tk" x="530.0" y="120" text-anchor="middle">CPF</text>
+<text class="ts" x="530.0" y="136" text-anchor="middle">23 fontes · LGPD</text>
+<rect class="nk" x="418" y="166" width="224" height="46" rx="23"/>
+<text class="tk" x="530.0" y="186" text-anchor="middle">CNAE subclasse</text>
+<text class="ts" x="530.0" y="202" text-anchor="middle">8 fontes</text>
+<rect class="nk" x="418" y="232" width="224" height="46" rx="23"/>
+<text class="tk" x="530.0" y="252" text-anchor="middle">CBO</text>
+<text class="ts" x="530.0" y="268" text-anchor="middle">7 fontes</text>
+<rect class="nk" x="418" y="298" width="224" height="46" rx="23"/>
+<text class="tk" x="530.0" y="318" text-anchor="middle">Título ↔ CBO ↔ CINE</text>
+<text class="ts" x="530.0" y="334" text-anchor="middle">tabela-ponte</text>
+<rect class="nk" x="418" y="364" width="224" height="46" rx="23"/>
+<text class="tk" x="530.0" y="384" text-anchor="middle">Código e-MEC do curso</text>
+<text class="ts" x="530.0" y="400" text-anchor="middle">6 fontes</text>
+<rect class="nk" x="418" y="430" width="224" height="46" rx="23"/>
+<text class="tk" x="530.0" y="450" text-anchor="middle">Município IBGE</text>
+<text class="ts" x="530.0" y="466" text-anchor="middle">45 fontes</text>
+<rect class="nk hotk" x="418" y="496" width="224" height="46" rx="23"/>
+<text class="tk" x="530.0" y="516" text-anchor="middle">Endereço e coordenada</text>
+<text class="ts" x="530.0" y="532" text-anchor="middle">18 fontes</text>
+<rect class="nk" x="418" y="562" width="224" height="46" rx="23"/>
+<text class="tk" x="530.0" y="582" text-anchor="middle">Nº contrato / processo</text>
+<text class="ts" x="530.0" y="598" text-anchor="middle">9 fontes</text>
+<rect class="nr" x="830" y="52" width="214" height="44" rx="6"/>
+<text class="tl" x="844" y="79.0">Empresas e mercado</text>
+<text class="ts" x="1032" y="79.0" text-anchor="end">15</text>
+<rect class="nr" x="830" y="124" width="214" height="44" rx="6"/>
+<text class="tl" x="844" y="151.0">Contratações e obras</text>
+<text class="ts" x="1032" y="151.0" text-anchor="end">18</text>
+<rect class="nr" x="830" y="196" width="214" height="44" rx="6"/>
+<text class="tl" x="844" y="223.0">Infraestrutura e regulados</text>
+<text class="ts" x="1032" y="223.0" text-anchor="end">25</text>
+<rect class="nr" x="830" y="268" width="214" height="44" rx="6"/>
+<text class="tl" x="844" y="295.0">Trabalho e salários</text>
+<text class="ts" x="1032" y="295.0" text-anchor="end">8</text>
+<rect class="nr" x="830" y="340" width="214" height="44" rx="6"/>
+<text class="tl" x="844" y="367.0">Ensino e formação</text>
+<text class="ts" x="1032" y="367.0" text-anchor="end">8</text>
+<rect class="nr" x="830" y="412" width="214" height="44" rx="6"/>
+<text class="tl" x="844" y="439.0">Judiciário e perícias</text>
+<text class="ts" x="1032" y="439.0" text-anchor="end">4</text>
+<rect class="nr" x="830" y="484" width="214" height="44" rx="6"/>
+<text class="tl" x="844" y="511.0">Economia e território</text>
+<text class="ts" x="1032" y="511.0" text-anchor="end">9</text>
+<rect class="nr" x="830" y="556" width="214" height="44" rx="6"/>
+<text class="tl" x="844" y="583.0">Legislativo e normas</text>
+<text class="ts" x="1032" y="583.0" text-anchor="end">6</text>
+</svg></div>
+    <figcaption>CNPJ, município e endereço sustentam a maioria das ligações. CPF abre as fontes de trabalho e perícia, mas exige base legal e cuidado com LGPD. A tabela-ponte entre título profissional, CBO e área CINE do INEP precisa ser construída pelo CREA: sem ela, emprego e ensino não conversam com o registro.</figcaption>
+  </figure>
+  <figure>
+    <div class="scroll"><svg viewBox="0 0 1060 330" role="img" aria-label="Fluxo: sinais externos de obra ou atividade são normalizados para uma chave comum, consultados na base do CREA na data do evento e separados entre cobertos, que alimentam o indicador de cobertura, e sem evidência, que entram numa fila priorizada para a GRE." class="graph">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs>
+<rect class="nr" x="10" y="40" width="210" height="250" rx="8"/>
+<text class="gh" x="26" y="66">Sinal externo</text>
+<text class="tl" x="26" y="96">Obra no CNO</text>
+<text class="tl" x="26" y="124">Contrato PNCP / AUDESP</text>
+<text class="tl" x="26" y="152">Sistema GD na ANEEL</text>
+<text class="tl" x="26" y="180">Alvará municipal</text>
+<text class="tl" x="26" y="208">Parcela SIGEF</text>
+<text class="tl" x="26" y="236">Estação ANATEL</text>
+<text class="tl" x="26" y="264">Licença CETESB</text>
+<line class="fl" x1="220" y1="165" x2="290" y2="165" marker-end="url(#ar)"/>
+<text class="ts" x="255" y="155" text-anchor="middle">normaliza</text>
+<rect class="nk hotk" x="292" y="115" width="200" height="100" rx="10"/>
+<text class="tk" x="392" y="146" text-anchor="middle">Chave comum</text>
+<text class="ts" x="392" y="168" text-anchor="middle">CNPJ ou CPF</text>
+<text class="ts" x="392" y="186" text-anchor="middle">endereço geocodificado</text>
+<text class="ts" x="392" y="204" text-anchor="middle">município · data do evento</text>
+<line class="fl" x1="492" y1="165" x2="562" y2="165" marker-end="url(#ar)"/>
+<text class="ts" x="527" y="155" text-anchor="middle">consulta</text>
+<rect class="nl" x="564" y="115" width="200" height="100" rx="10"/>
+<text class="tk" x="664" y="146" text-anchor="middle">Base do CREA-SP</text>
+<text class="ts" x="664" y="168" text-anchor="middle">registro vigente na data?</text>
+<text class="ts" x="664" y="186" text-anchor="middle">RT com vínculo ativo?</text>
+<text class="ts" x="664" y="204" text-anchor="middle">ART no local ou contrato?</text>
+<path class="fl" d="M764,140 C800,140 800,72 836,72" marker-end="url(#ar)"/>
+<text class="ts" x="800" y="62" text-anchor="end">coberto</text>
+<rect class="nr" x="838" y="44" width="212" height="56" rx="8"/>
+<text class="tl" x="852" y="68">Indicador de cobertura</text>
+<text class="ts" x="852" y="88">por GRE, setor e mês</text>
+<path class="fl hotl" d="M764,190 C800,190 800,258 836,258" marker-end="url(#ar)"/>
+<text class="ts" x="800" y="270" text-anchor="end">sem evidência</text>
+<rect class="nk hotk" x="838" y="230" width="212" height="56" rx="8"/>
+<text class="tl" x="852" y="254">Fila priorizada da GRE</text>
+<text class="ts" x="852" y="274">valor, risco, porte, prazo</text>
+<path class="fl dash" d="M944,286 C944,320 664,320 664,217" marker-end="url(#ar)"/>
+<text class="ts" x="804" y="316" text-anchor="middle">resultado da visita volta ao modelo</text>
+</svg></div>
+    <figcaption>Mecanismo comum a quase todos os cruzamentos de fiscalização: qualquer sinal externo com chave e data é consultado na base do CREA na data do evento. Sem evidência não quer dizer infração; quer dizer prioridade para verificar.</figcaption>
+  </figure>
+</section>
+
+<section id="cruzamentos">
+  <h2>Cruzamentos de maior valor estratégico</h2>
+  <p>Ordenados pelo que entregam com fontes já abertas. Os marcados “parcial” têm uma parte aberta e outra por acordo; os dois últimos dependem de acordo. Em todos, ausência de vínculo é prioridade para verificar, não infração.</p>
+  <div class="cross">
+    <article><span class="tag par">parcial</span><p class="q">Quais obras em andamento não têm ART identificada?</p><p>CNO aberto (obra, responsável, endereço) contra ART por CNPJ/CPF do contratante e endereço geocodificado gera candidatos para revisão. O vínculo confirmado depende do nº da ART, que vem no serviço do Serpro.</p><p class="meta"><b>Chave:</b> CNPJ, CPF, endereço · <b>Painel:</b> obras sem ART identificada por GRE, com quantas tinham chave</p></article>
+    <article><span class="tag pub">aberto</span><p class="q">Quem a prefeitura contrata para engenharia, e essa empresa tem registro e RT?</p><p>AUDESP Fase IV e despesas do TCE-SP, PNCP e Compras.gov.br contra registro de empresa, vínculo de RT e ART vinculada ao contrato.</p><p class="meta"><b>Chave:</b> CNPJ, nº contrato · <b>Painel:</b> contratos públicos por situação de registro</p></article>
+    <article><span class="tag pub">aberto</span><p class="q">Quantos estabelecimentos paulistas com CNAE da lista não têm registro localizado?</p><p>CNPJ completo ativo com CNAE da lista do CREA-SP contra registro de empresa na data do arquivo, separando “Sim” de “Passível de obrigação”. Sem correspondência não quer dizer irregular.</p><p class="meta"><b>Chave:</b> CNPJ, CNAE, município · <b>Painel:</b> cobertura de registro por GRE e setor</p></article>
+    <article><span class="tag pub">aberto</span><p class="q">Os engenheiros são contratados acima do piso?</p><p>Salário contratual do CAGED por CBO de engenharia, município, CNAE e horas contratadas, comparado ao piso da Lei 4.950-A/66: 6 salários mínimos para 6 horas, valor maior para jornada maior (regra validada pela GAJ). Só em agregado.</p><p class="meta"><b>Chave:</b> CBO, município · <b>Painel:</b> remuneração técnica por região</p></article>
+    <article><span class="tag pub">aberto</span><p class="q">Quantos sistemas solares foram instalados sem profissional registrado?</p><p>Geração distribuída da ANEEL por município e potência contra ARTs de instalação fotovoltaica no mesmo município e mês. Comparação agregada: não identifica o instalador.</p><p class="meta"><b>Chave:</b> município, data · <b>Painel:</b> cobertura de ART em energia solar</p></article>
+    <article><span class="tag par">parcial</span><p class="q">Quantos formandos viram profissionais registrados?</p><p>Concluintes por curso no Censo da Educação Superior ao lado dos registros novos (agregado). A taxa real, com registros até 24 meses depois, só nas IES que enviarem a lista nominal de formandos.</p><p class="meta"><b>Chave:</b> código e-MEC do curso, município · <b>Painel:</b> funil egresso → registro por IES</p></article>
+    <article><span class="tag pub">aberto</span><p class="q">Onde o Judiciário mais precisa de perícia de engenharia?</p><p>DataJud (TJSP, TRT-2, TRT-15, TRF-3) filtrado por assuntos e movimentos de perícia, agregado por comarca e tema. Mede demanda: não identifica o perito nem prova que a perícia foi de engenharia.</p><p class="meta"><b>Chave:</b> município IBGE do órgão julgador · <b>Painel:</b> demanda pericial por especialidade</p></article>
+    <article><span class="tag pub">aberto</span><p class="q">Barragens, minas e torres têm responsável técnico?</p><p>SNISB, ANM (SIGMINE, SIGBM) e ANATEL contra RT e ART do titular ou da prestadora.</p><p class="meta"><b>Chave:</b> CNPJ, coordenada · <b>Painel:</b> ativos de risco sem RT identificado</p></article>
+    <article><span class="tag pub">aberto</span><p class="q">Onde vai haver obra nos próximos dois anos?</p><p>PIESP (investimentos anunciados), BNDES, Obrasgov e Novo PAC por município, contra a capacidade de fiscalização de cada GRE.</p><p class="meta"><b>Chave:</b> município, CNPJ · <b>Painel:</b> radar de demanda futura</p></article>
+    <article><span class="tag pub">aberto</span><p class="q">O que tramita sobre engenharia no Congresso, na ALESP e nas câmaras municipais?</p><p>Câmara, Senado, ALESP e Querido Diário com palavras-chave (ART, Lei 5.194, piso, engenheiro, CREA).</p><p class="meta"><b>Chave:</b> nº da proposição, município · <b>Painel:</b> monitor legislativo com alerta</p></article>
+    <article><span class="tag conv">acordo</span><p class="q">O RT declarado trabalha mesmo na empresa?</p><p>Relação Trabalhista do Conecta (CNIS) por CPF do RT: vínculo, empregador, CBO e datas.</p><p class="meta"><b>Chave:</b> CPF, CNPJ · <b>Painel:</b> vínculos de RT confirmados</p></article>
+    <article><span class="tag conv">acordo</span><p class="q">Os peritos nomeados estão registrados e anotam ART?</p><p>Nomeações do TJSP e dos TRTs por especialidade contra registro profissional e ART de perícia.</p><p class="meta"><b>Chave:</b> CPF, nº processo · <b>Painel:</b> perícias com e sem profissional habilitado</p></article>
+  </div>
+</section>
+
+<section id="catalogo">
+  <h2>Catálogo de fontes</h2>
+  <p>Agrupado por tema e ordenado por valor para o CREA-SP. “Rotina” é a frequência em que a fonte publica, que limita a frequência de extração. Use os filtros para recortar; busque “unificação” para ver só as fontes que entraram na unificação.</p>
+  <div class="dl" id="dl" hidden><button type="button" class="chip" data-f="csv">Baixar catálogo unificado (CSV)</button><button type="button" class="chip" data-f="xlsx">Baixar catálogo unificado (XLSX)</button><span class="count" id="dlmsg" aria-live="polite"></span></div>
+  <div class="tools" role="group" aria-label="Filtros do catálogo">
+    <button type="button" class="chip" data-t="" aria-pressed="true">Todos os temas</button><button type="button" class="chip" data-t="emp" aria-pressed="false">Empresas e mercado</button><button type="button" class="chip" data-t="con" aria-pressed="false">Contratações e obras</button><button type="button" class="chip" data-t="inf" aria-pressed="false">Infraestrutura e setores regulados</button><button type="button" class="chip" data-t="tra" aria-pressed="false">Trabalho, salários e CBO</button><button type="button" class="chip" data-t="ens" aria-pressed="false">Ensino e formação</button><button type="button" class="chip" data-t="jud" aria-pressed="false">Judiciário e perícias</button><button type="button" class="chip" data-t="eco" aria-pressed="false">Economia e território</button><button type="button" class="chip" data-t="leg" aria-pressed="false">Legislativo e normas</button><button type="button" class="chip" data-t="cat" aria-pressed="false">Catálogos e atalhos</button>
+  </div>
+  <div class="tools">
+    <input type="search" id="q" placeholder="Buscar fonte, órgão, chave (ex.: CBO, obra, perícia)" aria-label="Buscar no catálogo">
+    <select id="acc" aria-label="Tipo de acesso"><option value="">Qualquer acesso</option><option>Público</option><option>Chave</option><option>Convênio</option><option>Restrito</option></select>
+    <label for="alto"><input type="checkbox" id="alto"> só alto valor</label>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+  <div class="legend"><span><span class="pill a-pub">Público</span> sem cadastro</span><span><span class="pill a-key">Chave</span> cadastro gratuito</span><span><span class="pill a-conv">Convênio</span> adesão institucional</span><span><span class="pill a-rest">Restrito</span> só com acordo específico</span><span>CPF* = mascarado na fonte</span></div>
+  <div class="scroll tbl">
+    <table class="cat">
+      <thead><tr><th>Fonte e endpoint</th><th>O que traz e uso</th><th>Acesso</th><th>Rotina</th><th>Chaves</th><th>Valor</th></tr></thead>
+      <tbody id="tb">
+<tr class="grp" data-tema="emp"><th colspan="6">Empresas e mercado <span>15</span></th></tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Alto" data-q="cnpj · dados abertos receita federal empresas, estabelecimentos, sócios (qsa com cpf mascarado), cnae principal e secundários, situação cadastral, simples e mei. universo de empresas com cnae da lista crea-sp (638 subclasses com registro obrigatório e 64 passíveis), aberturas e baixas por gre, sócios com formação técnica. cnpj cnae município cpf*">
+<td class="c-nome"><strong>CNPJ · dados abertos</strong><span class="org">Receita Federal</span><code>Recurso no dados.gov.br (cadastro-nacional-da-pessoa-juridica---cnpj); a rota antiga de arquivos respondeu 404 em 26/10</code></td>
+<td class="c-traz">Empresas, estabelecimentos, sócios (QSA com CPF mascarado), CNAE principal e secundários, situação cadastral, Simples e MEI.<p class="uso"><b>Para o CREA:</b> Universo de empresas com CNAE da lista CREA-SP (638 subclasses com registro obrigatório e 64 passíveis), aberturas e baixas por GRE, sócios com formação técnica.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo ZIP/CSV</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CNAE</span><span class="k">Município</span><span class="k">CPF*</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Alto" data-q="cno · cadastro nacional de obras receita federal serpro obras de construção civil inscritas: nº cno, responsável (cnpj ou cpf), endereço, área, situação e datas. campos art e rrt só no cadastro compartilhado do serpro. sinal direto de obra em andamento. cnpj cpf endereço município">
+<td class="c-nome"><strong>CNO · Cadastro Nacional de Obras</strong><span class="org">Receita Federal</span><code>Arquivo aberto: conjunto cadastro-nacional-de-obras-cno no dados.gov.br (campos a homologar) · campos ART/RRT: bcadastros.serpro.gov.br/documentacao/cadastro_cno (contrato)</code></td>
+<td class="c-traz">Obras de construção civil inscritas: nº CNO, responsável (CNPJ ou CPF), endereço, área, situação e datas. Os campos de ART e RRT, o papel do responsável e o código do imóvel aparecem no Cadastro Compartilhado do Serpro, que exige contrato ou acordo.<p class="uso"><b>Para o CREA:</b> Sinal direto de obra em andamento. Pelo arquivo aberto, o cruzamento com ART por endereço e responsável gera candidatos para revisão. Vínculo confirmado só com o nº da ART preenchido. Responsável tributário ou dono da obra não é o RT; o município vem em código TOM, não IBGE.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo + serviço Serpro (contrato)</span></td>
+<td class="num">Periódica (confirmar)</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span><span class="k">Endereço</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Convênio" data-val="Alto" data-q="consulta cnpj (conecta) rfb / serpro cadastro online por cnpj com qsa completo, conforme termo de adesão. revalidação cadastral de empresas registradas e identificação de sócios profissionais sem máscara. cnpj cpf">
+<td class="c-nome"><strong>Consulta CNPJ (Conecta)</strong><span class="org">RFB / Serpro</span><code>gov.br/conecta/catalogo/apis/consulta-cnpj · IP cadastrado e chaves</code></td>
+<td class="c-traz">Cadastro online por CNPJ com QSA completo, conforme termo de adesão.<p class="uso"><b>Para o CREA:</b> Revalidação cadastral de empresas registradas e identificação de sócios profissionais sem máscara.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">API REST</span></td>
+<td class="num">Sob demanda</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Alto" data-q="piesp · investimentos anunciados fundação seade anúncios de investimento no estado de sp por empresa, setor, município e valor. antecipar demanda de fiscalização: fábrica, data center ou loteamento anunciado vira obra em 6 a 24 meses. município nome empresa">
+<td class="c-nome"><strong>PIESP · investimentos anunciados</strong><span class="org">Fundação SEADE</span><code>repositorio.seade.gov.br (PIESP)</code></td>
+<td class="c-traz">Anúncios de investimento no Estado de SP por empresa, setor, município e valor.<p class="uso"><b>Para o CREA:</b> Antecipar demanda de fiscalização: fábrica, data center ou loteamento anunciado vira obra em 6 a 24 meses.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo / painel</span></td>
+<td class="num">Trimestral (confirmar)</td>
+<td class="c-k"><span class="k">Município</span><span class="k">Nome empresa</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Convênio" data-val="Médio" data-q="cpf · cadastro base do cidadão (conecta) rfb situação e dados de referência do cpf. higienizar cadastro profissional (óbito, nome, situação) antes de cruzar com outras bases. cpf">
+<td class="c-nome"><strong>CPF · Cadastro Base do Cidadão (Conecta)</strong><span class="org">RFB</span><code>gov.br/conecta/catalogo/apis/cadastro-base-do-cidadao-cbc-cpf</code></td>
+<td class="c-traz">Situação e dados de referência do CPF.<p class="uso"><b>Para o CREA:</b> Higienizar cadastro profissional (óbito, nome, situação) antes de cruzar com outras bases.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">API REST</span></td>
+<td class="num">Sob demanda</td>
+<td class="c-k"><span class="k">CPF</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Convênio" data-val="Médio" data-q="jucesp / redesim junta comercial sp atos societários: constituição, alterações, transformação, encerramento, nire. evento de abertura antes da rfb consolidar; objeto social textual para triagem. cnpj cpf">
+<td class="c-nome"><strong>JUCESP / REDESIM</strong><span class="org">Junta Comercial SP</span><code>jucesp.sp.gov.br</code></td>
+<td class="c-traz">Atos societários: constituição, alterações, transformação, encerramento, NIRE.<p class="uso"><b>Para o CREA:</b> Evento de abertura antes da RFB consolidar; objeto social textual para triagem.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">Serviço / acordo</span></td>
+<td class="num">Conforme acordo</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Médio" data-q="bndes · operações de financiamento bndes operações diretas e indiretas: cliente (cnpj), cnae, município, produto, valor contratado. empresas financiadas para máquinas e infraestrutura indicam projetos de engenharia em curso. cnpj cnae município">
+<td class="c-nome"><strong>BNDES · operações de financiamento</strong><span class="org">BNDES</span><code>dadosabertos.bndes.gov.br</code></td>
+<td class="c-traz">Operações diretas e indiretas: cliente (CNPJ), CNAE, município, produto, valor contratado.<p class="uso"><b>Para o CREA:</b> Empresas financiadas para máquinas e infraestrutura indicam projetos de engenharia em curso.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN / CSV</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CNAE</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Médio" data-q="inpi · patentes e marcas inpi depósitos de patentes e desenhos industriais com depositante e classificação. indicador de inovação das empresas de engenharia registradas. cnpj nome">
+<td class="c-nome"><strong>INPI · patentes e marcas</strong><span class="org">INPI</span><code>gov.br/inpi (dados abertos)</code></td>
+<td class="c-traz">Depósitos de patentes e desenhos industriais com depositante e classificação.<p class="uso"><b>Para o CREA:</b> Indicador de inovação das empresas de engenharia registradas.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Nome</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Chave" data-val="Médio" data-q="sanções ceis, cnep, cepim cgu · portal da transparência empresas inidôneas, punidas pela lei anticorrupção e entidades impedidas. alerta em empresas registradas e em rts de contratos públicos. cnpj cpf">
+<td class="c-nome"><strong>Sanções CEIS, CNEP, CEPIM</strong><span class="org">CGU · Portal da Transparência</span><code>api.portaldatransparencia.gov.br/api-de-dados · header chave-api-dados</code></td>
+<td class="c-traz">Empresas inidôneas, punidas pela Lei Anticorrupção e entidades impedidas.<p class="uso"><b>Para o CREA:</b> Alerta em empresas registradas e em RTs de contratos públicos.</p></td>
+<td><span class="pill a-key">Chave</span><span class="canal">API REST</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Baixo" data-q="cvm · companhias abertas cvm cadastro e demonstrações financeiras (dfp/itr) de companhias abertas. saúde financeira das grandes construtoras e concessionárias registradas. cnpj">
+<td class="c-nome"><strong>CVM · companhias abertas</strong><span class="org">CVM</span><code>dados.cvm.gov.br</code></td>
+<td class="c-traz">Cadastro e demonstrações financeiras (DFP/ITR) de companhias abertas.<p class="uso"><b>Para o CREA:</b> Saúde financeira das grandes construtoras e concessionárias registradas.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo CSV</span></td>
+<td class="num">Trimestral</td>
+<td class="c-k"><span class="k">CNPJ</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Baixo" data-q="dívida ativa da união pgfn devedores inscritos em dívida ativa (cnpj/cpf, valor, situação). consulta individual também via conecta. contexto de risco financeiro para priorizar cobrança de anuidades. cnpj cpf">
+<td class="c-nome"><strong>Dívida Ativa da União</strong><span class="org">PGFN</span><code>gov.br/pgfn (dados abertos) · Conecta consulta-divida-ativa-da-uniao</code></td>
+<td class="c-traz">Devedores inscritos em dívida ativa (CNPJ/CPF, valor, situação). Consulta individual também via Conecta.<p class="uso"><b>Para o CREA:</b> Contexto de risco financeiro para priorizar cobrança de anuidades.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo trimestral</span></td>
+<td class="num">Trimestral</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Convênio" data-val="Baixo" data-q="cade · condutas anticompetitivas cade (conecta) processos de cartel, inclusive em licitações de obras. contexto ético-disciplinar quando houver empresa registrada envolvida. cnpj">
+<td class="c-nome"><strong>CADE · condutas anticompetitivas</strong><span class="org">CADE (Conecta)</span><code>gov.br/conecta/catalogo/apis/consulta-de-condutas-anticompetitivas</code></td>
+<td class="c-traz">Processos de cartel, inclusive em licitações de obras.<p class="uso"><b>Para o CREA:</b> Contexto ético-disciplinar quando houver empresa registrada envolvida.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">API REST</span></td>
+<td class="num">Sob demanda</td>
+<td class="c-k"><span class="k">CNPJ</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Baixo" data-q="espelhos não oficiais de cnpj (brasilapi, minhareceita) terceiros consulta cnpj gratuita que replica os arquivos da rfb. só para protótipo. produção deve ler o arquivo oficial ou o conecta. cnpj">
+<td class="c-nome"><strong>Espelhos não oficiais de CNPJ (BrasilAPI, minhareceita)</strong><span class="org">Terceiros</span><code>brasilapi.com.br · minhareceita.org</code></td>
+<td class="c-traz">Consulta CNPJ gratuita que replica os arquivos da RFB.<p class="uso"><b>Para o CREA:</b> Só para protótipo. Produção deve ler o arquivo oficial ou o Conecta.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Conforme a RFB</td>
+<td class="c-k"><span class="k">CNPJ</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Médio" data-novo="1" data-q="ibge · demografia das empresas ibge nascimento, morte e sobrevivência de empresas por cnae e uf, por coorte anual. separar retração econômica de perda de cobertura no crea-sp. a partir de 2022 o escopo mudou e há quebra de série; não identifica empresas. cnae uf unificação">
+<td class="c-nome"><strong>IBGE · Demografia das empresas</strong><span class="org">IBGE</span><code>sidra.ibge.gov.br (Demografia das Empresas e Estatísticas de Empreendedorismo)</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Nascimento, morte e sobrevivência de empresas por CNAE e UF, por coorte anual.<p class="uso"><b>Para o CREA:</b> Separar retração econômica de perda de cobertura no Crea-SP. A partir de 2022 o escopo mudou e há quebra de série; não identifica empresas.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Tabelas SIDRA</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">CNAE</span><span class="k">UF</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="emp" data-acc="Público" data-val="Baixo" data-novo="1" data-q="finep · financiamentos finep projetos financiados com instituição, uf, data e valor. empresas e projetos inovadores em sp contra o cadastro. cnpj nominal não confirmado no arquivo. cnpj uf unificação">
+<td class="c-nome"><strong>FINEP · financiamentos</strong><span class="org">FINEP</span><code>finep.gov.br/transparencia-finep/paineis-e-downloads (link vigente a redescobrir)</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Projetos financiados com instituição, UF, data e valor.<p class="uso"><b>Para o CREA:</b> Empresas e projetos inovadores em SP contra o cadastro. CNPJ nominal não confirmado no arquivo.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Semanal (declarada)</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">UF</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="grp" data-tema="con"><th colspan="6">Contratações e obras <span>18</span></th></tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Alto" data-q="pncp · portal nacional de contratações mgi contratações, contratos, atas e itens da lei 14.133 de todos os entes: órgão, fornecedor, objeto, valores, vigência. contratos de engenharia por fornecedor: registro e rt na data do contrato, art vinculada. já há coletor no projeto. cnpj município nº contrato">
+<td class="c-nome"><strong>PNCP · Portal Nacional de Contratações</strong><span class="org">MGI</span><code>pncp.gov.br/api/consulta/v1/contratos?dataInicial=…&amp;dataFinal=…&amp;pagina=…</code></td>
+<td class="c-traz">Contratações, contratos, atas e itens da Lei 14.133 de todos os entes: órgão, fornecedor, objeto, valores, vigência.<p class="uso"><b>Para o CREA:</b> Contratos de engenharia por fornecedor: registro e RT na data do contrato, ART vinculada. Já há coletor no projeto.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span><span class="k">Nº contrato</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Alto" data-q="compras.gov.br · dados abertos mgi / seges módulos de contratações pncp, contratos, arp, fornecedor, licitações legadas, pesquisa de preços e catálogo de serviços (catser). itens de serviço de engenharia pelo código catser, preço praticado e fornecedor federal. cnpj uasg catser">
+<td class="c-nome"><strong>Compras.gov.br · dados abertos</strong><span class="org">MGI / SEGES</span><code>dadosabertos.compras.gov.br/modulo-contratacoes · modulo-contratos · modulo-fornecedor</code></td>
+<td class="c-traz">Módulos de contratações PNCP, contratos, ARP, fornecedor, licitações legadas, pesquisa de preços e catálogo de serviços (CATSER).<p class="uso"><b>Para o CREA:</b> Itens de serviço de engenharia pelo código CATSER, preço praticado e fornecedor federal.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST + CSV</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">UASG</span><span class="k">CATSER</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Chave" data-val="Alto" data-q="portal da transparência · api cgu contratos, licitações e participantes, convênios, despesas por favorecido, notas fiscais, emendas, renúncias. pagamentos federais a empresas de engenharia e participantes de licitação que não venceram. cnpj cpf município">
+<td class="c-nome"><strong>Portal da Transparência · API</strong><span class="org">CGU</span><code>api.portaldatransparencia.gov.br/api-de-dados/contratos/cpf-cnpj · /licitacoes/participantes</code></td>
+<td class="c-traz">Contratos, licitações e participantes, convênios, despesas por favorecido, notas fiscais, emendas, renúncias.<p class="uso"><b>Para o CREA:</b> Pagamentos federais a empresas de engenharia e participantes de licitação que não venceram.</p></td>
+<td><span class="pill a-key">Chave</span><span class="canal">API REST</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Alto" data-q="tce-sp · audesp fase iv tribunal de contas do estado de sp licitações (mensal) e ajustes/contratos (semestral) dos municípios paulistas jurisdicionados desde 2018, mais cubo sql. a fonte municipal paulista que o pncp ainda não cobre por inteiro. contratada de obra sem registro ou sem art. cnpj município nº contrato">
+<td class="c-nome"><strong>TCE-SP · AUDESP Fase IV</strong><span class="org">Tribunal de Contas do Estado de SP</span><code>transparencia.tce.sp.gov.br/sites/default/files/conjunto-dados/licitacoes-contratos/</code></td>
+<td class="c-traz">Licitações (mensal) e ajustes/contratos (semestral) dos municípios paulistas jurisdicionados desde 2018, mais cubo SQL.<p class="uso"><b>Para o CREA:</b> A fonte municipal paulista que o PNCP ainda não cobre por inteiro. Contratada de obra sem registro ou sem ART.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo ZIP / SQL</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span><span class="k">Nº contrato</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Alto" data-q="tce-sp · despesas e receitas municipais tce-sp empenhos, liquidações e pagamentos por fornecedor (cnpj) de 2008 a 2025; api json/xml para 2014 a 2019. quanto cada prefeitura paga a empresas de engenharia, mesmo fora de licitação. cnpj município">
+<td class="c-nome"><strong>TCE-SP · despesas e receitas municipais</strong><span class="org">TCE-SP</span><code>transparencia.tce.sp.gov.br/api/json/despesas/{municipio}/{ano}/{mes}</code></td>
+<td class="c-traz">Empenhos, liquidações e pagamentos por fornecedor (CNPJ) de 2008 a 2025; API JSON/XML para 2014 a 2019.<p class="uso"><b>Para o CREA:</b> Quanto cada prefeitura paga a empresas de engenharia, mesmo fora de licitação.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CSV anual + API</span></td>
+<td class="num">Anual / mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Alto" data-q="prefeitura de sp · licenciamento e geosampa pmsp alvarás de edificação, habite-se e camadas georreferenciadas da capital. na capital, alvará sem art correspondente é o cruzamento mais direto. modelo replicável para outros municípios por acordo. endereço geo cpf/cnpj">
+<td class="c-nome"><strong>Prefeitura de SP · licenciamento e GeoSampa</strong><span class="org">PMSP</span><code>prefeitura.sp.gov.br/web/licenciamento · wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs (GeoJSON)</code></td>
+<td class="c-traz">Alvarás de edificação, habite-se e camadas georreferenciadas da capital.<p class="uso"><b>Para o CREA:</b> Na capital, alvará sem ART identificada é o cruzamento mais direto. As camadas amostradas não trazem CNPJ: o cruzamento por local gera candidatos. Modelo replicável para outros municípios por acordo.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo / WMS</span></td>
+<td class="num">Periódica</td>
+<td class="c-k"><span class="k">Endereço</span><span class="k">Geo</span><span class="k">CPF/CNPJ</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Médio" data-q="tce-sp · painel de obras tce-sp obras municipais atrasadas e paralisadas declaradas ao audesp. obra parada é pauta de fiscalização e de relacionamento com prefeituras. exportação a confirmar. município cnpj">
+<td class="c-nome"><strong>TCE-SP · Painel de Obras</strong><span class="org">TCE-SP</span><code>tce.sp.gov.br/paineldeobras</code></td>
+<td class="c-traz">Obras municipais atrasadas e paralisadas declaradas ao AUDESP.<p class="uso"><b>Para o CREA:</b> Obra parada é pauta de fiscalização e de relacionamento com prefeituras. Exportação a confirmar.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Painel</span></td>
+<td class="num">Periódica</td>
+<td class="c-k"><span class="k">Município</span><span class="k">CNPJ</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Médio" data-q="obrasgov.br · projetos de investimento mgi obras federais georreferenciadas: executor, situação, execução física e financeira. obras federais em sp com coordenadas para cruzar com art por local. cnpj município geo">
+<td class="c-nome"><strong>Obrasgov.br · projetos de investimento</strong><span class="org">MGI</span><code>api.obrasgov.gestao.gov.br/obrasgov/api · nova api-publica.obrasgov.gestao.gov.br</code></td>
+<td class="c-traz">Obras federais georreferenciadas: executor, situação, execução física e financeira.<p class="uso"><b>Para o CREA:</b> Obras federais em SP com coordenadas para cruzar com ART por local.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span><span class="k">Geo</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Médio" data-q="transferegov mgi convênios e transferências da união a municípios, muitos para obras. obras municipais com recurso federal: convenente, executor e valores. cnpj município">
+<td class="c-nome"><strong>Transferegov</strong><span class="org">MGI</span><code>gov.br/transferegov (dados abertos)</code></td>
+<td class="c-traz">Convênios e transferências da União a municípios, muitos para obras.<p class="uso"><b>Para o CREA:</b> Obras municipais com recurso federal: convenente, executor e valores.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo diário</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Médio" data-q="tcu · dados abertos tcu acórdãos, licitantes inidôneos, fiscalizações de obras (fiscobras). sinais de irregularidade técnica em obras com empresas registradas. cnpj nº processo">
+<td class="c-nome"><strong>TCU · dados abertos</strong><span class="org">TCU</span><code>dados abertos do TCU</code></td>
+<td class="c-traz">Acórdãos, licitantes inidôneos, fiscalizações de obras (Fiscobras).<p class="uso"><b>Para o CREA:</b> Sinais de irregularidade técnica em obras com empresas registradas.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API / arquivo</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Nº processo</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Médio" data-q="governo de sp · compras e transparência governo do estado compras estaduais (bec-sp), contratos e despesas por favorecido. obras de der, cdhu, sabesp e secretarias contratadas pelo estado. cnpj">
+<td class="c-nome"><strong>Governo de SP · compras e transparência</strong><span class="org">Governo do Estado</span><code>dadosabertos.sp.gov.br · transparencia.sp.gov.br</code></td>
+<td class="c-traz">Compras estaduais (BEC-SP), contratos e despesas por favorecido.<p class="uso"><b>Para o CREA:</b> Obras de DER, CDHU, Sabesp e secretarias contratadas pelo Estado.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo / painel</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Médio" data-q="minha casa minha vida e novo pac ministério das cidades / casa civil empreendimentos habitacionais e obras do pac com município, situação e construtora. carteira de obras habitacionais por município para planejar fiscalização. cnpj município">
+<td class="c-nome"><strong>Minha Casa Minha Vida e Novo PAC</strong><span class="org">Ministério das Cidades / Casa Civil</span><code>dados.gov.br (obras do PAC, MCMV)</code></td>
+<td class="c-traz">Empreendimentos habitacionais e obras do PAC com município, situação e construtora.<p class="uso"><b>Para o CREA:</b> Carteira de obras habitacionais por município para planejar fiscalização.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Periódica</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Médio" data-q="crea-sp · portal da transparência crea-sp (implanta) contratos, licitações, despesas, empenhos, pagamentos, quadro de pessoal e balancetes do próprio conselho. painel de gestão interna: custo da fiscalização por gre e execução orçamentária. cnpj">
+<td class="c-nome"><strong>CREA-SP · Portal da Transparência</strong><span class="org">CREA-SP (Implanta)</span><code>crea-sp.implanta.net.br/transparencia/api/v1.0/Contratos · /Pagamentos</code></td>
+<td class="c-traz">Contratos, licitações, despesas, empenhos, pagamentos, quadro de pessoal e balancetes do próprio conselho.<p class="uso"><b>Para o CREA:</b> Painel de gestão interna: custo da fiscalização por GRE e execução orçamentária.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Alto" data-novo="1" data-q="der-sp · contratos e obras der-sp planilhas oficiais de contratos (número, contratado, objeto, datas) e de obras rodoviárias estaduais (obra, contrato, município ou trecho). carteira rodoviária paulista e seus fornecedores. conciliar com pncp para não contar duas vezes; ligar à art só por chave documental. cnpj nº contrato município unificação">
+<td class="c-nome"><strong>DER-SP · contratos e obras</strong><span class="org">DER-SP</span><code>dersp.der.sp.gov.br/WebSite/Arquivos/DadosAbertos/Administracao/Contratos/Contratos.xlsx · …/Obras/ObrasEstaduais/Obras.xlsx</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Planilhas oficiais de contratos (número, contratado, objeto, datas) e de obras rodoviárias estaduais (obra, contrato, município ou trecho).<p class="uso"><b>Para o CREA:</b> Carteira rodoviária paulista e seus fornecedores. Conciliar com PNCP para não contar duas vezes; ligar à ART só por chave documental.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo XLSX</span></td>
+<td class="num">A confirmar</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Nº contrato</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Alto" data-novo="1" data-q="aprova digital · licenciamento na capital smul / prefeitura de sp processos de licenciamento de empreendimentos: protocolo, sql do lote, endereço, subprefeitura, categoria de uso, áreas. fluxo de empreendimentos na capital contra art de projeto e execução por local e data. o arquivo de 2026 examinado não traz cnpj, cpf nem rt: gera candidatos, não vínculo. endereço município unificação">
+<td class="c-nome"><strong>Aprova Digital · licenciamento na capital</strong><span class="org">SMUL / Prefeitura de SP</span><code>dados.prefeitura.sp.gov.br/api/3/action/package_show?id=ad</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Processos de licenciamento de empreendimentos: protocolo, SQL do lote, endereço, subprefeitura, categoria de uso, áreas.<p class="uso"><b>Para o CREA:</b> Fluxo de empreendimentos na capital contra ART de projeto e execução por local e data. O arquivo de 2026 examinado não traz CNPJ, CPF nem RT: gera candidatos, não vínculo.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CSV / XLSX semestral</span></td>
+<td class="num">Semestral</td>
+<td class="c-k"><span class="k">Endereço</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Médio" data-novo="1" data-q="siurb · controle de obras da capital siurb / prefeitura de sp obras municipais da capital com contrato, localização e contratado quando divulgado. ligar obras municipais a pncp e tce-sp e depois à art, sem dupla contagem. cnpj nº contrato endereço unificação">
+<td class="c-nome"><strong>SIURB · controle de obras da capital</strong><span class="org">SIURB / Prefeitura de SP</span><code>dados.prefeitura.sp.gov.br (completo-obras-controle-de-obras.xlsx)</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Obras municipais da capital com contrato, localização e contratado quando divulgado.<p class="uso"><b>Para o CREA:</b> Ligar obras municipais a PNCP e TCE-SP e depois à ART, sem dupla contagem.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">XLSX / ODS</span></td>
+<td class="num">A confirmar</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Nº contrato</span><span class="k">Endereço</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Médio" data-novo="1" data-q="obras abertas e tcm-sp · capital prefeitura de sp / tcm-sp obras da capital com contrato, empresa, localização e órgão, por produto. complemento da capital ao pncp e ao tce-sp, que não fiscaliza o município de são paulo. cnpj nº contrato endereço unificação">
+<td class="c-nome"><strong>Obras Abertas e TCM-SP · capital</strong><span class="org">Prefeitura de SP / TCM-SP</span><code>obrasabertas.prefeitura.sp.gov.br</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Obras da capital com contrato, empresa, localização e órgão, por produto.<p class="uso"><b>Para o CREA:</b> Complemento da capital ao PNCP e ao TCE-SP, que não fiscaliza o município de São Paulo.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Portal / arquivos</span></td>
+<td class="num">Variável</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Nº contrato</span><span class="k">Endereço</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="con" data-acc="Público" data-val="Baixo" data-novo="1" data-q="aprovação de alvarás · base histórica smul / prefeitura de sp série histórica de alvarás aprovados na capital. descontinuada segundo a descrição oficial. só para série histórica. para rotina, usar aprova digital e geosampa. endereço unificação">
+<td class="c-nome"><strong>Aprovação de alvarás · base histórica</strong><span class="org">SMUL / Prefeitura de SP</span><code>dados.prefeitura.sp.gov.br/api/3/action/package_show?id=aprovacao-de-alvaras</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Série histórica de alvarás aprovados na capital. Descontinuada segundo a descrição oficial.<p class="uso"><b>Para o CREA:</b> Só para série histórica. Para rotina, usar Aprova Digital e GeoSampa.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Descontinuada</td>
+<td class="c-k"><span class="k">Endereço</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="grp" data-tema="inf"><th colspan="6">Infraestrutura e setores regulados <span>25</span></th></tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Alto" data-q="aneel · micro e minigeração distribuída aneel cada sistema de geração distribuída conectado: município, classe, potência, fonte, data de conexão, distribuidora. centenas de milhares de sistemas solares em sp. cada projeto exige profissional habilitado: base para medir cobertura de art por município. município cnpj/cpf*">
+<td class="c-nome"><strong>ANEEL · micro e minigeração distribuída</strong><span class="org">ANEEL</span><code>dadosabertos.aneel.gov.br (geração distribuída)</code></td>
+<td class="c-traz">Cada sistema de geração distribuída conectado: município, classe, potência, fonte, data de conexão, distribuidora.<p class="uso"><b>Para o CREA:</b> Centenas de milhares de sistemas solares em SP. Cada projeto exige profissional habilitado: base para medir cobertura de ART por município.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN / CSV</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">Município</span><span class="k">CNPJ/CPF*</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Alto" data-q="anm · sigmine, cfem e barragens de mineração agência nacional de mineração processos minerários (titular, substância, área, fase), arrecadação cfem e cadastro de barragens (sigbm). lavra e barragem exigem responsável técnico; titular sem rt registrado é alvo claro. cnpj cpf município geo">
+<td class="c-nome"><strong>ANM · SIGMINE, CFEM e barragens de mineração</strong><span class="org">Agência Nacional de Mineração</span><code>dados abertos da ANM</code></td>
+<td class="c-traz">Processos minerários (titular, substância, área, fase), arrecadação CFEM e cadastro de barragens (SIGBM).<p class="uso"><b>Para o CREA:</b> Lavra e barragem exigem responsável técnico; titular sem RT registrado é alvo claro.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Shapefile / CSV</span></td>
+<td class="num">Diária / mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span><span class="k">Município</span><span class="k">Geo</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Alto" data-q="ana · snisb barragens agência nacional de águas barragens: empreendedor, uso, categoria de risco, dano potencial, município. lei 12.334/2010: barragem de dano alto precisa de plano e responsável técnico. cnpj município geo">
+<td class="c-nome"><strong>ANA · SNISB barragens</strong><span class="org">Agência Nacional de Águas</span><code>snisb.gov.br</code></td>
+<td class="c-traz">Barragens: empreendedor, uso, categoria de risco, dano potencial, município.<p class="uso"><b>Para o CREA:</b> Lei 12.334/2010: barragem de dano alto precisa de plano e responsável técnico.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo / API</span></td>
+<td class="num">Periódica</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span><span class="k">Geo</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Convênio" data-val="Alto" data-q="cetesb · licenciamento ambiental cetesb licenças de instalação e operação com empreendimento, atividade e cnpj. indústria licenciada é quase sempre obrigada a ter rt. lista de licenças é o universo mais limpo de atividade industrial em sp. cnpj município">
+<td class="c-nome"><strong>CETESB · licenciamento ambiental</strong><span class="org">CETESB</span><code>cetesb.sp.gov.br</code></td>
+<td class="c-traz">Licenças de instalação e operação com empreendimento, atividade e CNPJ.<p class="uso"><b>Para o CREA:</b> Indústria licenciada é quase sempre obrigada a ter RT. Lista de licenças é o universo mais limpo de atividade industrial em SP.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">Acordo / consulta</span></td>
+<td class="num">Conforme acordo</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Convênio" data-val="Alto" data-q="corpo de bombeiros sp · avcb/clcb pmesp / cbpmesp projetos técnicos e autos de vistoria por edificação (sistema via fácil). projeto de prevenção a incêndio exige art. cruzamento por endereço e autor do projeto. endereço cpf cnpj">
+<td class="c-nome"><strong>Corpo de Bombeiros SP · AVCB/CLCB</strong><span class="org">PMESP / CBPMESP</span><code>corpodebombeiros.sp.gov.br</code></td>
+<td class="c-traz">Projetos técnicos e autos de vistoria por edificação (sistema Via Fácil).<p class="uso"><b>Para o CREA:</b> Projeto de prevenção a incêndio exige ART. Cruzamento por endereço e autor do projeto.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">Acordo</span></td>
+<td class="num">Conforme acordo</td>
+<td class="c-k"><span class="k">Endereço</span><span class="k">CPF</span><span class="k">CNPJ</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Alto" data-q="incra · sigef e sncr incra parcelas rurais georreferenciadas e certificadas, com credenciado responsável; cadastro rural. todo georreferenciamento certificado tem um profissional credenciado: conferir registro e art de agrimensura. cpf geo município">
+<td class="c-nome"><strong>INCRA · SIGEF e SNCR</strong><span class="org">INCRA</span><code>sigef.incra.gov.br · Conecta sigef-geo, sncr</code></td>
+<td class="c-traz">Parcelas rurais georreferenciadas e certificadas, com credenciado responsável; cadastro rural.<p class="uso"><b>Para o CREA:</b> Todo georreferenciamento certificado tem um profissional credenciado: conferir registro e ART de agrimensura.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Download / Conecta</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CPF</span><span class="k">Geo</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Convênio" data-val="Alto" data-q="mapa agrofit e cda-sp (gedave) mapa / secretaria de agricultura sp produtos fitossanitários registrados; receituário agronômico e defesa vegetal no estado. receita agronômica exige engenheiro agrônomo: volume por profissional é sinal forte de atuação e de abuso. cpf cnpj município">
+<td class="c-nome"><strong>MAPA Agrofit e CDA-SP (GEDAVE)</strong><span class="org">MAPA / Secretaria de Agricultura SP</span><code>Agrofit via AgroAPI Embrapa · CDA-SP</code></td>
+<td class="c-traz">Produtos fitossanitários registrados; receituário agronômico e defesa vegetal no Estado.<p class="uso"><b>Para o CREA:</b> Receita agronômica exige engenheiro agrônomo: volume por profissional é sinal forte de atuação e de abuso.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">API (Agrofit) / acordo</span></td>
+<td class="num">Conforme acordo</td>
+<td class="c-k"><span class="k">CPF</span><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-q="aneel · siga, outorgas e polímero aneel usinas (ceg, fase, potência, local); outorgas e cadeia societária dos agentes via conecta. o csv do siga não traz cnpj; usar polímero ou outorgas para chegar ao titular. ceg município cnpj">
+<td class="c-nome"><strong>ANEEL · SIGA, outorgas e Polímero</strong><span class="org">ANEEL</span><code>dadosabertos.aneel.gov.br/api/3/action/package_show?id=siga-…</code></td>
+<td class="c-traz">Usinas (CEG, fase, potência, local); outorgas e cadeia societária dos agentes via Conecta.<p class="uso"><b>Para o CREA:</b> O CSV do SIGA não traz CNPJ; usar Polímero ou Outorgas para chegar ao titular.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN / CSV + Conecta</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CEG</span><span class="k">Município</span><span class="k">CNPJ</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-q="anatel · estações licenciadas anatel estações de telecomunicações (erbs, enlaces) com prestadora, coordenadas e município. instalação de torre e estação exige projeto e art; cruzar por local e prestadora. cnpj geo município">
+<td class="c-nome"><strong>ANATEL · estações licenciadas</strong><span class="org">ANATEL</span><code>dados abertos da Anatel</code></td>
+<td class="c-traz">Estações de telecomunicações (ERBs, enlaces) com prestadora, coordenadas e município.<p class="uso"><b>Para o CREA:</b> Instalação de torre e estação exige projeto e ART; cruzar por local e prestadora.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Geo</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-q="anp · instalações autorizadas anp postos, distribuidoras, bases e instalações com autorização vigente. instalações industriais e de combustíveis com obrigação de rt. cnpj município">
+<td class="c-nome"><strong>ANP · instalações autorizadas</strong><span class="org">ANP</span><code>gov.br/anp (dados abertos)</code></td>
+<td class="c-traz">Postos, distribuidoras, bases e instalações com autorização vigente.<p class="uso"><b>Para o CREA:</b> Instalações industriais e de combustíveis com obrigação de RT.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-q="antt · dados abertos antt rntrc (transportadores), concessões rodoviárias federais, obras, investimentos, retornos e acidentes. obras das concessionárias federais em sp e empresas de transporte de produtos perigosos. cnpj rodovia/km">
+<td class="c-nome"><strong>ANTT · dados abertos</strong><span class="org">ANTT</span><code>dados.antt.gov.br</code></td>
+<td class="c-traz">RNTRC (transportadores), concessões rodoviárias federais, obras, investimentos, retornos e acidentes.<p class="uso"><b>Para o CREA:</b> Obras das concessionárias federais em SP e empresas de transporte de produtos perigosos.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Rodovia/km</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-q="artesp · concessões estaduais artesp concessões rodoviárias paulistas, investimentos e obras. maior carteira rodoviária concedida do país; obras com art obrigatória. cnpj rodovia/km">
+<td class="c-nome"><strong>ARTESP · concessões estaduais</strong><span class="org">ARTESP</span><code>artesp.sp.gov.br</code></td>
+<td class="c-traz">Concessões rodoviárias paulistas, investimentos e obras.<p class="uso"><b>Para o CREA:</b> Maior carteira rodoviária concedida do país; obras com ART obrigatória.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Painel / arquivo</span></td>
+<td class="num">Periódica</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Rodovia/km</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Convênio" data-val="Médio" data-q="detran-sp · credenciados e modificação veicular detran-sp itls, empresas de vistoria e processos de modificação veicular (csv) que exigem laudo de engenheiro. conferir se o engenheiro do laudo tem registro e art. requer acordo com o detran-sp. cnpj cpf">
+<td class="c-nome"><strong>DETRAN-SP · credenciados e modificação veicular</strong><span class="org">DETRAN-SP</span><code>detran.sp.gov.br</code></td>
+<td class="c-traz">ITLs, empresas de vistoria e processos de modificação veicular (CSV) que exigem laudo de engenheiro.<p class="uso"><b>Para o CREA:</b> Conferir se o engenheiro do laudo tem registro e ART. Requer acordo com o DETRAN-SP.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">Acordo</span></td>
+<td class="num">Conforme acordo</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-q="sinisa e arsesp · saneamento ministério das cidades / arsesp prestadores, sistemas e indicadores de água e esgoto por município. cobertura de rt em prestadores e obras de saneamento. cnpj município">
+<td class="c-nome"><strong>SINISA e ARSESP · saneamento</strong><span class="org">Ministério das Cidades / ARSESP</span><code>gov.br/cidades (SINISA) · arsesp.sp.gov.br</code></td>
+<td class="c-traz">Prestadores, sistemas e indicadores de água e esgoto por município.<p class="uso"><b>Para o CREA:</b> Cobertura de RT em prestadores e obras de saneamento.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-q="ibama · cadastro técnico federal ibama pessoas e empresas com atividades potencialmente poluidoras. convergência com a lista de cnaes do crea para atividades industriais. cnpj município">
+<td class="c-nome"><strong>IBAMA · Cadastro Técnico Federal</strong><span class="org">IBAMA</span><code>gov.br/ibama (dados abertos)</code></td>
+<td class="c-traz">Pessoas e empresas com atividades potencialmente poluidoras.<p class="uso"><b>Para o CREA:</b> Convergência com a lista de CNAEs do CREA para atividades industriais.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Periódica</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-q="defesa civil · s2id midr desastres reconhecidos por município, com tipo e data. áreas com deslizamento e enchente pedem laudos e obras de contenção. município">
+<td class="c-nome"><strong>Defesa Civil · S2iD</strong><span class="org">MIDR</span><code>s2id.mi.gov.br</code></td>
+<td class="c-traz">Desastres reconhecidos por município, com tipo e data.<p class="uso"><b>Para o CREA:</b> Áreas com deslizamento e enchente pedem laudos e obras de contenção.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Contínua</td>
+<td class="c-k"><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-q="sicar · cadastro ambiental rural mgi / sfb imóveis rurais declarados no car, áreas de app e reserva legal. contexto agronômico e ambiental por município. cpf cnpj geo">
+<td class="c-nome"><strong>SICAR · Cadastro Ambiental Rural</strong><span class="org">MGI / SFB</span><code>car.gov.br · Conecta consulta-sicar-cpf-cnpj</code></td>
+<td class="c-traz">Imóveis rurais declarados no CAR, áreas de APP e reserva legal.<p class="uso"><b>Para o CREA:</b> Contexto agronômico e ambiental por município.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Shapefile / Conecta</span></td>
+<td class="num">Periódica</td>
+<td class="c-k"><span class="k">CPF</span><span class="k">CNPJ</span><span class="k">Geo</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Baixo" data-q="senatran · frota ministério dos transportes frota de veículos por município, tipo e combustível. denominador para inspeção veicular e oficinas que exigem engenheiro mecânico. município">
+<td class="c-nome"><strong>SENATRAN · frota</strong><span class="org">Ministério dos Transportes</span><code>gov.br/transportes (estatísticas de frota)</code></td>
+<td class="c-traz">Frota de veículos por município, tipo e combustível.<p class="uso"><b>Para o CREA:</b> Denominador para inspeção veicular e oficinas que exigem engenheiro mecânico.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo mensal</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">Município</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Baixo" data-q="cnes · estabelecimentos de saúde ministério da saúde estabelecimentos, leitos e equipamentos de saúde. hospitais de grande porte com sistemas que pedem responsável técnico de engenharia. cnpj município">
+<td class="c-nome"><strong>CNES · estabelecimentos de saúde</strong><span class="org">Ministério da Saúde</span><code>apidadosabertos.saude.gov.br</code></td>
+<td class="c-traz">Estabelecimentos, leitos e equipamentos de saúde.<p class="uso"><b>Para o CREA:</b> Hospitais de grande porte com sistemas que pedem responsável técnico de engenharia.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-novo="1" data-q="aneel · pedidos de conexão de micro e minigeração aneel pedidos de conexão por distribuidora, município, data e situação. demanda futura de instalação solar por território. pedido não é instalação concluída nem art. município unificação">
+<td class="c-nome"><strong>ANEEL · pedidos de conexão de micro e minigeração</strong><span class="org">ANEEL</span><code>dadosabertos.aneel.gov.br/api/3/action/package_show?id=atendimento-mmgd-mini-e-micro-geracao-distribuida</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Pedidos de conexão por distribuidora, município, data e situação.<p class="uso"><b>Para o CREA:</b> Demanda futura de instalação solar por território. Pedido não é instalação concluída nem ART.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">ZIP / Parquet</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-novo="1" data-q="senatran · instituições técnicas licenciadas (itl) ministério dos transportes itls de inspeção veicular com identificação, endereço e uf. itls em sp contra registro e rt. últimos recursos listados são de 2022 a 2024; confirmar cnpj e vigência no arquivo. cnpj endereço unificação">
+<td class="c-nome"><strong>SENATRAN · instituições técnicas licenciadas (ITL)</strong><span class="org">Ministério dos Transportes</span><code>dados.transportes.gov.br/api/3/action/package_show?id=instituicoes-tecnicas-licenciadas</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">ITLs de inspeção veicular com identificação, endereço e UF.<p class="uso"><b>Para o CREA:</b> ITLs em SP contra registro e RT. Últimos recursos listados são de 2022 a 2024; confirmar CNPJ e vigência no arquivo.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">JSON</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Endereço</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-novo="1" data-q="mapa · sipeagro mapa estabelecimentos registrados no mapa: agroindústria, fertilizantes, alimentos para animais, aviação agrícola. agroindústrias contra registro e rt de agronomia. cnpj e rt dependem do recurso. cnpj município unificação">
+<td class="c-nome"><strong>MAPA · SIPEAGRO</strong><span class="org">MAPA</span><code>dados.agricultura.gov.br/api/3/action/package_show?id=sipeagro</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Estabelecimentos registrados no MAPA: agroindústria, fertilizantes, alimentos para animais, aviação agrícola.<p class="uso"><b>Para o CREA:</b> Agroindústrias contra registro e RT de agronomia. CNPJ e RT dependem do recurso.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CSV</span></td>
+<td class="num">Semanal</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Convênio" data-val="Médio" data-novo="1" data-q="inmetro · organismos acreditados inmetro laboratórios e organismos de inspeção acreditados, com escopo e situação. inspeção e ensaios com escopo técnico contra registro e rt. exportação estruturada a negociar. cnpj unificação">
+<td class="c-nome"><strong>INMETRO · organismos acreditados</strong><span class="org">INMETRO</span><code>gov.br/inmetro (CADORG, RBC, RBLE)</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Laboratórios e organismos de inspeção acreditados, com escopo e situação.<p class="uso"><b>Para o CREA:</b> Inspeção e ensaios com escopo técnico contra registro e RT. Exportação estruturada a negociar.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">Consulta / acordo</span></td>
+<td class="num">Situação atual</td>
+<td class="c-k"><span class="k">CNPJ</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">parceria · a negociar</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Público" data-val="Médio" data-novo="1" data-q="licenças ambientais da capital svma / prefeitura de sp licenças municipais com número, atividade, tipo, emissão, validade e localização aproximada. atividade licenciada na capital contra serviços ambientais e art. o csv examinado não traz cnpj nem rt. endereço unificação">
+<td class="c-nome"><strong>Licenças ambientais da capital</strong><span class="org">SVMA / Prefeitura de SP</span><code>dados.prefeitura.sp.gov.br (licença ambiental industrial e não industrial)</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Licenças municipais com número, atividade, tipo, emissão, validade e localização aproximada.<p class="uso"><b>Para o CREA:</b> Atividade licenciada na capital contra serviços ambientais e ART. O CSV examinado não traz CNPJ nem RT.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CSV / GPKG</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">Endereço</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="inf" data-acc="Convênio" data-val="Baixo" data-novo="1" data-q="ana · hidrowebservice agência nacional de águas séries hidrológicas por estação. contexto para drenagem e infraestrutura hídrica. não liga a cnpj; acesso autenticado. geo unificação">
+<td class="c-nome"><strong>ANA · HidroWebService</strong><span class="org">Agência Nacional de Águas</span><code>ana.gov.br/hidrowebservice/swagger-ui</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Séries hidrológicas por estação.<p class="uso"><b>Para o CREA:</b> Contexto para drenagem e infraestrutura hídrica. Não liga a CNPJ; acesso autenticado.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">API autenticada</span></td>
+<td class="num">Por série</td>
+<td class="c-k"><span class="k">Geo</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-c">parceria · a negociar</span></td>
+</tr>
+<tr class="grp" data-tema="tra"><th colspan="6">Trabalho, salários e CBO <span>8</span></th></tr>
+<tr class="src" data-tema="tra" data-acc="Público" data-val="Alto" data-q="novo caged · microdados mte / pdet admissões e desligamentos com município, cnae, cbo, salário, idade, escolaridade. salário de admissão de engenheiros contra o piso da lei 4.950-a/66 por município e setor; ritmo de contratação técnica. cbo cnae município">
+<td class="c-nome"><strong>Novo CAGED · microdados</strong><span class="org">MTE / PDET</span><code>pdet.mte.gov.br/microdados-rais-e-caged</code></td>
+<td class="c-traz">Admissões e desligamentos com município, CNAE, CBO, salário, idade, escolaridade.<p class="uso"><b>Para o CREA:</b> Salário de admissão de engenheiros contra o piso da Lei 4.950-A/66 por município e setor; ritmo de contratação técnica.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo 7z (FTP)</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">CBO</span><span class="k">CNAE</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="tra" data-acc="Público" data-val="Alto" data-q="rais · microdados mte / pdet estoque de vínculos em 31/12 por cbo, cnae, município e remuneração; estabelecimentos. quantos engenheiros empregados existem por município contra quantos registrados: lacuna de registro. cbo cnae município">
+<td class="c-nome"><strong>RAIS · microdados</strong><span class="org">MTE / PDET</span><code>pdet.mte.gov.br</code></td>
+<td class="c-traz">Estoque de vínculos em 31/12 por CBO, CNAE, município e remuneração; estabelecimentos.<p class="uso"><b>Para o CREA:</b> Quantos engenheiros empregados existem por município contra quantos registrados: lacuna de registro.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo anual</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">CBO</span><span class="k">CNAE</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="tra" data-acc="Público" data-val="Alto" data-q="cbo 2002 mte tabela de ocupações. famílias 214x (engenheiros), 2221 (agrônomos), 2134 (geólogos) e correlatas. tabela-ponte título profissional crea ↔ cbo. sem ela, nenhum cruzamento de emprego funciona. cbo">
+<td class="c-nome"><strong>CBO 2002</strong><span class="org">MTE</span><code>gov.br/trabalho-e-emprego/pt-br/assuntos/cbo</code></td>
+<td class="c-traz">Tabela de ocupações. Famílias 214x (engenheiros), 2221 (agrônomos), 2134 (geólogos) e correlatas.<p class="uso"><b>Para o CREA:</b> Tabela-ponte título profissional CREA ↔ CBO. Sem ela, nenhum cruzamento de emprego funciona.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo</span></td>
+<td class="num">Eventual</td>
+<td class="c-k"><span class="k">CBO</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="tra" data-acc="Convênio" data-val="Alto" data-q="relação trabalhista (conecta) inss / cnis por cpf: vínculos, empregador (cnpj/cpf/mei), cbo, admissão, encerramento. confirmar vínculo do rt com a empresa e cargo técnico sem art de cargo e função. cpf cnpj cbo">
+<td class="c-nome"><strong>Relação Trabalhista (Conecta)</strong><span class="org">INSS / CNIS</span><code>apigateway.conectagov.estaleiro.serpro.gov.br/api-relacao-trabalhista/v1/relacoes-trabalhistas?cpf=</code></td>
+<td class="c-traz">Por CPF: vínculos, empregador (CNPJ/CPF/MEI), CBO, admissão, encerramento.<p class="uso"><b>Para o CREA:</b> Confirmar vínculo do RT com a empresa e cargo técnico sem ART de cargo e função.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">API REST</span></td>
+<td class="num">Sob demanda</td>
+<td class="c-k"><span class="k">CPF</span><span class="k">CNPJ</span><span class="k">CBO</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="tra" data-acc="Convênio" data-val="Alto" data-q="rais identificada / esocial mte vínculos por estabelecimento e ocupação com identificação. empresas que empregam engenheiro e não têm registro no crea. exige base legal e lgpd. cnpj cpf cbo">
+<td class="c-nome"><strong>RAIS identificada / eSocial</strong><span class="org">MTE</span><code>MTE (acordo de cooperação)</code></td>
+<td class="c-traz">Vínculos por estabelecimento e ocupação com identificação.<p class="uso"><b>Para o CREA:</b> Empresas que empregam engenheiro e não têm registro no CREA. Exige base legal e LGPD.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">Acordo</span></td>
+<td class="num">Conforme acordo</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span><span class="k">CBO</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="tra" data-acc="Chave" data-val="Médio" data-q="base dos dados base dos dados (ong) caged, rais, censo, inep e outras bases já tratadas em bigquery. atalho para protótipo sem baixar arquivos de vários gigabytes. cbo cnae município">
+<td class="c-nome"><strong>Base dos Dados</strong><span class="org">Base dos Dados (ONG)</span><code>basedosdados.org · br_me_caged, br_me_rais</code></td>
+<td class="c-traz">CAGED, RAIS, Censo, INEP e outras bases já tratadas em BigQuery.<p class="uso"><b>Para o CREA:</b> Atalho para protótipo sem baixar arquivos de vários gigabytes.</p></td>
+<td><span class="pill a-key">Chave</span><span class="canal">SQL (BigQuery)</span></td>
+<td class="num">Segue as fontes</td>
+<td class="c-k"><span class="k">CBO</span><span class="k">CNAE</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="tra" data-acc="Público" data-val="Médio" data-novo="1" data-q="pnad contínua · ocupação e rendimento ibge ocupação, informalidade, conta própria e rendimento por uf e trimestre. contexto do trabalho técnico em sp, inclusive autônomo. amostra: não serve para município × engenharia. uf unificação">
+<td class="c-nome"><strong>PNAD Contínua · ocupação e rendimento</strong><span class="org">IBGE</span><code>servicodados.ibge.gov.br/api/v3/agregados/4099</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Ocupação, informalidade, conta própria e rendimento por UF e trimestre.<p class="uso"><b>Para o CREA:</b> Contexto do trabalho técnico em SP, inclusive autônomo. Amostra: não serve para município × engenharia.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API / microdados</span></td>
+<td class="num">Trimestral</td>
+<td class="c-k"><span class="k">UF</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="tra" data-acc="Convênio" data-val="Baixo" data-novo="1" data-q="sine, emprega brasil e pat-sp · vagas mte e parceiros vagas anunciadas por cbo e município. demanda declarada por ocupação técnica. serviço autenticado; não cobre todo o mercado. cbo município unificação">
+<td class="c-nome"><strong>SINE, Emprega Brasil e PAT-SP · vagas</strong><span class="org">MTE e parceiros</span><code>servicos.mte.gov.br</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Vagas anunciadas por CBO e município.<p class="uso"><b>Para o CREA:</b> Demanda declarada por ocupação técnica. Serviço autenticado; não cobre todo o mercado.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">Serviço / acordo</span></td>
+<td class="num">Dinâmica</td>
+<td class="c-k"><span class="k">CBO</span><span class="k">Município</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-c">parceria · a negociar</span></td>
+</tr>
+<tr class="grp" data-tema="ens"><th colspan="6">Ensino e formação <span>8</span></th></tr>
+<tr class="src" data-tema="ens" data-acc="Público" data-val="Alto" data-q="inep · censo da educação superior inep microdados por curso e ies: ingressantes, matrículas, concluintes, modalidade, área cine (engenharia, produção e construção; agricultura). formandos por curso e gre contra registros na colação: taxa de conversão egresso → profissional registrado. cód. curso e-mec município">
+<td class="c-nome"><strong>INEP · Censo da Educação Superior</strong><span class="org">INEP</span><code>gov.br/inep/.../microdados/censo-da-educacao-superior</code></td>
+<td class="c-traz">Microdados por curso e IES: ingressantes, matrículas, concluintes, modalidade, área CINE (Engenharia, produção e construção; Agricultura).<p class="uso"><b>Para o CREA:</b> Formandos por curso e GRE contra registros na colação: taxa de conversão egresso → profissional registrado.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo anual</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">Cód. curso e-MEC</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="ens" data-acc="Público" data-val="Alto" data-q="e-mec · cadastro de ies e cursos mec ies e cursos autorizados ou reconhecidos, situação, vagas, endereço de oferta. base para o cadastro de cursos do crea e para atribuição de títulos. cód. curso e-mec município">
+<td class="c-nome"><strong>e-MEC · cadastro de IES e cursos</strong><span class="org">MEC</span><code>dados.gov.br (cadastro e-MEC)</code></td>
+<td class="c-traz">IES e cursos autorizados ou reconhecidos, situação, vagas, endereço de oferta.<p class="uso"><b>Para o CREA:</b> Base para o cadastro de cursos do CREA e para atribuição de títulos.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo (dados.gov.br)</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">Cód. curso e-MEC</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="ens" data-acc="Público" data-val="Médio" data-q="enade e indicadores de qualidade inep notas enade, cpc e igc por curso. relacionar qualidade do curso com processos éticos e de fiscalização dos egressos. cód. curso e-mec">
+<td class="c-nome"><strong>ENADE e indicadores de qualidade</strong><span class="org">INEP</span><code>gov.br/inep</code></td>
+<td class="c-traz">Notas ENADE, CPC e IGC por curso.<p class="uso"><b>Para o CREA:</b> Relacionar qualidade do curso com processos éticos e de fiscalização dos egressos.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo anual</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">Cód. curso e-MEC</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="ens" data-acc="Público" data-val="Médio" data-q="capes · pós-graduação capes programas, discentes, titulados, docentes e produção. mestres e doutores em engenharia por ies paulista. ies município">
+<td class="c-nome"><strong>CAPES · pós-graduação</strong><span class="org">CAPES</span><code>dadosabertos.capes.gov.br</code></td>
+<td class="c-traz">Programas, discentes, titulados, docentes e produção.<p class="uso"><b>Para o CREA:</b> Mestres e doutores em engenharia por IES paulista.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">IES</span><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="ens" data-acc="Público" data-val="Médio" data-q="seade · ensino superior sp fundação seade séries de matrículas e concluintes no estado. leitura paulista pronta para painel. município">
+<td class="c-nome"><strong>SEADE · ensino superior SP</strong><span class="org">Fundação SEADE</span><code>repositorio.seade.gov.br/dataset/educacao-do-ensino-superior</code></td>
+<td class="c-traz">Séries de matrículas e concluintes no Estado.<p class="uso"><b>Para o CREA:</b> Leitura paulista pronta para painel.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="ens" data-acc="Convênio" data-val="Alto" data-novo="1" data-q="lista nominal de formandos das ies ies parceiras e crea-sp formandos por curso e data de conclusão, com identificação só quando autorizada. única forma de medir a taxa real de registro dos formados. inep sozinho só permite comparar totais. cpf cód. curso e-mec unificação">
+<td class="c-nome"><strong>Lista nominal de formandos das IES</strong><span class="org">IES parceiras e Crea-SP</span><code>Acordo com cada IES (registro na colação)</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Formandos por curso e data de conclusão, com identificação só quando autorizada.<p class="uso"><b>Para o CREA:</b> Única forma de medir a taxa real de registro dos formados. INEP sozinho só permite comparar totais.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">Acordo</span></td>
+<td class="num">Por semestre letivo</td>
+<td class="c-k"><span class="k">CPF</span><span class="k">Cód. curso e-MEC</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">parceria · a negociar</span></td>
+</tr>
+<tr class="src" data-tema="ens" data-acc="Público" data-val="Médio" data-novo="1" data-q="inep · trajetória e fluxo inep conclusão, desistência e permanência por coorte de ingresso, ies e curso. evasão e conclusão nos cursos de engenharia paulistas. não calcular evasão com ingressantes e concluintes do mesmo ano. cód. curso e-mec unificação">
+<td class="c-nome"><strong>INEP · trajetória e fluxo</strong><span class="org">INEP</span><code>download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/indicadores_trajetoria_es_2015_2024.zip</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Conclusão, desistência e permanência por coorte de ingresso, IES e curso.<p class="uso"><b>Para o CREA:</b> Evasão e conclusão nos cursos de engenharia paulistas. Não calcular evasão com ingressantes e concluintes do mesmo ano.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">ZIP / planilhas</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">Cód. curso e-MEC</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="ens" data-acc="Público" data-val="Médio" data-novo="1" data-q="cine brasil · classificação de cursos inep classificação internacional de cursos adaptada ao brasil, com código e rótulo. ponta da tabela-ponte título ↔ cbo ↔ cine. cine não define atribuição profissional. cine unificação">
+<td class="c-nome"><strong>CINE Brasil · classificação de cursos</strong><span class="org">INEP</span><code>repositorio.seade.gov.br (cine_inep.csv)</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Classificação internacional de cursos adaptada ao Brasil, com código e rótulo.<p class="uso"><b>Para o CREA:</b> Ponta da tabela-ponte título ↔ CBO ↔ CINE. CINE não define atribuição profissional.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CSV</span></td>
+<td class="num">Por revisão</td>
+<td class="c-k"><span class="k">CINE</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 29/10</span></td>
+</tr>
+<tr class="grp" data-tema="jud"><th colspan="6">Judiciário e perícias <span>4</span></th></tr>
+<tr class="src" data-tema="jud" data-acc="Chave" data-val="Alto" data-q="datajud · api pública cnj capa e movimentos dos processos por tribunal: classe, assuntos (tpu), movimentos com complementos, órgão julgador com código ibge. sem partes. demanda pericial por tema e comarca: insalubridade e periculosidade (trts), vícios construtivos, desapropriação, acidentes. até 10.000 por página com search_after. nº processo cnj município">
+<td class="c-nome"><strong>DataJud · API pública</strong><span class="org">CNJ</span><code>api-publica.datajud.cnj.jus.br/api_publica_tjsp/_search · trt2 · trt15 · trf3</code></td>
+<td class="c-traz">Capa e movimentos dos processos por tribunal: classe, assuntos (TPU), movimentos com complementos, órgão julgador com código IBGE. Sem partes.<p class="uso"><b>Para o CREA:</b> Demanda pericial por tema e comarca: insalubridade e periculosidade (TRTs), vícios construtivos, desapropriação, acidentes. Até 10.000 por página com search_after.</p></td>
+<td><span class="pill a-key">Chave</span><span class="canal">Elasticsearch</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">Nº processo CNJ</span><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="jud" data-acc="Restrito" data-val="Alto" data-q="tjsp · portal de auxiliares da justiça tjsp consulta pública mostra só nomes de peritos já nomeados; o cadastro completo é visível apenas às unidades judiciais. acordo com o tjsp para receber nomeações por especialidade e conferir registro e art de perícia do perito. nome cpf*">
+<td class="c-nome"><strong>TJSP · Portal de Auxiliares da Justiça</strong><span class="org">TJSP</span><code>tjsp.jus.br/auxiliaresdajustica</code></td>
+<td class="c-traz">Consulta pública mostra só nomes de peritos já nomeados; o cadastro completo é visível apenas às unidades judiciais.<p class="uso"><b>Para o CREA:</b> Acordo com o TJSP para receber nomeações por especialidade e conferir registro e ART de perícia do perito.</p></td>
+<td><span class="pill a-rest">Restrito</span><span class="canal">Consulta / acordo</span></td>
+<td class="num">Conforme acordo</td>
+<td class="c-k"><span class="k">Nome</span><span class="k">CPF*</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="jud" data-acc="Restrito" data-val="Médio" data-q="trt-2 e trt-15 · peritos (aj-jt) justiça do trabalho cadastro de peritos e honorários periciais da justiça do trabalho. perícia de insalubridade é atribuição de engenheiro de segurança do trabalho. cpf nº processo cnj">
+<td class="c-nome"><strong>TRT-2 e TRT-15 · peritos (AJ-JT)</strong><span class="org">Justiça do Trabalho</span><code>trt2.jus.br · trt15.jus.br</code></td>
+<td class="c-traz">Cadastro de peritos e honorários periciais da Justiça do Trabalho.<p class="uso"><b>Para o CREA:</b> Perícia de insalubridade é atribuição de engenheiro de segurança do trabalho.</p></td>
+<td><span class="pill a-rest">Restrito</span><span class="canal">Acordo</span></td>
+<td class="num">Conforme acordo</td>
+<td class="c-k"><span class="k">CPF</span><span class="k">Nº processo CNJ</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="jud" data-acc="Restrito" data-val="Médio" data-novo="1" data-q="trf-3 · cptec e ajg trf-3 / jfsp / cjf cadastro de peritos e pagamentos de assistência judiciária gratuita na justiça federal da 3ª região. demanda pericial federal em sp. inclui ms; ajg não é o total de perícias. rotina a negociar. nº processo cnj cpf unificação">
+<td class="c-nome"><strong>TRF-3 · CPTEC e AJG</strong><span class="org">TRF-3 / JFSP / CJF</span><code>web.trf3.jus.br/ecptec</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Cadastro de peritos e pagamentos de assistência judiciária gratuita na Justiça Federal da 3ª Região.<p class="uso"><b>Para o CREA:</b> Demanda pericial federal em SP. Inclui MS; AJG não é o total de perícias. Rotina a negociar.</p></td>
+<td><span class="pill a-rest">Restrito</span><span class="canal">Sistema / acordo</span></td>
+<td class="num">Conforme acordo</td>
+<td class="c-k"><span class="k">Nº processo CNJ</span><span class="k">CPF</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="grp" data-tema="eco"><th colspan="6">Economia e território <span>9</span></th></tr>
+<tr class="src" data-tema="eco" data-acc="Público" data-val="Alto" data-q="ibge · localidades e malhas ibge códigos de municípios, regiões e malhas geojson. chave territorial comum a todas as fontes; base do mapa por gre. município">
+<td class="c-nome"><strong>IBGE · localidades e malhas</strong><span class="org">IBGE</span><code>servicodados.ibge.gov.br/api/v1/localidades/estados/35/municipios</code></td>
+<td class="c-traz">Códigos de municípios, regiões e malhas GeoJSON.<p class="uso"><b>Para o CREA:</b> Chave territorial comum a todas as fontes; base do mapa por GRE.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Eventual</td>
+<td class="c-k"><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="eco" data-acc="Público" data-val="Alto" data-q="ibge · sidra / agregados v3 ibge população (tabela 6579), pib municipal, cempre (unidades locais e pessoal por cnae), paic (indústria da construção), pia, pas, censo 2022. denominadores: profissionais por mil habitantes, empresas registradas por unidade local cempre, peso da construção no pib. município cnae">
+<td class="c-nome"><strong>IBGE · SIDRA / Agregados v3</strong><span class="org">IBGE</span><code>servicodados.ibge.gov.br/api/v3/agregados/{tabela}/periodos/…/variaveis/…</code></td>
+<td class="c-traz">População (tabela 6579), PIB municipal, CEMPRE (unidades locais e pessoal por CNAE), PAIC (indústria da construção), PIA, PAS, Censo 2022.<p class="uso"><b>Para o CREA:</b> Denominadores: profissionais por mil habitantes, empresas registradas por unidade local CEMPRE, peso da construção no PIB.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">Município</span><span class="k">CNAE</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="eco" data-acc="Público" data-val="Médio" data-q="bcb · sgs banco central séries ipca (433), incc (192), selic (432) e milhares de outras. corrigir valores de art e contratos; ciclo de custo da construção. data">
+<td class="c-nome"><strong>BCB · SGS</strong><span class="org">Banco Central</span><code>api.bcb.gov.br/dados/serie/bcdata.sgs.{código}/dados?formato=json</code></td>
+<td class="c-traz">Séries IPCA (433), INCC (192), Selic (432) e milhares de outras.<p class="uso"><b>Para o CREA:</b> Corrigir valores de ART e contratos; ciclo de custo da construção.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Diária / mensal</td>
+<td class="c-k"><span class="k">Data</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="eco" data-acc="Público" data-val="Médio" data-q="bcb · scr.data banco central carteira de crédito por uf, setor cnae, porte, modalidade e inadimplência. crédito e inadimplência da construção em sp como termômetro antecedente. uf cnae">
+<td class="c-nome"><strong>BCB · SCR.data</strong><span class="org">Banco Central</span><code>dadosabertos.bcb.gov.br/dataset/scr_data</code></td>
+<td class="c-traz">Carteira de crédito por UF, setor CNAE, porte, modalidade e inadimplência.<p class="uso"><b>Para o CREA:</b> Crédito e inadimplência da construção em SP como termômetro antecedente.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN / Olinda</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">UF</span><span class="k">CNAE</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="eco" data-acc="Público" data-val="Médio" data-q="sinapi caixa / ibge custos e índices da construção civil por uf. referência para checar valor declarado em art de obra. uf">
+<td class="c-nome"><strong>SINAPI</strong><span class="org">Caixa / IBGE</span><code>caixa.gov.br (SINAPI)</code></td>
+<td class="c-traz">Custos e índices da construção civil por UF.<p class="uso"><b>Para o CREA:</b> Referência para checar valor declarado em ART de obra.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo mensal</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">UF</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="eco" data-acc="Público" data-val="Médio" data-q="seade · indicadores municipais fundação seade pib, emprego e empresas por município paulista. contexto estadual com recorte que o ibge publica com atraso. município">
+<td class="c-nome"><strong>SEADE · indicadores municipais</strong><span class="org">Fundação SEADE</span><code>repositorio.seade.gov.br</code></td>
+<td class="c-traz">PIB, emprego e empresas por município paulista.<p class="uso"><b>Para o CREA:</b> Contexto estadual com recorte que o IBGE publica com atraso.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN</span></td>
+<td class="num">Anual</td>
+<td class="c-k"><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="eco" data-acc="Público" data-val="Médio" data-q="siconfi tesouro nacional despesa municipal por função (urbanismo, saneamento, transporte), rreo e rgf. quanto cada município investe em obras, para dimensionar fiscalização. município">
+<td class="c-nome"><strong>SICONFI</strong><span class="org">Tesouro Nacional</span><code>apidatalake.tesouro.gov.br/docs/siconfi/</code></td>
+<td class="c-traz">Despesa municipal por função (urbanismo, saneamento, transporte), RREO e RGF.<p class="uso"><b>Para o CREA:</b> Quanto cada município investe em obras, para dimensionar fiscalização.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Bimestral / anual</td>
+<td class="c-k"><span class="k">Município</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="eco" data-acc="Público" data-val="Baixo" data-q="bcb · estban e crédito imobiliário banco central balancetes bancários por município; financiamento imobiliário. contexto do mercado imobiliário municipal. município">
+<td class="c-nome"><strong>BCB · ESTBAN e crédito imobiliário</strong><span class="org">Banco Central</span><code>olinda.bcb.gov.br</code></td>
+<td class="c-traz">Balancetes bancários por município; financiamento imobiliário.<p class="uso"><b>Para o CREA:</b> Contexto do mercado imobiliário municipal.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo / Olinda</span></td>
+<td class="num">Mensal</td>
+<td class="c-k"><span class="k">Município</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="eco" data-acc="Público" data-val="Baixo" data-novo="1" data-q="cnpq · fomento à pesquisa cnpq bolsas e auxílios por instituição, área e uf. vocações tecnológicas regionais e parcerias com ies. não liga a cnpj sem validação. uf unificação">
+<td class="c-nome"><strong>CNPq · fomento à pesquisa</strong><span class="org">CNPq</span><code>gov.br/cnpq (mapa de fomento em CT&amp;I)</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Bolsas e auxílios por instituição, área e UF.<p class="uso"><b>Para o CREA:</b> Vocações tecnológicas regionais e parcerias com IES. Não liga a CNPJ sem validação.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Portal / arquivo</span></td>
+<td class="num">Conforme conjunto</td>
+<td class="c-k"><span class="k">UF</span></td>
+<td><span class="val v-b">Baixo</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="grp" data-tema="leg"><th colspan="6">Legislativo e normas <span>6</span></th></tr>
+<tr class="src" data-tema="leg" data-acc="Público" data-val="Alto" data-q="querido diário · diários municipais open knowledge brasil busca textual em diários oficiais municipais (cobertura parcial em sp). concursos para engenheiro abaixo do piso, nomeação de rt municipal, editais de obras e leis locais. município">
+<td class="c-nome"><strong>Querido Diário · diários municipais</strong><span class="org">Open Knowledge Brasil</span><code>api.queridodiario.ok.org.br/gazettes?querystring=…&amp;territory_ids=…</code></td>
+<td class="c-traz">Busca textual em diários oficiais municipais (cobertura parcial em SP).<p class="uso"><b>Para o CREA:</b> Concursos para engenheiro abaixo do piso, nomeação de RT municipal, editais de obras e leis locais.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">Município</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="leg" data-acc="Público" data-val="Médio" data-q="câmara dos deputados · api v2 câmara proposições com busca por palavra-chave e tema, tramitações, votações. monitor de projetos sobre art, lei 5.194, piso salarial, conselhos e licitações. nº proposição">
+<td class="c-nome"><strong>Câmara dos Deputados · API v2</strong><span class="org">Câmara</span><code>dadosabertos.camara.leg.br/api/v2/proposicoes?keywords=engenharia</code></td>
+<td class="c-traz">Proposições com busca por palavra-chave e tema, tramitações, votações.<p class="uso"><b>Para o CREA:</b> Monitor de projetos sobre ART, Lei 5.194, piso salarial, conselhos e licitações.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">Nº proposição</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="leg" data-acc="Público" data-val="Médio" data-q="senado federal · dados abertos senado matérias, tramitação, votações e legislação. mesmo monitor, com alerta quando a matéria muda de fase. nº matéria">
+<td class="c-nome"><strong>Senado Federal · dados abertos</strong><span class="org">Senado</span><code>legis.senado.leg.br/dadosabertos/api-docs</code></td>
+<td class="c-traz">Matérias, tramitação, votações e legislação.<p class="uso"><b>Para o CREA:</b> Mesmo monitor, com alerta quando a matéria muda de fase.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">API REST</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">Nº matéria</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="leg" data-acc="Público" data-val="Médio" data-q="alesp · dados abertos assembleia legislativa sp proposituras estaduais, autores e tramitação. leis estaduais de obras, barragens, bombeiros e meio ambiente. nº propositura">
+<td class="c-nome"><strong>ALESP · dados abertos</strong><span class="org">Assembleia Legislativa SP</span><code>al.sp.gov.br (dados abertos)</code></td>
+<td class="c-traz">Proposituras estaduais, autores e tramitação.<p class="uso"><b>Para o CREA:</b> Leis estaduais de obras, barragens, bombeiros e meio ambiente.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Arquivo XML</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">Nº propositura</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="leg" data-acc="Chave" data-val="Médio" data-q="dou · inlabs imprensa nacional edições diárias do diário oficial da união em xml. resoluções do confea, editais federais e atos de interesse do sistema. cnpj nome">
+<td class="c-nome"><strong>DOU · INLABS</strong><span class="org">Imprensa Nacional</span><code>inlabs.in.gov.br</code></td>
+<td class="c-traz">Edições diárias do Diário Oficial da União em XML.<p class="uso"><b>Para o CREA:</b> Resoluções do Confea, editais federais e atos de interesse do sistema.</p></td>
+<td><span class="pill a-key">Chave</span><span class="canal">Arquivo XML</span></td>
+<td class="num">Diária</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">Nome</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-c">pista · a confirmar</span></td>
+</tr>
+<tr class="src" data-tema="leg" data-acc="Público" data-val="Médio" data-q="confea · normativos e relatório estatístico confea resoluções, decisões e estatísticas nacionais de registro. comparar sp com outros creas; base de regras para os painéis. uf título">
+<td class="c-nome"><strong>Confea · normativos e relatório estatístico</strong><span class="org">Confea</span><code>normativos.confea.org.br · relatorio.confea.org.br</code></td>
+<td class="c-traz">Resoluções, decisões e estatísticas nacionais de registro.<p class="uso"><b>Para o CREA:</b> Comparar SP com outros CREAs; base de regras para os painéis.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Site / painel</span></td>
+<td class="num">Contínua</td>
+<td class="c-k"><span class="k">UF</span><span class="k">Título</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="grp" data-tema="cat"><th colspan="6">Catálogos e atalhos <span>5</span></th></tr>
+<tr class="src" data-tema="cat" data-acc="Chave" data-val="Alto" data-q="dados.gov.br · api do portal de dados abertos cgu / mgi catálogo federal: conjuntos, recursos, organizações, temas, tags, reúsos. varredura completa e vigilância de atualização de todos os conjuntos de interesse. detalhes na seção própria. —">
+<td class="c-nome"><strong>dados.gov.br · API do Portal de Dados Abertos</strong><span class="org">CGU / MGI</span><code>dados.gov.br/dados/api/publico/conjuntos-dados?pagina=1 · header chave-api-dados-abertos</code></td>
+<td class="c-traz">Catálogo federal: conjuntos, recursos, organizações, temas, tags, reúsos.<p class="uso"><b>Para o CREA:</b> Varredura completa e vigilância de atualização de todos os conjuntos de interesse. Detalhes na seção própria.</p></td>
+<td><span class="pill a-key">Chave</span><span class="canal">API REST</span></td>
+<td class="num">Contínua</td>
+<td class="c-k"><span class="k">—</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="cat" data-acc="Convênio" data-val="Alto" data-q="conecta gov.br · catálogo mgi / sgd 97 apis governamentais de acesso controlado (cnpj, cpf, cnis, dívida ativa, cnd, sigef, obrasgov, aneel). porta para os dados identificados. ver seção própria. cnpj cpf">
+<td class="c-nome"><strong>Conecta gov.br · catálogo</strong><span class="org">MGI / SGD</span><code>gov.br/conecta/catalogo/apis/{api}</code></td>
+<td class="c-traz">97 APIs governamentais de acesso controlado (CNPJ, CPF, CNIS, Dívida Ativa, CND, SIGEF, Obrasgov, ANEEL).<p class="uso"><b>Para o CREA:</b> Porta para os dados identificados. Ver seção própria.</p></td>
+<td><span class="pill a-conv">Convênio</span><span class="canal">Catálogo</span></td>
+<td class="num">—</td>
+<td class="c-k"><span class="k">CNPJ</span><span class="k">CPF</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="cat" data-acc="Público" data-val="Médio" data-q="chelfo api · catálogo de apis públicas iniciativa independente mapeia 959 apis públicas brasileiras federais, estaduais e municipais, com filtros por esfera e tipo de acesso (data-base 03/09/2026). lista de conferência para apis estaduais e municipais paulistas. não é fonte de dados. —">
+<td class="c-nome"><strong>Chelfo API · catálogo de APIs públicas</strong><span class="org">Iniciativa independente</span><code>chelfoapi.com</code></td>
+<td class="c-traz">Mapeia 959 APIs públicas brasileiras federais, estaduais e municipais, com filtros por esfera e tipo de acesso (data-base 03/09/2026).<p class="uso"><b>Para o CREA:</b> Lista de conferência para APIs estaduais e municipais paulistas. Não é fonte de dados.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">Catálogo</span></td>
+<td class="num">—</td>
+<td class="c-k"><span class="k">—</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-h">documentação · 29/10</span></td>
+</tr>
+<tr class="src" data-tema="cat" data-acc="Público" data-val="Médio" data-q="portal de dados abertos de sp governo do estado catálogo ckan do estado com conjuntos de secretarias e autarquias. rodar a mesma varredura do dados.gov.br no catálogo estadual. —">
+<td class="c-nome"><strong>Portal de Dados Abertos de SP</strong><span class="org">Governo do Estado</span><code>dadosabertos.sp.gov.br</code></td>
+<td class="c-traz">Catálogo CKAN do Estado com conjuntos de secretarias e autarquias.<p class="uso"><b>Para o CREA:</b> Rodar a mesma varredura do dados.gov.br no catálogo estadual.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN</span></td>
+<td class="num">Contínua</td>
+<td class="c-k"><span class="k">—</span></td>
+<td><span class="val v-m">Médio</span><span class="st s-r">amostra · 26/10</span></td>
+</tr>
+<tr class="src" data-tema="cat" data-acc="Público" data-val="Alto" data-novo="1" data-q="dados abertos da cidade de são paulo prefeitura de sp / cgm catálogo ckan da capital: 489 conjuntos no levantamento, sem token. piloto municipal de licenciamento, obras e território. não representa os 645 municípios. — unificação">
+<td class="c-nome"><strong>Dados Abertos da Cidade de São Paulo</strong><span class="org">Prefeitura de SP / CGM</span><code>dados.prefeitura.sp.gov.br/api/3/action/package_search</code><span class="novo">nova na unificação</span></td>
+<td class="c-traz">Catálogo CKAN da capital: 489 conjuntos no levantamento, sem token.<p class="uso"><b>Para o CREA:</b> Piloto municipal de licenciamento, obras e território. Não representa os 645 municípios.</p></td>
+<td><span class="pill a-pub">Público</span><span class="canal">CKAN</span></td>
+<td class="num">Semanal (vigilância)</td>
+<td class="c-k"><span class="k">—</span></td>
+<td><span class="val v-a">Alto</span><span class="st s-r">amostra · 29/10</span></td>
+</tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="dadosgov">
+  <h2>dados.gov.br em detalhe</h2>
+  <p>O portal federal é um catálogo: ele não guarda a maior parte dos dados, aponta para os recursos publicados por cada órgão. O valor dele para o CREA-SP está em varrer o catálogo inteiro uma vez, marcar os conjuntos de interesse e vigiar a data de atualização de cada um para disparar a coleta certa.</p>
+  <div class="scroll tbl">
+    <table class="plain">
+      <thead><tr><th>Endpoint</th><th>Uso na rotina</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET /dados/api/publico/conjuntos-dados?pagina=N</code><br><span class="muted">filtros: nomeConjuntoDados, idOrganizacao, dadosAbertos, isPrivado</span></td><td>Listagem paginada de todos os conjuntos. Base da varredura semanal.</td></tr>
+        <tr><td><code>GET /dados/api/publico/conjuntos-dados/{id}</code></td><td>Detalhe do conjunto com recursos (URLs dos arquivos), datas e licença. Usado para descobrir a URL vigente, como no caso do CNPJ que mudou de endereço.</td></tr>
+        <tr><td><code>GET /dados/api/publico/organizacao</code> e <code>/organizacao/{id}</code></td><td>Lista de órgãos publicadores, para varrer por organização.</td></tr>
+        <tr><td><code>GET /dados/api/temas</code>, <code>/dados/api/tags</code>, <code>/conjuntos-dados/{id}/tag</code></td><td>Classificação por tema e tag, para achar conjuntos que a busca por nome não encontra.</td></tr>
+        <tr><td><code>GET /conjuntos-dados/formatos</code>, <code>/observancia-legal</code>, <code>/objetivos-desenvolvimento-sustentavel</code></td><td>Tabelas de apoio para filtrar formatos legíveis por máquina.</td></tr>
+        <tr><td><code>GET /dados/api/publico/reusos</code></td><td>Reúsos publicados por terceiros: mostram quem já cruzou aquela base.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">Autenticação: cabeçalho <code style="display:inline">chave-api-dados-abertos</code>, gerado pelo usuário no portal após login gov.br. Operações de escrita são exclusivas de administradores de organização. Contrato lido em hmg.dados.gov.br/v3/api-docs em 29/10/2026.</p>
+  <div class="cols">
+    <div class="panel">
+      <h3>Rotina de varredura proposta</h3>
+      <ol class="steps">
+        <li>Baixar a lista completa de organizações e conjuntos e guardar como catálogo local versionado.</li>
+        <li>Marcar conjuntos por organização-alvo e por termos: engenharia, obra, construção, CNPJ, CNO, barragem, mineração, energia, geração distribuída, telecomunicação, saneamento, rodovia, ensino superior, curso, emprego, CAGED, RAIS, licitação, contrato, perícia.</li>
+        <li>Para cada conjunto marcado, registrar recurso, formato, chave de cruzamento e frequência declarada.</li>
+        <li>Rodar diariamente só o detalhe dos conjuntos marcados e disparar a extração quando a data de atualização mudar.</li>
+        <li>Alertar quando um recurso sumir ou mudar de URL, antes que o painel mostre dado velho.</li>
+      </ol>
+    </div>
+    <div class="panel">
+      <h3>Organizações e conjuntos para marcar primeiro</h3>
+      <ul>
+        <li><b>Receita Federal:</b> CNPJ, Cadastro Nacional de Obras (CNO).</li>
+        <li><b>MGI e CGU:</b> Compras, Obrasgov, Transferegov, Portal da Transparência, sanções.</li>
+        <li><b>INEP, MEC e CAPES:</b> Censo da Educação Superior, cadastro e-MEC, ENADE, pós-graduação.</li>
+        <li><b>Agências:</b> ANEEL, ANATEL, ANM, ANA, ANP, ANTT, ANAC.</li>
+        <li><b>Infraestrutura:</b> DNIT, Ministério das Cidades (SINISA, MCMV, Defesa Civil), Novo PAC.</li>
+        <li><b>Fomento e mercado:</b> BNDES, PGFN, CVM, INPI, Banco Central.</li>
+        <li><b>Território:</b> INCRA (SIGEF, SNCR), IBAMA, SFB (CAR).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="conecta">
+  <h2>Conecta gov.br e Chelfo API</h2>
+  <p>O Conecta tem 97 APIs de acesso controlado. Como autarquia federal, o CREA-SP é candidato natural à adesão, mas a elegibilidade de conselhos profissionais precisa ser confirmada com a equipe do Conecta. A adesão exige cadastro de IP no Serpro e geração de chaves no Gerenciador Conecta. As que interessam:</p>
+  <div class="scroll tbl">
+    <table class="plain">
+      <thead><tr><th>API</th><th>Provedor</th><th>Uso para o CREA-SP</th></tr></thead>
+      <tbody>
+        <tr><td>CNPJ · Consulta de Empresas</td><td>RFB</td><td>QSA completo e revalidação cadastral online.</td></tr>
+        <tr><td>CPF · Cadastro Base do Cidadão</td><td>RFB</td><td>Higienizar cadastro profissional (situação, óbito).</td></tr>
+        <tr><td>Relação Trabalhista</td><td>INSS</td><td>Vínculos por CPF com CNPJ e CBO: confirmar RT e cargo técnico.</td></tr>
+        <tr><td>CND · Certidão Negativa de Débitos</td><td>RFB</td><td>Regularidade fiscal de empresa registrada.</td></tr>
+        <tr><td>Consulta Dívida Ativa da União e CADIN</td><td>PGFN</td><td>Risco financeiro na cobrança de anuidades.</td></tr>
+        <tr><td>Obrasgov · Cadastro Integrado de Projetos de Investimento</td><td>MGI</td><td>Obras federais georreferenciadas (API externa, sem adesão).</td></tr>
+        <tr><td>Outorgas de Geração e Polímero</td><td>ANEEL</td><td>Titular e cadeia societária de usinas.</td></tr>
+        <tr><td>SIGEF-GEO, SNCR, SICAR</td><td>INCRA, MGI</td><td>Georreferenciamento rural e CAR: agrimensura e agronomia.</td></tr>
+        <tr><td>Condutas anticompetitivas e Atos de concentração</td><td>CADE</td><td>Cartéis em licitação de obras.</td></tr>
+        <tr><td>CEP · Cadastro Base de Endereço</td><td>MGI</td><td>Padronizar endereço de obra antes de geocodificar.</td></tr>
+        <tr><td>API Portal de Dados Abertos</td><td>CGU</td><td>Mesma API do dados.gov.br descrita acima.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><b>Chelfo API</b> não é fonte de dados: é um catálogo independente de 959 APIs públicas brasileiras (federais, estaduais e municipais) com filtros por esfera e tipo de acesso, data-base 03/09/2026. A tabela é carregada dinamicamente e não pôde ser exportada nesta pesquisa. O uso recomendado é como lista de conferência das APIs estaduais e municipais paulistas que este atlas ainda não cobre.</p>
+</section>
+
+<section id="acordos">
+  <h2>Fontes que dependem de acordo</h2>
+  <p>Estas são as fontes que aprofundam a fiscalização além do que é público. Cada uma exige base legal, finalidade definida e tratamento LGPD.</p>
+  <div class="scroll tbl">
+    <table class="plain">
+      <thead><tr><th>Instituição</th><th>O que pedir</th><th>Ganho</th></tr></thead>
+      <tbody>
+        <tr><td>TJSP, TRT-2, TRT-15, TRF-3</td><td>Nomeações de peritos por especialidade, com CPF e nº do processo</td><td>Perícia sem profissional habilitado ou sem ART</td></tr>
+        <tr><td>Prefeituras (começando pela capital e sedes de GRE)</td><td>Alvarás, habite-se e responsáveis técnicos</td><td>Obra licenciada sem ART, em tempo quase real</td></tr>
+        <tr><td>Corpo de Bombeiros SP</td><td>AVCB/CLCB com autor do projeto</td><td>Projetos de prevenção a incêndio sem ART</td></tr>
+        <tr><td>CETESB</td><td>Licenças de instalação e operação com CNPJ</td><td>Universo industrial obrigado a RT</td></tr>
+        <tr><td>DETRAN-SP</td><td>ITLs e laudos de modificação veicular</td><td>Laudo de engenheiro sem registro ou ART</td></tr>
+        <tr><td>Secretaria de Agricultura (CDA-SP)</td><td>Receituário agronômico por profissional</td><td>Volume e padrão de receitas por agrônomo</td></tr>
+        <tr><td>JUCESP</td><td>Atos societários e objeto social</td><td>Empresa nova com atividade técnica antes da RFB consolidar</td></tr>
+        <tr><td>MTE</td><td>RAIS identificada ou eSocial por estabelecimento e CBO</td><td>Empresas que empregam engenheiro sem registro no CREA</td></tr>
+        <tr><td>Conecta (MGI)</td><td>Adesão às APIs CNPJ, CPF e Relação Trabalhista</td><td>Cadastro e vínculo de RT confirmados online</td></tr>
+        <tr><td>Confea</td><td>Extrações do SIC e do Cadastro Nacional de ART</td><td>Comparação com outros CREAs e ART de profissionais de fora de SP</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="metodo">
+  <h2>Método e limites</h2>
+  <div class="cols">
+    <div class="panel">
+      <h3>Como foi feito</h3>
+      <ul>
+        <li>Leitura dos anexos do projeto: organograma de março de 2026, carta de serviços, mapa do site, Lei 5.194, Lei 6.496, Resolução 1.137/2023, lista de CNAEs de março de 2025 e a API de transparência Implanta.</li>
+        <li>Leitura direta das documentações oficiais marcadas como verificadas em 29/10: dados.gov.br (homologação), Conecta, Relação Trabalhista, Obrasgov, Portal da Transparência, Compras.gov.br, DataJud, TCE-SP, TJSP e Chelfo.</li>
+        <li>Reaproveitamento das verificações de 26/10 do próprio projeto (docs/FONTES_EMPRESARIAIS_V10.md) e dos repositórios do Caio já existentes para PNCP, sócios da Receita e estatísticas de engenheiros.</li>
+        <li>Unificação em 29/10 com o levantamento complementar <code style="display:inline">planejamento-fontes-2026-10/</code> (104 entradas, 146 respostas HTTP registradas). Cada entrada de lá foi ligada a uma fonte do atlas ou entrou como fonte nova; a correspondência está na coluna <i>ids_levantamento</i> do catálogo baixável.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Cuidados</h3>
+      <ul>
+        <li>Fontes “a confirmar” precisam de homologação de endpoint, layout e cobertura antes de entrar em rotina.</li>
+        <li>CNAE indica atividade potencial; obrigação de registro depende da atividade efetiva.</li>
+        <li>CPF em base pública vem mascarado. Cruzamento por pessoa só com fonte autorizada.</li>
+        <li>O CNPJ alfanumérico começou em julho de 2026: tratar CNPJ como texto em todas as cargas.</li>
+        <li>DataJud não traz partes nem processos em segredo; conta demanda, não identifica peritos.</li>
+        <li>Sem evidência de ART não é infração. É prioridade de verificação.</li>
+        <li>Toda ligação tem um status: confirmada por documento, candidata (nome, endereço ou período parecidos, para revisão humana) ou contexto agregado. Candidatas não entram nas contagens confirmadas.</li>
+        <li>Município do órgão, do fornecedor e da execução são campos diferentes. Contrato de órgão paulista não prova obra em SP.</li>
+        <li>Fora do catálogo de propósito: Sniper (CNJ, acesso exclusivo do Judiciário) e Sisperjud (sem extração aberta).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div></main>
+<footer><div class="wrap">Mapeamento preparado para o projeto de dados estratégicos do CREA-SP. Endpoints e status refletem a consulta de 29/10/2026. Unificado com o levantamento complementar do repositório caiofvserra/empresas na mesma data.</div></footer>
+
+<script type="application/octet-stream" id="xlsx64">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</script>
+<script>
+(async function(){
+  var box = document.getElementById("dl"), msg = document.getElementById("dlmsg");
+  var dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null;
+  if (!dl) return;
+  box.hidden = false;
+  box.addEventListener("click", async function(ev){
+    var b = ev.target.closest("button[data-f]"); if (!b) return;
+    msg.textContent = "";
+    try {
+      var data;
+      if (b.dataset.f === "csv") { var r = await fetch("catalogo-fontes-unificado.csv"); if (!r.ok) throw {code:"unavailable"}; data = await r.blob(); }
+      else { var s = atob(document.getElementById("xlsx64").textContent.trim()), u = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); data = u; }
+      await dl.save({filename: "catalogo-fontes-unificado." + b.dataset.f, data: data});
+    } catch (e) {
+      if (e && e.code === "declined") return;
+      if (e && e.code === "rate_limited") { msg.textContent = "Aguarde a janela anterior fechar."; return; }
+      msg.textContent = "Download indisponível nesta visualização.";
+    }
+  });
+})();
+</script>
+<script>
+(function(){
+  var tema = "", rows = Array.prototype.slice.call(document.querySelectorAll("#tb tr"));
+  var q = document.getElementById("q"), acc = document.getElementById("acc"), alto = document.getElementById("alto"), count = document.getElementById("count");
+  var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+  function apply(){
+    var term = (q.value || "").trim().toLowerCase(), a = acc.value, onlyHigh = alto.checked, shown = 0, perGroup = {};
+    rows.forEach(function(r){
+      if (!r.classList.contains("src")) return;
+      var ok = (!tema || r.dataset.tema === tema) && (!a || r.dataset.acc === a) && (!onlyHigh || r.dataset.val === "Alto") && (!term || r.dataset.q.indexOf(term) !== -1);
+      r.hidden = !ok; if (ok){ shown++; perGroup[r.dataset.tema] = 1; }
+    });
+    rows.forEach(function(r){ if (r.classList.contains("grp")) r.hidden = !perGroup[r.dataset.tema]; });
+    count.textContent = shown + (shown === 1 ? " fonte" : " fontes");
+  }
+  chips.forEach(function(c){ c.addEventListener("click", function(){
+    tema = c.dataset.t; chips.forEach(function(x){ x.setAttribute("aria-pressed", x === c ? "true" : "false"); }); apply();
+  }); });
+  q.addEventListener("input", apply); acc.addEventListener("change", apply); alto.addEventListener("change", apply);
+  apply();
+})();
+</script>
