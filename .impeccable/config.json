@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "lato",
+        "createdAt": "2026-10-28T17:40:48.075Z",
+        "reason": "project design system: docs/DESIGN_SYSTEM_V13.md sets Lato + Raleway as the CREA identity supplied by the user"
+      }
+    ]
+  }
+}

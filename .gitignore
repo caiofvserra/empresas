@@ -7,3 +7,4 @@ test-results/
 !.env.example
 runtime/
 var/source-ingestion/
+dist-painel/
