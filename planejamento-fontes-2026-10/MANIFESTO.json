@@ -1,0 +1,224 @@
+{
+  "data": "2026-10-29",
+  "escopo": "planejamento e pesquisa; sem integração em produção",
+  "source_merge_commit": "049d618bfe4dd634be90bd1edcaac9bac4631647",
+  "counts": {
+    "catalogo_canonico": 104,
+    "fichas_origem": 105,
+    "casos_uso": 34,
+    "grafo_tipos_nos": 28,
+    "grafo_tipos_relacoes": 34,
+    "entidades_anexos": 27,
+    "documentos_anexos": 13,
+    "cnaes": 702,
+    "http_observacoes": 146,
+    "abas_excel": 8
+  },
+  "files": [
+    {
+      "path": "ARQUITETURA.md",
+      "bytes": 22020,
+      "sha256": "4197d7e9dc8b51970ad65cd1158019333d707e79541f00599f7f34b4594848b3"
+    },
+    {
+      "path": "CASOS_USO.md",
+      "bytes": 66772,
+      "sha256": "1c8794765a721d157f956968779ec1252e6c945347f3e7b50ff7a9f4f62d6d8f"
+    },
+    {
+      "path": "CATALOGO_FONTES.md",
+      "bytes": 131026,
+      "sha256": "1ce2ef2c49715c1f70455afdae1127874617262bce60b68be42af25c582b7161"
+    },
+    {
+      "path": "CONTEXTO_ANEXOS.md",
+      "bytes": 21328,
+      "sha256": "cad710d1e2db48e28b8ac7c7374e5d5bdb58cfb66fbb9dae25bebfe82b91c970"
+    },
+    {
+      "path": "MAPA_RELACOES.md",
+      "bytes": 11625,
+      "sha256": "55b536f29a612aa8523aa0b1191abfdca8648cfe13c5f0e1b3689d6013bd40b2"
+    },
+    {
+      "path": "README.md",
+      "bytes": 21567,
+      "sha256": "efe49f662c5bb021031c5bf6ce93d0378427df9a57675d690f8d76ea654c6232"
+    },
+    {
+      "path": "REVISAO_REPOSITORIO.md",
+      "bytes": 9060,
+      "sha256": "a9e3341845eaf73d48e4de15eb69cdb00c74059063825f1361c79b1283f0a7bb"
+    },
+    {
+      "path": "VALIDACAO_E_LIMITES.md",
+      "bytes": 5103,
+      "sha256": "b5184e2984d7da8fac91ef87a0c56c02b7a68fef83946ad9fd125b2d392f8a9a"
+    },
+    {
+      "path": "contratos/dadosgov-openapi-recorte.json",
+      "bytes": 37489,
+      "sha256": "4b70290ec9ecec642f8eae96d5a07c192f7c53826f30f703c52007a546935617"
+    },
+    {
+      "path": "contratos/implanta-contrato-extraido.json",
+      "bytes": 26870,
+      "sha256": "26b468134a71b5f3025b9641e22208506cbbdd70f2a1f6b3ef4745102531dbd8"
+    },
+    {
+      "path": "contratos/implanta-testes.json",
+      "bytes": 1010,
+      "sha256": "fb13f80162af1872500b7b3ed100dca6ddfe34c5598eb30f2e889ded12653e29"
+    },
+    {
+      "path": "evidencias/REVISAO_INDEPENDENTE.md",
+      "bytes": 11903,
+      "sha256": "c3243defcb8690b9b4538761a4d36d85ac7d9c36c3b3af4e77b8374969019b0c"
+    },
+    {
+      "path": "evidencias/evidencias-http-resumo.csv",
+      "bytes": 34477,
+      "sha256": "2f16430e8fe52e0d2ee66eff9376ba0febed9482557d6b501a692e9dcc9ee25b"
+    },
+    {
+      "path": "evidencias/evidencias-http-resumo.json",
+      "bytes": 63736,
+      "sha256": "34ba3a75c7eb86af918d0577a940137c11582a062c11993ef267947666ae8de0"
+    },
+    {
+      "path": "evidencias/visao-geral-v18.png",
+      "bytes": 518321,
+      "sha256": "007b5dd53e48ef62970392d4647bea536d987cbf1504d7fdeda076ec42a022c8"
+    },
+    {
+      "path": "inventarios/LEIA-ME.md",
+      "bytes": 2740,
+      "sha256": "a0cd8309ac0ca102238ab7eecf6401ac46a9a29077901c22e8b77bf284c7eaa1"
+    },
+    {
+      "path": "inventarios/casos-uso.csv",
+      "bytes": 55728,
+      "sha256": "e17444b52113262786bb446018fe6d51605c6a35fa0e7b6122b48f9536067c43"
+    },
+    {
+      "path": "inventarios/casos-uso.json",
+      "bytes": 73404,
+      "sha256": "03c6f132ca88e5c08dfbc2aaa375a492d500bf659c364e64d85bff0e5a8d71ab"
+    },
+    {
+      "path": "inventarios/catalogo-fontes.csv",
+      "bytes": 227885,
+      "sha256": "b7da0cb6182cc890f65052477375bce2216f301c4ead1e80bb2b876e5f761ae0"
+    },
+    {
+      "path": "inventarios/catalogo-fontes.json",
+      "bytes": 316618,
+      "sha256": "3d679d25b9731c290b09396c33e629efff75a932b306c7fb3c56b18e015da6f8"
+    },
+    {
+      "path": "inventarios/catalogo-fontes.xlsx",
+      "bytes": 177401,
+      "sha256": "13142288d613d209daae517e71cad4b129fc0b37c687a412fabdc43498938ae6"
+    },
+    {
+      "path": "inventarios/cnaes-contexto-extraidos.json",
+      "bytes": 125209,
+      "sha256": "3f66baf217d81c9895eb3c8051f6737fd53e17e687ee155387872cc11f05960e"
+    },
+    {
+      "path": "inventarios/contexto-modelo.json",
+      "bytes": 18234,
+      "sha256": "edd32d01ae1952826cf6f42a39d683c7b57186b8477e1d33f4a3755d27695cee"
+    },
+    {
+      "path": "inventarios/entidades-internas-propostas.csv",
+      "bytes": 7275,
+      "sha256": "de65734c2a8ad2677697af2e51d37b11c404da1eef60e50ccd7adbc3a659b86b"
+    },
+    {
+      "path": "inventarios/grafo-planejado.json",
+      "bytes": 19813,
+      "sha256": "2b707e70f7fe17202f8e23e82c6a0a6c781b6497e644c053886cc116948b1667"
+    },
+    {
+      "path": "inventarios/origens/empresas-economia-legislativo.json",
+      "bytes": 24495,
+      "sha256": "499e95e7404d161c29182c632e749910ad838906f2991c7928c4fd6a82d2d066"
+    },
+    {
+      "path": "inventarios/origens/fontes-catalogos-normalizadas.json",
+      "bytes": 15056,
+      "sha256": "316907b60b2f0ccb88bdbc16d176612357be380c1e0b919ba354a717cd4effa9"
+    },
+    {
+      "path": "inventarios/origens/formacao-trabalho.csv",
+      "bytes": 14246,
+      "sha256": "6f33ee1030d6988fb4b0e54d800ca59c0a42c58933c66cbc32ebb5b205634d6c"
+    },
+    {
+      "path": "inventarios/origens/formacao-trabalho.json",
+      "bytes": 20142,
+      "sha256": "1ebbc372eb6d3ee22f711efb69fca422ebe2638b638e7542add3439de9f10697"
+    },
+    {
+      "path": "inventarios/origens/justica-compras-catalogo.json",
+      "bytes": 26479,
+      "sha256": "81f62e92e11585c9b1a31ad3e22dbc1baedbcd68984399d3f1fc2b30b441a972"
+    },
+    {
+      "path": "inventarios/origens/setoriais.json",
+      "bytes": 31007,
+      "sha256": "ed03dd651ad675a02da6e28c29c969152d5766158598b772cf2e8b70d69a516e"
+    },
+    {
+      "path": "inventarios/origens-auditoria.csv",
+      "bytes": 212015,
+      "sha256": "7aac162aa1b5e9b7f03ece4a2c40ee537ddcc2185ad413f2c97dccd0bd356206"
+    },
+    {
+      "path": "inventarios/origens-auditoria.json",
+      "bytes": 282971,
+      "sha256": "432113166e7306688f3de97ccb9dc3779faf91b413e35a261b652cb1a2cbb34f"
+    },
+    {
+      "path": "inventarios/relacoes-planejadas.csv",
+      "bytes": 9322,
+      "sha256": "d44d645a18a22aca39b483ee6829285fcc2389526edd2c063032b1391af90e3b"
+    },
+    {
+      "path": "pesquisas/CATALOGOS.md",
+      "bytes": 24945,
+      "sha256": "983cf9e0123f9481ad2fbda8f056771829b43e1cb5f9e3f72612f402baa08a4d"
+    },
+    {
+      "path": "pesquisas/EMPRESAS_ECONOMIA_LEGISLATIVO.md",
+      "bytes": 12884,
+      "sha256": "b6991049edbe8eb723455dee5db2fb42fb439dfd5a0751fab9eb51c87dd8df49"
+    },
+    {
+      "path": "pesquisas/FORMACAO_TRABALHO.md",
+      "bytes": 17722,
+      "sha256": "da65fad707b6e17d42b71e2292432cad4143b8497ea15ab4bf1bcdd14ed05f2d"
+    },
+    {
+      "path": "pesquisas/JUSTICA_COMPRAS.md",
+      "bytes": 31935,
+      "sha256": "426fe7c12027ff3071bdd39b3a6f8dcdf473c93ae9afd1421b1c09890624e9ba"
+    },
+    {
+      "path": "pesquisas/ROTEIRO_CATALOGO_NACIONAL.md",
+      "bytes": 9658,
+      "sha256": "6f74493af5c36a4187599becf18a716c5ab36c86a6e78a8b0795c9cd4af98322"
+    },
+    {
+      "path": "pesquisas/SETORIAIS.md",
+      "bytes": 32009,
+      "sha256": "e9ae8526fa120023f343f84e095b09463b2a15a37db9b16a4244e4404538ea06"
+    },
+    {
+      "path": "scripts/validar-compilado.py",
+      "bytes": 4229,
+      "sha256": "2d727f13e003c84e900a93e95d14b4112e3ba3d290a4c836fde4dd704a7fe3c5"
+    }
+  ]
+}

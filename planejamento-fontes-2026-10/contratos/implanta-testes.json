@@ -1,0 +1,32 @@
+{
+  "tested_at_utc": "2026-10-29T15:35:38.365375+00:00",
+  "tests": [
+    {
+      "url": "https://crea-sp.implanta.net.br/transparencia/api/v1.0/PlanoDeContas?exercicio=2025",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "url": "https://crea-sp.implanta.net.br/transparencia/api/v1.0/Contratos?vigenciaInicio=2025-01-01&vigenciaTermino=2025-01-31",
+      "error": "HTTPError: HTTP Error 400: Bad Request"
+    },
+    {
+      "url": "https://crea-sp.implanta.net.br/transparencia/api/v1.0/Contratos?vigenciaInicio=01%2F2025&vigenciaTermino=01%2F2025",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "bytes_read": 37816,
+      "shape": "list",
+      "count": 95,
+      "first_keys": [
+        "NUMERO_CONTRATO",
+        "NUMERO_LICITACAO",
+        "NUMERO_PROCESSO_COMPRA",
+        "DATA_PUBLICACAO",
+        "CONTRATADA",
+        "VALOR",
+        "CONTRATOS",
+        "DATA_INICIO_VIGENCIA",
+        "DATA_FINAL_VIGENCIA"
+      ]
+    }
+  ]
+}

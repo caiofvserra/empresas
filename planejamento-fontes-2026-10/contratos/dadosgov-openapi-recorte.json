@@ -1,0 +1,1626 @@
+{
+  "info": {
+    "title": "API REST do Portal de Dados Abertos",
+    "contact": {
+      "name": "Diretoria de Tecnologia da Informação - DTI",
+      "url": "https://www.cgu.gov.br",
+      "email": "@cgu.gov.br"
+    },
+    "license": {
+      "name": "Decreto nº 8.777, de 11 de maio de 2016",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8777.htm"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://dados.gov.br",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    }
+  ],
+  "securitySchemes": {
+    "Authorization": {
+      "type": "apiKey",
+      "description": "Para obter chave do perfil da organização, acesse a opção de \"Tokens de organização\" na dashboard com um usuário com perfil de Administrador da Organização. Para obter chave do perfil Consumidor ou Gestor de Políticas de Dados Abertos, entre no sistema com este perfil e acesse a área do lado direito da página \"Minha Conta\"",
+      "name": "chave-api-dados-abertos",
+      "in": "header"
+    }
+  },
+  "getEndpoints": {
+    "/dados/api/publico/conjuntos-dados/{id}": {
+      "tags": [
+        "Conjuntos de dados"
+      ],
+      "summary": "Detalha um conjunto de dados",
+      "description": "Esse método detalha um conjunto de dados existente.",
+      "operationId": "detalhar",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConjuntoDadosApiView"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/publico/conjuntos-dados": {
+      "tags": [
+        "Conjuntos de dados"
+      ],
+      "summary": "Lista conjuntos de dados",
+      "description": "Esse método lista conjuntos de dados existente.",
+      "operationId": "listar",
+      "parameters": [
+        {
+          "name": "nomeConjuntoDados",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "dadosAbertos",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "isPrivado",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "false"
+          }
+        },
+        {
+          "name": "idOrganizacao",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "pagina",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ApiResultadoListaConjuntoDados"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/temas": {
+      "tags": [
+        "Temas"
+      ],
+      "summary": "Consulta de temas",
+      "operationId": "listar_1",
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TemaDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/tags": {
+      "tags": [
+        "Tags"
+      ],
+      "summary": "Consulta de tags",
+      "operationId": "listarTag",
+      "parameters": [
+        {
+          "name": "nome",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TagDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/solicitacoes": {
+      "tags": [
+        "Solicitações"
+      ],
+      "summary": "Consulta de Solicitações",
+      "operationId": "listar_2",
+      "parameters": [
+        {
+          "name": "filtro",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SolicitacaoApiFiltro"
+          }
+        }
+      ],
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SolicitacaoDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/publico/reusos": {
+      "tags": [
+        "Reúsos"
+      ],
+      "summary": "Lista reúsos",
+      "description": "Esse método lista reúsos existentes.",
+      "operationId": "listar_3",
+      "parameters": [
+        {
+          "name": "nomeReuso",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "nomeAutor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "idOrganizacao",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ApiResultadoListaReuso"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/publico/reuso/{id}": {
+      "tags": [
+        "Reúsos"
+      ],
+      "summary": "Detalha um reúso",
+      "description": "Esse método detalha um reúso existente.",
+      "operationId": "detalhar_1",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiResultadoReuso"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/publico/organizacao": {
+      "tags": [
+        "Organização"
+      ],
+      "summary": "Lista organizações",
+      "description": "Esse método lista organizações.",
+      "operationId": "listar_4",
+      "parameters": [
+        {
+          "name": "nome",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "pagina",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IndiceOrganizacao"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/publico/organizacao/{id}": {
+      "tags": [
+        "Organização"
+      ],
+      "summary": "Detalha uma organização",
+      "description": "Esse método detalha uma organização.",
+      "operationId": "detalhar_2",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizacaoApiDTO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/publico/conjuntos-dados/{id}/tag": {
+      "tags": [
+        "Conjuntos de dados"
+      ],
+      "summary": "Lista tags de um conjunto de dados",
+      "description": "Esse método lista as tags associadas a um conjunto de dados.",
+      "operationId": "listarTagsPorIdConjuntoDados",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TagDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/publico/conjuntos-dados/observancia-legal": {
+      "tags": [
+        "Conjuntos de dados"
+      ],
+      "operationId": "listarObservanciaLegal",
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ObservanciaLegalDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/publico/conjuntos-dados/objetivos-desenvolvimento-sustentavel": {
+      "tags": [
+        "Conjuntos de dados"
+      ],
+      "operationId": "listarOds",
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ObservanciaLegalDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dados/api/publico/conjuntos-dados/formatos": {
+      "tags": [
+        "Conjuntos de dados"
+      ],
+      "operationId": "listarFormatos",
+      "responses": {
+        "500": {
+          "description": "Internal Server Error",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "*/*": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ErroDTO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Entity",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ErroDTO"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "responseSchemas": {
+    "ConjuntoDadosApiView": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "titulo": {
+          "type": "string",
+          "maxLength": 2147483647,
+          "minLength": 2
+        },
+        "nome": {
+          "type": "string"
+        },
+        "organizacao": {
+          "type": "string"
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 1000,
+          "minLength": 2
+        },
+        "licenca": {
+          "type": "string"
+        },
+        "responsavel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emailResponsavel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "periodicidade": {
+          "type": "string",
+          "enum": [
+            "INVALIDO",
+            "DIARIA",
+            "SEMANAL",
+            "QUINZENAL",
+            "MENSAL",
+            "SOB_DEMANDA",
+            "OUTRAS",
+            "TRIMESTRAL",
+            "SEMESTRAL",
+            "ANUAL",
+            "QUADRIMESTRAL"
+          ]
+        },
+        "temas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/TemaApiForm"
+          },
+          "minItems": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/TagDTO"
+          },
+          "minItems": 1
+        },
+        "coberturaTemporalInicio": {
+          "type": "string",
+          "format": "date"
+        },
+        "coberturaTemporalFim": {
+          "type": "string",
+          "format": "date"
+        },
+        "coberturaEspacial": {
+          "type": "string",
+          "enum": [
+            "INVALIDO",
+            "FEDERAL",
+            "ESTADUAL",
+            "MUNICIPAL"
+          ]
+        },
+        "valorCoberturaEspacial": {
+          "type": "string"
+        },
+        "granularidadeEspacial": {
+          "type": "string",
+          "enum": [
+            "INVALIDO",
+            "FEDERAL",
+            "ESTADUAL",
+            "MUNICIPAL"
+          ]
+        },
+        "versao": {
+          "type": "string",
+          "minLength": 1
+        },
+        "atualizacaoVersao": {
+          "type": "boolean"
+        },
+        "visibilidade": {
+          "type": "string",
+          "enum": [
+            "INVALIDO",
+            "PUBLICA",
+            "PRIVADA"
+          ]
+        },
+        "descontinuado": {
+          "type": "boolean"
+        },
+        "dataDescontinuacao": {
+          "type": "string",
+          "format": "date"
+        },
+        "reuso": {
+          "type": "boolean"
+        },
+        "recursos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/RecursoApiView"
+          }
+        },
+        "dataUltimaAtualizacaoMetadados": {
+          "type": "string"
+        },
+        "dataUltimaAtualizacaoArquivo": {
+          "type": "string"
+        },
+        "dataCatalogacao": {
+          "type": "string"
+        },
+        "atualizado": {
+          "type": "string"
+        },
+        "dadosRacaEtnia": {
+          "type": "boolean"
+        },
+        "dadosGenero": {
+          "type": "boolean"
+        },
+        "ods": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "observanciaLegal": {
+          "type": "string"
+        },
+        "dadosAbertos": {
+          "type": "string"
+        },
+        "selo": {
+          "type": "string"
+        },
+        "origemCadastro": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "descricao",
+        "emailResponsavel",
+        "licenca",
+        "periodicidade",
+        "responsavel",
+        "tags",
+        "temas",
+        "titulo",
+        "versao",
+        "visibilidade"
+      ]
+    },
+    "RecursoApiView": {
+      "type": "object",
+      "properties": {
+        "dataCatalogacao": {
+          "type": "string"
+        },
+        "dataUltimaAtualizacaoArquivo": {
+          "type": "string"
+        },
+        "link": {
+          "type": "string"
+        },
+        "quantidadeDownloads": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "nomeArquivo": {
+          "type": "string"
+        },
+        "idConjuntoDados": {
+          "type": "string"
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 1000,
+          "minLength": 0
+        },
+        "titulo": {
+          "type": "string"
+        },
+        "formato": {
+          "type": "string"
+        },
+        "tipo": {
+          "type": "string",
+          "enum": [
+            "INVALIDO",
+            "DADOS",
+            "DOCUMENTACAO",
+            "DICIONARIO_DE_DADOS",
+            "API",
+            "OUTRO"
+          ]
+        },
+        "numOrdem": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "tamanho": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "ApiResultadoListaReuso": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nome": {
+          "type": "string"
+        },
+        "autor": {
+          "type": "string"
+        },
+        "organizacao": {
+          "type": "string"
+        },
+        "dataAtualizacao": {
+          "type": "string"
+        },
+        "situacao": {
+          "type": "string"
+        },
+        "privado": {
+          "type": "string"
+        }
+      }
+    },
+    "ApiResultadoListaConjuntoDados": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "nome": {
+          "type": "string"
+        },
+        "catalogacao": {
+          "type": "string"
+        },
+        "nomeOrganizacao": {
+          "type": "string"
+        },
+        "ultimaAlteracaoMetadados": {
+          "type": "string"
+        },
+        "ultimaAtualizacaoDados": {
+          "type": "string"
+        },
+        "isAtualizado": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

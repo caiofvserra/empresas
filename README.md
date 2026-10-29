@@ -1,4 +1,10 @@
-# CREA-SP · Cockpit de gestão empresarial — V14
+# CREA-SP · Inteligência empresarial
+
+A versão do Claude com oito abas laterais (**V18**) está integrada à `main`. Em desenvolvimento, abra **`/painel.html`**; a entrada `/` permanece na V14. `npm run build:painel` gera o HTML autocontido em `entrega/painel-gestao-creasp.html`. Esta integração preserva o histórico e não altera a hospedagem publicada.
+
+O [planejamento de fontes e da próxima arquitetura](planejamento-fontes-2026-10/README.md), pesquisado em 29/10/2026, reúne **104 entradas canônicas, 34 casos de uso, grafos de relações e contexto dos 13 anexos**. Inclui [catálogo Excel](planejamento-fontes-2026-10/inventarios/catalogo-fontes.xlsx), acesso, periodicidade, fórmulas, limites e [revisão crítica da V18](planejamento-fontes-2026-10/REVISAO_REPOSITORIO.md). É planejamento: não configura conectores, acordos ou um novo painel.
+
+## Entrada padrão existente — V14
 
 Protótipo funcional **React + TypeScript + Vite** que especifica um relatório Microsoft Power BI para a gestão das **empresas e relações empresariais do CREA-SP**. A V14 reorganiza o painel em um **cockpit de 5 páginas** voltado à decisão: onde a base cresce ou recua, quanto está em jogo em arrecadação e dívida, onde agir primeiro e como a operação (fiscalização, CAO, ART, cadastro) responde. Também traz **dados públicos reais** (Confea, IBGE, PNCP, Banco Central, Portal da Transparência e Relatório de Gestão 2025 do CREA-SP).
 

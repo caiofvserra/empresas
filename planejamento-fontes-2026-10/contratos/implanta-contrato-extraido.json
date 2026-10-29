@@ -1,0 +1,1035 @@
+{
+  "source": "document.json fornecido pelo usuário",
+  "swagger": "2.0",
+  "title": "API REST do Portal da Transparência",
+  "base_url": "https://crea-sp.implanta.net.br/transparencia/api",
+  "operation_count": 30,
+  "security_declared": false,
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/v1.0/ProcessosComprasServicos",
+      "summary": "Busca as informações dos Processos de Compras cadastrados",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/ProcessoCompraServico"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/Balancete",
+      "summary": "Busca as informações do Balancete Contábil",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Data início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Data término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "validarServico",
+          "in": "query",
+          "description": "Se true, valida a liberação do período antes de retornar os dados",
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Balancete"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/BalancoFinanceiro",
+      "summary": "Busca as informações do Balanço Financeiro",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Data início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Data término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/BalancoFinanceiro"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/BalancoOrcamentario",
+      "summary": "Busca as informações do Balanço Orçamentário",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Data início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Data término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/BalancoOrcamentario"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/BalancoPatrimonial",
+      "summary": "Busca as informações do Balanço Patrimonial",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Data início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Data término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/BalancoPatrimonial"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/ComparativoReceita",
+      "summary": "Busca as informações do Comparativo da Receita",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Data início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Data término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Comparativo"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/ComparativoDespesa",
+      "summary": "Busca as informações do Comparativo da Despesa",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Data início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Data término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Comparativo"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/FluxoCaixa",
+      "summary": "Busca as informações do Fluxo de Caixa",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Data início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Data término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/DFC"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/ExecucaoFinanceira",
+      "summary": "Busca as informações da execução financeira",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Data início de referência. Ex: 01/01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Data término de referência. Ex: 31/12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/ExecucaoFinanceira"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/PlanoDeContas",
+      "summary": "Busca as informações do Plano de contas",
+      "parameters": [
+        {
+          "name": "exercicio",
+          "in": "query",
+          "description": "Ano início do exercício. Ex: 2020",
+          "required": true,
+          "type": "integer",
+          "format": "int32"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/PlanoDeContasEntity"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/VariacoesPatrimoniais",
+      "summary": "Busca as informações das Variações Patrimoniais",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/VariacaoPatrimonial"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/Contratos",
+      "summary": "Busca as informações dos Contratos cadastrados",
+      "parameters": [
+        {
+          "name": "vigenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início da vigência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "vigenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término da vigência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Contrato"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/ContratosAditivos",
+      "summary": "Busca as informações dos Contratos cadastrados",
+      "parameters": [
+        {
+          "name": "vigenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início da vigência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "vigenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término da vigência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Contrato"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/Convenios",
+      "summary": "Busca as informações dos Convênios cadastrados",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Convenio"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/Licitacoes",
+      "summary": "Busca as informações das Licitações cadastrados",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "numeroLicitacao",
+          "in": "query",
+          "description": "Número da Licitação.",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Licitacao"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/RelacaoAquisicoes",
+      "summary": "Busca as informações das Aquisições ou Alienações",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "numeroProcesso",
+          "in": "query",
+          "description": "Número do Processo de Compra.",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "numeroLicitacao",
+          "in": "query",
+          "description": "Número da Licitação.",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/RelacaoAquisicao"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/DemonstrativoEmpenhosPagamentos",
+      "summary": "Busca as informações do Demonstrativo de Empenhos e Pagamentos",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "tipoRelatorio",
+          "in": "query",
+          "description": "Tipo do relatório: OffLine (padrão) ou OnLine",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "validarServico",
+          "in": "query",
+          "description": "Se true, valida a liberação do período antes de retornar os dados",
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/DemonstrativoEmpenhoPagamento"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/DespesasCentroCusto",
+      "summary": "Busca as informações das Despesas mensais por Centro de Custo",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/DespesaMensalCentroCusto"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/Empenhos",
+      "summary": "Busca as informações dos Empenhos cadastrados",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Empenho"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/MovimentacoesFinanceiras",
+      "summary": "Busca as informações das Movimentações Financeiras cadastradas",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/MovimentoFinanceiro"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/Pagamentos",
+      "summary": "Busca as informações dos Pagamentos cadastrados",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Pagamento"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/AtasColegiados",
+      "summary": "Busca as informações das Atas de Colegiados",
+      "parameters": [
+        {
+          "name": "dataInicio",
+          "in": "query",
+          "description": "Data início de referência. Ex: 01/01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "dataTermino",
+          "in": "query",
+          "description": "Data término de referência. Ex: 01/01/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/AtasColegiados"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/Conselheiros",
+      "summary": "Busca as informações do Rol de Mandatários",
+      "parameters": [],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/ConteudosConselheiros"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/PlanosCargosSalarios",
+      "summary": "Busca as informações dos Planos de Cargos e Salários",
+      "parameters": [],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/PlanosCargosSalarios"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/QuadrosPessoas",
+      "summary": "Busca as informações dos Quadros de Pessoas",
+      "parameters": [],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Quadros"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/BensMoveis",
+      "summary": "Busca as informações dos Bens Móveis cadastrados",
+      "parameters": [
+        {
+          "name": "tipoBem",
+          "in": "query",
+          "description": "Tipo do Bem pesquisado.",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/BemMovel"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/BensImoveis",
+      "summary": "Busca as informações dos Bens Imóveis cadastrados",
+      "parameters": [
+        {
+          "name": "tipoBem",
+          "in": "query",
+          "description": "Tipo do Bem pesquisado.",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/BemImovel"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/EstatisticaAcessoModulo",
+      "summary": "Busca as informações da Estatística de Acesso por Módulo",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Mês/Ano início de referência. Ex: 01/2020",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Mês/Ano término de referência. Ex: 12/2020",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/EstatisticaAcessoModulo"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/EstatisticaAnualSolicitacoes",
+      "summary": "Busca as informações da Estatística Anual de Solicitações",
+      "parameters": [
+        {
+          "name": "referenciaInicio",
+          "in": "query",
+          "description": "Ano início de referência. Ex: 2019",
+          "required": true,
+          "type": "integer",
+          "format": "int32"
+        },
+        {
+          "name": "referenciaTermino",
+          "in": "query",
+          "description": "Ano término de referência. Ex: 2020",
+          "required": true,
+          "type": "integer",
+          "format": "int32"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/EstatisticaAnualSolicitacoes"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1.0/RelatoriosUpload",
+      "summary": "Busca as informações do relatório pela última data de Upload",
+      "parameters": [
+        {
+          "name": "nomeRelatorio",
+          "in": "query",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "response_200": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/RelatoriosUpload"
+        }
+      }
+    }
+  ],
+  "schemas_of_interest": {
+    "Contrato": {
+      "type": "object",
+      "properties": {
+        "NUMERO_CONTRATO": {
+          "type": "string"
+        },
+        "NUMERO_LICITACAO": {
+          "type": "string"
+        },
+        "NUMERO_PROCESSO_COMPRA": {
+          "type": "string"
+        },
+        "DATA_PUBLICACAO": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "CONTRATADA": {
+          "type": "string"
+        },
+        "VALOR": {
+          "format": "double",
+          "type": "number"
+        },
+        "CONTRATOS": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "DATA_INICIO_VIGENCIA": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "DATA_FINAL_VIGENCIA": {
+          "format": "date-time",
+          "type": "string"
+        }
+      }
+    },
+    "Licitacao": {
+      "type": "object",
+      "properties": {
+        "NUMERO_LICITACAO": {
+          "type": "string"
+        },
+        "NUMERO_PROCESSO_COMPRA": {
+          "type": "string"
+        },
+        "MODALIDADE": {
+          "type": "string"
+        },
+        "OBJETO": {
+          "type": "string"
+        },
+        "VENCEDOR": {
+          "type": "string"
+        },
+        "ARQUIVO_EDITAL": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ProcessoCompraServico": {
+      "type": "object",
+      "properties": {
+        "NUMERO_PROCESSO": {
+          "type": "string"
+        },
+        "SITUACAO_ATUAL": {
+          "type": "string"
+        },
+        "DATA_CADASTRO": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "NUMERO_PROTOCOLO": {
+          "type": "string"
+        },
+        "UNIDADE_REQUISITANTE": {
+          "type": "string"
+        },
+        "VALOR_TOTAL_PROCESSO": {
+          "format": "double",
+          "type": "number"
+        },
+        "ITENS": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProcessoCompraServicoItem"
+          }
+        },
+        "ORDENS": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProcessoCompraServicoOrdem"
+          }
+        },
+        "OBJETO": {
+          "type": "string"
+        },
+        "JUSTIFICATIVA": {
+          "type": "string"
+        }
+      }
+    },
+    "Convenio": {
+      "type": "object",
+      "properties": {
+        "NUMERO_CONVENIO": {
+          "type": "string"
+        },
+        "OBJETO": {
+          "type": "string"
+        },
+        "VALOR_TOTAL": {
+          "format": "double",
+          "type": "number"
+        },
+        "INICIO_VIGENCIA": {
+          "type": "string"
+        },
+        "TERMINO_VIGENCIA": {
+          "type": "string"
+        },
+        "BENEFICIARIO": {
+          "type": "string"
+        },
+        "MODALIDADE": {
+          "type": "string"
+        }
+      }
+    },
+    "Pagamento": {
+      "type": "object",
+      "properties": {
+        "NUMERO_EMPENHO": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "NUMERO_PAGAMENTO": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "RESTO_A_PAGAR": {
+          "type": "boolean"
+        },
+        "DATA_PAGAMENTO": {
+          "type": "string"
+        },
+        "CONTA_EMPENHO": {
+          "type": "string"
+        },
+        "CONTA_PASSIVO": {
+          "type": "string"
+        },
+        "FAVORECIDO_FOMATADO": {
+          "type": "string"
+        },
+        "HISTORICO": {
+          "type": "string"
+        },
+        "VALOR": {
+          "format": "double",
+          "type": "number"
+        },
+        "VALOR_LIQUIDO": {
+          "format": "double",
+          "type": "number"
+        },
+        "CPF_CNPJ": {
+          "type": "string"
+        },
+        "NOME_RAZAO_SOCIAL": {
+          "type": "string"
+        }
+      }
+    },
+    "MovimentoFinanceiro": {
+      "type": "object",
+      "properties": {
+        "NUMERO": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "DATA": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "TIPO_DOCUMENTO": {
+          "type": "string"
+        },
+        "NUMERO_DOCUMENTO": {
+          "type": "string"
+        },
+        "NOME_FAVORECIDO": {
+          "type": "string"
+        },
+        "VALOR": {
+          "format": "double",
+          "type": "number"
+        },
+        "NOME_CONTA_ORIGEM": {
+          "type": "string"
+        },
+        "NOME_CONTA_DESTINO": {
+          "type": "string"
+        },
+        "ORIGEM": {
+          "type": "string"
+        },
+        "HISTORICO": {
+          "type": "string"
+        }
+      }
+    },
+    "RelatoriosUpload": {
+      "type": "object",
+      "properties": {
+        "TITULO_RELATORIO": {
+          "type": "string"
+        },
+        "PERIODICIDADE": {
+          "type": "string"
+        },
+        "PERIODO_VALOR": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "PERIODO_VALOR_TERMINO": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "DATA_ULTIMO_UPLOAD": {
+          "format": "date-time",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "warning": "Contrato recebido; não comprova disponibilidade/atualização de todos endpoints. Dados do próprio conselho, não de todo mercado de engenharia."
+}

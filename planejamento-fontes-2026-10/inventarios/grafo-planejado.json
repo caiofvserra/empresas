@@ -1,0 +1,597 @@
+{
+  "data": "2026-10-29",
+  "status": "planejamento",
+  "nota": "Nenhum nó é pessoa, empresa ou documento real. Categorias indicam condições de relação futura, não vínculo já implementado.",
+  "nos": [
+    {
+      "id": "empresa",
+      "nome": "Empresa-raiz",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "estabelecimento",
+      "nome": "Estabelecimento / CNPJ completo",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "socio_pj",
+      "nome": "Sócio pessoa jurídica",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "registro",
+      "nome": "Episódio de registro ou visto",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "profissional",
+      "nome": "Profissional / identificação protegida",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "rt",
+      "nome": "Vínculo de responsabilidade técnica",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "art",
+      "nome": "ART e ciclo de vida",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "atividade",
+      "nome": "Atividade técnica / quantidade / unidade",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "cao",
+      "nome": "CAO empresarial",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "cat",
+      "nome": "CAT profissional",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "contrato",
+      "nome": "Contrato e partes com papéis",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "compra",
+      "nome": "Compra / contratação publicada",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "projeto",
+      "nome": "Projeto CIPI / investimento",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "obra",
+      "nome": "Obra / empreendimento / instalação",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "licenca",
+      "nome": "Licença / outorga / autorização",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "cno",
+      "nome": "Obra CNO / responsáveis",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "nomeacao",
+      "nome": "Nomeação judicial / ato",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "processo",
+      "nome": "Processo judicial / referência validada",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "ies_coorte",
+      "nome": "Coorte de IES autorizada",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "emprego_agregado",
+      "nome": "Emprego e salário agregado",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "formacao_agregada",
+      "nome": "Formação agregada",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "economia_agregada",
+      "nome": "Economia / população / crédito agregados",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "territorio",
+      "nome": "Território com papel e vigência",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "classificacao",
+      "nome": "CNAE / CBO / CINE versionados",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "tempo",
+      "nome": "Data do fato / competência / observação",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "titulo",
+      "nome": "Título financeiro empresarial",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "pagamento",
+      "nome": "Pagamento / estorno / alocação",
+      "tipo": "entidade ou dimensão proposta"
+    },
+    {
+      "id": "norma",
+      "nome": "Proposição / norma / etapa / vigência",
+      "tipo": "entidade ou dimensão proposta"
+    }
+  ],
+  "arestas": [
+    {
+      "id": "REL01",
+      "origem": "empresa",
+      "destino": "estabelecimento",
+      "relacao": "possui",
+      "categoria": "documental",
+      "fontes": [
+        "RFB-CNPJ"
+      ],
+      "condicao": "Raiz e CNPJ completo preservados como texto; fotografia e datas.",
+      "limite": "Empresa e estabelecimento não são unidades intercambiáveis.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL02",
+      "origem": "socio_pj",
+      "destino": "empresa",
+      "relacao": "participa conforme QSA",
+      "categoria": "documental",
+      "fontes": [
+        "RFB-QSA"
+      ],
+      "condicao": "Identificação PJ exata e qualificação; data/fotografia.",
+      "limite": "Não prova beneficiário final ou controle nem identifica PF por CPF mascarado.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL03",
+      "origem": "estabelecimento",
+      "destino": "registro",
+      "relacao": "tem registro ou visto",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Chave e episódios reais homologados no SQL Server/Db2.",
+      "limite": "Não pressupor toda filial coberta por um registro de raiz.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL04",
+      "origem": "empresa",
+      "destino": "rt",
+      "relacao": "possui vínculo técnico",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Empresa, profissional e vigência do vínculo.",
+      "limite": "Vínculo técnico não é vínculo societário ou trabalhista automaticamente.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL05",
+      "origem": "profissional",
+      "destino": "rt",
+      "relacao": "ocupa vínculo técnico",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Identidade autorizada, título/atribuição e intervalo.",
+      "limite": "CBO/título acadêmico não substitui atribuição registrada.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL06",
+      "origem": "profissional",
+      "destino": "art",
+      "relacao": "declara responsabilidade",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Número, conselho, autoria e eventos da ART.",
+      "limite": "Baixa/cancelamento/anulação têm semânticas distintas.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL07",
+      "origem": "estabelecimento",
+      "destino": "art",
+      "relacao": "figura como contratada quando informada",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Papel da parte identificado, sem confundir contratante/proprietário.",
+      "limite": "Não inventar empresa para ART profissional sem contratada.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL08",
+      "origem": "art",
+      "destino": "atividade",
+      "relacao": "descreve atividade e quantidade",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Tabela filha de atividades e unidades; rede de ARTs.",
+      "limite": "Somar ARTs complementares pode duplicar empreendimento e valor.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL09",
+      "origem": "art",
+      "destino": "cao",
+      "relacao": "compõe acervo operacional",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Ponte certidão–ART, titular empresa e eventos.",
+      "limite": "Emissão histórica não significa estoque atualmente válido.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL10",
+      "origem": "art",
+      "destino": "cat",
+      "relacao": "compõe acervo técnico profissional",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Ponte certidão–ART e titular profissional.",
+      "limite": "Não somar CAT e CAO como documentos equivalentes.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL11",
+      "origem": "compra",
+      "destino": "contrato",
+      "relacao": "origina ou referencia",
+      "categoria": "documental",
+      "fontes": [
+        "JC01",
+        "JC02"
+      ],
+      "condicao": "Controle PNCP e referências de compra/contrato.",
+      "limite": "Licitação, ata e contrato não são a mesma unidade.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL12",
+      "origem": "estabelecimento",
+      "destino": "contrato",
+      "relacao": "participa com papel fornecedor/subcontratado",
+      "categoria": "documental",
+      "fontes": [
+        "JC02"
+      ],
+      "condicao": "Identificador fornecedor e datas conforme recurso.",
+      "limite": "Endereço do fornecedor não é local da obra.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL13",
+      "origem": "contrato",
+      "destino": "projeto",
+      "relacao": "referencia CIPI",
+      "categoria": "documental condicional",
+      "fontes": [
+        "JC02",
+        "JC11"
+      ],
+      "condicao": "Campo CIPI/referência presente e identidade de projeto validada.",
+      "limite": "Campo nulo não significa projeto inexistente; cobertura não é universal.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL14",
+      "origem": "projeto",
+      "destino": "obra",
+      "relacao": "descreve investimento e localização",
+      "categoria": "documental condicional",
+      "fontes": [
+        "JC11"
+      ],
+      "condicao": "Geometria/IBGE, documentos e fases de execução.",
+      "limite": "Local de órgão não substitui execução; projetos podem ser multiterritoriais.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL15",
+      "origem": "contrato",
+      "destino": "art",
+      "relacao": "possui vínculo documental",
+      "categoria": "documental condicional",
+      "fontes": [
+        "JC02",
+        "JC24"
+      ],
+      "condicao": "Contrato/partes/objeto/local/data e referência validados N:N.",
+      "limite": "ART próxima da data ou da mesma empresa não comprova vínculo.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL16",
+      "origem": "contrato",
+      "destino": "art",
+      "relacao": "sugere correspondência",
+      "categoria": "candidata",
+      "fontes": [
+        "JC02",
+        "JC24"
+      ],
+      "condicao": "Critérios de similaridade e alternativas conservados para revisão.",
+      "limite": "Não entra em vínculo confirmado; similaridade não é probabilidade de infração.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL17",
+      "origem": "cno",
+      "destino": "art",
+      "relacao": "referencia ART",
+      "categoria": "parceria/documental condicional",
+      "fontes": [
+        "RFB-CNO"
+      ],
+      "condicao": "Canal autorizado; ART com origem/formato e confirmação interna.",
+      "limite": "Campo pode estar vazio; RRT é documento de outro conselho.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL18",
+      "origem": "cno",
+      "destino": "estabelecimento",
+      "relacao": "tem responsável PJ com papel",
+      "categoria": "parceria/documental condicional",
+      "fontes": [
+        "RFB-CNO"
+      ],
+      "condicao": "Identificação e tipo de responsabilidade declarados e datas.",
+      "limite": "Responsável tributário/dono não é automaticamente executor ou RT.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL19",
+      "origem": "licenca",
+      "destino": "obra",
+      "relacao": "autoriza ou se refere a empreendimento",
+      "categoria": "documental condicional",
+      "fontes": [
+        "SP-AD",
+        "SP-LIC-IND",
+        "SP-LIC-NAOIND",
+        "SET14"
+      ],
+      "condicao": "Processo/cadastro/instalação e situação; cobertura municipal indicada.",
+      "limite": "Licença não prova execução ou conclusão da obra.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL20",
+      "origem": "obra",
+      "destino": "art",
+      "relacao": "referencia documento técnico",
+      "categoria": "documental condicional",
+      "fontes": [
+        "SET01",
+        "SET05",
+        "RFB-CNO"
+      ],
+      "condicao": "ID empreendimento/contrato/documento e papel confirmados.",
+      "limite": "Proprietário/operador não identifica empresa prestadora de engenharia.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL21",
+      "origem": "obra",
+      "destino": "art",
+      "relacao": "sugere relação espacial/temporal",
+      "categoria": "candidata",
+      "fontes": [
+        "SP-AD",
+        "SP-LIC-IND"
+      ],
+      "condicao": "Local e datas compatíveis, com método e incerteza.",
+      "limite": "Endereço próximo ou nome igual não é chave determinística.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL22",
+      "origem": "nomeacao",
+      "destino": "processo",
+      "relacao": "é ato de processo",
+      "categoria": "parceria/documental condicional",
+      "fontes": [
+        "JC21",
+        "JC22",
+        "JC23"
+      ],
+      "condicao": "Número CNJ/tribunal/unidade/ato e especialidade.",
+      "limite": "Assunto do DataJud não identifica ato de nomeação ou profissão.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL23",
+      "origem": "processo",
+      "destino": "art",
+      "relacao": "é referência judicial declarada",
+      "categoria": "interno/documental condicional",
+      "fontes": [
+        "JC24"
+      ],
+      "condicao": "Campo de referência disponível no banco e normalizado.",
+      "limite": "Modelo normativo não comprova preenchimento; ART múltipla exige linhas filhas.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL24",
+      "origem": "nomeacao",
+      "destino": "profissional",
+      "relacao": "nomeia profissional identificado",
+      "categoria": "parceria/documental condicional",
+      "fontes": [
+        "JC21",
+        "JC22",
+        "JC23"
+      ],
+      "condicao": "Identidade e profissão/especialidade por fonte autorizada.",
+      "limite": "Não inferir necessidade legal de engenheiro só pelo assunto do processo.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL25",
+      "origem": "ies_coorte",
+      "destino": "profissional",
+      "relacao": "observa posterior ingresso no CREA",
+      "categoria": "interno autorizado",
+      "fontes": [],
+      "condicao": "Lista elegível recebida, deduplicação, conclusão e registro posterior; CPF protegido.",
+      "limite": "Taxa só descreve a coorte recebida, não todos os concluintes do INEP.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL26",
+      "origem": "formacao_agregada",
+      "destino": "territorio",
+      "relacao": "contextualiza oferta e conclusão",
+      "categoria": "contexto agregado",
+      "fontes": [
+        "EDU01",
+        "EDU03",
+        "EDU07"
+      ],
+      "condicao": "Município da oferta, modalidade e ano; curso classificado.",
+      "limite": "Local do curso não comprova residência ou emprego; não ligar nominalmente ao CNPJ.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL27",
+      "origem": "emprego_agregado",
+      "destino": "territorio",
+      "relacao": "contextualiza mercado formal",
+      "categoria": "contexto agregado",
+      "fontes": [
+        "LAB01",
+        "LAB02",
+        "LAB03",
+        "LAB04"
+      ],
+      "condicao": "Grão permitido e código municipal/CNAE/CBO versionados.",
+      "limite": "Vínculo de emprego não é pessoa distinta, RT nem registro profissional.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL28",
+      "origem": "economia_agregada",
+      "destino": "territorio",
+      "relacao": "contextualiza escala e cenário",
+      "categoria": "contexto agregado",
+      "fontes": [
+        "IBGE-POP",
+        "IBGE-PIB",
+        "IBGE-CEMPRE",
+        "BCB-SCR"
+      ],
+      "condicao": "Papel territorial e competência verificados no produto.",
+      "limite": "Não atribuir PIB/crédito/população a uma empresa individual.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL29",
+      "origem": "estabelecimento",
+      "destino": "classificacao",
+      "relacao": "declara CNAEs principal/secundários",
+      "categoria": "documental",
+      "fontes": [
+        "RFB-CNPJ",
+        "IBGE-CNAE"
+      ],
+      "condicao": "Código e versão; relação N:N, classe CREA preservada.",
+      "limite": "CNAE não define obrigação ou modalidade profissional automaticamente.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL30",
+      "origem": "emprego_agregado",
+      "destino": "classificacao",
+      "relacao": "usa CNAE/CBO do produto",
+      "categoria": "contexto agregado",
+      "fontes": [
+        "LAB01",
+        "LAB02",
+        "LAB05"
+      ],
+      "condicao": "Códigos/versões e agregação compatíveis.",
+      "limite": "CBO,CNAE e CINE não têm equivalência automática1:1.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL31",
+      "origem": "formacao_agregada",
+      "destino": "classificacao",
+      "relacao": "usa CINE/curso",
+      "categoria": "contexto agregado",
+      "fontes": [
+        "EDU01",
+        "EDU03"
+      ],
+      "condicao": "Curso/IES/CINE e recorte aprovado.",
+      "limite": "Toda CINE07 não equivale ao universo profissional do CREA.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL32",
+      "origem": "empresa",
+      "destino": "titulo",
+      "relacao": "é devedora de obrigação",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Título, natureza, vencimento, devedor e situação jurídica.",
+      "limite": "Adimplência empresarial difere de registro específico; não misturar débito PF.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL33",
+      "origem": "pagamento",
+      "destino": "titulo",
+      "relacao": "liquida ou estorna saldo alocado",
+      "categoria": "interno a confirmar",
+      "fontes": [],
+      "condicao": "Livro de alocações e saldo histórico; principal/encargos separados.",
+      "limite": "Recebimento é fluxo; estoque de dívida não deve ser somado ao longo dos meses.",
+      "status": "tipo de relação planejada; não instância real"
+    },
+    {
+      "id": "REL34",
+      "origem": "norma",
+      "destino": "classificacao",
+      "relacao": "afeta atividade conforme revisão",
+      "categoria": "candidata temática",
+      "fontes": [
+        "LEG-CAMARA",
+        "LEG-SENADO",
+        "LEG-ALESP"
+      ],
+      "condicao": "Tema/texto e etapa validados pela área institucional.",
+      "limite": "Proposição não é norma vigente; palavra-chave não determina efeito jurídico.",
+      "status": "tipo de relação planejada; não instância real"
+    }
+  ]
+}

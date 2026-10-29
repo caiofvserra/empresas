@@ -1,0 +1,1898 @@
+{
+  "metadados": {
+    "nota": "Somente metadados permitidos; sem corpo, amostras, nomes, CPF/CNPJ, credenciais ou cabeçalhos de autenticação. Sem método/data no relatório original permanece não informado. fonte_ids pode conter candidatos por domínio/rota, não prova que cada produto foi testado.200HTML pode ser manutenção/rejeição; consultar ficha do catálogo.",
+    "total_observacoes": 146,
+    "contagem_status": {
+      "200": 118,
+      "503": 15,
+      "403": 7,
+      "sem resposta HTTP registrada": 2,
+      "404": 2,
+      "400": 1,
+      "401": 1
+    }
+  },
+  "observacoes": [
+    {
+      "fonte_ids": [
+        "EDU07"
+      ],
+      "url": "https://dadosabertos.capes.gov.br/api/3/action/datastore_search?resource_id=8afca354-18d5-4b6c-9158-2695fb26ad86&limit=0",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "não informado",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "total": 103000
+      },
+      "proveniencia": "evidence-formacao-trabalho/details.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU04",
+        "LAB03",
+        "LAB04",
+        "SET26"
+      ],
+      "url": "https://repositorio.seade.gov.br/dataset/af336846-0b47-4f5f-bcc3-ac42795784ab/resource/606b5280-b233-439b-b536-2a5d133aa239/download/dicvar_boletim_trimestral.csv",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/details.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU04",
+        "LAB03",
+        "LAB04",
+        "SET26"
+      ],
+      "url": "https://repositorio.seade.gov.br/dataset/69c8e25e-2bd4-4e93-8d39-373027383c1d/resource/cb4131ce-e6db-40b4-9335-dfc7f61355e3/download/dicvariaveis_baseatual.csv",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/details.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU01",
+        "EDU02",
+        "EDU03",
+        "EDU06"
+      ],
+      "url": "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/indicadores-educacionais/indicadores-de-fluxo-da-educacao-superior",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "não informado",
+      "content_type": "text/html;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/details.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU01",
+        "EDU02",
+        "EDU03",
+        "EDU06"
+      ],
+      "url": "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/indicadores-educacionais/indicadores-de-trajetoria-da-educacao-superior/2015-2023",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "não informado",
+      "content_type": "text/html;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/details.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU01",
+        "EDU02",
+        "EDU03",
+        "EDU06"
+      ],
+      "url": "https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/cine-brasil",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "não informado",
+      "content_type": "text/html;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/details.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU06"
+      ],
+      "url": "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/indicadores-educacionais/indicadores-de-qualidade-da-educacao-superior",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "não informado",
+      "content_type": "text/html;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/details.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_continua/Trimestral/Microdados/",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "não informado",
+      "content_type": "text/html;charset=ISO-8859-1",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/details.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU07"
+      ],
+      "url": "https://dadosabertos.capes.gov.br/api/3/action/package_search?q=discentes&rows=3",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU07"
+      ],
+      "url": "https://dadosabertos.capes.gov.br/api/3/action/package_search?q=titulados&rows=2",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/probes.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CNAE",
+        "IBGE-GEO",
+        "LAB06"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v3/agregados/4099/metadados",
+      "status": 503,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/probes.json"
+    },
+    {
+      "fonte_ids": [
+        "LAB06"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v3/agregados/4099/periodos/-1/variaveis/4099?localidades=N3%5B35%5D",
+      "status": 503,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU01"
+      ],
+      "url": "https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2024.zip",
+      "status": 503,
+      "metodo": "HEAD",
+      "verificado_em": "2026-10-29",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/probes.json"
+    },
+    {
+      "fonte_ids": [
+        "LAB05"
+      ],
+      "url": "https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/cbo/servicos/downloads/cbo2002-ocupacao.csv",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/probes.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://dadosabertos.mec.gov.br/images/conteudo/Ind-ensino-superior/2022//PDA_Dados_Cursos_Graduacao_Brasil.csv",
+      "status": 403,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU04",
+        "LAB03",
+        "LAB04",
+        "SET26"
+      ],
+      "url": "https://repositorio.seade.gov.br/api/3/action/package_search?q=emprego&rows=3",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU04",
+        "LAB03",
+        "LAB04",
+        "SET26"
+      ],
+      "url": "https://repositorio.seade.gov.br/api/3/action/package_search?q=superior&rows=3",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU04",
+        "LAB03",
+        "LAB04",
+        "SET26"
+      ],
+      "url": "https://repositorio.seade.gov.br/dataset/cb99a06d-7b66-4e58-bd3f-2a7e52fa8607/resource/f2a5f819-4d52-4d39-b172-404ab792d351/download/matriculas_inep.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/seade-superior-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU04",
+        "LAB03",
+        "LAB04",
+        "SET26"
+      ],
+      "url": "https://repositorio.seade.gov.br/dataset/cb99a06d-7b66-4e58-bd3f-2a7e52fa8607/resource/c12b9696-64cb-4e5e-8747-132979a29be3/download/dicvar_matriculas_inep.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/seade-superior-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU03"
+      ],
+      "url": "https://repositorio.seade.gov.br/dataset/cb99a06d-7b66-4e58-bd3f-2a7e52fa8607/resource/b6abe70a-3cff-41a7-935f-23892d1c02b8/download/cine_inep.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/seade-superior-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU04",
+        "LAB03",
+        "LAB04",
+        "SET26"
+      ],
+      "url": "https://repositorio.seade.gov.br/dataset/cb99a06d-7b66-4e58-bd3f-2a7e52fa8607/resource/ac5716fc-6682-4154-9629-5e89213781af/download/dicvar_cine_inep.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/seade-superior-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU04",
+        "LAB03",
+        "LAB04",
+        "SET26"
+      ],
+      "url": "https://repositorio.seade.gov.br/dataset/cb99a06d-7b66-4e58-bd3f-2a7e52fa8607/resource/c086e0bf-e292-4b7f-a18b-4f0abbeb7719/download/ies_inep.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/seade-superior-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "EDU04",
+        "LAB03",
+        "LAB04",
+        "SET26"
+      ],
+      "url": "https://repositorio.seade.gov.br/dataset/cb99a06d-7b66-4e58-bd3f-2a7e52fa8607/resource/fff4b458-c151-4a71-b941-c4f4e69ff628/download/ies_inep.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidence-formacao-trabalho/seade-superior-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "SET01",
+        "SET02",
+        "SET03"
+      ],
+      "url": "https://dadosabertos.aneel.gov.br/api/3/action/package_search?q=SIGA&rows=3",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:29.942183+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "count_catalogo": 3
+      },
+      "proveniencia": "evidence-setoriais/aneel.json"
+    },
+    {
+      "fonte_ids": [
+        "SET01"
+      ],
+      "url": "https://dadosabertos.aneel.gov.br/api/3/action/datastore_search?resource_id=20ef769f-a072-489d-9df4-c834529f8a78&limit=1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:06.703250+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "registros_amostra": 1
+      },
+      "proveniencia": "evidence-setoriais/aneel_agentes_data.json"
+    },
+    {
+      "fonte_ids": [
+        "SET01",
+        "SET02",
+        "SET03"
+      ],
+      "url": "https://dadosabertos.aneel.gov.br/api/3/action/package_search?q=microgeracao&rows=3",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:30.204834+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "count_catalogo": 2
+      },
+      "proveniencia": "evidence-setoriais/aneel_gd.json"
+    },
+    {
+      "fonte_ids": [
+        "SET01"
+      ],
+      "url": "https://dadosabertos.aneel.gov.br/api/3/action/datastore_search?resource_id=11ec447d-698d-4ab8-977f-b424d5deee6a&limit=1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:06.620492+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "registros_amostra": 1
+      },
+      "proveniencia": "evidence-setoriais/aneel_siga_data.json"
+    },
+    {
+      "fonte_ids": [
+        "SET18",
+        "SET19"
+      ],
+      "url": "https://dadosabertos.anm.gov.br/SCM/",
+      "status": 403,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:06.304779+00:00",
+      "content_type": "text/html",
+      "contagem": "não informado",
+      "proveniencia": "evidence-setoriais/anm_scm_index.json"
+    },
+    {
+      "fonte_ids": [
+        "SET19"
+      ],
+      "url": "https://dadosabertos.anm.gov.br/SIGBM/",
+      "status": 403,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:06.152393+00:00",
+      "content_type": "text/html",
+      "contagem": "não informado",
+      "proveniencia": "evidence-setoriais/anm_sigbm_index.json"
+    },
+    {
+      "fonte_ids": [
+        "SET04"
+      ],
+      "url": "https://revendedoresapi.anp.gov.br/v1/glp?uf=SP&municipio=SAO+PAULO&numeropagina=1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:06.370249+00:00",
+      "content_type": "application/json; charset=utf-8",
+      "contagem": {
+        "registros_amostra": 1
+      },
+      "proveniencia": "evidence-setoriais/anp_glp_data.json"
+    },
+    {
+      "fonte_ids": [
+        "SET04"
+      ],
+      "url": "https://revendedoresapi.anp.gov.br/swagger/v1/swagger.json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:05.761769+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-setoriais/anp_openapi.json"
+    },
+    {
+      "fonte_ids": [
+        "SET08"
+      ],
+      "url": "https://dados.antt.gov.br/api/3/action/package_search?q=rntrc&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:30.421885+00:00",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-setoriais/antt.json"
+    },
+    {
+      "fonte_ids": [
+        "SET08",
+        "SET09"
+      ],
+      "url": "https://dados.antt.gov.br/dataset/registro-nacional-de-transportadores-rodoviarios-de-cargas-rntrc",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:06.087186+00:00",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-setoriais/antt_rntrc_page.json"
+    },
+    {
+      "fonte_ids": [
+        "SET22"
+      ],
+      "url": "https://dadosabertos.bndes.gov.br/api/3/action/package_show?id=operacoes-financiamento",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:30.410351+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-setoriais/bndes.json"
+    },
+    {
+      "fonte_ids": [
+        "SET22"
+      ],
+      "url": "https://dadosabertos.bndes.gov.br/api/3/action/datastore_search?resource_id=6f56b78c-510f-44b6-8274-78a5b7e931f4&limit=1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:07.321031+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "registros_amostra": 1
+      },
+      "proveniencia": "evidence-setoriais/bndes_data.json"
+    },
+    {
+      "fonte_ids": [
+        "SET27"
+      ],
+      "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&request=GetCapabilities",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:06.942103+00:00",
+      "content_type": "application/xml",
+      "contagem": "não informado",
+      "proveniencia": "evidence-setoriais/geo_capabilities.json"
+    },
+    {
+      "fonte_ids": [
+        "SET27"
+      ],
+      "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&request=GetFeature&version=2.0.0&typeNames=geoportal%3Alicenca_industrial&outputFormat=application%2Fjson&count=1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:03.413902+00:00",
+      "content_type": "application/json;charset=UTF-8",
+      "contagem": {
+        "feicoes_amostra": 1
+      },
+      "proveniencia": "evidence-setoriais/geo_licenca_industrial.json"
+    },
+    {
+      "fonte_ids": [
+        "SET27"
+      ],
+      "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&request=GetFeature&version=2.0.0&typeNames=geoportal%3Acontrole_uso_via_publica_geoinfra&outputFormat=application%2Fjson&count=1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:02.882978+00:00",
+      "content_type": "application/json;charset=UTF-8",
+      "contagem": {
+        "feicoes_amostra": 1
+      },
+      "proveniencia": "evidence-setoriais/geoinfra_sample.json"
+    },
+    {
+      "fonte_ids": [
+        "SET13"
+      ],
+      "url": "https://dadosabertos.ibama.gov.br/api/3/action/package_search?q=atividades+potencialmente&rows=5",
+      "status": 403,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:30.077737+00:00",
+      "content_type": "text/plain; charset=UTF-8",
+      "contagem": "não informado",
+      "proveniencia": "evidence-setoriais/ibama.json"
+    },
+    {
+      "fonte_ids": [
+        "SET20"
+      ],
+      "url": "https://dados.agricultura.gov.br/api/3/action/package_show?id=sipeagro",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:30.073719+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidence-setoriais/mapa.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=licenciamento&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:34.618416+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "count_catalogo": 3
+      },
+      "proveniencia": "evidence-setoriais/sp.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=CETESB&rows=20",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:05.030667+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "count_catalogo": 0
+      },
+      "proveniencia": "evidence-setoriais/sp_cetesb.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=PIB&rows=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:06.481935+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "count_catalogo": 1
+      },
+      "proveniencia": "evidence-setoriais/sp_seade.json"
+    },
+    {
+      "fonte_ids": [
+        "SET10",
+        "SET11"
+      ],
+      "url": "https://dados.transportes.gov.br/api/3/action/package_search?q=Institui%C3%A7%C3%B5es+T%C3%A9cnicas+Licenciadas&rows=3",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:31.022024+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "count_catalogo": 1
+      },
+      "proveniencia": "evidence-setoriais/transportes.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-CAPITAL"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/dataset/5afd3cf5-29aa-4c5d-8d7f-7780c77a434f/resource/5a02b880-227d-4e01-b35d-aa2f19bd2025/download/extrato-ad-2026-semestre-1-final.xlsx",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "contagem": {
+        "worksheet_rows": 1925
+      },
+      "proveniencia": "evidencias-catalogo/aprova-digital-2026-header.json"
+    },
+    {
+      "fonte_ids": [
+        "SET01",
+        "SET02",
+        "SET03"
+      ],
+      "url": "https://dadosabertos.aneel.gov.br/api/3/action/package_search?q=geracao&rows=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/fontes-http.json"
+    },
+    {
+      "fonte_ids": [
+        "SET13"
+      ],
+      "url": "https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=pessoas-juridicas-inscritas-no-ctf-app",
+      "status": 403,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/fontes-http.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://dadosabertos.anatel.gov.br/api/3/action/package_list",
+      "status": "sem resposta HTTP registrada",
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/fontes-http.json"
+    },
+    {
+      "fonte_ids": [
+        "SET15"
+      ],
+      "url": "https://dadosabertos.ana.gov.br/",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/fontes-http.json"
+    },
+    {
+      "fonte_ids": [
+        "SET18"
+      ],
+      "url": "https://geo.anm.gov.br/arcgis/rest/services/SIGMINE/dados_anm/MapServer/0?f=pjson",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/plain; charset=UTF-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/fontes-http.json"
+    },
+    {
+      "fonte_ids": [
+        "SET08"
+      ],
+      "url": "https://dados.antt.gov.br/api/3/action/package_search?q=obras&rows=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/fontes-http.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://dados.gov.br/dados/conjuntos-dados/sistema-de-informacoes-geograficas-da-mineracao-sigmine",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/html",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/fontes-http.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://www.institucional.jucesp.sp.gov.br/downloads/dados_abertos/REL_2026-01_PDA-CONSTITUICAO.csv",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/header-checks.json"
+    },
+    {
+      "fonte_ids": [
+        "SP-LIC-IND"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/dataset/16ba3296-b1c4-47e0-8a4f-880f84e99694/resource/dd5c35da-7e35-4c43-a88f-598d4887d8d3/download/licenca_ambiental_industrial_cgm_escazu_v2.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/header-checks.json"
+    },
+    {
+      "fonte_ids": [
+        "SP-LIC-NAOIND"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/dataset/31721078-d9c2-4b6e-ab49-c6b7d8a8a079/resource/195dfeaa-2934-4b6c-bf42-beddb1d80430/download/licenca_ambiental_nao_industrial_cgm_escazu_v2.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/header-checks.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-CAPITAL"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/dataset/5afd3cf5-29aa-4c5d-8d7f-7780c77a434f/resource/5a02b880-227d-4e01-b35d-aa2f19bd2025/download/extrato-ad-2026-semestre-1-final.xlsx",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "contagem": {
+        "worksheet_rows": 1925
+      },
+      "proveniencia": "evidencias-catalogo/header-checks.json"
+    },
+    {
+      "fonte_ids": [
+        "SP-LIC-IND"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/dataset/16ba3296-b1c4-47e0-8a4f-880f84e99694/resource/dd5c35da-7e35-4c43-a88f-598d4887d8d3/download/licenca_ambiental_industrial_cgm_escazu_v2.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/licenca-industrial-header.json"
+    },
+    {
+      "fonte_ids": [
+        "SP-LIC-NAOIND"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/dataset/31721078-d9c2-4b6e-ab49-c6b7d8a8a079/resource/195dfeaa-2934-4b6c-bf42-beddb1d80430/download/licenca_ambiental_nao_industrial_cgm_escazu_v2.csv",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "text/csv",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/licenca-nao-industrial-header.json"
+    },
+    {
+      "fonte_ids": [
+        "SET18"
+      ],
+      "url": "https://geo.anm.gov.br/arcgis/rest/services/SIGMINE/dados_anm/MapServer/0/query?where=UF%3D%27SP%27&outFields=PROCESSO%2CFASE%2CUF&returnGeometry=false&resultRecordCount=1&f=json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "application/json; charset=UTF-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/more-http.json"
+    },
+    {
+      "fonte_ids": [
+        "SET02",
+        "SET03"
+      ],
+      "url": "https://dadosabertos.aneel.gov.br/api/3/action/package_show?id=siga-sistema-de-informacoes-de-geracao-da-aneel",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/more-http.json"
+    },
+    {
+      "fonte_ids": [
+        "SET04"
+      ],
+      "url": "https://revendedoresapi.anp.gov.br/swagger/v1/swagger.json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/more-http.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?rows=1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/more-http.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-CAPITAL"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/api/3/action/package_search?rows=1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "não informado",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-catalogo/more-http.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=engenharia&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 1
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=empresas&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 16
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=JUCESP&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 2
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=CETESB&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 0
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=DETRAN&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 20
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=obras&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 24
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=outorga&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 0
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=licita%C3%A7%C3%B5es&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 13
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=res%C3%ADduos&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 1
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=energia&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 4
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=emprego&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 6
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?q=educa%C3%A7%C3%A3o&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 49
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-CAPITAL"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/api/3/action/package_search?q=alvar%C3%A1&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 3
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-CAPITAL"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/api/3/action/package_search?q=licenciamento&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 22
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-CAPITAL"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/api/3/action/package_search?q=obras&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 33
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-CAPITAL"
+      ],
+      "url": "https://dados.prefeitura.sp.gov.br/api/3/action/package_search?q=edifica%C3%A7%C3%B5es&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:45.049946+00:00",
+      "content_type": "não informado",
+      "contagem": {
+        "count": 2
+      },
+      "proveniencia": "evidencias-catalogo/sp-query-summary.json"
+    },
+    {
+      "fonte_ids": [
+        "LEG-SENADO"
+      ],
+      "url": "https://legis.senado.leg.br/dadosabertos/api-docs/swagger-ui/index.html",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:34.704402+00:00",
+      "content_type": "text/html",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [
+        "LEG-SENADO"
+      ],
+      "url": "https://legis.senado.leg.br/dadosabertos/v3/api-docs/swagger-config",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:34.705045+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://ckan.al.sp.gov.br/api/3/action/package_search?q=proposituras&rows=10",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:34.705655+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [
+        "LEG-ALESP"
+      ],
+      "url": "https://www3.al.sp.gov.br/repositorio/dados-abertos/output/xml/tramitacao-atual.xml",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:34.706065+00:00",
+      "content_type": "application/xml",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://www.institucional.jucesp.sp.gov.br/downloads/dados_abertos/REL_2026-06_PDA-CONSTITUICAO.csv",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:34.706432+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [
+        "RFB-CNPJ",
+        "RFB-QSA"
+      ],
+      "url": "https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/",
+      "status": 404,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:34.707151+00:00",
+      "content_type": "text/html; charset=UTF-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-POP"
+      ],
+      "url": "https://apisidra.ibge.gov.br/values/t/6579/n3/35/v/9324/p/last?formato=json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:35.452887+00:00",
+      "content_type": "application/json; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CNAE",
+        "IBGE-GEO",
+        "LAB06"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/SP/municipios?orderBy=nome",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:36.082931+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [
+        "BCB-IMOB"
+      ],
+      "url": "https://olinda.bcb.gov.br/olinda/servico/MercadoImobiliario/versao/v1/odata/mercadoimobiliario?%24top=1&%24format=json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:36.323891+00:00",
+      "content_type": "application/json;charset=UTF-8;odata.metadata=minimal",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [
+        "BCB-ESTBAN",
+        "BCB-SCR"
+      ],
+      "url": "https://dadosabertos.bcb.gov.br/api/3/action/resource_show?id=b8f105b9-fb9c-49ea-8f45-6d8df20f702a",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:36.375000+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [
+        "BCB-ESTBAN"
+      ],
+      "url": "https://www.bcb.gov.br/estatisticas/estatisticabancariamunicipios",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:36.544540+00:00",
+      "content_type": "text/html",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://www.gov.br/conecta/catalogo/apis/consulta-cnpj",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:36:37.184678+00:00",
+      "content_type": "text/html;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-2.json"
+    },
+    {
+      "fonte_ids": [
+        "LEG-SENADO"
+      ],
+      "url": "https://legis.senado.leg.br/dadosabertos/v3/api-docs",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29T15:37:58.391804+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-3.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CEMPRE",
+        "IBGE-PAIC",
+        "IBGE-PAS",
+        "IBGE-PIB",
+        "IBGE-SINAPI"
+      ],
+      "url": "https://apisidra.ibge.gov.br/desctabapi.aspx?c=9582",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29T15:37:58.392629+00:00",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-3.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CEMPRE",
+        "IBGE-PAIC",
+        "IBGE-PAS",
+        "IBGE-PIB",
+        "IBGE-SINAPI"
+      ],
+      "url": "https://apisidra.ibge.gov.br/desctabapi.aspx?c=5938",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29T15:37:58.393152+00:00",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-3.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CEMPRE",
+        "IBGE-PAIC",
+        "IBGE-PAS",
+        "IBGE-PIB",
+        "IBGE-SINAPI"
+      ],
+      "url": "https://apisidra.ibge.gov.br/desctabapi.aspx?c=10441",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29T15:37:58.393692+00:00",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-3.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CEMPRE",
+        "IBGE-PAIC",
+        "IBGE-PAS",
+        "IBGE-PIB",
+        "IBGE-SINAPI"
+      ],
+      "url": "https://apisidra.ibge.gov.br/desctabapi.aspx?c=2634",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29T15:37:58.394122+00:00",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-3.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CEMPRE",
+        "IBGE-PAIC",
+        "IBGE-PAS",
+        "IBGE-PIB",
+        "IBGE-SINAPI"
+      ],
+      "url": "https://apisidra.ibge.gov.br/desctabapi.aspx?c=2296",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29T15:37:58.394641+00:00",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-3.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://www.bcb.gov.br/pda/desig/scrdata_2026.zip",
+      "status": 200,
+      "metodo": "HEAD",
+      "verificado_em": "2026-10-29T15:37:59.264634+00:00",
+      "content_type": "application/x-zip-compressed",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-3.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://bcadastros.serpro.gov.br/documentacao/cadastro_cno/",
+      "status": 200,
+      "metodo": "GET",
+      "verificado_em": "2026-10-29T15:37:59.379500+00:00",
+      "content_type": "text/html",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root-3.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-GEO"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/35/municipios",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:51.110609+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CNAE"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v2/cnae/subclasses/7112000",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:51.111207+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CNAE",
+        "IBGE-GEO",
+        "LAB06"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v3/agregados/5938/metadados",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:51.111664+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CNAE",
+        "IBGE-GEO",
+        "LAB06"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v3/agregados/5938/periodos/2021/variaveis/37?localidades=N6%5B3550308%5D",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:51.112088+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CNAE",
+        "IBGE-GEO",
+        "LAB06"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v3/agregados/6579/metadados",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:51.112539+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CNAE",
+        "IBGE-GEO",
+        "LAB06"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v3/agregados/9582/metadados",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:51.113019+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "IBGE-CNAE",
+        "IBGE-GEO",
+        "LAB06"
+      ],
+      "url": "https://servicodados.ibge.gov.br/api/v3/agregados/2296/metadados",
+      "status": 503,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:51.113615+00:00",
+      "content_type": "text/plain",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "BCB-SGS"
+      ],
+      "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json&dataInicial=01%2F10%2F2026&dataFinal=20%2F10%2F2026",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:56.335513+00:00",
+      "content_type": "application/json; charset=utf-8",
+      "contagem": {
+        "count": 20
+      },
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "BCB-ESTBAN",
+        "BCB-SCR"
+      ],
+      "url": "https://dadosabertos.bcb.gov.br/api/3/action/package_search?q=SCR.data&rows=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:56.335942+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "count": 3664
+      },
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "BCB-ESTBAN",
+        "BCB-SCR"
+      ],
+      "url": "https://dadosabertos.bcb.gov.br/api/3/action/package_search?q=ESTBAN&rows=5",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:56.336477+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "count": 0
+      },
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "LEG-CAMARA"
+      ],
+      "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?ano=2026&keywords=engenharia&itens=3",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:56.700017+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "LEG-CAMARA"
+      ],
+      "url": "https://dadosabertos.camara.leg.br/api/v2/api-docs",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:56.700260+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "LEG-SENADO"
+      ],
+      "url": "https://legis.senado.leg.br/dadosabertos/api-docs/swagger-config",
+      "status": 404,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:56.700532+00:00",
+      "content_type": "application/problem+json",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "LEG-SENADO"
+      ],
+      "url": "https://legis.senado.leg.br/dadosabertos/legislacao/tiposPublicacao.json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:56.700992+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://www.gov.br/receitafederal/pt-br/assuntos/orientacao-tributaria/cadastros/consultas/dados-publicos-cnpj",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:57.608702+00:00",
+      "content_type": "text/html;charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://www.gov.br/receitafederal/dados/cnpj-metadados.pdf",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:57.681487+00:00",
+      "content_type": "application/pdf",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "RFB-CNPJ",
+        "RFB-QSA"
+      ],
+      "url": "https://arquivos.receitafederal.gov.br/",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:57.905783+00:00",
+      "content_type": "text/html; charset=UTF-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [
+        "CAT-SP"
+      ],
+      "url": "https://dadosabertos.sp.gov.br/api/3/action/package_search?fq=organization%3Ajucesp&rows=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:58.226308+00:00",
+      "content_type": "application/json;charset=utf-8",
+      "contagem": {
+        "count": 2
+      },
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://dadosabertos.des.sp.gov.br/manual",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:58.631168+00:00",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "evidencias-root/http-root.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://crea-sp.implanta.net.br/transparencia/api/v1.0/PlanoDeContas?exercicio=2025",
+      "status": "sem resposta HTTP registrada",
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:38.365375+00:00",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "implanta-testes.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://crea-sp.implanta.net.br/transparencia/api/v1.0/Contratos?vigenciaInicio=2025-01-01&vigenciaTermino=2025-01-31",
+      "status": 400,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:38.365375+00:00",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "implanta-testes.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://crea-sp.implanta.net.br/transparencia/api/v1.0/Contratos?vigenciaInicio=01%2F2025&vigenciaTermino=01%2F2025",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:35:38.365375+00:00",
+      "content_type": "application/json; charset=utf-8",
+      "contagem": {
+        "count": 95
+      },
+      "proveniencia": "implanta-testes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC01",
+        "JC02"
+      ],
+      "url": "https://pncp.gov.br/api/consulta/v1/contratos?dataInicial=20260901&dataFinal=20260901&pagina=1&tamanhoPagina=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:33.676490+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC01"
+      ],
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260901&dataFinal=20260901&codigoModalidadeContratacao=6&uf=SP&pagina=1&tamanhoPagina=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:33.677208+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC02"
+      ],
+      "url": "https://pncp.gov.br/api/consulta/v1/contratos/atualizacao?dataInicial=20260901&dataFinal=20260901&pagina=1&tamanhoPagina=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:33.677769+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC05"
+      ],
+      "url": "https://dadosabertos.compras.gov.br/modulo-servico/6_consultarItemServico?pagina=1&tamanhoPagina=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:33.678292+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC03"
+      ],
+      "url": "https://dadosabertos.compras.gov.br/modulo-contratacoes/1_consultarContratacoes_PNCP_14133?dataPublicacaoPncpInicial=2026-09-01&dataPublicacaoPncpFinal=2026-09-01&codigoModalidade=6&unidadeOrgaoUfSigla=SP&pagina=1&tamanhoPagina=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:33.678693+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC06",
+        "JC07"
+      ],
+      "url": "https://transparencia.tce.sp.gov.br/api/json/despesas/balsamo/2015/1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:34.938771+00:00",
+      "content_type": "application/json",
+      "contagem": {
+        "rows": 1342
+      },
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC06"
+      ],
+      "url": "https://transparencia.tce.sp.gov.br/api/json/despesas/balsamo/2026/1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:35.229994+00:00",
+      "content_type": "application/json",
+      "contagem": {
+        "rows": 1446
+      },
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC08"
+      ],
+      "url": "https://audesp.tce.sp.gov.br/api/swagger-initializer.js",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:35.301812+00:00",
+      "content_type": "application/javascript",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC11"
+      ],
+      "url": "https://api-publica.obrasgov.gestao.gov.br/obras/openapi.json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:35.806332+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC12",
+        "JC13",
+        "JC14",
+        "JC15"
+      ],
+      "url": "https://api-publica.transferegov.gestao.gov.br/",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:36.816351+00:00",
+      "content_type": "text/html",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://datajud-wiki.cnj.jus.br/api-publica/glossario/",
+      "status": 403,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:37.045283+00:00",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://datajud-wiki.cnj.jus.br/api-publica/acesso/",
+      "status": 403,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:37.239959+00:00",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC06",
+        "JC07"
+      ],
+      "url": "https://transparencia.tce.sp.gov.br/conjunto-de-dados",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:37.477142+00:00",
+      "content_type": "text/html; charset=UTF-8",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [],
+      "url": "https://www.tjsp.jus.br/AuxiliaresDaJustica/ConsultaPublica",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:33:37.699864+00:00",
+      "content_type": "text/html; charset=utf-8",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes.json"
+    },
+    {
+      "fonte_ids": [
+        "JC11"
+      ],
+      "url": "https://api-publica.obrasgov.gestao.gov.br/obras/projeto-investimento?uf_principal=SP&pagina=1&tamanho_da_pagina=1",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:46.300346+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC11"
+      ],
+      "url": "https://api-publica.obrasgov.gestao.gov.br/obras/data-atualizacao",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:46.300948+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC08"
+      ],
+      "url": "https://audesp.tce.sp.gov.br/api/audesp.yaml",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:46.301485+00:00",
+      "content_type": "text/plain; charset=UTF-8",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC22"
+      ],
+      "url": "https://aj.sigeo.jt.jus.br/aj2/internetaberto/profissionais.jsf",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:46.302773+00:00",
+      "content_type": "text/html;charset=UTF-8",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC22"
+      ],
+      "url": "https://aj.sigeo.jt.jus.br/aj2/internetaberto/consultapublicanomeacoes.jsf",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:46.303454+00:00",
+      "content_type": "text/html;charset=UTF-8",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC04"
+      ],
+      "url": "https://dadosabertos.compras.gov.br/modulo-fornecedor/1_consultarFornecedor?ativo=true&codigoCnae=7112000&pagina=1&tamanhoPagina=10",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:47.185823+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC17"
+      ],
+      "url": "https://api.portaldatransparencia.gov.br/api-de-dados/ceis?pagina=1",
+      "status": 401,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:47.222821+00:00",
+      "content_type": "não informado",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC12"
+      ],
+      "url": "https://api-publica.transferegov.gestao.gov.br/discricionarias/openapi.json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:47.501679+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC13"
+      ],
+      "url": "https://api-publica.transferegov.gestao.gov.br/especiais/openapi.json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:47.930174+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC14"
+      ],
+      "url": "https://api-publica.transferegov.gestao.gov.br/parcerias/openapi.json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:48.047528+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    },
+    {
+      "fonte_ids": [
+        "JC15"
+      ],
+      "url": "https://api-publica.transferegov.gestao.gov.br/fundoafundo/openapi.json",
+      "status": 200,
+      "metodo": "não informado",
+      "verificado_em": "2026-10-29T15:34:48.462131+00:00",
+      "content_type": "application/json",
+      "contagem": "não informado",
+      "proveniencia": "justica-compras-evidencias/http-probes2.json"
+    }
+  ]
+}

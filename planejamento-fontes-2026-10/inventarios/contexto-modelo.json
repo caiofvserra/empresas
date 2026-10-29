@@ -1,0 +1,606 @@
+{
+  "data_revisao": "2026-10-29",
+  "escopo": "planejamento; não conectado aos bancos corporativos",
+  "documentos": [
+    {
+      "nome": "Fiscalização do Crea-SP – Crea-SP.html",
+      "sha256": "e0c18019d520119ae5abb40f1491ffee9b4725b7d3f9bd0ab11b43210cc9777d",
+      "bytes": 1003177,
+      "paginas": null,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "5194-66.pdf",
+      "sha256": "d51d0694092e05698caa5e271583d6e54eb48989a8bb9df401cad153f750079f",
+      "bytes": 148467,
+      "paginas": 15,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "CONFEA _ Conselho Federal de Engenharia e Agronomia.pdf",
+      "sha256": "bc6b31757bdd04b8e3faff8c675d7364a8a6a3646cba478571cb8b9352a1d714",
+      "bytes": 457892,
+      "paginas": 25,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "Serviços – Crea-SP.pdf",
+      "sha256": "1dae12aa3ca5fb5bf69e2e8f753791f3aee6d7197c3c846ba4d15a0b7cdcba77",
+      "bytes": 912789,
+      "paginas": 41,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "6496-77.pdf",
+      "sha256": "beee30ebbaa444d05d49e9621ab3f9702d51f3ef4eff6fc64b032f801771b79f",
+      "bytes": 97280,
+      "paginas": 3,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "ORGANOGRAMA MARCO 2026 -2 (1).pdf",
+      "sha256": "61ccf6725aed500cae9fbfad5448405835ab86da7b3c38e5aa694df94fc1594b",
+      "bytes": 822315,
+      "paginas": 41,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "document.json",
+      "sha256": "f0994fa52b66aa45b9b136e82dde8f5e91fd2539811f07ede84930ead8c65496",
+      "bytes": 80108,
+      "paginas": null,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "Anexos_Resolucao 1160-2025.pdf",
+      "sha256": "4fd1931b7e164ea92e1ba63abc7a12b8f6c81023133aa0fc67724531584202cd",
+      "bytes": 3928041,
+      "paginas": 20,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "Lista_Cnaes_Crea_SP_rev_mar_2025.pdf",
+      "sha256": "26511d07c197f55a1ba550174425169d8a30981d0a4bee201b1d5935e12e45ba",
+      "bytes": 323125,
+      "paginas": 10,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "1002-02.pdf",
+      "sha256": "be5292da037172a5cd0d18b459ba912d07774787462413df8900bca4f42fbb85",
+      "bytes": 137585,
+      "paginas": 9,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "Mapa do Site _ Portal da Transparência _ CREA_SP.pdf",
+      "sha256": "ce98ec163b72f282576b0ac67fd69d3c757968d0954aa5812a07f45d1e0cd678",
+      "bytes": 163772,
+      "paginas": 1,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "Mapa do Site – Crea-SP.pdf",
+      "sha256": "1843e133d9bfd2962ad1080f2da55918ca0b80ccf3a0deca445fa5aea6952e5f",
+      "bytes": 421140,
+      "paginas": 11,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    },
+    {
+      "nome": "1002-02 (1).pdf",
+      "sha256": "bf1bfcc84e20ec05813212e0b7c6489399cb36260bdcbc387d5528d891de7bc1",
+      "bytes": 70982,
+      "paginas": 7,
+      "uso": "contexto e dicionário, não fonte produtiva de atualização"
+    }
+  ],
+  "entidades": [
+    {
+      "id": "empresa",
+      "grao": "pessoa jurídica/raiz CNPJ",
+      "evidencia": "Lei5.194pp11–12; Serviçospp20–24",
+      "campos_para_mapear": [
+        "id_empresa",
+        "cnpj_raiz",
+        "razao_social",
+        "natureza_juridica",
+        "valid_from",
+        "valid_to"
+      ],
+      "limite": "comprovação documental do conceito; schema e disponibilidade não conferidos"
+    },
+    {
+      "id": "estabelecimento",
+      "grao": "CNPJ completo",
+      "evidencia": "Serviçospp20–21; modeloARTpp2–5",
+      "campos_para_mapear": [
+        "id_estabelecimento",
+        "id_empresa",
+        "cnpj_completo",
+        "matriz_filial",
+        "municipio_ibge",
+        "endereco",
+        "valid_from",
+        "valid_to"
+      ],
+      "limite": "proposta de modelagem; não foi confirmado que cadastro CREA distingue todos estabelecimentos"
+    },
+    {
+      "id": "estabelecimento_cnae",
+      "grao": "CNPJ+CNAE+tipo+vigência",
+      "evidencia": "ListaCNAEpp1–10; Serviços p21",
+      "campos_para_mapear": [
+        "id_estabelecimento",
+        "cnae",
+        "principal_secundario",
+        "valid_from",
+        "valid_to"
+      ],
+      "limite": "classificação lista fornecida identificada; vigência empresarial ainda depende de snapshots"
+    },
+    {
+      "id": "regra_cnae",
+      "grao": "subclasse+versão da lista",
+      "evidencia": "ListaCNAEmar2025",
+      "campos_para_mapear": [
+        "cnae",
+        "descricao",
+        "classe_original",
+        "classe_normalizada",
+        "versao_lista",
+        "pagina_fonte",
+        "regra_validada"
+      ],
+      "limite": "702 subclasses;638Sim/sim;64Passíveldeobrigação; não decisão automática"
+    },
+    {
+      "id": "registro_empresa",
+      "grao": "registro/visto+vigência",
+      "evidencia": "Lei5.194pp11–12; Serviçospp20–21",
+      "campos_para_mapear": [
+        "id_registro",
+        "id_empresa",
+        "id_estabelecimento",
+        "tipo_registro_visto",
+        "situacao",
+        "inicio",
+        "fim"
+      ],
+      "limite": "conceito documentado; unidade de registro e cardinalidades locais a confirmar"
+    },
+    {
+      "id": "movimentacao_registro",
+      "grao": "evento de registro",
+      "evidencia": "Serviçospp20–21",
+      "campos_para_mapear": [
+        "id_evento",
+        "id_registro",
+        "tipo",
+        "data_efeito",
+        "data_lancamento"
+      ],
+      "limite": "documentação de serviços não confirma tabela histórica completa"
+    },
+    {
+      "id": "profissional",
+      "grao": "profissional distinto",
+      "evidencia": "Anexos1160p1",
+      "campos_para_mapear": [
+        "id_profissional",
+        "rnp",
+        "registro_regional",
+        "modalidade",
+        "titulo",
+        "situacao"
+      ],
+      "limite": "documentado; CPF restrito não exportar publicamente"
+    },
+    {
+      "id": "atribuicao",
+      "grao": "profissional+atribuição+vigência",
+      "evidencia": "CartaServiçospp12–13",
+      "campos_para_mapear": [
+        "id_profissional",
+        "codigo_atribuicao",
+        "modalidade",
+        "inicio",
+        "fim",
+        "fundamento"
+      ],
+      "limite": "atribuição não dedutível apenas de curso/CBO"
+    },
+    {
+      "id": "vinculo_tecnico",
+      "grao": "profissional+empresa+período",
+      "evidencia": "Res1137pp15–16;Anexos1160p12",
+      "campos_para_mapear": [
+        "id_vinculo",
+        "id_profissional",
+        "id_empresa",
+        "tipo",
+        "cargo_funcao",
+        "inicio",
+        "fim",
+        "id_art_cargo"
+      ],
+      "limite": "cada profissional pode ter múltiplos vínculos; vínculo societário e emprego são fatos diferentes"
+    },
+    {
+      "id": "art",
+      "grao": "ART distinta com versões/eventos",
+      "evidencia": "Lei6496p1;Anexos1160pp1–12",
+      "campos_para_mapear": [
+        "numero_art",
+        "versao",
+        "tipo",
+        "forma_registro",
+        "participacao",
+        "id_profissional",
+        "id_empresa_contratada",
+        "contratante_id",
+        "proprietario_id",
+        "inicio_previsto",
+        "termino_previsto",
+        "valor_declarado",
+        "situacao"
+      ],
+      "limite": "campos de modelo; preenchimento atual não verificado; não somar valores vinculados indiscriminadamente"
+    },
+    {
+      "id": "art_atividade",
+      "grao": "ART+item atividade",
+      "evidencia": "Anexos1160p1",
+      "campos_para_mapear": [
+        "numero_art",
+        "item",
+        "atividade_profissional",
+        "obra_servico",
+        "complemento",
+        "quantidade",
+        "unidade"
+      ],
+      "limite": "tabela filha necessária; códigos versionados"
+    },
+    {
+      "id": "art_vinculacao",
+      "grao": "ART origem+ART destino+relação",
+      "evidencia": "Res1137pp5–6;alterações1160arts2–3",
+      "campos_para_mapear": [
+        "art_origem",
+        "art_destino",
+        "tipo_relacao",
+        "inicio",
+        "fim"
+      ],
+      "limite": "rede de responsabilidade documentada; não criar ligação apenas por mesmo CNPJ"
+    },
+    {
+      "id": "obra_servico",
+      "grao": "empreendimento/local de execução",
+      "evidencia": "Anexos1160p1",
+      "campos_para_mapear": [
+        "id_empreendimento",
+        "codigo_obra_publica",
+        "municipio_ibge",
+        "endereco",
+        "coordenadas",
+        "finalidade",
+        "data_inicio",
+        "data_fim"
+      ],
+      "limite": "código/coordenadas opcionais; local de execução pode diferir da sede do fornecedor"
+    },
+    {
+      "id": "processo_destinatario_art",
+      "grao": "ART+item processo",
+      "evidencia": "Anexos1160p1,pp4–5,9–11",
+      "campos_para_mapear": [
+        "numero_art",
+        "item",
+        "numero_processo_original",
+        "numero_processo_cnj",
+        "orgao_destinatario",
+        "cpf_cnpj_destinatario",
+        "valor_honorario_declarado",
+        "data"
+      ],
+      "limite": "novo modelo não comprova implementação local; processo pode ser referência não-CNJ; ART múltipla exige itens"
+    },
+    {
+      "id": "contrato_art",
+      "grao": "ART+contrato declarado",
+      "evidencia": "Anexos1160p1,pp2–3,18–19",
+      "campos_para_mapear": [
+        "numero_art",
+        "numero_contrato",
+        "orgao_contratante",
+        "cnpj_contratante",
+        "cnpj_contratada",
+        "data_celebracao",
+        "valor_declarado"
+      ],
+      "limite": "ponte comPNCP depende validação documental; texto aproximado apenas sugestão"
+    },
+    {
+      "id": "cao",
+      "grao": "certidão PJ+emissão",
+      "evidencia": "Res1137pp18–19;Anexos1160pp19–20",
+      "campos_para_mapear": [
+        "id_cao",
+        "id_empresa",
+        "data_emissao",
+        "situacao",
+        "valid_from",
+        "valid_to",
+        "autenticacao"
+      ],
+      "limite": "certidão daempresa; emissão histórica não equivale estoque atual válido"
+    },
+    {
+      "id": "cao_art",
+      "grao": "CAO+ART",
+      "evidencia": "Res1137art55;Anexos1160p19",
+      "campos_para_mapear": [
+        "id_cao",
+        "numero_art"
+      ],
+      "limite": "ponte explícita exigida para acervo operacional"
+    },
+    {
+      "id": "cat",
+      "grao": "certidão profissional+emissão",
+      "evidencia": "Res1137pp16–17;Anexos1160pp13–15",
+      "campos_para_mapear": [
+        "id_cat",
+        "id_profissional",
+        "data_emissao",
+        "situacao",
+        "numero_controle"
+      ],
+      "limite": "não confundir comCAO"
+    },
+    {
+      "id": "fiscalizacao_evidencia",
+      "grao": "evidência/caso/origem",
+      "evidencia": "HTMLFiscalização;Serviçospp27,36",
+      "campos_para_mapear": [
+        "id_evidencia",
+        "fonte",
+        "id_origem",
+        "data",
+        "pessoa_id",
+        "local",
+        "atividade",
+        "validacao"
+      ],
+      "limite": "modelo proposto para cruzamento digital; sem juízo automático de infração"
+    },
+    {
+      "id": "auto_processo_decisao",
+      "grao": "auto/decisão/evento distintos",
+      "evidencia": "Lei5194pp13–14;HTMLFiscalização",
+      "campos_para_mapear": [
+        "id_auto",
+        "id_processo",
+        "pessoa_id",
+        "enquadramento",
+        "data",
+        "instancia",
+        "situacao",
+        "data_transito",
+        "regularizacao"
+      ],
+      "limite": "não confundir auto lavrado com decisão definitiva ou multa exigível"
+    },
+    {
+      "id": "titulo_financeiro",
+      "grao": "título/obrigação PJ",
+      "evidencia": "CartaServiçospp25–27;HTMLFiscalização",
+      "campos_para_mapear": [
+        "id_titulo",
+        "id_empresa",
+        "natureza",
+        "competencia",
+        "vencimento",
+        "principal",
+        "situacao_juridica"
+      ],
+      "limite": "schema privado a confirmar; não usar API de saídas institucionais como receitaPJ"
+    },
+    {
+      "id": "pagamento_titulo",
+      "grao": "liquidação/alocação por título",
+      "evidencia": "CartaServiçospp25–27",
+      "campos_para_mapear": [
+        "id_pagamento",
+        "id_titulo",
+        "data",
+        "valor_centavos",
+        "estorno"
+      ],
+      "limite": "pagamento efetivo é fluxo; saldo é estoque; controlar parcelas/estornos"
+    },
+    {
+      "id": "ies_curso",
+      "grao": "IES+curso+versão curricular",
+      "evidencia": "CartaServiçospp29–30",
+      "campos_para_mapear": [
+        "id_ies",
+        "cnpj_ies",
+        "codigo_inep_ies",
+        "id_curso",
+        "codigo_inep_curso",
+        "codigo_cine",
+        "curriculo_versao"
+      ],
+      "limite": "ponte INEP/e-MEC a validar; não inferir habilitação de curso somente por nome"
+    },
+    {
+      "id": "lista_formandos",
+      "grao": "IES+curso+turma+protocolo",
+      "evidencia": "CartaServiçosp30;serviçooficiallistaformandos",
+      "campos_para_mapear": [
+        "id_lista",
+        "id_ies",
+        "id_curso",
+        "turma",
+        "data_envio",
+        "id_protocolo",
+        "cpf_restrito",
+        "data_conclusao"
+      ],
+      "limite": "documentado conteúdo nominal interno; não republicar CPF; denominador cobre apenas listas recebidas"
+    },
+    {
+      "id": "protocolo",
+      "grao": "solicitação/objeto de negócio",
+      "evidencia": "CartaServiços;organogramap5",
+      "campos_para_mapear": [
+        "id_protocolo",
+        "servico",
+        "subtipo",
+        "solicitante_id",
+        "data_abertura",
+        "data_conclusao",
+        "status",
+        "objeto_id"
+      ],
+      "limite": "protocolo não equivale empresa/registro; pode ter exigências e reabertura"
+    },
+    {
+      "id": "territorio_gre",
+      "grao": "município+GRE+vigência",
+      "evidencia": "Organogramap12",
+      "campos_para_mapear": [
+        "municipio_ibge",
+        "gre",
+        "inicio",
+        "fim"
+      ],
+      "limite": "organograma só confirma sedes e estrutura; obter tabela oficial de abrangência"
+    },
+    {
+      "id": "contrato_conselho",
+      "grao": "contrato de compra do CREA-SP",
+      "evidencia": "Swaggerdocument.json e GET200",
+      "campos_para_mapear": [
+        "NUMERO_CONTRATO",
+        "NUMERO_LICITACAO",
+        "NUMERO_PROCESSO_COMPRA",
+        "DATA_PUBLICACAO",
+        "CONTRATADA",
+        "VALOR",
+        "DATA_INICIO_VIGENCIA",
+        "DATA_FINAL_VIGENCIA"
+      ],
+      "limite": "retorno real testado; sem CNPJ separado no schema Contrato; separar mercado dos gastos institucionais"
+    }
+  ],
+  "relacoes": [
+    {
+      "origem": "empresa",
+      "destino": "estabelecimento",
+      "cardinalidade": "1:N",
+      "status": "proposta a confirmar"
+    },
+    {
+      "origem": "estabelecimento",
+      "destino": "estabelecimento_cnae",
+      "cardinalidade": "1:N",
+      "status": "proposta a confirmar"
+    },
+    {
+      "origem": "empresa",
+      "destino": "registro_empresa",
+      "cardinalidade": "1:N",
+      "status": "vigência e visto local a confirmar"
+    },
+    {
+      "origem": "empresa",
+      "destino": "vinculo_tecnico",
+      "cardinalidade": "1:N",
+      "status": "conceito documentado"
+    },
+    {
+      "origem": "profissional",
+      "destino": "vinculo_tecnico",
+      "cardinalidade": "1:N",
+      "status": "conceito documentado"
+    },
+    {
+      "origem": "profissional",
+      "destino": "art",
+      "cardinalidade": "1:N",
+      "status": "conceito documentado"
+    },
+    {
+      "origem": "empresa",
+      "destino": "art",
+      "cardinalidade": "1:N opcional",
+      "status": "somente quando consta empresa contratada"
+    },
+    {
+      "origem": "art",
+      "destino": "art_atividade",
+      "cardinalidade": "1:N",
+      "status": "conceito documentado"
+    },
+    {
+      "origem": "art",
+      "destino": "processo_destinatario_art",
+      "cardinalidade": "1:N",
+      "status": "modelo individual/múltiplo, implementação desconhecida"
+    },
+    {
+      "origem": "art",
+      "destino": "contrato_art",
+      "cardinalidade": "N:M possível",
+      "status": "relacionamento documental, não apenas CNPJ"
+    },
+    {
+      "origem": "empresa",
+      "destino": "cao",
+      "cardinalidade": "1:N",
+      "status": "conceito documentado"
+    },
+    {
+      "origem": "cao",
+      "destino": "cao_art",
+      "cardinalidade": "1:N",
+      "status": "conceito documentado"
+    },
+    {
+      "origem": "profissional",
+      "destino": "cat",
+      "cardinalidade": "1:N",
+      "status": "conceito documentado"
+    },
+    {
+      "origem": "ies_curso",
+      "destino": "lista_formandos",
+      "cardinalidade": "1:N",
+      "status": "fluxo documentado, IDs a confirmar"
+    },
+    {
+      "origem": "empresa",
+      "destino": "titulo_financeiro",
+      "cardinalidade": "1:N",
+      "status": "proposta a confirmar"
+    },
+    {
+      "origem": "titulo_financeiro",
+      "destino": "pagamento_titulo",
+      "cardinalidade": "1:N ou N:M por alocação",
+      "status": "proposta a confirmar"
+    }
+  ],
+  "normativos_oficiais": [
+    "https://www.planalto.gov.br/ccivil_03/leis/l5194.htm",
+    "https://www.planalto.gov.br/ccivil_03/leis/l6496.htm",
+    "https://www.planalto.gov.br/ccivil_03/leis/l6839.htm",
+    "https://normativos.confea.org.br/Ementas/Visualizar?id=542",
+    "https://normativos.confea.org.br/Ementas/Visualizar?id=76099",
+    "https://normativos.confea.org.br/Ementas/Visualizar?id=83001"
+  ],
+  "governanca": "Responsável por validação é proposta; não ownership inferido do organograma. Informações de pessoas, financeiro, denúncias e processos exigem controle de acesso. Este arquivo não contém registros pessoais reais."
+}

@@ -1,0 +1,102 @@
+# Contexto do CREA-SP extraído dos 13 anexos
+
+Revisão: 29/10/2026. Escopo: planejamento de integrações e modelo analítico, sem acesso ao SQL Server/Db2. As páginas indicadas são as páginas físicas dos PDFs, contadas desde 1. Os arquivos fornecidos são evidência documental; a presença de um campo em um formulário **não comprova** que ele esteja preenchido, normalizado ou disponível no banco atual. Não se recomenda usar os PDFs ou o HTML como fonte de atualização do BI.
+
+## Achados que mudam o planejamento
+
+1. O CREA-SP tem um ecossistema de **obras, serviços, vínculos, documentos e instituições**, além do cadastro de pessoas jurídicas. A ART liga profissional, empresa contratada quando houver, contratante/destinatário, contrato/processo, atividade, local e período. O desenho deve aproveitar essas relações e não apenas comparar o CNAE de dois cadastros.
+2. Os modelos da Resolução 1.160/2025 incluem **dados do processo e destinatário do serviço**, inclusive nomeação judicial. É uma ponte concreta para estudar perícias: ART interna → número do processo e órgão → nomeação/ato do tribunal. A chave precisa existir no banco e ser validada; classe processual ou assunto do DataJud, isoladamente, não identifica a profissão do perito.
+3. A Carta de Serviços documenta **envio de listas de formandos pelas IES**, com nome, CPF e curso. Existe oportunidade de usar internamente coortes autorizadas de concluintes para medir ingresso no CREA; não é preciso presumir que o INEP disponibilize CPF de graduados. A publicação deve ser agregada.
+4. A lista de CNAEs fornecida contém **702 subclasses distintas**: 638 rotuladas `Sim`/`sim` e 64 `Passível de obrigação`. A classe original deve ser preservada e versionada. Ela é insumo de triagem, não sentença automática sobre obrigação ou infração.
+5. `document.json` é um **Swagger 2.0 do Portal da Transparência do CREA-SP**, não uma base de empresas. Possui 30 operações GET. Uma consulta real de contratos retornou HTTP 200/JSON; é possível planejar ingestão da transparência do próprio conselho separada do universo das empresas fiscalizadas.
+6. O organograma de março/2026 mostra uma **Unidade de Inteligência de Dados e Informações Estratégicas (UDE)**, a **Equipe de Desenvolvimento e Administração de Dados (EDAD)** e a estrutura SUPFIS/GPF/UPF/UPI/14 GREs. São interlocutores para validação e acesso; o desenho não deve transformar o organograma em dezenas de páginas.
+
+## Leitura por anexo
+
+| Arquivo | Páginas / natureza | O que informa | Consequência analítica e cuidado |
+|---|---|---|---|
+| `1002-02.pdf` | 9 páginas. Resolução 1.002, de 26/11/2002, mais Código de Ética | Ato de adoção nas pp. 1–2; estrutura p. 3; código pp. 4–9. Dever de sigilo e precisão das informações p. 6; condutas relativas a salários/honorários p. 8 | Ética e proteção da informação são regras de governança. Não é uma base de profissionais ou de processos disciplinares. Não inferir infração por salário médio de uma CBO |
+| `1002-02 (1).pdf` | 7 páginas. Versão diagramada do mesmo Código de Ética | Estrutura p. 1; corpo do código pp. 2–7. Não inclui as duas páginas iniciais do ato de adoção existentes no outro arquivo | Não tratar como segunda norma ou duplicar obrigações; manter uma referência normativa e registrar as duas apresentações |
+| `5194-66.pdf` | 15 páginas. Lei 5.194/1966 em reprodução histórica | Atividades e exercício profissional pp. 1–3; atribuições do conselho e câmaras pp. 7–10; registro profissional/empresa e visto pp. 11–12; penalidades e multas pp. 13–14 | Distinguir pessoa, pessoa jurídica, registro, visto e vínculo. Situação cadastral, fato fiscalizável, autuação, decisão, multa e pagamento são entidades/eventos diferentes. Reprodução histórica não substitui texto consolidado vigente |
+| `6496-77.pdf` | 3 páginas. Lei 6.496/1977 | ART para contratos de obras/serviços e definição de responsáveis, arts. 1º–3º na p. 1; restante majoritariamente Mútua | Contrato e ART não são a mesma unidade. ART é elemento de responsabilidade técnica; não equivale a nota fiscal, receita realizada ou comprovação automática de execução |
+| `CONFEA _ Conselho Federal de Engenharia e Agronomia.pdf` | 25 páginas. Página do normativo da Resolução 1.137/2023 com alterações no texto | ART: dados, tipos, vínculos e ciclo de vida pp. 2–15; acervo profissional/CAT pp. 16–17; CAO pp. 18–19; atestados pp. 19–21; integração e adaptação de sistemas pp. 22–24 | Separar ART inicial/complementar/substituição, ART baixada/cancelada/anulada e rede de responsabilidades. CAO pertence à empresa; CAT ao profissional. Eventos de emissão e estoque atualmente válido exigem medidas diferentes |
+| `Anexos_Resolucao 1160-2025.pdf` | 20 páginas. Modelos e dados da ART/CAT/CAO | Dicionário de dados p. 1; ART de obra/serviço pp. 2–3; modelo A.1 com processo pp. 4–5; múltipla pp. 6–8; múltipla B.1/processos pp. 9–11; cargo/função p. 12; CAT pp. 13–15; requerimentos pp. 16–17; atestado p. 18; CAO p. 19 e requerimento p. 20 | Grande potencial de ligação com PNCP, obras e perícias. Há cabeçalhos de modelo com `XXXX/20XX` e referência `1123/2023` em páginas do PDF; não interpretar esses rótulos como uma nova norma. A resolução oficial 1.160 determina substituir os anexos da 1.137. Confirmar implementação dos novos campos no sistema local |
+| `document.json` | JSON Swagger 2.0, 30 operações | Host `crea-sp.implanta.net.br`, base `/transparencia/api`. Contabilidade, compras, contratos, pagamentos, convênios e alguns dados institucionais | Fonte técnica de API para transparência do próprio conselho. Não fornece endpoint de universo de empresas registradas, RT, ART ou CAO neste contrato. Disponibilidade e data de atualização exigem validação por endpoint |
+| `Mapa do Site _ Portal da Transparência _ CREA_SP.pdf` | 1 página. Recorte de navegação | Competência legal, câmaras, estrutura, auditorias, prestação de contas, convênios, repasses, receitas/despesas | É apenas a parte capturada do mapa. Não prova conteúdo completo nem obrigação jurídica específica de publicar cada indicador. Não autoriza transpor microdados internos para internet |
+| `Mapa do Site – Crea-SP.pdf` | 11 páginas. Navegação institucional e de serviços | Consultas públicas, protocolos, fiscalização, profissionais, empresas, certidões e serviços de IES | Evidencia famílias de serviços e sistemas de origem. Link de consulta pública não equivale a API em lote nem garante autorização de extração automatizada |
+| `Serviços – Crea-SP.pdf` | 41 páginas. Carta de Serviços | Profissionais e ART nas pp. 2–19; empresas pp. 20–28; IES/cursos/formandos pp. 29–32; sociedade/estudantes/entidades pp. 33–40 | Cadastro empresarial inclui alterações de CNAE/capital/quadro técnico/dados societários (p. 21); visto e registro têm trajetórias próprias. Listas de formandos e cadastro de cursos documentados na p. 30 permitem planejar coortes internas sem inventar identificação pública do INEP |
+| `Fiscalização do Crea-SP – Crea-SP.html` | HTML de orientação, sem paginação estável | Competência de fiscalização profissional; ART, habilitação, registro, notificação, auto, defesa, recurso, multa, protesto e denúncia; também limita competências frente a prefeituras/Defesa Civil/MTE | Usar como contexto do fluxo e dos limites. Dados de denúncia/defesa são sensíveis. Ausência de correspondência externa é indício para verificação, não autuação. Notificação ≠ auto; auto ≠ decisão definitiva; pagamento ≠ regularização material |
+| `Lista_Cnaes_Crea_SP_rev_mar_2025.pdf` | 10 páginas. Lista de subclasses e classificação | 702 códigos distintos com descrição e classe original. Exemplos: 7112-0/00 engenharia (`sim`, p. 10), 7119-7/01 cartografia/topografia/geodésia (`Sim`, p. 10), 7119-7/04 perícia de segurança do trabalho (`Sim`, p. 10), 6621-5/01 peritos/avaliadores de seguros (`Passível de obrigação`, p. 9) | Registrar versão março/2025, principal/secundário, regra e classe original. Uma empresa pode aparecer em múltiplos CNAEs; totais de ranking setorial podem ser não aditivos. A atividade efetivamente exercida e a competência profissional continuam necessárias |
+| `ORGANOGRAMA MARCO 2026 -2 (1).pdf` | 41 páginas. Estrutura de março/2026 | Visão geral p. 2; UDE/EPD p. 3; GPP/UAPE/EAPA p. 5; SUPTEC/GIT/GDEP/EDAD/UINFRA p. 7; SUPADF p. 9; SUPFIS/GPF/UPF/UPI p. 11; GREs p. 12 e desdobramentos pp. 13–41 | Versão do organograma é dimensão histórica. Não inferir responsável de cada tabela apenas pela sigla; os responsáveis por validação abaixo são propostas a confirmar |
+
+## O que os anexos comprovam e o que ainda falta confirmar
+
+| Domínio interno | Evidência documental | Entidades e atributos para levantar no banco | Pendente antes da ingestão |
+|---|---|---|---|
+| Empresa e estabelecimentos | Lei 5.194, Carta de Serviços pp. 20–24 | Pessoa jurídica, CNPJ completo/raiz, registro/visto, situação, datas, CNAEs, natureza/porte quando houver, endereço, sócios/quadro técnico com vigência | Mapeamento SQL Server/Db2; definição de empresa distinta e estabelecimento; histórico de eventos e duplicidades |
+| Profissional e atribuições | Lei, Código, Carta, anexos ART | ID interno, RNP, registro, modalidade/título, atribuições, situação, eventual identificação restrita | Dicionários de modalidades e atribuições, vigência e acesso. Título acadêmico/CBO não são sinônimos de atribuição |
+| Vínculo técnico | Res. 1.137 pp. 15–16 e formulário p. 12 dos anexos | Profissional, empresa, tipo, função, início, fim, ART de cargo/função | Cobertura histórica e compatibilidade entre vínculo societário, trabalhista e responsabilidade técnica; não presumir um vínculo por pessoa |
+| ART e atividades | Lei 6.496; Res. 1.137; anexos pp. 1–12 | Número, tipo, forma, participação, profissional, empresa contratada quando houver, contratante/destinatário, contrato/processo, local, datas, valor declarado, atividades, quantidade/unidade, rede ART | Campos opcionais e preenchidos pelo declarante; correções e substituições; vigência técnica; ausência de CNPJ ou número de contrato/processo. Não somar valor integral de ARTs vinculadas como faturamento |
+| ART de perícia/processo | Anexos p. 1, pp. 4–5 e 9–11; Res. 1.160 art. 1º | Número/referência de processo, órgão destinatário e identificador, profissional, empresa se houver, atividade, honorários declarados | Existência do modelo no sistema, código CNJ normalizado e exceções, tribunal/unidade, data; ART múltipla precisa tabela filha por processo. Não inferir que toda perícia é empresarial |
+| CAT, CAO e atestado | Res. 1.137 pp. 16–21; anexos pp. 13–20 | Certidão, titular profissional/empresa, ARTs relacionadas, emissão, situação/validade, atestado e partes, atividades/quantidades, autenticação | Eventos de perda de validade/cancelamento, persistência das ARTs da certidão e sigilo dos documentos. CAT e CAO são fatos distintos |
+| Fiscalização e processo | HTML e serviços pp. 16/27/36; Lei pp. 13–14 | Evidência de origem, local, pessoa fiscalizada, relatório/notificação, auto, enquadramento, decisão e instâncias, defesa/recurso, trânsito, regularização | Separar rotina analítica de tramitação administrativa; papéis de acesso, situação jurídica e fundamento antes de qualquer conclusão |
+| Financeiro empresarial | Serviços pp. 25–27, HTML, API contábil | Título/devedor, competência, vencimento, parcelas, pagamentos, saldo, natureza (anuidade/taxa/multa), cobrança/protesto/dívida ativa | Pagamentos do contribuinte no sistema corporativo não são os pagamentos a fornecedores da API de transparência. Contabilidade agregada não individualiza adimplência de empresas |
+| IES, cursos e formandos | Serviços pp. 29–32; página atual do serviço | IES, curso, currículo/versão, turma, lista enviada, concluinte restrito, curso, data/protocolo, posterior registro profissional | Autorização, finalidade, CPF protegido, retenção, identificação do curso por código INEP/e-MEC. Lista enviada não cobre automaticamente todos concluintes de SP |
+| Protocolo e serviço | Carta e mapa; GPP/EAPA no organograma | Protocolo, solicitante, serviço/subtipo, datas, exigências, estados e vínculo com objeto de negócio | Evitar medir o mesmo pedido como protocolo, registro e certidão. Cadastros e serviços têm unidades e datas diferentes |
+| Transparência do próprio conselho | Swagger e teste de contratos | Licitação, processo de compra, contrato/aditivo, fornecedor, pagamento, empenho, convênio, conta/centro de custo | Disponibilidade, filtros, CNPJ, granularidade e periodicidade por endpoint. Domínio separado da fiscalização do mercado |
+
+## Campos de maior valor presentes nos modelos de ART
+
+O Anexo I, p. 1, diferencia quatro papéis: **profissional**, **empresa contratada**, **contratante/destinatário** e **proprietário da obra**. O endereço da empresa não substitui o local da obra. Contrato e processo têm chaves diferentes. Coordenadas e código do cadastro de obras públicas são campos opcionais; sua presença no modelo não comprova geolocalização completa.
+
+A mesma página inclui valor contratual/honorários, número e data de contrato, número de processo, início e término previsto, tipo de vínculo, cargo/função, atividade/obra-serviço/complemento, quantidade e unidade. Esses campos oferecem quatro pontes prioritárias:
+
+- **PNCP/contrato público → ART**: órgão e fornecedor, número de contrato, data e local/objeto, com validação da ponte documental. Contrato público pode ter múltiplas ARTs e subcontratadas.
+- **Licença/instalação/obra externa → ART**: identificador de empreendimento, código de obra, endereço/coordenadas e datas, apoiados em empresa e atividade. Proximidade geográfica é apenas sugestão.
+- **Processo judicial → ART de perícia**: processo/órgão/atividade e período. Contar atos de nomeação, ARTs e pagamentos separadamente.
+- **Empresa → vínculo → ART → CAO**: vigência do vínculo na data da atividade, não apenas situação atual. A CAT continua no ramo profissional da rede.
+
+O valor declarado de uma ART pode representar contrato global ou parcela; ART inicial e complementares podem descrever o mesmo empreendimento. O BI precisa de regra explícita para evitar duplicar valores, serviços e obras.
+
+## Classificação CNAE extraída
+
+A extração por `pdftotext -layout` encontrou 702 linhas iniciadas por subclasse, e todas foram interpretadas com código, descrição, classe e página. Não surgiram códigos duplicados na extração. São 623 grafados `Sim`, 15 `sim` e 64 `Passível de obrigação`; a normalização técnica pode unificar capitalização mantendo a coluna original. Arquivo: `cnaes-contexto-extraidos.json`. A inspeção visual e o aceite do responsável pela lista continuam necessários antes de transformar a extração em regra produtiva.
+
+É essencial não eliminar a segunda classe nem tratar CNAE secundário como prova da atividade executada. A [Lei 6.839/1980, art. 1º](https://www.planalto.gov.br/ccivil_03/leis/l6839.htm) relaciona registro à atividade básica ou aos serviços prestados a terceiros. A lista de 2025 deve ser interpretada junto da regra jurídica e da atividade observada, com validação técnica.
+
+## API do próprio CREA-SP encontrada no JSON
+
+**Contrato recebido:** Swagger 2.0, título `API REST do Portal da Transparência`, versão `v1`, base `https://crea-sp.implanta.net.br/transparencia/api`. Não há esquema de autenticação declarado no arquivo. Isso não comprova acesso irrestrito a todos os serviços ou ausência de limites operacionais.
+
+As 30 operações GET cobrem: processos de compras/serviços; balancete; balanços financeiro/orçamentário/patrimonial; comparativos de receita/despesa; fluxo de caixa; execução financeira; plano de contas; variações patrimoniais; contratos e aditivos; convênios; licitações; aquisições; demonstrativo de empenhos/pagamentos; despesas por centro de custo; empenhos; movimentações financeiras; pagamentos; atas de colegiados; conselheiros; planos de cargos/salários; quadros de pessoas; bens móveis/imóveis; estatísticas de acesso; estatística anual de solicitações; data de último upload de relatórios.
+
+**Teste real em 29/10/2026:** `GET /v1.0/Contratos?vigenciaInicio=01%2F2025&vigenciaTermino=01%2F2025` retornou HTTP 200, JSON de lista com 95 elementos (37.816 bytes). Somente status, contagem e nomes dos campos foram guardados na evidência; não foram republicados documentos/nomes de fornecedores. Campos retornados: número de contrato, licitação e processo de compra; data de publicação; contratada; valor; anexos; início/fim de vigência. O significado exato do filtro de vigência e a completude histórica devem ser testados antes do conector; não se atribuiu o total a “contratos celebrados em janeiro”.
+
+Os parâmetros de referência/vigência são `MM/AAAA` conforme descrições no Swagger, não datas ISO. O primeiro teste com formato ISO respondeu 400; a correção documentada respondeu 200. `/v1.0/PlanoDeContas?exercicio=2025` excedeu 25 segundos no teste; não foi declarado funcional.
+
+O schema `Contrato` não traz campo CNPJ separado: `CONTRATADA` é texto. `Pagamento` declara `CPF_CNPJ` e razão social/favorecido, o que exige proteger pessoas físicas e confirmar chave de ligação com contrato. Não vincular por nome como correspondência definitiva. O endpoint de pagamentos deste portal trata **saídas do conselho**, não anuidades recebidas das empresas registradas.
+
+Arquivos técnicos: `implanta-contrato-extraido.json` (operações e schemas de interesse) e `implanta-testes.json` (evidência de rede sem linhas nominais). Proposta: atualização diária ou semanal a negociar com o publicador, com carimbo de extração e reprocessamento de janelas anteriores; essa cadência é recomendação, não SLA constatado.
+
+## Governança sugerida a partir do organograma
+
+- **UDE/Gabinete**: patrocínio e leitura executiva; proposta de responsável pelo dicionário e prioridades, sujeita à designação formal.
+- **SUPTEC/EDAD, GDEP e UINFRA**: mapeamento das tabelas, segurança, gateway e operações de integração; o organograma não prova ownership dos dados.
+- **SUPFIS/GPF/UPF/UPI e GREs**: critérios de triagem, limites de atribuição, validação de evidências e territorialização. O agrupamento de municípios por GRE precisa de tabela oficial com vigência; o organograma traz sedes, não a lista completa de municípios abrangidos.
+- **GPP/EAPA**: validação dos conceitos de acervo técnico/operacional, protocolo e arquivo conforme atribuições efetivamente delegadas.
+- **SUPADF/GPFP/UFC e áreas jurídicas pertinentes**: regras financeiras e situação de cobrança; multas pendentes de recurso não podem ser tratadas como receita recuperável definitiva sem status jurídico.
+- **SUPCOL/câmaras e áreas técnicas competentes**: validação de atribuições e enquadramento; possuir CNAE não decide atribuição profissional.
+- **Área educacional/cadastral a designar**: IES, cursos e listas de concluintes; o documento não permite concluir qual unidade detém cada tabela.
+
+## Referências oficiais conferidas
+
+- [Lei 5.194/1966 consolidada — Planalto](https://www.planalto.gov.br/ccivil_03/leis/l5194.htm).
+- [Lei 6.496/1977 — Planalto](https://www.planalto.gov.br/ccivil_03/leis/l6496.htm).
+- [Lei 6.839/1980 — Planalto](https://www.planalto.gov.br/ccivil_03/leis/l6839.htm).
+- [Resolução 1.002/2002 — repositório normativo Confea](https://normativos.confea.org.br/Ementas/Visualizar?id=542) e [página temática de ética](https://www.confea.org.br/atuacao/etica-profissional).
+- [Resolução 1.137/2023 com redações alteradas — Confea](https://normativos.confea.org.br/Ementas/Visualizar?id=76099).
+- [Resolução 1.160, de 11/12/2025 — Confea](https://normativos.confea.org.br/Ementas/Visualizar?id=83001): altera regras de ART, contempla nomeação judicial e substitui modelos; art. 8º estabelece entrada em vigor 90 dias após publicação. Não se confundiu a data da assinatura com a publicação para calcular vigência exata.
+- [Envio da lista de formandos — CREA-SP](https://www.creasp.org.br/servico/envio-da-lista-de-formandos/), página consultada com atualização indicada de 29/04/2026, confirma lista oficial com nome, CPF e curso no fluxo autenticado da IES.
+- [Carta de Serviços — CREA-SP](https://www.creasp.org.br/servico/).
+
+A conferência é de planejamento e proveniência, não parecer jurídico sobre cada caso. Não se afirmou que o pacote de anexos contém a lista completa de indicadores exigidos pelo Confea/TCU, nem que cada dado interno pode ser publicado. A norma de transparência, o indicador solicitado, a granularidade autorizada e o responsável pela validação devem ser mapeados individualmente.
