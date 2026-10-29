@@ -4,7 +4,7 @@ A aplicação usa as cores, famílias tipográficas e papéis informados pelo us
 
 ## Fonte única de tokens
 
-`src/enterprise-v11/design-tokens.css` contém cores, papéis, tipografia, espaçamento, sombras e camadas. O canvas é claro (`surface=#F8F8F8`), os gráficos usam superfície branca e o cabeçalho/faixa principal usam azul CREA. O amarelo destaca valores e a ação principal, sempre com texto escuro quando é fundo.
+Na V13, `src/enterprise-v11/design-tokens.css` (retirado em 29/10/2026; está no histórico do Git) continha cores, papéis, tipografia, espaçamento, sombras e camadas. O canvas é claro (`surface=#F8F8F8`), os gráficos usam superfície branca e o cabeçalho/faixa principal usam azul CREA. O amarelo destaca valores e a ação principal, sempre com texto escuro quando é fundo.
 
 | Família | Pure | Light | Dark | Lighter |
 |---|---|---|---|---|
