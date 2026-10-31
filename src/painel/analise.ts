@@ -4,6 +4,7 @@ import type { EnterpriseModel } from '../enterprise-v10/types';
 import { median, stockBridge } from '../gestao-v14/metrics';
 import type { Acao, Alvo, Fiscalizacao, Origem, StatusMulta, Tipo } from './fiscalizacao';
 import { origens } from './fiscalizacao';
+import { buildEnterpriseEvidence, isValidEnterpriseCnpj } from '../enterprise-v10/data';
 
 /** V17 · análise da atividade do CREA-SP sobre empresas: fiscalizar, autuar, multar, obrigar registro e o efeito na base e na receita. */
 const DAY = 86400000;
@@ -136,8 +137,8 @@ export function porRegional(dataset: Dataset, f: Fiscalizacao, model: Enterprise
 /** Pares do mapa bivariado: X mede o problema, Y a resposta. Vermelho = problema alto e resposta baixa. */
 export type ParId = 'problema' | 'resultado' | 'mercado';
 export const pares: Record<ParId, { label: string; pergunta: string; x: string; y: string; getX: (row: Regional) => number | null; getY: (row: Regional) => number | null; fx: (value: number) => string; fy: (value: number) => string; critico: string; leitura: string }> = {
-  problema: { label: 'Sem registro × fiscalização', pergunta: 'Onde a fiscalização está aquém das empresas sem registro?', x: '% dos CNPJs de engenharia sem registro', y: 'ações fiscalizatórias por 100 irregularidades', getX: row => row.pctSemRegistro, getY: row => row.acoesPor100, fx: value => `${value.toFixed(0)}%`, fy: value => value.toFixed(0), critico: 'Muitas sem registro, pouca fiscalização', leitura: 'Vermelho: alta proporção de empresas sem registro e poucas ações fiscalizatórias. Candidatas a reforço de equipe ou força-tarefa.' },
-  resultado: { label: 'Fiscalização × regularização', pergunta: 'Onde a fiscalização age e as empresas não se regularizam?', x: 'ações fiscalizatórias por 100 irregularidades', y: '% das ações já regularizadas', getX: row => row.acoesPor100, getY: row => row.taxa, fx: value => value.toFixed(0), fy: value => `${value.toFixed(0)}%`, critico: 'Muita ação, pouca regularização', leitura: 'Vermelho: muitas ações e pouca regularização. Rever prazos de notificação, a autuação e a cobrança das multas.' },
+  problema: { label: 'Sem registro × fiscalização', pergunta: 'Onde a fiscalização está aquém das empresas sem registro?', x: '% dos CNPJs de engenharia sem registro', y: 'ações fiscalizatórias por 100 indícios', getX: row => row.pctSemRegistro, getY: row => row.acoesPor100, fx: value => `${value.toFixed(0)}%`, fy: value => value.toFixed(0), critico: 'Muitas sem registro, pouca fiscalização', leitura: 'Vermelho: alta proporção de empresas sem registro e poucas ações fiscalizatórias. Candidatas a reforço de equipe ou força-tarefa.' },
+  resultado: { label: 'Fiscalização × regularização', pergunta: 'Onde a fiscalização age e as empresas não se regularizam?', x: 'ações fiscalizatórias por 100 indícios', y: '% das ações já regularizadas', getX: row => row.acoesPor100, getY: row => row.taxa, fx: value => value.toFixed(0), fy: value => `${value.toFixed(0)}%`, critico: 'Muita ação, pouca regularização', leitura: 'Vermelho: muitas ações e pouca regularização. Rever prazos de notificação, a autuação e a cobrança das multas.' },
   mercado: { label: 'Emprego técnico × registro', pergunta: 'Onde o mercado de engenharia emprega muito e registra pouco?', x: 'empregos técnicos (RAIS/CAGED) por empresa registrada', y: 'novos registros por 1.000 empregos técnicos', getX: row => row.empregoPorEmpresa, getY: row => row.registrosPorMilEmpregos, fx: value => value.toFixed(0), fy: value => value.toFixed(1), critico: 'Mercado grande, pouco registro novo', leitura: 'Vermelho: muitos empregos em ocupações de engenharia para poucas empresas registradas, e o registro não acompanha. Provável sub-registro.' },
 };
 /** Classe 0..2 por tercil entre as regionais com valor. */
@@ -257,26 +258,44 @@ export function mercadoPorCamara(scope: Scope, model: EnterpriseModel, f: Fiscal
   return [...rows.values()].filter(row => row.total > 0).sort((a, b) => b.total - a.total);
 }
 
-/* ---------- Contratos públicos de engenharia (PNCP) pela situação do fornecedor na data do contrato ---------- */
-export type SituacaoFornecedor = 'Sem registro na data' | 'Registrada, com anuidade vencida' | 'Registrada, sem ART em 60 dias' | 'Regular: registro, quitação e ART';
-export const situacoesFornecedor: SituacaoFornecedor[] = ['Sem registro na data', 'Registrada, com anuidade vencida', 'Registrada, sem ART em 60 dias', 'Regular: registro, quitação e ART'];
-export interface ContratoPublico { id: string; companyId: string; establishmentId: string; buyerId: string; categoria: string; objeto: string; valor: number; data: string; registrada: boolean; quitada: boolean; comArt: boolean; situacao: SituacaoFornecedor }
-/** Primeira situação que se aplica, nesta ordem: sem registro, sem quitação de anuidade (impede a certidão de registro e quitação), sem ART. */
+/* ---------- Contratos públicos de engenharia (PNCP): situação do fornecedor na data e vínculo com ART em três graus ---------- */
+/** Fato verificável no cadastro na data do contrato: registro vigente e quitação da anuidade (certidão de registro e quitação). */
+export type SituacaoFornecedor = 'Sem registro na data' | 'Registrada, com anuidade vencida' | 'Registrada e quitada';
+export const situacoesFornecedor: SituacaoFornecedor[] = ['Sem registro na data', 'Registrada, com anuidade vencida', 'Registrada e quitada'];
+/**
+ * V19 · vínculo contrato–ART (plano rev. 2, tese T2; lacuna 1 do V18):
+ * confirmado = a ART cita o contrato ou o processo (ponte documental); candidato = ART da mesma empresa entre 30 dias antes e 60 depois,
+ * para revisão humana; não identificado = nenhum dos dois. Sem chave suficiente = CNPJ do fornecedor inválido, a busca não pôde ser feita.
+ * Não identificado é prioridade para verificar, nunca prova de que falta ART.
+ */
+export type GrauVinculo = 'Confirmado por documento' | 'Candidato para revisão' | 'Não identificado' | 'Sem chave para a busca';
+export const grausVinculo: GrauVinculo[] = ['Confirmado por documento', 'Candidato para revisão', 'Não identificado', 'Sem chave para a busca'];
+export interface ContratoPublico {
+  id: string; companyId: string; establishmentId: string; buyerId: string; categoria: string; objeto: string; valor: number; data: string;
+  registrada: boolean; quitada: boolean; situacao: SituacaoFornecedor; chave: boolean; vinculo: GrauVinculo; artsDocumento: string[]; artsCandidatas: string[];
+}
 export function contratosPublicos(scope: Scope, period: number): ContratoPublico[] {
   const w = janela(scope.anchor, period), technical = new Set(['Obras', 'Serviços técnicos', 'Manutenção', 'Consultoria']);
   const registrations = new Map<string, Scope['registrations']>();
   for (const row of scope.dataset.registrations) registrations.set(row.establishmentId, [...(registrations.get(row.establishmentId) ?? []), row]);
-  const arts = new Map<string, number[]>();
-  for (const row of scope.dataset.arts) arts.set(row.companyId, [...(arts.get(row.companyId) ?? []), toDay(row.date)]);
+  const arts = new Map<string, { id: string; day: number }[]>();
+  for (const row of scope.dataset.arts) if (row.date <= scope.anchor) arts.set(row.companyId, [...(arts.get(row.companyId) ?? []), { id: row.id, day: toDay(row.date) }]);
   const invoices = new Map<string, Scope['invoices']>();
   for (const row of scope.dataset.invoices) invoices.set(row.companyId, [...(invoices.get(row.companyId) ?? []), row]);
+  const places = new Map(scope.dataset.establishments.map(row => [row.id, row]));
+  const documento = new Map<string, string[]>();
+  for (const row of buildEnterpriseEvidence(scope.dataset).contractArt) if (row.recordedAt <= scope.anchor) documento.set(row.contractId, [...(documento.get(row.contractId) ?? []), row.artId]);
   return scope.contracts.filter(row => technical.has(row.category) && inside(row.date, w.start, w.end)).map(row => {
     const day = toDay(row.date);
     const registrada = (registrations.get(row.establishmentId) ?? []).some(item => toDay(item.startedAt) <= day && (!item.ceasedAt || toDay(item.ceasedAt) > day));
     const quitada = !(invoices.get(row.companyId) ?? []).some(item => item.dueDate < row.date && item.amount > 0 && (!item.paymentDate || item.paymentDate > row.date));
-    const comArt = (arts.get(row.companyId) ?? []).some(artDay => artDay >= day - 30 && artDay <= day + 60);
-    const situacao: SituacaoFornecedor = !registrada ? 'Sem registro na data' : !quitada ? 'Registrada, com anuidade vencida' : !comArt ? 'Registrada, sem ART em 60 dias' : 'Regular: registro, quitação e ART';
-    return { id: row.id, companyId: row.companyId, establishmentId: row.establishmentId, buyerId: row.buyerId, categoria: row.category, objeto: row.object, valor: row.value, data: row.date, registrada, quitada, comArt, situacao };
+    const situacao: SituacaoFornecedor = !registrada ? 'Sem registro na data' : !quitada ? 'Registrada, com anuidade vencida' : 'Registrada e quitada';
+    const chave = isValidEnterpriseCnpj(places.get(row.establishmentId)?.cnpj ?? '');
+    const artsDocumento = chave ? documento.get(row.id) ?? [] : [];
+    const artsCandidatas = chave && !artsDocumento.length ? (arts.get(row.companyId) ?? []).filter(art => art.day >= day - 30 && art.day <= day + 60).map(art => art.id) : [];
+    const vinculo: GrauVinculo = !chave ? 'Sem chave para a busca' : artsDocumento.length ? 'Confirmado por documento' : artsCandidatas.length ? 'Candidato para revisão' : 'Não identificado';
+    return { id: row.id, companyId: row.companyId, establishmentId: row.establishmentId, buyerId: row.buyerId, categoria: row.category, objeto: row.object, valor: row.value, data: row.date,
+      registrada, quitada, situacao, chave, vinculo, artsDocumento, artsCandidatas };
   });
 }
 /** Autos de infração por regional e mês (últimos 12 meses), para o mapa de calor. */

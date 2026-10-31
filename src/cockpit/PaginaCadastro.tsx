@@ -2,21 +2,28 @@ import { useMemo } from 'react';
 import { complianceFlow } from '../gestao-v14/metrics';
 import { Chart, Spark } from '../painel/chart';
 import { Mekko, PonteChart } from '../painel/VisaoCadastro';
-import { int, mes, pct } from '../painel/ui';
+import { data, int, mes, pct } from '../painel/ui';
+import { classesCnae, correspondencias } from '../observatorio/norte';
 import type { CockpitCtx } from './contexto';
 import { camaraPorte, entradasSaidas, pagamento, prazoRegistro } from './medidas';
 import { Bloco } from './ui';
 
-/** Aba 2 · Cadastro: situação do registro e do pagamento, composição, mercado por câmara, entradas e saídas, prazo de registro e regionais. */
+/**
+ * Aba 2 · Empresas e cobertura (painel da onda 1, evolução do Cadastro da V18): três contagens que não se somam, conciliação
+ * Receita × Crea-SP com “Sim” e “Passível” separados, cobertura por regional, situação, entradas e saídas, prazo de registro e regionais.
+ */
 export default function PaginaCadastro({ ctx }: { ctx: CockpitCtx }) {
   const { model, scope, tokens } = ctx;
   const flow = useMemo(() => complianceFlow(model, scope), [model, scope]);
   return <div className="ck-grid ck-grid-cadastro">
+    <Bloco ctx={ctx} id="tc" area="tc" title="Três contagens, três unidades" question="Empresa-raiz, estabelecimento e registro vigentes no corte. Nunca se somam como sinônimos." help="Caso de uso UC01. Empresa = raiz do CNPJ com ao menos um registro ou visto vigente. Estabelecimento = CNPJ completo. Registro = episódio de registro ou visto. Inativas = raízes com histórico e nenhum registro vigente."><Contagens ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="cv" area="cv" title="Conciliação Receita × Crea-SP" question="CNPJs completos ativos com CNAE da lista, por classe e correspondência no cadastro no mesmo corte." help="Caso de uso UC02. Classe pela atividade principal (Lei 6.839/80, atividade básica): “Sim” = CNAE com registro obrigatório na lista do Crea-SP (rev. mar/2025); “Passível” = passível de obrigação. O universo inclui CNAE principal ou secundário da lista. Sem correspondência não quer dizer irregular: o CNAE não prova atividade nem obrigação."><Conciliacao ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="cg" area="cg" title="Cobertura “Sim” por regional" question="Parte dos CNPJs “Sim” de cada GRE com registro ou visto vigente, e o que está só no histórico ou sem correspondência."><CoberturaGre ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="reg" area="reg" title="Situação do registro e do pagamento" question="Empresas do universo de engenharia pelo registro no CREA-SP, e as registradas pela situação das anuidades."><Situacoes ctx={ctx} flow={flow} /></Bloco>
     <Bloco ctx={ctx} id="es" area="es" title="Entradas e saídas da base, mês a mês" question="Acima da linha zero, as entradas (após fiscalização em destaque); abaixo, as saídas. A linha mostra as empresas registradas."><EntradasSaidas ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="pt" area="pt" title="Ponte da base no período" question="De onde veio e para onde foi a variação de empresas registradas."><PonteChart ctx={ctx} ponte={ctx.ponte} /></Bloco>
-    <Bloco ctx={ctx} id="mk" area="mk" title="Mercado de engenharia por câmara" question="Largura: CNPJs ativos na Receita com CNAE de engenharia. Altura: quanto está registrado, em dia, e quanto falta registrar."><Mekko ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="sk" area="sk" title="Funil de conformidade" question="Universo de engenharia → registro ativo → responsável técnico → ART no período. Clique num fluxo para ver as empresas."><Funil ctx={ctx} flow={flow} /></Bloco>
+    <Bloco ctx={ctx} id="mk" area="mk" title="Mercado por câmara" question="Largura: CNPJs ativos na Receita com CNAE da lista (câmara aproximada pelo CNAE principal). Altura: quanto está registrado, em dia, e quanto falta registrar."><Mekko ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="sk" area="sk" title="Funil de conformidade" question="Universo com CNAE da lista → registro ativo → responsável técnico → ART no período. Clique num fluxo para ver as empresas."><Funil ctx={ctx} flow={flow} /></Bloco>
     <Bloco ctx={ctx} id="cp" area="cp" title="Empresas registradas por câmara e porte" question="Câmara pela atividade principal; porte declarado na Receita."><CamaraPorte ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="pz" area="pz" title="Prazo de concessão do registro" question="Dias entre o pedido e o início do registro, para os registros concedidos no período."><PrazoRegistro ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="mu" area="mu" title="Empresas registradas por regional, 24 meses" question="Cada quadro na sua própria escala. Verde cresce, vermelho recua. Clique para o resumo da regional."><Multiplos ctx={ctx} /></Bloco>
@@ -117,4 +124,47 @@ function Multiplos({ ctx }: { ctx: CockpitCtx }) {
     return <button key={row.id} className={`multiple ${ctx.greId === row.id ? 'is-selected' : ''}`} onClick={() => ctx.open({ kind: 'gre', id: row.id })} title={`${row.name}: resumo da regional`}>
       <span><b>{row.curto}</b><em className={delta === null ? '' : delta >= 0 ? 'pos' : 'neg'}>{delta === null ? '—' : `${delta >= 0 ? '+' : ''}${pct(delta)}`}</em></span>
       <Spark values={row.spark} color={last >= first ? tokens.good : tokens.bad} /><small>{int(last)} empresas</small></button>; })}</div>;
+}
+
+function Contagens({ ctx }: { ctx: CockpitCtx }) {
+  const c = ctx.norte.contagens;
+  const itens: [string, number, string][] = [['Empresas (raiz CNPJ)', c.raizes, 'com ao menos um registro ou visto vigente'], ['Estabelecimentos (CNPJ completo)', c.estabelecimentos, 'com registro ou visto vigente'], ['Registros e vistos vigentes', c.registros, `${int(c.vistos)} vistos de outro CREA`]];
+  return <div className="tres">
+    {itens.map(([label, value, note]) => <div key={label} className="tres-item"><span>{label}</span><strong>{int(value)}</strong><small>{note}</small></div>)}
+    <p className="duo-note">{int(c.raizesHistorico)} empresas só com histórico (inativas) · corte {data(ctx.dataset.snapshotDate)}</p>
+  </div>;
+}
+
+function Conciliacao({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, c = ctx.norte.cobertura, cores = [tokens.blue, tokens.heat[1], tokens.warn];
+  const option = useMemo(() => ({
+    grid: { top: 26, right: 40, bottom: 2, left: 2, containLabel: true },
+    legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10.5 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const classe = classesCnae[items[0].dataIndex], total = correspondencias.reduce((sum, nome) => sum + c.porClasse[classe][nome].length, 0);
+      return `<b>“${classe}”</b> · ${int(total)} CNPJs<br/>${items.map(item => `${item.marker}${item.seriesName}: ${int(item.value)} (${pct(item.value / Math.max(1, total) * 100)})`).join('<br/>')}`; } },
+    xAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
+    yAxis: { type: 'category', inverse: true, data: classesCnae.map(row => `“${row}”`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
+    series: correspondencias.map((nome, index) => ({ name: nome, type: 'bar', stack: 'c', barWidth: 22, data: classesCnae.map(classe => c.porClasse[classe][nome].length), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
+      label: index === correspondencias.length - 1 ? { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, formatter: (params: any) => { const classe = classesCnae[params.dataIndex]; const taxa = classe === 'Sim' ? c.taxaSim : c.taxaPassivel; return taxa === null ? '' : pct(taxa, 1); } } : undefined })),
+  }), [c, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <div className="stack">
+    <p className="kpi-line"><b>{c.taxa === null ? '—' : pct(c.taxa, 1)}</b> de cobertura em {int(c.total)} CNPJs · “Sim” <b>{c.taxaSim === null ? '—' : pct(c.taxaSim, 1)}</b> · “Passível” <b>{c.taxaPassivel === null ? '—' : pct(c.taxaPassivel, 1)}</b> · Receita e cadastro em {data(c.competenciaReceita)}</p>
+    <Chart option={option} tokens={tokens} label="Conciliação dos CNPJs com CNAE da lista com o cadastro do Crea-SP" onPick={params => { const classe = classesCnae[params.dataIndex], nome = correspondencias[params.seriesIndex]; const ids = classe && nome ? c.porClasse[classe][nome] : [];
+      if (ids.length) ctx.open({ kind: 'cnpjs', title: `“${classe}” · ${nome.toLowerCase()}`, what: 'CNPJs completos ativos na Receita com CNAE da lista do Crea-SP nesta classe e correspondência.', use: nome === 'Sem correspondência' ? 'Sem correspondência não quer dizer irregular. Confirmar atividade antes de orientar ou notificar.' : undefined, ids }); }} />
+  </div>;
+}
+
+function CoberturaGre({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, rows = useMemo(() => [...ctx.norte.cobertura.porGre].sort((a, b) => (a.taxaSim ?? 0) - (b.taxaSim ?? 0)), [ctx.norte]), cores = [tokens.blue, tokens.heat[1], tokens.warn];
+  const short = (name: string) => name.split('·')[1]?.trim() ?? name;
+  const option = useMemo(() => ({
+    grid: { top: 24, right: 36, bottom: 2, left: 2, containLabel: true },
+    legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'value', max: 100, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, formatter: '{value}%' } },
+    yAxis: { type: 'category', data: rows.map(row => short(row.name)), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10 } },
+    series: correspondencias.map((nome, index) => ({ name: nome, type: 'bar', stack: 'g', barWidth: 10, data: rows.map(row => { const total = correspondencias.reduce((sum, item) => sum + row.sim[item].length, 0); return total ? Math.round(row.sim[nome].length / total * 1000) / 10 : 0; }),
+      itemStyle: { color: cores[index] }, label: index === 0 ? { show: true, position: 'insideLeft', color: '#FFFFFF', fontSize: 9.5, formatter: (params: any) => params.value >= 12 ? `${params.value.toLocaleString('pt-BR')}%` : '' } : undefined })),
+  }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <Chart option={option} tokens={tokens} label="Cobertura dos CNPJs “Sim” por regional" onPick={params => { const row = rows[params.dataIndex]; if (row) ctx.open({ kind: 'gre', id: row.id }); }} />;
 }

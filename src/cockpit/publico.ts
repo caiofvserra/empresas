@@ -54,7 +54,10 @@ export const registrosNovos = { fonte: { nome: 'Confea SIC · registros profissi
 /** Piso da Lei 4.950-A/66 na leitura do Confea (8,5 salários mínimos vigentes, jornada de 8 h). */
 const leitura = pisos.data.leituras.find(row => row.id === 'confea-8_5sm')!;
 export const piso = { valor8h: leitura.valorJornada8h ?? 0, salarioMinimo: pisos.data.salarioMinimoFallback.valor, referencia: leitura.ano, fonte: { nome: 'Lei 4.950-A/66 · leitura Confea (8,5 SM)', url: 'https://www.planalto.gov.br/ccivil_03/leis/l4950a.htm', data: pisos.meta.atualizadoEm } as Fonte };
-export const salarios = { fonte: { nome: 'Salário médio CLT por ocupação (CAGED, via portal salario.com.br)', url: 'https://www.salario.com.br', data: '2026-08-31' } as Fonte,
+/** Piso da Lei 4.950-A/66 com a base congelada pelo STF (ADPFs 53, 149 e 171) e na leitura Confea. Leitura descritiva e agregada: a regra por jornada ainda precisa ser versionada e validada pela GAJ. */
+const stf = pisos.data.leituras.find(row => row.id === 'stf-congelado') as { baseCongeladaValor?: number; valorJornada8h?: number } | undefined;
+export const pisoLegal = { base: stf?.baseCongeladaValor ?? 1212, exigivel8h: stf?.valorJornada8h ?? 10302, confea8h: leitura.valorJornada8h ?? 13778.5 };
+export const salarios = { fonte: { nome: 'Salário médio CLT por ocupação (CAGED, via portal salario.com.br · fonte secundária)', url: 'https://www.salario.com.br', data: '2026-08-31' } as Fonte,
   linhas: parseCsv(salariosCsv).map(row => ({ cbo: row.cbo, ocupacao: row.occupation.split(' (')[0].replace(' — ', ' · '), salario: Number(row.averageMonthlySalary), horas: Number(row.weeklyHours), movimentacoes: Number(row.movements), engenharia: /^Engenheiro/.test(row.occupation) })) };
 
 /** Concluintes de cursos presenciais de engenharia em SP (Censo da Educação Superior/INEP), por curso e ano. */

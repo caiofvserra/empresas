@@ -15,11 +15,11 @@ export type StatusMulta = 'Em prazo de defesa' | 'Em julgamento' | 'Paga' | 'Dí
 export interface Auto { id: string; date: string; valor: number; status: StatusMulta; paidAt?: string }
 export type Resolucao = 'Registro obtido' | 'RT indicado' | 'Baixa do registro' | 'ART recolhida';
 export interface Acao { id: string; tipo: Tipo; origem: Origem; date: string; establishmentId: string; companyId: string; greId: string; cityId: string; regularizedAt?: string; resolucao?: Resolucao; auto?: Auto; contractId?: string }
-/** Alvo = irregularidade identificada. Aberto quando não há regularização até o corte. */
+/** Alvo = indício para análise (V19: não é irregularidade identificada). Aberto quando não há regularização até o corte. */
 export interface Alvo { id: string; tipo: Tipo; establishmentId: string; companyId: string; greId: string; cityId: string; since: string; regularizedAt?: string; resolucao?: Resolucao; acaoId?: string }
 export interface Fiscalizacao { acoes: Acao[]; alvos: Alvo[]; start: string; anchor: string }
 
-export const tipoLabel: Record<Tipo, string> = { registro: 'Falta de registro', rt: 'RT baixado sem substituto', art: 'Obra pública sem ART' };
+export const tipoLabel: Record<Tipo, string> = { registro: 'Registro não localizado', rt: 'RT baixado sem substituto', art: 'Contrato sem ART identificada' };
 export const origens: Origem[] = ['Cruzamento Receita (CNAE)', 'Contrato público (PNCP)', 'Denúncia', 'Rotina de campo', 'Cadastro CREA'];
 const technicalCategories = new Set(['Obras', 'Serviços técnicos', 'Manutenção', 'Consultoria']);
 const baseFine: Record<Tipo, number> = { registro: 4200, rt: 3100, art: 1600 };
