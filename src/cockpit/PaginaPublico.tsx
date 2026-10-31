@@ -3,19 +3,21 @@ import { ExternalLink } from 'lucide-react';
 import { Chart } from '../painel/chart';
 import { int, money, pct } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
-import { piso } from './cruzamentos';
-import { brasil, fonteConfea, formacaoSp, medianaAdmissaoCivil, registrosNovos, resultados2025, salarios, ufs } from './publico';
+import { brasil, pisoLegal as piso, fonteConfea, formacaoSp, medianaAdmissaoCivil, registrosNovos, resultados2025, salarios, ufs } from './publico';
 import { Bloco, Selo } from './ui';
 
-/** Aba 8 · Contexto público: somente dados públicos reais, com fonte e data de captura. Não respondem aos filtros do painel. */
+/**
+ * Aba 8 · Contexto público: somente dados públicos reais, com fonte e data de captura. Retrato versionado no repositório:
+ * não é atualizado por rotina nem responde aos filtros (lacuna 8 do V18). Formação e salário ficam em agregado (lacunas 5 e 9).
+ */
 export default function PaginaPublico({ ctx }: { ctx: CockpitCtx }) {
   return <div className="ck-grid ck-grid-publico">
     <section className="ck-facts" style={{ gridArea: 'kpi' }} aria-label="Resultados publicados pelo CREA-SP em 2025">
       <span className="ck-facts-title">Resultados publicados · exercício 2025 <Selo data={resultados2025.fonte.data} /><a href={resultados2025.fonte.url} target="_blank" rel="noreferrer" aria-label="Abrir o Relatório de Gestão 2025"><ExternalLink size={13} /></a></span>
       <div className="ck-facts-row">{resultados2025.itens.map(item => <div key={item.id} className="ck-fact"><strong>{item.display}</strong><span>{item.label}</span></div>)}</div>
     </section>
-    <Bloco ctx={ctx} id="pi" area="pi" title="Remuneração de engenheiros × piso legal" question="Salário médio CLT de ocupações de engenharia contra o piso exigível e a leitura do Confea." badge={<Selo data={salarios.fonte.data} />} help={`Piso da Lei 4.950-A/66 em jornada de 8 h: ${money(piso.exigivel8h)} (8,5 × R$ 1.212, base congelada pelo STF em 2022); leitura Confea com o salário mínimo vigente: ${money(piso.confea8h)}. Salários: CAGED via portal salario.com.br.`}><Remuneracao ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="fo" area="fo" title="Formação em engenharia em São Paulo" question="Concluintes e ingressantes de cursos presenciais de engenharia, por ano. Ao lado, os maiores cursos." badge={<Selo data={formacaoSp.fonte.data} />}><Formacao ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="pi" area="pi" title="Remuneração de engenheiros × piso legal" question="Salário médio CLT de ocupações de engenharia contra o piso exigível e a leitura do Confea." badge={<Selo data={salarios.fonte.data} />} help={`Piso da Lei 4.950-A/66 em jornada de 8 h: ${money(piso.exigivel8h)} (8,5 × R$ 1.212, base congelada pelo STF em 2022); leitura Confea com o salário mínimo vigente: ${money(piso.confea8h)}. Salários: CAGED via portal salario.com.br, fonte secundária a trocar pelos microdados RAIS/CAGED. Leitura agregada e descritiva: não indica empresa nem descumprimento.`}><Remuneracao ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="fo" area="fo" title="Formação em engenharia em São Paulo" question="Concluintes e ingressantes de cursos presenciais de engenharia, por ano (INEP). Não é taxa de registro: essa exige a lista nominal das IES." badge={<Selo data={formacaoSp.fonte.data} />}><Formacao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="de" area="de" title="Profissionais por 100 mil habitantes, por UF" question="Profissionais ativos no Sistema Confea/Crea em relação à população. SP em destaque; a linha é a média do Brasil." badge={<Selo data={fonteConfea.data} />}><Densidade ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="mu" area="mu" title="Participação feminina, por UF" question="% de mulheres entre os profissionais registrados. SP em destaque; a linha é a média do Brasil." badge={<Selo data={fonteConfea.data} />}><Mulheres ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="rn" area="rn" title="Registros profissionais novos por ano" question="CREA-SP (barras, série publicada até 2022) e Brasil (linha). Antecipa a reposição de responsáveis técnicos." badge={<Selo data={registrosNovos.fonte.data} />}><Registros ctx={ctx} /></Bloco>

@@ -1,4 +1,4 @@
-/* V18 · cockpit de empresas: trilho de assuntos à esquerda, cabeçalho com destaques, grade em 12 colunas por aba. Tokens de cor vêm de painel.css (claro e escuro). */
+/* V19 · Observatório Crea-SP · Empresas (evolução do cockpit V18): trilho de assuntos à esquerda, cabeçalho com destaques, grade em 12 colunas por aba. Tokens de cor vêm de painel.css (claro e escuro). */
 .ck { height: 100dvh; min-height: 640px; display: grid; grid-template-columns: 84px minmax(0, 1fr); background: var(--bg); color: var(--ink); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 .ck[aria-busy="true"] .ck-page { opacity: .7; transition: opacity .2s; }
 
@@ -48,10 +48,11 @@
 .ck-page { min-height: 0; overflow: auto; padding: 12px 18px 14px; animation: ck-enter .3s ease-out; }
 @keyframes ck-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .ck-grid { display: grid; gap: 12px; grid-template-columns: repeat(12, minmax(0, 1fr)); height: 100%; }
-.ck-grid-geral { grid-template-rows: auto minmax(330px, 1.1fr) minmax(280px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map sc sc sc sc sc sc sc" "map map map map map lt lt lt lt lt lt lt"; }
-.ck-grid-cadastro { grid-template-rows: repeat(3, minmax(360px, 1fr)); grid-template-areas: "reg reg reg es es es es es pt pt pt pt" "mk mk mk mk mk sk sk sk sk cp cp cp" "pz pz pz pz mu mu mu mu mu mu mu mu"; }
-.ck-grid-fiscalizacao { grid-template-rows: auto minmax(420px, 1.2fr) minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map map map ca ca ca ca ca" "me me me me cu cu cu cu it it it it" "ht ht ht ht ht ht ht ht ht ht ht ht"; }
-.ck-grid-malha { grid-template-rows: repeat(3, minmax(360px, 1fr)); grid-template-areas: "mf1 mf1 mf1 mf1 mf8 mf8 mf8 mf8 mf2 mf2 mf2 mf2" "mf4 mf4 mf4 mf4 mf5 mf5 mf5 mf5 mf6 mf6 mf6 mf6" "mf3 mf3 mf3 mf3 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9"; }
+.ck-grid-presidencia { grid-template-rows: 268px auto minmax(360px, 1.1fr) minmax(280px, 1fr); grid-template-areas: "n1 n1 n1 n2 n2 n2 n3 n3 n3 n4 n4 n4" "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map sc sc sc sc sc sc sc" "map map map map map lt lt lt lt lt lt lt"; height: auto; }
+.ck-grid-cadastro { grid-template-rows: 330px repeat(3, minmax(360px, 1fr)); grid-template-areas: "tc tc tc cv cv cv cv cv cg cg cg cg" "reg reg reg es es es es es pt pt pt pt" "mk mk mk mk mk sk sk sk sk cp cp cp" "pz pz pz pz mu mu mu mu mu mu mu mu"; height: auto; }
+.ck-grid-fiscalizacao { grid-template-rows: auto minmax(420px, 1.2fr) minmax(330px, 1fr) 340px minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map map map ca ca ca ca ca" "me me me me cu cu cu cu it it it it" "cv cv cv cv cv cv ta ta ta ta ta ta" "ht ht ht ht ht ht ht ht ht ht ht ht"; height: auto; }
+.ck-grid-malha { grid-template-rows: minmax(430px, 1.2fr) repeat(2, minmax(360px, 1fr)); grid-template-areas: "mf1 mf1 mf1 mf1 mf1 mf1 mf8 mf8 mf8 mf8 mf8 mf8" "mf2 mf2 mf2 mf2 mf7 mf7 mf7 mf7 mf3 mf3 mf3 mf3" "mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9"; }
+.ck-grid-metodo { grid-template-rows: 600px 640px; grid-template-areas: "rl rl rl rl rl rl lc lc lc lc lc lc" "uc uc uc uc uc uc ft ft ft ft ft ft"; height: auto; }
 .ck-grid-tecnica { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "qt qt qt qt ah ah ah ah ah am am am" "ca ca ca ca rg rg rg rg sa sa sa sa"; }
 .ck-grid-receita { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "yoy yoy yoy yoy yoy yoy yoy rg rg rg rg rg" "tr tr tr tr tr tr or or or dp dp dp"; }
 .ck-grid-atendimento { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "as as as as as as cw cw cw cw cw cw" "mm mm mm mm fu fu fu fu qa qa qa qa"; }
@@ -217,13 +218,15 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 /* ---------- 1366×768 e telas baixas: linhas de altura fixa e rolagem da página ---------- */
 @media (max-width: 1600px) {
   .ck-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .ck-grid-geral { grid-template-rows: auto minmax(380px, 1.1fr) minmax(300px, 1fr); }
+  .ck-grid-presidencia { grid-template-rows: 268px auto minmax(380px, 1.1fr) minmax(300px, 1fr); }
 }
 @media (max-width: 1500px), (max-height: 860px) {
   .ck-grid { height: auto; }
-  .ck-grid-geral { grid-template-rows: auto 400px 330px; }
-  .ck-grid-cadastro, .ck-grid-malha { grid-template-rows: repeat(3, 360px); }
-  .ck-grid-fiscalizacao { grid-template-rows: auto 440px 340px 340px; }
+  .ck-grid-presidencia { grid-template-rows: 268px auto 400px 330px; }
+  .ck-grid-cadastro { grid-template-rows: 330px repeat(3, 360px); }
+  .ck-grid-malha { grid-template-rows: 440px 360px 360px; }
+  .ck-grid-fiscalizacao { grid-template-rows: auto 440px 340px 340px 340px; }
+  .ck-grid-metodo { grid-template-rows: 560px 600px; }
   .ck-grid-tecnica, .ck-grid-receita, .ck-grid-atendimento { grid-template-rows: auto 340px 340px; }
   .ck-grid-publico { grid-template-rows: auto 340px 320px; }
   .ind-row strong { font-size: 21px; } .ind { padding: 8px 10px; }
@@ -262,3 +265,41 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
   .help::after { width: 240px; }
 }
 @media (prefers-reduced-motion: reduce) { .ck-pulse-track, .ck-pulse-dot, .ck-live.is-busy, .ck-page { animation: none; } .ind, .ck-rail button, .multiple { transition: none; } }
+
+/* ---------- V19 · Observatório: trilho da onda 1, indicadores-norte, status de ligação, método ---------- */
+.ck-rail-group { margin: 2px 0 0; font-size: 8.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; text-align: center; color: #FABD07; }
+.ck-rail button.is-after-onda { margin-top: 7px; position: relative; }
+.ck-rail button.is-after-onda::before { content: ""; position: absolute; top: -5px; left: 14px; right: 14px; height: 1px; background: rgba(255,255,255,.18); }
+.t-norte .tile-body { display: flex; flex-direction: column; min-height: 0; }
+.norte { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; }
+.norte-valor { margin: 0; display: flex; flex-direction: column; gap: 2px; }
+.norte-valor strong { font: 800 27px/1.05 var(--display); letter-spacing: -.01em; color: var(--ink); }
+.norte-valor span { font-size: 11px; line-height: 1.35; color: var(--muted); }
+.norte-valor span b { color: var(--ink); }
+.norte-chart { flex: 1; min-height: 90px; display: flex; }
+.ficha { margin: 0; display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 3px 10px; font-size: 11px; line-height: 1.38; overflow: auto; }
+.ficha dt { font-weight: 800; color: var(--muted); font-size: 10px; letter-spacing: .04em; text-transform: uppercase; padding-top: 1px; }
+.ficha dd { margin: 0; color: var(--ink); }
+.status { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 10.5px; font-weight: 800; white-space: nowrap; border: 1px solid transparent; }
+.status.is-confirmado { color: var(--good); background: var(--good-bg); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
+.status.is-candidato { color: var(--ink); background: color-mix(in srgb, var(--accent) 22%, transparent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+.status.is-contexto { color: var(--muted); background: var(--neutral-bg); border-color: var(--line); }
+.regras, .metodo { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 11.5px; }
+.regras th, .metodo th { position: sticky; top: 0; z-index: 1; padding: 4px 6px; border-bottom: 1px solid var(--line); background: var(--surface); text-align: left; font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.regras td, .metodo td { padding: 5px 6px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.35; }
+.regras td small, .metodo td small { display: block; color: var(--muted); font-size: 10.5px; }
+.regras td b + small, .metodo td b + small { margin-top: 1px; }
+.regras tbody tr { cursor: pointer; } .regras tbody tr:hover { background: var(--soft); }
+.regras .cellbar i { background: var(--blue); }
+.metodo td.nao { color: var(--bad); }
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 1px 7px; border: 1px solid var(--line); border-radius: 999px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+.seg.is-wrap { flex-wrap: wrap; } .seg.is-wrap button { display: inline-flex; align-items: center; gap: 5px; }
+.fontes-heat { height: 230px; display: flex; flex: none; }
+.table-wrap.is-short { max-height: 190px; }
+.tres { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(3, minmax(0, 1fr)) auto; gap: 6px; }
+.tres-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: baseline; column-gap: 10px; padding: 7px 10px; border-radius: 9px; background: var(--soft); border: 1px solid var(--line); }
+.tres-item span { font-size: 11.5px; font-weight: 700; color: var(--muted); }
+.tres-item strong { grid-row: span 2; font: 800 24px/1 var(--display); color: var(--ink); }
+.tres-item small { font-size: 10.5px; color: var(--muted); }
+.pendentes { margin: 0; font-size: 10.5px; line-height: 1.35; color: var(--muted); }

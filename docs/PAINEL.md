@@ -1,5 +1,7 @@
 # Painel de empresas no CREA-SP — V18
 
+> A V19 reorganizou as abas e acrescentou indicadores-norte, malha fina v1 e a aba Método. Este documento descreve a V18; as mudanças estão em [V19.md](V19.md).
+
 Cockpit em oito abas, uma por assunto. A Visão geral dá a cada assunto o mesmo peso, com um cartão que abre a aba correspondente. O catálogo completo, com 78 indicadores, está em `docs/INDICADORES_V18.md` e `docs/INDICADORES_V18.xlsx`. Cada indicador traz nome, cálculo, objetivo, fonte, forma gráfica e prioridade.
 
 ## Padrões

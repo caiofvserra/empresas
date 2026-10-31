@@ -1,4 +1,4 @@
-// Gera o painel V15 em um único HTML autocontido: entrega/painel-gestao-creasp.html.
+// Gera o painel (V19) em um único HTML autocontido: entrega/painel-gestao-creasp.html.
 // Com --artifact <arquivo>, grava também a versão sem o esqueleto <html>/<head>/<body>, usada para publicar como página.
 import { execSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';

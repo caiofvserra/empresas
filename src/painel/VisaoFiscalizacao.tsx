@@ -37,7 +37,7 @@ export default function VisaoFiscalizacao({ ctx }: { ctx: Ctx }) {
     </section>
     <div className="grid grid-fisc">
       <MapaBivariado ctx={ctx} />
-      <Tile area="sit" title="Situação das irregularidades" question="Quanto de cada infração já foi tratado: notificada, autuada, regularizada ou ainda sem ação fiscal.">
+      <Tile area="sit" title="Situação dos indícios" question="Quanto de cada tipo de indício já foi tratado: notificada, autuada, regularizada ou ainda sem ação fiscal.">
         <Situacao ctx={ctx} />
       </Tile>
       <Tile area="mes" title="Ações, autos e regularizações por mês" question="O ritmo da fiscalização se mantém? Barra clara: ações; dentro dela, autos por tipo; linha: regularizações.">
@@ -122,7 +122,7 @@ export function Situacao({ ctx }: { ctx: Ctx }) {
       </div>;
     })}
     <p className="insight">{(() => { const worst = [...ctx.resumo.situacao].filter(item => item.total).sort((a, b) => b.partes['Sem ação'].length / b.total - a.partes['Sem ação'].length / a.total)[0];
-      return worst ? <>Maior lacuna: <b>{pct(worst.partes['Sem ação'].length / worst.total * 100)}</b> das irregularidades de {tipoLabel[worst.tipo].toLowerCase()} ainda sem ação fiscal.</> : null; })()}</p>
+      return worst ? <>Maior lacuna: <b>{pct(worst.partes['Sem ação'].length / worst.total * 100)}</b> dos indícios de {tipoLabel[worst.tipo].toLowerCase()} ainda sem ação fiscal.</> : null; })()}</p>
   </div>;
 }
 

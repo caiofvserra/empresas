@@ -1,0 +1,278 @@
+{
+"origem": "planejamento-fontes-2026-10/CASOS_USO.md",
+"total": 34,
+"casos": [
+{
+"id": "UC01",
+"nome": "Base empresarial CREA-SP",
+"grupo": "Presença e desenvolvimento empresarial",
+"resumo": "Empresas distintas e estabelecimentos com registro ou visto vigente, acompanhados do universo histórico. É o denominador institucional principal.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; cadastro; SUPFIS; planejamento"
+},
+{
+"id": "UC02",
+"nome": "Cobertura cadastral estimada",
+"grupo": "Presença e desenvolvimento empresarial",
+"resumo": "Correspondência do CREA-SP no universo de estabelecimentos da Receita com atividades selecionadas e situação elegível.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; SUPFIS; cadastro; câmaras técnicas"
+},
+{
+"id": "UC03",
+"nome": "Saldo empresarial no CREA-SP",
+"grupo": "Presença e desenvolvimento empresarial",
+"resumo": "Entradas e saídas de empresas distintas na base vigente, reconciliadas com o estoque inicial e final.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; cadastro; planejamento"
+},
+{
+"id": "UC04",
+"nome": "Permanência empresarial no CREA-SP",
+"grupo": "Presença e desenvolvimento empresarial",
+"resumo": "Acompanhamento de uma coorte real de empresas registradas no início para verificar continuidade cadastral.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; cadastro; relacionamento empresarial"
+},
+{
+"id": "UC05",
+"nome": "Dinamismo empresarial técnico em SP",
+"grupo": "Presença e desenvolvimento empresarial",
+"resumo": "Abertura e mudanças observadas de estabelecimentos paulistas em atividades selecionadas, independentemente de registro no CREA.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; planejamento; SUPFIS; relacionamento"
+},
+{
+"id": "UC06",
+"nome": "Consistência cadastral empresarial",
+"grupo": "Presença e desenvolvimento empresarial",
+"resumo": "Divergências verificáveis entre fontes e campos que impedem o cruzamento confiável.",
+"prioridade": "P1",
+"gestao": "SUPTEC/EDAD; cadastro; SUPFIS; UDE/planejamento"
+},
+{
+"id": "UC07",
+"nome": "Redes societárias empresariais",
+"grupo": "Presença e desenvolvimento empresarial",
+"resumo": "Exploração de empresas relacionadas por participação societária ou administração documentada, preservando papel e tempo.",
+"prioridade": "P2",
+"gestao": "Presidência/Gabinete; cadastro; relacionamento; SUPFIS"
+},
+{
+"id": "UC08",
+"nome": "Cobertura de responsabilidade técnica",
+"grupo": "Presença técnica e acervo",
+"resumo": "Empresas com registro vigente e ao menos um vínculo técnico vigente identificado no mesmo corte.",
+"prioridade": "P1",
+"gestao": "SUPFIS; cadastro; câmaras técnicas; Presidência/Gabinete"
+},
+{
+"id": "UC09",
+"nome": "Continuidade da responsabilidade técnica",
+"grupo": "Presença técnica e acervo",
+"resumo": "Dias em que empresas registradas mantiveram vínculo técnico identificado, incluindo lacunas transitórias entre trocas.",
+"prioridade": "P1",
+"gestao": "SUPFIS; cadastro; câmaras técnicas"
+},
+{
+"id": "UC10",
+"nome": "Atividade técnica empresarial registrada",
+"grupo": "Presença técnica e acervo",
+"resumo": "Empresas com ART vinculada explicitamente, por atividade, território de execução e período.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; SUPFIS; câmaras técnicas; planejamento"
+},
+{
+"id": "UC11",
+"nome": "Acervo operacional empresarial",
+"grupo": "Presença técnica e acervo",
+"resumo": "Empresas que obtiveram CAO e composição do acervo por atividades e ARTs relacionadas.",
+"prioridade": "P1",
+"gestao": "GPP/EAPA ou área de acervo competente; câmaras técnicas; relacionamento; Presidência/Gabinete"
+},
+{
+"id": "UC12",
+"nome": "Demanda pública por serviços técnicos",
+"grupo": "Demanda pública e investimentos",
+"resumo": "Contratos públicos de escopo técnico selecionado, com valores contratados e papéis geográficos explicitamente definidos.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; planejamento; SUPFIS; câmaras técnicas"
+},
+{
+"id": "UC13",
+"nome": "Cobertura dos fornecedores técnicos",
+"grupo": "Demanda pública e investimentos",
+"resumo": "Presença de registro/visto entre fornecedores identificados em contratações técnicas de interesse territorial do CREA-SP.",
+"prioridade": "P1",
+"gestao": "SUPFIS; câmaras técnicas; Presidência/Gabinete"
+},
+{
+"id": "UC14",
+"nome": "Rastreabilidade entre contrato e ART",
+"grupo": "Demanda pública e investimentos",
+"resumo": "Contratos técnicos com ponte documental validada para uma ou mais ARTs do escopo correspondente.",
+"prioridade": "P1",
+"gestao": "SUPFIS; câmaras técnicas; SUPTEC/EDAD; órgãos parceiros"
+},
+{
+"id": "UC15",
+"nome": "Carteira de infraestrutura em SP",
+"grupo": "Demanda pública e investimentos",
+"resumo": "Projetos e obras do CIPI/Obrasgov com localização, estágio, execução e relações contratuais disponíveis.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; planejamento; SUPFIS; câmaras técnicas"
+},
+{
+"id": "UC16",
+"nome": "Obras do CNO com vínculo técnico identificado",
+"grupo": "Demanda pública e investimentos",
+"resumo": "Conciliação de obras cadastradas no CNO com empreendimento, empresa e ART, somente mediante acesso autorizado.",
+"prioridade": "Parceria",
+"gestao": "SUPFIS; câmaras técnicas; SUPTEC/EDAD; RFB parceira"
+},
+{
+"id": "UC17",
+"nome": "Atividade licenciada com presença técnica",
+"grupo": "Evidência territorial e setorial",
+"resumo": "Licenças e empreendimentos identificáveis em fontes ambientais/municipais com relações empresariais e técnicas documentadas.",
+"prioridade": "Parceria",
+"gestao": "SUPFIS; câmaras técnicas; planejamento; órgãos licenciadores"
+},
+{
+"id": "UC18",
+"nome": "Presença técnica em setores regulados",
+"grupo": "Evidência territorial e setorial",
+"resumo": "Empresas e instalações de energia, combustíveis, telecomunicações e outras atividades com identificadores oficiais.",
+"prioridade": "P1",
+"gestao": "SUPFIS; câmaras técnicas; Presidência/Gabinete; planejamento"
+},
+{
+"id": "UC19",
+"nome": "Investimentos empresariais financiados",
+"grupo": "Demanda pública e investimentos",
+"resumo": "Operações BNDES por setor, projeto e território disponível, relacionadas ao tomador empresarial.",
+"prioridade": "P2",
+"gestao": "Presidência/Gabinete; planejamento; SUPFIS; relacionamento"
+},
+{
+"id": "UC20",
+"nome": "Evidências convergentes de atividade",
+"grupo": "Fiscalização digital",
+"resumo": "Empresas/estabelecimentos em que uma combinação de observações datadas sustenta uma verificação digital, sem presumir independência estatística entre fontes.",
+"prioridade": "P1",
+"gestao": "SUPFIS; câmaras técnicas; SUPTEC/EDAD; UDE/planejamento"
+},
+{
+"id": "UC21",
+"nome": "Adimplência empresarial no CREA-SP",
+"grupo": "Sustentabilidade e serviços empresariais",
+"resumo": "Empresas com obrigações vencidas elegíveis e ausência de saldo vencido exigível no corte.",
+"prioridade": "P1",
+"gestao": "SUPADF/financeiro; Presidência/Gabinete; relacionamento; jurídico competente"
+},
+{
+"id": "UC22",
+"nome": "Recebimentos empresariais do CREA-SP",
+"grupo": "Sustentabilidade e serviços empresariais",
+"resumo": "Entradas efetivas de caixa provenientes de pessoas jurídicas por natureza, separando fluxo de estoque a receber.",
+"prioridade": "P1",
+"gestao": "SUPADF/financeiro; Presidência/Gabinete; planejamento"
+},
+{
+"id": "UC23",
+"nome": "Recuperação da dívida empresarial",
+"grupo": "Sustentabilidade e serviços empresariais",
+"resumo": "Parcela do saldo vencido de uma carteira fixa inicial efetivamente recuperada em caixa, sem incluir encargos gerados depois da abertura na taxa.",
+"prioridade": "P1",
+"gestao": "SUPADF/financeiro; jurídico competente; Presidência/Gabinete"
+},
+{
+"id": "UC24",
+"nome": "Prazo dos serviços empresariais",
+"grupo": "Sustentabilidade e serviços empresariais",
+"resumo": "Tempo e previsibilidade de serviços que habilitam ou documentam a atuação empresarial: registro, alteração, RT e CAO.",
+"prioridade": "P1",
+"gestao": "cadastro/atendimento; GPP/EAPA ou área competente; SUPTEC/EDAD; Presidência/Gabinete"
+},
+{
+"id": "UC25",
+"nome": "Emprego técnico formal em SP",
+"grupo": "Contexto econômico e formação",
+"resumo": "Estoque e movimentação de empregos em ocupações e atividades relacionadas à engenharia, em agregações oficiais.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; planejamento; câmaras técnicas; relacionamento"
+},
+{
+"id": "UC26",
+"nome": "Remuneração técnica real",
+"grupo": "Contexto econômico e formação",
+"resumo": "Nível e distribuição de remuneração/salários de ocupações selecionadas, com valores reais e universo explícito.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; câmaras técnicas; planejamento"
+},
+{
+"id": "UC27",
+"nome": "Formação em engenharia em SP",
+"grupo": "Contexto econômico e formação",
+"resumo": "Oferta de cursos, matrículas, ingressantes e concluintes em áreas compatíveis, sem identificação nominal pública.",
+"prioridade": "P1",
+"gestao": "Presidência/Gabinete; área educacional/IES; câmaras técnicas; planejamento"
+},
+{
+"id": "UC28",
+"nome": "Ingresso dos concluintes no CREA-SP",
+"grupo": "Contexto econômico e formação",
+"resumo": "Conversão observada de coortes autorizadas de diplomados de IES parceiras em primeiro registro profissional.",
+"prioridade": "Parceria",
+"gestao": "Presidência/Gabinete; área educacional/IES; relacionamento; câmaras técnicas"
+},
+{
+"id": "UC29",
+"nome": "Demanda pericial de engenharia",
+"grupo": "Perícias e agenda regulatória",
+"resumo": "Nomeações/serviços periciais observados por profissão/especialidade validadas e território judicial.",
+"prioridade": "Parceria",
+"gestao": "Presidência/Gabinete; câmaras técnicas; SUPFIS; tribunais parceiros"
+},
+{
+"id": "UC30",
+"nome": "Rastreabilidade pericial de ART",
+"grupo": "Perícias e agenda regulatória",
+"resumo": "Nomeações elegíveis com ligação confirmada a ART de perícia/processo, preservando escopo e identidade.",
+"prioridade": "Parceria",
+"gestao": "SUPFIS; câmaras técnicas; SUPTEC/EDAD; tribunais parceiros"
+},
+{
+"id": "UC31",
+"nome": "Densidade empresarial e desenvolvimento regional",
+"grupo": "Contexto econômico e formação",
+"resumo": "Concentração de estabelecimentos técnicos em relação à população e estrutura econômica regional, mantendo medidas separadas.",
+"prioridade": "P2",
+"gestao": "Presidência/Gabinete; planejamento; SUPFIS; relacionamento regional"
+},
+{
+"id": "UC32",
+"nome": "Agenda normativa da engenharia",
+"grupo": "Perícias e agenda regulatória",
+"resumo": "Proposições e mudanças de tramitação com possível impacto em atividades, empresas, formação e exercício profissional.",
+"prioridade": "P2",
+"gestao": "Presidência/Gabinete; relações institucionais; câmaras técnicas; jurídico competente"
+},
+{
+"id": "UC33",
+"nome": "Demanda técnica planejada",
+"grupo": "Demanda pública e investimentos",
+"resumo": "Itens dos planos anuais de contratação classificados como serviços/obras técnicos e ainda não materializados em contratos identificados.",
+"prioridade": "P2",
+"gestao": "Presidência/Gabinete; planejamento; câmaras técnicas; relacionamento"
+},
+{
+"id": "UC34",
+"nome": "Concentração do mercado público técnico",
+"grupo": "Demanda pública e investimentos",
+"resumo": "Distribuição do valor contratado entre fornecedores em um mercado definido, junto da participação de empresas locais e registradas.",
+"prioridade": "P2",
+"gestao": "Presidência/Gabinete; planejamento; relacionamento empresarial; câmaras técnicas"
+}
+]
+}

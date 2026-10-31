@@ -1,156 +1,123 @@
 import { useMemo } from 'react';
 import { Chart } from '../painel/chart';
-import { camaraDaEmpresa, camaras, mercadoPorCamara, situacoesFornecedor } from '../painel/analise';
-import type { SituacaoFornecedor } from '../painel/analise';
+import { camaraDaEmpresa, camaras, grausVinculo, situacoesFornecedor } from '../painel/analise';
+import type { ContratoPublico, GrauVinculo, SituacaoFornecedor } from '../painel/analise';
 import { brl, int, money, pct } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
-import { piso, situacoesDiretoria } from './cruzamentos';
-import type { SituacaoDiretoria, Vinculo } from './cruzamentos';
+import { regrasPendentes, statusAjuda } from './cruzamentos';
+import type { Indicio, StatusLigacao } from './cruzamentos';
 import { Bloco, linhasEmpresas } from './ui';
 
-/** Aba 4 · Malha fina: indícios de irregularidade por cruzamento do cadastro com Receita, quadro societário, RAIS e contratos públicos. */
+/**
+ * Aba 4 · Malha fina v1: indícios por regra, com status de ligação (confirmado, candidato, contexto), fonte e versão.
+ * A lista é para análise; nenhum indício vira auto de infração sem verificação.
+ */
 export default function PaginaMalha({ ctx }: { ctx: CockpitCtx }) {
   return <div className="ck-grid ck-grid-malha">
-    <Bloco ctx={ctx} id="mf1" area="mf1" title="Empresas com indício, por cruzamento" question="Quantas empresas cada cruzamento aponta e quantas já tiveram ação fiscal. Clique para a lista."><Indicios ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf8" area="mf8" title="Contratos públicos de engenharia e situação do fornecedor" question="Contratos do período (PNCP) pela situação da empresa na data: registro, quitação da anuidade e ART." help="Sem quitação de anuidade, a empresa não obteria a certidão de registro e quitação exigida em licitações. ART considerada entre 30 dias antes e 60 dias depois do contrato (Lei 6.496/77)."><Contratos ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf2" area="mf2" title="CNAE de engenharia sem registro" question="CNPJs ativos na Receita com atividade de engenharia e sem registro no CREA-SP (art. 59 da Lei 5.194/66), por câmara." help="Cruzamento dos dados abertos do CNPJ (situação cadastral e CNAE) com o cadastro de registros. CNAE indica, mas não prova, a atividade: confirmar antes de autuar."><SemRegistro ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf4" area="mf4" title="Nome de engenharia sem diretoria registrada" question="Empresas com “engenharia” ou “agronomia” no nome e a composição da diretoria pelo registro no CREA (art. 5º da Lei 5.194/66)." help="A lei só permite essas palavras na denominação quando a maioria da diretoria é de profissionais registrados. Cruzamento do Quadro de Sócios e Administradores (QSA) da Receita com o cadastro de profissionais por nome e CPF parcial. Camada demonstrativa."><Diretorias ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf5" area="mf5" title="Engenheiros empregados abaixo do piso" question={`Salário dos vínculos em CBO de engenheiro em relação ao piso da jornada (8 h: ${money(piso.exigivel8h)}).`} help={`Lei 4.950-A/66: 6 h = 6 × R$ 1.212; 8 h = 8,5 × R$ 1.212 (base congelada pelo STF, ADPFs 53, 149 e 171, 2022). Leitura Confea com o salário mínimo vigente: ${money(piso.confea8h)} em 8 h. Fonte em produção: RAIS identificada ou eSocial, por acordo com o MTE (o dado público não traz CNPJ). Camada demonstrativa.`}><Piso ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf6" area="mf6" title="Engenheiros empregados e registro" question="Empresas sem registro que empregam engenheiros, e empresas com empregado em cargo de engenheiro sem registro ativo, por câmara." help="Vínculo em CBO de engenheiro indica atividade de engenharia. Empregado nessa ocupação sem registro ativo é indício de exercício ilegal da profissão. Fonte em produção: RAIS identificada ou eSocial. Camada demonstrativa."><EmpregoRegistro ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf3" area="mf3" title="Registro ativo com CNPJ inativo" question="Registros ativos no CREA-SP de CNPJ baixado, inapto ou suspenso na Receita: cadastro a sanear e anuidade dificilmente recebida."><CnpjInativo ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf9" area="mf9" title="Cobertura do registro × emprego em engenharia, por regional" question="Cobertura do mercado (eixo horizontal) contra a variação do emprego em ocupações de engenharia (RAIS/CAGED). Tamanho: empresas registradas." help="Linhas tracejadas: médias das regionais. Emprego crescendo com cobertura baixa (canto superior esquerdo) indica mercado crescendo sem o registro acompanhar."><Quadrante ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf1" area="mf1" title="Indícios por regra" question="Cada regra com o status da ligação entre as bases, a fonte e a versão. Clique numa regra para a lista de empresas." help={`Confirmado: ${statusAjuda.Confirmado} Candidato: ${statusAjuda.Candidato} Contexto: ${statusAjuda.Contexto}`}><Regras ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf8" area="mf8" title="Contratos públicos técnicos e ART" question="Vínculo de cada contrato do período (PNCP) com ART, em três graus, e quantos tinham chave para a busca." help="Confirmado: a ART cita o número do contrato ou do processo. Candidato: ART da mesma empresa entre 30 dias antes e 60 depois, para revisão. Não identificado: nenhum dos dois; é prioridade para verificar, não prova de que falta ART. A taxa só usa contratos com CNPJ do fornecedor válido (chave para a busca)."><Vinculos ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf7" area="mf7" title="Fornecedor na data do contrato" question="Registro vigente e quitação da anuidade do estabelecimento contratado, na data de cada contrato técnico." help="Sem quitação, a empresa não obteria a certidão de registro e quitação. A situação é lida na data do contrato, não na data de hoje."><Fornecedor ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf2" area="mf2" title="CNAE da lista sem registro localizado, por câmara" question="Estabelecimentos ativos na Receita com CNAE da lista do Crea-SP e sem registro ou visto vigente. “Sim” separado de “Passível”." help="CNAE delimita o universo de análise; não prova atividade efetiva nem obrigação. “Passível de obrigação” depende da atividade básica e dos serviços prestados. Câmara aproximada pelo CNAE principal (cenário); em produção, pelo cadastro técnico."><SemRegistro ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf3" area="mf3" title="Registro ativo com CNPJ inativo" question="Registros ativos no Crea-SP de CNPJ baixado, inapto ou suspenso na Receita: cadastro a sanear e anuidade dificilmente recebida."><CnpjInativo ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf9" area="mf9" title="Cobertura × emprego em engenharia, por regional" question="Contexto agregado: cobertura do mercado contra a variação do emprego em ocupações de engenharia (RAIS/CAGED, por município e CBO). Tamanho: empresas registradas." help="Emprego é agregado por município, CNAE e CBO e não se liga a CNPJ ou CPF. Linhas tracejadas: médias das regionais."><Quadrante ctx={ctx} /></Bloco>
   </div>;
 }
 
-function Indicios({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, malha } = ctx, rows = [...malha.indicios].sort((a, b) => b.empresas.length - a.empresas.length);
-  const porEmpresa = useMemo(() => { const map = new Map<string, string[]>(); for (const item of malha.indicios) for (const id of item.empresas) map.set(id, [...(map.get(id) ?? []), item.label]); return map; }, [malha]);
-  const option = useMemo(() => ({
-    grid: { top: 24, right: 40, bottom: 2, left: 2, containLabel: true },
-    legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10.5 } },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.label}</b><br/>${int(row.empresas.length)} empresas · ${int(row.comAcao.length)} já com ação fiscal (${pct(row.comAcao.length / Math.max(1, row.empresas.length) * 100)})`; } },
-    xAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
-    yAxis: { type: 'category', inverse: true, data: rows.map(row => row.label), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5, width: 190, overflow: 'break' } },
-    series: [
-      { name: 'Já com ação fiscal', type: 'bar', stack: 'i', barWidth: 13, data: rows.map(row => row.comAcao.length), itemStyle: { color: tokens.good } },
-      { name: 'Sem ação fiscal', type: 'bar', stack: 'i', barWidth: 13, data: rows.map(row => row.empresas.length - row.comAcao.length), itemStyle: { color: tokens.warn, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(rows[params.dataIndex].empresas.length) } },
-    ],
-  }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+export const Status = ({ status }: { status: StatusLigacao }) => <span className={`status is-${status.toLowerCase()}`} title={statusAjuda[status]}>{status}</span>;
+
+function Regras({ ctx }: { ctx: CockpitCtx }) {
+  const { malha } = ctx, max = Math.max(1, ...malha.indicios.map(row => row.empresas.length));
+  const porEmpresa = useMemo(() => { const map = new Map<string, Indicio[]>(); for (const item of malha.indicios) for (const id of item.empresas) map.set(id, [...(map.get(id) ?? []), item]); return map; }, [malha]);
+  const abrir = (item: Indicio, semAcao: boolean) => { const acted = new Set(item.comAcao), ids = semAcao ? item.empresas.filter(id => !acted.has(id)) : item.empresas; if (!ids.length) return;
+    ctx.open({ kind: 'linhas', eyebrow: `${item.status} · ${item.fonte} · regra ${item.versao}`, title: `${item.label}${semAcao ? ' · sem ação fiscal' : ''}`, what: item.regra, use: `Comece pelas empresas com mais indícios confirmados e sem ação fiscal. Não concluir ${item.naoConcluir.charAt(0).toLowerCase()}${item.naoConcluir.slice(1)}`, listTitle: 'Empresas, mais indícios primeiro',
+      rows: linhasEmpresas(ctx, ids, id => { const list = porEmpresa.get(id) ?? [], confirmados = list.filter(row => row.status === 'Confirmado').length;
+        return { value: `${list.length} indício${list.length > 1 ? 's' : ''} · ${confirmados} confirmado${confirmados === 1 ? '' : 's'}`, note: list.map(row => `${row.label} (${row.status.toLowerCase()})`).join(' · '), sort: confirmados * 10 + list.length }; }) }); };
   return <div className="stack">
-    <p className="kpi-line"><b>{int(malha.empresas.length)}</b> empresas com ao menos um indício · <b>{int(malha.multiplos.length)}</b> com dois ou mais · <b>{pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)}</b> já com ação fiscal</p>
-    <Chart option={option} tokens={tokens} label="Empresas por indício de irregularidade" onPick={params => { const row = rows[params.dataIndex]; if (!row) return;
-      const acted = new Set(row.comAcao), ids = params.seriesIndex === 0 ? row.comAcao : row.empresas.filter(id => !acted.has(id));
-      ctx.open({ kind: 'linhas', title: `${row.label} · ${params.seriesIndex === 0 ? 'já com ação fiscal' : 'sem ação fiscal'}`, what: 'Empresas apontadas por este cruzamento de bases. A coluna à direita mostra quantos indícios cada empresa acumula.', use: 'Comece pelas empresas com mais indícios e sem ação fiscal.', listTitle: 'Empresas, mais indícios primeiro',
-        rows: linhasEmpresas(ctx, ids, id => { const list = porEmpresa.get(id) ?? []; return { value: `${list.length} indício${list.length > 1 ? 's' : ''}`, note: list.join(' · '), sort: list.length }; }) }); }} />
+    <p className="kpi-line"><b>{int(malha.confirmadas.length)}</b> empresas com indício confirmado · <b>{int(malha.empresas.length)}</b> com algum indício · <b>{int(malha.multiplos.length)}</b> com dois ou mais · <b>{pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)}</b> já com ação fiscal</p>
+    <div className="table-wrap"><table className="regras">
+      <thead><tr><th>Regra</th><th>Status</th><th>Empresas</th><th>Sem ação fiscal</th></tr></thead>
+      <tbody>{malha.indicios.map(item => { const sem = item.empresas.length - item.comAcao.length;
+        return <tr key={item.id} tabIndex={0} onClick={() => abrir(item, false)} onKeyDown={event => { if (event.key === 'Enter') abrir(item, false); }}>
+          <td><b>{item.label}</b><small>{item.fonte} · regra {item.versao}</small></td><td><Status status={item.status} /></td>
+          <td><span className="cellbar"><i style={{ width: `${item.empresas.length / max * 100}%` }} /><em>{int(item.empresas.length)}</em></span></td>
+          <td><button className="link" onClick={event => { event.stopPropagation(); abrir(item, true); }}>{int(sem)} · {pct(sem / Math.max(1, item.empresas.length) * 100)}</button></td></tr>; })}</tbody>
+    </table></div>
+    <p className="pendentes">Ainda sem regra no cenário: {regrasPendentes.map(row => `${row.label} (${row.motivo})`).join('; ')}.</p>
   </div>;
 }
 
-function Contratos({ ctx }: { ctx: CockpitCtx }) {
+function Vinculos({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, malha } = ctx, contratos = malha.contratos;
-  const cores: Record<SituacaoFornecedor, string> = { 'Sem registro na data': tokens.bad, 'Registrada, com anuidade vencida': tokens.warn, 'Registrada, sem ART em 60 dias': tokens.accent, 'Regular: registro, quitação e ART': tokens.good };
-  const categorias = useMemo(() => [...new Set(contratos.map(row => row.categoria))].sort((a, b) => contratos.filter(row => row.categoria === b).reduce((s, r) => s + r.valor, 0) - contratos.filter(row => row.categoria === a).reduce((s, r) => s + r.valor, 0)), [contratos]);
-  const soma = (categoria: string, situacao: SituacaoFornecedor) => contratos.filter(row => row.categoria === categoria && row.situacao === situacao);
+  const cores: Record<GrauVinculo, string> = { 'Confirmado por documento': tokens.good, 'Candidato para revisão': tokens.accent, 'Não identificado': tokens.warn, 'Sem chave para a busca': tokens.line };
+  const categorias = useMemo(() => [...new Set(contratos.map(row => row.categoria))].sort(), [contratos]);
+  const de = (categoria: string, grau: GrauVinculo) => contratos.filter(row => row.categoria === categoria && row.vinculo === grau);
   const option = useMemo(() => ({
-    grid: { top: 44, right: 10, bottom: 2, left: 2, containLabel: true },
+    grid: { top: 44, right: 30, bottom: 2, left: 2, containLabel: true },
     legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10.5 } },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => `<b>${items[0].name}</b><br/>${items.map(item => { const rows = soma(items[0].name, item.seriesName); return `${item.marker}${item.seriesName}: ${brl(item.value)} · ${int(rows.length)} contratos`; }).join('<br/>')}` },
-    xAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, formatter: (value: number) => brl(value) } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => `<b>${items[0].name}</b><br/>${items.map(item => { const rows = de(items[0].name, item.seriesName); return `${item.marker}${item.seriesName}: ${int(rows.length)} contratos · ${brl(rows.reduce((s, r) => s + r.valor, 0))}`; }).join('<br/>')}` },
+    xAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
     yAxis: { type: 'category', inverse: true, data: categorias, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
-    series: situacoesFornecedor.map((situacao, index) => ({ name: situacao, type: 'bar', stack: 'c', barWidth: 16, data: categorias.map(categoria => soma(categoria, situacao).reduce((sum, row) => sum + row.valor, 0)), itemStyle: { color: cores[situacao], borderColor: tokens.surface, borderWidth: 1, borderRadius: index === situacoesFornecedor.length - 1 ? [0, 3, 3, 0] : 0 } })),
+    series: grausVinculo.map((grau, index) => ({ name: grau, type: 'bar', stack: 'v', barWidth: 16, data: categorias.map(categoria => de(categoria, grau).length), itemStyle: { color: cores[grau], borderColor: tokens.surface, borderWidth: 1, borderRadius: index === grausVinculo.length - 1 ? [0, 3, 3, 0] : 0 } })),
   }), [categorias, tokens, contratos]); // eslint-disable-line react-hooks/exhaustive-deps
-  const semRegistro = contratos.filter(row => row.situacao === 'Sem registro na data'), irregular = malha.contratosIrregulares;
+  const comChave = malha.contratosComChave, confirmados = comChave.filter(row => row.vinculo === 'Confirmado por documento').length, naoId = comChave.filter(row => row.vinculo === 'Não identificado');
   return <div className="stack">
-    <p className="kpi-line"><b>{brl(semRegistro.reduce((sum, row) => sum + row.valor, 0))}</b> com fornecedor sem registro · <b>{int(irregular.length)}</b> de {int(contratos.length)} contratos com alguma pendência</p>
-    <Chart option={option} tokens={tokens} label="Valor de contratos públicos de engenharia por categoria e situação do fornecedor" onPick={params => { const rows = soma(params.name, params.seriesName); if (!rows.length) return;
-      const nomes = new Map(ctx.dataset.companies.map(row => [row.id, row.tradeName || row.name])), buyers = new Map(ctx.dataset.buyers.map(row => [row.id, row.name]));
-      ctx.open({ kind: 'linhas', title: `${params.name} · ${String(params.seriesName).toLowerCase()}`, what: 'Contratos públicos de engenharia do período (PNCP) e a situação da empresa contratada na data do contrato.', use: params.seriesName === 'Regular: registro, quitação e ART' ? undefined : 'Contrato público é prova documental: notifique a empresa e informe o órgão contratante quando couber.', listTitle: 'Contratos, maior valor primeiro',
-        summary: [['Contratos', int(rows.length)], ['Valor', brl(rows.reduce((sum, row) => sum + row.valor, 0))], ['Empresas', int(new Set(rows.map(row => row.companyId)).size)]],
-        rows: rows.map(row => ({ key: row.id, companyId: row.companyId, title: nomes.get(row.companyId) ?? row.companyId, subtitle: `${buyers.get(row.buyerId) ?? 'Órgão público'} · ${row.data.split('-').reverse().join('/')}`, value: money(row.valor), note: `${row.objeto} · ${row.situacao}`, sortValue: row.valor })) }); }} />
+    <p className="kpi-line"><b>{int(comChave.length)}</b> de {int(contratos.length)} contratos com chave para a busca · <b>{pct(confirmados / Math.max(1, comChave.length) * 100)}</b> com vínculo confirmado · <b>{int(naoId.length)}</b> ({brl(naoId.reduce((s, r) => s + r.valor, 0))}) sem ART identificada</p>
+    <Chart option={option} tokens={tokens} label="Contratos públicos técnicos por categoria e grau de vínculo com ART" onPick={params => abrirContratos(ctx, de(params.name, params.seriesName), `${params.name} · ${String(params.seriesName).toLowerCase()}`, params.seriesName === 'Não identificado' ? 'Prioridade para verificar, começando pelos de maior valor. Vínculo não identificado não é infração.' : params.seriesName === 'Candidato para revisão' ? 'Confirme se a ART candidata corresponde ao objeto, ao local e ao período do contrato.' : undefined)} />
+  </div>;
+}
+
+function abrirContratos(ctx: CockpitCtx, rows: ContratoPublico[], title: string, use?: string) {
+  if (!rows.length) return;
+  const nomes = new Map(ctx.dataset.companies.map(row => [row.id, row.tradeName || row.name])), buyers = new Map(ctx.dataset.buyers.map(row => [row.id, row.name]));
+  ctx.open({ kind: 'linhas', title, what: 'Contratos públicos técnicos do período (PNCP), a situação do fornecedor na data do contrato e o vínculo com ART.', use, listTitle: 'Contratos, maior valor primeiro',
+    summary: [['Contratos', int(rows.length)], ['Valor', brl(rows.reduce((sum, row) => sum + row.valor, 0))], ['Empresas', int(new Set(rows.map(row => row.companyId)).size)]],
+    rows: rows.map(row => ({ key: row.id, companyId: row.companyId, title: nomes.get(row.companyId) ?? row.companyId, subtitle: `${buyers.get(row.buyerId) ?? 'Órgão público'} · ${row.data.split('-').reverse().join('/')}`, value: money(row.valor),
+      note: `${row.objeto} · ${row.situacao} · ${row.vinculo}${row.artsDocumento.length ? ` (${row.artsDocumento.join(', ')})` : row.artsCandidatas.length ? ` (${row.artsCandidatas.length} ART candidata${row.artsCandidatas.length > 1 ? 's' : ''})` : ''}`, sortValue: row.valor })) });
+}
+
+function Fornecedor({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens, malha } = ctx, contratos = malha.contratos;
+  const cores: Record<SituacaoFornecedor, string> = { 'Sem registro na data': tokens.bad, 'Registrada, com anuidade vencida': tokens.warn, 'Registrada e quitada': tokens.good };
+  const grupos = situacoesFornecedor.map(situacao => ({ situacao, rows: contratos.filter(row => row.situacao === situacao) }));
+  const total = contratos.reduce((s, r) => s + r.valor, 0);
+  const option = useMemo(() => ({
+    tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${brl(item.value)} · ${pct(item.percent)} do valor<br/>${int(grupos[item.dataIndex].rows.length)} contratos` },
+    title: { text: brl(total), subtext: 'em contratos técnicos', left: 'center', top: '36%', textStyle: { color: tokens.ink, fontSize: 17, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 10.5 } },
+    series: [{ type: 'pie', radius: ['55%', '80%'], center: ['50%', '50%'], padAngle: 2, itemStyle: { borderRadius: 4, borderColor: tokens.surface, borderWidth: 2 }, label: { show: false },
+      data: grupos.map(item => ({ name: item.situacao, value: item.rows.reduce((s, r) => s + r.valor, 0), itemStyle: { color: cores[item.situacao] } })) }],
+  }), [grupos, tokens, total]); // eslint-disable-line react-hooks/exhaustive-deps
+  const abrir = (situacao: SituacaoFornecedor) => abrirContratos(ctx, grupos.find(item => item.situacao === situacao)?.rows ?? [], `Fornecedor · ${situacao.toLowerCase()}`, situacao === 'Sem registro na data' ? 'Confirme o objeto e a atividade; informe o órgão contratante quando couber.' : undefined);
+  return <div className="split">
+    <Chart option={option} tokens={tokens} label="Valor de contratos técnicos pela situação do fornecedor na data" onPick={params => abrir(grupos[params.dataIndex]?.situacao)} />
+    <ul className="side-list">{grupos.map(item => <li key={item.situacao}><button onClick={() => abrir(item.situacao)}><i style={{ background: cores[item.situacao] }} /><span>{item.situacao}</span><b>{int(item.rows.length)}</b></button></li>)}
+      <li className="side-note">Lido na data do contrato. Município do órgão e do fornecedor não indicam o local da obra.</li></ul>
   </div>;
 }
 
 function SemRegistro({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => mercadoPorCamara(ctx.scope, ctx.model, ctx.f), [ctx.scope, ctx.model, ctx.f]);
-  const comAcao = rows.reduce((sum, row) => sum + row.partes['Sem registro, com ação'].length, 0), total = comAcao + rows.reduce((sum, row) => sum + row.partes['Sem registro, sem ação'].length, 0);
+  const { tokens, malha } = ctx, camara = camaraDaEmpresa(ctx.dataset), places = new Map(ctx.dataset.establishments.map(row => [row.id, row]));
+  const acted = useMemo(() => new Set(ctx.f.alvos.filter(row => row.tipo === 'registro' && !row.regularizedAt && row.acaoId).map(row => row.establishmentId)), [ctx.f]);
+  const series = useMemo(() => {
+    const por = (ids: string[], filtro: (id: string) => boolean) => camaras.map(name => ids.filter(id => filtro(id) && camara.get(places.get(id)?.companyId ?? '') === name));
+    return [
+      { name: '“Sim”, já com ação fiscal', color: tokens.good, ids: por(malha.semRegistroSim, id => acted.has(id)) },
+      { name: '“Sim”, sem ação fiscal', color: tokens.bad, ids: por(malha.semRegistroSim, id => !acted.has(id)) },
+      { name: '“Passível”', color: tokens.heat[1], ids: por(malha.semRegistroPassivel, () => true) },
+    ];
+  }, [malha, acted, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   const option = useMemo(() => ({
     grid: { top: 24, right: 34, bottom: 2, left: 2, containLabel: true },
     legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10.5 } },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     xAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
-    yAxis: { type: 'category', inverse: true, data: rows.map(row => row.camara), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
-    series: [
-      { name: 'Já com ação fiscal', type: 'bar', stack: 's', barWidth: 15, data: rows.map(row => row.partes['Sem registro, com ação'].length), itemStyle: { color: tokens.good } },
-      { name: 'Sem ação fiscal', type: 'bar', stack: 's', barWidth: 15, data: rows.map(row => row.partes['Sem registro, sem ação'].length), itemStyle: { color: tokens.bad, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(rows[params.dataIndex].partes['Sem registro, com ação'].length + rows[params.dataIndex].partes['Sem registro, sem ação'].length) } },
-    ],
-  }), [rows, tokens]);
-  return <div className="stack">
-    <p className="kpi-line"><b>{int(total)}</b> CNPJs sem registro · <b>{pct(comAcao / Math.max(1, total) * 100)}</b> já com ação fiscal</p>
-    <Chart option={option} tokens={tokens} label="CNPJs de engenharia sem registro por câmara" onPick={params => { const row = rows[params.dataIndex]; if (!row) return; const segment = params.seriesIndex === 0 ? 'Sem registro, com ação' : 'Sem registro, sem ação';
-      ctx.open({ kind: 'cnpjs', title: `${row.camara} · ${params.seriesIndex === 0 ? 'sem registro, já com ação fiscal' : 'sem registro e sem ação fiscal'}`, what: 'CNPJs ativos na Receita com CNAE de engenharia desta câmara, sem registro ativo no CREA-SP.', use: 'Confirme a atividade (contratos, RAIS, site) antes de notificar.', ids: row.partes[segment], segmento: segment }); }} />
-  </div>;
-}
-
-function Diretorias({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, malha } = ctx, cores: Record<SituacaoDiretoria, string> = { 'Maioria com registro ativo': tokens.good, 'Metade ou menos com registro ativo': tokens.warn, 'Nenhum diretor com registro ativo': tokens.bad };
-  const grupos = situacoesDiretoria.map(situacao => ({ situacao, rows: malha.diretorias.filter(row => row.situacao === situacao) }));
-  const total = malha.diretorias.length, irregulares = total - grupos[0].rows.length;
-  const option = useMemo(() => ({
-    tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${int(item.value)} empresas · ${pct(item.percent)}` },
-    title: { text: int(total), subtext: 'com o termo no nome', left: 'center', top: '36%', textStyle: { color: tokens.ink, fontSize: 19, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 10.5 } },
-    series: [{ type: 'pie', radius: ['55%', '80%'], center: ['50%', '50%'], padAngle: 2, itemStyle: { borderRadius: 4, borderColor: tokens.surface, borderWidth: 2 }, label: { show: false }, data: grupos.map(item => ({ name: item.situacao, value: item.rows.length, itemStyle: { color: cores[item.situacao] } })) }],
-  }), [grupos, tokens, total]); // eslint-disable-line react-hooks/exhaustive-deps
-  const abrir = (situacao: SituacaoDiretoria) => { const rows = grupos.find(item => item.situacao === situacao)?.rows ?? []; if (!rows.length) return;
-    const byId = new Map(rows.map(row => [row.companyId, row]));
-    ctx.open({ kind: 'linhas', title: `Diretoria · ${situacao.toLowerCase()}`, what: 'Empresas com “engenharia” ou “agronomia” na razão social e a situação, no CREA, de cada administrador do quadro societário (QSA).', use: situacao === 'Maioria com registro ativo' ? undefined : 'Notifique para adequar a denominação ou a composição da diretoria (art. 5º da Lei 5.194/66).', listTitle: 'Empresas, menos diretores registrados primeiro',
-      rows: linhasEmpresas(ctx, rows.map(row => row.companyId), id => { const row = byId.get(id)!; return { value: `${row.ativos} de ${row.diretores.length} com registro ativo`, note: row.diretores.map(item => `${item.nome} (${item.papel.toLowerCase()}, ${item.situacao.toLowerCase()})`).join(' · '), sort: row.diretores.length - row.ativos }; }) }); };
-  return <div className="split">
-    <Chart option={option} tokens={tokens} label="Empresas com termo técnico no nome pela composição da diretoria" onPick={params => abrir(grupos[params.dataIndex]?.situacao)} />
-    <ul className="side-list">{grupos.map(item => <li key={item.situacao}><button onClick={() => abrir(item.situacao)}><i style={{ background: cores[item.situacao] }} /><span>{item.situacao}</span><b>{int(item.rows.length)}</b></button></li>)}
-      <li className="side-note"><b>{int(irregulares)}</b> empresas ({pct(irregulares / Math.max(1, total) * 100)}) sem maioria de diretores registrados</li></ul>
-  </div>;
-}
-
-const faixasPiso: [string, number][] = [['menos de 70%', 0.7], ['70 a 85%', 0.85], ['85 a 100%', 1], ['100 a 115%', 1.15], ['115 a 130%', 1.3], ['130% ou mais', Infinity]];
-function Piso({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, malha } = ctx;
-  const faixas = useMemo(() => faixasPiso.map(([nome], index) => ({ nome, vinculos: malha.vinculos.filter(row => { const razao = row.salario / row.piso; return razao < faixasPiso[index][1] && (index === 0 || razao >= faixasPiso[index - 1][1]); }) })), [malha]);
-  const empresas = new Set(malha.abaixoPiso.map(row => row.companyId)).size;
-  const option = useMemo(() => ({
-    grid: { top: 12, right: 6, bottom: 24, left: 4, containLabel: true },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const item = faixas[items[0].dataIndex]; return `<b>Salário ${item.nome} do piso</b><br/>${int(item.vinculos.length)} vínculos em ${int(new Set(item.vinculos.map(row => row.companyId)).size)} empresas`; } },
-    xAxis: { type: 'category', data: faixas.map(item => item.nome), name: 'salário em relação ao piso da jornada', nameLocation: 'middle', nameGap: 22, nameTextStyle: { color: tokens.muted, fontSize: 10 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10, interval: 0 } },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
-    series: [{ type: 'bar', barWidth: '66%', data: faixas.map((item, index) => ({ value: item.vinculos.length, itemStyle: { borderRadius: [4, 4, 0, 0], color: index < 3 ? tokens.bad : tokens.blue } })), label: { show: true, position: 'top', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(params.value) } }],
-  }), [faixas, tokens]);
-  const abrir = (vinculos: Vinculo[], titulo: string) => { if (!vinculos.length) return;
-    const porEmpresa = new Map<string, Vinculo[]>(); for (const row of vinculos) porEmpresa.set(row.companyId, [...(porEmpresa.get(row.companyId) ?? []), row]);
-    ctx.open({ kind: 'linhas', title: titulo, what: 'Vínculos de emprego em CBO de engenheiro e o salário em relação ao piso da jornada (Lei 4.950-A/66).', use: 'Oriente a empresa sobre o piso e, se persistir, encaminhe ao Ministério do Trabalho ou ao Ministério Público do Trabalho.', listTitle: 'Empresas, menor salário relativo primeiro',
-      rows: linhasEmpresas(ctx, [...porEmpresa.keys()], id => { const rows = porEmpresa.get(id)!, menor = rows.reduce((min, row) => row.salario / row.piso < min.salario / min.piso ? row : min, rows[0]);
-        return { value: `menor: ${money(menor.salario)} (${pct(menor.salario / menor.piso * 100)} do piso)`, note: `${rows.length} vínculo${rows.length > 1 ? 's' : ''} · ${[...new Set(rows.map(row => row.ocupacao))].join(', ')} · ${menor.horas} h/semana`, sort: 1 - menor.salario / menor.piso }; }) }); };
-  return <div className="stack">
-    <p className="kpi-line"><b>{int(malha.abaixoPiso.length)}</b> vínculos abaixo do piso ({pct(malha.abaixoPiso.length / Math.max(1, malha.vinculos.length) * 100)}) em <b>{int(empresas)}</b> empresas · <button className="link" onClick={() => abrir(malha.abaixoPiso, 'Engenheiros empregados abaixo do piso')}>ver empresas</button></p>
-    <Chart option={option} tokens={tokens} label="Vínculos de engenheiros pela relação entre salário e piso" onPick={params => { const item = faixas[params.dataIndex]; if (item) abrir(item.vinculos, `Salário ${item.nome} do piso`); }} />
-  </div>;
-}
-
-function EmpregoRegistro({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, malha } = ctx, camara = camaraDaEmpresa(ctx.dataset);
-  const semRegistroEngenheiro = useMemo(() => [...new Set(malha.engenheirosSemRegistro.map(row => row.companyId))], [malha]);
-  const series = [{ name: 'Sem registro, emprega engenheiros', ids: malha.empregaSemRegistro, color: tokens.bad }, { name: 'Engenheiro empregado sem registro ativo', ids: semRegistroEngenheiro, color: tokens.warn }];
-  const option = useMemo(() => ({
-    grid: { top: 24, right: 30, bottom: 2, left: 2, containLabel: true },
-    legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10.5 } },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    xAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
     yAxis: { type: 'category', inverse: true, data: camaras, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
-    series: series.map(item => ({ name: item.name, type: 'bar', barWidth: 9, barGap: '30%', data: camaras.map(name => item.ids.filter(id => camara.get(id) === name).length), itemStyle: { color: item.color, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5 } })),
-  }), [tokens, malha]); // eslint-disable-line react-hooks/exhaustive-deps
+    series: series.map((item, index) => ({ name: item.name, type: 'bar', stack: 's', barWidth: 15, data: item.ids.map(ids => ids.length), itemStyle: { color: item.color, borderRadius: index === series.length - 1 ? [0, 3, 3, 0] : 0 } })),
+  }), [series, tokens]);
+  const sim = malha.semRegistroSim.length, comAcao = series[0].ids.flat().length;
   return <div className="stack">
-    <p className="kpi-line"><b>{int(malha.empregaSemRegistro.length)}</b> empresas sem registro empregam engenheiros · <b>{int(malha.engenheirosSemRegistro.length)}</b> empregados como engenheiro sem registro ativo</p>
-    <Chart option={option} tokens={tokens} label="Empresas por cruzamento entre emprego de engenheiros e registro" onPick={params => { const item = series[params.seriesIndex], name = camaras[params.dataIndex]; if (!item || !name) return;
-      const vinc = new Map<string, Vinculo[]>(); for (const row of malha.vinculos) vinc.set(row.companyId, [...(vinc.get(row.companyId) ?? []), row]);
-      ctx.open({ kind: 'linhas', title: `${name} · ${item.name.toLowerCase()}`, what: params.seriesIndex === 0 ? 'Empresas sem registro ativo no CREA-SP com empregados em CBO de engenheiro (RAIS identificada).' : 'Empresas com empregado em CBO de engenheiro cujo CPF não tem registro ativo no CREA.', use: params.seriesIndex === 0 ? 'Indício forte de atividade de engenharia: priorize a notificação para registro.' : 'Verifique o exercício ilegal da profissão e a responsabilidade da empresa.', listTitle: 'Empresas, mais vínculos primeiro',
-        rows: linhasEmpresas(ctx, item.ids.filter(id => camara.get(id) === name), id => { const rows = vinc.get(id) ?? [], sem = rows.filter(row => !row.profissionalAtivo).length; return { value: `${rows.length} engenheiro${rows.length > 1 ? 's' : ''} empregado${rows.length > 1 ? 's' : ''}`, note: `${sem} sem registro ativo · ${[...new Set(rows.map(row => row.ocupacao))].join(', ')}`, sort: rows.length }; }) }); }} />
+    <p className="kpi-line"><b>{int(sim)}</b> CNPJs “Sim” sem registro localizado ({pct(comAcao / Math.max(1, sim) * 100)} já com ação) · <b>{int(malha.semRegistroPassivel.length)}</b> “Passível”, à parte</p>
+    <Chart option={option} tokens={tokens} label="CNPJs com CNAE da lista sem registro localizado, por câmara e classe" onPick={params => { const item = series[params.seriesIndex], ids = item?.ids[params.dataIndex]; if (!ids?.length) return;
+      ctx.open({ kind: 'cnpjs', title: `${camaras[params.dataIndex]} · ${item.name.replace(/[“”]/g, '')}`, what: 'CNPJs ativos na Receita com CNAE da lista do Crea-SP desta câmara e classe, sem registro ou visto vigente no corte.', use: 'Confirme a atividade (contratos, licenças, site) antes de orientar ou notificar. Nenhum auto sai só do CNAE.', ids }); }} />
   </div>;
 }
 
