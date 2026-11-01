@@ -55,6 +55,7 @@ export function FichaPop({ ficha, titulo, leitura, anchor }: { ficha?: FichaBloc
         {ficha.cruzamento && <><dt>Cruzamento</dt><dd>{ficha.cruzamento}</dd></>}
         <dt>Regra e versão</dt><dd>{ficha.regra}</dd>
         <dt>Limitações</dt><dd>{ficha.limites}</dd>
+        {ficha.extra?.map(([rotulo, texto]) => <Fragment key={rotulo}><dt>{rotulo}</dt><dd>{texto}</dd></Fragment>)}
         {parceriasDe(ficha).map(id => <Fragment key={id}><dt>Depende de parceria</dt><dd className="ficha-parceria"><b>{parceriaPorId[id].parceiro}</b> precisa entregar: {parceriaPorId[id].entrega.charAt(0).toLowerCase()}{parceriaPorId[id].entrega.slice(1)}. Chave: {parceriaPorId[id].chave}. Até o acordo, a camada é demonstrativa.</dd></Fragment>)}
         {leitura && <><dt>Leitura</dt><dd>{leitura}</dd></>}
         <dt>Último cálculo</dt><dd>Calculado ao abrir, com a base lida em {data(anchor)} (data de referência do painel).</dd>
