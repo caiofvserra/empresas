@@ -1,27 +1,32 @@
 import { useMemo, useState } from 'react';
 import { Chart } from '../painel/chart';
 import { int } from '../painel/ui';
-import { casos, fontes, lacunas, niveisEvidencia, regrasLeitura, situacoesCaso, usoNoPainel } from '../observatorio/governanca';
-import type { Decisao, SituacaoCaso } from '../observatorio/governanca';
+import { casos, coletaDe, coletas, ferramentasIa, fontes, lacunas, niveisEvidencia, regrasLeitura, situacoesCaso, usoNoPainel } from '../observatorio/governanca';
+import type { Coleta, Decisao, SituacaoCaso, SituacaoFerramenta } from '../observatorio/governanca';
+import { regras, regrasPendentes, statusAjuda } from './cruzamentos';
 import type { CockpitCtx } from './contexto';
+import { Status } from './PaginaMalha';
 import { Bloco } from './ui';
 
 /**
- * Aba 9 · Método: o que o projeto elaborou e a V19 aplica. Regras de leitura do plano rev. 2, decisão sobre as 12 lacunas do V18,
- * onde está cada um dos 34 casos de uso e o atlas unificado de 98 fontes, com nível de evidência.
+ * Aba 11 · Método: o que o projeto elaborou e a V20 aplica. Regras de leitura do plano rev. 2, decisão sobre as 12 lacunas do V18,
+ * o bloco que atende cada um dos 34 casos de uso, as regras da malha fina com status e coleta, o atlas de 98 fontes com a forma de
+ * coleta e as ferramentas de IA e análises avançadas que alimentam o painel.
  */
 export default function PaginaMetodo({ ctx }: { ctx: CockpitCtx }) {
   return <div className="ck-grid ck-grid-metodo">
     <Bloco ctx={ctx} id="rl" area="rl" title="O que cada cruzamento permite concluir" question="Regras de leitura do plano do Observatório (rev. 2). Toda ligação é confirmada, candidata ou contexto; a situação no Crea-SP é lida na data do fato."><RegrasLeitura /></Bloco>
-    <Bloco ctx={ctx} id="lc" area="lc" title="As 12 lacunas do V18 e a decisão na V19" question="Da revisão do repositório: cada lacuna foi corrigida, rotulada como demonstrativa ou retirada. A última coluna diz o que falta para produção."><Lacunas /></Bloco>
-    <Bloco ctx={ctx} id="uc" area="uc" title="Os 34 casos de uso e onde estão" question="Casos com fórmula, grão e tempo do levantamento de 29/10. Clique numa situação para filtrar."><Casos ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="ft" area="ft" title="Atlas de 98 fontes, por tema e evidência" question="Catálogo unificado (atlas + levantamento). Evidência: amostra lida, contrato de API, documentação, pista a confirmar ou parceria. Clique numa célula para listar."><Fontes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="lc" area="lc" title="As 12 lacunas do V18 e a decisão tomada" question="Da revisão do repositório: cada lacuna foi corrigida, rotulada como demonstrativa ou retirada. A última coluna diz o que falta para produção."><Lacunas /></Bloco>
+    <Bloco ctx={ctx} id="uc" area="uc" title="Os 34 casos de uso e o bloco que atende cada um" question="Casos com fórmula, grão e tempo do levantamento de 29/10. Clique numa situação para filtrar."><Casos ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mr" area="mr" title="Regras da malha fina" question="As 11 regras da V20 com status da ligação, fonte, forma de coleta, versão e o que não se pode concluir de cada uma." help={`Confirmado: ${statusAjuda.Confirmado} Candidato: ${statusAjuda.Candidato} Contexto: ${statusAjuda.Contexto}`}><RegrasMalha /></Bloco>
+    <Bloco ctx={ctx} id="ft" area="ft" title="Atlas de 98 fontes, por tema, evidência e coleta" question="Catálogo unificado (atlas + levantamento). Só fontes de coleta automática periódica ou por convênio entram no painel. Clique numa célula para listar."><Fontes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="ia" area="ia" title="IA e análises avançadas" question="O que roda fora da ferramenta de BI e alimenta o painel: classificadores, pareamento, anomalia, extração e previsão. Toda saída entra como candidato, com validação humana."><Ferramentas ctx={ctx} /></Bloco>
   </div>;
 }
 
 function RegrasLeitura() {
   return <div className="table-wrap"><table className="metodo">
-    <thead><tr><th>Cruzamento</th><th>Pode concluir</th><th>Não pode concluir</th><th>Na V19</th></tr></thead>
+    <thead><tr><th>Cruzamento</th><th>Pode concluir</th><th>Não pode concluir</th><th>No painel</th></tr></thead>
     <tbody>{regrasLeitura.map(row => <tr key={row.cruzamento}><td><b>{row.cruzamento}</b></td><td>{row.pode}</td><td className="nao">{row.naoPode}</td><td><small>{row.noPainel}</small></td></tr>)}</tbody>
   </table></div>;
 }
@@ -38,7 +43,7 @@ function Lacunas() {
   </div>;
 }
 
-const corCaso = (tokens: CockpitCtx['tokens']): Record<SituacaoCaso, string> => ({ 'No painel': tokens.good, Parcial: tokens.accent, 'Próximas ondas': tokens.blue, 'Depende de acordo': tokens.heat[1] });
+const corCaso = (tokens: CockpitCtx['tokens']): Record<SituacaoCaso, string> => ({ 'No painel': tokens.good, Parcial: tokens.accent, 'Depende de acordo': tokens.heat[1], 'Fora da coleta automática': tokens.muted });
 function Casos({ ctx }: { ctx: CockpitCtx }) {
   const [filtro, setFiltro] = useState<SituacaoCaso | null>(null), cores = corCaso(ctx.tokens);
   const rows = filtro ? casos.filter(row => row.situacao === filtro) : casos;
@@ -48,17 +53,29 @@ function Casos({ ctx }: { ctx: CockpitCtx }) {
       {situacoesCaso.map(item => <button key={item} role="radio" aria-checked={filtro === item} className={filtro === item ? 'on' : ''} onClick={() => setFiltro(filtro === item ? null : item)}><i className="dot" style={{ background: cores[item] }} />{item} · {casos.filter(row => row.situacao === item).length}</button>)}
     </div>
     <div className="table-wrap"><table className="metodo">
-      <thead><tr><th>Caso</th><th>Prioridade</th><th>Situação</th><th>Onde</th></tr></thead>
+      <thead><tr><th>Caso</th><th>Prioridade</th><th>Situação</th><th>Bloco do painel</th></tr></thead>
       <tbody>{rows.map(row => <tr key={row.id} title={row.resumo}><td><b>{row.id} · {row.nome}</b><small>{row.grupo}</small></td><td>{row.prioridade}</td><td><span className="chip" style={{ borderColor: cores[row.situacao] }}><i className="dot" style={{ background: cores[row.situacao] }} />{row.situacao}</span></td><td><small>{row.onde}</small></td></tr>)}</tbody>
     </table></div>
   </div>;
 }
 
+function RegrasMalha() {
+  return <div className="stack">
+    <div className="table-wrap"><table className="metodo">
+      <thead><tr><th>Regra</th><th>Status</th><th>Coleta</th><th>Fonte e versão</th><th>Não pode concluir</th></tr></thead>
+      <tbody>{regras.map(row => <tr key={row.id} title={row.regra}><td><b>{row.label}</b></td><td><Status status={row.status} /></td><td><span className={`coleta is-${row.coleta.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')}`}>{row.coleta}</span></td><td><small>{row.fonte} · {row.versao}</small></td><td className="nao"><small>{row.naoConcluir}</small></td></tr>)}</tbody>
+    </table></div>
+    <p className="pendentes">Pendentes: {regrasPendentes.map(row => `${row.label} (${row.motivo})`).join('; ')}.</p>
+  </div>;
+}
+
+const corColeta = (tokens: CockpitCtx['tokens']): Record<Coleta, string> => ({ Automática: tokens.good, Convênio: tokens.accent, 'Fora da coleta automática': tokens.muted });
 function Fontes({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, [sel, setSel] = useState<{ tema: string; evidencia: string } | null>(null);
+  const { tokens } = ctx, [sel, setSel] = useState<{ tema: string; evidencia: string } | null>(null), [coleta, setColeta] = useState<Coleta | null>(null), cores = corColeta(tokens);
+  const base = useMemo(() => coleta ? fontes.filter(row => coletaDe(row) === coleta) : fontes, [coleta]);
   const temas = useMemo(() => [...new Set(fontes.map(row => row.tema))].sort((a, b) => fontes.filter(row => row.tema === b).length - fontes.filter(row => row.tema === a).length), []);
   const niveis = niveisEvidencia.filter(nivel => fontes.some(row => row.evidencia === nivel));
-  const celulas = useMemo(() => temas.flatMap((tema, y) => niveis.map((nivel, x) => [x, y, fontes.filter(row => row.tema === tema && row.evidencia === nivel).length] as [number, number, number])), [temas, niveis]);
+  const celulas = useMemo(() => temas.flatMap((tema, y) => niveis.map((nivel, x) => [x, y, base.filter(row => row.tema === tema && row.evidencia === nivel).length] as [number, number, number])), [temas, niveis, base]);
   const option = useMemo(() => ({
     grid: { top: 4, right: 8, bottom: 26, left: 4, containLabel: true },
     tooltip: { formatter: (item: any) => `<b>${temas[item.value[1]]}</b><br/>${niveis[item.value[0]]}: ${int(item.value[2])} fontes` },
@@ -67,13 +84,29 @@ function Fontes({ ctx }: { ctx: CockpitCtx }) {
     visualMap: { show: false, min: 0, max: Math.max(...celulas.map(row => row[2]), 1), inRange: { color: [tokens.soft, tokens.blue] } },
     series: [{ type: 'heatmap', data: celulas, label: { show: true, color: tokens.ink, fontSize: 10, formatter: (item: any) => item.value[2] || '' }, itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 3 } }],
   }), [celulas, temas, niveis, tokens]);
-  const lista = sel ? fontes.filter(row => row.tema === sel.tema && row.evidencia === sel.evidencia) : fontes.filter(row => usoNoPainel[row.fonte]);
+  const lista = sel ? base.filter(row => row.tema === sel.tema && row.evidencia === sel.evidencia) : base.filter(row => usoNoPainel[row.fonte]);
+  const conta = (item: Coleta) => fontes.filter(row => coletaDe(row) === item).length;
   return <div className="stack">
-    <p className="kpi-line"><b>{int(fontes.length)}</b> fontes · <b>{int(fontes.filter(row => row.acesso === 'Público').length)}</b> públicas · <b>{int(fontes.filter(row => row.acesso === 'Convênio').length)}</b> por convênio · <b>{int(fontes.filter(row => row.evidencia === 'amostra').length)}</b> com amostra lida</p>
+    <div className="seg is-wrap" role="radiogroup" aria-label="Forma de coleta">
+      <button role="radio" aria-checked={coleta === null} className={coleta === null ? 'on' : ''} onClick={() => setColeta(null)}>Todas · {fontes.length}</button>
+      {coletas.map(item => <button key={item} role="radio" aria-checked={coleta === item} className={coleta === item ? 'on' : ''} onClick={() => setColeta(coleta === item ? null : item)}><i className="dot" style={{ background: cores[item] }} />{item} · {conta(item)}</button>)}
+    </div>
     <div className="fontes-heat"><Chart option={option} tokens={tokens} label="Fontes do atlas por tema e nível de evidência" onPick={item => { const tema = temas[item.value?.[1]], evidencia = niveis[item.value?.[0]]; if (tema && evidencia && item.value[2]) setSel({ tema, evidencia }); }} /></div>
     <div className="table-wrap is-short"><table className="metodo">
-      <thead><tr><th colSpan={3}>{sel ? <>{sel.tema} · {sel.evidencia} <button className="link" onClick={() => setSel(null)}>limpar</button></> : 'Fontes que a V19 usa ou simula'}</th></tr></thead>
-      <tbody>{lista.map(row => <tr key={row.fonte}><td><b>{row.fonte}</b><small>{row.orgao} · {row.acesso} · {row.rotina}</small></td><td><small>{row.chaves}</small></td><td><small>{usoNoPainel[row.fonte] ?? `${row.evidencia}${row.data ? ` · ${row.data}` : ''}`}</small></td></tr>)}</tbody>
+      <thead><tr><th colSpan={4}>{sel ? <>{sel.tema} · {sel.evidencia} <button className="link" onClick={() => setSel(null)}>limpar</button></> : 'Fontes que a V20 usa ou simula'}</th></tr></thead>
+      <tbody>{lista.map(row => { const forma = coletaDe(row); return <tr key={row.fonte}><td><b>{row.fonte}</b><small>{row.orgao} · {row.acesso} · {row.rotina}</small></td><td><span className="chip" style={{ borderColor: cores[forma] }}><i className="dot" style={{ background: cores[forma] }} />{forma}</span></td><td><small>{row.chaves}</small></td><td><small>{usoNoPainel[row.fonte] ?? `${row.evidencia}${row.data ? ` · ${row.data}` : ''}`}</small></td></tr>; })}</tbody>
+    </table></div>
+  </div>;
+}
+
+const corFerramenta = (tokens: CockpitCtx['tokens']): Record<SituacaoFerramenta, string> => ({ 'No painel': tokens.good, Protótipo: tokens.accent, Planejada: tokens.muted });
+function Ferramentas({ ctx }: { ctx: CockpitCtx }) {
+  const cores = corFerramenta(ctx.tokens);
+  return <div className="stack">
+    <p className="kpi-line"><b>{int(ferramentasIa.filter(row => row.situacao === 'No painel').length)}</b> no painel · <b>{int(ferramentasIa.filter(row => row.situacao === 'Protótipo').length)}</b> em protótipo · <b>{int(ferramentasIa.filter(row => row.situacao === 'Planejada').length)}</b> planejadas · nenhuma saída vira fato sem validação humana e taxa de falso positivo medida</p>
+    <div className="table-wrap"><table className="metodo">
+      <thead><tr><th>Ferramenta</th><th>Tipo</th><th>Alimenta</th><th>Entrada e saída</th><th>Validação</th><th>Situação</th></tr></thead>
+      <tbody>{ferramentasIa.map(row => <tr key={row.nome}><td><b>{row.nome}</b></td><td>{row.tipo}</td><td><small>{row.bloco}</small></td><td><small>{row.entrada}</small><small>→ {row.saida}</small></td><td><small>{row.validacao}</small></td><td><span className="chip" style={{ borderColor: cores[row.situacao] }}><i className="dot" style={{ background: cores[row.situacao] }} />{row.situacao}</span></td></tr>)}</tbody>
     </table></div>
   </div>;
 }

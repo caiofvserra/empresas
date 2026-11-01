@@ -7,9 +7,12 @@ import { Curvas, MapaBivariado, Mensal, Situacao, corTipo } from '../painel/Visa
 import { Segments, brl, int, mes, money, pct, short } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
 import { caminhoAcoes } from './medidas';
-import { Bloco, Indicador } from './ui';
+import { Bloco, FichaPop, Indicador } from './ui';
+import { fichaDe } from './fichas';
+import { PRAZO_RESULTADO } from '../painel/forcas';
+import type { ResultadoFt } from '../painel/forcas';
 
-/** Aba 3 · Fiscalização: os atos do rito (ação, notificação, auto, multa, julgamento, dívida ativa) e o resultado (regularização e registro). */
+/** Aba 5 · Fiscalização: os atos do rito (ação, notificação, auto, multa, julgamento, dívida ativa), o resultado (regularização e registro) e as forças-tarefas contra o seu grupo de comparação. Tudo lido na data de referência. */
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 const cruzamento = new Set(['Cruzamento Receita (CNAE)', 'Contrato público (PNCP)', 'Cadastro CREA']);
 
@@ -20,25 +23,26 @@ export default function PaginaFiscalizacao({ ctx }: { ctx: CockpitCtx }) {
   const viaCruzamento = resumo.acoes.filter(row => cruzamento.has(row.origem)).length;
   return <div className="ck-grid ck-grid-fiscalizacao">
     <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Indicadores da fiscalização">
-      <Indicador destaque label="Ações fiscalizatórias" value={int(resumo.acoes.length)} variacao={{ value: change(resumo.acoes.length, resumo.acoesPrev) }} spark={resumo.mensal.map(row => row.acoes)} cor={tokens.accent}
+      <Indicador destaque ficha="k-acoes" ctx={ctx} label="Ações fiscalizatórias" value={int(resumo.acoes.length)} variacao={{ value: change(resumo.acoes.length, resumo.acoesPrev) }} spark={resumo.mensal.map(row => row.acoes)} cor={tokens.accent}
         sub={`${int(resumo.acoes.length / period)} por mês · ${pct(viaCruzamento / Math.max(1, resumo.acoes.length) * 100)} a partir de cruzamento de dados`} onOpen={() => ctx.open({ kind: 'acoes' })} />
-      <Indicador label="Autos de infração lavrados" value={int(resumo.autos.length)} variacao={{ value: change(resumo.autos.length, resumo.autosPrev) }} spark={resumo.mensal.map(row => tipos.reduce((sum, tipo) => sum + row.autos[tipo], 0))} cor={tokens.bad}
+      <Indicador ficha="k-autos" ctx={ctx} label="Autos de infração lavrados" value={int(resumo.autos.length)} variacao={{ value: change(resumo.autos.length, resumo.autosPrev) }} spark={resumo.mensal.map(row => tipos.reduce((sum, tipo) => sum + row.autos[tipo], 0))} cor={tokens.bad}
         sub={<><Segments parts={tipos.map(tipo => ({ label: tipoLabel[tipo], value: resumo.autos.filter(row => row.tipo === tipo).length, color: colors[tipo] }))} />{pct(resumo.acoes.filter(row => row.auto).length / Math.max(1, resumo.acoes.length) * 100)} das ações geraram auto</>} onOpen={() => ctx.open({ kind: 'autos' })} />
-      <Indicador label="Multas aplicadas" value={brl(resumo.aplicada)} variacao={{ value: change(resumo.aplicada, resumo.aplicadaPrev) }}
+      <Indicador ficha="k-multas" ctx={ctx} label="Multas aplicadas" value={brl(resumo.aplicada)} variacao={{ value: change(resumo.aplicada, resumo.aplicadaPrev) }}
         sub={<><Segments parts={(Object.keys(resumo.multas) as StatusMulta[]).map(key => ({ label: key, value: resumo.multas[key].valor, color: status[key], format: brl }))} />{brl(resumo.multas['Dívida ativa'].valor)} em dívida ativa · {brl(resumo.multas['Em julgamento'].valor)} em julgamento</>} onOpen={() => ctx.open({ kind: 'multas' })} />
-      <Indicador label="Multas recebidas" value={brl(resumo.recebida)} sub={`${resumo.pagaCoorte === null ? '—' : pct(resumo.pagaCoorte)} do valor aplicado no período já foi pago`} onOpen={() => ctx.open({ kind: 'multas', status: 'Paga' })} />
-      <Indicador label="Regularizações após ação" value={int(resumo.regularizacoes.length)} variacao={{ value: change(resumo.regularizacoes.length, resumo.regularizacoesPrev) }} spark={resumo.mensal.map(row => row.regularizacoes)} cor={tokens.good} meta={{ atual: resumo.taxa, alvo: metas.regularizacao }}
+      <Indicador ficha="k-recebidas" ctx={ctx} label="Multas recebidas" value={brl(resumo.recebida)} sub={`${resumo.pagaCoorte === null ? '—' : pct(resumo.pagaCoorte)} do valor aplicado no período já foi pago`} onOpen={() => ctx.open({ kind: 'multas', status: 'Paga' })} />
+      <Indicador ficha="k-regularizacoes" ctx={ctx} label="Regularizações após ação" value={int(resumo.regularizacoes.length)} variacao={{ value: change(resumo.regularizacoes.length, resumo.regularizacoesPrev) }} spark={resumo.mensal.map(row => row.regularizacoes)} cor={tokens.good} meta={{ atual: resumo.taxa, alvo: metas.regularizacao }}
         sub={`${resumo.taxa === null ? '—' : pct(resumo.taxa)} das ações do período · mediana de ${resumo.medianaDias === null ? '—' : int(resumo.medianaDias)} dias · associação, não causa`} onOpen={() => ctx.open({ kind: 'regularizacoes' })} />
-      <Indicador label="Registros obtidos pela fiscalização" value={int(ponte.viaFiscalizacao.length)} sub={`${pct(ponte.viaFiscalizacao.length / Math.max(1, entradas) * 100)} das entradas na base no período`}
+      <Indicador ficha="k-registros" ctx={ctx} label="Registros obtidos pela fiscalização" value={int(ponte.viaFiscalizacao.length)} sub={`${pct(ponte.viaFiscalizacao.length / Math.max(1, entradas) * 100)} das entradas na base no período`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Registros obtidos pela fiscalização', what: 'Empresas que passaram a ter registro ativo no período depois de uma ação fiscalizatória por falta de registro.', ids: ponte.viaFiscalizacao })} />
     </section>
-    <MapaBivariado ctx={ctx} area="map" />
+    <MapaBivariado ctx={ctx} area="map" tools={<FichaPop ficha={fichaDe('fiscalizacao', 'map')} titulo="Mapa bivariado das regionais" anchor={ctx.anchor} />} />
     <Bloco ctx={ctx} id="ca" area="ca" title="Caminho das ações fiscalizatórias" question="O que aconteceu com as ações do período: regularização após a notificação, auto de infração e o destino da multa." help="Rito da Resolução Confea nº 1.008/2004: notificação, auto de infração, defesa e julgamento pela câmara especializada, multa paga ou inscrita em dívida ativa. A regularização pode ocorrer em qualquer etapa."><Caminho ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="me" area="me" title="Ações, autos e regularizações por mês" question="Barra clara: ações; dentro dela, autos por infração; linha: regularizações."><Mensal ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="cu" area="cu" title="Tempo até regularizar, por origem da ação" question="Qual fonte de informação leva mais empresas à regularização, e mais rápido."><Curvas ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="it" area="it" title="Indícios tratados, por tipo" question="Indícios conhecidos e o ponto do rito em que estão, até a regularização."><Situacao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="cv" area="cv" title="Conversão da fiscalização em 180 dias" question="Ações iniciadas em cada trimestre e quantas terminaram em regularização (registro, RT, ART ou baixa) em até 180 dias." help="Indicador-norte 2. Coorte pela data da ação; barras claras são coortes que ainda não completaram 180 dias e não entram na comparação. Associação no tempo, não prova de que a ação causou a regularização."><Conversao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ta" area="ta" title="Tempo até agir, por regional" question="Mediana de dias entre a entrada do indício na base e a primeira ação fiscal, para indícios que entraram no período." help="Indicador-norte 4. Mediana de Kaplan-Meier: indícios ainda sem ação entram como abertos (censurados), não como zero. Regional sem mediana: mais da metade dos indícios segue sem ação."><TempoAgir ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="ft" area="ft" title="Forças-tarefas e grupo de comparação" question="Cada força-tarefa (tema, regional, período) contra as demais ações do mesmo tipo e período fora dela: regularização em 180 dias, receita em 365 dias e mediana de dias. Fecha quando todas as ações completaram 180 dias." help="Associação no tempo, não causa: a força-tarefa escolhe os alvos e os grupos não são comparáveis em tudo. Lista demonstrativa; em produção, a lista da SUPFIS e um campo de origem na ação."><Forcas ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ht" area="ht" title="Autos de infração por regional e mês" question="Últimos 12 meses. Mostra a constância da atuação de cada regional. Clique numa célula para ver os autos."><AutosRegionais ctx={ctx} /></Bloco>
   </div>;
 }
@@ -126,5 +130,32 @@ function TempoAgir({ ctx }: { ctx: CockpitCtx }) {
   return <div className="stack">
     <p className="kpi-line"><b>{t.mediana === null ? 'mais da metade sem ação' : `${int(t.mediana)} dias`}</b> de mediana no estado · <b>{int(t.abertos)}</b> de {int(t.esperas.length)} indícios do período ainda sem ação · {t.porTipo.map(row => `${row.nome.toLowerCase()}: ${row.mediana === null ? 'em aberto' : `${int(row.mediana)} d`}`).join(' · ')}</p>
     <Chart option={option} tokens={tokens} label="Indícios com e sem ação e tempo mediano até a primeira ação, por regional" onPick={params => { const row = rows[params.dataIndex]; if (row) ctx.open({ kind: 'gre', id: row.id }); }} />
+  </div>;
+}
+
+function Forcas({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens, forcas } = ctx, gres = new Map(ctx.dataset.gres.map(row => [row.id, short(row.name)]));
+  const fechadas = forcas.filter(row => row.fechada), positivas = fechadas.filter(row => (row.diferenca ?? 0) > 0).length;
+  const abrir = (item: ResultadoFt, grupo: 'grupo' | 'comparacao') => { const g = item[grupo]; if (!g.acoes.length) return;
+    const nomes = new Map(ctx.dataset.companies.map(row => [row.id, row.tradeName || row.name])), ok = new Set(g.regularizadas.map(row => row.id));
+    ctx.open({ kind: 'linhas', eyebrow: `${item.ft.id} · ${grupo === 'grupo' ? 'força-tarefa' : 'grupo de comparação'}`, title: grupo === 'grupo' ? item.ft.nome : `Demais ações de ${tipoLabel[item.ft.tema].toLowerCase()} no período`, what: grupo === 'grupo' ? item.ft.descricao : 'Ações do mesmo tipo e período fora de qualquer força-tarefa, em todo o estado.', use: 'Associação no tempo, não causa.', listTitle: 'Ações, regularizadas primeiro',
+      summary: [['Ações', int(g.acoes.length)], ['Regularizadas em 180 d', g.taxa === null ? '—' : pct(g.taxa)], ['Receita em 365 d', brl(g.receita)]],
+      rows: g.acoes.map(acao => ({ key: acao.id, companyId: acao.companyId, title: nomes.get(acao.companyId) ?? acao.companyId, subtitle: `${gres.get(acao.greId) ?? acao.greId} · ação em ${acao.date.split('-').reverse().join('/')}`, value: ok.has(acao.id) ? `regularizada em ${acao.regularizedAt!.split('-').reverse().join('/')}` : acao.regularizedAt ? 'regularizada depois de 180 dias' : 'sem regularização', note: `${acao.origem}${acao.auto ? ` · auto ${money(acao.auto.valor)}` : ''}`, sortValue: ok.has(acao.id) ? 1 : 0 })) }); };
+  const max = Math.max(1, ...forcas.map(row => Math.max(row.grupo.acoes.length, row.comparacao.acoes.length)));
+  const taxa = (value: number | null) => value === null ? '—' : pct(value);
+  return <div className="stack">
+    <p className="kpi-line"><b>{int(forcas.length)}</b> forças-tarefas no recorte · <b>{int(fechadas.length)}</b> fechadas ({int(positivas)} com diferença positiva) · <b>{int(forcas.length - fechadas.length)}</b> ainda sem {PRAZO_RESULTADO} dias completos</p>
+    <div className="table-wrap"><table className="regras ft">
+      <thead><tr><th>Força-tarefa</th><th>Período</th><th>Ações</th><th>Regularização 180 d</th><th>Comparação</th><th>Diferença</th><th>Receita 365 d</th><th>Mediana</th></tr></thead>
+      <tbody>{forcas.map(item => <tr key={item.ft.id} tabIndex={0} onClick={() => abrir(item, 'grupo')} onKeyDown={event => { if (event.key === 'Enter') abrir(item, 'grupo'); }}>
+        <td><b>{item.ft.id} · {item.ft.nome}</b><small>{tipoLabel[item.ft.tema]} · {gres.get(item.ft.greId) ?? item.ft.greId}{item.fechada ? '' : ' · em aberto'}</small></td>
+        <td><small>{item.ft.inicio.split('-').reverse().join('/')} a {item.ft.fim.split('-').reverse().join('/')}</small></td>
+        <td><span className="cellbar"><i style={{ width: `${item.grupo.acoes.length / max * 100}%` }} /><em>{int(item.grupo.acoes.length)}</em></span></td>
+        <td><b>{taxa(item.grupo.taxa)}</b><small>{int(item.grupo.regularizadas.length)} de {int(item.grupo.acoes.length)}</small></td>
+        <td><button className="link" onClick={event => { event.stopPropagation(); abrir(item, 'comparacao'); }}>{taxa(item.comparacao.taxa)}</button><small>{int(item.comparacao.regularizadas.length)} de {int(item.comparacao.acoes.length)} ações</small></td>
+        <td>{item.diferenca === null ? '—' : <span className={item.diferenca >= 0 ? 'pos' : 'neg'}>{item.diferenca >= 0 ? '+' : ''}{item.diferenca.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} p.p.</span>}{!item.fechada && <small>parcial</small>}</td>
+        <td>{brl(item.grupo.receita)}<small>{int(item.grupo.empresasPagantes)} empresas · comparação {brl(item.comparacao.receita)}</small></td>
+        <td>{item.grupo.medianaDias === null ? '—' : `${int(item.grupo.medianaDias)} d`}<small>comparação {item.comparacao.medianaDias === null ? '—' : `${int(item.comparacao.medianaDias)} d`}</small></td></tr>)}</tbody>
+    </table></div>
   </div>;
 }

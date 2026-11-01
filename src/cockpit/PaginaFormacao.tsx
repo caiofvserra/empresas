@@ -1,0 +1,121 @@
+import { useMemo, useState } from 'react';
+import { ArrowDownUp } from 'lucide-react';
+import { Chart } from '../painel/chart';
+import { int, pct } from '../painel/ui';
+import type { Coorte, LinhaIes } from '../domain/formacao';
+import type { CockpitCtx } from './contexto';
+import { Bloco, Indicador, linhasProfissionais, proporcao } from './ui';
+
+/**
+ * Aba 4 · Formação e ingresso: concluintes do Censo (INEP, carga anual) por IES, modalidade e canal contra os registros novos
+ * no Crea-SP, por coorte de conclusão, com três taxas: registro em 24 meses, atividade (ART em 24 meses) e permanência (ativo e
+ * adimplente após 2 anos). Tudo lido na data de referência; coortes só fecham quando o prazo passou.
+ */
+export default function PaginaFormacao({ ctx }: { ctx: CockpitCtx }) {
+  const q = ctx.formacao, fechada24 = q.coortes.filter(row => row.fechada24).at(-1), fechada48 = q.coortes.filter(row => row.fechada48).at(-1);
+  const anterior24 = q.coortes.filter(row => row.fechada24).at(-2), anterior48 = q.coortes.filter(row => row.fechada48).at(-2);
+  const pp = (now: number | null | undefined, before: number | null | undefined) => now == null || before == null ? null : now - before;
+  return <div className="ck-grid ck-grid-formacao">
+    <section className="ck-cards is-four" style={{ gridArea: 'kpi' }} aria-label="Indicadores de formação e ingresso">
+      <Indicador destaque ficha="k-concluintes" ctx={ctx} label={`Concluintes de ${fechada24?.ano ?? '—'}`} value={fechada24 ? int(fechada24.concluintes) : '—'} variacao={{ value: fechada24 && anterior24?.concluintes ? (fechada24.concluintes - anterior24.concluintes) / anterior24.concluintes * 100 : null, label: `vs. ${anterior24?.ano ?? 'coorte anterior'}` }} sub={fechada24 ? `${int(q.serie.find(row => row.ano === fechada24.ano)?.ead ?? 0)} a distância · último ano com coorte fechada` : 'nenhuma coorte fechada'} />
+      <Indicador ficha="k-registro" ctx={ctx} label="Registro em 24 meses" value={fechada24?.taxaRegistro24 == null ? '—' : pct(fechada24.taxaRegistro24, 1)} variacao={{ value: pp(fechada24?.taxaRegistro24, anterior24?.taxaRegistro24), kind: 'pp', label: `vs. coorte ${anterior24?.ano ?? 'anterior'}` }} sub={fechada24 ? `${proporcao(fechada24.registradosEm24.length, fechada24.concluintes, 1)} dos concluintes de ${fechada24.ano}` : ''} onOpen={() => fechada24 && abrirCoorte(ctx, fechada24, 'registradosEm24')} />
+      <Indicador ficha="k-atividade" ctx={ctx} label="Atividade em 24 meses do registro" value={fechada48?.taxaAtividade == null ? '—' : pct(fechada48.taxaAtividade, 1)} variacao={{ value: pp(fechada48?.taxaAtividade, anterior48?.taxaAtividade), kind: 'pp', label: `vs. coorte ${anterior48?.ano ?? 'anterior'}` }} sub={fechada48 ? `${proporcao(fechada48.comAtividade.length, fechada48.registradosEm24.length)} dos registrados de ${fechada48.ano} com ART` : ''} onOpen={() => fechada48 && abrirCoorte(ctx, fechada48, 'comAtividade')} />
+      <Indicador ficha="k-permanencia" ctx={ctx} label="Permanência após 2 anos" value={fechada48?.taxaPermanencia == null ? '—' : pct(fechada48.taxaPermanencia, 1)} variacao={{ value: pp(fechada48?.taxaPermanencia, anterior48?.taxaPermanencia), kind: 'pp', label: `vs. coorte ${anterior48?.ano ?? 'anterior'}` }} sub={fechada48 ? `${proporcao(fechada48.ativosAdimplentes.length, fechada48.registradosEm24.length)} ativos e em dia 2 anos depois do registro` : ''} onOpen={() => fechada48 && abrirCoorte(ctx, fechada48, 'ativosAdimplentes')} />
+    </section>
+    <Bloco ctx={ctx} id="fc" area="fc" title="Três taxas por coorte de conclusão" question="Concluintes (INEP) e registrados em 24 meses, com as taxas de registro, atividade e permanência. Coortes em aberto ficam claras e fora da comparação."><Coortes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="fs" area="fs" title="Concluintes por ano e canal" question="Presencial e a distância, pelo Censo; a linha são os registrados no Crea-SP com aquele ano de conclusão, até a data de referência."><Serie ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="fi" area="fi" title="Por instituição de ensino" question="Coortes fechadas somadas: concluintes, registrados, taxa de registro, parte EaD e cadeiras no plenário. Ordene pelas colunas."><TabelaIes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="fm" area="fm" title="Por modalidade" question="Concluintes das coortes fechadas e taxa de registro em 24 meses."><Modalidades ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="fn" area="fn" title="Por canal e natureza da IES" question="Taxa de registro em 24 meses: presencial contra EaD, e IES pública contra privada."><CanalNatureza ctx={ctx} /></Bloco>
+  </div>;
+}
+
+function abrirCoorte(ctx: CockpitCtx, coorte: Coorte, chave: 'registradosEm24' | 'comAtividade' | 'ativosAdimplentes') {
+  const titulos = { registradosEm24: 'registrados em 24 meses', comAtividade: 'com ART em 24 meses do registro', ativosAdimplentes: 'ativos e adimplentes 2 anos depois do registro' };
+  const rows = coorte[chave]; if (!rows.length) return;
+  ctx.open({ kind: 'linhas', eyebrow: `Coorte ${coorte.ano}`, title: `Concluintes de ${coorte.ano} ${titulos[chave]}`, what: 'Profissionais com este ano de conclusão informado no registro, na situação escolhida. Sem lista nominal das IES, o cruzamento é agregado por IES e ano.', listTitle: 'Profissionais, registro mais recente primeiro',
+    summary: [['Concluintes', int(coorte.concluintes)], ['Registrados em 24 m', int(coorte.registradosEm24.length)], ['Com ART', int(coorte.comAtividade.length)]],
+    rows: linhasProfissionais(ctx, rows, row => ({ value: `registro em ${row.registroEm.split('-').reverse().join('/')}`, note: `${ctx.formacao.porIes.find(item => item.ies.id === row.iesId)?.ies.sigla ?? row.iesId} · ${row.nivel}`, sort: -Date.parse(row.registroEm) })) });
+}
+
+function Coortes({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, rows = ctx.formacao.coortes;
+  const option = useMemo(() => ({
+    grid: { top: 30, right: 8, bottom: 2, left: 4, containLabel: true },
+    legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10.5 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex];
+      return `<b>Coorte ${row.ano}</b>${row.fechada24 ? '' : ' · registro em aberto'}${row.fechada24 && !row.fechada48 ? ' · atividade e permanência em aberto' : ''}<br/>${int(row.concluintes)} concluintes · ${int(row.registradosEm24.length)} registrados em 24 meses<br/>Registro: <b>${row.taxaRegistro24 === null ? '—' : pct(row.taxaRegistro24, 1)}</b> · Atividade: <b>${row.taxaAtividade === null ? '—' : pct(row.taxaAtividade, 1)}</b> · Permanência: <b>${row.taxaPermanencia === null ? '—' : pct(row.taxaPermanencia, 1)}</b>`; } },
+    xAxis: { type: 'category', data: rows.map(row => String(row.ano)), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
+    yAxis: [{ type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } }, { type: 'value', max: 100, splitLine: { show: false }, axisLabel: { color: tokens.muted, formatter: '{value}%' } }],
+    series: [
+      { name: 'Concluintes', type: 'bar', barWidth: '54%', data: rows.map(row => ({ value: row.concluintes, itemStyle: { color: row.fechada24 ? tokens.heat[1] : tokens.line, borderRadius: [3, 3, 0, 0] } })) },
+      { name: 'Registrados em 24 meses', type: 'bar', barGap: '-100%', barWidth: '54%', data: rows.map(row => ({ value: row.registradosEm24.length, itemStyle: { color: row.fechada24 ? tokens.blue : tokens.muted, borderRadius: [3, 3, 0, 0] } })) },
+      { name: 'Registro', type: 'line', yAxisIndex: 1, data: rows.map(row => row.fechada24 ? row.taxaRegistro24 : null), symbol: 'circle', symbolSize: 6, lineStyle: { color: tokens.ink, width: 2 }, itemStyle: { color: tokens.ink } },
+      { name: 'Atividade', type: 'line', yAxisIndex: 1, data: rows.map(row => row.fechada48 ? row.taxaAtividade : null), symbol: 'diamond', symbolSize: 7, lineStyle: { color: tokens.accent, width: 2 }, itemStyle: { color: tokens.accent } },
+      { name: 'Permanência', type: 'line', yAxisIndex: 1, data: rows.map(row => row.fechada48 ? row.taxaPermanencia : null), symbol: 'rect', symbolSize: 6, lineStyle: { color: tokens.good, width: 2, type: 'dashed' }, itemStyle: { color: tokens.good } },
+    ],
+  }), [rows, tokens]);
+  return <Chart option={option} tokens={tokens} label="Concluintes, registrados e as três taxas por coorte de conclusão" onPick={params => { const row = rows[params.dataIndex]; if (!row) return; abrirCoorte(ctx, row, params.seriesName === 'Atividade' ? 'comAtividade' : params.seriesName === 'Permanência' ? 'ativosAdimplentes' : 'registradosEm24'); }} />;
+}
+
+function Serie({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, rows = ctx.formacao.serie;
+  const option = useMemo(() => ({
+    grid: { top: 30, right: 8, bottom: 2, left: 4, containLabel: true },
+    legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10.5 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.ano}</b><br/>Presencial: ${int(row.presencial)} · EaD: ${int(row.ead)} (${pct(row.ead / Math.max(1, row.presencial + row.ead) * 100)})<br/>Registrados até a data de referência: <b>${int(row.registrados)}</b>`; } },
+    xAxis: { type: 'category', data: rows.map(row => String(row.ano)), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
+    series: [
+      { name: 'Presencial', type: 'bar', stack: 'c', barWidth: '56%', data: rows.map(row => row.presencial), itemStyle: { color: tokens.blue } },
+      { name: 'A distância (EaD)', type: 'bar', stack: 'c', data: rows.map(row => row.ead), itemStyle: { color: tokens.heat[1], borderRadius: [3, 3, 0, 0] } },
+      { name: 'Registrados da coorte', type: 'line', data: rows.map(row => row.registrados), smooth: 0.3, symbol: 'circle', symbolSize: 5, lineStyle: { color: tokens.ink, width: 2 }, itemStyle: { color: tokens.ink } },
+    ],
+  }), [rows, tokens]);
+  return <Chart option={option} tokens={tokens} label="Concluintes por ano e canal e registrados da coorte" />;
+}
+
+type ColunaIes = { key: string; label: string; get: (row: LinhaIes) => number | null; cell: (row: LinhaIes) => string };
+function TabelaIes({ ctx }: { ctx: CockpitCtx }) {
+  const rows = ctx.formacao.porIes, [sort, setSort] = useState<{ key: string; dir: 1 | -1 }>({ key: 'concluintes', dir: -1 });
+  const colunas: ColunaIes[] = [
+    { key: 'concluintes', label: 'Concluintes', get: row => row.concluintes, cell: row => int(row.concluintes) },
+    { key: 'registrados', label: 'Registrados', get: row => row.registrados, cell: row => int(row.registrados) },
+    { key: 'taxa', label: 'Registro 24 m', get: row => row.taxa, cell: row => row.taxa === null ? '—' : pct(row.taxa, 1) },
+    { key: 'ead', label: 'EaD', get: row => row.ead, cell: row => row.ead === null ? '—' : pct(row.ead) },
+    { key: 'cadeiras', label: 'Cadeiras', get: row => row.cadeiras, cell: row => int(row.cadeiras) },
+  ];
+  const coluna = colunas.find(item => item.key === sort.key)!, ordenadas = [...rows].sort((a, b) => ((coluna.get(a) ?? -Infinity) - (coluna.get(b) ?? -Infinity)) * sort.dir);
+  return <div className="table-wrap"><table className="metodo is-dense">
+    <thead><tr><th>IES</th><th>Natureza</th>{colunas.map(item => <th key={item.key} aria-sort={sort.key === item.key ? (sort.dir === 1 ? 'ascending' : 'descending') : 'none'}><button className="th-sort" onClick={() => setSort({ key: item.key, dir: sort.key === item.key ? (sort.dir === 1 ? -1 : 1) : -1 })}>{item.label}{sort.key === item.key && <ArrowDownUp size={10} />}</button></th>)}</tr></thead>
+    <tbody>{ordenadas.map(row => <tr key={row.ies.id}><td><b>{row.ies.sigla}</b><small>{row.ies.nome} · {row.ies.tipo}</small></td><td>{row.ies.natureza}</td>{colunas.map(item => <td key={item.key} className="num">{item.cell(row)}</td>)}</tr>)}</tbody>
+  </table></div>;
+}
+
+function Modalidades({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, rows = useMemo(() => [...ctx.formacao.porModalidade].sort((a, b) => b.concluintes - a.concluintes), [ctx.formacao]);
+  const option = useMemo(() => ({
+    grid: { top: 4, right: 74, bottom: 2, left: 2, containLabel: true },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.modalidade}</b><br/>${int(row.concluintes)} concluintes · ${int(row.registrados)} registrados em 24 meses<br/>Taxa: <b>${row.taxa === null ? '—' : pct(row.taxa, 1)}</b>`; } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.modalidade), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5, width: 110, overflow: 'truncate' } },
+    series: [{ type: 'bar', barWidth: 13, data: rows.map(row => row.concluintes), itemStyle: { color: tokens.heat[2], borderRadius: [0, 4, 4, 0] }, showBackground: true, backgroundStyle: { color: tokens.soft, borderRadius: 4 },
+      label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => { const row = rows[params.dataIndex]; return `${int(row.concluintes)} · ${row.taxa === null ? '—' : pct(row.taxa)}`; } } }],
+  }), [rows, tokens]);
+  return <Chart option={option} tokens={tokens} label="Concluintes e taxa de registro por modalidade" />;
+}
+
+function CanalNatureza({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.formacao;
+  const rows = useMemo(() => [...q.porCanal.map(row => ({ nome: row.canal, concluintes: row.concluintes, registrados: row.registrados, taxa: row.taxa, grupo: 'Canal' })), ...q.porNatureza.map(row => ({ nome: `IES ${row.natureza.toLowerCase()}`, concluintes: row.concluintes, registrados: row.registrados, taxa: row.taxa, grupo: 'Natureza' }))], [q]);
+  const option = useMemo(() => ({
+    grid: { top: 4, right: 60, bottom: 2, left: 2, containLabel: true },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.nome}</b><br/>${int(row.registrados)} registrados em 24 meses de ${int(row.concluintes)} concluintes<br/>Taxa: <b>${row.taxa === null ? '—' : pct(row.taxa, 1)}</b>`; } },
+    xAxis: { type: 'value', max: 100, show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.nome), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
+    series: [{ type: 'bar', barWidth: 16, data: rows.map(row => ({ value: row.taxa ?? 0, itemStyle: { color: row.grupo === 'Canal' ? tokens.blue : tokens.brand, borderRadius: [0, 4, 4, 0] } })), showBackground: true, backgroundStyle: { color: tokens.soft, borderRadius: 4 },
+      label: { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, fontWeight: 700, formatter: (params: any) => rows[params.dataIndex].taxa === null ? '—' : pct(params.value, 1) } }],
+  }), [rows, tokens]);
+  return <div className="stack">
+    <Chart option={option} tokens={tokens} label="Taxa de registro em 24 meses por canal e natureza da IES" />
+    <p className="kpi-line">EaD médio das IES: {q.porNatureza.map(row => `${row.natureza.toLowerCase()} ${row.ead === null ? '—' : pct(row.ead)}`).join(' · ')}. Diferenças refletem também perfil e região dos alunos.</p>
+  </div>;
+}

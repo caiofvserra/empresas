@@ -4,7 +4,7 @@ import type { InstitutionalModel, InstitutionalProgramId, InstitutionalServiceRe
 import { median } from '../gestao-v14/metrics';
 import { janela } from '../painel/analise';
 
-/** V18 · atendimento, estrutura física, capacitação e orçamento do Conselho (modelo institucional demonstrativo), por regional e período. */
+/** V18 · atendimento, estrutura física e orçamento dos programas do Conselho (modelo institucional demonstrativo), por regional e período. */
 const DAY = 86400000;
 const addDays = (date: string, days: number) => new Date(Date.parse(`${date}T00:00:00Z`) + days * DAY).toISOString().slice(0, 10);
 const daysBetween = (from: string, to: string) => Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / DAY);
@@ -68,28 +68,16 @@ function coworking(model: InstitutionalModel, dataset: Dataset, greId: string | 
   return { unidades, meses, celulas, ocupacao: share(total.usadas, total.disponiveis), ocupacaoAntes: share(antes.usadas, antes.disponiveis), usadas: total.usadas, disponiveis: total.disponiveis, usuarios: total.usuarios, custo: sum(unidades.map(row => row.custo)) };
 }
 
-/* ---------- Capacitação (formação e orientação técnica): da inscrição à aplicação relatada ---------- */
-export interface Etapa { nome: string; valor: number; nota: string }
-export interface Capacitacao { atividades: number; etapas: Etapa[]; participantes: number; custo: number; custoPorParticipante: number | null; taxaPresenca: number | null; taxaResposta: number | null; taxaAplicacao: number | null }
+/* ---------- Capacitação: custo e alcance, sem medida de efeito (V20) ---------- */
+export interface Capacitacao { atividades: number; participantes: number; inscricoes: number; presencas: number; custo: number; custoPorParticipante: number | null; custoPorPresenca: number | null }
 function capacitacao(model: InstitutionalModel, greId: string | null, period: number, anchor: string): Capacitacao {
   const w = janela(anchor, period), programas = new Set<InstitutionalProgramId>(['formacao', 'orientacao']);
   const atividades = model.activities.filter(row => programas.has(row.programId) && (!greId || row.greId === greId) && inside(row.date, w.start, w.end));
   const ids = new Set(atividades.map(row => row.id));
-  const inscricoes = model.participation.filter(row => ids.has(row.activityId)), presencas = inscricoes.filter(row => row.attended), identificadas = presencas.filter(row => row.professionalId);
-  const elegiveis = model.followups.filter(row => ids.has(row.activityId) && row.dueAt <= anchor), respostas = elegiveis.filter(row => row.responded && row.respondedAt! <= anchor);
-  const aplicacao = respostas.filter(row => row.outcome === 'Aplicação profissional relatada');
-  const participantes = new Set(identificadas.map(row => row.professionalId)).size;
+  const inscricoes = model.participation.filter(row => ids.has(row.activityId)), presencas = inscricoes.filter(row => row.attended);
+  const participantes = new Set(presencas.filter(row => row.professionalId).map(row => row.professionalId)).size;
   const custo = sum(model.budgetEntries.filter(row => programas.has(row.programId) && (!greId || row.greId === greId) && inside(`${row.month}-01`, `${w.start.slice(0, 7)}-01`, w.end)).map(row => row.executedCents)) / 100;
-  return { atividades: atividades.length, participantes, custo, custoPorParticipante: participantes ? custo / participantes : null,
-    taxaPresenca: share(presencas.length, inscricoes.length), taxaResposta: share(respostas.length, elegiveis.length), taxaAplicacao: share(aplicacao.length, respostas.length),
-    etapas: [
-      { nome: 'Inscrições', valor: inscricoes.length, nota: `${atividades.length} palestras, oficinas e orientações` },
-      { nome: 'Presenças', valor: presencas.length, nota: 'compareceram à atividade' },
-      { nome: 'Presenças identificadas', valor: identificadas.length, nota: 'com registro profissional informado' },
-      { nome: 'Acompanhamento em 90 dias', valor: elegiveis.length, nota: 'presenças com prazo de retorno vencido' },
-      { nome: 'Responderam', valor: respostas.length, nota: 'questionário de retorno' },
-      { nome: 'Aplicação relatada', valor: aplicacao.length, nota: 'dizem ter aplicado no trabalho (autodeclarado)' },
-    ] };
+  return { atividades: atividades.length, participantes, inscricoes: inscricoes.length, presencas: presencas.length, custo, custoPorParticipante: participantes ? custo / participantes : null, custoPorPresenca: presencas.length ? custo / presencas.length : null };
 }
 
 /* ---------- Orçamento dos programas: planejado × executado ---------- */
@@ -108,9 +96,12 @@ function orcamento(model: InstitutionalModel, greId: string | null, period: numb
 
 export interface Estrutura { atendimento: Atendimento; coworking: Coworking; capacitacao: Capacitacao; orcamento: Orcamento; nota: string }
 const cache = new Map<string, Estrutura>();
-/** O modelo institucional é calculado uma vez por cenário; os recortes por regional e período ficam em cache. */
+/**
+ * O modelo institucional é calculado uma vez por base lida (a base em D é outro objeto); os recortes por data de referência, regional e período ficam em cache.
+ * V20: o funil de capacitação saiu (retorno autodeclarado não mede efeito); custo e participantes de capacitação ficam no Controle interno, sem medida de efeito.
+ */
 export function estruturaDe(dataset: Dataset, greId: string | null, period: number): Estrutura {
-  const key = `${greId ?? ''}|${period}`, saved = cache.get(key); if (saved) return saved;
+  const key = `${dataset.snapshotDate}|${greId ?? ''}|${period}`, saved = cache.get(key); if (saved) return saved;
   const model = buildInstitutionalModel(dataset), anchor = dataset.snapshotDate;
   const value = { atendimento: atendimento(model, greId, period, anchor), coworking: coworking(model, dataset, greId, period, anchor), capacitacao: capacitacao(model, greId, period, anchor), orcamento: orcamento(model, greId, period, anchor),
     nota: 'Modelo institucional demonstrativo: território = local de oferta da atividade, unidade ou atendimento. Câmara não se aplica.' };

@@ -9,7 +9,7 @@ import { contratosPublicos, ponteBase, porRegional, receita, resumoFiscal } from
 import { estruturaDe, situacoesPedido } from '../src/cockpit/estrutura.ts';
 import { malhaFina, regras } from '../src/cockpit/cruzamentos.ts';
 import { artsPeriodo, caminhoAcoes, entradasSaidas, linhasGre, prazoRegistro } from '../src/cockpit/medidas.ts';
-import { leitura, metasPadrao } from '../src/cockpit/leitura.ts';
+import { leitura, metasPadrao, pageIds } from '../src/cockpit/leitura.ts';
 
 const f = buildFiscalizacao(dataset);
 const scope = selectEnterpriseScope(dataset, { ...defaultFilters, period: 12 }), model = buildEnterpriseModel(scope);
@@ -25,12 +25,14 @@ test('atendimento, coworking, capacitação e orçamento fecham por partes', () 
   assert.ok(e.atendimento.taxaNoPrazo! >= 0 && e.atendimento.taxaNoPrazo! <= 100);
   assert.equal(e.coworking.celulas.length, e.coworking.unidades.length * 12);
   assert.ok(Math.abs(sum(e.orcamento.programas.map(row => row.executado)) - e.orcamento.executado) < 0.01);
-  for (let index = 1; index < e.capacitacao.etapas.length; index++) assert.ok(e.capacitacao.etapas[index].valor <= e.capacitacao.etapas[index - 1].valor, 'funil não cresce');
+  assert.ok(e.capacitacao.presencas <= e.capacitacao.inscricoes && e.capacitacao.participantes <= e.capacitacao.inscricoes, 'presenças e participantes não passam das inscrições');
+  assert.ok(e.capacitacao.custo >= 0 && (e.capacitacao.custoPorParticipante === null || Math.abs(e.capacitacao.custoPorParticipante * e.capacitacao.participantes - e.capacitacao.custo) < 0.01), 'custo por participante fecha com o custo');
+  assert.ok(!('etapas' in e.capacitacao), 'o funil com retorno autodeclarado saiu na V20: custo sem medida de efeito');
   const capital = estruturaDe(dataset, 'GRE5', 12);
   assert.ok(capital.atendimento.pedidos.every(row => row.greId === 'GRE5') && capital.atendimento.pedidos.length < e.atendimento.pedidos.length);
 });
 
-test('malha fina v1: cada regra tem status, indícios dentro do recorte e contratos em três graus', () => {
+test('malha fina: cada regra tem status, indícios dentro do recorte e contratos em três graus', () => {
   assert.equal(new Set(regras.map(row => row.id)).size, regras.length);
   assert.ok(regras.every(row => ['Confirmado', 'Candidato', 'Contexto'].includes(row.status) && row.fonte && row.versao && row.naoConcluir));
   assert.ok(!malha.indicios.some(row => /diretoria|piso|emprega/i.test(row.label)), 'camadas retiradas na V19 não voltam');
@@ -64,5 +66,5 @@ test('cadastro, fiscalização e regionais reconciliam', () => {
   const insights = leitura({ metas: metasPadrao, ponte: ponteBase(model, scope, f, 12), cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo, rec: receita(history, f, null, 12), saldo: model.metrics.overdue.value ?? 0,
     inadimplencia: 40, linhas, malha, arts: { atual: arts.atual.length, antes: arts.antes }, cao: 120, estrutura: estruturaDe(dataset, null, 12) });
   assert.ok(insights.length >= 10);
-  assert.ok(insights.every(item => item.strong && item.text && ['presidencia', 'cadastro', 'fiscalizacao', 'malha', 'tecnica', 'receita', 'atendimento', 'publico', 'metodo'].includes(item.page)));
+  assert.ok(insights.every(item => item.strong && item.text && pageIds.includes(item.page)));
 });

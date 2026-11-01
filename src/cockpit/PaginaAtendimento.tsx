@@ -1,35 +1,33 @@
 import { useMemo } from 'react';
 import { qualityQueue } from '../gestao-v14/metrics';
 import { Chart } from '../painel/chart';
-import { brl, int, mes, money, pct } from '../painel/ui';
+import { int, mes, money, pct } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
 import { situacaoPedido, situacoesPedido } from './estrutura';
 import type { Estrutura, SituacaoPedido } from './estrutura';
 import { Bloco, Indicador, carregando, linhasEmpresas } from './ui';
 
-/** Aba 7 · Atendimento e estrutura: prazos do atendimento, uso dos coworkings, capacitação e qualidade do cadastro. */
+/** Aba 10 · Atendimento e estrutura: prazos do atendimento, uso dos coworkings e qualidade do cadastro. A capacitação (custo e alcance) foi para o Controle interno. */
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 
 export default function PaginaAtendimento({ ctx }: { ctx: CockpitCtx }) {
   const { estrutura, metas, tokens } = ctx, quality = useMemo(() => qualityQueue(ctx.scope), [ctx.scope]);
   const pendencias = quality.reduce((sum, row) => sum + row.open, 0);
   if (!estrutura) return <div className="ck-grid ck-grid-atendimento"><div className="ck-wait">{carregando}</div></div>;
-  const { atendimento, coworking, capacitacao } = estrutura;
+  const { atendimento, coworking } = estrutura;
   return <div className="ck-grid ck-grid-atendimento">
-    <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Indicadores de atendimento e estrutura">
-      <Indicador destaque label="Solicitações resolvidas no prazo" value={atendimento.taxaNoPrazo === null ? '—' : pct(atendimento.taxaNoPrazo)} meta={{ atual: atendimento.taxaNoPrazo, alvo: metas.atendimento }}
+    <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores de atendimento e estrutura">
+      <Indicador destaque ficha="k-prazo" ctx={ctx} label="Solicitações resolvidas no prazo" value={atendimento.taxaNoPrazo === null ? '—' : pct(atendimento.taxaNoPrazo)} meta={{ atual: atendimento.taxaNoPrazo, alvo: metas.atendimento }}
         variacao={{ value: atendimento.taxaNoPrazo === null || atendimento.taxaNoPrazoAntes === null ? null : atendimento.taxaNoPrazo - atendimento.taxaNoPrazoAntes, kind: 'pp' }} sub={`em até 14 dias · meta ${metas.atendimento}%`} />
-      <Indicador label="Solicitações de atendimento" value={int(atendimento.pedidos.length)} variacao={{ value: change(atendimento.pedidos.length, atendimento.totalAntes) }} sub={`${pct(atendimento.empresas / Math.max(1, atendimento.pedidos.length) * 100)} vindas de empresas`} />
-      <Indicador label="Tempo de resolução" value={atendimento.medianaDias === null ? '—' : `${int(atendimento.medianaDias)} dias`} sub={`mediana · ${int(atendimento.partes['Em aberto, prazo vencido'].length)} em aberto com prazo vencido`} />
-      <Indicador label="Ocupação dos coworkings" value={coworking.ocupacao === null ? '—' : pct(coworking.ocupacao)} variacao={{ value: coworking.ocupacao === null || coworking.ocupacaoAntes === null ? null : coworking.ocupacao - coworking.ocupacaoAntes, kind: 'pp' }}
+      <Indicador ficha="k-solicitacoes" ctx={ctx} label="Solicitações de atendimento" value={int(atendimento.pedidos.length)} variacao={{ value: change(atendimento.pedidos.length, atendimento.totalAntes) }} sub={`${pct(atendimento.empresas / Math.max(1, atendimento.pedidos.length) * 100)} vindas de empresas`} />
+      <Indicador ficha="k-tempo" ctx={ctx} label="Tempo de resolução" value={atendimento.medianaDias === null ? '—' : `${int(atendimento.medianaDias)} dias`} sub={`mediana · ${int(atendimento.partes['Em aberto, prazo vencido'].length)} em aberto com prazo vencido`} />
+      <Indicador ficha="k-coworking" ctx={ctx} label="Ocupação dos coworkings" value={coworking.ocupacao === null ? '—' : pct(coworking.ocupacao)} variacao={{ value: coworking.ocupacao === null || coworking.ocupacaoAntes === null ? null : coworking.ocupacao - coworking.ocupacaoAntes, kind: 'pp' }}
         sub={coworking.unidades.length ? `${int(coworking.unidades.length)} unidades · ${int(coworking.usuarios)} usuários · ${coworking.usadas ? money(coworking.custo / coworking.usadas) : '—'} por hora usada` : 'sem unidade nesta regional'} />
-      <Indicador label="Participantes em capacitação" value={int(capacitacao.participantes)} sub={`${int(capacitacao.atividades)} atividades · ${capacitacao.custoPorParticipante === null ? '—' : money(capacitacao.custoPorParticipante)} por participante`} />
-      <Indicador label="Pendências cadastrais abertas" value={int(pendencias)} sub={quality[0] ? `maior: ${quality[0].type}` : 'sem pendências'} onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas com pendência cadastral aberta', what: 'Empresas com ao menos uma pendência de qualidade cadastral não resolvida.', ids: [...new Set(quality.flatMap(row => row.companyIds))] })} />
+      <Indicador ficha="k-pendencias" ctx={ctx} label="Pendências cadastrais abertas" value={int(pendencias)} sub={quality[0] ? `maior: ${quality[0].type}` : 'sem pendências'} onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas com pendência cadastral aberta', what: 'Empresas com ao menos uma pendência de qualidade cadastral não resolvida.', ids: [...new Set(quality.flatMap(row => row.companyIds))] })} />
     </section>
     <Bloco ctx={ctx} id="as" area="as" title="Solicitações por assunto e situação" question="Resolvidas no prazo de 14 dias, resolvidas com atraso, abertas com prazo vencido e abertas no prazo." help="Prazo de referência de 14 dias, ilustrativo. Território = local do atendimento; o filtro de câmara não se aplica."><Assuntos ctx={ctx} estrutura={estrutura} /></Bloco>
     <Bloco ctx={ctx} id="cw" area="cw" title="Ocupação dos coworkings por unidade e mês" question="Horas de mesa usadas ÷ horas disponíveis, nos últimos 12 meses. Ao lado, usuários e custo por hora usada no período."><Coworkings ctx={ctx} estrutura={estrutura} /></Bloco>
     <Bloco ctx={ctx} id="mm" area="mm" title="Solicitações por mês" question="Quantidade e % resolvidas no prazo, mês a mês no período."><Mensal ctx={ctx} estrutura={estrutura} /></Bloco>
-    <Bloco ctx={ctx} id="fu" area="fu" title="Capacitação: da inscrição à aplicação" question="Palestras, oficinas e orientações do período, até o retorno relatado 90 dias depois." help="Retorno autodeclarado, sem atribuição causal. Presenças sem registro profissional informado não entram no acompanhamento."><Funil ctx={ctx} estrutura={estrutura} /></Bloco>
     <Bloco ctx={ctx} id="qa" area="qa" title="Qualidade do cadastro" question="Pendências abertas e resolvidas por tipo. A base sustenta todos os indicadores do painel."><Qualidade ctx={ctx} quality={quality} /></Bloco>
   </div>;
 }
@@ -88,21 +86,6 @@ function Mensal({ ctx, estrutura }: { ctx: CockpitCtx; estrutura: Estrutura }) {
     ],
   }), [rows, tokens, ctx.metas.atendimento]);
   return <Chart option={option} tokens={tokens} label="Solicitações por mês e percentual resolvido no prazo" />;
-}
-
-function Funil({ ctx, estrutura }: { ctx: CockpitCtx; estrutura: Estrutura }) {
-  const { tokens } = ctx, etapas = estrutura.capacitacao.etapas, cores = [tokens.brand, tokens.blue, tokens.heat[2], tokens.cat[4], tokens.accent, tokens.good];
-  const option = useMemo(() => ({
-    tooltip: { formatter: (item: any) => `<b>${item.name}</b><br/>${int(item.value)} · ${etapas[item.dataIndex].nota}` },
-    series: [{ type: 'funnel', left: 4, right: 4, top: 4, bottom: 4, minSize: '22%', gap: 3, sort: 'none', itemStyle: { borderWidth: 0 },
-      label: { position: 'inside', fontWeight: 700, fontSize: 10.5, formatter: (item: any) => `${item.name}  ${int(item.value)}` },
-      data: etapas.map((etapa, index) => ({ name: etapa.nome, value: etapa.valor, itemStyle: { color: cores[index] }, label: { color: index === 4 ? '#1A202C' : '#FFFFFF' } })) }],
-  }), [etapas, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
-  const cap = estrutura.capacitacao;
-  return <div className="stack">
-    <Chart option={option} tokens={tokens} label="Funil da capacitação, da inscrição à aplicação relatada" />
-    <p className="kpi-line">{cap.taxaPresenca === null ? '—' : pct(cap.taxaPresenca)} de presença · {cap.taxaResposta === null ? '—' : pct(cap.taxaResposta)} responderam · {cap.taxaAplicacao === null ? '—' : pct(cap.taxaAplicacao)} relatam aplicação · custo {brl(cap.custo)}</p>
-  </div>;
 }
 
 function Qualidade({ ctx, quality }: { ctx: CockpitCtx; quality: ReturnType<typeof qualityQueue> }) {

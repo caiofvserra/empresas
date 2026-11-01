@@ -1,0 +1,217 @@
+{
+  "meta": {
+    "dataset": "confea-modalidades",
+    "titulo": "Títulos ativos no Sistema Confea/Crea por grupo, modalidade, nível e título",
+    "unidade": "títulos ativos",
+    "fonteId": "confea-sic-estoque-2026",
+    "notas": [
+      "TÍTULOS ≠ PESSOAS: um profissional pode ter mais de um título (ex.: Engenheiro Civil e Engenheiro de Segurança do Trabalho). Por isso a contagem por título/modalidade soma mais que o total de profissionais ativos e NUNCA deve ser lida como número de pessoas distintas.",
+      "Aritmética da ressalva: 1.373.447 títulos para 1.217.708 profissionais ativos — 155.739 títulos a mais (12,8% do total de pessoas).",
+      "Denominador do campo percentual: porGrupo, porNivel e topTitulos usam o total de 1.373.447 títulos; porModalidadeEngenharia usa os 1.070.469 títulos do grupo ENGENHARIA.",
+      "O endpoint distingue 301 títulos diferentes no Sistema, dos quais 254 no grupo ENGENHARIA; topTitulos traz os 15 maiores de todos os grupos (por isso títulos de agronomia e especiais aparecem na lista).",
+      "É este recorte que separa engenharia das demais profissões do Sistema — o número do funil \"profissionais ativos\" cobre todas elas.",
+      "Arquivo DERIVADO — não editar à mão. Regerar com `node scripts/derivar-confea.mjs` a partir de docs/research/assets/ (recoleta: scripts/fetch-confea.mjs / scripts/fetch-ibge.mjs, fora do container)."
+    ],
+    "atualizadoEm": "2026-08-30",
+    "snapshot": {
+      "consultaUrl": "https://relatorio.confea.org.br/Profissional/RegistrosPorGrupo/Buscar",
+      "capturadoEm": "2026-08-30"
+    }
+  },
+  "data": {
+    "totalTitulos": 1373447,
+    "totalProfissionaisAtivos": 1217708,
+    "porGrupo": [
+      {
+        "id": "engenharia",
+        "rotulo": "Engenharia",
+        "valor": 1070469,
+        "percentual": 77.9
+      },
+      {
+        "id": "agronomia",
+        "rotulo": "Agronomia",
+        "valor": 167831,
+        "percentual": 12.2
+      },
+      {
+        "id": "especiais",
+        "rotulo": "Especiais",
+        "valor": 135147,
+        "percentual": 9.8
+      }
+    ],
+    "porModalidadeEngenharia": [
+      {
+        "id": "civil",
+        "rotulo": "Civil",
+        "valor": 548302,
+        "percentual": 51.2
+      },
+      {
+        "id": "mecanica-e-metalurgica",
+        "rotulo": "Mecânica e metalúrgica",
+        "valor": 228502,
+        "percentual": 21.3
+      },
+      {
+        "id": "eletricista",
+        "rotulo": "Eletricista",
+        "valor": 216534,
+        "percentual": 20.2
+      },
+      {
+        "id": "quimica",
+        "rotulo": "Química",
+        "valor": 39918,
+        "percentual": 3.7
+      },
+      {
+        "id": "geologia-e-minas",
+        "rotulo": "Geologia e minas",
+        "valor": 21626,
+        "percentual": 2
+      },
+      {
+        "id": "agrimensura",
+        "rotulo": "Agrimensura",
+        "valor": 15587,
+        "percentual": 1.5
+      }
+    ],
+    "porNivel": [
+      {
+        "id": "graduacao",
+        "rotulo": "Graduação",
+        "valor": 1196620,
+        "percentual": 87.1
+      },
+      {
+        "id": "especializacao",
+        "rotulo": "Especialização",
+        "valor": 116094,
+        "percentual": 8.5
+      },
+      {
+        "id": "tecnologo",
+        "rotulo": "Tecnólogo",
+        "valor": 44252,
+        "percentual": 3.2
+      },
+      {
+        "id": "tecnico-de-nivel-medio",
+        "rotulo": "Técnico de nível médio",
+        "valor": 16481,
+        "percentual": 1.2
+      }
+    ],
+    "topTitulos": [
+      {
+        "id": "engenheiro-civil",
+        "rotulo": "Engenheiro Civil",
+        "valor": 479327,
+        "percentual": 34.9,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "engenheiro-agronomo",
+        "rotulo": "Engenheiro Agrônomo",
+        "valor": 140495,
+        "percentual": 10.2,
+        "grupo": "Agronomia"
+      },
+      {
+        "id": "engenheiro-eletricista",
+        "rotulo": "Engenheiro Eletricista",
+        "valor": 138550,
+        "percentual": 10.1,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "engenheiro-mecanico",
+        "rotulo": "Engenheiro Mecânico",
+        "valor": 128248,
+        "percentual": 9.3,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "engenheiro-de-seguranca-do-trabalho",
+        "rotulo": "Engenheiro de Segurança do Trabalho",
+        "valor": 116631,
+        "percentual": 8.5,
+        "grupo": "Especiais"
+      },
+      {
+        "id": "engenheiro-de-producao",
+        "rotulo": "Engenheiro de Produção",
+        "valor": 53584,
+        "percentual": 3.9,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "engenheiro-ambiental",
+        "rotulo": "Engenheiro Ambiental",
+        "valor": 31373,
+        "percentual": 2.3,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "engenheiro-quimico",
+        "rotulo": "Engenheiro Químico",
+        "valor": 22919,
+        "percentual": 1.7,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "engenheiro-de-controle-e-automacao",
+        "rotulo": "Engenheiro de Controle e Automação",
+        "valor": 21605,
+        "percentual": 1.6,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "engenheiro-florestal",
+        "rotulo": "Engenheiro Florestal",
+        "valor": 17076,
+        "percentual": 1.2,
+        "grupo": "Agronomia"
+      },
+      {
+        "id": "tecnico-de-seguranca-do-trabalho",
+        "rotulo": "Técnico de Segurança do Trabalho",
+        "valor": 16481,
+        "percentual": 1.2,
+        "grupo": "Especiais"
+      },
+      {
+        "id": "engenheiro-sanitarista-e-ambiental",
+        "rotulo": "Engenheiro Sanitarista e Ambiental",
+        "valor": 12052,
+        "percentual": 0.9,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "engenheiro-de-producao-mecanica",
+        "rotulo": "Engenheiro de Produção - Mecânica",
+        "valor": 11664,
+        "percentual": 0.8,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "geologo",
+        "rotulo": "Geólogo",
+        "valor": 11542,
+        "percentual": 0.8,
+        "grupo": "Engenharia"
+      },
+      {
+        "id": "engenheiro-eletricista-eletronica",
+        "rotulo": "Engenheiro Eletricista - Eletrônica",
+        "valor": 11305,
+        "percentual": 0.8,
+        "grupo": "Engenharia"
+      }
+    ],
+    "ressalvaTitulos": "TÍTULOS ≠ PESSOAS: um profissional pode ter mais de um título (ex.: Engenheiro Civil e Engenheiro de Segurança do Trabalho). Por isso a contagem por título/modalidade soma mais que o total de profissionais ativos e NUNCA deve ser lida como número de pessoas distintas. No agregado: 1.373.447 títulos para 1.217.708 profissionais ativos."
+  }
+}
