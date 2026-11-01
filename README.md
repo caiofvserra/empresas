@@ -45,6 +45,16 @@ A configuração do coletor vem **desabilitada**. Ela não configura servidor, g
 
 As regras completas estão no [plano](observatorio/plano-observatorio-crea-sp.html) e em [ARQUITETURA.md](planejamento-fontes-2026-10/ARQUITETURA.md). As 12 lacunas do V18 estão em [REVISAO_REPOSITORIO.md](planejamento-fontes-2026-10/REVISAO_REPOSITORIO.md); a decisão sobre cada uma está na aba Método.
 
+## Como escrever os textos do painel
+
+Os textos do painel são lidos pela Presidência e pelas superintendências, por isso seguem um padrão único:
+
+- Frases completas, com sujeito e verbo, uma ideia por frase. Nada de termos soltos ligados por "·", "×" ou "→".
+- Sem códigos internos no texto visível (número de caso de uso, versão do painel, "D", "coorte", "universo", "ponte"). Em vez de "em D", escreva "na data escolhida".
+- Siglas pouco conhecidas são explicadas na primeira vez. ART, RT, CNPJ, CNAE e regional podem ficar sem explicação.
+- O título diz o assunto em palavras comuns; a pergunta diz o que o gráfico mostra e como ler; a ficha (i) diz como é calculado e o cuidado de leitura.
+- Cada informação fica num lugar só.
+
 ## Histórico
 
 As versões V4 a V14 foram retiradas em 29/10/2026 (último commit com elas: `884eee9`). As entregas V18 e V19, os catálogos de indicadores do V18 e as notas da V19 saíram em 01/11/2026 com a V21; tudo continua no histórico do Git.

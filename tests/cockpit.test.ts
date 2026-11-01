@@ -44,7 +44,7 @@ test('malha fina: cada regra tem status, indícios dentro do recorte e contratos
   assert.equal(malha.semRegistroSim.length + malha.semRegistroPassivel.length, malha.semRegistro.length);
   for (const row of contratos) {
     assert.equal(row.situacao, !row.registrada ? 'Sem registro na data' : !row.quitada ? 'Registrada, com anuidade vencida' : 'Registrada e quitada');
-    if (!row.chave) assert.equal(row.vinculo, 'Sem chave para a busca');
+    if (!row.chave) assert.equal(row.vinculo, 'Sem dados para a busca');
     if (row.vinculo === 'Confirmado por documento') assert.ok(row.artsDocumento.length > 0 && row.artsCandidatas.length === 0, 'candidata não conta como confirmada');
     if (row.vinculo === 'Candidato para revisão') assert.ok(row.artsDocumento.length === 0 && row.artsCandidatas.length > 0);
     if (row.vinculo === 'Não identificado') assert.ok(row.artsDocumento.length === 0 && row.artsCandidatas.length === 0);

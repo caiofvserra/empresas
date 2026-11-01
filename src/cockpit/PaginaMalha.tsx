@@ -15,16 +15,16 @@ import { Bloco, Parceria, carregando, linhasEmpresas, nomeEmpresa } from './ui';
  */
 export default function PaginaMalha({ ctx }: { ctx: CockpitCtx }) {
   return <div className="ck-grid ck-grid-malha">
-    <Bloco ctx={ctx} id="mf1" area="mf1" title="Indícios por regra" question="Cada regra com o status da ligação entre as bases, a fonte, a forma de coleta e a versão. Clique numa regra para a lista de empresas." help={`Confirmado: ${statusAjuda.Confirmado} Candidato: ${statusAjuda.Candidato} Contexto: ${statusAjuda.Contexto}`}><Regras ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf8" area="mf8" title="Contratos públicos técnicos e ART" question="Vínculo de cada contrato do período (PNCP) com ART, em três graus, e quantos tinham chave para a busca." help="Confirmado: a ART cita o número do contrato ou do processo. Candidato: ART da mesma empresa entre 30 dias antes e 60 depois, para revisão. Não identificado: nenhum dos dois; é prioridade para verificar, não prova de que falta ART. A taxa só usa contratos com CNPJ do fornecedor válido (chave para a busca)."><Vinculos ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf7" area="mf7" title="Fornecedor na data do contrato" question="Registro vigente e quitação da anuidade do estabelecimento contratado, na data de cada contrato técnico." help="Sem quitação, a empresa não obteria a certidão de registro e quitação. A situação é lida na data do contrato, não na data de hoje."><Fornecedor ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf2" area="mf2" title="CNAE da lista sem registro localizado, por câmara" question="Estabelecimentos ativos na Receita com CNAE da lista do Crea-SP e sem registro ou visto vigente. “Sim” separado de “Passível”." help="CNAE delimita o universo de análise; não prova atividade efetiva nem obrigação. “Passível de obrigação” depende da atividade básica e dos serviços prestados. Câmara aproximada pelo CNAE principal (cenário); em produção, pelo cadastro técnico."><SemRegistro ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf3" area="mf3" title="Registro ativo com CNPJ inativo" question="Registros ativos no Crea-SP de CNPJ baixado, inapto ou suspenso na Receita: cadastro a sanear e anuidade dificilmente recebida."><CnpjInativo ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf4" area="mf4" title="Padrão anormal de ART por profissional" question={`Autores com ARTs nos últimos 12 meses acima de três vezes a mediana (mínimo de ${LIMITE_ART}) e para cinco ou mais empresas ou em quatro ou mais regionais.`} help="Volume alto é normal em algumas modalidades e portes. Conferir compatibilidade de tempo e área (Resolução Confea nº 1.025/2009) antes de qualquer tratativa."><AutoresAnormais ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf5" area="mf5" title="Sucessão de empresas após baixa" question={`Registro baixado ou cancelado nos últimos 24 meses e outra empresa aberta no mesmo município, com o mesmo CNAE principal, em até ${PRAZO_SUCESSAO} dias. RT em comum eleva a prioridade.`} help="Não diz que a nova empresa é a mesma nem que herda débitos: isso depende de análise societária e jurídica."><Sucessoes ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf6" area="mf6" title="Obras sem ART de fiscalização e nomes de engenharia" question="Obras públicas com ART de execução identificada e nenhuma ART de fiscalização; e CNPJs ativos sem registro cujo nome contém termos de engenharia, qualquer que seja o CNAE." help="A ART de fiscalização pode estar sob outra chave: orientar o órgão antes de notificar. O nome é indício de apresentação ao mercado, não prova de atividade."><ObrasNomes ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mf9" area="mf9" title="Cobertura × emprego em engenharia, por regional" question="Contexto agregado: cobertura do mercado contra a variação do emprego em ocupações de engenharia (RAIS/CAGED, por município e CBO). Tamanho: empresas registradas." help="Emprego é agregado por município, CNAE e CBO e não se liga a CNPJ ou CPF. Linhas tracejadas: médias das regionais."><Quadrante ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mh" area="mh" title="Indícios por data de referência" question="A malha fina recalculada com a base como estava no fim de cada um dos 12 meses anteriores: empresas com indício, confirmadas e com ação; e cada regra na primeira e na última data." help="Mesma leitura do seletor de data, mês a mês; nada é sobrescrito. Diferença entre datas é variação do indício, não resultado da fiscalização."><HistoricoMalha ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf1" area="mf1" title="Empresas apontadas por cada regra" question="Cada regra da malha fina, quão segura é a ligação entre as bases, de onde vêm os dados e quantas empresas ela aponta. Clique numa regra para ver as empresas." help={`Confirmado: ${statusAjuda.Confirmado} Candidato: ${statusAjuda.Candidato} Contexto: ${statusAjuda.Contexto}`}><Regras ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf8" area="mf8" title="Contratos públicos técnicos com e sem ART" question="Para cada contrato técnico do período publicado no PNCP, se foi encontrada a ART correspondente, se há uma ART provável ou se nada foi encontrado." help="A ART é encontrada quando cita o número do contrato. É provável quando a mesma empresa registrou ART entre 30 dias antes e 60 dias depois do contrato. Quando nada aparece, o contrato deve ser verificado, mas isso não prova que falte ART. Só entram contratos com CNPJ válido."><Vinculos ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf7" area="mf7" title="Situação da empresa na data do contrato" question="Se a empresa contratada tinha registro ativo e anuidade em dia na data de cada contrato técnico." help="Sem anuidade em dia, a empresa não conseguiria a certidão de registro e quitação. A situação é a da data do contrato, não a de hoje."><Fornecedor ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf2" area="mf2" title="Empresas com atividade de engenharia e sem registro, por câmara" question="Estabelecimentos ativos na Receita com atividade da lista do Crea-SP que não têm registro nem visto. Os de registro obrigatório (“Sim”) aparecem separados dos que dependem de análise (“Passível”)." help="A atividade declarada à Receita delimita quem olhar, mas não prova que a empresa exerce a atividade nem que é obrigada a se registrar. A câmara é estimada pela atividade principal."><SemRegistro ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf3" area="mf3" title="Registro ativo de empresa fechada na Receita" question="Empresas com registro ativo no Crea-SP cujo CNPJ está baixado, inapto ou suspenso na Receita. É cadastro a corrigir e anuidade que dificilmente será paga."><CnpjInativo ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf4" area="mf4" title="Profissionais com volume incomum de ARTs" question={`Profissionais que registraram, nos últimos 12 meses, mais de três vezes o número de ARTs do profissional típico (no mínimo ${LIMITE_ART}), para cinco ou mais empresas ou em quatro ou mais regionais.`} help="Volume alto é normal em algumas modalidades e empresas grandes. Antes de qualquer contato, confira se há tempo e área compatíveis (Resolução Confea nº 1.025/2009)."><AutoresAnormais ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf5" area="mf5" title="Empresa que fecha e outra que abre no lugar" question={`Registro baixado ou cancelado nos últimos 24 meses e, em até ${PRAZO_SUCESSAO} dias, outra empresa aberta no mesmo município com a mesma atividade principal. Se as duas tiveram o mesmo responsável técnico, o caso sobe na fila.`} help="Isso não prova que a nova empresa seja a mesma nem que herde as dívidas da anterior. Essa conclusão depende de análise societária e jurídica."><Sucessoes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf6" area="mf6" title="Obras sem ART de fiscalização e empresas com nome de engenharia" question="Obras públicas com ART de execução e sem ART de fiscalização. E empresas ativas sem registro cujo nome contém palavras como “engenharia” ou “construtora”, qualquer que seja a atividade declarada." help="A ART de fiscalização pode estar registrada com outro número, então o primeiro passo é orientar o órgão. O nome mostra como a empresa se apresenta, não prova o que ela faz."><ObrasNomes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mf9" area="mf9" title="Registro e emprego em engenharia, por regional" question="Compara a parte das empresas de engenharia que está registrada com a variação do emprego formal em ocupações de engenharia, por regional. A bolha maior tem mais empresas registradas." help="O emprego vem somado por município e ocupação e não identifica empresa nem pessoa. As linhas tracejadas são as médias das regionais."><Quadrante ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mh" area="mh" title="Como a malha fina evoluiu nos últimos 12 meses" question="A malha fina refeita com a base como estava no fim de cada um dos 12 meses anteriores: empresas apontadas, empresas com caso confirmado e empresas que já tiveram ação. Abaixo, cada regra no primeiro e no último mês." help="É a mesma conta do seletor de data, repetida mês a mês, sem alterar nenhum valor. A diferença entre meses mostra como os casos mudaram, não o resultado da fiscalização."><HistoricoMalha ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -34,26 +34,26 @@ function Regras({ ctx }: { ctx: CockpitCtx }) {
   const { malha } = ctx, max = Math.max(1, ...malha.indicios.map(row => row.empresas.length));
   const porEmpresa = useMemo(() => { const map = new Map<string, Indicio[]>(); for (const item of malha.indicios) for (const id of item.empresas) map.set(id, [...(map.get(id) ?? []), item]); return map; }, [malha]);
   const abrir = (item: Indicio, semAcao: boolean) => { const acted = new Set(item.comAcao), ids = semAcao ? item.empresas.filter(id => !acted.has(id)) : item.empresas; if (!ids.length) return;
-    ctx.open({ kind: 'linhas', eyebrow: `${item.status} · ${item.fonte} · regra ${item.versao}`, title: `${item.label}${semAcao ? ' · sem ação fiscal' : ''}`, what: item.regra, use: `Comece pelas empresas com mais indícios confirmados e sem ação fiscal. Não concluir ${item.naoConcluir.charAt(0).toLowerCase()}${item.naoConcluir.slice(1)}`, listTitle: 'Empresas, mais indícios primeiro',
+    ctx.open({ kind: 'linhas', eyebrow: `${item.status}. Fontes: ${item.fonte}`, title: `${item.label}${semAcao ? ', sem ação fiscal' : ''}`, what: item.regra, use: `Comece pelas empresas com mais indícios confirmados e sem ação fiscal. Não concluir ${item.naoConcluir.charAt(0).toLowerCase()}${item.naoConcluir.slice(1)}`, listTitle: 'Empresas, mais indícios primeiro',
       rows: linhasEmpresas(ctx, ids, id => { const list = porEmpresa.get(id) ?? [], confirmados = list.filter(row => row.status === 'Confirmado').length;
         return { value: `${list.length} indício${list.length > 1 ? 's' : ''} · ${confirmados} confirmado${confirmados === 1 ? '' : 's'}`, note: list.map(row => `${row.label} (${row.status.toLowerCase()})`).join(' · '), sort: confirmados * 10 + list.length }; }) }); };
   return <div className="stack">
-    <p className="kpi-line"><b>{int(malha.confirmadas.length)}</b> empresas com indício confirmado · <b>{int(malha.empresas.length)}</b> com algum indício · <b>{int(malha.multiplos.length)}</b> com dois ou mais · <b>{pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)}</b> já com ação fiscal</p>
+    <p className="kpi-line"><b>{int(malha.confirmadas.length)}</b> empresas têm indício confirmado. Ao todo, <b>{int(malha.empresas.length)}</b> têm algum indício e <b>{int(malha.multiplos.length)}</b> têm dois ou mais. <b>{pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)}</b> delas já receberam ação fiscal.</p>
     <div className="table-wrap"><table className="regras">
-      <thead><tr><th>Regra</th><th>Status</th><th>Coleta</th><th>Empresas</th><th>Sem ação fiscal</th></tr></thead>
+      <thead><tr><th>Regra</th><th>Confiança</th><th>Coleta</th><th>Empresas</th><th>Sem ação fiscal</th></tr></thead>
       <tbody>{malha.indicios.map(item => { const sem = item.empresas.length - item.comAcao.length;
         return <tr key={item.id} tabIndex={0} onClick={() => abrir(item, false)} onKeyDown={event => { if (event.key === 'Enter') abrir(item, false); }}>
-          <td><b>{item.label}{item.parceria && <Parceria id={item.parceria} compacto />}</b><small>{item.fonte} · regra {item.versao}</small></td><td><Status status={item.status} /></td><td><span className={`coleta is-${item.coleta.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`}>{item.coleta}</span></td>
+          <td><b>{item.label}{item.parceria && <Parceria id={item.parceria} compacto />}</b><small>Fontes: {item.fonte}. {item.versao.charAt(0).toUpperCase()}{item.versao.slice(1)}.</small></td><td><Status status={item.status} /></td><td><span className={`coleta is-${item.coleta.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`}>{item.coleta}</span></td>
           <td><span className="cellbar"><i style={{ width: `${item.empresas.length / max * 100}%` }} /><em>{int(item.empresas.length)}</em></span></td>
-          <td><button className="link" onClick={event => { event.stopPropagation(); abrir(item, true); }}>{int(sem)} · {pct(sem / Math.max(1, item.empresas.length) * 100)}</button></td></tr>; })}</tbody>
+          <td><button className="link" onClick={event => { event.stopPropagation(); abrir(item, true); }}>{int(sem)} ({pct(sem / Math.max(1, item.empresas.length) * 100)})</button></td></tr>; })}</tbody>
     </table></div>
-    <p className="pendentes">Ainda sem regra no cenário: {regrasPendentes.map(row => `${row.label} (${row.motivo})`).join('; ')}.</p>
+    <p className="pendentes">Regras que ainda não entraram: {regrasPendentes.map(row => `${row.label}, porque ${row.motivo}`).join('; ')}.</p>
   </div>;
 }
 
 function Vinculos({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, malha } = ctx, contratos = malha.contratos;
-  const cores: Record<GrauVinculo, string> = { 'Confirmado por documento': tokens.good, 'Candidato para revisão': tokens.accent, 'Não identificado': tokens.warn, 'Sem chave para a busca': tokens.line };
+  const cores: Record<GrauVinculo, string> = { 'Confirmado por documento': tokens.good, 'Candidato para revisão': tokens.accent, 'Não identificado': tokens.warn, 'Sem dados para a busca': tokens.line };
   const categorias = useMemo(() => [...new Set(contratos.map(row => row.categoria))].sort(), [contratos]);
   const de = (categoria: string, grau: GrauVinculo) => contratos.filter(row => row.categoria === categoria && row.vinculo === grau);
   const option = useMemo(() => ({
@@ -66,7 +66,7 @@ function Vinculos({ ctx }: { ctx: CockpitCtx }) {
   }), [categorias, tokens, contratos]); // eslint-disable-line react-hooks/exhaustive-deps
   const comChave = malha.contratosComChave, confirmados = comChave.filter(row => row.vinculo === 'Confirmado por documento').length, naoId = comChave.filter(row => row.vinculo === 'Não identificado');
   return <div className="stack">
-    <p className="kpi-line"><b>{int(comChave.length)}</b> de {int(contratos.length)} contratos com chave para a busca · <b>{pct(confirmados / Math.max(1, comChave.length) * 100)}</b> com vínculo confirmado · <b>{int(naoId.length)}</b> ({brl(naoId.reduce((s, r) => s + r.valor, 0))}) sem ART identificada</p>
+    <p className="kpi-line"><b>{int(comChave.length)}</b> dos {int(contratos.length)} contratos têm dados suficientes para procurar a ART. Em <b>{pct(confirmados / Math.max(1, comChave.length) * 100)}</b> deles a ART foi encontrada, e <b>{int(naoId.length)}</b> contratos ({brl(naoId.reduce((s, r) => s + r.valor, 0))}) seguem sem ART identificada.</p>
     <Chart option={option} tokens={tokens} label="Contratos públicos técnicos por categoria e grau de vínculo com ART" onPick={params => abrirContratos(ctx, de(params.name, params.seriesName), `${params.name} · ${String(params.seriesName).toLowerCase()}`, params.seriesName === 'Não identificado' ? 'Prioridade para verificar, começando pelos de maior valor. Vínculo não identificado não é infração.' : params.seriesName === 'Candidato para revisão' ? 'Confirme se a ART candidata corresponde ao objeto, ao local e ao período do contrato.' : undefined)} />
   </div>;
 }
@@ -95,7 +95,7 @@ function Fornecedor({ ctx }: { ctx: CockpitCtx }) {
   return <div className="split">
     <Chart option={option} tokens={tokens} label="Valor de contratos técnicos pela situação do fornecedor na data" onPick={params => abrir(grupos[params.dataIndex]?.situacao)} />
     <ul className="side-list">{grupos.map(item => <li key={item.situacao}><button onClick={() => abrir(item.situacao)}><i style={{ background: cores[item.situacao] }} /><span>{item.situacao}</span><b>{int(item.rows.length)}</b></button></li>)}
-      <li className="side-note">Lido na data do contrato. Município do órgão e do fornecedor não indicam o local da obra.</li></ul>
+      <li className="side-note">A situação é lida na data de cada contrato. O município do órgão e o do fornecedor não indicam onde a obra fica.</li></ul>
   </div>;
 }
 
@@ -120,9 +120,9 @@ function SemRegistro({ ctx }: { ctx: CockpitCtx }) {
   }), [series, tokens]);
   const sim = malha.semRegistroSim.length, comAcao = series[0].ids.flat().length;
   return <div className="stack">
-    <p className="kpi-line"><b>{int(sim)}</b> CNPJs “Sim” sem registro localizado ({pct(comAcao / Math.max(1, sim) * 100)} já com ação) · <b>{int(malha.semRegistroPassivel.length)}</b> “Passível”, à parte</p>
+    <p className="kpi-line"><b>{int(sim)}</b> estabelecimentos com atividade de registro obrigatório não foram encontrados no cadastro, e {pct(comAcao / Math.max(1, sim) * 100)} deles já receberam ação fiscal. Outros <b>{int(malha.semRegistroPassivel.length)}</b> têm atividade que depende de análise e ficam à parte.</p>
     <Chart option={option} tokens={tokens} label="CNPJs com CNAE da lista sem registro localizado, por câmara e classe" onPick={params => { const item = series[params.seriesIndex], ids = item?.ids[params.dataIndex]; if (!ids?.length) return;
-      ctx.open({ kind: 'cnpjs', title: `${camaras[params.dataIndex]} · ${item.name.replace(/[“”]/g, '')}`, what: 'CNPJs ativos na Receita com CNAE da lista do Crea-SP desta câmara e classe, sem registro ou visto vigente no corte.', use: 'Confirme a atividade (contratos, licenças, site) antes de orientar ou notificar. Nenhum auto sai só do CNAE.', ids }); }} />
+      ctx.open({ kind: 'cnpjs', title: `${camaras[params.dataIndex]} · ${item.name.replace(/[“”]/g, '')}`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP, desta câmara e classe, sem registro nem visto na data escolhida.', use: 'Confirme a atividade (contratos, licenças, site) antes de orientar ou notificar. Nenhum auto sai só do CNAE.', ids }); }} />
   </div>;
 }
 
@@ -136,7 +136,7 @@ function CnpjInativo({ ctx }: { ctx: CockpitCtx }) {
     series: [{ type: 'bar', barWidth: 16, data: grupos.map((item, index) => ({ value: item.ids.length, itemStyle: { color: [tokens.bad, tokens.warn, tokens.heat[1]][index], borderRadius: [0, 4, 4, 0] } })), label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700 } }],
   }), [grupos, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <div className="stack">
-    <p className="kpi-line"><b>{int(malha.cnpjInativo.registros.length)}</b> registros ativos · <b>{int(malha.cnpjInativo.companies.length)}</b> empresas · <b>{brl(malha.cnpjInativo.vencido)}</b> vencidos dessas empresas</p>
+    <p className="kpi-line"><b>{int(malha.cnpjInativo.registros.length)}</b> registros seguem ativos no Crea-SP, de <b>{int(malha.cnpjInativo.companies.length)}</b> empresas cujo CNPJ já não está ativo na Receita. Essas empresas devem <b>{brl(malha.cnpjInativo.vencido)}</b> em valores vencidos.</p>
     <Chart option={option} tokens={tokens} label="Registros ativos por situação do CNPJ na Receita" onPick={params => { const item = grupos[params.dataIndex]; if (item?.ids.length) ctx.open({ kind: 'cnpjs', title: `Registro ativo com CNPJ ${item.status.toLowerCase()}`, what: 'Estabelecimentos com registro ativo no CREA-SP cujo CNPJ está nesta situação na Receita Federal.', use: 'Rever o registro: a base fica inflada e a anuidade lançada dificilmente será recebida.', ids: item.ids }); }} />
   </div>;
 }
@@ -174,8 +174,8 @@ function AutoresAnormais({ ctx }: { ctx: CockpitCtx }) {
   }), [rows, tokens, malha.medianaArts]);
   const indicio = malha.indicios.find(row => row.id === 'artAnormal');
   return <div className="stack">
-    <p className="kpi-line"><b>{int(malha.autoresAnormais.length)}</b> profissionais no padrão · <b>{int(indicio?.empresas.length ?? 0)}</b> empresas com ARTs desses autores · mediana de <b>{int(malha.medianaArts)}</b> ARTs por autor em 12 meses</p>
-    {rows.length ? <Chart option={option} tokens={tokens} label="Autores com padrão anormal de ART" onPick={() => { if (indicio?.empresas.length) ctx.open({ kind: 'empresas', title: 'Empresas com ART de autor em padrão anormal', what: 'Empresas das ARTs dos profissionais que satisfazem a regra no período.', use: 'Candidato para revisão: conferir compatibilidade de tempo e área antes de qualquer tratativa.', ids: indicio.empresas }); }} /> : <div className="empty-note">Nenhum profissional no padrão neste recorte.</div>}
+    <p className="kpi-line"><b>{int(malha.autoresAnormais.length)}</b> profissionais registraram ARTs em volume fora do normal, ligadas a <b>{int(indicio?.empresas.length ?? 0)}</b> empresas. Para comparar, o profissional típico registra <b>{int(malha.medianaArts)}</b> ARTs em 12 meses.</p>
+    {rows.length ? <Chart option={option} tokens={tokens} label="Autores com padrão anormal de ART" onPick={() => { if (indicio?.empresas.length) ctx.open({ kind: 'empresas', title: 'Empresas com ART de autor em padrão anormal', what: 'Empresas das ARTs dos profissionais que satisfazem a regra no período.', use: 'Candidato para revisão: conferir compatibilidade de tempo e área antes de qualquer tratativa.', ids: indicio.empresas }); }} /> : <div className="empty-note">Nenhum profissional com volume fora do normal nos filtros escolhidos.</div>}
   </div>;
 }
 
@@ -197,8 +197,8 @@ function Sucessoes({ ctx }: { ctx: CockpitCtx }) {
     series: [{ type: 'bar', barWidth: 9, data: porGre.map(row => row.n), itemStyle: { color: tokens.heat[2], borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10 } }],
   }), [porGre, tokens]);
   return <div className="stack">
-    <p className="kpi-line"><b>{int(rows.length)}</b> pares candidatos · <b>{int(empresas)}</b> empresas novas · <b>{int(comRt)}</b> com RT em comum · <button className="link" onClick={abrir}>ver os pares</button></p>
-    {rows.length ? <Chart option={option} tokens={tokens} label="Pares candidatos de sucessão por regional da empresa nova" onPick={abrir} /> : <div className="empty-note">Nenhum par candidato neste recorte.</div>}
+    <p className="kpi-line"><b>{int(rows.length)}</b> pares de empresas podem indicar que uma nova empresa substituiu outra. São <b>{int(empresas)}</b> empresas novas, e <b>{int(comRt)}</b> têm o mesmo responsável técnico da antiga. <button className="link" onClick={abrir}>ver os pares</button></p>
+    {rows.length ? <Chart option={option} tokens={tokens} label="Pares candidatos de sucessão por regional da empresa nova" onPick={abrir} /> : <div className="empty-note">Nenhum par de empresas nos filtros escolhidos.</div>}
   </div>;
 }
 
@@ -216,12 +216,12 @@ function ObrasNomes({ ctx }: { ctx: CockpitCtx }) {
   }), [porTermo, tokens]);
   return <div className="split">
     <div className="stack">
-      <p className="kpi-line"><b>{int(obras.length)}</b> obras com ART de execução e sem ART de fiscalização, de <b>{int(malha.obrasComExecucao.length)}</b> com execução identificada ({brl(obras.reduce((sum, row) => sum + row.valor, 0))}) · <button className="link" onClick={() => abrirContratos(ctx, obras, 'Obras públicas sem ART de fiscalização', 'Orientar o órgão contratante sobre a ART de fiscalização antes de qualquer notificação. A ART pode estar sob outra chave.')}>ver as obras</button></p>
-      <p className="kpi-line"><b>{int(nomes.length)}</b> CNPJs ativos sem registro com termo de engenharia no nome, por termo:</p>
+      <p className="kpi-line"><b>{int(obras.length)}</b> das <b>{int(malha.obrasComExecucao.length)}</b> obras com ART de execução não têm ART de fiscalização. Elas somam {brl(obras.reduce((sum, row) => sum + row.valor, 0))}. <button className="link" onClick={() => abrirContratos(ctx, obras, 'Obras públicas sem ART de fiscalização', 'Orientar o órgão contratante sobre a ART de fiscalização antes de qualquer notificação. A ART pode estar sob outra chave.')}>ver as obras</button></p>
+      <p className="kpi-line"><b>{int(nomes.length)}</b> empresas ativas na Receita sem registro no Crea-SP têm no nome uma palavra ligada à engenharia. A divisão por palavra é esta:</p>
       <Chart option={option} tokens={tokens} label="CNPJs sem registro com termo de engenharia no nome, por termo" onPick={() => { if (nomes.length) ctx.open({ kind: 'cnpjs', title: 'Nome de engenharia sem registro', what: 'Estabelecimentos ativos na Receita, sem registro ou visto vigente, cuja razão social ou nome fantasia contém termo de engenharia.', use: 'Candidato: confirmar a atividade antes de orientar. Em produção, o classificador de nomes passa por validação humana.', ids: nomes }); }} />
     </div>
     <ul className="side-list" aria-label="Obras sem ART de fiscalização">{obras.slice(0, 6).map(row => <li key={row.id}><span className="side-row"><span>{nomeEmpresa(ctx, row.companyId)}</span><b>{brl(row.valor)}</b><small>{row.objeto} · {data(row.data)}</small></span></li>)}
-      <li className="side-note">Maiores obras sem ART de fiscalização. Lido na data de referência.</li></ul>
+      <li className="side-note">As maiores obras sem ART de fiscalização, na data escolhida no alto da tela.</li></ul>
   </div>;
 }
 
@@ -242,12 +242,12 @@ function HistoricoMalha({ ctx }: { ctx: CockpitCtx }) {
   const primeiro = pontos[0], ultimo = pontos[pontos.length - 1];
   return <div className="split is-wide">
     <div className="stack">
-      <p className="kpi-line">{h.completo ? <><b>{int(pontos.length)}</b> datas, de {data(h.datas[0])} a {data(h.datas[h.datas.length - 1])}</> : <>Calculando <b>{int(pontos.length)}</b> de {int(h.datas.length)} datas…</>} · regional aplicada; a câmara não se aplica ao histórico</p>
+      <p className="kpi-line">{h.completo ? <><b>{int(pontos.length)}</b> datas, de {data(h.datas[0])} a {data(h.datas[h.datas.length - 1])}.</> : <>Calculando <b>{int(pontos.length)}</b> de {int(h.datas.length)} datas…</>} O histórico respeita a regional escolhida, mas não o filtro de câmara.</p>
       {pontos.length ? <Chart option={option} tokens={tokens} label="Empresas com indício, confirmadas e com ação, por data de referência" /> : carregando}
     </div>
     <ul className="side-list" aria-label="Regras na primeira e na última data">
-      {primeiro && ultimo ? regrasAtivas.map(regra => { const a = primeiro.porRegra[regra.id] ?? 0, b = ultimo.porRegra[regra.id] ?? 0; return <li key={regra.id}><button disabled><i style={{ background: b > a ? tokens.warn : b < a ? tokens.good : tokens.muted }} /><span><small>{regra.label}</small></span><b>{int(a)} → {int(b)}</b></button></li>; }) : <li className="side-note">Aguardando o primeiro ponto…</li>}
-      <li className="side-note">Primeira → última data do histórico, por regra.</li>
+      {primeiro && ultimo ? regrasAtivas.map(regra => { const a = primeiro.porRegra[regra.id] ?? 0, b = ultimo.porRegra[regra.id] ?? 0; return <li key={regra.id}><button disabled><i style={{ background: b > a ? tokens.warn : b < a ? tokens.good : tokens.muted }} /><span><small>{regra.label}</small></span><b>de {int(a)} para {int(b)}</b></button></li>; }) : <li className="side-note">Aguardando o primeiro ponto…</li>}
+      <li className="side-note">Quantas empresas cada regra apontava na primeira data do histórico e quantas aponta na última.</li>
     </ul>
   </div>;
 }

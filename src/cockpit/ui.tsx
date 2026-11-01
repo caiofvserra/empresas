@@ -53,13 +53,13 @@ export function FichaPop({ ficha, titulo, leitura, anchor }: { ficha?: FichaBloc
         <dt>Como calcula</dt><dd>{ficha.calcula}</dd>
         <dt>Fontes e data</dt><dd>{ficha.fontes}</dd>
         {ficha.cruzamento && <><dt>Cruzamento</dt><dd>{ficha.cruzamento}</dd></>}
-        <dt>Regra e versão</dt><dd>{ficha.regra}</dd>
+        <dt>Versão da regra</dt><dd>{ficha.regra}</dd>
         <dt>Limitações</dt><dd>{ficha.limites}</dd>
         {ficha.extra?.map(([rotulo, texto]) => <Fragment key={rotulo}><dt>{rotulo}</dt><dd>{texto}</dd></Fragment>)}
-        {parceriasDe(ficha).map(id => <Fragment key={id}><dt>Depende de parceria</dt><dd className="ficha-parceria"><b>{parceriaPorId[id].parceiro}</b> precisa entregar: {parceriaPorId[id].entrega.charAt(0).toLowerCase()}{parceriaPorId[id].entrega.slice(1)}. Chave: {parceriaPorId[id].chave}. Até o acordo, a camada é demonstrativa.</dd></Fragment>)}
+        {parceriasDe(ficha).map(id => <Fragment key={id}><dt>Depende de parceria</dt><dd className="ficha-parceria"><b>{parceriaPorId[id].parceiro}</b> precisa entregar: {parceriaPorId[id].entrega.charAt(0).toLowerCase()}{parceriaPorId[id].entrega.slice(1)}. Os dados se ligam por: {parceriaPorId[id].chave}. Até o acordo ser fechado, os números são demonstrativos.</dd></Fragment>)}
         {leitura && <><dt>Leitura</dt><dd>{leitura}</dd></>}
-        <dt>Último cálculo</dt><dd>Calculado ao abrir, com a base lida em {data(anchor)} (data de referência do painel).</dd>
-        <dt>Dono</dt><dd>{ficha.dono}</dd>
+        <dt>Último cálculo</dt><dd>Calculado ao abrir o painel, com a base como estava em {data(anchor)}, a data escolhida no alto da tela.</dd>
+        <dt>Responsável</dt><dd>{ficha.dono}</dd>
         {ficha.acao && <><dt>Ação sugerida</dt><dd className="ficha-acao">{ficha.acao}</dd></>}
       </dl> : <p className="ficha-leitura">{leitura}</p>}
     </div>
@@ -70,7 +70,7 @@ export function FichaPop({ ficha, titulo, leitura, anchor }: { ficha?: FichaBloc
 export const Selo = ({ data }: { data: string }) => <span className="selo" title="Dado público real versionado no painel">Real · {data.split('-').reverse().join('/')}</span>;
 
 export interface Variacao { value: number | null; kind?: 'pct' | 'pp'; goodUp?: boolean; label?: string }
-export function Var({ value, kind = 'pct', goodUp = true, label = 'vs. ano anterior' }: Variacao) {
+export function Var({ value, kind = 'pct', goodUp = true, label = 'em relação ao ano anterior' }: Variacao) {
   if (value === null || !Number.isFinite(value)) return <span className="delta is-none">sem base de comparação</span>;
   const good = goodUp ? value >= 0 : value <= 0, Icon = Math.abs(value) < 0.5 ? Minus : value > 0 ? ArrowUpRight : ArrowDownRight;
   const text = kind === 'pp' ? `${value > 0 ? '+' : ''}${value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} p.p.` : `${value > 0 ? '+' : ''}${pct(value)}`;
