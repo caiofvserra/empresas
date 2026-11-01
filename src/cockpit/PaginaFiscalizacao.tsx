@@ -34,7 +34,7 @@ export default function PaginaFiscalizacao({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ficha="k-autos" ctx={ctx} label="Autos de infração lavrados" value={int(resumo.autos.length)} variacao={{ value: change(resumo.autos.length, resumo.autosPrev) }} spark={resumo.mensal.map(row => tipos.reduce((sum, tipo) => sum + row.autos[tipo], 0))} cor={tokens.bad}
         sub={<><Segments parts={tipos.map(tipo => ({ label: tipoLabel[tipo], value: resumo.autos.filter(row => row.tipo === tipo).length, color: colors[tipo] }))} />{pct(resumo.acoes.filter(row => row.auto).length / Math.max(1, resumo.acoes.length) * 100)} das ações geraram auto</>} onOpen={() => ctx.open({ kind: 'autos' })} />
       <Indicador ficha="k-multas" ctx={ctx} label="Multas aplicadas" value={brl(resumo.aplicada)} variacao={{ value: change(resumo.aplicada, resumo.aplicadaPrev) }}
-        sub={<><Segments parts={(Object.keys(resumo.multas) as StatusMulta[]).map(key => ({ label: key, value: resumo.multas[key].valor, color: status[key], format: brl }))} />{brl(resumo.multas['Dívida ativa'].valor)} em dívida ativa · {brl(resumo.multas['Em julgamento'].valor)} em julgamento</>} onOpen={() => ctx.open({ kind: 'multas' })} />
+        sub={<><Segments parts={(Object.keys(resumo.multas) as StatusMulta[]).map(key => ({ label: key, value: resumo.multas[key].valor, color: status[key], format: brl }))} />{brl(resumo.multas['Dívida ativa'].valor)} em dívida ativa e {brl(resumo.multas['Em julgamento'].valor)} em julgamento</>} onOpen={() => ctx.open({ kind: 'multas' })} />
       <Indicador ficha="k-recebidas" ctx={ctx} label="Multas recebidas" value={brl(resumo.recebida)} sub={`${resumo.pagaCoorte === null ? '—' : pct(resumo.pagaCoorte)} do valor aplicado no período já foi pago`} onOpen={() => ctx.open({ kind: 'multas', status: 'Paga' })} />
       <Indicador ficha="k-regularizacoes" ctx={ctx} label="Regularizações após ação" value={int(resumo.regularizacoes.length)} variacao={{ value: change(resumo.regularizacoes.length, resumo.regularizacoesPrev) }} spark={resumo.mensal.map(row => row.regularizacoes)} cor={tokens.good} meta={{ atual: resumo.taxa, alvo: metas.regularizacao }}
         sub={`${resumo.taxa === null ? '—' : pct(resumo.taxa)} das ações do período, em ${resumo.medianaDias === null ? '—' : int(resumo.medianaDias)} dias no caso típico. A ação pode não ser a causa.`} onOpen={() => ctx.open({ kind: 'regularizacoes' })} />
@@ -105,7 +105,7 @@ function Conversao({ ctx }: { ctx: CockpitCtx }) {
     grid: { top: 28, right: 8, bottom: 2, left: 4, containLabel: true },
     legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10.5 } },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex];
-      return `<b>${row.trimestre.replace('-', ' ')}</b>${row.completa ? '' : ' · coorte em aberto'}<br/>${int(row.acoes.length)} ações · ${int(row.convertidas.length)} regularizadas em até 180 dias<br/>Conversão: <b>${row.taxa === null ? '—' : pct(row.taxa, 1)}</b>`; } },
+      return `<b>${row.trimestre.replace('-', ' ')}</b>${row.completa ? '' : ' (ainda dentro do prazo de 180 dias)'}<br/>${int(row.acoes.length)} ações · ${int(row.convertidas.length)} regularizadas em até 180 dias<br/>Conversão: <b>${row.taxa === null ? '—' : pct(row.taxa, 1)}</b>`; } },
     xAxis: { type: 'category', data: rows.map(row => row.trimestre.replace('-', ' ')), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
     yAxis: [{ type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } }, { type: 'value', max: 100, splitLine: { show: false }, axisLabel: { color: tokens.muted, formatter: '{value}%' } }],
     series: [
@@ -117,7 +117,7 @@ function Conversao({ ctx }: { ctx: CockpitCtx }) {
   }), [rows, tokens]);
   return <div className="stack">
     <p className="kpi-line">{c.atual ? <><b>{pct(c.atual.taxa ?? 0, 1)}</b> das ações iniciadas em {c.atual.trimestre.replace('-', ' ')} terminaram em regularização, no trimestre mais recente que já completou 180 dias.{c.anterior && c.anterior !== c.atual && c.anterior.taxa !== null && <> No trimestre anterior ({c.anterior.trimestre.replace('-', ' ')}) foram {pct(c.anterior.taxa, 1)}.</>}</> : 'Nenhum trimestre completou 180 dias ainda.'} {int(rows.filter(row => !row.completa).length)} trimestres ainda estão dentro do prazo.</p>
-    <Chart option={option} tokens={tokens} label="Conversão em 180 dias por coorte trimestral" onPick={params => { const row = rows[params.dataIndex]; if (!row?.acoes.length) return;
+    <Chart option={option} tokens={tokens} label="Ações de cada trimestre que terminaram em regularização em 180 dias" onPick={params => { const row = rows[params.dataIndex]; if (!row?.acoes.length) return;
       const ids = params.seriesName === 'Regularizadas em 180 dias' ? row.convertidas : row.acoes;
       ctx.open({ kind: 'empresas', title: `Ações iniciadas em ${row.trimestre.replace('-', ' ')}, ${String(params.seriesName).toLowerCase()}`, what: 'Empresas das ações fiscais iniciadas no trimestre.', use: 'Associação no tempo, não efeito causal.', ids: [...new Set(ids.map(acao => acao.companyId))] }); }} />
   </div>;

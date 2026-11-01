@@ -34,26 +34,26 @@ function Regras({ ctx }: { ctx: CockpitCtx }) {
   const { malha } = ctx, max = Math.max(1, ...malha.indicios.map(row => row.empresas.length));
   const porEmpresa = useMemo(() => { const map = new Map<string, Indicio[]>(); for (const item of malha.indicios) for (const id of item.empresas) map.set(id, [...(map.get(id) ?? []), item]); return map; }, [malha]);
   const abrir = (item: Indicio, semAcao: boolean) => { const acted = new Set(item.comAcao), ids = semAcao ? item.empresas.filter(id => !acted.has(id)) : item.empresas; if (!ids.length) return;
-    ctx.open({ kind: 'linhas', eyebrow: `${item.status}, com dados de ${item.fonte}`, title: `${item.label}${semAcao ? ', sem ação fiscal' : ''}`, what: item.regra, use: `Comece pelas empresas com mais indícios confirmados e sem ação fiscal. Não concluir ${item.naoConcluir.charAt(0).toLowerCase()}${item.naoConcluir.slice(1)}`, listTitle: 'Empresas, mais indícios primeiro',
+    ctx.open({ kind: 'linhas', eyebrow: `${item.status}. Fontes: ${item.fonte}`, title: `${item.label}${semAcao ? ', sem ação fiscal' : ''}`, what: item.regra, use: `Comece pelas empresas com mais indícios confirmados e sem ação fiscal. Não concluir ${item.naoConcluir.charAt(0).toLowerCase()}${item.naoConcluir.slice(1)}`, listTitle: 'Empresas, mais indícios primeiro',
       rows: linhasEmpresas(ctx, ids, id => { const list = porEmpresa.get(id) ?? [], confirmados = list.filter(row => row.status === 'Confirmado').length;
         return { value: `${list.length} indício${list.length > 1 ? 's' : ''} · ${confirmados} confirmado${confirmados === 1 ? '' : 's'}`, note: list.map(row => `${row.label} (${row.status.toLowerCase()})`).join(' · '), sort: confirmados * 10 + list.length }; }) }); };
   return <div className="stack">
     <p className="kpi-line"><b>{int(malha.confirmadas.length)}</b> empresas têm indício confirmado. Ao todo, <b>{int(malha.empresas.length)}</b> têm algum indício e <b>{int(malha.multiplos.length)}</b> têm dois ou mais. <b>{pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)}</b> delas já receberam ação fiscal.</p>
     <div className="table-wrap"><table className="regras">
-      <thead><tr><th>Regra</th><th>Status</th><th>Coleta</th><th>Empresas</th><th>Sem ação fiscal</th></tr></thead>
+      <thead><tr><th>Regra</th><th>Confiança</th><th>Coleta</th><th>Empresas</th><th>Sem ação fiscal</th></tr></thead>
       <tbody>{malha.indicios.map(item => { const sem = item.empresas.length - item.comAcao.length;
         return <tr key={item.id} tabIndex={0} onClick={() => abrir(item, false)} onKeyDown={event => { if (event.key === 'Enter') abrir(item, false); }}>
-          <td><b>{item.label}{item.parceria && <Parceria id={item.parceria} compacto />}</b><small>Dados de {item.fonte}; {item.versao}</small></td><td><Status status={item.status} /></td><td><span className={`coleta is-${item.coleta.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`}>{item.coleta}</span></td>
+          <td><b>{item.label}{item.parceria && <Parceria id={item.parceria} compacto />}</b><small>Fontes: {item.fonte}. {item.versao.charAt(0).toUpperCase()}{item.versao.slice(1)}.</small></td><td><Status status={item.status} /></td><td><span className={`coleta is-${item.coleta.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`}>{item.coleta}</span></td>
           <td><span className="cellbar"><i style={{ width: `${item.empresas.length / max * 100}%` }} /><em>{int(item.empresas.length)}</em></span></td>
-          <td><button className="link" onClick={event => { event.stopPropagation(); abrir(item, true); }}>{int(sem)} · {pct(sem / Math.max(1, item.empresas.length) * 100)}</button></td></tr>; })}</tbody>
+          <td><button className="link" onClick={event => { event.stopPropagation(); abrir(item, true); }}>{int(sem)} ({pct(sem / Math.max(1, item.empresas.length) * 100)})</button></td></tr>; })}</tbody>
     </table></div>
-    <p className="pendentes">Ainda sem regra no cenário: {regrasPendentes.map(row => `${row.label} (${row.motivo})`).join('; ')}.</p>
+    <p className="pendentes">Regras que ainda não entraram: {regrasPendentes.map(row => `${row.label}, porque ${row.motivo}`).join('; ')}.</p>
   </div>;
 }
 
 function Vinculos({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, malha } = ctx, contratos = malha.contratos;
-  const cores: Record<GrauVinculo, string> = { 'Confirmado por documento': tokens.good, 'Candidato para revisão': tokens.accent, 'Não identificado': tokens.warn, 'Sem chave para a busca': tokens.line };
+  const cores: Record<GrauVinculo, string> = { 'Confirmado por documento': tokens.good, 'Candidato para revisão': tokens.accent, 'Não identificado': tokens.warn, 'Sem dados para a busca': tokens.line };
   const categorias = useMemo(() => [...new Set(contratos.map(row => row.categoria))].sort(), [contratos]);
   const de = (categoria: string, grau: GrauVinculo) => contratos.filter(row => row.categoria === categoria && row.vinculo === grau);
   const option = useMemo(() => ({

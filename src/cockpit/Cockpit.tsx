@@ -227,7 +227,7 @@ export default function Cockpit() {
         <label className="ck-select"><span>Regional</span><select value={gre} onChange={event => change(() => setGre(event.target.value))}><option value="">Todas</option>{dataset.gres.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
         <label className="ck-select"><span>Câmara</span><select value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
         <div className="seg" role="radiogroup" aria-label="Período">{[3, 6, 12].map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => setPeriod(value))}>{value} meses</button>)}</div>
-        <span className="ck-window">{data(ctx.janela.start)} a {data(ctx.janela.end)} · comparado com {data(ctx.janela.prevStart)} a {data(ctx.janela.prevEnd)}{emD && <> · base lida em <strong>{data(anchor)}</strong></>}</span>
+        <span className="ck-window">De {data(ctx.janela.start)} a {data(ctx.janela.end)}, comparado com {data(ctx.janela.prevStart)} a {data(ctx.janela.prevEnd)}.{emD && <> Situação em <strong>{data(anchor)}</strong>.</>}</span>
         {(gre || camara || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCamara(''); setPeriod(12); setAnchorSel(null); })}><RotateCcw size={14} />Limpar filtros</button>}
       </section>
       <main className={`ck-page ck-page-${page} ${focus ? 'has-focus' : ''}`} key={page}><current.Page ctx={ctx} /></main>

@@ -91,7 +91,7 @@ export function MapaBivariado({ ctx, area = 'map', tools }: { ctx: Ctx; area?: s
     actions={<div className="tile-tools"><div className="seg" role="radiogroup" aria-label="Indicadores do mapa">{(Object.keys(pares) as ParId[]).map(id => <button key={id} role="radio" aria-checked={par === id} className={par === id ? 'on' : ''} onClick={() => setPar(id)}>{pares[id].label}</button>)}</div>{tools}</div>}>
     <div className="map-layout">
       <div className="map-box">{option ? <Chart option={option} tokens={tokens} label={`Mapa das regionais: ${config.x} e ${config.y}`} onPick={pick} /> : <div className="loading">Carregando mapa…</div>}
-        <p className="map-note">Território de cada GRE aproximado pelos municípios da amostra; em produção, usar a tabela oficial município → GRE.</p></div>
+        <p className="map-note">O território de cada regional é aproximado pelos municípios do cenário. Em produção, será usada a tabela oficial que liga município e regional.</p></div>
       <aside className="map-side">
         <div className="biv" onMouseLeave={() => setDestaque(null)}>
           <span className="biv-y">{config.y} ↑</span>

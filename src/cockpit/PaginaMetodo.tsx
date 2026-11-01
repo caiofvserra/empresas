@@ -52,11 +52,11 @@ function RegrasLeitura({ ctx }: { ctx: CockpitCtx }) {
   const rows = frente ? regrasLeitura.filter(row => row.frente === frente) : regrasLeitura;
   return <div className="stack">
     <div className="seg is-wrap" role="radiogroup" aria-label="Frente">
-      <button role="radio" aria-checked={frente === null} className={frente === null ? 'on' : ''} onClick={() => setFrente(null)}>Todas · {regrasLeitura.length}</button>
-      {frentes.map(item => <button key={item.id} role="radio" aria-checked={frente === item.id} className={frente === item.id ? 'on' : ''} onClick={() => setFrente(frente === item.id ? null : item.id)}>{item.frente} · {regrasLeitura.filter(row => row.frente === item.id).length}</button>)}
+      <button role="radio" aria-checked={frente === null} className={frente === null ? 'on' : ''} onClick={() => setFrente(null)}>Todas ({regrasLeitura.length})</button>
+      {frentes.map(item => <button key={item.id} role="radio" aria-checked={frente === item.id} className={frente === item.id ? 'on' : ''} onClick={() => setFrente(frente === item.id ? null : item.id)}>{item.frente} ({regrasLeitura.filter(row => row.frente === item.id).length})</button>)}
     </div>
     <div className="table-wrap"><table className="metodo is-dense">
-      <thead><tr><th>Cruzamento</th><th>Chave e condição</th><th>Pode concluir</th><th>Não pode concluir</th><th>Situação</th><th>No painel</th></tr></thead>
+      <thead><tr><th>Cruzamento</th><th>Como as bases se ligam</th><th>Pode concluir</th><th>Não pode concluir</th><th>Situação</th><th>No painel</th></tr></thead>
       <tbody>{rows.map(row => <tr key={row.cruzamento}><td><b>{row.cruzamento}</b><small>{frentePorId[row.frente]?.frente}</small></td><td><small>{row.chave}</small></td><td>{row.pode}</td><td className="nao">{row.naoPode}</td><td><Situacao situacao={row.situacao} tokens={tokens} /></td><td><small>{row.noPainel}</small></td></tr>)}</tbody>
     </table></div>
   </div>;
@@ -68,7 +68,7 @@ function Lacunas() {
   return <div className="stack">
     <p className="kpi-line"><b>{contagem('Corrigida')}</b> medidas foram corrigidas, <b>{contagem('Retirada')}</b> foram retiradas e <b>{contagem('Rotulada')}</b> passaram a ser marcadas como demonstrativas.</p>
     <div className="table-wrap"><table className="metodo">
-      <thead><tr><th>#</th><th>Lacuna</th><th>Decisão</th><th>O que mudou</th><th>Falta para produção</th></tr></thead>
+      <thead><tr><th>#</th><th>Problema</th><th>Decisão</th><th>O que mudou</th><th>Falta para produção</th></tr></thead>
       <tbody>{lacunas.map(row => <tr key={row.n}><td>{row.n}</td><td><b>{row.titulo}</b></td><td><span className={`status ${decisaoClasse[row.decisao]}`}>{row.decisao}</span></td><td>{row.oQueMudou}</td><td><small>{row.falta}</small></td></tr>)}</tbody>
     </table></div>
   </div>;
@@ -80,8 +80,8 @@ function Casos({ ctx }: { ctx: CockpitCtx }) {
   const rows = filtro ? casos.filter(row => row.situacao === filtro) : casos;
   return <div className="stack">
     <div className="seg is-wrap" role="radiogroup" aria-label="Situação do caso de uso">
-      <button role="radio" aria-checked={filtro === null} className={filtro === null ? 'on' : ''} onClick={() => setFiltro(null)}>Todos · {casos.length}</button>
-      {situacoesCaso.map(item => <button key={item} role="radio" aria-checked={filtro === item} className={filtro === item ? 'on' : ''} onClick={() => setFiltro(filtro === item ? null : item)}><i className="dot" style={{ background: cores[item] }} />{item} · {casos.filter(row => row.situacao === item).length}</button>)}
+      <button role="radio" aria-checked={filtro === null} className={filtro === null ? 'on' : ''} onClick={() => setFiltro(null)}>Todos ({casos.length})</button>
+      {situacoesCaso.map(item => <button key={item} role="radio" aria-checked={filtro === item} className={filtro === item ? 'on' : ''} onClick={() => setFiltro(filtro === item ? null : item)}><i className="dot" style={{ background: cores[item] }} />{item} ({casos.filter(row => row.situacao === item).length})</button>)}
     </div>
     <div className="table-wrap"><table className="metodo">
       <thead><tr><th>Caso</th><th>Prioridade</th><th>Situação</th><th>Bloco do painel</th></tr></thead>
@@ -93,7 +93,7 @@ function Casos({ ctx }: { ctx: CockpitCtx }) {
 function RegrasMalha() {
   return <div className="stack">
     <div className="table-wrap"><table className="metodo">
-      <thead><tr><th>Regra</th><th>Status</th><th>Coleta</th><th>Fonte e versão</th><th>Não pode concluir</th></tr></thead>
+      <thead><tr><th>Regra</th><th>Confiança</th><th>Coleta</th><th>Fonte e versão</th><th>Não pode concluir</th></tr></thead>
       <tbody>{regras.map(row => <tr key={row.id} title={row.regra}><td><b>{row.label}</b></td><td><Status status={row.status} /></td><td><span className={`coleta is-${row.coleta.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')}`}>{row.coleta}</span></td><td><small>{row.fonte} · {row.versao}</small></td><td className="nao"><small>{row.naoConcluir}</small></td></tr>)}</tbody>
     </table></div>
     <p className="pendentes">Pendentes: {regrasPendentes.map(row => `${row.label} (${row.motivo})`).join('; ')}.</p>
@@ -119,12 +119,12 @@ function Fontes({ ctx }: { ctx: CockpitCtx }) {
   const conta = (item: Coleta) => fontes.filter(row => coletaDe(row) === item).length;
   return <div className="stack">
     <div className="seg is-wrap" role="radiogroup" aria-label="Forma de coleta">
-      <button role="radio" aria-checked={coleta === null} className={coleta === null ? 'on' : ''} onClick={() => setColeta(null)}>Todas · {fontes.length}</button>
-      {coletas.map(item => <button key={item} role="radio" aria-checked={coleta === item} className={coleta === item ? 'on' : ''} onClick={() => setColeta(coleta === item ? null : item)}><i className="dot" style={{ background: cores[item] }} />{item} · {conta(item)}</button>)}
+      <button role="radio" aria-checked={coleta === null} className={coleta === null ? 'on' : ''} onClick={() => setColeta(null)}>Todas ({fontes.length})</button>
+      {coletas.map(item => <button key={item} role="radio" aria-checked={coleta === item} className={coleta === item ? 'on' : ''} onClick={() => setColeta(coleta === item ? null : item)}><i className="dot" style={{ background: cores[item] }} />{item} ({conta(item)})</button>)}
     </div>
     <div className="fontes-heat"><Chart option={option} tokens={tokens} label="Fontes do atlas por tema e nível de evidência" onPick={item => { const tema = temas[item.value?.[1]], evidencia = niveis[item.value?.[0]]; if (tema && evidencia && item.value[2]) setSel({ tema, evidencia }); }} /></div>
     <div className="table-wrap is-short"><table className="metodo">
-      <thead><tr><th colSpan={4}>{sel ? <>{sel.tema} · {sel.evidencia} <button className="link" onClick={() => setSel(null)}>limpar</button></> : 'Fontes que a V20 usa ou simula'}</th></tr></thead>
+      <thead><tr><th colSpan={4}>{sel ? <>{sel.tema} · {sel.evidencia} <button className="link" onClick={() => setSel(null)}>limpar</button></> : 'Fontes que o painel usa ou simula'}</th></tr></thead>
       <tbody>{lista.map(row => { const forma = coletaDe(row); return <tr key={row.fonte}><td><b>{row.fonte}</b><small>{row.orgao} · {row.acesso} · {row.rotina}</small></td><td><span className="chip" style={{ borderColor: cores[forma] }}><i className="dot" style={{ background: cores[forma] }} />{forma}</span></td><td><small>{row.chaves}</small></td><td><small>{usoNoPainel[row.fonte] ?? `${row.evidencia}${row.data ? ` · ${row.data}` : ''}`}</small></td></tr>; })}</tbody>
     </table></div>
   </div>;
@@ -150,8 +150,8 @@ function Radar({ ctx }: { ctx: CockpitCtx }) {
   const porFamilia = useMemo(() => familiasNormativas.map(familia => ({ familia, n: rows.filter(row => row.familia === familia).length })).filter(row => row.n > 0), [rows]);
   return <div className="stack">
     <div className="seg is-wrap" role="radiogroup" aria-label="Casa legislativa">
-      <button role="radio" aria-checked={casa === null} className={casa === null ? 'on' : ''} onClick={() => setCasa(null)}>Todas · {proposicoes.length}</button>
-      {casasLegislativas.map(item => <button key={item} role="radio" aria-checked={casa === item} className={casa === item ? 'on' : ''} onClick={() => setCasa(casa === item ? null : item)}>{item} · {proposicoes.filter(row => row.casa === item).length}</button>)}
+      <button role="radio" aria-checked={casa === null} className={casa === null ? 'on' : ''} onClick={() => setCasa(null)}>Todas ({proposicoes.length})</button>
+      {casasLegislativas.map(item => <button key={item} role="radio" aria-checked={casa === item} className={casa === item ? 'on' : ''} onClick={() => setCasa(casa === item ? null : item)}>{item} ({proposicoes.filter(row => row.casa === item).length})</button>)}
     </div>
     <p className="kpi-line">{porFamilia.map(row => <span key={row.familia} className="chip" style={{ marginRight: 4 }}>{row.familia}: {row.n}</span>)}</p>
     <div className="table-wrap"><table className="metodo is-dense">
@@ -166,7 +166,7 @@ function Gate({ ctx }: { ctx: CockpitCtx }) {
   return <div className="stack">
     <ol className="gate" aria-label="Passos do gate">{gatePromocao.map((passo, index) => <li key={index}><b>{index + 1}</b><small>{passo}</small></li>)}</ol>
     <div className="table-wrap"><table className="metodo is-dense">
-      <thead><tr><th>Fonte</th><th>Frente</th><th>Passo alcançado</th><th>Evidência (29/10)</th><th>Pendente</th><th>No painel</th></tr></thead>
+      <thead><tr><th>Fonte</th><th>Frente</th><th>Passo alcançado</th><th>O que se sabe (29/10/2026)</th><th>Pendente</th><th>No painel</th></tr></thead>
       <tbody>{prontidaoFontes.map(row => <tr key={row.fonte}><td><b>{row.fonte}</b></td><td><small>{frentePorId[row.frente]?.frente}</small></td>
         <td><span className="gate-bar" title={`${row.passo} de ${passos}`}>{Array.from({ length: passos }, (_, index) => <i key={index} style={{ background: index < row.passo ? (row.passo >= 5 ? tokens.good : tokens.blue) : tokens.soft }} />)}<b>{row.passo}/{passos}</b></span></td>
         <td><small>{row.evidencia}</small></td><td className="nao"><small>{row.pendente}</small></td><td><small>{row.noPainel}</small></td></tr>)}</tbody>
@@ -179,7 +179,7 @@ function ParceriasTabela() {
   return <div className="stack">
     <p className="kpi-line"><b>{parcerias.length}</b> parcerias estão previstas, e <b>{parcerias.filter(row => row.prioridade === 'A').length}</b> delas têm prioridade alta. <b>{Object.values(fichas).filter(row => row.parceria).length}</b> blocos do painel levam o sinal “!” porque dependem de alguma delas.</p>
     <div className="table-wrap"><table className="metodo is-dense">
-      <thead><tr><th>Parceiro</th><th>Prioridade</th><th>O que precisa entregar</th><th>Chave</th><th>Base prevista</th><th>Camadas no painel</th></tr></thead>
+      <thead><tr><th>Parceiro</th><th>Prioridade</th><th>O que precisa entregar</th><th>Como os dados se ligam</th><th>Base prevista</th><th>Onde aparece no painel</th></tr></thead>
       <tbody>{parcerias.map(row => <tr key={row.id}><td><b>{row.parceiro}</b><small>{blocos(row.id)} bloco{blocos(row.id) === 1 ? '' : 's'} <Parceria id={row.id} compacto /></small></td><td>{row.prioridade}</td><td><small>{row.entrega}</small></td><td><small>{row.chave}</small></td><td className="nao"><small>{row.basePrevista}</small></td><td><small>{row.camadas}</small></td></tr>)}</tbody>
     </table></div>
   </div>;

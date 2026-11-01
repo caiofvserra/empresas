@@ -29,12 +29,12 @@ export default function PaginaCadastro({ ctx }: { ctx: CockpitCtx }) {
     <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Indicadores de responsabilidade técnica, ART e certidões">
       <Indicador destaque ficha="k-rt" ctx={ctx} label="Empresas com responsável técnico" value={rt === null ? '—' : pct(rt)} meta={{ atual: rt, alvo: metas.rt }} variacao={{ value: rt === null ? null : rt - metas.rt, kind: 'pp', label: `em relação à meta de ${metas.rt}%` }} sub={`${int(qt.comRt.length)} de ${int(ativas.length)} empresas registradas`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas registradas sem RT identificado', what: 'Empresas com registro ativo sem responsável técnico de vínculo vigente: RT baixado sem substituto ou nenhum vínculo carregado.', use: 'Notifique as de RT baixado; confira o cadastro das sem vínculo.', ids: [...qt.rtBaixado, ...qt.semVinculo] })} />
-      <Indicador ficha="k-rt-baixado" ctx={ctx} label="RT baixado sem substituto" value={int(qt.rtBaixado.length)} sub="baixa do RT sem novo vínculo em 30 dias" onOpen={() => ctx.open({ kind: 'alvos', tipo: 'rt' })} />
+      <Indicador ficha="k-rt-baixado" ctx={ctx} label="RT que saiu sem substituto" value={int(qt.rtBaixado.length)} sub="empresas sem novo responsável técnico 30 dias depois da saída" onOpen={() => ctx.open({ kind: 'alvos', tipo: 'rt' })} />
       <Indicador ficha="k-arts" ctx={ctx} label="ARTs de empresas" value={int(arts.atual.length)} variacao={{ value: change(arts.atual.length, arts.antes) }} spark={arts.mensal} cor={tokens.blue} sub={`${int(new Set(arts.atual.map(row => row.companyId)).size)} empresas com ART no período`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas com ART no período', what: 'Empresas com ao menos uma ART registrada no período.', ids: [...new Set(arts.atual.map(row => row.companyId))] })} />
       <Indicador ficha="k-valor-art" ctx={ctx} label="Valor declarado em ART" value={brl(arts.valor)} variacao={{ value: change(arts.valor, arts.valorAntes) }} sub="soma do valor de contrato das ARTs" />
       <Indicador ficha="k-cao" ctx={ctx} label="Certidão de acervo operacional" value={cao.median === null ? '—' : `${int(cao.median)} dias`} sub={`é o prazo típico; 90% saem em até ${cao.p90 === null ? '—' : int(cao.p90)} dias, e ${int(fila)} pedidos aguardam`} />
-      <Indicador ficha="k-quitacao" ctx={ctx} label="Aptas à certidão de registro e quitação" value={pct(pay.emDia.length / Math.max(1, ativas.length) * 100)} sub={`${int(pay.inadimplentes.length)} empresas registradas com anuidade vencida`}
+      <Indicador ficha="k-quitacao" ctx={ctx} label="Em dia para a certidão de quitação" value={pct(pay.emDia.length / Math.max(1, ativas.length) * 100)} sub={`${int(pay.inadimplentes.length)} empresas registradas com anuidade vencida`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas sem quitação de anuidade', what: 'Empresas registradas com anuidade vencida na data escolhida. Sem quitação, elas não conseguiriam a certidão de registro e quitação exigida em licitações.', use: 'Cobrança prioritária das que têm contrato público.', ids: pay.inadimplentes })} />
     </section>
     <Bloco ctx={ctx} id="tc" area="tc" title="Empresas, estabelecimentos e registros" question="Três números que medem coisas diferentes e não devem ser somados: empresas (pela raiz do CNPJ), estabelecimentos (cada CNPJ completo) e registros ativos no Crea-SP." help="Uma empresa pode ter vários estabelecimentos, e cada estabelecimento pode ter mais de um registro ou visto. Empresas inativas são as que já tiveram registro e hoje não têm nenhum."><Contagens ctx={ctx} /></Bloco>
@@ -341,12 +341,12 @@ function Dinamica({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, a = ctx.mercado.aberturas, coortes = ctx.mercado.permanencia;
   const option = useMemo(() => ({
     grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = a.meses[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.aberturas)} estabelecimentos abertos com CNAE da lista<br/>${int(row.comRegistro)} já com registro ou visto em D`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = a.meses[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.aberturas)} estabelecimentos abertos com CNAE da lista<br/>${int(row.comRegistro)} já com registro ou visto na data escolhida`; } },
     xAxis: { type: 'category', data: a.meses.map(row => mes(row.month)), axisLabel: { color: tokens.muted, fontSize: 10, interval: 2 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
     yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
     series: [
       { type: 'bar', name: 'Já registrados', stack: 'a', barWidth: 10, data: a.meses.map(row => row.comRegistro), itemStyle: { color: tokens.good } },
-      { type: 'bar', name: 'Sem registro em D', stack: 'a', data: a.meses.map(row => row.aberturas - row.comRegistro), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1 } },
+      { type: 'bar', name: 'Sem registro na data escolhida', stack: 'a', data: a.meses.map(row => row.aberturas - row.comRegistro), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1 } },
     ],
   }), [a, tokens]);
   return <div className="split is-wide">

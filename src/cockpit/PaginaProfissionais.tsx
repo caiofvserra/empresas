@@ -194,7 +194,7 @@ function Pericias({ ctx }: { ctx: CockpitCtx }) {
     </div>
     <ul className="side-list" aria-label="Ponte com a ART e peritos">
       {q.porPonte.map(row => <li key={row.ponte}><button disabled><i style={{ background: row.ponte === 'Confirmada' ? tokens.good : row.ponte === 'Sem chave' ? tokens.muted : tokens.accent }} /><span>Ponte {row.ponte.toLowerCase()}</span><b>{int(row.n)}</b></button></li>)}
-      <li><button onClick={abrirPeritos}><i style={{ background: tokens.warn }} /><span>Peritos nomeados sem registro ativo em D</span><b>{int(q.peritosSemRegistroAtivo.length)}</b></button></li>
+      <li><button onClick={abrirPeritos}><i style={{ background: tokens.warn }} /><span>Peritos nomeados sem registro ativo na data escolhida</span><b>{int(q.peritosSemRegistroAtivo.length)}</b></button></li>
       <li><button disabled><i style={{ background: tokens.line }} /><span>Nomeações sem perito localizado</span><b>{int(q.naoLocalizadas)}</b></button></li>
       <li className="side-note">Depende de acordo com o Tribunal de Justiça (TJSP) para identificar o perito e a especialidade. O Diário da Justiça e o e-SAJ só podem ser usados com uma coleta aprovada pelo Tribunal. Os números são demonstrativos.</li>
     </ul>

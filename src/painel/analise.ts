@@ -137,9 +137,9 @@ export function porRegional(dataset: Dataset, f: Fiscalizacao, model: Enterprise
 /** Pares do mapa bivariado: X mede o problema, Y a resposta. Vermelho = problema alto e resposta baixa. */
 export type ParId = 'problema' | 'resultado' | 'mercado';
 export const pares: Record<ParId, { label: string; pergunta: string; x: string; y: string; getX: (row: Regional) => number | null; getY: (row: Regional) => number | null; fx: (value: number) => string; fy: (value: number) => string; critico: string; leitura: string }> = {
-  problema: { label: 'Sem registro × fiscalização', pergunta: 'Onde a fiscalização está aquém das empresas sem registro?', x: '% dos CNPJs de engenharia sem registro', y: 'ações fiscalizatórias por 100 indícios', getX: row => row.pctSemRegistro, getY: row => row.acoesPor100, fx: value => `${value.toFixed(0)}%`, fy: value => value.toFixed(0), critico: 'Muitas sem registro, pouca fiscalização', leitura: 'Vermelho: alta proporção de empresas sem registro e poucas ações fiscalizatórias. Candidatas a reforço de equipe ou força-tarefa.' },
-  resultado: { label: 'Fiscalização × regularização', pergunta: 'Onde a fiscalização age e as empresas não se regularizam?', x: 'ações fiscalizatórias por 100 indícios', y: '% das ações já regularizadas', getX: row => row.acoesPor100, getY: row => row.taxa, fx: value => value.toFixed(0), fy: value => `${value.toFixed(0)}%`, critico: 'Muita ação, pouca regularização', leitura: 'Vermelho: muitas ações e pouca regularização. Rever prazos de notificação, a autuação e a cobrança das multas.' },
-  mercado: { label: 'Emprego técnico × registro', pergunta: 'Onde o mercado de engenharia emprega muito e registra pouco?', x: 'empregos técnicos (RAIS/CAGED) por empresa registrada', y: 'novos registros por 1.000 empregos técnicos', getX: row => row.empregoPorEmpresa, getY: row => row.registrosPorMilEmpregos, fx: value => value.toFixed(0), fy: value => value.toFixed(1), critico: 'Mercado grande, pouco registro novo', leitura: 'Vermelho: muitos empregos em ocupações de engenharia para poucas empresas registradas, e o registro não acompanha. Provável sub-registro.' },
+  problema: { label: 'Sem registro e fiscalização', pergunta: 'Onde a fiscalização está aquém das empresas sem registro?', x: 'parte dos estabelecimentos de engenharia sem registro', y: 'ações fiscais para cada 100 indícios', getX: row => row.pctSemRegistro, getY: row => row.acoesPor100, fx: value => `${value.toFixed(0)}%`, fy: value => value.toFixed(0), critico: 'Muitas sem registro, pouca fiscalização', leitura: 'Em vermelho, as regionais com muitas empresas sem registro e poucas ações fiscais. São candidatas a reforço de equipe ou a uma força-tarefa.' },
+  resultado: { label: 'Fiscalização e regularização', pergunta: 'Onde a fiscalização age e as empresas não se regularizam?', x: 'ações fiscais para cada 100 indícios', y: 'parte das ações que já terminou em regularização', getX: row => row.acoesPor100, getY: row => row.taxa, fx: value => value.toFixed(0), fy: value => `${value.toFixed(0)}%`, critico: 'Muita ação, pouca regularização', leitura: 'Em vermelho, as regionais com muitas ações e pouca regularização. Vale rever os prazos de notificação, a autuação e a cobrança das multas.' },
+  mercado: { label: 'Emprego técnico e registro', pergunta: 'Onde o mercado de engenharia emprega muito e registra pouco?', x: 'empregos técnicos (RAIS e CAGED) por empresa registrada', y: 'registros novos para cada mil empregos técnicos', getX: row => row.empregoPorEmpresa, getY: row => row.registrosPorMilEmpregos, fx: value => value.toFixed(0), fy: value => value.toFixed(1), critico: 'Mercado grande, pouco registro novo', leitura: 'Em vermelho, as regionais com muitos empregos de engenharia para poucas empresas registradas, onde o registro não acompanha o emprego. É provável que falte registro.' },
 };
 /** Classe 0..2 por tercil entre as regionais com valor. */
 export function tercil(values: (number | null)[]): (value: number | null) => number | null {
@@ -268,8 +268,8 @@ export const situacoesFornecedor: SituacaoFornecedor[] = ['Sem registro na data'
  * para revisão humana; não identificado = nenhum dos dois. Sem chave suficiente = CNPJ do fornecedor inválido, a busca não pôde ser feita.
  * Não identificado é prioridade para verificar, nunca prova de que falta ART.
  */
-export type GrauVinculo = 'Confirmado por documento' | 'Candidato para revisão' | 'Não identificado' | 'Sem chave para a busca';
-export const grausVinculo: GrauVinculo[] = ['Confirmado por documento', 'Candidato para revisão', 'Não identificado', 'Sem chave para a busca'];
+export type GrauVinculo = 'Confirmado por documento' | 'Candidato para revisão' | 'Não identificado' | 'Sem dados para a busca';
+export const grausVinculo: GrauVinculo[] = ['Confirmado por documento', 'Candidato para revisão', 'Não identificado', 'Sem dados para a busca'];
 export interface ContratoPublico {
   id: string; companyId: string; establishmentId: string; buyerId: string; categoria: string; objeto: string; valor: number; data: string;
   registrada: boolean; quitada: boolean; situacao: SituacaoFornecedor; chave: boolean; vinculo: GrauVinculo; artsDocumento: string[]; artsCandidatas: string[];
@@ -293,7 +293,7 @@ export function contratosPublicos(scope: Scope, period: number): ContratoPublico
     const chave = isValidEnterpriseCnpj(places.get(row.establishmentId)?.cnpj ?? '');
     const artsDocumento = chave ? documento.get(row.id) ?? [] : [];
     const artsCandidatas = chave && !artsDocumento.length ? (arts.get(row.companyId) ?? []).filter(art => art.day >= day - 30 && art.day <= day + 60).map(art => art.id) : [];
-    const vinculo: GrauVinculo = !chave ? 'Sem chave para a busca' : artsDocumento.length ? 'Confirmado por documento' : artsCandidatas.length ? 'Candidato para revisão' : 'Não identificado';
+    const vinculo: GrauVinculo = !chave ? 'Sem dados para a busca' : artsDocumento.length ? 'Confirmado por documento' : artsCandidatas.length ? 'Candidato para revisão' : 'Não identificado';
     return { id: row.id, companyId: row.companyId, establishmentId: row.establishmentId, buyerId: row.buyerId, categoria: row.category, objeto: row.object, valor: row.value, data: row.date,
       registrada, quitada, situacao, chave, vinculo, artsDocumento, artsCandidatas };
   });
