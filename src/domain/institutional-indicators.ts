@@ -4,11 +4,11 @@ const competence = 'Cenário demonstrativo CREA-SP: corte em 30/09/2026; fluxos 
 const source = 'Modelo relacional institucional demonstrativo local; integração prevista com tabelas de programas, presenças, orçamento, reservas e serviços do CREA-SP. Nenhuma conexão institucional foi configurada; custos, participantes e resultados são fictícios.';
 const ruleVersion = 'resultados-institucionais-demo-7.0';
 const owners = {
-  programs: 'SUPCOR e unidade responsável pelo programa, com validação da UDE: responsáveis propostos, a homologar pelo CREA-SP.',
+  programs: 'SUPCOR e unidade responsável pelo programa, com validação da EDAD (SUPTEC): responsáveis propostos, a homologar pelo CREA-SP.',
   financial: 'SUPADF e unidade responsável pelo programa, com controle interno: responsáveis propostos, a homologar pelo CREA-SP.',
   infrastructure: 'Unidade responsável pelo CreaLab e SUPADF: responsáveis propostos, a homologar pelo CREA-SP.',
-  planning: 'Presidência/GABI e UDE, com as áreas responsáveis: responsáveis propostos, a homologar pelo CREA-SP.',
-  service: 'Unidade responsável pelo serviço cadastral ou orientação, com validação da UDE: responsáveis propostos, a homologar pelo CREA-SP.',
+  planning: 'Presidência/GABI e EDAD (SUPTEC), com as áreas responsáveis: responsáveis propostos, a homologar pelo CREA-SP.',
+  service: 'Unidade responsável pelo serviço cadastral ou orientação, com validação da EDAD (SUPTEC): responsáveis propostos, a homologar pelo CREA-SP.',
 };
 
 type Definition = Pick<ReportIndicatorDefinition, 'id' | 'name' | 'concept' | 'formula' | 'unit' | 'limitations'>

@@ -10,6 +10,10 @@ import { buildProfissionais, buildEmpregoCbo, remuneracaoPorCbo, resumoProfissio
 import { buildFormacao, quadroFormacao } from '../domain/formacao';
 import { buildEntidades, quadroEntidades } from '../domain/entidades';
 import { buildConselho, quadroConselho } from '../domain/conselho';
+import { buildInstalacoes, buildObras, buildSociedades, quadroInstalacoes, quadroObras, quadroSociedades } from '../domain/frentes';
+import { datasHistorico, pontoHistorico } from '../observatorio/historico';
+import type { PontoHistorico } from '../observatorio/historico';
+import { aberturasRfb, buildDemandaPlanejada, concentracaoMercado, densidadeRegional, permanenciaCoorte, quadroDemanda } from '../domain/mercado';
 import type { EnterpriseModel } from '../enterprise-v10/types';
 import { EngineeringEmblem } from '../components/EngineeringIdentity';
 import { selectEnterpriseScope } from '../enterprise-v10/filters';
@@ -46,7 +50,7 @@ import '../painel/painel.css';
 import './cockpit.css';
 
 /**
- * V20 · Observatório Crea-SP (nome provisório). Protótipo completo, revisado: 11 assuntos, data de referência (o painel como
+ * V21 · Prumo · inteligência estratégica do Crea-SP. Protótipo completo, revisado: 11 assuntos, data de referência (o painel como
  * estava em D, sem sobrescrever nenhum valor), ficha (i) em todo bloco e cartão, profissionais e formação com a mesma
  * profundidade das empresas, entidades e IES, controle interno, forças-tarefas com grupo de comparação e malha fina v2.
  */
@@ -78,11 +82,11 @@ const camaraMap = camaraDaEmpresa(dataset);
 const hoje = dataset.snapshotDate;
 const datasReferencia = datasReferenciaDe(dataset);
 /** Camadas construídas uma vez por base lida em D (cache por referência da base). */
-const camadas = new WeakMap<Dataset, { f: ReturnType<typeof buildFiscalizacao>; profissionais: ReturnType<typeof buildProfissionais>; emprego: ReturnType<typeof buildEmpregoCbo>; formacao: ReturnType<typeof buildFormacao>; entidades: ReturnType<typeof buildEntidades>; conselho: ReturnType<typeof buildConselho> }>();
+const camadas = new WeakMap<Dataset, { f: ReturnType<typeof buildFiscalizacao>; profissionais: ReturnType<typeof buildProfissionais>; emprego: ReturnType<typeof buildEmpregoCbo>; formacao: ReturnType<typeof buildFormacao>; entidades: ReturnType<typeof buildEntidades>; conselho: ReturnType<typeof buildConselho>; sociedades: ReturnType<typeof buildSociedades>; obras: ReturnType<typeof buildObras>; instalacoes: ReturnType<typeof buildInstalacoes> }>();
 function camadasDe(view: Dataset) {
   let value = camadas.get(view);
   if (!value) {
-    value = { f: fiscalizacaoAt(buildFiscalizacao(dataset), view.snapshotDate), profissionais: buildProfissionais(view), emprego: buildEmpregoCbo(view), formacao: buildFormacao(view), entidades: buildEntidades(view), conselho: buildConselho(view) };
+    value = { f: fiscalizacaoAt(buildFiscalizacao(dataset), view.snapshotDate), profissionais: buildProfissionais(view), emprego: buildEmpregoCbo(view), formacao: buildFormacao(view), entidades: buildEntidades(view), conselho: buildConselho(view), sociedades: buildSociedades(view), obras: buildObras(view), instalacoes: buildInstalacoes(view) };
     camadas.set(view, value);
   }
   return value;
@@ -100,6 +104,7 @@ export default function Cockpit() {
   const [focus, setFocus] = useState<string | null>(null);
   const [modal, setModal] = useState<'metas' | 'fontes' | null>(null);
   const [estrutura, setEstrutura] = useState<Estrutura | null>(null);
+  const [historico, setHistorico] = useState<{ chave: string; pontos: PontoHistorico[] }>({ chave: '', pontos: [] });
   const [systemDark, setSystemDark] = useState(() => window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false);
   const [pending, transition] = useTransition();
   const tokens = useTokens();
@@ -113,6 +118,14 @@ export default function Cockpit() {
   useEffect(() => { gravar('metas', metas); }, [metas]);
   // Atendimento, estrutura e orçamento vêm do modelo institucional (cerca de 1 s na primeira vez): calculado depois da primeira pintura.
   useEffect(() => { let alive = true; setEstrutura(null); const id = window.setTimeout(() => { const value = estruturaDe(view, gre || null, period); if (alive) setEstrutura(value); }, 30); return () => { alive = false; window.clearTimeout(id); }; }, [view, gre, period]);
+  // Histórico por data de referência: um ponto por mês (cerca de 1 s cada), calculado depois da estrutura, um de cada vez, com cache.
+  useEffect(() => {
+    let alive = true; const chave = `${view.snapshotDate}|${gre}`, datas = datasHistorico(view), fBase = camadasDe(view).f;
+    setHistorico({ chave, pontos: [] });
+    const passo = (index: number) => { if (!alive || index >= datas.length) return; const ponto = pontoHistorico(dataset, fBase, datas[index], gre || null); if (!alive) return; setHistorico(previous => previous.chave === chave ? { chave, pontos: [...previous.pontos, ponto] } : previous); window.setTimeout(() => passo(index + 1), 40); };
+    const id = window.setTimeout(() => passo(0), 400);
+    return () => { alive = false; window.clearTimeout(id); };
+  }, [view, gre]);
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
@@ -144,8 +157,9 @@ export default function Cockpit() {
     const linhas = linhasGre(stateModel, stateHistory, stateScope, regionais, period, stateMalha, stateArts.atual);
     const cobradas = model.metrics.compliance.denominatorCompanyIds?.length ?? 0;
     const norte = { cobertura: cobertura(scope, model), contagens: contagens(scope, model), conversao: conversao(f, gre || null), receita: receitaAtribuivel(view, f, gre || null, period), tempo: tempoAteAgir(view, f, gre || null, period, tipoLabel) };
+    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), densidade: densidadeRegional(view), aberturas: aberturasRfb(view, gre || null, 24), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
     return { resumo, regionais, contratos, malha, arts, linhas, ponte: ponteBase(model, scope, f, period), rec: receita(history, f, gre || null, period),
-      inadimplencia: cobradas ? devedoras(model).size / cobradas * 100 : null, cao: caoService(scope).median, norte };
+      inadimplencia: cobradas ? devedoras(model).size / cobradas * 100 : null, cao: caoService(scope).median, norte, mercado };
   }, [view, f, gre, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
   // Camadas da V20: profissionais, formação, entidades, controle interno e forças-tarefas, todas lidas em D.
   const extra = useMemo(() => {
@@ -157,8 +171,9 @@ export default function Cockpit() {
     for (const row of f.acoes) if (row.date >= inicio && row.date <= anchor) acoesPorGre.set(row.greId, (acoesPorGre.get(row.greId) ?? 0) + 1);
     const conselho = quadroConselho(base.conselho, anchor, greId, acoesPorGre);
     const forcas = resultadosForcas(view, f, greId);
-    return { profissionais, formacao, entidades, conselho, forcas };
-  }, [base, view, anchor, f, gre, period]);
+    const frentes = { sociedades: quadroSociedades(base.sociedades, view, scope.companyIds, greId), obras: quadroObras(base.obras, view, scope.companyIds, greId), instalacoes: quadroInstalacoes(base.instalacoes, view, greId) };
+    return { profissionais, formacao, entidades, conselho, forcas, frentes };
+  }, [base, view, anchor, f, gre, period, scope]);
   const insights = useMemo(() => leitura({ metas, ponte: derived.ponte, cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo: derived.resumo, rec: derived.rec, saldo: model.metrics.overdue.value ?? 0,
     inadimplencia: derived.inadimplencia, linhas: derived.linhas, malha: derived.malha, arts: { atual: derived.arts.atual.length, antes: derived.arts.antes }, cao: derived.cao, estrutura,
     conversao: derived.norte.conversao.atual, tempo: derived.norte.tempo, profissionais: extra.profissionais.resumo, formacao: extra.formacao, conselho: extra.conselho, forcas: extra.forcas }), [metas, derived, model, estrutura, extra]);
@@ -168,7 +183,8 @@ export default function Cockpit() {
     open: setDetail, filterGre: id => change(() => setGre(previous => previous === id ? '' : id)), page, go: setPage, dark,
     anchor, hoje, datasReferencia, setAnchor: value => change(() => setAnchorSel(value && value < hoje ? value : null)),
     historyScope, stateScope, stateModel, stateHistory, linhas: derived.linhas, ponte: derived.ponte, rec: derived.rec, contratos: derived.contratos, malha: derived.malha, estrutura, arts: derived.arts,
-    metas, insights, focus, toggleFocus: id => setFocus(previous => previous === id ? null : id), norte: derived.norte, ...extra };
+    metas, insights, focus, toggleFocus: id => setFocus(previous => previous === id ? null : id), norte: derived.norte, mercado: derived.mercado, ...extra,
+    historico: { pontos: historico.chave === `${view.snapshotDate}|${gre}` ? historico.pontos : [], datas: datasHistorico(view), completo: historico.chave === `${view.snapshotDate}|${gre}` && historico.pontos.length === datasHistorico(view).length } };
   const current = pages.find(item => item.id === page)!;
   const emD = anchor !== hoje;
 
@@ -184,7 +200,7 @@ export default function Cockpit() {
     </nav>
     <div className="ck-main">
       <header className="ck-header">
-        <div className="ck-title"><span className="ck-eyebrow" title="Nome provisório, a confirmar">Observatório Crea-SP · V20</span><h1>{current.title}</h1><p>{current.subtitle}</p></div>
+        <div className="ck-title"><span className="ck-eyebrow" title="Prumo · inteligência estratégica do Crea-SP">Prumo · V21</span><h1>{current.title}</h1><p>{current.subtitle}</p></div>
         <div className="ck-pulse" aria-label="Destaques do período">
           <span className="ck-pulse-dot" aria-hidden="true" />
           <div className="ck-pulse-track">{[...insights, ...insights].map((item, index) => <button key={index} className={`is-${item.tone}`} aria-hidden={index >= insights.length} tabIndex={index >= insights.length ? -1 : 0} onClick={() => setPage(item.page)}><b>{item.strong}</b> {item.text}</button>)}</div>
@@ -247,6 +263,8 @@ function Fontes() {
     <article><h3>Dados internos · demonstrativos</h3><p>Cadastro de empresas e estabelecimentos, registros, vínculos de responsável técnico, ARTs, certidões de acervo operacional, anuidades e pagamentos, contratos públicos (PNCP), emprego formal por município e ocupação (RAIS/CAGED), pendências cadastrais, atendimento, coworkings, capacitação e orçamento dos programas. Cenário fictício e reproduzível (semente {dataset.seed}); em produção, as bases do CREA-SP e as fontes públicas.</p></article>
     <article><h3>Camadas derivadas do cenário · demonstrativas</h3><p>Ações fiscalizatórias, autos de infração, multas e regularizações: geradas por sorteio determinístico a partir de eventos do cadastro (primeiro registro, baixa de RT sem substituto, contrato público sem ART identificada). Ponte documental contrato–ART: fictícia e explícita, para mostrar o grau “confirmado por documento”. Em produção, o sistema de fiscalização do CREA-SP e o campo de contrato ou processo na ART.</p></article>
     <article><h3>Camadas novas na V20 · demonstrativas</h3><p>Profissionais (registro, situação, interrupções, anuidade, autoria das ARTs), emprego formal por ocupação CBO (estoque, saldo e salário mediano, só em agregado), concluintes por IES, ano, modalidade e canal, entidades de classe e IES com repasses, convênios, contratos e patrocínios, despesa e receita do Conselho por natureza, função e regional, diárias, fornecedores, empenhos, contratos administrativos e pessoal, e forças-tarefas de fiscalização. Todas derivadas do mesmo cenário determinístico, com as regras descritas em cada ficha (i). Em produção, o sistema de registro profissional, o Novo CAGED e a RAIS agregados, o Censo da Educação Superior do INEP, os sistemas de convênios e de execução orçamentária do Conselho.</p></article>
+    <article><h3>Camadas novas na V21 · demonstrativas</h3><p>Frentes do mapa de relações com fonte pública de coleta automática: sócios pessoa jurídica do QSA aberto (rede societária e regra “sócio PJ de engenharia sem registro”), obras do Obrasgov ligadas aos contratos do PNCP pelo CIPI (situação, local de execução, ART de execução e de fiscalização), instalações e operações da ANEEL, ANP, ANM e BNDES com agente identificado por CNPJ, planos anuais de contratação do PNCP (demanda planejada por etapa), população por município para a densidade regional, e a estrutura do radar normativo (Câmara, Senado e ALESP, com proposições fictícias até o conector). Também as medidas do levantamento que faltavam: concentração do mercado público (cinco maiores e HHI), aberturas na Receita e permanência de coortes. Tudo derivado do mesmo cenário determinístico; em produção, os dados abertos de cada órgão com a chave CNPJ exata e a data de cada fato.</p></article>
+    <article><h3>Histórico por data de referência</h3><p>Os indicadores-norte, a base e os indícios da malha fina recalculados com a base como estava no fim de cada um dos 12 meses anteriores a D (Presidência e Malha fina). É a mesma leitura do seletor de data aplicada mês a mês; o cálculo roda depois da primeira pintura, um ponto por vez, e fica em cache. Em produção, é a tabela diária de indicadores do DW.</p></article>
     <article><h3>Data de referência</h3><p>Cada fato do cenário guarda a sua data (início e fim). Escolher uma data de referência D lê a base só com o que já existia em D e recalcula todas as abas; nenhum valor é sobrescrito e a mesma base lida em datas diferentes dá os números de cada dia. Em produção, é o papel do histórico (SCD2) e da tabela diária de indicadores no DW.</p></article>
     <article><h3>Retiradas desde a V19</h3><p>Quadro de administradores sorteado (art. 5º), vínculos nominais de emprego com salário e piso por empresa, “emprega engenheiro sem registro” e, na V20, o Portal Salário e as demais fontes com coleta pontual: só entram fontes com coleta automática periódica ou com acordo previsto. O QSA aberto mascara o CPF e o emprego público é agregado: não se ligam a CNPJ ou CPF sem acordo. Detalhes na página Método.</p></article>
     <article><h3>Dados públicos reais (com selo “Real”)</h3><ul>{reais.map(item => <li key={item.nome}><b>{item.nome}</b> · capturado em {data(item.data)} · <a href={item.url} target="_blank" rel="noreferrer">origem</a></li>)}</ul></article>

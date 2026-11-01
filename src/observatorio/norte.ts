@@ -6,7 +6,7 @@ import { janela } from '../painel/analise';
 import type { Acao, Alvo, Fiscalizacao, Origem, Tipo } from '../painel/fiscalizacao';
 
 /**
- * V19 · os quatro indicadores-norte do plano do Observatório Crea-SP (revisão 2), calculados sobre o cenário demonstrativo.
+ * V19 · os quatro indicadores-norte do plano do Prumo (antes Observatório Crea-SP, revisão 2), calculados sobre o cenário demonstrativo.
  * Cada função segue a ficha do plano: fórmula, data de referência e leitura. Nenhuma conclui infração ou efeito causal.
  */
 const DAY = 86400000;
@@ -103,7 +103,7 @@ export function conversao(f: Fiscalizacao, greId: string | null, quantos = 8): {
 }
 
 /* ---------- 3 · Receita atribuível ---------- */
-/** Origens que nascem de um indício por cruzamento de bases (o “indício do Observatório”). Denúncia e rotina de campo ficam fora. */
+/** Origens que nascem de um indício por cruzamento de bases (o “indício do Prumo”). Denúncia e rotina de campo ficam fora. */
 export const origensIndicio: Origem[] = ['Cruzamento Receita (CNAE)', 'Contrato público (PNCP)', 'Cadastro CREA'];
 export const PRAZO_ATRIBUICAO = 365;
 export interface Pagamento { companyId: string; acaoId: string; origem: Origem; data: string; valor: number; tipo: 'Anuidade' | 'Multa' }
@@ -179,7 +179,7 @@ export const fichas: Record<NorteId, Ficha> = {
     formula: 'Estabelecimentos ativos em SP (CNPJ completo) com CNAE principal ou secundário da lista Crea-SP e registro ou visto vigente ÷ todos esses estabelecimentos.',
     unidade: '% de CNPJs completos', grao: 'Estabelecimento (CNPJ completo), não raiz', data: 'Competência do arquivo da Receita e corte do cadastro no mesmo mês.',
     leitura: 'Vigente, só histórico e sem correspondência aparecem separados; “Sim” separado de “Passível” pela atividade principal. Sem correspondência não quer dizer irregular.',
-    desconhecido: 'CNPJ inválido ou duplicado fica fora do denominador e é contado na qualidade cadastral.', dono: 'UDE, com SUPFIS e cadastro',
+    desconhecido: 'CNPJ inválido ou duplicado fica fora do denominador e é contado na qualidade cadastral.', dono: 'EDAD (SUPTEC), com SUPFIS e cadastro',
     prototipo: 'Calculado sobre o cenário demonstrativo; a lista “Sim/Passível” do cenário segue a classificação da lista de mar/2025.' },
   conversao: { id: 'conversao', nome: 'Conversão da fiscalização', caso: 'Plano · indicador-norte 2',
     formula: 'Ações fiscais iniciadas no trimestre com regularização (registro, RT, ART ou baixa) em até 180 dias ÷ ações iniciadas no trimestre.',
@@ -188,7 +188,7 @@ export const fichas: Record<NorteId, Ficha> = {
     desconhecido: 'Coorte que ainda não completou 180 dias aparece em aberto, sem entrar na comparação.', dono: 'SUPFIS',
     prototipo: 'Ações e regularizações vêm da camada demonstrativa de fiscalização.' },
   receita: { id: 'receita', nome: 'Receita atribuível', caso: 'Plano · indicador-norte 3',
-    formula: 'Anuidades, ARTs e multas efetivamente recebidas de casos abertos a partir de um indício do Observatório, em até 12 meses da abertura.',
+    formula: 'Anuidades, ARTs e multas efetivamente recebidas de casos abertos a partir de um indício do Prumo, em até 12 meses da abertura.',
     unidade: 'R$ recebidos', grao: 'Pagamento', data: 'Data do pagamento, não do lançamento.',
     leitura: 'Associação, não efeito causal; estornos descontados.',
     desconhecido: 'Pagamento sem data ou sem caso ligado não entra. Cada pagamento é atribuído uma vez, ao caso mais antigo que o cobre.', dono: 'SUPADF e SUPFIS',

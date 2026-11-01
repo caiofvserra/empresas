@@ -5,6 +5,8 @@ import { quadroTecnico } from '../painel/analise';
 import { Mekko, PonteChart, Quadro } from '../painel/VisaoCadastro';
 import { brl, data, int, mes, pct, short } from '../painel/ui';
 import { classesCnae, correspondencias } from '../observatorio/norte';
+import { fontesInstalacao } from '../domain/frentes';
+import type { FonteInstalacao } from '../domain/frentes';
 import type { CockpitCtx } from './contexto';
 import { artPorCamara, artPorModalidade, artRegionalMes, artsPeriodo, camaraPorte, entradasSaidas, pagamento, prazoRegistro } from './medidas';
 import { Bloco, Indicador } from './ui';
@@ -51,6 +53,10 @@ export default function PaginaCadastro({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="ca" area="ca" title="Prazo da certidão de acervo operacional (CAO)" question="Dias do pedido à emissão, para as certidões emitidas; e os pedidos que aguardam." help="Certidão de acervo operacional da empresa (Resolução Confea nº 1.137/2023)."><Certidoes ctx={ctx} cao={cao} /></Bloco>
     <Bloco ctx={ctx} id="rg" area="rg" title="Responsável técnico e quitação, por regional" question="% das empresas registradas com RT identificado e % aptas à certidão de registro e quitação."><RegionalRt ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="sa" area="sa" title="Empresas registradas sem ART no período" question="Atividade não declarada ou empresa parada? Por câmara, % das registradas sem nenhuma ART."><SemArt ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="qs" area="qs" title="Rede societária: sócios pessoa jurídica" question="Sócios PJ do QSA aberto da Receita, por chave CNPJ exata: grupos de empresas ligadas por participação e sócios de fora do universo que se apresentam como engenharia. Clique num grupo para ver as empresas." help="Sócio pessoa física fica fora (CPF mascarado no QSA aberto). Participação declarada não prova controle nem que o sócio seja RT."><RedeSocietaria ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="in" area="in" title="Instalações e investimentos com agente identificado" question="ANEEL (usinas e agentes), ANP (instalações e revendas), ANM (processos com titular) e BNDES (operações), por regional, com o agente identificado por CNPJ e sua presença no cadastro." help="Contexto: o agente é operador, titular ou financiado; não é, por isso, projetista, instalador ou responsável técnico."><Instalacoes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="dn" area="dn" title="Densidade empresarial por regional" question="Estabelecimentos elegíveis (Receita ativa, CNAE da lista) por 10 mil habitantes contra a cobertura cadastral. Tamanho: população. Clique para o resumo da regional."><Densidade ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="ab" area="ab" title="Dinâmica da base: aberturas na Receita e permanência" question="Estabelecimentos com CNAE da lista abertos nos últimos 24 meses e quantos já têm registro ou visto; permanência das coortes de empresas registradas há 3, 6 e 12 meses."><Dinamica ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -262,4 +268,92 @@ function SemArt({ ctx }: { ctx: CockpitCtx }) {
       label: { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, formatter: (params: any) => `${pct(params.value)} · ${int(rows[params.dataIndex].semArt.length)}` } }],
   }), [rows, tokens]);
   return <Chart option={option} tokens={tokens} label="Empresas registradas sem ART no período por câmara" onPick={params => { const row = rows[params.dataIndex]; if (row?.semArt.length) ctx.open({ kind: 'empresas', title: `${row.camara} · registradas sem ART no período`, what: 'Empresas com registro ativo sem nenhuma ART registrada no período.', use: 'Verifique se a empresa está em atividade; se estiver, oriente sobre a obrigação de ART (Lei 6.496/77).', ids: row.semArt }); }} />;
+}
+
+/* ---------- V21 · frentes com fonte automática e medidas do levantamento ---------- */
+function RedeSocietaria({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.frentes.sociedades, grupos = useMemo(() => q.grupos.slice().sort((a, b) => b.empresas.length - a.empresas.length || a.id.localeCompare(b.id)).slice(0, 10), [q]);
+  const option = useMemo(() => ({
+    grid: { top: 6, right: 40, bottom: 2, left: 2, containLabel: true },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = grupos[items[0].dataIndex]; return `<b>Grupo ${row.id}</b><br/>${int(row.empresas.length)} empresas do universo, ${int(row.registradas)} registradas<br/>${int(row.externos)} sócios PJ de fora (${int(row.externosEngenharia)} com CNAE da lista)`; } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: grupos.map(row => `Grupo ${row.id}`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
+    series: [
+      { type: 'bar', name: 'Registradas', stack: 'g', barWidth: 12, data: grupos.map(row => row.registradas), itemStyle: { color: tokens.good } },
+      { type: 'bar', name: 'Sem registro vigente', stack: 'g', data: grupos.map(row => row.empresas.length - row.registradas), itemStyle: { color: tokens.warn, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(grupos[params.dataIndex].empresas.length) } },
+    ],
+  }), [grupos, tokens]);
+  return <div className="split">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.empresasComSocioPj.length)}</b> empresas com sócio PJ · <b>{int(q.sociosInternos)}</b> sócios do universo e <b>{int(q.sociosExternos)}</b> de fora · <b>{int(q.gruposMultiplos)}</b> grupos com duas ou mais empresas (maior: {int(q.maiorGrupo)})</p>
+      <Chart option={option} tokens={tokens} label="Maiores grupos societários por número de empresas" onPick={params => { const row = grupos[params.dataIndex]; if (row) ctx.open({ kind: 'empresas', title: `Grupo societário ${row.id}`, what: 'Empresas do universo ligadas por participação societária de pessoa jurídica (QSA aberto, chave CNPJ exata).', use: 'Contexto: a ligação é societária, não técnica. Ver o registro e o RT de cada empresa antes de qualquer leitura.', ids: row.empresas }); }} />
+    </div>
+    <ul className="side-list" aria-label="Sócios PJ de engenharia">
+      <li><button onClick={() => q.investidasRegistradasComSocioEngenhariaSemRegistro.length && ctx.open({ kind: 'empresas', title: 'Registradas com sócio PJ de engenharia sem registro', what: 'Empresas registradas cujo sócio PJ, de fora do universo, tem CNAE da lista do Crea-SP e nenhum registro localizado.', use: 'Contexto para a malha fina (regra sócio PJ): o sócio pode não exercer a atividade.', ids: q.investidasRegistradasComSocioEngenhariaSemRegistro })}><i style={{ background: tokens.warn }} /><span>Registradas com sócio PJ de engenharia sem registro</span><b>{int(q.investidasRegistradasComSocioEngenhariaSemRegistro.length)}</b></button></li>
+      <li><button disabled><i style={{ background: tokens.muted }} /><span>Sócios PJ de fora com CNAE da lista</span><b>{int(q.externosEngenharia.length)}</b></button></li>
+      <li className="side-note">QSA aberto da Receita (mensal). Sócio PF depende de acordo (CPF completo).</li>
+    </ul>
+  </div>;
+}
+
+function Instalacoes({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.frentes.instalacoes, gres = useMemo(() => new Map(ctx.dataset.gres.map(row => [row.id, short(row.name)])), [ctx.dataset]);
+  const rows = useMemo(() => q.porGre.slice().sort((a, b) => b.n - a.n), [q]), cores: Record<FonteInstalacao, string> = { ANEEL: tokens.accent, ANP: tokens.blue, ANM: tokens.heat[1], BNDES: tokens.brand };
+  const option = useMemo(() => ({
+    grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'category', data: rows.map(row => gres.get(row.greId) ?? row.greId), axisLabel: { color: tokens.muted, fontSize: 10, interval: 0, rotate: 30 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
+    series: fontesInstalacao.map(fonte => ({ type: 'bar', name: fonte, stack: 'f', barWidth: 16, data: rows.map(row => row.porFonte[fonte]), itemStyle: { color: cores[fonte] } })),
+  }), [rows, gres, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <div className="split is-wide">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.instalacoes.length)}</b> instalações e operações com agente identificado por CNPJ · <b>{int(q.novas12)}</b> novas nos últimos 12 meses ({q.novasAntes ? `${q.novas12 >= q.novasAntes ? '+' : ''}${pct((q.novas12 - q.novasAntes) / q.novasAntes * 100)} vs. 12 meses anteriores` : 'sem base anterior'})</p>
+      <Chart option={option} tokens={tokens} label="Instalações e investimentos por regional e fonte" onPick={params => { const row = rows[params.dataIndex]; if (row) ctx.filterGre(row.greId); }} />
+    </div>
+    <ul className="side-list" aria-label="Por fonte">
+      {q.porFonte.map(row => <li key={row.fonte}><button disabled><i style={{ background: cores[row.fonte] }} /><span>{row.fonte} · {int(row.n)} registros<br /><small>{int(row.agentesNoUniverso)} agentes no universo, {int(row.agentesRegistrados)} registrados</small></span><b>{row.fonte === 'BNDES' ? brl(row.valor) : `${row.valor.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 })} ${row.unidade}`}</b></button></li>)}
+      <li className="side-note">Agente = operador, titular ou financiado, por CNPJ exato. Não é prova de projeto, instalação ou RT.</li>
+    </ul>
+  </div>;
+}
+
+function Densidade({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, rows = ctx.mercado.densidade.filter(row => row.densidade !== null && row.cobertura !== null);
+  const option = useMemo(() => {
+    if (!rows.length) return {};
+    const xs = rows.map(row => row.densidade!), ys = rows.map(row => row.cobertura!);
+    return {
+      grid: { top: 12, right: 22, bottom: 34, left: 8, containLabel: true },
+      tooltip: { formatter: (item: any) => `<b>${item.data.name}</b><br/>${item.value[0].toLocaleString('pt-BR', { maximumFractionDigits: 1 })} estabelecimentos elegíveis por 10 mil hab.<br/>Cobertura: ${pct(item.value[1], 1)}<br/>População: ${int(item.value[2])} · elegíveis: ${int(item.data.elegiveis)}` },
+      xAxis: { type: 'log', logBase: 10, name: 'estabelecimentos elegíveis por 10 mil habitantes (escala log)', nameLocation: 'middle', nameGap: 22, nameTextStyle: { color: tokens.muted, fontSize: 10 }, min: Math.max(0.1, Math.round(Math.min(...xs) / 1.5 * 10) / 10), max: 10 ** Math.ceil(Math.log10(Math.max(...xs) * 1.2)), splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
+      yAxis: { type: 'value', min: Math.floor((Math.min(...ys) - 2) / 5) * 5, max: Math.ceil((Math.max(...ys) + 2) / 5) * 5, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, formatter: '{value}%' } },
+      series: [{ type: 'scatter', data: rows.map(row => ({ name: short(row.name), id: row.greId, elegiveis: row.elegiveis, value: [row.densidade, row.cobertura, row.populacao], itemStyle: { color: tokens.blue, opacity: 0.8, borderColor: tokens.surface, borderWidth: 1.5 } })),
+        symbolSize: (value: number[]) => Math.max(8, Math.sqrt(value[2] / 1000) * 1.1), label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (item: any) => item.data.name }, labelLayout: { hideOverlap: true } }],
+    };
+  }, [rows, tokens]);
+  return <Chart option={option} tokens={tokens} label="Densidade de estabelecimentos elegíveis contra cobertura cadastral por regional" onPick={item => item.data?.id && ctx.open({ kind: 'gre', id: item.data.id })} />;
+}
+
+function Dinamica({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, a = ctx.mercado.aberturas, coortes = ctx.mercado.permanencia;
+  const option = useMemo(() => ({
+    grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = a.meses[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.aberturas)} estabelecimentos abertos com CNAE da lista<br/>${int(row.comRegistro)} já com registro ou visto em D`; } },
+    xAxis: { type: 'category', data: a.meses.map(row => mes(row.month)), axisLabel: { color: tokens.muted, fontSize: 10, interval: 2 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
+    series: [
+      { type: 'bar', name: 'Já registrados', stack: 'a', barWidth: 10, data: a.meses.map(row => row.comRegistro), itemStyle: { color: tokens.good } },
+      { type: 'bar', name: 'Sem registro em D', stack: 'a', data: a.meses.map(row => row.aberturas - row.comRegistro), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1 } },
+    ],
+  }), [a, tokens]);
+  return <div className="split is-wide">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(a.total)}</b> estabelecimentos com CNAE da lista abertos em 24 meses · <b>{int(a.comRegistro)}</b> já registrados ({a.total ? pct(a.comRegistro / a.total * 100) : '—'}) · <b>{int(a.foraDeAtividade)}</b> elegíveis baixados, inaptos ou suspensos na fotografia</p>
+      <Chart option={option} tokens={tokens} label="Estabelecimentos abertos na Receita por mês e situação no cadastro" onPick={() => a.ids.length && ctx.open({ kind: 'cnpjs', title: 'Abertos na Receita em 24 meses', what: 'Estabelecimentos com CNAE da lista do Crea-SP abertos nos últimos 24 meses antes da data de referência (data de abertura da Receita).', use: 'Aberturas são mercado novo; a correspondência no cadastro é uma decomposição, não um filtro. Sem registro não quer dizer irregular.', ids: a.ids })} />
+    </div>
+    <ul className="side-list" aria-label="Permanência das coortes">
+      {coortes.map(row => <li key={row.mesesAtras}><button onClick={() => row.saidas.length && ctx.open({ kind: 'empresas', title: `Saíram da base em ${row.mesesAtras} meses`, what: `Empresas com registro ou visto vigente em ${data(row.d0)} e sem registro vigente na data de referência.`, use: 'Perda de vínculo institucional; cadastro vigente não prova atividade e a saída não tem causa atribuída.', ids: row.saidas })}><i style={{ background: row.taxa !== null && row.taxa >= 90 ? tokens.good : tokens.warn }} /><span>Coorte de {row.mesesAtras} meses ({data(row.d0)})<br /><small>{int(row.permanecem.length)} de {int(row.coorte.length)} permanecem · {int(row.saidas.length)} saíram</small></span><b>{row.taxa === null ? '—' : pct(row.taxa, 1)}</b></button></li>)}
+      <li className="side-note">Coorte fixa de raízes vigentes em D − n meses; quem entrou depois não conta. Aberturas: fotografia mensal da Receita, com defasagem.</li>
+    </ul>
+  </div>;
 }

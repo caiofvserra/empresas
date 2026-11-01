@@ -149,7 +149,7 @@ const make = (entries: Entry[], source: string, owner: string, _snapshot = false
 
 export const indicators: IndicatorDefinition[] = [
   ...professionalIndicators,
-  ...make(registry, 'Cadastro CREA-SP + CNPJ/Receita Federal (integrações propostas)', 'Gestão do cadastro empresarial; apoio BI: UDE/GABI', true),
+  ...make(registry, 'Cadastro CREA-SP + CNPJ/Receita Federal (integrações propostas)', 'Gestão do cadastro empresarial; apoio BI: EDAD/SUPTEC', true),
   ...make(technical, 'Cadastro CREA-SP + vínculos de RTS + ART (dados internos propostos)', 'CREA-SP · unidade responsável por registros, vínculos e ART'),
   ...make(cao, 'Processos de CAO + ART + cadastro empresarial (dados internos propostos)', 'GPP/EAPA · acervo operacional'),
   ...make(financial, 'Obrigações e pagamentos empresariais (dados internos propostos)', 'CREA-SP · unidade financeira e recuperação de crédito', true),
