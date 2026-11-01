@@ -14,7 +14,7 @@ import type { Profissional } from '../domain/profissionais';
 /**
  * Componentes do cockpit V20: bloco com ampliação e ficha (i), cartão de indicador com ficha e selo de dado real.
  * A ficha diz o que o bloco mede, como calcula, de onde vêm os dados, qual cruzamento e regra usa, o que não permite concluir,
- * quando foi calculado (a data de referência do painel) e quem responde por ele. Desde a V22, um bloco cuja ficha declara `parceria`
+ * e quando foi calculado (a data de referência do painel). Desde a V22, um bloco cuja ficha declara `parceria`
  * mostra o marcador "!" no título: o indicador só sai do demonstrativo quando o acordo com aquele parceiro existir.
  */
 /** Marcador "!" de indicador que depende de parceria; o título diz qual acordo falta. */
@@ -59,7 +59,6 @@ export function FichaPop({ ficha, titulo, leitura, anchor }: { ficha?: FichaBloc
         {parceriasDe(ficha).map(id => <Fragment key={id}><dt>Depende de parceria</dt><dd className="ficha-parceria"><b>{parceriaPorId[id].parceiro}</b> precisa entregar: {parceriaPorId[id].entrega.charAt(0).toLowerCase()}{parceriaPorId[id].entrega.slice(1)}. Os dados se ligam por: {parceriaPorId[id].chave}. Até o acordo ser fechado, os números são demonstrativos.</dd></Fragment>)}
         {leitura && <><dt>Leitura</dt><dd>{leitura}</dd></>}
         <dt>Último cálculo</dt><dd>Calculado ao abrir o painel, com a base como estava em {data(anchor)}, a data escolhida no alto da tela.</dd>
-        <dt>Responsável</dt><dd>{ficha.dono}</dd>
         {ficha.acao && <><dt>Ação sugerida</dt><dd className="ficha-acao">{ficha.acao}</dd></>}
       </dl> : <p className="ficha-leitura">{leitura}</p>}
     </div>

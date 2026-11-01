@@ -19,7 +19,7 @@ import { populacaoCidade } from './mercado';
  */
 
 /* ---------- Parcerias: quem precisa entregar o quê ---------- */
-export type ParceriaId = 'rfb-cno' | 'prefeituras' | 'bombeiros' | 'cetesb' | 'tjsp' | 'tce-sp' | 'bcb' | 'rfb-cpf' | 'ies' | 'mte';
+export type ParceriaId = 'rfb-cno' | 'prefeituras' | 'bombeiros' | 'cetesb' | 'tjsp' | 'tce-sp' | 'bcb' | 'rfb-cpf' | 'jucesp' | 'ies' | 'mte' | 'detran' | 'inmetro';
 export interface Parceria { id: ParceriaId; parceiro: string; entrega: string; chave: string; prioridade: 'A' | 'B' | 'C'; camadas: string; basePrevista: string }
 /** Acordos que as camadas desta versão pressupõem, com a prioridade do plano de 29/10 (A = primeiros acordos sugeridos). Nenhum está firmado. */
 export const parcerias: Parceria[] = [
@@ -29,10 +29,13 @@ export const parcerias: Parceria[] = [
   { id: 'rfb-cno', parceiro: 'Receita Federal e Serpro (Cadastro Nacional de Obras)', entrega: 'Obras inscritas no cadastro em SP, com o responsável, o papel dele, a situação, o local e o campo de ART', chave: 'número da obra no cadastro, CNPJ ou CPF do responsável e ART informada', prioridade: 'B', camadas: 'Fiscalização, obras privadas; Malha fina, obra privada sem ART', basePrevista: 'Acesso pelo Conecta, do Serpro, com autorização jurídica, porque o dado não é aberto' },
   { id: 'cetesb', parceiro: 'CETESB (e IBAMA e ANA, quando trouxerem CNPJ)', entrega: 'Licenças prévia, de instalação e de operação com o CNPJ do titular, o empreendimento, a fase e a validade', chave: 'número do processo e CNPJ do titular', prioridade: 'B', camadas: 'Fiscalização, licenças e alvarás', basePrevista: 'Acordo com a CETESB. Os dados públicos do IBAMA e da ANA não trazem CNPJ confiável' },
   { id: 'tjsp', parceiro: 'TJSP (e os tribunais do trabalho e o federal da região)', entrega: 'Nomeações de peritos com o número do processo, a comarca, a especialidade, o perito identificado e os honorários fixados', chave: 'número do processo, identidade autorizada do perito e registro informado', prioridade: 'B', camadas: 'Profissionais, perícias judiciais', basePrevista: 'Extrato regular enviado pelo Tribunal. O Diário da Justiça e o e-SAJ só com coleta aprovada' },
-  { id: 'rfb-cpf', parceiro: 'Receita Federal (CPF completo dos sócios) e Junta Comercial (JUCESP)', entrega: 'Sócios pessoas físicas com CPF completo, qualificação e data de entrada, e os atos de abertura e alteração das empresas', chave: 'CPF completo, comparado com o cadastro de profissionais', prioridade: 'B', camadas: 'Empresas, sócios pessoas físicas', basePrevista: 'Convênio com a Receita, porque o quadro de sócios público mascara o CPF. A carga da Junta Comercial ainda não foi testada' },
+  { id: 'rfb-cpf', parceiro: 'Receita Federal (CPF completo dos sócios)', entrega: 'Sócios pessoas físicas com CPF completo, qualificação e data de entrada', chave: 'CPF completo, comparado com o cadastro de profissionais', prioridade: 'B', camadas: 'Painel de Empresas, sócios pessoas físicas', basePrevista: 'Convênio com a Receita, porque o quadro de sócios público mascara o CPF' },
+  { id: 'jucesp', parceiro: 'Junta Comercial do Estado de São Paulo (JUCESP)', entrega: 'Atos de abertura e de alteração do contrato social, com o objeto social, as atividades declaradas e a data de cada ato', chave: 'CNPJ e número do registro na Junta (NIRE)', prioridade: 'A', camadas: 'Painel de Empresas, alterações no contrato social', basePrevista: 'Acordo de cooperação técnica com a Junta Comercial. A carga ainda não foi testada' },
+  { id: 'detran', parceiro: 'DETRAN-SP', entrega: 'Empresas credenciadas para vistoria e inspeção veicular e para desmontagem e reciclagem, com o CNPJ, a atividade, a validade e o responsável técnico informado', chave: 'CNPJ e número do credenciamento', prioridade: 'B', camadas: 'Painel de Empresas, credenciamentos', basePrevista: 'Acordo de cooperação técnica com o DETRAN-SP; não há arquivo público com o CNPJ e o responsável técnico' },
+  { id: 'inmetro', parceiro: 'INMETRO', entrega: 'Laboratórios e organismos de inspeção acreditados, com o CNPJ, o escopo técnico e a validade da acreditação', chave: 'CNPJ e número da acreditação', prioridade: 'C', camadas: 'Painel de Empresas, credenciamentos', basePrevista: 'Habilitação na base de acreditação do INMETRO, que hoje só se consulta uma a uma' },
   { id: 'ies', parceiro: 'Instituições de ensino parceiras', entrega: 'Lista autorizada de formados por curso e data de conclusão, com CPF, para acompanhar quem se registra', chave: 'CPF, comparado com o primeiro registro profissional', prioridade: 'B', camadas: 'Formação, lista nominal das instituições parceiras', basePrevista: 'Termo com cada instituição, com finalidade amparada em lei. Os dados públicos do INEP não trazem nomes' },
-  { id: 'mte', parceiro: 'Ministério do Trabalho (RAIS identificada e eSocial)', entrega: 'Número de empregados por empresa e ocupação, sem nenhum salário individual', chave: 'CNPJ do estabelecimento e código da ocupação', prioridade: 'C', camadas: 'Profissionais, empregados técnicos por empresa', basePrevista: 'Acordo com o Ministério. Até lá, só totais por município e ocupação' },
-  { id: 'bcb', parceiro: 'Banco Central (crédito em totais)', entrega: 'Saldo e número de operações de crédito por município e atividade da lista, sempre em totais', chave: 'município, atividade e mês', prioridade: 'C', camadas: 'Empresas, contexto econômico por regional', basePrevista: 'Pedido de extração em totais. O dado público de crédito não é aberto por atividade' },
+  { id: 'mte', parceiro: 'Ministério do Trabalho (RAIS identificada e eSocial)', entrega: 'Número de empregados por empresa e ocupação, sem nenhum salário individual', chave: 'CNPJ do estabelecimento e código da ocupação', prioridade: 'C', camadas: 'Painel de Empresas, empregados técnicos por empresa', basePrevista: 'Acordo com o Ministério. Até lá, só totais por município e ocupação' },
+  { id: 'bcb', parceiro: 'Banco Central (crédito em totais)', entrega: 'Saldo e número de operações de crédito por município e atividade da lista, sempre em totais', chave: 'município, atividade e mês', prioridade: 'C', camadas: 'Painel de Empresas, economia, aberturas e registros', basePrevista: 'Pedido de extração em totais. O dado público de crédito não é aberto por atividade' },
 ];
 export const parceriaPorId = Object.fromEntries(parcerias.map(row => [row.id, row])) as Record<ParceriaId, Parceria>;
 
@@ -376,4 +379,78 @@ export function quadroVinculos(layer: Vinculos, dataset: Dataset, companyIds: Se
     porFaixa: faixasVinculos.map(faixa => ({ faixa, registradas: empresas.filter(row => registradas.has(row.companyId) && faixaVinculos(row.vinculosTecnicos) === faixa).length, semRegistro: empresas.filter(row => !registradas.has(row.companyId) && universo(row.companyId) && faixaVinculos(row.vinculosTecnicos) === faixa).length })),
     registradasSemRt: comTecnicos.filter(row => registradas.has(row.companyId) && !rtVigente.has(row.companyId)).map(row => row.companyId).sort(),
     semRegistroComTecnicos: comTecnicos.filter(row => !registradas.has(row.companyId) && universo(row.companyId)).map(row => row.companyId).sort() };
+}
+
+
+/* ---------- Painel de Empresas · credenciamentos técnicos (DETRAN-SP e INMETRO) ---------- */
+export type FonteCredenciamento = 'DETRAN-SP' | 'INMETRO';
+export const fontesCredenciamento: FonteCredenciamento[] = ['DETRAN-SP', 'INMETRO'];
+export const atividadesCredenciamento: Record<FonteCredenciamento, string[]> = {
+  'DETRAN-SP': ['Vistoria de identificação veicular', 'Inspeção veicular', 'Desmontagem e reciclagem'],
+  INMETRO: ['Laboratório de ensaio', 'Laboratório de calibração', 'Organismo de inspeção'],
+};
+export interface Credenciamento { id: string; fonte: FonteCredenciamento; atividade: string; companyId: string; greId: string; desde: string; validade: string }
+export interface Credenciamentos { credenciamentos: Credenciamento[] }
+const cacheCred = new WeakMap<Dataset, Credenciamentos>();
+/** Empresas credenciadas por órgãos técnicos, sorteadas de forma estável entre as matrizes do cenário. Demonstrativo: depende de acordo com cada órgão. */
+export function buildCredenciamentos(dataset: Dataset): Credenciamentos {
+  const saved = cacheCred.get(dataset); if (saved) return saved;
+  const rows: Credenciamento[] = [], inicio = `${dataset.months[0]}-01`;
+  for (const place of matrizes(dataset).values()) for (const fonte of fontesCredenciamento) {
+    if (chance(`cred:${fonte}:${place.companyId}`) > (fonte === 'DETRAN-SP' ? 0.035 : 0.022)) continue;
+    const desde = dateBetween(`cred:${fonte}:${place.companyId}:d`, inicio, dataset.snapshotDate);
+    rows.push({ id: `${fonte}-${place.companyId}`, fonte, atividade: pick(`cred:${fonte}:${place.companyId}:a`, atividadesCredenciamento[fonte]), companyId: place.companyId, greId: place.greId, desde,
+      validade: toDate(toDay(desde) + between(`cred:${fonte}:${place.companyId}:v`, 365, 1460)) });
+  }
+  const value = { credenciamentos: rows }; cacheCred.set(dataset, value); return value;
+}
+export interface LinhaCredenciamento { fonte: FonteCredenciamento; atividade: string; empresas: string[]; registradas: string[]; comRt: string[]; semRegistro: string[]; registradasSemRt: string[] }
+export interface QuadroCredenciamentos { linhas: LinhaCredenciamento[]; total: number; semRegistro: string[]; registradasSemRt: string[] }
+/** Credenciamentos vigentes na data de referência, por fonte e atividade, com a situação da empresa no cadastro e o RT vigente. */
+export function quadroCredenciamentos(layer: Credenciamentos, dataset: Dataset, companyIds: Set<string> | null, greId: string | null): QuadroCredenciamentos {
+  const anchor = dataset.snapshotDate, registradas = registradasEm(dataset, anchor), dentro = dentroDe(companyIds, greId);
+  const rt = new Set(dataset.technicalLinks.filter(row => row.startDate <= anchor && (!row.endDate || row.endDate > anchor)).map(row => row.companyId));
+  const vigentes = layer.credenciamentos.filter(row => row.desde <= anchor && row.validade >= anchor && dentro(row.companyId, row.greId));
+  const linhas = fontesCredenciamento.flatMap(fonte => atividadesCredenciamento[fonte].map(atividade => {
+    const empresas = [...new Set(vigentes.filter(row => row.fonte === fonte && row.atividade === atividade).map(row => row.companyId))];
+    const reg = empresas.filter(id => registradas.has(id));
+    return { fonte, atividade, empresas, registradas: reg, comRt: reg.filter(id => rt.has(id)), semRegistro: empresas.filter(id => !registradas.has(id)), registradasSemRt: reg.filter(id => !rt.has(id)) };
+  }));
+  const unicos = (ids: string[]) => [...new Set(ids)];
+  return { linhas, total: new Set(vigentes.map(row => row.companyId)).size, semRegistro: unicos(linhas.flatMap(row => row.semRegistro)), registradasSemRt: unicos(linhas.flatMap(row => row.registradasSemRt)) };
+}
+
+/* ---------- Painel de Empresas · alterações no contrato social (JUCESP) ---------- */
+export interface AlteracaoJucesp { id: string; companyId: string; greId: string; data: string; tipo: 'Abertura' | 'Alteração do objeto social' }
+export interface Jucesp { atos: AlteracaoJucesp[] }
+const cacheJucesp = new WeakMap<Dataset, Jucesp>();
+/** Atos da Junta Comercial que incluíram uma atividade da lista do Crea-SP no contrato social: a abertura da empresa ou uma alteração posterior. Demonstrativo. */
+export function buildJucesp(dataset: Dataset): Jucesp {
+  const saved = cacheJucesp.get(dataset); if (saved) return saved;
+  const atos: AlteracaoJucesp[] = [], inicio = `${dataset.months[0]}-01`;
+  for (const place of matrizes(dataset).values()) {
+    if (classeDoEstabelecimento(dataset, place) === null) continue;
+    if (place.openedAt >= inicio) atos.push({ id: `jc-a-${place.companyId}`, companyId: place.companyId, greId: place.greId, data: place.openedAt, tipo: 'Abertura' });
+    else if (chance(`jucesp:${place.companyId}`) < 0.07) atos.push({ id: `jc-o-${place.companyId}`, companyId: place.companyId, greId: place.greId, data: dateBetween(`jucesp:${place.companyId}:d`, inicio, dataset.snapshotDate), tipo: 'Alteração do objeto social' });
+  }
+  const value = { atos }; cacheJucesp.set(dataset, value); return value;
+}
+export interface TrimestreJucesp { trimestre: string; aberturas: number; alteracoes: number; registradasDepois: number }
+export interface QuadroJucesp { trimestres: TrimestreJucesp[]; atos: AlteracaoJucesp[]; registradasDepois: string[]; jaRegistradas: string[]; semRegistro: string[]; alteracoesSemRegistro: string[] }
+/** Atos dos últimos 24 meses até a data de referência: quantos foram seguidos de registro no Crea-SP, quantos já tinham registro e quantos seguem sem registro. */
+export function quadroJucesp(layer: Jucesp, dataset: Dataset, companyIds: Set<string> | null, greId: string | null): QuadroJucesp {
+  const anchor = dataset.snapshotDate, inicio = mesesAntes(anchor, 24), dentro = dentroDe(companyIds, greId);
+  const atos = layer.atos.filter(row => row.data > inicio && row.data <= anchor && dentro(row.companyId, row.greId));
+  const regs = dataset.registrations.filter(row => row.startedAt <= anchor);
+  const primeira = new Map<string, string>(), vigente = new Set<string>();
+  for (const row of regs) { const atual = primeira.get(row.companyId); if (!atual || row.startedAt < atual) primeira.set(row.companyId, row.startedAt); if (row.status === 'Ativo') vigente.add(row.companyId); }
+  const depois = (row: AlteracaoJucesp) => vigente.has(row.companyId) && (primeira.get(row.companyId) ?? '') >= row.data;
+  const antes = (row: AlteracaoJucesp) => vigente.has(row.companyId) && (primeira.get(row.companyId) ?? '9') < row.data;
+  const trimestre = (date: string) => `${date.slice(0, 4)}-T${Math.floor((Number(date.slice(5, 7)) - 1) / 3) + 1}`;
+  const nomes = [...new Set(atos.map(row => trimestre(row.data)))].sort();
+  return {
+    trimestres: nomes.map(nome => { const rows = atos.filter(row => trimestre(row.data) === nome); return { trimestre: nome, aberturas: rows.filter(row => row.tipo === 'Abertura').length, alteracoes: rows.filter(row => row.tipo !== 'Abertura').length, registradasDepois: rows.filter(depois).length }; }),
+    atos, registradasDepois: atos.filter(depois).map(row => row.companyId), jaRegistradas: atos.filter(antes).map(row => row.companyId),
+    semRegistro: atos.filter(row => !vigente.has(row.companyId)).map(row => row.companyId), alteracoesSemRegistro: atos.filter(row => row.tipo !== 'Abertura' && !vigente.has(row.companyId)).map(row => row.companyId),
+  };
 }

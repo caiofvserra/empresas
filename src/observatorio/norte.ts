@@ -173,31 +173,31 @@ export function tempoAteAgir(dataset: Dataset, f: Fiscalizacao, greId: string | 
 
 /* ---------- Fichas (formato dos 34 casos de uso) ---------- */
 export type NorteId = 'cobertura' | 'conversao' | 'receita' | 'tempo';
-export interface Ficha { id: NorteId; nome: string; formula: string; unidade: string; grao: string; data: string; leitura: string; desconhecido: string; dono: string; prototipo: string; caso: string }
+export interface Ficha { id: NorteId; nome: string; formula: string; unidade: string; grao: string; data: string; leitura: string; desconhecido: string; prototipo: string; caso: string }
 export const fichas: Record<NorteId, Ficha> = {
   cobertura: { id: 'cobertura', nome: 'Quanto do mercado está registrado', caso: 'UC02',
     formula: 'Estabelecimentos ativos em SP com atividade principal ou secundária da lista do Crea-SP e com registro ou visto, divididos por todos esses estabelecimentos.',
     unidade: 'Porcentagem de estabelecimentos', grao: 'Cada estabelecimento conta uma vez, pelo CNPJ completo, e não pela raiz da empresa.', data: 'O arquivo da Receita e o cadastro do Crea-SP são do mesmo mês.',
     leitura: 'Dos estabelecimentos com atividade de engenharia na Receita, quantos têm registro ou visto no Crea-SP.',
-    desconhecido: 'CNPJ inválido ou repetido fica fora da conta e aparece na qualidade do cadastro.', dono: 'EDAD (SUPTEC), com a SUPFIS e a área de cadastro',
+    desconhecido: 'CNPJ inválido ou repetido fica fora da conta e aparece na qualidade do cadastro.',
     prototipo: 'Calculado sobre o cenário demonstrativo. A divisão entre “Sim” e “Passível” segue a lista de atividades de março de 2025.' },
   conversao: { id: 'conversao', nome: 'Quanto a fiscalização resolve', caso: 'Indicador principal 2 do plano',
     formula: 'Ações fiscais iniciadas no trimestre que terminaram em regularização (registro, troca de RT, ART ou baixa) em até 180 dias, divididas pelas ações iniciadas no trimestre.',
     unidade: 'Porcentagem de ações', grao: 'Cada ação fiscal conta uma vez.', data: 'As ações são agrupadas pelo trimestre em que começaram. Um trimestre só entra na comparação depois de completar 180 dias.',
     leitura: 'Das ações iniciadas em cada trimestre, quantas terminaram em regularização em até 180 dias.',
-    desconhecido: 'O trimestre que ainda não completou 180 dias aparece no gráfico, mas fica fora da comparação.', dono: 'SUPFIS',
+    desconhecido: 'O trimestre que ainda não completou 180 dias aparece no gráfico, mas fica fora da comparação.',
     prototipo: 'As ações e as regularizações vêm do cenário demonstrativo de fiscalização.' },
   receita: { id: 'receita', nome: 'Quanto entrou depois de um caso aberto', caso: 'Indicador principal 3 do plano',
     formula: 'Anuidades, ARTs e multas recebidas de empresas com caso aberto a partir de um indício do programa, em até 12 meses depois da abertura do caso.',
     unidade: 'Reais recebidos', grao: 'Cada pagamento conta uma vez.', data: 'Vale a data do pagamento, e não a do lançamento.',
     leitura: 'Anuidades e multas pagas nos 12 meses seguintes a um caso aberto por indício.',
-    desconhecido: 'Pagamento sem data ou sem caso ligado não entra. Cada pagamento é contado uma só vez, no caso mais antigo.', dono: 'SUPADF e SUPFIS',
+    desconhecido: 'Pagamento sem data ou sem caso ligado não entra. Cada pagamento é contado uma só vez, no caso mais antigo.',
     prototipo: 'O cenário não tem taxa de ART nem estorno, por isso só entram anuidades e multas. Um caso por indício é uma ação que nasceu do cruzamento com a Receita, o PNCP ou o cadastro.' },
   tempo: { id: 'tempo', nome: 'Quanto tempo leva para agir', caso: 'Indicador principal 4 do plano',
     formula: 'Tempo típico (mediana), em dias, entre o momento em que o indício entra na base e a primeira ação fiscal sobre ele.',
     unidade: 'Dias, no caso típico (mediana)', grao: 'Cada indício conta uma vez.', data: 'Vale a data em que o indício entrou na base. O resultado pode ser separado por regional e por tipo de indício.',
     leitura: 'Quantos dias passam, no caso típico, entre o indício aparecer e a fiscalização agir.',
-    desconhecido: 'O indício que se resolve sem ação sai da conta na data em que se resolveu.', dono: 'SUPFIS e regionais',
+    desconhecido: 'O indício que se resolve sem ação sai da conta na data em que se resolveu.',
     prototipo: 'Os indícios e as ações vêm do cenário demonstrativo de fiscalização.' },
 };
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import type { ComponentType, ReactNode } from 'react';
-import { BookOpenCheck, Building2, CalendarClock, ChevronDown, ClipboardCheck, Database, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, RotateCcw, ScanSearch, ShieldCheck, Sun, Target, Wallet, X } from 'lucide-react';
+import { ArrowUpRight, BookOpenCheck, Building2, CalendarClock, ChevronDown, ClipboardCheck, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, LayoutGrid, Moon, Network, RotateCcw, ScanSearch, ShieldCheck, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
 import { dataset } from '../domain/dataset';
 import { datasReferencia as datasReferenciaDe, datasetAt, fiscalizacaoAt } from '../domain/tempo';
 import { defaultFilters } from '../domain/types';
@@ -13,8 +13,8 @@ import { buildConselho, quadroConselho } from '../domain/conselho';
 import { buildInstalacoes, buildObras, buildSociedades, quadroInstalacoes, quadroObras, quadroSociedades } from '../domain/frentes';
 import { datasHistorico, pontoHistorico } from '../observatorio/historico';
 import type { PontoHistorico } from '../observatorio/historico';
-import { aberturasRfb, buildDemandaPlanejada, concentracaoMercado, densidadeRegional, permanenciaCoorte, quadroDemanda } from '../domain/mercado';
-import { buildCno, buildDespesaTce, buildLicencas, buildPericias, buildSociosPf, buildVinculos, contextoEconomico, coorteNominal, quadroCno, quadroLicencas, quadroPericias, quadroSociosPf, quadroTce, quadroVinculos } from '../domain/parcerias';
+import { aberturasRfb, buildDemandaPlanejada, concentracaoMercado, permanenciaCoorte, quadroDemanda } from '../domain/mercado';
+import { buildCno, buildCredenciamentos, buildDespesaTce, buildJucesp, buildLicencas, buildPericias, buildSociosPf, buildVinculos, coorteNominal, quadroCno, quadroCredenciamentos, quadroJucesp, quadroLicencas, quadroPericias, quadroSociosPf, quadroTce, quadroVinculos } from '../domain/parcerias';
 import type { EnterpriseModel } from '../enterprise-v10/types';
 import { EngineeringEmblem } from '../components/EngineeringIdentity';
 import { selectEnterpriseScope } from '../enterprise-v10/filters';
@@ -33,11 +33,11 @@ import { malhaFina } from './cruzamentos';
 import { estruturaDe } from './estrutura';
 import type { Estrutura } from './estrutura';
 import { leitura, metasPadrao } from './leitura';
+import { painelDaPagina } from './leitura';
 import type { Metas, PageId } from './leitura';
 import { artsPeriodo, linhasGre } from './medidas';
 import { despesaPublicada, fonteConfea, formacaoSp, piso as pisoPublico, registrosNovos, resultados2025 } from './publico';
 import PaginaPresidencia from './PaginaPresidencia';
-import PaginaCadastro from './PaginaCadastro';
 import PaginaProfissionais from './PaginaProfissionais';
 import PaginaFormacao from './PaginaFormacao';
 import PaginaFiscalizacao from './PaginaFiscalizacao';
@@ -47,6 +47,11 @@ import PaginaEntidades from './PaginaEntidades';
 import PaginaControle from './PaginaControle';
 import PaginaAtendimento from './PaginaAtendimento';
 import PaginaMetodo from './PaginaMetodo';
+import PaginaMercado from '../empresas/PaginaMercado';
+import PaginaEvolucao from '../empresas/PaginaEvolucao';
+import PaginaRt from '../empresas/PaginaRt';
+import PaginaVinculos from '../empresas/PaginaVinculos';
+import '../empresas/empresas.css';
 import '../painel/painel.css';
 import './cockpit.css';
 
@@ -55,9 +60,9 @@ import './cockpit.css';
  * estava em D, sem sobrescrever nenhum valor), ficha (i) em todo bloco e cartão, profissionais e formação com a mesma
  * profundidade das empresas, entidades e IES, controle interno, forças-tarefas com grupo de comparação e malha fina v2.
  */
-const pages: { id: PageId; label: string; title: string; subtitle: string; icon: ComponentType<{ size?: number }>; Page: ComponentType<{ ctx: CockpitCtx }> }[] = [
+type PaginaDef = { id: PageId; label: string; title: string; subtitle: string; icon: ComponentType<{ size?: number }>; Page: ComponentType<{ ctx: CockpitCtx }> };
+const paginasGeral: PaginaDef[] = [
   { id: 'presidencia', label: 'Presidência', title: 'Presidência', subtitle: 'Os quatro indicadores principais, um resumo de cada assunto e a comparação das regionais com o ano anterior', icon: Landmark, Page: PaginaPresidencia },
-  { id: 'cadastro', label: 'Empresas', title: 'Empresas, cobertura e responsabilidade técnica', subtitle: 'Quanto das empresas com atividade de engenharia está registrado no Crea-SP, onde estão as que faltam, e como andam responsáveis técnicos, ARTs e certidões', icon: Building2, Page: PaginaCadastro },
   { id: 'profissionais', label: 'Profissionais', title: 'Profissionais', subtitle: 'Quantos profissionais estão ativos, quantos entram e saem, quem são, se pagam a anuidade, quantas ARTs registram e quantos empregos formais existem na área', icon: HardHat, Page: PaginaProfissionais },
   { id: 'formacao', label: 'Formação', title: 'Formação e registro', subtitle: 'Quantos se formam a cada ano e quantos se registram, trabalham e continuam no sistema, por instituição, modalidade e canal', icon: GraduationCap, Page: PaginaFormacao },
   { id: 'fiscalizacao', label: 'Fiscalização', title: 'Fiscalização', subtitle: 'Quantas ações a fiscalização faz, onde o processo demora, quantas terminam em regularização e qual foi o resultado das forças-tarefas', icon: ShieldCheck, Page: PaginaFiscalizacao },
@@ -68,7 +73,26 @@ const pages: { id: PageId; label: string; title: string; subtitle: string; icon:
   { id: 'atendimento', label: 'Atendimento', title: 'Atendimento e estrutura', subtitle: 'Se as solicitações são resolvidas no prazo, como os coworkings são usados e como está a qualidade do cadastro', icon: Headset, Page: PaginaAtendimento },
   { id: 'metodo', label: 'Método', title: 'Método, regras e fontes', subtitle: 'O que cada cruzamento permite concluir, o que foi corrigido no painel, as perguntas que ele responde, as regras da malha fina, as fontes de dados e o uso de inteligência artificial', icon: BookOpenCheck, Page: PaginaMetodo },
 ];
-const STORAGE = 'crea-observatorio-v20';
+/** Painel de Empresas: o primeiro painel separado do painel geral (01/11/2026), com filtros de regional, câmara, período e data que valem para todas as páginas. */
+const paginasEmpresas: PaginaDef[] = [
+  { id: 'mercado', label: 'Mercado', title: 'Mercado e registro', subtitle: 'Quantas empresas com atividade de engenharia existem, quantas estão registradas no Crea-SP e em que atividades estão as que faltam', icon: Building2, Page: PaginaMercado },
+  { id: 'evolucao', label: 'Evolução', title: 'Evolução das empresas', subtitle: 'Como a economia, a abertura de empresas de engenharia e os registros no Crea-SP andaram juntos, e quantas empresas entram e saem da base', icon: TrendingUp, Page: PaginaEvolucao },
+  { id: 'rt', label: 'RT e ART', title: 'Responsáveis técnicos e ARTs', subtitle: 'Quantas empresas registradas têm responsável técnico, quantas empresas cada profissional assume e quantas ARTs as empresas registram', icon: FileSignature, Page: PaginaRt },
+  { id: 'vinculos', label: 'Vínculos', title: 'Sócios, instalações e empregados', subtitle: 'Com quem as empresas se ligam: sócios, instalações e financiamentos de setores regulados, empregados técnicos, credenciamentos e alterações no contrato social', icon: Network, Page: PaginaVinculos },
+];
+export type PainelId = 'geral' | 'empresas';
+interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; outro: { id: PainelId; label: string; title: string } }
+const paineis: Record<PainelId, Painel> = {
+  geral: { id: 'geral', nome: 'Inteligência Estratégica', paginas: paginasGeral, periodos: [3, 6, 12], storage: 'crea-observatorio-v20', outro: { id: 'empresas', label: 'Empresas', title: 'Abrir o painel de Empresas' } },
+  empresas: { id: 'empresas', nome: 'Inteligência Estratégica · Empresas', paginas: paginasEmpresas, periodos: [3, 6, 12, 24], storage: 'crea-empresas-v1', outro: { id: 'geral', label: 'Geral', title: 'Abrir o painel geral' } },
+};
+/** Endereço de outro painel: no site, empresas.html e index.html; na entrega em arquivo único, os dois HTML lado a lado na pasta entrega. */
+export function enderecoPainel(id: PainelId, pagina?: PageId) {
+  const entrega = /painel-[a-z-]+\.html$/.test(window.location.pathname);
+  const arquivo = entrega ? (id === 'empresas' ? 'painel-empresas-creasp.html' : 'painel-gestao-creasp.html') : (id === 'empresas' ? 'empresas.html' : 'index.html');
+  return pagina ? `${arquivo}#${pagina}` : arquivo;
+}
+let STORAGE = 'crea-observatorio-v20';
 const ler = <T,>(key: string, fallback: T): T => { try { const raw = localStorage.getItem(`${STORAGE}-${key}`); return raw === null ? fallback : JSON.parse(raw) as T; } catch { return fallback; } };
 const gravar = (key: string, value: unknown) => { try { localStorage.setItem(`${STORAGE}-${key}`, JSON.stringify(value)); } catch { /* navegador sem armazenamento: o painel segue funcionando */ } };
 /** Modelos empresariais em cache por recorte (data de referência, regional, câmara, período): trocar de filtro e voltar é imediato. */
@@ -85,23 +109,26 @@ const datasReferencia = datasReferenciaDe(dataset);
 /** Camadas construídas uma vez por base lida em D (cache por referência da base). */
 const camadas = new WeakMap<Dataset, Camadas>();
 type Camadas = { f: ReturnType<typeof buildFiscalizacao>; profissionais: ReturnType<typeof buildProfissionais>; emprego: ReturnType<typeof buildEmpregoCbo>; formacao: ReturnType<typeof buildFormacao>; entidades: ReturnType<typeof buildEntidades>; conselho: ReturnType<typeof buildConselho>; sociedades: ReturnType<typeof buildSociedades>; obras: ReturnType<typeof buildObras>; instalacoes: ReturnType<typeof buildInstalacoes>;
-  cno: ReturnType<typeof buildCno>; licencas: ReturnType<typeof buildLicencas>; pericias: ReturnType<typeof buildPericias>; tce: ReturnType<typeof buildDespesaTce>; sociosPf: ReturnType<typeof buildSociosPf>; vinculos: ReturnType<typeof buildVinculos> };
+  cno: ReturnType<typeof buildCno>; licencas: ReturnType<typeof buildLicencas>; pericias: ReturnType<typeof buildPericias>; tce: ReturnType<typeof buildDespesaTce>; sociosPf: ReturnType<typeof buildSociosPf>; vinculos: ReturnType<typeof buildVinculos>; credenciamentos: ReturnType<typeof buildCredenciamentos>; jucesp: ReturnType<typeof buildJucesp> };
 function camadasDe(view: Dataset) {
   let value = camadas.get(view);
   if (!value) {
     const profissionais = buildProfissionais(view);
     value = { f: fiscalizacaoAt(buildFiscalizacao(dataset), view.snapshotDate), profissionais, emprego: buildEmpregoCbo(view), formacao: buildFormacao(view), entidades: buildEntidades(view), conselho: buildConselho(view), sociedades: buildSociedades(view), obras: buildObras(view), instalacoes: buildInstalacoes(view),
-      cno: buildCno(view), licencas: buildLicencas(view), pericias: buildPericias(view, profissionais), tce: buildDespesaTce(view), sociosPf: buildSociosPf(view, profissionais), vinculos: buildVinculos(view) };
+      cno: buildCno(view), licencas: buildLicencas(view), pericias: buildPericias(view, profissionais), tce: buildDespesaTce(view), sociosPf: buildSociosPf(view, profissionais), vinculos: buildVinculos(view), credenciamentos: buildCredenciamentos(view), jucesp: buildJucesp(view) };
     camadas.set(view, value);
   }
   return value;
 }
 
-export default function Cockpit() {
-  const [page, setPage] = useState<PageId>(() => { const saved = ler<string>('pagina', 'presidencia'); return pages.some(item => item.id === saved) ? saved as PageId : 'presidencia'; });
+export default function Cockpit({ painel: painelId = 'geral' }: { painel?: PainelId }) {
+  const painel = paineis[painelId], pages = painel.paginas;
+  STORAGE = painel.storage;
+  const [page, setPage] = useState<PageId>(() => { const hash = window.location.hash.slice(1), saved = pages.some(item => item.id === hash) ? hash : ler<string>('pagina', pages[0].id); return pages.some(item => item.id === saved) ? saved as PageId : pages[0].id; });
   const [gre, setGre] = useState('');
   const [camara, setCamara] = useState('');
   const [period, setPeriod] = useState(12);
+  const leve = painel.id === 'empresas';
   const [anchorSel, setAnchorSel] = useState<string | null>(null);
   const [detail, setDetail] = useState<Detail | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark' | null>(() => ler<'light' | 'dark' | null>('tema', null));
@@ -122,25 +149,26 @@ export default function Cockpit() {
   useEffect(() => { gravar('pagina', page); setFocus(null); }, [page]);
   useEffect(() => { gravar('metas', metas); }, [metas]);
   // Atendimento, estrutura e orçamento vêm do modelo institucional (cerca de 1 s na primeira vez): calculado depois da primeira pintura.
-  useEffect(() => { let alive = true; setEstrutura(null); const id = window.setTimeout(() => { const value = estruturaDe(view, gre || null, period); if (alive) setEstrutura(value); }, 30); return () => { alive = false; window.clearTimeout(id); }; }, [view, gre, period]);
+  useEffect(() => { if (leve) return; let alive = true; setEstrutura(null); const id = window.setTimeout(() => { const value = estruturaDe(view, gre || null, period); if (alive) setEstrutura(value); }, 30); return () => { alive = false; window.clearTimeout(id); }; }, [view, gre, period, leve]);
   // Histórico por data de referência: um ponto por mês (cerca de 1 s cada), calculado depois da estrutura, um de cada vez, com cache.
   useEffect(() => {
+    if (leve) return;
     let alive = true; const chave = `${view.snapshotDate}|${gre}`, datas = datasHistorico(view), fBase = camadasDe(view).f;
     setHistorico({ chave, pontos: [] });
     const passo = (index: number) => { if (!alive || index >= datas.length) return; const ponto = pontoHistorico(dataset, fBase, datas[index], gre || null); if (!alive) return; setHistorico(previous => previous.chave === chave ? { chave, pontos: [...previous.pontos, ponto] } : previous); window.setTimeout(() => passo(index + 1), 40); };
     const id = window.setTimeout(() => passo(0), 400);
     return () => { alive = false; window.clearTimeout(id); };
-  }, [view, gre]);
+  }, [view, gre, leve]);
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
       if (event.key === 'Escape') { if (detail) setDetail(null); else if (modal) setModal(null); else setFocus(null); return; }
       if (event.ctrlKey || event.metaKey || event.altKey || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName) || modal || detail) return;
       if (/^[0-9]$/.test(event.key)) { const index = event.key === '0' ? 9 : Number(event.key) - 1; if (pages[index]) setPage(pages[index].id); }
-      else if (event.key === 'm' || event.key === 'M') setPage('metodo');
+      else if ((event.key === 'm' || event.key === 'M') && pages.some(item => item.id === 'metodo')) setPage('metodo');
     };
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key);
-  }, [detail, modal]);
+  }, [detail, modal, pages]);
 
   const subset = useMemo(() => camara ? view.companies.filter(row => camaraMap.get(row.id) === camara).map(row => row.id) : undefined, [view, camara]);
   const scope = useMemo(() => selectEnterpriseScope(view, filtros(gre ? [gre] : [], period), subset), [view, gre, period, subset]);
@@ -162,7 +190,7 @@ export default function Cockpit() {
     const linhas = linhasGre(stateModel, stateHistory, stateScope, regionais, period, stateMalha, stateArts.atual);
     const cobradas = model.metrics.compliance.denominatorCompanyIds?.length ?? 0;
     const norte = { cobertura: cobertura(scope, model), contagens: contagens(scope, model), conversao: conversao(f, gre || null), receita: receitaAtribuivel(view, f, gre || null, period), tempo: tempoAteAgir(view, f, gre || null, period, tipoLabel) };
-    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), densidade: densidadeRegional(view), aberturas: aberturasRfb(view, gre || null, 24), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
+    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), aberturas: aberturasRfb(view, gre || null, 24), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
     return { resumo, regionais, contratos, malha, arts, linhas, ponte: ponteBase(model, scope, f, period), rec: receita(history, f, gre || null, period),
       inadimplencia: cobradas ? devedoras(model).size / cobradas * 100 : null, cao: caoService(scope).median, norte, mercado };
   }, [view, f, gre, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
@@ -178,16 +206,20 @@ export default function Cockpit() {
     const forcas = resultadosForcas(view, f, greId);
     const frentes = { sociedades: quadroSociedades(base.sociedades, view, scope.companyIds, greId), obras: quadroObras(base.obras, view, scope.companyIds, greId), instalacoes: quadroInstalacoes(base.instalacoes, view, greId) };
     const parcerias = { cno: quadroCno(base.cno, view, scope.companyIds, greId), licencas: quadroLicencas(base.licencas, view, scope.companyIds, greId), pericias: quadroPericias(base.pericias, view, base.profissionais, greId), tce: quadroTce(base.tce, derived.contratos),
-      contexto: contextoEconomico(view), sociosPf: quadroSociosPf(base.sociosPf, view, base.profissionais, scope.companyIds, greId), coorteNominal: coorteNominal(base.formacao, base.profissionais, view, greId), vinculos: quadroVinculos(base.vinculos, view, scope.companyIds, greId) };
+      sociosPf: quadroSociosPf(base.sociosPf, view, base.profissionais, scope.companyIds, greId), coorteNominal: coorteNominal(base.formacao, base.profissionais, view, greId), vinculos: quadroVinculos(base.vinculos, view, scope.companyIds, greId),
+      credenciamentos: quadroCredenciamentos(base.credenciamentos, view, scope.companyIds, greId), jucesp: quadroJucesp(base.jucesp, view, scope.companyIds, greId) };
     return { profissionais, formacao, entidades, conselho, forcas, frentes, parcerias };
   }, [base, view, anchor, f, gre, period, scope, derived.contratos]);
   const insights = useMemo(() => leitura({ metas, ponte: derived.ponte, cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo: derived.resumo, rec: derived.rec, saldo: model.metrics.overdue.value ?? 0,
     inadimplencia: derived.inadimplencia, linhas: derived.linhas, malha: derived.malha, arts: { atual: derived.arts.atual.length, antes: derived.arts.antes }, cao: derived.cao, estrutura,
     conversao: derived.norte.conversao.atual, tempo: derived.norte.tempo, profissionais: extra.profissionais.resumo, formacao: extra.formacao, conselho: extra.conselho, forcas: extra.forcas }), [metas, derived, model, estrutura, extra]);
 
+  // No painel de Empresas, os destaques são só os das páginas dele; no geral, um destaque de empresas abre o painel de Empresas.
+  const destaques = leve ? insights.filter(item => pages.some(row => row.id === item.page)) : insights;
+  const irPara = (target: PageId) => { if (pages.some(item => item.id === target)) setPage(target); else window.location.href = enderecoPainel(painelDaPagina(target), target); };
   const change = (work: () => void) => transition(work);
   const ctx: CockpitCtx = { dataset: view, f, scope, model, history, period, greId: gre || null, camara: camara || null, janela: janelaDe(f.anchor, period), resumo: derived.resumo, regionais: derived.regionais, tokens,
-    open: setDetail, filterGre: id => change(() => setGre(previous => previous === id ? '' : id)), page, go: setPage, dark,
+    open: setDetail, filterGre: id => change(() => setGre(previous => previous === id ? '' : id)), page, go: irPara, dark,
     anchor, hoje, datasReferencia, setAnchor: value => change(() => setAnchorSel(value && value < hoje ? value : null)),
     historyScope, stateScope, stateModel, stateHistory, linhas: derived.linhas, ponte: derived.ponte, rec: derived.rec, contratos: derived.contratos, malha: derived.malha, estrutura, arts: derived.arts,
     metas, insights, focus, toggleFocus: id => setFocus(previous => previous === id ? null : id), norte: derived.norte, mercado: derived.mercado, ...extra,
@@ -198,7 +230,8 @@ export default function Cockpit() {
   return <div className={`ck ${dark ? 'is-dark' : ''} ${emD ? 'is-passado' : ''}`} aria-busy={pending}>
     <nav className="ck-rail" aria-label="Assuntos do painel">
       <div className="ck-logo" title="CREA-SP"><EngineeringEmblem /></div>
-      {pages.map((item, index) => <button key={item.id} className={page === item.id ? 'on' : ''} aria-current={page === item.id ? 'page' : undefined} onClick={() => setPage(item.id)} title={`${item.title} (tecla ${index === 10 ? 'M' : (index + 1) % 10})`}><item.icon size={18} /><span>{item.label}</span></button>)}
+      {pages.map((item, index) => <button key={item.id} className={page === item.id ? 'on' : ''} aria-current={page === item.id ? 'page' : undefined} onClick={() => setPage(item.id)} title={`${item.title} (tecla ${item.id === 'metodo' ? 'M' : (index + 1) % 10})`}><item.icon size={18} /><span>{item.label}</span></button>)}
+      <a className="ck-rail-painel" href={enderecoPainel(painel.outro.id)} title={painel.outro.title}>{painel.outro.id === 'empresas' ? <Building2 size={18} /> : <LayoutGrid size={18} />}<span>{painel.outro.label}<ArrowUpRight size={10} /></span></a>
       <div className="ck-rail-bottom">
         <button onClick={() => setModal('metas')} title="Metas usadas nos cartões e no quadro das regionais"><Target size={17} /><span>Metas</span></button>
         <button onClick={() => setModal('fontes')} title="Fontes, métodos e limites"><Database size={17} /><span>Fontes</span></button>
@@ -207,10 +240,10 @@ export default function Cockpit() {
     </nav>
     <div className="ck-main">
       <header className="ck-header">
-        <div className="ck-title"><span className="ck-eyebrow" title="Inteligência Estratégica Crea-SP, programa de dados da EDAD (SUPTEC)">Inteligência Estratégica <span className="ck-legenda-parceria" title="Os blocos e as regras com este sinal mostram o que um acordo com outro órgão permitiria medir. Até o acordo ser fechado, os números são demonstrativos."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span></span><h1>{current.title}</h1><p>{current.subtitle}</p></div>
+        <div className="ck-title"><span className="ck-eyebrow" title="Inteligência Estratégica Crea-SP, programa de dados da EDAD (SUPTEC)">{painel.nome} <span className="ck-legenda-parceria" title="Os blocos e as regras com este sinal mostram o que um acordo com outro órgão permitiria medir. Até o acordo ser fechado, os números são demonstrativos."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span></span><h1>{current.title}</h1><p>{current.subtitle}</p></div>
         <div className="ck-pulse" aria-label="Destaques do período">
           <span className="ck-pulse-dot" aria-hidden="true" />
-          <div className="ck-pulse-track">{[...insights, ...insights].map((item, index) => <button key={index} className={`is-${item.tone}`} aria-hidden={index >= insights.length} tabIndex={index >= insights.length ? -1 : 0} onClick={() => setPage(item.page)}><b>{item.strong}</b> {item.text}</button>)}</div>
+          <div className="ck-pulse-track">{[...destaques, ...destaques].map((item, index) => <button key={index} className={`is-${item.tone}`} aria-hidden={index >= destaques.length} tabIndex={index >= destaques.length ? -1 : 0} onClick={() => irPara(item.page)}><b>{item.strong}</b> {item.text}</button>)}</div>
         </div>
         <div className="ck-meta">
           <span className="demo" title="Dados internos fictícios, gerados para demonstrar o modelo. Dados públicos reais trazem selo próprio.">Demonstrativo</span>
@@ -226,13 +259,13 @@ export default function Cockpit() {
       <section className="ck-filters" aria-label="Filtros">
         <label className="ck-select"><span>Regional</span><select value={gre} onChange={event => change(() => setGre(event.target.value))}><option value="">Todas</option>{dataset.gres.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
         <label className="ck-select"><span>Câmara</span><select value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
-        <div className="seg" role="radiogroup" aria-label="Período">{[3, 6, 12].map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => setPeriod(value))}>{value} meses</button>)}</div>
+        <div className="seg" role="radiogroup" aria-label="Período">{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => setPeriod(value))}>{value} meses</button>)}</div>
         <span className="ck-window">De {data(ctx.janela.start)} a {data(ctx.janela.end)}, comparado com {data(ctx.janela.prevStart)} a {data(ctx.janela.prevEnd)}.{emD && <> Situação em <strong>{data(anchor)}</strong>.</>}</span>
         {(gre || camara || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCamara(''); setPeriod(12); setAnchorSel(null); })}><RotateCcw size={14} />Limpar filtros</button>}
       </section>
       <main className={`ck-page ck-page-${page} ${focus ? 'has-focus' : ''}`} key={page}><current.Page ctx={ctx} /></main>
       <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{int(scope.companies.length)} empresas no recorte</strong>
-        <span className="ck-status-note">{pending ? 'Recalculando…' : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : 'As teclas 1 a 9, 0 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
+        <span className="ck-status-note">{pending ? 'Recalculando…' : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : leve ? 'As teclas 1 a 4 trocam de página. Os filtros do alto valem para todas as páginas. Clique numa barra, faixa ou ponto para ver as empresas daquele item.' : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
     </div>
     {detail && <Drawer ctx={ctx} detail={detail} onClose={() => setDetail(null)} />}
     {modal === 'metas' && <Janela title="Metas do painel" subtitle="As metas usadas nos cartões, no quadro das regionais e nos destaques. Elas ficam salvas neste navegador." onClose={() => setModal(null)}><MetasForm metas={metas} onChange={setMetas} /></Janela>}

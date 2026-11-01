@@ -46,14 +46,15 @@ test('data de referência: a base lida em D só tem o que existia em D e nada é
   if (cancelado) assert.equal(view.registrations.find(row => row.id === cancelado.id)?.status, 'Ativo');
 });
 
-test('ficha (i): todo bloco e cartão de toda aba tem ficha registrada, e toda ficha registrada é usada', () => {
-  const dir = join(import.meta.dirname, '..', 'src', 'cockpit');
-  const paginaDe: Record<string, string> = { PaginaPresidencia: 'presidencia', PaginaCadastro: 'cadastro', PaginaProfissionais: 'profissionais', PaginaFormacao: 'formacao', PaginaFiscalizacao: 'fiscalizacao', PaginaMalha: 'malha', PaginaReceita: 'receita', PaginaEntidades: 'entidades', PaginaControle: 'controle', PaginaAtendimento: 'atendimento', PaginaMetodo: 'metodo' };
-  const arquivos = readdirSync(dir).filter(name => /^Pagina\w+\.tsx$/.test(name));
-  assert.deepEqual(arquivos.map(name => paginaDe[name.replace('.tsx', '')]).sort(), [...pageIds].sort(), 'uma página por aba, sem páginas sobrando');
+test('ficha (i): todo bloco e cartão de todo painel tem ficha registrada, e toda ficha registrada é usada', () => {
+  const raiz = join(import.meta.dirname, '..', 'src');
+  const paginaDe: Record<string, string> = { 'cockpit/PaginaPresidencia': 'presidencia', 'cockpit/PaginaProfissionais': 'profissionais', 'cockpit/PaginaFormacao': 'formacao', 'cockpit/PaginaFiscalizacao': 'fiscalizacao', 'cockpit/PaginaMalha': 'malha', 'cockpit/PaginaReceita': 'receita', 'cockpit/PaginaEntidades': 'entidades', 'cockpit/PaginaControle': 'controle', 'cockpit/PaginaAtendimento': 'atendimento', 'cockpit/PaginaMetodo': 'metodo',
+    'empresas/PaginaMercado': 'mercado', 'empresas/PaginaEvolucao': 'evolucao', 'empresas/PaginaRt': 'rt', 'empresas/PaginaVinculos': 'vinculos' };
+  const arquivos = ['cockpit', 'empresas'].flatMap(dir => readdirSync(join(raiz, dir)).filter(name => /^Pagina\w+\.tsx$/.test(name)).map(name => `${dir}/${name.replace('.tsx', '')}`));
+  assert.deepEqual(arquivos.map(name => paginaDe[name]).sort(), [...pageIds].sort(), 'uma página por aba, sem páginas sobrando');
   const usadas = new Set<string>();
   for (const name of arquivos) {
-    const page = paginaDe[name.replace('.tsx', '')], src = readFileSync(join(dir, name), 'utf8');
+    const page = paginaDe[name], src = readFileSync(join(raiz, `${name}.tsx`), 'utf8');
     const ids = [...src.matchAll(/<Bloco\b[^>]*?\sid="([a-z0-9-]+)"/g)].map(match => match[1]);
     const cards = [...src.matchAll(/\sficha="([a-z0-9-]+)"/g)].map(match => match[1]);
     const soltas = [...src.matchAll(/fichaDe\('(\w+)',\s*'([a-z0-9-]+)'\)/g)].map(match => `${match[1]}.${match[2]}`);
@@ -64,8 +65,9 @@ test('ficha (i): todo bloco e cartão de toda aba tem ficha registrada, e toda f
   }
   for (const key of Object.keys(fichas)) assert.ok(usadas.has(key), `ficha registrada sem bloco: ${key}`);
   for (const [key, ficha] of Object.entries(fichas)) {
-    assert.ok(ficha.mede && ficha.calcula && ficha.fontes && ficha.regra && ficha.limites && ficha.dono, `ficha incompleta: ${key}`);
+    assert.ok(ficha.mede && ficha.calcula && ficha.fontes && ficha.regra && ficha.limites, `ficha incompleta: ${key}`);
     assert.ok(!/onda/i.test(JSON.stringify(ficha)), `ficha com linguagem de ondas: ${key}`);
+    assert.ok(!/\bdon[oa]s?\b/i.test(JSON.stringify(ficha)), `ficha com a palavra dono: ${key}`);
   }
 });
 

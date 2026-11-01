@@ -1,0 +1,19 @@
+import type { CockpitCtx } from '../cockpit/contexto';
+import { Bloco } from '../cockpit/ui';
+import { Credenciamentos, Instalacoes, Jucesp, RedeSocietaria, SociosPf, Vinculos } from './blocos';
+
+/**
+ * Painel de Empresas, página 4: com quem a empresa se liga. Sócios empresas (quadro aberto da Receita), sócios pessoas físicas,
+ * instalações e financiamentos de setores regulados, empregados técnicos, credenciamentos e atos da Junta Comercial. Os blocos
+ * marcados com "!" dependem de acordo e são demonstrativos até ele existir.
+ */
+export default function PaginaVinculos({ ctx }: { ctx: CockpitCtx }) {
+  return <div className="ck-grid ck-grid-vinculos">
+    <Bloco ctx={ctx} id="qs" area="qs" title="Empresas que são sócias de outras empresas" question="Pelo quadro de sócios publicado pela Receita Federal, mostra grupos de empresas ligadas porque uma é sócia da outra, e sócios de fora da base que têm atividade de engenharia. Clique num grupo para ver as empresas." help="Ser sócio não prova controle da empresa nem responsabilidade técnica."><RedeSocietaria ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="sp" area="sp" title="Sócios pessoas físicas que são profissionais" question="Com o CPF completo dos sócios, que só a Receita pode fornecer por acordo, mostra quantos sócios são profissionais registrados, quantos são o responsável técnico da própria empresa e onde um sócio poderia assumir a responsabilidade que falta." help="Ser sócio não faz da pessoa responsável técnica nem empregada. Serve para entender a empresa, não para apontar irregularidade."><SociosPf ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="in" area="in" title="Usinas, postos, minas e financiamentos" question="Usinas e agentes de energia (ANEEL), instalações e revendas de combustível (ANP), processos de mineração (ANM) e financiamentos do BNDES, por regional, ligados à empresa pelo CNPJ. Clique numa faixa para ver os agentes daquela fonte na regional." help="A empresa aparece aqui porque opera, é titular ou recebeu o financiamento. Isso não faz dela a projetista, a instaladora ou a responsável técnica."><Instalacoes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="vn" area="vn" title="Empregados em ocupações técnicas, por empresa" question="Quantos empregados com carteira em ocupações de engenharia cada empresa tem, contados pela RAIS identificada que o Ministério do Trabalho só fornece por acordo. Mostra também empresas registradas com técnicos e sem responsável técnico." help="Empregado em ocupação técnica não é responsável técnico, e o vínculo não prova atividade privativa. Nenhum salário individual é usado."><Vinculos ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="cr" area="cr" title="Empresas credenciadas por órgãos técnicos" question="Empresas credenciadas pelo DETRAN-SP (vistoria, inspeção veicular, desmontagem e reciclagem) e acreditadas pelo INMETRO (laboratórios e organismos de inspeção), pela situação no cadastro do Crea-SP e pelo responsável técnico." help="O credenciamento mostra atividade técnica, mas não define sozinho a atribuição profissional exigida."><Credenciamentos ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="jc" area="jc" title="Empresas que passaram a ter engenharia no contrato social" question="Aberturas e alterações do contrato social na Junta Comercial que incluíram uma atividade da lista do Crea-SP, por trimestre, e quantas dessas empresas se registraram depois." help="A Receita mostra só a atividade atual. A data em que a engenharia entrou no contrato vem da Junta Comercial."><Jucesp ctx={ctx} /></Bloco>
+  </div>;
+}
