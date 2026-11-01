@@ -61,7 +61,7 @@
 .ck-grid-cadastro { grid-template-rows: auto 330px repeat(5, minmax(340px, 1fr)); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "tc tc tc cv cv cv cv cv cg cg cg cg" "reg reg reg es es es es es pt pt pt pt" "mk mk mk mk mk sk sk sk sk cp cp cp" "pz pz pz pz mu mu mu mu mu mu mu mu" "qt qt qt qt ah ah ah ah ah am am am" "ca ca ca ca rg rg rg rg sa sa sa sa"; height: auto; }
 .ck-grid-fiscalizacao { grid-template-rows: auto minmax(420px, 1.2fr) minmax(330px, 1fr) 340px minmax(300px, auto) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map map map ca ca ca ca ca" "me me me me cu cu cu cu it it it it" "cv cv cv cv cv cv ta ta ta ta ta ta" "ft ft ft ft ft ft ft ft ft ft ft ft" "ht ht ht ht ht ht ht ht ht ht ht ht"; height: auto; }
 .ck-grid-malha { grid-template-rows: minmax(430px, 1.2fr) repeat(3, minmax(360px, 1fr)); grid-template-areas: "mf1 mf1 mf1 mf1 mf1 mf1 mf8 mf8 mf8 mf8 mf8 mf8" "mf2 mf2 mf2 mf2 mf7 mf7 mf7 mf7 mf3 mf3 mf3 mf3" "mf4 mf4 mf4 mf4 mf5 mf5 mf5 mf5 mf6 mf6 mf6 mf6" "mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9"; height: auto; }
-.ck-grid-metodo { grid-template-rows: 600px 640px 640px; grid-template-areas: "rl rl rl rl rl rl lc lc lc lc lc lc" "uc uc uc uc uc uc mr mr mr mr mr mr" "ft ft ft ft ft ft ia ia ia ia ia ia"; height: auto; }
+.ck-grid-metodo { grid-template-rows: 560px 640px 640px 640px; grid-template-areas: "fr fr fr fr fr fr fr lc lc lc lc lc" "rl rl rl rl rl rl rl rl rl rl rl rl" "uc uc uc uc uc uc mr mr mr mr mr mr" "ft ft ft ft ft ft ia ia ia ia ia ia"; height: auto; }
 .ck-grid-receita { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "yoy yoy yoy yoy yoy yoy yoy rg rg rg rg rg" "tr tr tr tr tr tr tr or or or or or"; }
 .ck-grid-atendimento { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "as as as as as as cw cw cw cw cw cw" "mm mm mm mm mm mm qa qa qa qa qa qa"; }
 .ck-page.has-focus .ck-grid { grid-template-areas: none; grid-template-rows: minmax(0, 1fr); height: 100%; }
@@ -236,7 +236,7 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
   .ck-grid-cadastro { grid-template-rows: auto 330px repeat(5, 340px); }
   .ck-grid-malha { grid-template-rows: 440px 360px 360px 360px; }
   .ck-grid-fiscalizacao { grid-template-rows: auto 440px 340px 340px auto 340px; }
-  .ck-grid-metodo { grid-template-rows: 560px 600px 600px; }
+  .ck-grid-metodo { grid-template-rows: 560px 600px 600px 600px; }
   .ind-row strong { font-size: 21px; } .ind { padding: 8px 10px; }
   .ck-title h1 { font-size: 18px; } .ck-header { grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; }
   .geo-layout { grid-template-columns: minmax(0, 1fr) 176px; }
@@ -327,6 +327,7 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 .coleta { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 10.5px; font-weight: 800; white-space: nowrap; border: 1px solid transparent; }
 .coleta.is-automatica { color: var(--good); background: var(--good-bg); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
 .coleta.is-convenio { color: var(--ink); background: color-mix(in srgb, var(--accent) 22%, transparent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+.coleta.is-mista { color: var(--ink); background: color-mix(in srgb, var(--blue) 10%, color-mix(in srgb, var(--accent) 14%, transparent)); border-color: color-mix(in srgb, var(--blue) 35%, transparent); }
 .coleta.is-interna { color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, transparent); border-color: color-mix(in srgb, var(--blue) 35%, transparent); }
 .coleta.is-fora-da-coleta-automatica { color: var(--muted); background: var(--neutral-bg); border-color: var(--line); }
 .metodo.is-dense td { padding: 3px 6px; font-size: 11px; } .metodo.is-dense th { padding: 3px 6px; }
