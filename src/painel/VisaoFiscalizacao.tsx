@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import type { Ctx } from './contexto';
@@ -53,7 +54,7 @@ export default function VisaoFiscalizacao({ ctx }: { ctx: Ctx }) {
 /* ---------- Mapa bivariado: território das regionais, cor = problema × resposta ---------- */
 const bivariada = [['#E8E8E8', '#E4ACAC', '#C85A5A'], ['#B0D5DF', '#AD9EA5', '#985356'], ['#64ACBE', '#627F8C', '#574249']];
 const nivel = ['baixo', 'médio', 'alto'];
-export function MapaBivariado({ ctx, area = 'map' }: { ctx: Ctx; area?: string }) {
+export function MapaBivariado({ ctx, area = 'map', tools }: { ctx: Ctx; area?: string; tools?: ReactNode }) {
   const [par, setPar] = useState<ParId>('problema');
   const [destaque, setDestaque] = useState<{ cell?: [number, number]; gre?: string } | null>(null);
   const centroids = useSpMap(), config = pares[par], { tokens } = ctx;
@@ -87,7 +88,7 @@ export function MapaBivariado({ ctx, area = 'map' }: { ctx: Ctx; area?: string }
   }, [territorio, rotulos, classes, config, tokens, destaque, ctx.greId]); // eslint-disable-line react-hooks/exhaustive-deps
   const pick = (params: any) => { const greId = params.componentType === 'geo' ? territorio?.get(params.name) : params.data?.greId; if (greId) ctx.open({ kind: 'gre', id: greId }); };
   return <Tile area={area} title={config.pergunta} question={config.leitura} className="t-map"
-    actions={<div className="seg" role="radiogroup" aria-label="Indicadores do mapa">{(Object.keys(pares) as ParId[]).map(id => <button key={id} role="radio" aria-checked={par === id} className={par === id ? 'on' : ''} onClick={() => setPar(id)}>{pares[id].label}</button>)}</div>}>
+    actions={<div className="tile-tools"><div className="seg" role="radiogroup" aria-label="Indicadores do mapa">{(Object.keys(pares) as ParId[]).map(id => <button key={id} role="radio" aria-checked={par === id} className={par === id ? 'on' : ''} onClick={() => setPar(id)}>{pares[id].label}</button>)}</div>{tools}</div>}>
     <div className="map-layout">
       <div className="map-box">{option ? <Chart option={option} tokens={tokens} label={`Mapa das regionais: ${config.x} e ${config.y}`} onPick={pick} /> : <div className="loading">Carregando mapa…</div>}
         <p className="map-note">Território de cada GRE aproximado pelos municípios da amostra; em produção, usar a tabela oficial município → GRE.</p></div>

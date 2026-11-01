@@ -12,38 +12,46 @@ import type { LinhaGre } from './medidas';
 import { Bloco, Indicador } from './ui';
 
 /**
- * Aba 1 · Presidência (painel da onda 1 do Observatório): os quatro indicadores-norte com ficha, um cartão por assunto,
- * o mapa e o quadro das regionais contra o ano anterior, e a leitura do período.
+ * Aba 1 · Presidência: os quatro indicadores-norte com ficha, um cartão por assunto (os doze assuntos do painel, cada um com a
+ * sua ficha), o mapa e o quadro das regionais contra o ano anterior, e a leitura do período. Tudo lido na data de referência.
  */
 const change = (now: number, before: number | null | undefined) => before ? (now - before) / before * 100 : null;
 
 export default function PaginaPresidencia({ ctx }: { ctx: CockpitCtx }) {
-  const { model, history, resumo, rec, malha, estrutura, arts, metas, tokens, period } = ctx;
+  const { model, history, resumo, rec, malha, estrutura, metas, tokens, period } = ctx;
   const months = history.monthly, before = months.length > period ? months[months.length - 1 - period] : null;
   const base = model.metrics.base.value ?? 0, cobertura = model.metrics.coverage.value, saldo = model.metrics.overdue.value ?? 0;
   const cobradas = model.metrics.compliance.denominatorCompanyIds?.length ?? 0, inad = cobradas ? devedoras(model).size / cobradas * 100 : null;
   const semRegistro = model.metadata.eligibleEstablishmentIds.length - model.metadata.activeEligibleEstablishmentIds.length;
   const taxa = estrutura?.atendimento.taxaNoPrazo ?? null, taxaAntes = estrutura?.atendimento.taxaNoPrazoAntes ?? null;
+  const p = ctx.profissionais.resumo, ativosAntes = p.porNivel.reduce((sum, row) => sum + row.antes, 0);
+  const coorte = ctx.formacao.coortes.filter(row => row.fechada24).at(-1), coorteAntes = ctx.formacao.coortes.filter(row => row.fechada24).at(-2);
+  const ft = ctx.forcas.filter(row => row.fechada && row.diferenca !== null).at(-1), abertas = ctx.forcas.filter(row => !row.fechada).length;
+  const e = ctx.entidades, c = ctx.conselho;
   return <div className="ck-grid ck-grid-presidencia">
     <Norte ctx={ctx} id="cobertura" area="n1" />
     <Norte ctx={ctx} id="conversao" area="n2" />
     <Norte ctx={ctx} id="receita" area="n3" />
     <Norte ctx={ctx} id="tempo" area="n4" />
-    <section className="ck-cards" style={{ gridArea: 'kpi' }} aria-label="Um indicador por assunto">
-      <Indicador destaque aspecto="Cadastro" label="Empresas registradas" value={int(base)} variacao={{ value: change(base, before?.base), label: `em ${period} meses` }} spark={months.map(row => row.base)} cor={tokens.accent} sub={`${int(ctx.ponte.viaFiscalizacao.length)} entraram após fiscalização`} onOpen={() => ctx.go('cadastro')} />
-      <Indicador aspecto="Mercado" label="Cobertura cadastral" value={cobertura === null ? '—' : pct(cobertura, 1)} variacao={{ value: cobertura === null ? null : cobertura - metas.cobertura, kind: 'pp', label: `vs. meta de ${metas.cobertura}%` }} meta={{ atual: cobertura, alvo: metas.cobertura }} sub={`${int(semRegistro)} CNPJs da lista sem registro localizado`} onOpen={() => ctx.go('cadastro')} />
-      <Indicador aspecto="Fiscalização" label="Autos de infração" value={int(resumo.autos.length)} variacao={{ value: change(resumo.autos.length, resumo.autosPrev) }} spark={resumo.mensal.map(row => row.autos.registro + row.autos.rt + row.autos.art)} cor={tokens.bad} sub={`${int(resumo.acoes.length)} ações · ${int(resumo.regularizacoes.length)} regularizações`} onOpen={() => ctx.go('fiscalizacao')} />
-      <Indicador aspecto="Receita" label="Arrecadação de empresas" value={brl(rec.total)} variacao={{ value: rec.totalAntes === null ? null : change(rec.total, rec.totalAntes) }} spark={rec.mensal.map(row => row.anuidades + row.multas)} cor={tokens.good} sub={`${brl(rec.multas)} de multas`} onOpen={() => ctx.go('receita')} />
-      <Indicador aspecto="Cobrança" label="Saldo vencido" value={brl(saldo)} variacao={{ value: change(saldo, before?.overdue), goodUp: false, label: `em ${period} meses` }} spark={months.map(row => row.overdue)} cor={tokens.bad} sub={inad === null ? '' : `${pct(inad)} das empresas cobradas inadimplentes`} onOpen={() => ctx.go('receita')} />
-      <Indicador aspecto="Responsabilidade técnica" label="ARTs de empresas" value={int(arts.atual.length)} variacao={{ value: change(arts.atual.length, arts.antes) }} spark={arts.mensal} cor={tokens.blue} sub={`${pct(model.metrics.rtCoverage.value ?? 0)} das empresas com RT`} onOpen={() => ctx.go('tecnica')} />
-      <Indicador aspecto="Malha fina" label="Empresas com indício confirmado" value={int(malha.confirmadas.length)}
+    <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Um indicador por assunto">
+      <Indicador destaque ficha="k-empresas" ctx={ctx} aspecto="Empresas" label="Empresas registradas" value={int(base)} variacao={{ value: change(base, before?.base), label: `em ${period} meses` }} spark={months.map(row => row.base)} cor={tokens.accent} sub={`${int(ctx.ponte.viaFiscalizacao.length)} entraram após fiscalização`} onOpen={() => ctx.go('cadastro')} />
+      <Indicador ficha="k-cobertura" ctx={ctx} aspecto="Mercado" label="Cobertura cadastral" value={cobertura === null ? '—' : pct(cobertura, 1)} variacao={{ value: cobertura === null ? null : cobertura - metas.cobertura, kind: 'pp', label: `vs. meta de ${metas.cobertura}%` }} meta={{ atual: cobertura, alvo: metas.cobertura }} sub={`${int(semRegistro)} CNPJs da lista sem registro localizado`} onOpen={() => ctx.go('cadastro')} />
+      <Indicador ficha="k-profissionais" ctx={ctx} aspecto="Profissionais" label="Profissionais ativos" value={int(p.ativos.length)} variacao={{ value: change(p.ativos.length, ativosAntes), label: 'vs. um ano antes' }} spark={p.mensal.map(row => row.novos)} cor={tokens.blue} sub={`${int(p.novos.length)} registros novos no período · ${p.taxaAdimplencia === null ? '—' : pct(p.taxaAdimplencia)} em dia`} onOpen={() => ctx.go('profissionais')} />
+      <Indicador ficha="k-formacao" ctx={ctx} aspecto="Formação" label={`Registro em 24 meses · ${coorte?.ano ?? '—'}`} value={coorte?.taxaRegistro24 == null ? '—' : pct(coorte.taxaRegistro24, 1)} variacao={{ value: coorte?.taxaRegistro24 != null && coorteAntes?.taxaRegistro24 != null ? coorte.taxaRegistro24 - coorteAntes.taxaRegistro24 : null, kind: 'pp', label: `vs. coorte ${coorteAntes?.ano ?? 'anterior'}` }} sub={coorte ? `${int(coorte.registradosEm24.length)} de ${int(coorte.concluintes)} concluintes (INEP)` : 'nenhuma coorte fechada'} onOpen={() => ctx.go('formacao')} />
+      <Indicador ficha="k-autos" ctx={ctx} aspecto="Fiscalização" label="Autos de infração" value={int(resumo.autos.length)} variacao={{ value: change(resumo.autos.length, resumo.autosPrev) }} spark={resumo.mensal.map(row => row.autos.registro + row.autos.rt + row.autos.art)} cor={tokens.bad} sub={`${int(resumo.acoes.length)} ações · ${int(resumo.regularizacoes.length)} regularizações`} onOpen={() => ctx.go('fiscalizacao')} />
+      <Indicador ficha="k-forcas" ctx={ctx} aspecto="Forças-tarefas" label={ft ? `${ft.ft.id} vs. grupo de comparação` : 'Forças-tarefas'} value={ft ? `${ft.diferenca! >= 0 ? '+' : ''}${ft.diferenca!.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} p.p.` : '—'} sub={ft ? `${ft.grupo.taxa === null ? '—' : pct(ft.grupo.taxa)} em ${int(ft.grupo.acoes.length)} ações contra ${ft.comparacao.taxa === null ? '—' : pct(ft.comparacao.taxa)} em ${int(ft.comparacao.acoes.length)} · ${int(abertas)} em aberto` : `${int(ctx.forcas.length)} forças-tarefas, nenhuma fechada`} onOpen={() => ctx.go('fiscalizacao')} />
+      <Indicador ficha="k-receita" ctx={ctx} aspecto="Receita" label="Arrecadação de empresas" value={brl(rec.total)} variacao={{ value: rec.totalAntes === null ? null : change(rec.total, rec.totalAntes) }} spark={rec.mensal.map(row => row.anuidades + row.multas)} cor={tokens.good} sub={`${brl(rec.multas)} de multas`} onOpen={() => ctx.go('receita')} />
+      <Indicador ficha="k-saldo" ctx={ctx} aspecto="Cobrança" label="Saldo vencido" value={brl(saldo)} variacao={{ value: change(saldo, before?.overdue), goodUp: false, label: `em ${period} meses` }} spark={months.map(row => row.overdue)} cor={tokens.bad} sub={inad === null ? '' : `${pct(inad)} das empresas cobradas inadimplentes`} onOpen={() => ctx.go('receita')} />
+      <Indicador ficha="k-entidades" ctx={ctx} aspecto="Entidades e IES" label="Repasses em 12 meses" value={brl(e.total)} variacao={{ value: change(e.total, e.totalAntes), label: 'vs. 12 meses anteriores' }} sub={`${int(e.linhas.length)} organizações · ${int(e.cadeiras)} cadeiras no plenário`} onOpen={() => ctx.go('entidades')} />
+      <Indicador ficha="k-controle" ctx={ctx} aspecto="Controle interno" label="Despesa em atividades-fim" value={c.fimMeioAtual.taxaFim === null ? '—' : pct(c.fimMeioAtual.taxaFim)} spark={c.ritmo.slice(-12).map(row => row.realizado)} cor={tokens.heat[2]} sub={`${brl(c.fimMeioAtual.fim + c.fimMeioAtual.meio)} realizados em 12 meses`} onOpen={() => ctx.go('controle')} />
+      <Indicador ficha="k-malha" ctx={ctx} aspecto="Malha fina" label="Empresas com indício confirmado" value={int(malha.confirmadas.length)}
         sub={<><Segments parts={[{ label: 'Com ação fiscal', value: malha.comAcao.length, color: tokens.good }, { label: 'Sem ação fiscal', value: malha.empresas.length - malha.comAcao.length, color: tokens.warn }]} />{int(malha.empresas.length)} com algum indício · {pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)} com ação</>} onOpen={() => ctx.go('malha')} />
-      <Indicador aspecto="Atendimento" label="Solicitações resolvidas no prazo" value={taxa === null ? '…' : pct(taxa)} variacao={{ value: taxa === null || taxaAntes === null ? null : taxa - taxaAntes, kind: 'pp' }} meta={{ atual: taxa, alvo: metas.atendimento }}
+      <Indicador ficha="k-atendimento" ctx={ctx} aspecto="Atendimento" label="Solicitações resolvidas no prazo" value={taxa === null ? '…' : pct(taxa)} variacao={{ value: taxa === null || taxaAntes === null ? null : taxa - taxaAntes, kind: 'pp' }} meta={{ atual: taxa, alvo: metas.atendimento }}
         sub={estrutura?.atendimento.medianaDias == null ? 'calculando…' : `mediana de ${int(estrutura.atendimento.medianaDias)} dias`} onOpen={() => ctx.go('atendimento')} />
     </section>
     <MapaRegional ctx={ctx} />
     <Bloco ctx={ctx} id="sc" area="sc" title="Quadro das regionais" question="Cada regional em todos os assuntos. Setas comparam com as metas; cores marcam as maiores lacunas. Clique numa linha para o resumo da regional."><Quadro ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="lt" area="lt" title="Leitura do período" question="Destaques calculados a cada filtro. Clique numa frase para abrir o assunto." className="t-leitura">
+    <Bloco ctx={ctx} id="lt" area="lt" title="Leitura do período" question="Destaques calculados a cada filtro e data de referência. Clique numa frase para abrir o assunto." className="t-leitura">
       <ul className="leitura">{ctx.insights.map((item, index) => <li key={index} className={`is-${item.tone}`}><button onClick={() => ctx.go(item.page)}><i aria-hidden="true" /><span><b>{item.strong}</b> {item.text}</span></button></li>)}</ul>
     </Bloco>
   </div>;

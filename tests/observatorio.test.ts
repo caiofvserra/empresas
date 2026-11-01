@@ -6,7 +6,7 @@ import { selectEnterpriseScope } from '../src/enterprise-v10/filters.ts';
 import { buildEnterpriseModel } from '../src/enterprise-v10/model.ts';
 import { buildFiscalizacao, tipoLabel } from '../src/painel/fiscalizacao.ts';
 import { PRAZO_ATRIBUICAO, PRAZO_CONVERSAO, classesCnae, cobertura, contagens, conversao, correspondencias, fichas, medianaKm, origensIndicio, receitaAtribuivel, tempoAteAgir } from '../src/observatorio/norte.ts';
-import { casos, fontes, lacunas, regrasLeitura } from '../src/observatorio/governanca.ts';
+import { casos, fontes, lacunas, regrasLeitura, situacoesCaso } from '../src/observatorio/governanca.ts';
 
 const f = buildFiscalizacao(dataset);
 const scope = selectEnterpriseScope(dataset, { ...defaultFilters, period: 12 }), model = buildEnterpriseModel(scope);
@@ -71,5 +71,8 @@ test('método: fichas, regras de leitura, 12 lacunas, 34 casos e 98 fontes', () 
   assert.deepEqual(lacunas.map(row => row.n), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   assert.equal(casos.length, 34);
   assert.ok(casos.every(row => row.onde !== '—'), 'todo caso tem lugar ou destino');
+  assert.ok(casos.every(row => situacoesCaso.includes(row.situacao)));
+  assert.ok(!casos.some(row => /onda/i.test(row.onde)), 'sem linguagem de ondas');
+  assert.ok(lacunas.every(row => !/onda/i.test(`${row.oQueMudou} ${row.falta}`)) && regrasLeitura.every(row => !/onda/i.test(row.noPainel)));
   assert.equal(fontes.length, 98);
 });

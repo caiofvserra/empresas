@@ -5,11 +5,10 @@ import { Chart } from '../painel/chart';
 import { devedoras } from '../painel/analise';
 import { brl, int, mes, money, pct } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
-import { despesaPublicada } from './publico';
 import { averageAnnualTicket } from '../gestao-v14/metrics';
-import { Bloco, Indicador, Selo, carregando } from './ui';
+import { Bloco, Indicador, carregando } from './ui';
 
-/** Aba 6 · Receita, cobrança e orçamento: arrecadação ano contra ano, saldo vencido (idade, recuperação, decomposição) e execução orçamentária. */
+/** Aba 7 · Receita, cobrança e orçamento: arrecadação ano contra ano, saldo vencido (idade, recuperação, decomposição) e execução orçamentária dos programas. A despesa publicada foi para o Controle interno. */
 const change = (now: number, before: number | null | undefined) => before ? (now - before) / before * 100 : null;
 
 export default function PaginaReceita({ ctx }: { ctx: CockpitCtx }) {
@@ -20,19 +19,18 @@ export default function PaginaReceita({ ctx }: { ctx: CockpitCtx }) {
   const orc = estrutura?.orcamento;
   return <div className="ck-grid ck-grid-receita">
     <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Indicadores de receita, cobrança e orçamento">
-      <Indicador destaque label="Arrecadação de empresas" value={brl(rec.total)} variacao={{ value: rec.totalAntes === null ? null : change(rec.total, rec.totalAntes) }} spark={rec.mensal.map(row => row.anuidades + row.multas)} cor={tokens.accent} sub={`${brl(rec.anuidades)} anuidades · ${brl(rec.multas)} multas`} />
-      <Indicador label="Saldo vencido" value={brl(saldo)} variacao={{ value: change(saldo, before?.overdue), goodUp: false, label: `em ${period} meses` }} spark={months.map(row => row.overdue)} cor={tokens.bad} sub={`${int(debtors.size)} empresas devedoras`}
+      <Indicador destaque ficha="k-arrecadacao" ctx={ctx} label="Arrecadação de empresas" value={brl(rec.total)} variacao={{ value: rec.totalAntes === null ? null : change(rec.total, rec.totalAntes) }} spark={rec.mensal.map(row => row.anuidades + row.multas)} cor={tokens.accent} sub={`${brl(rec.anuidades)} anuidades · ${brl(rec.multas)} multas`} />
+      <Indicador ficha="k-saldo" ctx={ctx} label="Saldo vencido" value={brl(saldo)} variacao={{ value: change(saldo, before?.overdue), goodUp: false, label: `em ${period} meses` }} spark={months.map(row => row.overdue)} cor={tokens.bad} sub={`${int(debtors.size)} empresas devedoras`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas com saldo vencido', what: 'Empresas cobradas com valor vencido e não pago no corte.', use: 'Cobre primeiro os maiores saldos e os mais recentes; confira se o CNPJ segue ativo.', ids: [...debtors] })} />
-      <Indicador label="Adimplência" value={adimplencia === null ? '—' : pct(adimplencia)} meta={{ atual: adimplencia, alvo: metas.adimplencia }} variacao={{ value: adimplencia === null ? null : adimplencia - metas.adimplencia, kind: 'pp', label: `vs. meta de ${metas.adimplencia}%` }} sub={`${int(cobradas.length - debtors.size)} de ${int(cobradas.length)} empresas cobradas em dia`} />
-      <Indicador label="Recuperação da dívida" value={model.metrics.recovery.value === null ? '—' : pct(model.metrics.recovery.value)} meta={{ atual: model.metrics.recovery.value, alvo: metas.recuperacao }} sub={`${brl(model.recoveryCohort.recovered)} recebidos de ${brl(model.recoveryCohort.openingBalance)} vencidos no início`} />
-      <Indicador label="Execução orçamentária" value={orc?.execucao == null ? '…' : pct(orc.execucao)} sub={orc ? `${brl(orc.executado)} executados de ${brl(orc.planejado)} planejados` : 'calculando…'} />
-      <Indicador label="Potencial anual de registro" value={ticket === null ? '—' : brl(gap * ticket)} sub={`${int(gap)} CNPJs sem registro × ${ticket === null ? '—' : money(ticket)} de anuidade mediana`} />
+      <Indicador ficha="k-adimplencia" ctx={ctx} label="Adimplência" value={adimplencia === null ? '—' : pct(adimplencia)} meta={{ atual: adimplencia, alvo: metas.adimplencia }} variacao={{ value: adimplencia === null ? null : adimplencia - metas.adimplencia, kind: 'pp', label: `vs. meta de ${metas.adimplencia}%` }} sub={`${int(cobradas.length - debtors.size)} de ${int(cobradas.length)} empresas cobradas em dia`} />
+      <Indicador ficha="k-recuperacao" ctx={ctx} label="Recuperação da dívida" value={model.metrics.recovery.value === null ? '—' : pct(model.metrics.recovery.value)} meta={{ atual: model.metrics.recovery.value, alvo: metas.recuperacao }} sub={`${brl(model.recoveryCohort.recovered)} recebidos de ${brl(model.recoveryCohort.openingBalance)} vencidos no início`} />
+      <Indicador ficha="k-execucao" ctx={ctx} label="Execução orçamentária" value={orc?.execucao == null ? '…' : pct(orc.execucao)} sub={orc ? `${brl(orc.executado)} executados de ${brl(orc.planejado)} planejados` : 'calculando…'} />
+      <Indicador ficha="k-potencial" ctx={ctx} label="Potencial anual de registro" value={ticket === null ? '—' : brl(gap * ticket)} sub={`${int(gap)} CNPJs sem registro × ${ticket === null ? '—' : money(ticket)} de anuidade mediana`} />
     </section>
     <Bloco ctx={ctx} id="yoy" area="yoy" title="Arrecadação de empresas, mês a mês" question="Anuidades e multas recebidas; a linha é o total do mesmo mês no ano anterior. Setas: variação de cada mês."><AnoContraAno ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="rg" area="rg" title="Recuperação e idade do saldo vencido" question="Quanto do saldo vencido no início do período já foi recebido, e há quanto tempo o saldo atual está vencido."><Recuperacao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="tr" area="tr" title="Onde está o saldo vencido" question="Clique numa barra para abrir o próximo nível; troque a dimensão no cabeçalho de cada coluna; ⌖ lista as empresas." help="Árvore de decomposição: regional, porte, faixa de atraso, atividade (CNAE) e situação do RT."><Arvore ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="or" area="or" title="Orçamento dos programas" question="Planejado (barra clara) e executado (barra escura) no período, por programa.">{orc ? <Orcamento ctx={ctx} /> : carregando}</Bloco>
-    <Bloco ctx={ctx} id="dp" area="dp" title="Despesa publicada do Conselho" question={`Portal da Transparência: despesa por exercício e composição acumulada ${despesaPublicada.periodo}.`} badge={<Selo data={despesaPublicada.fonte.data} />}><Despesa ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -98,20 +96,5 @@ function Orcamento({ ctx }: { ctx: CockpitCtx }) {
   return <div className="stack">
     <p className="kpi-line"><b>{orc.execucao === null ? '—' : pct(orc.execucao)}</b> de execução · {brl(orc.executado)} de {brl(orc.planejado)} · {orc.executadoAntes ? `${orc.executado >= orc.executadoAntes ? '+' : ''}${pct((orc.executado / orc.executadoAntes - 1) * 100)} executado vs. ano anterior` : ''}</p>
     <Chart option={option} tokens={tokens} label="Orçamento planejado e executado por programa" />
-  </div>;
-}
-
-function Despesa({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, exercicios = despesaPublicada.exercicios, subgrupos = [...despesaPublicada.subgrupos].sort((a, b) => b.valor - a.valor);
-  const primeiro = exercicios[0], ultimo = exercicios.at(-1)!;
-  const option = useMemo(() => ({
-    grid: { top: 4, right: 64, bottom: 2, left: 2, containLabel: true },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => `<b>${items[0].name}</b><br/>${money(items[0].value)} acumulados ${despesaPublicada.periodo}` },
-    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: subgrupos.map(row => row.label), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5, width: 150, overflow: 'truncate' } },
-    series: [{ type: 'bar', barWidth: 12, data: subgrupos.map(row => row.valor), itemStyle: { color: tokens.heat[2], borderRadius: [0, 4, 4, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => brl(params.value) } }],
-  }), [subgrupos, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <div className="stack">
-    <p className="kpi-line">Despesa de <b>{brl(ultimo.valor)}</b> em {ultimo.ano}, contra {brl(primeiro.valor)} em {primeiro.ano} ({ultimo.valor >= primeiro.valor ? '+' : ''}{pct((ultimo.valor / primeiro.valor - 1) * 100)})</p>
-    <Chart option={option} tokens={tokens} label="Despesa publicada do CREA-SP por subgrupo" />
   </div>;
 }

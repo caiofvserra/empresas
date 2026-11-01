@@ -6,10 +6,9 @@ import generoUf from '../../public/data/engineer-statistics/confea-genero.json';
 import populacaoUf from '../../public/data/engineer-statistics/populacao-uf.json';
 import pisos from '../../public/data/engineer-statistics/pisos.json';
 import registrosAno from '../../public/data/engineer-statistics/confea-registros-ano.json';
-import salariosCsv from '../../archives/data-publica-v6/salarios_cbo.csv?raw';
 import formacaoCsv from '../../archives/data-publica-v6/educacao_sp_cine_ano.csv?raw';
 
-/** Dados públicos REAIS versionados no repositório (sem consulta de rede), com fonte e data de captura. */
+/** Dados públicos REAIS versionados no repositório (sem consulta de rede), com fonte e data de captura. O Portal Salário (coleta pontual, fonte secundária) saiu na V20. */
 export function parseCsv(text: string): Record<string, string>[] {
   const rows: string[][] = []; let field = '', row: string[] = [], quoted = false;
   const input = text.replace(/^﻿/, '');
@@ -57,9 +56,6 @@ export const piso = { valor8h: leitura.valorJornada8h ?? 0, salarioMinimo: pisos
 /** Piso da Lei 4.950-A/66 com a base congelada pelo STF (ADPFs 53, 149 e 171) e na leitura Confea. Leitura descritiva e agregada: a regra por jornada ainda precisa ser versionada e validada pela GAJ. */
 const stf = pisos.data.leituras.find(row => row.id === 'stf-congelado') as { baseCongeladaValor?: number; valorJornada8h?: number } | undefined;
 export const pisoLegal = { base: stf?.baseCongeladaValor ?? 1212, exigivel8h: stf?.valorJornada8h ?? 10302, confea8h: leitura.valorJornada8h ?? 13778.5 };
-export const salarios = { fonte: { nome: 'Salário médio CLT por ocupação (CAGED, via portal salario.com.br · fonte secundária)', url: 'https://www.salario.com.br', data: '2026-08-31' } as Fonte,
-  linhas: parseCsv(salariosCsv).map(row => ({ cbo: row.cbo, ocupacao: row.occupation.split(' (')[0].replace(' — ', ' · '), salario: Number(row.averageMonthlySalary), horas: Number(row.weeklyHours), movimentacoes: Number(row.movements), engenharia: /^Engenheiro/.test(row.occupation) })) };
-
 /** Concluintes de cursos presenciais de engenharia em SP (Censo da Educação Superior/INEP), por curso e ano. */
 const formacao = parseCsv(formacaoCsv).map(row => ({ code: row.code, curso: row.name, ano: row.year, concluintes: Number(row.graduates), ingressantes: Number(row.entrants) }));
 const anos = [...new Set(formacao.map(row => row.ano))].sort();
