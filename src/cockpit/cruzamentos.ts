@@ -25,9 +25,9 @@ const unique = (values: string[]) => [...new Set(values)].sort();
 export type StatusLigacao = 'Confirmado' | 'Candidato' | 'Contexto';
 export const statusLigacao: StatusLigacao[] = ['Confirmado', 'Candidato', 'Contexto'];
 export const statusAjuda: Record<StatusLigacao, string> = {
-  Confirmado: 'Ligação por chave exata ou documento (CNPJ completo, nº do contrato na ART). O fato é verificável; a obrigação ainda depende de análise.',
-  Candidato: 'Semelhança de atividade, empresa ou período. Vai para revisão humana e fica fora das contagens confirmadas.',
-  Contexto: 'Agregado ou dependente de análise normativa. Orienta prioridade, não aponta empresa.',
+  Confirmado: 'As bases se ligam por um dado idêntico ou por documento, como o CNPJ completo ou o número do contrato escrito na ART. O fato pode ser verificado, mas a obrigação ainda depende de análise.',
+  Candidato: 'As bases se ligam por semelhança de atividade, empresa ou período. O caso precisa ser revisto por uma pessoa e fica fora das contagens confirmadas.',
+  Contexto: 'O dado é agregado ou depende de interpretação da norma. Ajuda a decidir prioridades, mas não aponta uma empresa.',
 };
 
 export type IndicioId = 'cnaeSim' | 'cnaePassivel' | 'contratoSemRegistro' | 'contratoSemVinculo' | 'rtSemSubstituto' | 'cnpjInativo'
@@ -35,60 +35,60 @@ export type IndicioId = 'cnaeSim' | 'cnaePassivel' | 'contratoSemRegistro' | 'co
 export interface Regra { id: IndicioId; label: string; status: StatusLigacao; regra: string; fonte: string; versao: string; naoConcluir: string; coleta: 'Interna' | 'Automática' | 'Convênio';
   /** V22: a regra só sai do demonstrativo com o acordo deste parceiro ("!" na tabela). */
   parceria?: ParceriaId }
-export const VERSAO_REGRAS = 'v1 · 31/10/2026';
-export const VERSAO_REGRAS_V2 = 'v2 · 01/11/2026';
-export const VERSAO_REGRAS_V3 = 'v3 · 01/11/2026';
-export const VERSAO_REGRAS_V4 = 'v4 · 01/11/2026 (parceria)';
+export const VERSAO_REGRAS = 'versão 1, de 31/10/2026';
+export const VERSAO_REGRAS_V2 = 'versão 2, de 01/11/2026';
+export const VERSAO_REGRAS_V3 = 'versão 3, de 01/11/2026';
+export const VERSAO_REGRAS_V4 = 'versão 4, de 01/11/2026, depende de parceria';
 export const regras: Regra[] = [
-  { id: 'contratoSemRegistro', status: 'Confirmado', label: 'Contrato técnico com fornecedor sem registro na data', fonte: 'PNCP × cadastro PJ', versao: VERSAO_REGRAS, coleta: 'Automática',
+  { id: 'contratoSemRegistro', status: 'Confirmado', label: 'Contrato técnico com fornecedor sem registro na data', fonte: 'PNCP e cadastro de empresas', versao: VERSAO_REGRAS, coleta: 'Automática',
     regra: 'Contrato público de obra, serviço técnico, manutenção ou consultoria cujo estabelecimento contratado (CNPJ completo) não tinha registro vigente na data do contrato.',
     naoConcluir: 'Que o objeto exigia registro: confirmar o objeto e a atividade antes de notificar.' },
-  { id: 'cnpjInativo', status: 'Confirmado', label: 'Registro ativo com CNPJ baixado, inapto ou suspenso', fonte: 'Receita (CNPJ) × cadastro PJ', versao: VERSAO_REGRAS, coleta: 'Automática',
-    regra: 'Registro ativo no Crea-SP de estabelecimento cuja situação na Receita, no mesmo corte, é baixada, inapta ou suspensa.',
+  { id: 'cnpjInativo', status: 'Confirmado', label: 'Registro ativo com CNPJ baixado, inapto ou suspenso', fonte: 'Receita Federal e cadastro de empresas', versao: VERSAO_REGRAS, coleta: 'Automática',
+    regra: 'Registro ativo no Crea-SP de um estabelecimento que, na mesma data, aparece na Receita como baixado, inapto ou suspenso.',
     naoConcluir: 'Que a empresa deixou de atuar: situação cadastral não prova funcionamento.' },
-  { id: 'rtSemSubstituto', status: 'Confirmado', label: 'RT baixado sem substituto há mais de 30 dias', fonte: 'Cadastro PJ e vínculos de RT', versao: VERSAO_REGRAS, coleta: 'Interna',
+  { id: 'rtSemSubstituto', status: 'Confirmado', label: 'RT baixado sem substituto há mais de 30 dias', fonte: 'Cadastro de empresas e responsáveis técnicos', versao: VERSAO_REGRAS, coleta: 'Interna',
     regra: 'Empresa com registro vigente cujo último vínculo de responsável técnico terminou há mais de 30 dias sem outro vínculo.',
     naoConcluir: 'Que houve atividade técnica sem responsável no período.' },
-  { id: 'atividadeComDebito', status: 'Confirmado', label: 'Atividade recente com anuidade vencida', fonte: 'ART × anuidades', versao: VERSAO_REGRAS_V2, coleta: 'Interna',
-    regra: 'Empresa registrada com ART nos últimos 90 dias e saldo de anuidade vencido no corte: está em atividade e não obteria a certidão de registro e quitação.',
+  { id: 'atividadeComDebito', status: 'Confirmado', label: 'Atividade recente com anuidade vencida', fonte: 'ARTs e anuidades', versao: VERSAO_REGRAS_V2, coleta: 'Interna',
+    regra: 'Empresa registrada com ART nos últimos 90 dias e anuidade vencida na data escolhida. Ela está em atividade e não conseguiria a certidão de registro e quitação.',
     naoConcluir: 'Que a empresa está em licitação ou precisa da certidão: a regra ordena a cobrança, não cria obrigação nova.' },
-  { id: 'cnaeSim', status: 'Candidato', label: 'CNAE “Sim” sem registro localizado', fonte: 'Receita (CNPJ, CNAE) × lista CNAE Crea-SP × cadastro PJ', versao: VERSAO_REGRAS, coleta: 'Automática',
-    regra: 'Estabelecimento ativo na Receita com CNAE principal ou secundário marcado “Sim” na lista do Crea-SP e sem registro ou visto vigente no corte.',
+  { id: 'cnaeSim', status: 'Candidato', label: 'Atividade de registro obrigatório sem registro encontrado', fonte: 'Receita Federal, lista de atividades do Crea-SP e cadastro de empresas', versao: VERSAO_REGRAS, coleta: 'Automática',
+    regra: 'Estabelecimento ativo na Receita, com atividade principal ou secundária de registro obrigatório (“Sim”) na lista do Crea-SP, sem registro nem visto na data escolhida.',
     naoConcluir: 'Que a empresa é irregular: CNAE não prova atividade efetiva nem obrigação.' },
-  { id: 'contratoSemVinculo', status: 'Candidato', label: 'Contrato técnico sem ART identificada', fonte: 'PNCP × ART', versao: VERSAO_REGRAS, coleta: 'Automática',
-    regra: 'Contrato com chave para a busca, sem ART que cite o contrato e sem ART candidata da mesma empresa entre 30 dias antes e 60 depois.',
+  { id: 'contratoSemVinculo', status: 'Candidato', label: 'Contrato técnico sem ART identificada', fonte: 'PNCP e ARTs', versao: VERSAO_REGRAS, coleta: 'Automática',
+    regra: 'Contrato com dados suficientes para a busca, sem nenhuma ART que cite o contrato e sem ART da mesma empresa entre 30 dias antes e 60 dias depois dele.',
     naoConcluir: 'Que falta ART: a busca por empresa e período pode não achar a ART certa.' },
-  { id: 'obraSemArtFiscalizacao', status: 'Candidato', label: 'Obra pública sem ART de fiscalização', fonte: 'PNCP × Obrasgov (CIPI) × ART (execução e fiscalização)', versao: VERSAO_REGRAS_V3, coleta: 'Automática',
-    regra: 'Obra pública iniciada segundo o Obrasgov (em execução, paralisada ou concluída) com ponte ao contrato do PNCP (CIPI no contrato ou candidata) ou ART de execução identificada, e nenhuma ART de fiscalização da obra registrada por profissional do órgão contratante ou de empresa contratada para fiscalizar.',
+  { id: 'obraSemArtFiscalizacao', status: 'Candidato', label: 'Obra pública sem ART de fiscalização', fonte: 'PNCP, Obrasgov e ARTs de execução e de fiscalização', versao: VERSAO_REGRAS_V3, coleta: 'Automática',
+    regra: 'Obra pública iniciada segundo o Obrasgov (em execução, paralisada ou concluída) ligada ao contrato do PNCP (pelo código CIPI no contrato ou por semelhança) ou ART de execução identificada, e nenhuma ART de fiscalização da obra registrada por profissional do órgão contratante ou de empresa contratada para fiscalizar.',
     naoConcluir: 'Que o órgão descumpre a Lei 6.496/77: a ART de fiscalização pode estar sob outro contrato ou outra chave. Primeiro, orientar o órgão.' },
-  { id: 'artAnormal', status: 'Candidato', label: 'Padrão anormal de ART por profissional', fonte: 'ART (autor, empresa, regional)', versao: VERSAO_REGRAS_V2, coleta: 'Interna',
+  { id: 'artAnormal', status: 'Candidato', label: 'Profissional com volume de ART fora do normal', fonte: 'ARTs (autor, empresa e regional)', versao: VERSAO_REGRAS_V2, coleta: 'Interna',
     regra: 'Profissional com ARTs nos últimos 12 meses acima de três vezes a mediana dos autores (mínimo de 6) e para cinco ou mais empresas ou em quatro ou mais regionais. As empresas listadas são as dessas ARTs.',
     naoConcluir: 'Que o profissional “vende” ART ou acumula RT indevidamente: volumes altos são normais em algumas modalidades e portes. Conferir compatibilidade de tempo e área (Resolução Confea nº 1.025/2009).' },
-  { id: 'sucessao', status: 'Candidato', label: 'Sucessão de empresas após baixa do registro', fonte: 'Cadastro PJ × Receita (abertura, CNAE, município) × RT', versao: VERSAO_REGRAS_V2, coleta: 'Automática',
+  { id: 'sucessao', status: 'Candidato', label: 'Sucessão de empresas após baixa do registro', fonte: 'Cadastro de empresas, Receita Federal e responsáveis técnicos', versao: VERSAO_REGRAS_V2, coleta: 'Automática',
     regra: 'Registro baixado ou cancelado nos últimos 24 meses e outra empresa aberta no mesmo município, com o mesmo CNAE principal, em até 180 dias da baixa. RT em comum entre as duas eleva a prioridade.',
     naoConcluir: 'Que a nova empresa é a mesma ou herda débitos da anterior: isso depende de análise societária e jurídica.' },
-  { id: 'nomeEngenharia', status: 'Candidato', label: 'Nome de engenharia sem registro', fonte: 'Receita (razão social, nome fantasia) × cadastro PJ', versao: VERSAO_REGRAS_V2, coleta: 'Automática',
+  { id: 'nomeEngenharia', status: 'Candidato', label: 'Nome de engenharia sem registro', fonte: 'Nomes das empresas na Receita Federal e cadastro de empresas', versao: VERSAO_REGRAS_V2, coleta: 'Automática',
     regra: 'Estabelecimento ativo na Receita, sem registro ou visto vigente, cuja razão social ou nome fantasia contém “engenharia”, “engenheiro”, “construtora” ou “projetos”, qualquer que seja o CNAE.',
     naoConcluir: 'Que a empresa exerce atividade privativa: o nome é indício de apresentação ao mercado, não prova de atividade. Em produção, o classificador de nomes passa por validação humana.' },
-  { id: 'cnoSemArt', status: 'Candidato', label: 'Obra do CNO sem ART localizada', fonte: 'CNO autorizado (Receita Federal) × ART', versao: VERSAO_REGRAS_V4, coleta: 'Convênio', parceria: 'rfb-cno',
-    regra: 'Obra inscrita no CNO em SP, ativa ou paralisada, com dados mínimos e empresa do universo no papel de executora, cujo campo ART está vazio ou não corresponde a ART da mesma empresa na base do Crea-SP.',
+  { id: 'cnoSemArt', status: 'Candidato', label: 'Obra privada sem ART encontrada', fonte: 'Cadastro Nacional de Obras (acesso autorizado pela Receita) e ARTs', versao: VERSAO_REGRAS_V4, coleta: 'Convênio', parceria: 'rfb-cno',
+    regra: 'Obra inscrita no Cadastro Nacional de Obras em SP, ativa ou paralisada, executada por empresa com atividade de engenharia, cujo campo de ART está vazio ou não bate com nenhuma ART da mesma empresa no Crea-SP.',
     naoConcluir: 'Que a executora atua sem ART: o campo do CNO é preenchido pelo responsável tributário e a ART pode estar em nome do profissional ou de outra chave. Primeiro, orientar o preenchimento.' },
-  { id: 'licencaSemArt', status: 'Candidato', label: 'Alvará ou licença de obra sem ART ligada', fonte: 'Alvarás (prefeituras), AVCB (Corpo de Bombeiros), licenças (CETESB) × ART', versao: VERSAO_REGRAS_V4, coleta: 'Convênio', parceria: 'prefeituras',
-    regra: 'Alvará de construção ou reforma, AVCB ou licença de instalação vigente em D sem ART ligada ao processo ou à obra. Aponta a executora identificada no processo; sem ela, a titular do universo.',
+  { id: 'licencaSemArt', status: 'Candidato', label: 'Alvará ou licença de obra sem ART ligada', fonte: 'Alvarás das prefeituras, vistorias do Corpo de Bombeiros, licenças da CETESB e ARTs', versao: VERSAO_REGRAS_V4, coleta: 'Convênio', parceria: 'prefeituras',
+    regra: 'Alvará de construção ou reforma, auto de vistoria dos Bombeiros ou licença de instalação vigente na data escolhida, sem ART ligada ao processo ou à obra. Aponta a empresa executora identificada no processo ou, se ela não aparecer, a titular.',
     naoConcluir: 'Que falta ART: a ligação exige a chave do processo, e a ART pode existir sob outro número. Titular não é projetista nem executora.' },
-  { id: 'socioPj', status: 'Contexto', label: 'Sócio PJ de engenharia sem registro', fonte: 'QSA aberto (Receita) × lista CNAE Crea-SP × cadastro PJ', versao: VERSAO_REGRAS_V3, coleta: 'Automática',
-    regra: 'Empresa registrada cujo quadro societário aberto tem sócio pessoa jurídica com CNAE da lista do Crea-SP e sem registro ou visto localizado no corte. Só sócios PJ: o CPF do sócio PF é mascarado.',
+  { id: 'socioPj', status: 'Contexto', label: 'Empresa sócia, de engenharia, sem registro', fonte: 'Quadro de sócios da Receita, lista de atividades do Crea-SP e cadastro de empresas', versao: VERSAO_REGRAS_V3, coleta: 'Automática',
+    regra: 'Empresa registrada que tem como sócia outra empresa com atividade da lista do Crea-SP, sem registro nem visto na data escolhida. Só entram sócios empresas, porque o CPF dos sócios pessoas físicas vem mascarado.',
     naoConcluir: 'Controle, favorecimento ou que o sócio exerce atividade técnica: a sociedade é declarada, não provada, e a holding pode não prestar serviço. Contexto para a análise da empresa investida.' },
-  { id: 'cnaePassivel', status: 'Contexto', label: 'CNAE “Passível” sem registro localizado', fonte: 'Receita (CNPJ, CNAE) × lista CNAE Crea-SP × cadastro PJ', versao: VERSAO_REGRAS, coleta: 'Automática',
-    regra: 'Como a regra “Sim”, mas só com CNAE “Passível de obrigação”: depende da atividade básica e dos serviços efetivamente prestados.',
+  { id: 'cnaePassivel', status: 'Contexto', label: 'Atividade que depende de análise, sem registro encontrado', fonte: 'Receita Federal, lista de atividades do Crea-SP e cadastro de empresas', versao: VERSAO_REGRAS, coleta: 'Automática',
+    regra: 'Igual à regra das atividades de registro obrigatório, mas para as atividades que dependem de análise (“Passível”). A obrigação depende da atividade básica e dos serviços que a empresa de fato presta.',
     naoConcluir: 'Que existe obrigação de registro sem avaliação normativa.' },
 ];
 export const regraPorId = Object.fromEntries(regras.map(row => [row.id, row])) as Record<IndicioId, Regra>;
 
 /** Regras do plano para a malha fina que o cenário ainda não sustenta. */
 export const regrasPendentes = [
-  { label: 'RT de empresas demais, longe demais', motivo: 'exige domicílio do profissional e regra aprovada pelas câmaras' },
-  { label: 'Perito nomeado sem registro ativo', motivo: 'aponta profissional, não empresa; está em Profissionais · perícias judiciais, que depende do acordo com o TJSP (!)' },
+  { label: 'RT de empresas demais, longe demais', motivo: 'precisa do endereço do profissional e de uma regra aprovada pelas câmaras' },
+  { label: 'Perito nomeado sem registro ativo', motivo: 'aponta um profissional, e não uma empresa. Está no bloco de perícias judiciais da aba Profissionais, que depende do acordo com o TJSP (!)' },
 ];
 
 export const TERMOS_ENGENHARIA = /engenharia|engenheir|construtora|projetos/i;
