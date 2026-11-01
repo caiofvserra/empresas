@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { ArrowDownUp, ChevronDown, FileText, BarChart3 } from 'lucide-react';
+import { ArrowDownUp, ChevronDown } from 'lucide-react';
 import { Chart, Spark, useSpMap } from '../painel/chart';
 import { devedoras } from '../painel/analise';
 import { rotulosGre, territorioGre } from '../painel/territorio';
@@ -155,9 +155,7 @@ function Quadro({ ctx }: { ctx: CockpitCtx }) {
 
 /* ---------- Indicadores-norte: número, decomposição e ficha (fórmula, data, leitura) ---------- */
 function Norte({ ctx, id, area }: { ctx: CockpitCtx; id: NorteId; area: string }) {
-  const [ficha, setFicha] = useState(false);
   const item = fichas[id], { norte, tokens } = ctx;
-  const toggle = <button className="icon-btn ghost-icon" onClick={() => setFicha(value => !value)} aria-pressed={ficha} aria-label={ficha ? 'Ver o gráfico' : 'Ver a ficha do indicador'} title={ficha ? 'Ver o gráfico' : 'Ficha: fórmula, data e leitura'}>{ficha ? <BarChart3 size={14} /> : <FileText size={14} />}</button>;
   let valor = '—', sub: ReactNode = null, chart: ReactNode = null;
   if (id === 'cobertura') {
     const c = norte.cobertura; valor = c.taxa === null ? '—' : pct(c.taxa, 1);
@@ -204,11 +202,8 @@ function Norte({ ctx, id, area }: { ctx: CockpitCtx; id: NorteId; area: string }
       series: [{ type: 'bar', barWidth: 12, data: rows.map(row => row.mediana ?? 0), itemStyle: { color: tokens.blue, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => rows[params.dataIndex].mediana === null ? 'em aberto' : `${int(params.value)} d` } }] }}
       onPick={params => { const row = rows[params.dataIndex]; if (row) ctx.open({ kind: 'alvos', tipo: row.id as never }); }} />;
   }
-  return <Bloco ctx={ctx} id={area} area={area} title={item.nome} question={ficha ? `${item.caso} · ficha do indicador` : item.leitura} actions={toggle} className="t-norte">
-    {ficha ? <dl className="ficha">
-      <dt>Fórmula</dt><dd>{item.formula}</dd><dt>Unidade e grão</dt><dd>{item.unidade} · {item.grao}</dd><dt>Data de referência</dt><dd>{item.data}</dd>
-      <dt>Leitura</dt><dd>{item.leitura}</dd><dt>Desconhecido</dt><dd>{item.desconhecido}</dd><dt>Dono</dt><dd>{item.dono}</dd><dt>No protótipo</dt><dd>{item.prototipo}</dd>
-    </dl> : <div className="norte"><p className="norte-valor"><strong>{valor}</strong><span>{sub}</span></p><div className="norte-chart">{chart}</div></div>}
+  return <Bloco ctx={ctx} id={area} area={area} title={item.nome} question={item.leitura} className="t-norte">
+    <div className="norte"><p className="norte-valor"><strong>{valor}</strong><span>{sub}</span></p><div className="norte-chart">{chart}</div></div>
   </Bloco>;
 }
 

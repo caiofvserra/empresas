@@ -1,5 +1,9 @@
 import type { PageId } from './leitura';
 import type { ParceriaId } from '../domain/parcerias';
+import { fichas as fichasNorte } from '../observatorio/norte';
+import type { NorteId } from '../observatorio/norte';
+/** Os indicadores-norte têm uma ficha mais longa (plano rev. 2): os campos a mais entram na mesma ficha (i), sem botão separado. */
+const norte = (id: NorteId): Pick<FichaBloco, 'extra'> => { const f = fichasNorte[id]; return { extra: [['Unidade e grão', `${f.unidade} · ${f.grao}`], ['Data de referência', f.data], ['O que fica de fora', f.desconhecido], ['No protótipo', f.prototipo]] }; };
 
 /**
  * V20/V21 · ficha de cada bloco e cartão do painel, lida pelo (i). Chave: `${aba}.${id do bloco}`.
@@ -9,7 +13,9 @@ import type { ParceriaId } from '../domain/parcerias';
  */
 export interface FichaBloco { mede: string; calcula: string; fontes: string; cruzamento?: string; regra: string; limites: string; dono: string; acao?: string;
   /** V22: o indicador depende de acordo com este parceiro (ou estes); o bloco mostra um "!" por parceiro e a ficha diz o que cada acordo precisa entregar. */
-  parceria?: ParceriaId | ParceriaId[] }
+  parceria?: ParceriaId | ParceriaId[];
+  /** Campos a mais da ficha, na ordem: usado pelos indicadores-norte (unidade e grão, data de referência, o que fica de fora, protótipo). */
+  extra?: [string, string][] }
 /** Parcerias declaradas numa ficha, sempre como lista. */
 export const parceriasDe = (ficha?: FichaBloco): ParceriaId[] => !ficha?.parceria ? [] : Array.isArray(ficha.parceria) ? ficha.parceria : [ficha.parceria];
 
@@ -45,10 +51,10 @@ const EDAD = 'EDAD (unidade de dados da SUPTEC), com a área de cadastro', SUPFI
 
 export const fichas: Record<string, FichaBloco> = {
   /* ---------- Presidência ---------- */
-  'presidencia.n1': { mede: 'Cobertura cadastral estimada: parte dos CNPJs completos ativos em SP com CNAE da lista do Crea-SP que tem registro ou visto vigente.', calcula: 'Estabelecimentos ativos com CNAE principal ou secundário da lista e registro ou visto vigente ÷ todos esses estabelecimentos, com “Sim” e “Passível” separados pela atividade principal.', fontes: RECEITA, cruzamento: 'CNPJ completo (chave exata) entre a Receita e o cadastro PJ.', regra: `${V1} · caso de uso UC02`, limites: 'CNAE não prova atividade nem obrigação: sem correspondência não quer dizer irregular. CNPJ inválido ou duplicado fica fora do denominador.', dono: EDAD },
-  'presidencia.n2': { mede: 'Conversão da fiscalização: parte das ações fiscais de cada trimestre que terminou em regularização em até 180 dias.', calcula: 'Ações iniciadas no trimestre com registro, RT, ART ou baixa em até 180 dias ÷ ações iniciadas no trimestre. Só coortes que já completaram 180 dias entram na comparação.', fontes: FISCAL, regra: `${V1} · indicador-norte 2`, limites: `${ASSOC} Coorte em aberto aparece sem entrar na comparação.`, dono: SUPFIS },
-  'presidencia.n3': { mede: 'Receita atribuível à fiscalização: anuidades e multas recebidas, em até 12 meses, de empresas com caso aberto a partir de um indício.', calcula: 'Soma dos pagamentos (pela data do pagamento) de empresas com ação fiscal originada de cruzamento ou cadastro, até 365 dias depois da ação.', fontes: `${FISCAL} ${INTERNO}`, regra: `${V1} · indicador-norte 3`, limites: `${ASSOC} A empresa poderia ter pago sem a ação; o valor é um teto, não um ganho líquido.`, dono: `${SUPFIS} e ${FIN}` },
-  'presidencia.n4': { mede: 'Tempo até agir: dias entre a entrada do indício na base e a primeira ação fiscal.', calcula: 'Mediana de Kaplan-Meier sobre os indícios que entraram no período; os ainda sem ação entram como abertos (censurados), não como zero.', fontes: FISCAL, regra: `${V1} · indicador-norte 4`, limites: 'Sem mediana quando mais da metade dos indícios segue sem ação. Mede a fila, não a qualidade da ação.', dono: SUPFIS },
+  'presidencia.n1': { ...norte('cobertura'), mede: 'Cobertura cadastral estimada: parte dos CNPJs completos ativos em SP com CNAE da lista do Crea-SP que tem registro ou visto vigente.', calcula: 'Estabelecimentos ativos com CNAE principal ou secundário da lista e registro ou visto vigente ÷ todos esses estabelecimentos, com “Sim” e “Passível” separados pela atividade principal.', fontes: RECEITA, cruzamento: 'CNPJ completo (chave exata) entre a Receita e o cadastro PJ.', regra: `${V1} · caso de uso UC02`, limites: 'CNAE não prova atividade nem obrigação: sem correspondência não quer dizer irregular. CNPJ inválido ou duplicado fica fora do denominador.', dono: EDAD },
+  'presidencia.n2': { ...norte('conversao'), mede: 'Conversão da fiscalização: parte das ações fiscais de cada trimestre que terminou em regularização em até 180 dias.', calcula: 'Ações iniciadas no trimestre com registro, RT, ART ou baixa em até 180 dias ÷ ações iniciadas no trimestre. Só coortes que já completaram 180 dias entram na comparação.', fontes: FISCAL, regra: `${V1} · indicador-norte 2`, limites: `${ASSOC} Coorte em aberto aparece sem entrar na comparação.`, dono: SUPFIS },
+  'presidencia.n3': { ...norte('receita'), mede: 'Receita atribuível à fiscalização: anuidades e multas recebidas, em até 12 meses, de empresas com caso aberto a partir de um indício.', calcula: 'Soma dos pagamentos (pela data do pagamento) de empresas com ação fiscal originada de cruzamento ou cadastro, até 365 dias depois da ação.', fontes: `${FISCAL} ${INTERNO}`, regra: `${V1} · indicador-norte 3`, limites: `${ASSOC} A empresa poderia ter pago sem a ação; o valor é um teto, não um ganho líquido.`, dono: `${SUPFIS} e ${FIN}` },
+  'presidencia.n4': { ...norte('tempo'), mede: 'Tempo até agir: dias entre a entrada do indício na base e a primeira ação fiscal.', calcula: 'Mediana de Kaplan-Meier sobre os indícios que entraram no período; os ainda sem ação entram como abertos (censurados), não como zero.', fontes: FISCAL, regra: `${V1} · indicador-norte 4`, limites: 'Sem mediana quando mais da metade dos indícios segue sem ação. Mede a fila, não a qualidade da ação.', dono: SUPFIS },
   'presidencia.k-empresas': { mede: 'Empresas (raiz do CNPJ) com registro ativo no corte.', calcula: 'Contagem de raízes com ao menos um registro ou visto vigente; variação contra o mesmo ponto do ano anterior.', fontes: INTERNO, regra: `${V1} · UC01`, limites: 'Raiz, estabelecimento e registro são unidades diferentes e não se somam.', dono: EDAD },
   'presidencia.k-cobertura': { mede: 'Cobertura cadastral estimada (indicador-norte 1), contra a meta de leitura.', calcula: 'Ver a ficha do indicador-norte 1. A meta é um parâmetro ajustável em “Metas”, não meta oficial.', fontes: RECEITA, cruzamento: 'CNPJ completo (chave exata).', regra: `${V1} · UC02`, limites: 'Sem correspondência não quer dizer irregular.', dono: EDAD },
   'presidencia.k-autos': { mede: 'Autos de infração lavrados no período, com ações e regularizações.', calcula: 'Contagem de autos pela data do auto; variação contra o mesmo período do ano anterior.', fontes: FISCAL, regra: V1, limites: 'Auto lavrado não é multa recebida: o rito segue pela defesa e pelo julgamento.', dono: SUPFIS },
