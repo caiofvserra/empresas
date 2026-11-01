@@ -6,7 +6,7 @@ import { selectEnterpriseScope } from '../src/enterprise-v10/filters.ts';
 import { buildEnterpriseModel } from '../src/enterprise-v10/model.ts';
 import { buildFiscalizacao, tipoLabel } from '../src/painel/fiscalizacao.ts';
 import { PRAZO_ATRIBUICAO, PRAZO_CONVERSAO, classesCnae, cobertura, contagens, conversao, correspondencias, fichas, medianaKm, origensIndicio, receitaAtribuivel, tempoAteAgir } from '../src/observatorio/norte.ts';
-import { casos, fontes, lacunas, regrasLeitura, situacoesCaso } from '../src/observatorio/governanca.ts';
+import { casos, fontes, frentes, lacunas, regrasLeitura, situacoesCaso, situacoesCruzamento } from '../src/observatorio/governanca.ts';
 
 const f = buildFiscalizacao(dataset);
 const scope = selectEnterpriseScope(dataset, { ...defaultFilters, period: 12 }), model = buildEnterpriseModel(scope);
@@ -67,7 +67,12 @@ test('tempo até agir: abertos são censurados, não zero', () => {
 test('método: fichas, regras de leitura, 12 lacunas, 34 casos e 98 fontes', () => {
   assert.deepEqual(Object.keys(fichas).sort(), ['cobertura', 'conversao', 'receita', 'tempo']);
   assert.ok(Object.values(fichas).every(row => row.formula && row.data && row.leitura));
-  assert.equal(regrasLeitura.length, 8);
+  assert.equal(regrasLeitura.length, 20, 'matriz dos principais cruzamentos do mapa de relações');
+  assert.equal(frentes.length, 9, 'oito frentes externas e a base interna');
+  const ids = new Set(frentes.map(row => row.id));
+  assert.ok(regrasLeitura.every(row => ids.has(row.frente) && row.chave && row.pode && row.naoPode && row.noPainel && situacoesCruzamento.includes(row.situacao)));
+  assert.ok(frentes.every(row => row.potencial && row.fontes && row.noPainel && situacoesCruzamento.includes(row.situacao)));
+  assert.ok([...ids].every(id => regrasLeitura.some(row => row.frente === id)), 'toda frente tem ao menos um cruzamento na matriz');
   assert.deepEqual(lacunas.map(row => row.n), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   assert.equal(casos.length, 34);
   assert.ok(casos.every(row => row.onde !== '—'), 'todo caso tem lugar ou destino');

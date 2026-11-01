@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Chart } from '../painel/chart';
 import { int } from '../painel/ui';
-import { casos, coletaDe, coletas, ferramentasIa, fontes, lacunas, niveisEvidencia, regrasLeitura, situacoesCaso, usoNoPainel } from '../observatorio/governanca';
-import type { Coleta, Decisao, SituacaoCaso, SituacaoFerramenta } from '../observatorio/governanca';
+import { casos, coletaDe, coletas, ferramentasIa, fontes, frentePorId, frentes, lacunas, niveisEvidencia, regrasLeitura, situacoesCaso, usoNoPainel } from '../observatorio/governanca';
+import type { Coleta, Decisao, SituacaoCaso, SituacaoCruzamento, SituacaoFerramenta } from '../observatorio/governanca';
+
+/** Classe CSS a partir de um rótulo com acento (Automática → automatica). */
+const chave = (value: string) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 import { regras, regrasPendentes, statusAjuda } from './cruzamentos';
 import type { CockpitCtx } from './contexto';
 import { Status } from './PaginaMalha';
@@ -15,7 +18,8 @@ import { Bloco } from './ui';
  */
 export default function PaginaMetodo({ ctx }: { ctx: CockpitCtx }) {
   return <div className="ck-grid ck-grid-metodo">
-    <Bloco ctx={ctx} id="rl" area="rl" title="O que cada cruzamento permite concluir" question="Regras de leitura do plano do Observatório (rev. 2). Toda ligação é confirmada, candidata ou contexto; a situação no Crea-SP é lida na data do fato."><RegrasLeitura /></Bloco>
+    <Bloco ctx={ctx} id="fr" area="fr" title="Frentes de cruzamento e o potencial de cada uma" question="Oito frentes externas do mapa de relações mais a base interna: fontes, potencial mais relevante, forma de coleta e onde cada uma já está no painel."><Frentes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="rl" area="rl" title="O que cada cruzamento permite concluir" question="Matriz dos 20 principais cruzamentos do mapa de relações: chave, resultado, o que não se conclui e onde está no painel. Toda ligação é confirmada, candidata ou contexto; a situação no Crea-SP é lida na data do fato. Clique numa frente para filtrar."><RegrasLeitura ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="lc" area="lc" title="As 12 lacunas do V18 e a decisão tomada" question="Da revisão do repositório: cada lacuna foi corrigida, rotulada como demonstrativa ou retirada. A última coluna diz o que falta para produção."><Lacunas /></Bloco>
     <Bloco ctx={ctx} id="uc" area="uc" title="Os 34 casos de uso e o bloco que atende cada um" question="Casos com fórmula, grão e tempo do levantamento de 29/10. Clique numa situação para filtrar."><Casos ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="mr" area="mr" title="Regras da malha fina" question="As 11 regras da V20 com status da ligação, fonte, forma de coleta, versão e o que não se pode concluir de cada uma." help={`Confirmado: ${statusAjuda.Confirmado} Candidato: ${statusAjuda.Candidato} Contexto: ${statusAjuda.Contexto}`}><RegrasMalha /></Bloco>
@@ -24,11 +28,33 @@ export default function PaginaMetodo({ ctx }: { ctx: CockpitCtx }) {
   </div>;
 }
 
-function RegrasLeitura() {
-  return <div className="table-wrap"><table className="metodo">
-    <thead><tr><th>Cruzamento</th><th>Pode concluir</th><th>Não pode concluir</th><th>No painel</th></tr></thead>
-    <tbody>{regrasLeitura.map(row => <tr key={row.cruzamento}><td><b>{row.cruzamento}</b></td><td>{row.pode}</td><td className="nao">{row.naoPode}</td><td><small>{row.noPainel}</small></td></tr>)}</tbody>
-  </table></div>;
+const corSituacao = (tokens: CockpitCtx['tokens']): Record<SituacaoCruzamento, string> => ({ 'No painel': tokens.good, Parcial: tokens.accent, Planejada: tokens.blue, 'Depende de acordo': tokens.heat[1], 'Fora da coleta automática': tokens.muted });
+const Situacao = ({ situacao, tokens }: { situacao: SituacaoCruzamento; tokens: CockpitCtx['tokens'] }) => <span className="chip"><i className="dot" style={{ background: corSituacao(tokens)[situacao] }} />{situacao}</span>;
+
+function Frentes({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, contagem = (situacao: SituacaoCruzamento) => frentes.filter(row => row.situacao === situacao).length;
+  return <div className="stack">
+    <p className="kpi-line"><b>{contagem('No painel')}</b> no painel · <b>{contagem('Parcial')}</b> parciais · <b>{contagem('Planejada')}</b> planejadas · <b>{contagem('Depende de acordo')}</b> dependem de acordo · {regrasLeitura.length} cruzamentos na matriz</p>
+    <div className="table-wrap"><table className="metodo is-dense">
+      <thead><tr><th>Frente</th><th>Potencial mais relevante</th><th>Coleta</th><th>Situação</th><th>No painel</th></tr></thead>
+      <tbody>{frentes.map(row => <tr key={row.id}><td><b>{row.frente}</b><small>{row.fontes}</small></td><td>{row.potencial}</td><td><span className={`coleta is-${chave(row.coleta)}`}>{row.coleta}</span></td><td><Situacao situacao={row.situacao} tokens={tokens} /></td><td><small>{row.noPainel}</small></td></tr>)}</tbody>
+    </table></div>
+  </div>;
+}
+
+function RegrasLeitura({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, [frente, setFrente] = useState<string | null>(null);
+  const rows = frente ? regrasLeitura.filter(row => row.frente === frente) : regrasLeitura;
+  return <div className="stack">
+    <div className="seg is-wrap" role="radiogroup" aria-label="Frente">
+      <button role="radio" aria-checked={frente === null} className={frente === null ? 'on' : ''} onClick={() => setFrente(null)}>Todas · {regrasLeitura.length}</button>
+      {frentes.map(item => <button key={item.id} role="radio" aria-checked={frente === item.id} className={frente === item.id ? 'on' : ''} onClick={() => setFrente(frente === item.id ? null : item.id)}>{item.frente} · {regrasLeitura.filter(row => row.frente === item.id).length}</button>)}
+    </div>
+    <div className="table-wrap"><table className="metodo is-dense">
+      <thead><tr><th>Cruzamento</th><th>Chave e condição</th><th>Pode concluir</th><th>Não pode concluir</th><th>Situação</th><th>No painel</th></tr></thead>
+      <tbody>{rows.map(row => <tr key={row.cruzamento}><td><b>{row.cruzamento}</b><small>{frentePorId[row.frente]?.frente}</small></td><td><small>{row.chave}</small></td><td>{row.pode}</td><td className="nao">{row.naoPode}</td><td><Situacao situacao={row.situacao} tokens={tokens} /></td><td><small>{row.noPainel}</small></td></tr>)}</tbody>
+    </table></div>
+  </div>;
 }
 
 const decisaoClasse: Record<Decisao, string> = { Corrigida: 'is-confirmado', Rotulada: 'is-contexto', Retirada: 'is-candidato' };
