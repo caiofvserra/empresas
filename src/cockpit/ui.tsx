@@ -23,11 +23,12 @@ export function Parceria({ id, compacto }: { id: ParceriaId; compacto?: boolean 
   return <span className={`selo selo-parceria ${compacto ? 'is-compacto' : ''}`} role="img" aria-label={`Depende de parceria com ${p.parceiro}`} title={`Depende de parceria: ${p.parceiro}. ${p.entrega}.`}>!</span>;
 }
 export function Bloco({ ctx, id, area, title, question, help, badge, actions, children, className }: { ctx: CockpitCtx; id: string; area: string; title: string; question?: string; help?: string; badge?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
-  const focus = ctx.focus === id, ficha = fichaDe(ctx.page, id);
+  // No painel de Empresas o visual fica enxuto: a pergunta e a leitura do bloco vão para o (i), e o bloco mostra só o título.
+  const focus = ctx.focus === id, ficha = fichaDe(ctx.page, id), leitura = ctx.enxuto ? [question, help].filter(Boolean).join(' ') || undefined : help;
   return <section className={`tile ck-tile ${focus ? 'is-focus' : ''} ${ficha?.parceria ? 'is-parceria' : ''} ${className ?? ''}`} style={{ gridArea: area }} aria-label={title}>
-    <header><div><h3>{title}{parceriasDe(ficha).map(id => <Parceria key={id} id={id} />)}{badge}</h3>{question && <p>{question}</p>}</div>
+    <header><div><h3>{title}{parceriasDe(ficha).map(id => <Parceria key={id} id={id} />)}{badge}</h3>{question && !ctx.enxuto && <p>{question}</p>}</div>
       <div className="tile-tools">{actions}
-        <FichaPop ficha={ficha} titulo={title} leitura={help} anchor={ctx.anchor} />
+        <FichaPop ficha={ficha} titulo={title} leitura={leitura} anchor={ctx.anchor} />
         <button className="icon-btn ghost-icon" aria-label={focus ? `Restaurar ${title}` : `Ampliar ${title}`} title={focus ? 'Restaurar (Esc)' : 'Ampliar'} onClick={() => ctx.toggleFocus(id)}>{focus ? <Minimize2 size={14} /> : <Maximize2 size={14} />}</button>
       </div></header>
     <div className="tile-body">{children}</div>

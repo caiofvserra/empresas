@@ -18,17 +18,9 @@
 .ck-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
 .ck-title h1 { margin: 1px 0 0; font: 700 21px/1.15 var(--display); letter-spacing: -.01em; }
 .ck-title p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
-.ck-pulse { position: relative; min-width: 0; height: 34px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); overflow: hidden; }
-.ck-pulse-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: ck-ping 2.2s infinite; }
-.ck-pulse-track { display: flex; gap: 30px; white-space: nowrap; animation: ck-marquee 110s linear infinite; }
-.ck-pulse:hover .ck-pulse-track, .ck-pulse:focus-within .ck-pulse-track { animation-play-state: paused; }
-.ck-pulse-track button { padding: 0; border: 0; background: transparent; font-size: 12px; color: var(--muted); }
-.ck-pulse-track button:hover { color: var(--ink); }
-.ck-pulse-track b { color: var(--ink); font-weight: 800; }
-.ck-pulse-track .is-good b { color: var(--good); } .ck-pulse-track .is-bad b { color: var(--bad); }
-@keyframes ck-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes ck-ping { 0% { box-shadow: 0 0 0 0 rgba(250,189,7,.55); } 70% { box-shadow: 0 0 0 9px rgba(250,189,7,0); } 100% { box-shadow: 0 0 0 0 rgba(250,189,7,0); } }
 .ck-meta { display: flex; align-items: center; gap: 10px; }
+.ck-header > .ck-meta { grid-column: -2; justify-self: end; } /* a barra de destaques rolante saiu em 01/11/2026; a data continua à direita */
 .ck-meta .demo { color: var(--ink); background: color-mix(in srgb, var(--accent) 22%, transparent); border: 1px dashed var(--accent); }
 .ck-ref { position: relative; display: flex; align-items: center; gap: 6px; padding-left: 10px; border-left: 1px solid var(--line); font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .ck-ref > svg:first-child { flex: none; color: var(--blue); }
@@ -262,7 +254,6 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
   .ck-rail-bottom { margin: 0 0 0 auto; flex-direction: row; padding: 0; border: 0; }
   .ck-main { display: block; }
   .ck-header { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-  .ck-pulse { order: 3; }
   .ck-page { overflow: visible; }
   .ck-grid { display: flex; flex-direction: column; height: auto; }
   .ck-grid > * { grid-area: auto !important; min-width: 0; }
@@ -286,7 +277,7 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
   .ck-metas label { grid-template-columns: minmax(0, 1fr); }
   .help::after { width: 240px; }
 }
-@media (prefers-reduced-motion: reduce) { .ck-pulse-track, .ck-pulse-dot, .ck-live.is-busy, .ck-page { animation: none; } .ind, .ck-rail button, .multiple { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ck-live.is-busy, .ck-page { animation: none; } .ind, .ck-rail button, .multiple { transition: none; } }
 
 /* ---------- Inteligência Estratégica: indicadores-norte, fichas, status de ligação, método ---------- */
 .t-norte .tile-body { display: flex; flex-direction: column; min-height: 0; }

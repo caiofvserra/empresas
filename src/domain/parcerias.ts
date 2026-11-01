@@ -296,6 +296,34 @@ export function buildSociosPf(dataset: Dataset, modelo: ModeloProfissionais = bu
   }
   const value = { socios, anchor }; cachePf.set(dataset, value); return value;
 }
+/* ---------- Nome da empresa e quem a dirige (Lei 5.194/66, arts. 4º e 5º) ---------- */
+/**
+ * A lei não exige que os sócios sejam profissionais para a empresa se registrar: basta o responsável técnico (art. 8º, parágrafo
+ * único, e art. 59). A exigência vale para o nome. "Engenharia" ou "agronomia" na razão social pede diretoria composta, na maioria,
+ * de profissionais registrados (art. 5º); "engenheiro" ou "engenheiro-agrônomo" pede sociedade só de profissionais (art. 4º).
+ * O art. 59, § 1º, condiciona o registro a um nome condizente com a finalidade e com a qualificação de quem compõe a empresa.
+ */
+export interface LinhaDenominacao { empresaId: string; nome: string; regra: 'Maioria da diretoria (art. 5º)' | 'Só profissionais (art. 4º)'; dirigentes: number; profissionaisAtivos: number; atende: boolean; registrada: boolean }
+export interface QuadroDenominacao { linhas: LinhaDenominacao[]; atendem: string[]; naoAtendem: string[]; naoAtendemRegistradas: string[]; semDirigente: string[] }
+const termoArt4 = /\bengenheir[oa]s?\b|\bengenheir[oa]s?-agr[oô]nom[oa]s?\b/i, termoArt5 = /\bengenharia\b|\bagronomia\b/i;
+export function quadroDenominacao(layer: SociosPf, dataset: Dataset, modelo: ModeloProfissionais, companyIds: Set<string> | null, greId: string | null): QuadroDenominacao {
+  const anchor = dataset.snapshotDate, gre = new Map([...matrizes(dataset)].map(([id, row]) => [id, row.greId])), dentro = dentroDe(companyIds, greId), registradas = registradasEm(dataset, anchor);
+  const porEmpresa = new Map<string, SocioPf[]>();
+  for (const row of layer.socios) if (row.desde <= anchor) porEmpresa.set(row.empresaId, [...(porEmpresa.get(row.empresaId) ?? []), row]);
+  const ativo = (id: string | null) => { const row = id ? modelo.porId.get(id) : undefined; return row ? situacaoEm(row, anchor) === 'Ativo' : false; };
+  const linhas: LinhaDenominacao[] = [];
+  for (const company of dataset.companies) {
+    if (!dentro(company.id, gre.get(company.id) ?? '')) continue;
+    const art4 = termoArt4.test(company.name), art5 = termoArt5.test(company.name); if (!art4 && !art5) continue;
+    const socios = porEmpresa.get(company.id) ?? [];
+    // Art. 5º fala da diretoria: sócios-administradores e administradores. Art. 4º fala de quem compõe a pessoa jurídica: todos os sócios.
+    const dirigentes = art4 ? socios : socios.filter(row => row.qualificacao !== 'Sócio'), profissionaisAtivos = dirigentes.filter(row => ativo(row.profissionalId)).length;
+    const atende = dirigentes.length > 0 && (art4 ? profissionaisAtivos === dirigentes.length : profissionaisAtivos > dirigentes.length / 2);
+    linhas.push({ empresaId: company.id, nome: company.name, regra: art4 ? 'Só profissionais (art. 4º)' : 'Maioria da diretoria (art. 5º)', dirigentes: dirigentes.length, profissionaisAtivos, atende, registrada: registradas.has(company.id) });
+  }
+  const ids = (filtro: (row: LinhaDenominacao) => boolean) => linhas.filter(filtro).map(row => row.empresaId);
+  return { linhas, atendem: ids(row => row.atende), naoAtendem: ids(row => !row.atende && row.dirigentes > 0), naoAtendemRegistradas: ids(row => !row.atende && row.dirigentes > 0 && row.registrada), semDirigente: ids(row => row.dirigentes === 0) };
+}
 export interface QuadroSociosPf {
   socios: SocioPf[]; empresasComSocioPf: string[]; sociosProfissionais: SocioPf[]; sociosProfissionaisAtivos: number;
   /** Sócio profissional que também é RT vigente da própria empresa. */

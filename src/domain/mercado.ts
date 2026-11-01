@@ -111,10 +111,10 @@ export interface Aberturas {
   foraDeAtividade: number; ids: string[];
 }
 /** Estabelecimentos com CNAE da lista abertos nos últimos `meses` meses antes de D, e quantos já têm registro ou visto vigente em D. */
-export function aberturasRfb(view: Dataset, greId: string | null, meses = 12): Aberturas {
+export function aberturasRfb(view: Dataset, greId: string | null, meses = 12, cityId: string | null = null): Aberturas {
   const fim = view.snapshotDate, inicio = `${view.months[Math.max(0, view.months.length - meses)]}-01`;
   const vigentes = new Set(view.registrations.filter(row => row.status === 'Ativo').map(row => row.establishmentId));
-  const elegiveis = view.establishments.filter(row => (!greId || row.greId === greId) && classeDoEstabelecimento(view, row) !== null);
+  const elegiveis = view.establishments.filter(row => (!greId || row.greId === greId) && (!cityId || row.cityId === cityId) && classeDoEstabelecimento(view, row) !== null);
   const abertos = elegiveis.filter(row => row.openedAt >= inicio && row.openedAt <= fim);
   const months = view.months.slice(-meses);
   return { meses: months.map(month => { const rows = abertos.filter(row => row.openedAt.slice(0, 7) === month); return { month, aberturas: rows.length, comRegistro: rows.filter(row => vigentes.has(row.id)).length }; }),
