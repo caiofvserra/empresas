@@ -85,7 +85,7 @@ function Casos({ ctx }: { ctx: CockpitCtx }) {
     </div>
     <div className="table-wrap"><table className="metodo">
       <thead><tr><th>Caso</th><th>Prioridade</th><th>Situação</th><th>Bloco do painel</th></tr></thead>
-      <tbody>{rows.map(row => <tr key={row.id} title={row.resumo}><td><b>{row.id} · {row.nome}</b><small>{row.grupo}</small></td><td>{row.prioridade}</td><td><span className="chip" style={{ borderColor: cores[row.situacao] }}><i className="dot" style={{ background: cores[row.situacao] }} />{row.situacao}</span></td><td><small>{row.onde}</small></td></tr>)}</tbody>
+      <tbody>{rows.map(row => <tr key={row.id} title={row.resumo}><td><b>{row.nome}</b><small>{row.grupo}</small></td><td>{row.prioridade}</td><td><span className="chip" style={{ borderColor: cores[row.situacao] }}><i className="dot" style={{ background: cores[row.situacao] }} />{row.situacao}</span></td><td><small>{row.onde}</small></td></tr>)}</tbody>
     </table></div>
   </div>;
 }
@@ -137,7 +137,7 @@ function Ferramentas({ ctx }: { ctx: CockpitCtx }) {
     <p className="kpi-line"><b>{int(ferramentasIa.filter(row => row.situacao === 'No painel').length)}</b> ferramentas já estão no painel, <b>{int(ferramentasIa.filter(row => row.situacao === 'Protótipo').length)}</b> estão em protótipo e <b>{int(ferramentasIa.filter(row => row.situacao === 'Planejada').length)}</b> estão planejadas. Nenhum resultado delas é tratado como fato antes de ser conferido por uma pessoa e de se medir quantas vezes a ferramenta erra.</p>
     <div className="table-wrap"><table className="metodo">
       <thead><tr><th>Ferramenta</th><th>Tipo</th><th>Alimenta</th><th>Entrada e saída</th><th>Validação</th><th>Situação</th></tr></thead>
-      <tbody>{ferramentasIa.map(row => <tr key={row.nome}><td><b>{row.nome}</b></td><td>{row.tipo}</td><td><small>{row.bloco}</small></td><td><small>{row.entrada}</small><small>→ {row.saida}</small></td><td><small>{row.validacao}</small></td><td><span className="chip" style={{ borderColor: cores[row.situacao] }}><i className="dot" style={{ background: cores[row.situacao] }} />{row.situacao}</span></td></tr>)}</tbody>
+      <tbody>{ferramentasIa.map(row => <tr key={row.nome}><td><b>{row.nome}</b></td><td>{row.tipo}</td><td><small>{row.bloco}</small></td><td><small>{row.entrada}</small><small>Resultado: {row.saida}</small></td><td><small>{row.validacao}</small></td><td><span className="chip" style={{ borderColor: cores[row.situacao] }}><i className="dot" style={{ background: cores[row.situacao] }} />{row.situacao}</span></td></tr>)}</tbody>
     </table></div>
   </div>;
 }
