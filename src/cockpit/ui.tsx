@@ -70,7 +70,7 @@ export function FichaPop({ ficha, titulo, leitura, anchor }: { ficha?: FichaBloc
 export const Selo = ({ data }: { data: string }) => <span className="selo" title="Dado público real versionado no painel">Real · {data.split('-').reverse().join('/')}</span>;
 
 export interface Variacao { value: number | null; kind?: 'pct' | 'pp'; goodUp?: boolean; label?: string }
-export function Var({ value, kind = 'pct', goodUp = true, label = 'vs. ano anterior' }: Variacao) {
+export function Var({ value, kind = 'pct', goodUp = true, label = 'em relação ao ano anterior' }: Variacao) {
   if (value === null || !Number.isFinite(value)) return <span className="delta is-none">sem base de comparação</span>;
   const good = goodUp ? value >= 0 : value <= 0, Icon = Math.abs(value) < 0.5 ? Minus : value > 0 ? ArrowUpRight : ArrowDownRight;
   const text = kind === 'pp' ? `${value > 0 ? '+' : ''}${value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} p.p.` : `${value > 0 ? '+' : ''}${pct(value)}`;

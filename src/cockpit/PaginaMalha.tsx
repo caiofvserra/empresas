@@ -34,11 +34,11 @@ function Regras({ ctx }: { ctx: CockpitCtx }) {
   const { malha } = ctx, max = Math.max(1, ...malha.indicios.map(row => row.empresas.length));
   const porEmpresa = useMemo(() => { const map = new Map<string, Indicio[]>(); for (const item of malha.indicios) for (const id of item.empresas) map.set(id, [...(map.get(id) ?? []), item]); return map; }, [malha]);
   const abrir = (item: Indicio, semAcao: boolean) => { const acted = new Set(item.comAcao), ids = semAcao ? item.empresas.filter(id => !acted.has(id)) : item.empresas; if (!ids.length) return;
-    ctx.open({ kind: 'linhas', eyebrow: `${item.status} · ${item.fonte} · regra ${item.versao}`, title: `${item.label}${semAcao ? ' · sem ação fiscal' : ''}`, what: item.regra, use: `Comece pelas empresas com mais indícios confirmados e sem ação fiscal. Não concluir ${item.naoConcluir.charAt(0).toLowerCase()}${item.naoConcluir.slice(1)}`, listTitle: 'Empresas, mais indícios primeiro',
+    ctx.open({ kind: 'linhas', eyebrow: `${item.status}, com dados de ${item.fonte}`, title: `${item.label}${semAcao ? ' · sem ação fiscal' : ''}`, what: item.regra, use: `Comece pelas empresas com mais indícios confirmados e sem ação fiscal. Não concluir ${item.naoConcluir.charAt(0).toLowerCase()}${item.naoConcluir.slice(1)}`, listTitle: 'Empresas, mais indícios primeiro',
       rows: linhasEmpresas(ctx, ids, id => { const list = porEmpresa.get(id) ?? [], confirmados = list.filter(row => row.status === 'Confirmado').length;
         return { value: `${list.length} indício${list.length > 1 ? 's' : ''} · ${confirmados} confirmado${confirmados === 1 ? '' : 's'}`, note: list.map(row => `${row.label} (${row.status.toLowerCase()})`).join(' · '), sort: confirmados * 10 + list.length }; }) }); };
   return <div className="stack">
-    <p className="kpi-line"><b>{int(malha.confirmadas.length)}</b> empresas com indício confirmado · <b>{int(malha.empresas.length)}</b> com algum indício · <b>{int(malha.multiplos.length)}</b> com dois ou mais · <b>{pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)}</b> já com ação fiscal</p>
+    <p className="kpi-line"><b>{int(malha.confirmadas.length)}</b> empresas têm indício confirmado. Ao todo, <b>{int(malha.empresas.length)}</b> têm algum indício e <b>{int(malha.multiplos.length)}</b> têm dois ou mais. <b>{pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)}</b> delas já receberam ação fiscal.</p>
     <div className="table-wrap"><table className="regras">
       <thead><tr><th>Regra</th><th>Status</th><th>Coleta</th><th>Empresas</th><th>Sem ação fiscal</th></tr></thead>
       <tbody>{malha.indicios.map(item => { const sem = item.empresas.length - item.comAcao.length;
@@ -66,7 +66,7 @@ function Vinculos({ ctx }: { ctx: CockpitCtx }) {
   }), [categorias, tokens, contratos]); // eslint-disable-line react-hooks/exhaustive-deps
   const comChave = malha.contratosComChave, confirmados = comChave.filter(row => row.vinculo === 'Confirmado por documento').length, naoId = comChave.filter(row => row.vinculo === 'Não identificado');
   return <div className="stack">
-    <p className="kpi-line"><b>{int(comChave.length)}</b> de {int(contratos.length)} contratos com chave para a busca · <b>{pct(confirmados / Math.max(1, comChave.length) * 100)}</b> com vínculo confirmado · <b>{int(naoId.length)}</b> ({brl(naoId.reduce((s, r) => s + r.valor, 0))}) sem ART identificada</p>
+    <p className="kpi-line"><b>{int(comChave.length)}</b> dos {int(contratos.length)} contratos têm dados suficientes para procurar a ART. Em <b>{pct(confirmados / Math.max(1, comChave.length) * 100)}</b> deles a ART foi encontrada, e <b>{int(naoId.length)}</b> contratos ({brl(naoId.reduce((s, r) => s + r.valor, 0))}) seguem sem ART identificada.</p>
     <Chart option={option} tokens={tokens} label="Contratos públicos técnicos por categoria e grau de vínculo com ART" onPick={params => abrirContratos(ctx, de(params.name, params.seriesName), `${params.name} · ${String(params.seriesName).toLowerCase()}`, params.seriesName === 'Não identificado' ? 'Prioridade para verificar, começando pelos de maior valor. Vínculo não identificado não é infração.' : params.seriesName === 'Candidato para revisão' ? 'Confirme se a ART candidata corresponde ao objeto, ao local e ao período do contrato.' : undefined)} />
   </div>;
 }
@@ -95,7 +95,7 @@ function Fornecedor({ ctx }: { ctx: CockpitCtx }) {
   return <div className="split">
     <Chart option={option} tokens={tokens} label="Valor de contratos técnicos pela situação do fornecedor na data" onPick={params => abrir(grupos[params.dataIndex]?.situacao)} />
     <ul className="side-list">{grupos.map(item => <li key={item.situacao}><button onClick={() => abrir(item.situacao)}><i style={{ background: cores[item.situacao] }} /><span>{item.situacao}</span><b>{int(item.rows.length)}</b></button></li>)}
-      <li className="side-note">Lido na data do contrato. Município do órgão e do fornecedor não indicam o local da obra.</li></ul>
+      <li className="side-note">A situação é lida na data de cada contrato. O município do órgão e o do fornecedor não indicam onde a obra fica.</li></ul>
   </div>;
 }
 
@@ -120,9 +120,9 @@ function SemRegistro({ ctx }: { ctx: CockpitCtx }) {
   }), [series, tokens]);
   const sim = malha.semRegistroSim.length, comAcao = series[0].ids.flat().length;
   return <div className="stack">
-    <p className="kpi-line"><b>{int(sim)}</b> CNPJs “Sim” sem registro localizado ({pct(comAcao / Math.max(1, sim) * 100)} já com ação) · <b>{int(malha.semRegistroPassivel.length)}</b> “Passível”, à parte</p>
+    <p className="kpi-line"><b>{int(sim)}</b> estabelecimentos com atividade de registro obrigatório não foram encontrados no cadastro, e {pct(comAcao / Math.max(1, sim) * 100)} deles já receberam ação fiscal. Outros <b>{int(malha.semRegistroPassivel.length)}</b> têm atividade que depende de análise e ficam à parte.</p>
     <Chart option={option} tokens={tokens} label="CNPJs com CNAE da lista sem registro localizado, por câmara e classe" onPick={params => { const item = series[params.seriesIndex], ids = item?.ids[params.dataIndex]; if (!ids?.length) return;
-      ctx.open({ kind: 'cnpjs', title: `${camaras[params.dataIndex]} · ${item.name.replace(/[“”]/g, '')}`, what: 'CNPJs ativos na Receita com CNAE da lista do Crea-SP desta câmara e classe, sem registro ou visto vigente no corte.', use: 'Confirme a atividade (contratos, licenças, site) antes de orientar ou notificar. Nenhum auto sai só do CNAE.', ids }); }} />
+      ctx.open({ kind: 'cnpjs', title: `${camaras[params.dataIndex]} · ${item.name.replace(/[“”]/g, '')}`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP, desta câmara e classe, sem registro nem visto na data escolhida.', use: 'Confirme a atividade (contratos, licenças, site) antes de orientar ou notificar. Nenhum auto sai só do CNAE.', ids }); }} />
   </div>;
 }
 
@@ -136,7 +136,7 @@ function CnpjInativo({ ctx }: { ctx: CockpitCtx }) {
     series: [{ type: 'bar', barWidth: 16, data: grupos.map((item, index) => ({ value: item.ids.length, itemStyle: { color: [tokens.bad, tokens.warn, tokens.heat[1]][index], borderRadius: [0, 4, 4, 0] } })), label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700 } }],
   }), [grupos, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <div className="stack">
-    <p className="kpi-line"><b>{int(malha.cnpjInativo.registros.length)}</b> registros ativos · <b>{int(malha.cnpjInativo.companies.length)}</b> empresas · <b>{brl(malha.cnpjInativo.vencido)}</b> vencidos dessas empresas</p>
+    <p className="kpi-line"><b>{int(malha.cnpjInativo.registros.length)}</b> registros seguem ativos no Crea-SP, de <b>{int(malha.cnpjInativo.companies.length)}</b> empresas cujo CNPJ já não está ativo na Receita. Essas empresas devem <b>{brl(malha.cnpjInativo.vencido)}</b> em valores vencidos.</p>
     <Chart option={option} tokens={tokens} label="Registros ativos por situação do CNPJ na Receita" onPick={params => { const item = grupos[params.dataIndex]; if (item?.ids.length) ctx.open({ kind: 'cnpjs', title: `Registro ativo com CNPJ ${item.status.toLowerCase()}`, what: 'Estabelecimentos com registro ativo no CREA-SP cujo CNPJ está nesta situação na Receita Federal.', use: 'Rever o registro: a base fica inflada e a anuidade lançada dificilmente será recebida.', ids: item.ids }); }} />
   </div>;
 }
@@ -174,8 +174,8 @@ function AutoresAnormais({ ctx }: { ctx: CockpitCtx }) {
   }), [rows, tokens, malha.medianaArts]);
   const indicio = malha.indicios.find(row => row.id === 'artAnormal');
   return <div className="stack">
-    <p className="kpi-line"><b>{int(malha.autoresAnormais.length)}</b> profissionais no padrão · <b>{int(indicio?.empresas.length ?? 0)}</b> empresas com ARTs desses autores · mediana de <b>{int(malha.medianaArts)}</b> ARTs por autor em 12 meses</p>
-    {rows.length ? <Chart option={option} tokens={tokens} label="Autores com padrão anormal de ART" onPick={() => { if (indicio?.empresas.length) ctx.open({ kind: 'empresas', title: 'Empresas com ART de autor em padrão anormal', what: 'Empresas das ARTs dos profissionais que satisfazem a regra no período.', use: 'Candidato para revisão: conferir compatibilidade de tempo e área antes de qualquer tratativa.', ids: indicio.empresas }); }} /> : <div className="empty-note">Nenhum profissional no padrão neste recorte.</div>}
+    <p className="kpi-line"><b>{int(malha.autoresAnormais.length)}</b> profissionais registraram ARTs em volume fora do normal, ligadas a <b>{int(indicio?.empresas.length ?? 0)}</b> empresas. Para comparar, o profissional típico registra <b>{int(malha.medianaArts)}</b> ARTs em 12 meses.</p>
+    {rows.length ? <Chart option={option} tokens={tokens} label="Autores com padrão anormal de ART" onPick={() => { if (indicio?.empresas.length) ctx.open({ kind: 'empresas', title: 'Empresas com ART de autor em padrão anormal', what: 'Empresas das ARTs dos profissionais que satisfazem a regra no período.', use: 'Candidato para revisão: conferir compatibilidade de tempo e área antes de qualquer tratativa.', ids: indicio.empresas }); }} /> : <div className="empty-note">Nenhum profissional com volume fora do normal nos filtros escolhidos.</div>}
   </div>;
 }
 
@@ -197,8 +197,8 @@ function Sucessoes({ ctx }: { ctx: CockpitCtx }) {
     series: [{ type: 'bar', barWidth: 9, data: porGre.map(row => row.n), itemStyle: { color: tokens.heat[2], borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10 } }],
   }), [porGre, tokens]);
   return <div className="stack">
-    <p className="kpi-line"><b>{int(rows.length)}</b> pares candidatos · <b>{int(empresas)}</b> empresas novas · <b>{int(comRt)}</b> com RT em comum · <button className="link" onClick={abrir}>ver os pares</button></p>
-    {rows.length ? <Chart option={option} tokens={tokens} label="Pares candidatos de sucessão por regional da empresa nova" onPick={abrir} /> : <div className="empty-note">Nenhum par candidato neste recorte.</div>}
+    <p className="kpi-line"><b>{int(rows.length)}</b> pares de empresas podem indicar que uma nova empresa substituiu outra. São <b>{int(empresas)}</b> empresas novas, e <b>{int(comRt)}</b> têm o mesmo responsável técnico da antiga. <button className="link" onClick={abrir}>ver os pares</button></p>
+    {rows.length ? <Chart option={option} tokens={tokens} label="Pares candidatos de sucessão por regional da empresa nova" onPick={abrir} /> : <div className="empty-note">Nenhum par de empresas nos filtros escolhidos.</div>}
   </div>;
 }
 
@@ -216,12 +216,12 @@ function ObrasNomes({ ctx }: { ctx: CockpitCtx }) {
   }), [porTermo, tokens]);
   return <div className="split">
     <div className="stack">
-      <p className="kpi-line"><b>{int(obras.length)}</b> obras com ART de execução e sem ART de fiscalização, de <b>{int(malha.obrasComExecucao.length)}</b> com execução identificada ({brl(obras.reduce((sum, row) => sum + row.valor, 0))}) · <button className="link" onClick={() => abrirContratos(ctx, obras, 'Obras públicas sem ART de fiscalização', 'Orientar o órgão contratante sobre a ART de fiscalização antes de qualquer notificação. A ART pode estar sob outra chave.')}>ver as obras</button></p>
-      <p className="kpi-line"><b>{int(nomes.length)}</b> CNPJs ativos sem registro com termo de engenharia no nome, por termo:</p>
+      <p className="kpi-line"><b>{int(obras.length)}</b> das <b>{int(malha.obrasComExecucao.length)}</b> obras com ART de execução não têm ART de fiscalização. Elas somam {brl(obras.reduce((sum, row) => sum + row.valor, 0))}. <button className="link" onClick={() => abrirContratos(ctx, obras, 'Obras públicas sem ART de fiscalização', 'Orientar o órgão contratante sobre a ART de fiscalização antes de qualquer notificação. A ART pode estar sob outra chave.')}>ver as obras</button></p>
+      <p className="kpi-line"><b>{int(nomes.length)}</b> empresas ativas na Receita sem registro no Crea-SP têm no nome uma palavra ligada à engenharia. A divisão por palavra é esta:</p>
       <Chart option={option} tokens={tokens} label="CNPJs sem registro com termo de engenharia no nome, por termo" onPick={() => { if (nomes.length) ctx.open({ kind: 'cnpjs', title: 'Nome de engenharia sem registro', what: 'Estabelecimentos ativos na Receita, sem registro ou visto vigente, cuja razão social ou nome fantasia contém termo de engenharia.', use: 'Candidato: confirmar a atividade antes de orientar. Em produção, o classificador de nomes passa por validação humana.', ids: nomes }); }} />
     </div>
     <ul className="side-list" aria-label="Obras sem ART de fiscalização">{obras.slice(0, 6).map(row => <li key={row.id}><span className="side-row"><span>{nomeEmpresa(ctx, row.companyId)}</span><b>{brl(row.valor)}</b><small>{row.objeto} · {data(row.data)}</small></span></li>)}
-      <li className="side-note">Maiores obras sem ART de fiscalização. Lido na data de referência.</li></ul>
+      <li className="side-note">As maiores obras sem ART de fiscalização, na data escolhida no alto da tela.</li></ul>
   </div>;
 }
 
@@ -242,12 +242,12 @@ function HistoricoMalha({ ctx }: { ctx: CockpitCtx }) {
   const primeiro = pontos[0], ultimo = pontos[pontos.length - 1];
   return <div className="split is-wide">
     <div className="stack">
-      <p className="kpi-line">{h.completo ? <><b>{int(pontos.length)}</b> datas, de {data(h.datas[0])} a {data(h.datas[h.datas.length - 1])}</> : <>Calculando <b>{int(pontos.length)}</b> de {int(h.datas.length)} datas…</>} · regional aplicada; a câmara não se aplica ao histórico</p>
+      <p className="kpi-line">{h.completo ? <><b>{int(pontos.length)}</b> datas, de {data(h.datas[0])} a {data(h.datas[h.datas.length - 1])}.</> : <>Calculando <b>{int(pontos.length)}</b> de {int(h.datas.length)} datas…</>} O histórico respeita a regional escolhida, mas não o filtro de câmara.</p>
       {pontos.length ? <Chart option={option} tokens={tokens} label="Empresas com indício, confirmadas e com ação, por data de referência" /> : carregando}
     </div>
     <ul className="side-list" aria-label="Regras na primeira e na última data">
-      {primeiro && ultimo ? regrasAtivas.map(regra => { const a = primeiro.porRegra[regra.id] ?? 0, b = ultimo.porRegra[regra.id] ?? 0; return <li key={regra.id}><button disabled><i style={{ background: b > a ? tokens.warn : b < a ? tokens.good : tokens.muted }} /><span><small>{regra.label}</small></span><b>{int(a)} → {int(b)}</b></button></li>; }) : <li className="side-note">Aguardando o primeiro ponto…</li>}
-      <li className="side-note">Primeira → última data do histórico, por regra.</li>
+      {primeiro && ultimo ? regrasAtivas.map(regra => { const a = primeiro.porRegra[regra.id] ?? 0, b = ultimo.porRegra[regra.id] ?? 0; return <li key={regra.id}><button disabled><i style={{ background: b > a ? tokens.warn : b < a ? tokens.good : tokens.muted }} /><span><small>{regra.label}</small></span><b>de {int(a)} para {int(b)}</b></button></li>; }) : <li className="side-note">Aguardando o primeiro ponto…</li>}
+      <li className="side-note">Quantas empresas cada regra apontava na primeira data do histórico e quantas aponta na última.</li>
     </ul>
   </div>;
 }

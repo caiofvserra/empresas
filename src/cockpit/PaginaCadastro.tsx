@@ -27,15 +27,15 @@ export default function PaginaCadastro({ ctx }: { ctx: CockpitCtx }) {
   const fila = cao.queue.reduce((sum, row) => sum + row.count, 0), rt = model.metrics.rtCoverage.value;
   return <div className="ck-grid ck-grid-cadastro">
     <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Indicadores de responsabilidade técnica, ART e certidões">
-      <Indicador destaque ficha="k-rt" ctx={ctx} label="Empresas com responsável técnico" value={rt === null ? '—' : pct(rt)} meta={{ atual: rt, alvo: metas.rt }} variacao={{ value: rt === null ? null : rt - metas.rt, kind: 'pp', label: `vs. meta de ${metas.rt}%` }} sub={`${int(qt.comRt.length)} de ${int(ativas.length)} empresas registradas`}
+      <Indicador destaque ficha="k-rt" ctx={ctx} label="Empresas com responsável técnico" value={rt === null ? '—' : pct(rt)} meta={{ atual: rt, alvo: metas.rt }} variacao={{ value: rt === null ? null : rt - metas.rt, kind: 'pp', label: `em relação à meta de ${metas.rt}%` }} sub={`${int(qt.comRt.length)} de ${int(ativas.length)} empresas registradas`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas registradas sem RT identificado', what: 'Empresas com registro ativo sem responsável técnico de vínculo vigente: RT baixado sem substituto ou nenhum vínculo carregado.', use: 'Notifique as de RT baixado; confira o cadastro das sem vínculo.', ids: [...qt.rtBaixado, ...qt.semVinculo] })} />
       <Indicador ficha="k-rt-baixado" ctx={ctx} label="RT baixado sem substituto" value={int(qt.rtBaixado.length)} sub="baixa do RT sem novo vínculo em 30 dias" onOpen={() => ctx.open({ kind: 'alvos', tipo: 'rt' })} />
       <Indicador ficha="k-arts" ctx={ctx} label="ARTs de empresas" value={int(arts.atual.length)} variacao={{ value: change(arts.atual.length, arts.antes) }} spark={arts.mensal} cor={tokens.blue} sub={`${int(new Set(arts.atual.map(row => row.companyId)).size)} empresas com ART no período`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas com ART no período', what: 'Empresas com ao menos uma ART registrada no período.', ids: [...new Set(arts.atual.map(row => row.companyId))] })} />
       <Indicador ficha="k-valor-art" ctx={ctx} label="Valor declarado em ART" value={brl(arts.valor)} variacao={{ value: change(arts.valor, arts.valorAntes) }} sub="soma do valor de contrato das ARTs" />
-      <Indicador ficha="k-cao" ctx={ctx} label="Certidão de acervo operacional" value={cao.median === null ? '—' : `${int(cao.median)} dias`} sub={`prazo mediano · 90% em até ${cao.p90 === null ? '—' : int(cao.p90)} dias · ${int(fila)} pedidos na fila`} />
+      <Indicador ficha="k-cao" ctx={ctx} label="Certidão de acervo operacional" value={cao.median === null ? '—' : `${int(cao.median)} dias`} sub={`é o prazo típico; 90% saem em até ${cao.p90 === null ? '—' : int(cao.p90)} dias, e ${int(fila)} pedidos aguardam`} />
       <Indicador ficha="k-quitacao" ctx={ctx} label="Aptas à certidão de registro e quitação" value={pct(pay.emDia.length / Math.max(1, ativas.length) * 100)} sub={`${int(pay.inadimplentes.length)} empresas registradas com anuidade vencida`}
-        onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas sem quitação de anuidade', what: 'Empresas registradas com anuidade vencida no corte: não obteriam a certidão de registro e quitação exigida em licitações.', use: 'Cobrança prioritária das que têm contrato público.', ids: pay.inadimplentes })} />
+        onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas sem quitação de anuidade', what: 'Empresas registradas com anuidade vencida na data escolhida. Sem quitação, elas não conseguiriam a certidão de registro e quitação exigida em licitações.', use: 'Cobrança prioritária das que têm contrato público.', ids: pay.inadimplentes })} />
     </section>
     <Bloco ctx={ctx} id="tc" area="tc" title="Empresas, estabelecimentos e registros" question="Três números que medem coisas diferentes e não devem ser somados: empresas (pela raiz do CNPJ), estabelecimentos (cada CNPJ completo) e registros ativos no Crea-SP." help="Uma empresa pode ter vários estabelecimentos, e cada estabelecimento pode ter mais de um registro ou visto. Empresas inativas são as que já tiveram registro e hoje não têm nenhum."><Contagens ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="cv" area="cv" title="Receita Federal comparada com o cadastro do Crea-SP" question="Estabelecimentos ativos na Receita com atividade (CNAE) da lista do Crea-SP, separados entre os que têm registro, os que só tiveram registro no passado e os que nunca apareceram no cadastro." help="“Sim” reúne as atividades em que o registro é obrigatório; “Passível” reúne as que dependem de análise. Não encontrar a empresa no cadastro não quer dizer que ela esteja irregular, porque o CNAE não prova a atividade."><Conciliacao ctx={ctx} /></Bloco>
@@ -75,11 +75,11 @@ function Situacoes({ ctx, flow }: { ctx: CockpitCtx; flow: ReturnType<typeof com
     series: [{ type: 'pie', radius: ['52%', '76%'], center: ['50%', '42%'], padAngle: 2, itemStyle: { borderRadius: 4, borderColor: tokens.surface, borderWidth: 2 }, label: { show: false },
       data: parts.map(part => ({ name: part.name, value: part.ids.length, itemStyle: { color: part.color } })) }],
   });
-  const abrir = (parts: { name: string; ids: string[] }[], titulo: string) => (params: any) => { const part = parts[params.dataIndex]; if (part?.ids.length) ctx.open({ kind: 'empresas', title: `${titulo} · ${part.name.toLowerCase()}`, what: 'Empresas (CNPJ raiz) nesta situação no corte.', ids: part.ids }); };
+  const abrir = (parts: { name: string; ids: string[] }[], titulo: string) => (params: any) => { const part = parts[params.dataIndex]; if (part?.ids.length) ctx.open({ kind: 'empresas', title: `${titulo} · ${part.name.toLowerCase()}`, what: 'Empresas, contadas pela raiz do CNPJ, nesta situação na data escolhida.', ids: part.ids }); };
   return <div className="duo">
     <Chart option={rosca(registro, registro.reduce((sum, part) => sum + part.ids.length, 0), 'empresas de engenharia')} tokens={tokens} label="Empresas por situação do registro" onPick={abrir(registro, 'Situação do registro')} />
     <Chart option={rosca(pagamentoParts, pay.emDia.length + pay.inadimplentes.length, 'empresas registradas')} tokens={tokens} label="Empresas registradas por situação de pagamento" onPick={abrir(pagamentoParts, 'Situação de pagamento')} />
-    <p className="duo-note">{int(vistos)} empresas com visto de outro CREA ativo · {int(ctx.ponte.saidas.length)} saídas no período</p>
+    <p className="duo-note">{int(vistos)} empresas têm visto ativo de outro CREA, e {int(ctx.ponte.saidas.length)} saíram da base no período.</p>
   </div>;
 }
 
@@ -146,7 +146,7 @@ function PrazoRegistro({ ctx }: { ctx: CockpitCtx }) {
     series: [{ type: 'bar', barWidth: '64%', data: prazo.faixas.map((item, index) => ({ value: item.ids.length, itemStyle: { borderRadius: [4, 4, 0, 0], color: index <= 2 ? tokens.good : index <= 4 ? tokens.accent : tokens.bad } })), label: { show: true, position: 'top', color: tokens.ink, fontSize: 10 } }],
   }), [prazo, tokens]);
   return <div className="stack">
-    <p className="kpi-line"><b>{prazo.mediana === null ? '—' : `${int(prazo.mediana)} dias`}</b> de mediana · 90% em até <b>{prazo.p90 === null ? '—' : `${int(prazo.p90)} dias`}</b> · {int(prazo.total)} registros no período</p>
+    <p className="kpi-line"><b>{prazo.mediana === null ? '—' : `${int(prazo.mediana)} dias`}</b> é o prazo típico (mediana), e 90% dos pedidos saem em até <b>{prazo.p90 === null ? '—' : `${int(prazo.p90)} dias`}</b>. Foram {int(prazo.total)} registros no período.</p>
     <Chart option={option} tokens={tokens} label="Distribuição do prazo de concessão do registro" onPick={params => { const item = prazo.faixas[params.dataIndex]; if (item?.ids.length) ctx.open({ kind: 'empresas', title: `Registros concedidos em ${item.nome} dias`, what: 'Empresas cujo registro começou no período, pelo prazo entre o pedido e a concessão.', ids: item.ids }); }} />
   </div>;
 }
@@ -164,7 +164,7 @@ function Contagens({ ctx }: { ctx: CockpitCtx }) {
   const itens: [string, number, string][] = [['Empresas (raiz CNPJ)', c.raizes, 'com ao menos um registro ou visto vigente'], ['Estabelecimentos (CNPJ completo)', c.estabelecimentos, 'com registro ou visto vigente'], ['Registros e vistos vigentes', c.registros, `${int(c.vistos)} vistos de outro CREA`]];
   return <div className="tres">
     {itens.map(([label, value, note]) => <div key={label} className="tres-item"><span>{label}</span><strong>{int(value)}</strong><small>{note}</small></div>)}
-    <p className="duo-note">{int(c.raizesHistorico)} empresas só com histórico (inativas) · data de referência {data(ctx.dataset.snapshotDate)}</p>
+    <p className="duo-note">{int(c.raizesHistorico)} empresas já tiveram registro e hoje não têm nenhum. Contagem na data de {data(ctx.dataset.snapshotDate)}.</p>
   </div>;
 }
 
@@ -181,7 +181,7 @@ function Conciliacao({ ctx }: { ctx: CockpitCtx }) {
       label: index === correspondencias.length - 1 ? { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, formatter: (params: any) => { const classe = classesCnae[params.dataIndex]; const taxa = classe === 'Sim' ? c.taxaSim : c.taxaPassivel; return taxa === null ? '' : pct(taxa, 1); } } : undefined })),
   }), [c, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <div className="stack">
-    <p className="kpi-line"><b>{c.taxa === null ? '—' : pct(c.taxa, 1)}</b> de cobertura em {int(c.total)} CNPJs · “Sim” <b>{c.taxaSim === null ? '—' : pct(c.taxaSim, 1)}</b> · “Passível” <b>{c.taxaPassivel === null ? '—' : pct(c.taxaPassivel, 1)}</b> · Receita e cadastro em {data(c.competenciaReceita)}</p>
+    <p className="kpi-line"><b>{c.taxa === null ? '—' : pct(c.taxa, 1)}</b> dos {int(c.total)} estabelecimentos estão no cadastro. Nas atividades de registro obrigatório a cobertura é de <b>{c.taxaSim === null ? '—' : pct(c.taxaSim, 1)}</b>; nas que dependem de análise, <b>{c.taxaPassivel === null ? '—' : pct(c.taxaPassivel, 1)}</b>. Receita e cadastro comparados em {data(c.competenciaReceita)}.</p>
     <Chart option={option} tokens={tokens} label="Conciliação dos CNPJs com CNAE da lista com o cadastro do Crea-SP" onPick={params => { const classe = classesCnae[params.dataIndex], nome = correspondencias[params.seriesIndex]; const ids = classe && nome ? c.porClasse[classe][nome] : [];
       if (ids.length) ctx.open({ kind: 'cnpjs', title: `“${classe}” · ${nome.toLowerCase()}`, what: 'CNPJs completos ativos na Receita com CNAE da lista do Crea-SP nesta classe e correspondência.', use: nome === 'Sem correspondência' ? 'Sem correspondência não quer dizer irregular. Confirmar atividade antes de orientar ou notificar.' : undefined, ids }); }} />
   </div>;
@@ -239,7 +239,7 @@ function Certidoes({ ctx, cao }: { ctx: CockpitCtx; cao: ReturnType<typeof caoSe
   return <div className="stack">
     <Chart option={option} tokens={tokens} label="Distribuição do prazo de emissão da certidão de acervo operacional" />
     <ul className="chips-row" aria-label="Pedidos que aguardam">{cao.queue.map(row => <li key={row.status}><button onClick={() => ctx.open({ kind: 'empresas', title: `Certidões · ${row.status.toLowerCase()}`, what: 'Empresas com pedido de certidão de acervo operacional nesta situação.', ids: row.companyIds })}><b>{int(row.count)}</b> {row.status.toLowerCase()}<small>há {row.medianAge === null ? '—' : int(row.medianAge)} dias (mediana)</small></button></li>)}
-      <li className="chips-note">{int(cao.issued)} emitidas · {int(cao.revoked)} revogadas</li></ul>
+      <li className="chips-note">{int(cao.issued)} certidões emitidas e {int(cao.revoked)} revogadas</li></ul>
   </div>;
 }
 
@@ -287,13 +287,13 @@ function RedeSocietaria({ ctx }: { ctx: CockpitCtx }) {
   }), [grupos, tokens]);
   return <div className="split">
     <div className="stack">
-      <p className="kpi-line"><b>{int(q.empresasComSocioPj.length)}</b> empresas com sócio PJ · <b>{int(q.sociosInternos)}</b> sócios do universo e <b>{int(q.sociosExternos)}</b> de fora · <b>{int(q.gruposMultiplos)}</b> grupos com duas ou mais empresas (maior: {int(q.maiorGrupo)})</p>
-      <Chart option={option} tokens={tokens} label="Maiores grupos societários por número de empresas" onPick={params => { const row = grupos[params.dataIndex]; if (row) ctx.open({ kind: 'empresas', title: `Grupo societário ${row.id}`, what: 'Empresas do universo ligadas por participação societária de pessoa jurídica (QSA aberto, chave CNPJ exata).', use: 'Contexto: a ligação é societária, não técnica. Ver o registro e o RT de cada empresa antes de qualquer leitura.', ids: row.empresas }); }} />
+      <p className="kpi-line"><b>{int(q.empresasComSocioPj.length)}</b> empresas têm outra empresa como sócia. Desses sócios, <b>{int(q.sociosInternos)}</b> também têm atividade de engenharia e <b>{int(q.sociosExternos)}</b> não têm. Há <b>{int(q.gruposMultiplos)}</b> grupos com duas ou mais empresas; o maior reúne {int(q.maiorGrupo)}.</p>
+      <Chart option={option} tokens={tokens} label="Maiores grupos societários por número de empresas" onPick={params => { const row = grupos[params.dataIndex]; if (row) ctx.open({ kind: 'empresas', title: `Grupo societário ${row.id}`, what: 'Empresas com atividade de engenharia ligadas entre si porque uma é sócia da outra, segundo o quadro de sócios publicado pela Receita.', use: 'Contexto: a ligação é societária, não técnica. Ver o registro e o RT de cada empresa antes de qualquer leitura.', ids: row.empresas }); }} />
     </div>
     <ul className="side-list" aria-label="Sócios PJ de engenharia">
-      <li><button onClick={() => q.investidasRegistradasComSocioEngenhariaSemRegistro.length && ctx.open({ kind: 'empresas', title: 'Registradas com sócio PJ de engenharia sem registro', what: 'Empresas registradas cujo sócio PJ, de fora do universo, tem CNAE da lista do Crea-SP e nenhum registro localizado.', use: 'Contexto para a malha fina (regra sócio PJ): o sócio pode não exercer a atividade.', ids: q.investidasRegistradasComSocioEngenhariaSemRegistro })}><i style={{ background: tokens.warn }} /><span>Registradas com sócio PJ de engenharia sem registro</span><b>{int(q.investidasRegistradasComSocioEngenhariaSemRegistro.length)}</b></button></li>
+      <li><button onClick={() => q.investidasRegistradasComSocioEngenhariaSemRegistro.length && ctx.open({ kind: 'empresas', title: 'Registradas com sócio PJ de engenharia sem registro', what: 'Empresas registradas que têm como sócia outra empresa com atividade da lista do Crea-SP, mas sem registro encontrado.', use: 'Contexto para a malha fina (regra sócio PJ): o sócio pode não exercer a atividade.', ids: q.investidasRegistradasComSocioEngenhariaSemRegistro })}><i style={{ background: tokens.warn }} /><span>Registradas com sócio PJ de engenharia sem registro</span><b>{int(q.investidasRegistradasComSocioEngenhariaSemRegistro.length)}</b></button></li>
       <li><button disabled><i style={{ background: tokens.muted }} /><span>Sócios PJ de fora com CNAE da lista</span><b>{int(q.externosEngenharia.length)}</b></button></li>
-      <li className="side-note">QSA aberto da Receita (mensal). Sócio PF depende de acordo (CPF completo).</li>
+      <li className="side-note">Os sócios vêm do quadro societário que a Receita publica todo mês. Para identificar sócios pessoas físicas é preciso um acordo com a Receita, porque o CPF vem mascarado.</li>
     </ul>
   </div>;
 }
@@ -310,12 +310,12 @@ function Instalacoes({ ctx }: { ctx: CockpitCtx }) {
   }), [rows, gres, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <div className="split is-wide">
     <div className="stack">
-      <p className="kpi-line"><b>{int(q.instalacoes.length)}</b> instalações e operações com agente identificado por CNPJ · <b>{int(q.novas12)}</b> novas nos últimos 12 meses ({q.novasAntes ? `${q.novas12 >= q.novasAntes ? '+' : ''}${pct((q.novas12 - q.novasAntes) / q.novasAntes * 100)} vs. 12 meses anteriores` : 'sem base anterior'})</p>
+      <p className="kpi-line"><b>{int(q.instalacoes.length)}</b> instalações e operações têm uma empresa responsável identificada pelo CNPJ. Nos últimos 12 meses surgiram <b>{int(q.novas12)}</b> novas ({q.novasAntes ? `${q.novas12 >= q.novasAntes ? '+' : ''}${pct((q.novas12 - q.novasAntes) / q.novasAntes * 100)} em relação aos 12 meses anteriores` : 'sem período anterior para comparar'}).</p>
       <Chart option={option} tokens={tokens} label="Instalações e investimentos por regional e fonte" onPick={params => { const row = rows[params.dataIndex]; if (row) ctx.filterGre(row.greId); }} />
     </div>
     <ul className="side-list" aria-label="Por fonte">
       {q.porFonte.map(row => <li key={row.fonte}><button disabled><i style={{ background: cores[row.fonte] }} /><span>{row.fonte} · {int(row.n)} registros<br /><small>{int(row.agentesNoUniverso)} agentes no universo, {int(row.agentesRegistrados)} registrados</small></span><b>{row.fonte === 'BNDES' ? brl(row.valor) : `${row.valor.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 })} ${row.unidade}`}</b></button></li>)}
-      <li className="side-note">Agente = operador, titular ou financiado, por CNPJ exato. Não é prova de projeto, instalação ou RT.</li>
+      <li className="side-note">A empresa aparece como operadora, titular ou financiada, pelo CNPJ exato. Isso não prova que ela fez o projeto, a instalação ou tenha RT.</li>
     </ul>
   </div>;
 }
@@ -351,12 +351,12 @@ function Dinamica({ ctx }: { ctx: CockpitCtx }) {
   }), [a, tokens]);
   return <div className="split is-wide">
     <div className="stack">
-      <p className="kpi-line"><b>{int(a.total)}</b> estabelecimentos com CNAE da lista abertos em 24 meses · <b>{int(a.comRegistro)}</b> já registrados ({a.total ? pct(a.comRegistro / a.total * 100) : '—'}) · <b>{int(a.foraDeAtividade)}</b> elegíveis baixados, inaptos ou suspensos na fotografia</p>
+      <p className="kpi-line"><b>{int(a.total)}</b> estabelecimentos com atividade de engenharia foram abertos nos últimos 24 meses, e <b>{int(a.comRegistro)}</b> deles já se registraram ({a.total ? pct(a.comRegistro / a.total * 100) : '—'}). Outros <b>{int(a.foraDeAtividade)}</b> já aparecem na Receita como baixados, inaptos ou suspensos.</p>
       <Chart option={option} tokens={tokens} label="Estabelecimentos abertos na Receita por mês e situação no cadastro" onPick={() => a.ids.length && ctx.open({ kind: 'cnpjs', title: 'Abertos na Receita em 24 meses', what: 'Estabelecimentos com CNAE da lista do Crea-SP abertos nos últimos 24 meses antes da data de referência (data de abertura da Receita).', use: 'Aberturas são mercado novo; a correspondência no cadastro é uma decomposição, não um filtro. Sem registro não quer dizer irregular.', ids: a.ids })} />
     </div>
     <ul className="side-list" aria-label="Permanência das coortes">
       {coortes.map(row => <li key={row.mesesAtras}><button onClick={() => row.saidas.length && ctx.open({ kind: 'empresas', title: `Saíram da base em ${row.mesesAtras} meses`, what: `Empresas com registro ou visto vigente em ${data(row.d0)} e sem registro vigente na data de referência.`, use: 'Perda de vínculo institucional; cadastro vigente não prova atividade e a saída não tem causa atribuída.', ids: row.saidas })}><i style={{ background: row.taxa !== null && row.taxa >= 90 ? tokens.good : tokens.warn }} /><span>Coorte de {row.mesesAtras} meses ({data(row.d0)})<br /><small>{int(row.permanecem.length)} de {int(row.coorte.length)} permanecem · {int(row.saidas.length)} saíram</small></span><b>{row.taxa === null ? '—' : pct(row.taxa, 1)}</b></button></li>)}
-      <li className="side-note">Coorte fixa de raízes vigentes em D − n meses; quem entrou depois não conta. Aberturas: fotografia mensal da Receita, com defasagem.</li>
+      <li className="side-note">Cada linha acompanha as empresas que estavam registradas naquela data; quem entrou depois não conta. As aberturas vêm do arquivo mensal da Receita, que chega com algumas semanas de atraso.</li>
     </ul>
   </div>;
 }
@@ -372,17 +372,17 @@ function SociosPf({ ctx }: { ctx: CockpitCtx }) {
       { type: 'bar', name: 'Demais sócios PF', stack: 'q', data: q.porQualificacao.map(row => row.n - row.profissionais), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(q.porQualificacao[params.dataIndex].n) } },
     ],
   }), [q, tokens]);
-  const abrir = (titulo: string, ids: string[], what: string, use: string) => ids.length && ctx.open({ kind: 'empresas', title: titulo, what, use, ids, eyebrow: 'Contexto · depende de parceria (CPF completo do QSA)' });
+  const abrir = (titulo: string, ids: string[], what: string, use: string) => ids.length && ctx.open({ kind: 'empresas', title: titulo, what, use, ids, eyebrow: 'Contexto que depende de acordo com a Receita (CPF completo dos sócios)' });
   return <div className="split">
     <div className="stack">
-      <p className="kpi-line"><b>{int(q.empresasComSocioPf.length)}</b> empresas com sócio PF identificado · <b>{int(q.sociosProfissionais.length)}</b> sócios são profissionais do sistema ({int(q.sociosProfissionaisAtivos)} ativos) · <b>{int(q.socioEhRt.length)}</b> são RT da própria empresa</p>
+      <p className="kpi-line"><b>{int(q.empresasComSocioPf.length)}</b> empresas têm sócio pessoa física identificado. Entre esses sócios, <b>{int(q.sociosProfissionais.length)}</b> são profissionais registrados no sistema Confea/Crea ({int(q.sociosProfissionaisAtivos)} com registro ativo), e <b>{int(q.socioEhRt.length)}</b> são o próprio responsável técnico da empresa.</p>
       <Chart option={option} tokens={tokens} label="Sócios pessoa física por qualificação e presença no cadastro profissional" />
     </div>
     <ul className="side-list" aria-label="Leituras do quadro societário">
       <li><button onClick={() => abrir('Registradas sem RT com sócio profissional ativo', q.registradasSemRtComSocioProfissional, 'Empresas registradas sem vínculo de RT vigente cujo sócio é profissional com registro ativo.', 'Orientar a anotação do RT: o sócio pode ser o responsável natural. Sociedade não é vínculo de responsabilidade.')}><i style={{ background: tokens.accent }} /><span>Registradas sem RT com sócio profissional ativo</span><b>{int(q.registradasSemRtComSocioProfissional.length)}</b></button></li>
       <li><button onClick={() => abrir('Registradas com sócio profissional inativo', q.registradasComSocioProfissionalInativo, 'Empresas registradas cujo sócio profissional está com registro cancelado ou interrompido na data de referência.', 'Contexto para o relacionamento com o profissional; nada a notificar à empresa por isso.')}><i style={{ background: tokens.muted }} /><span>Registradas com sócio profissional cancelado ou interrompido</span><b>{int(q.registradasComSocioProfissionalInativo.length)}</b></button></li>
       <li><button disabled><i style={{ background: tokens.blue }} /><span>Sócio profissional é RT da própria empresa</span><b>{int(q.socioEhRt.length)}</b></button></li>
-      <li className="side-note">Depende do acordo com a Receita Federal (CPF completo); o QSA aberto mascara o CPF. JUCESP complementa os atos. Demonstrativo.</li>
+      <li className="side-note">Este bloco depende de um acordo com a Receita Federal, porque o quadro de sócios público mascara o CPF. A Junta Comercial (JUCESP) complementa as alterações societárias. Os números são demonstrativos.</li>
     </ul>
   </div>;
 }
@@ -405,7 +405,7 @@ function ContextoEconomico({ ctx }: { ctx: CockpitCtx }) {
     <Chart option={option} tokens={tokens} label="PIB por habitante contra cobertura cadastral, por regional" onPick={params => { const row = rows[params.dataIndex]; if (row) ctx.open({ kind: 'gre', id: row.greId }); }} />
     <ul className="side-list" aria-label="Crédito por estabelecimento elegível">
       {credito.map(row => <li key={row.greId}><button onClick={() => ctx.open({ kind: 'gre', id: row.greId })}><i style={{ background: tokens.accent }} /><span>{short(row.name)}<small>{brl(row.creditoSaldo)} · {int(row.creditoOperacoes)} operações</small></span><b>{brl(row.creditoPorElegivel ?? 0)}</b></button></li>)}
-      <li className="side-note">PIB e VAB: IBGE (anual, público). Crédito por município e CNAE: só em agregado, pelo acordo com o Banco Central. Demonstrativo.</li>
+      <li className="side-note">O PIB e o valor adicionado vêm do IBGE, que publica uma vez por ano. O crédito por município e atividade só existe em total agregado e depende de acordo com o Banco Central. Os números são demonstrativos.</li>
     </ul>
   </div>;
 }

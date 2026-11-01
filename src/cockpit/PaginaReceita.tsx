@@ -19,13 +19,13 @@ export default function PaginaReceita({ ctx }: { ctx: CockpitCtx }) {
   const orc = estrutura?.orcamento;
   return <div className="ck-grid ck-grid-receita">
     <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Indicadores de receita, cobrança e orçamento">
-      <Indicador destaque ficha="k-arrecadacao" ctx={ctx} label="Arrecadação de empresas" value={brl(rec.total)} variacao={{ value: rec.totalAntes === null ? null : change(rec.total, rec.totalAntes) }} spark={rec.mensal.map(row => row.anuidades + row.multas)} cor={tokens.accent} sub={`${brl(rec.anuidades)} anuidades · ${brl(rec.multas)} multas`} />
+      <Indicador destaque ficha="k-arrecadacao" ctx={ctx} label="Arrecadação de empresas" value={brl(rec.total)} variacao={{ value: rec.totalAntes === null ? null : change(rec.total, rec.totalAntes) }} spark={rec.mensal.map(row => row.anuidades + row.multas)} cor={tokens.accent} sub={`${brl(rec.anuidades)} de anuidades e ${brl(rec.multas)} de multas`} />
       <Indicador ficha="k-saldo" ctx={ctx} label="Saldo vencido" value={brl(saldo)} variacao={{ value: change(saldo, before?.overdue), goodUp: false, label: `em ${period} meses` }} spark={months.map(row => row.overdue)} cor={tokens.bad} sub={`${int(debtors.size)} empresas devedoras`}
-        onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas com saldo vencido', what: 'Empresas cobradas com valor vencido e não pago no corte.', use: 'Cobre primeiro os maiores saldos e os mais recentes; confira se o CNPJ segue ativo.', ids: [...debtors] })} />
-      <Indicador ficha="k-adimplencia" ctx={ctx} label="Adimplência" value={adimplencia === null ? '—' : pct(adimplencia)} meta={{ atual: adimplencia, alvo: metas.adimplencia }} variacao={{ value: adimplencia === null ? null : adimplencia - metas.adimplencia, kind: 'pp', label: `vs. meta de ${metas.adimplencia}%` }} sub={`${int(cobradas.length - debtors.size)} de ${int(cobradas.length)} empresas cobradas em dia`} />
+        onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas com saldo vencido', what: 'Empresas com valor vencido e ainda não pago na data escolhida.', use: 'Cobre primeiro os maiores saldos e os mais recentes; confira se o CNPJ segue ativo.', ids: [...debtors] })} />
+      <Indicador ficha="k-adimplencia" ctx={ctx} label="Adimplência" value={adimplencia === null ? '—' : pct(adimplencia)} meta={{ atual: adimplencia, alvo: metas.adimplencia }} variacao={{ value: adimplencia === null ? null : adimplencia - metas.adimplencia, kind: 'pp', label: `em relação à meta de ${metas.adimplencia}%` }} sub={`${int(cobradas.length - debtors.size)} de ${int(cobradas.length)} empresas cobradas em dia`} />
       <Indicador ficha="k-recuperacao" ctx={ctx} label="Recuperação da dívida" value={model.metrics.recovery.value === null ? '—' : pct(model.metrics.recovery.value)} meta={{ atual: model.metrics.recovery.value, alvo: metas.recuperacao }} sub={`${brl(model.recoveryCohort.recovered)} recebidos de ${brl(model.recoveryCohort.openingBalance)} vencidos no início`} />
       <Indicador ficha="k-execucao" ctx={ctx} label="Execução orçamentária" value={orc?.execucao == null ? '…' : pct(orc.execucao)} sub={orc ? `${brl(orc.executado)} executados de ${brl(orc.planejado)} planejados` : 'calculando…'} />
-      <Indicador ficha="k-potencial" ctx={ctx} label="Potencial anual de registro" value={ticket === null ? '—' : brl(gap * ticket)} sub={`${int(gap)} CNPJs sem registro × ${ticket === null ? '—' : money(ticket)} de anuidade mediana`} />
+      <Indicador ficha="k-potencial" ctx={ctx} label="Potencial anual de registro" value={ticket === null ? '—' : brl(gap * ticket)} sub={`${int(gap)} estabelecimentos sem registro, multiplicados pela anuidade típica de ${ticket === null ? '—' : money(ticket)}`} />
     </section>
     <Bloco ctx={ctx} id="yoy" area="yoy" title="Arrecadação de empresas, mês a mês" question="Anuidades e multas recebidas de empresas em cada mês. A linha mostra o mesmo mês do ano anterior, e as setas, a variação."><AnoContraAno ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="rg" area="rg" title="Dívida recuperada e dívida antiga" question="Quanto da dívida que existia no início do período já foi recebido, e há quanto tempo está vencida a dívida de hoje."><Recuperacao ctx={ctx} /></Bloco>
@@ -94,7 +94,7 @@ function Orcamento({ ctx }: { ctx: CockpitCtx }) {
     ],
   }), [rows, tokens]);
   return <div className="stack">
-    <p className="kpi-line"><b>{orc.execucao === null ? '—' : pct(orc.execucao)}</b> de execução · {brl(orc.executado)} de {brl(orc.planejado)} · {orc.executadoAntes ? `${orc.executado >= orc.executadoAntes ? '+' : ''}${pct((orc.executado / orc.executadoAntes - 1) * 100)} executado vs. ano anterior` : ''}</p>
+    <p className="kpi-line"><b>{orc.execucao === null ? '—' : pct(orc.execucao)}</b> do orçamento foi executado: {brl(orc.executado)} de {brl(orc.planejado)} planejados.{orc.executadoAntes ? ` O valor executado variou ${orc.executado >= orc.executadoAntes ? '+' : ''}${pct((orc.executado / orc.executadoAntes - 1) * 100)} em relação ao ano anterior.` : ''}</p>
     <Chart option={option} tokens={tokens} label="Orçamento planejado e executado por programa" />
   </div>;
 }

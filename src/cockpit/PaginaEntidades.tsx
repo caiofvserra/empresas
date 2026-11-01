@@ -22,8 +22,8 @@ export default function PaginaEntidades({ ctx }: { ctx: CockpitCtx }) {
     <section className="ck-cards is-four" style={{ gridArea: 'kpi' }} aria-label="Indicadores de entidades e IES">
       <Indicador destaque ficha="k-organizacoes" ctx={ctx} label="Organizações registradas" value={int(e.linhas.length)} sub={grupos.map(grupo => `${int(porGrupo(grupo))} ${grupo.toLowerCase().replace('ies', 'IES')}`).join(' · ')} />
       <Indicador ficha="k-cadeiras" ctx={ctx} label="Cadeiras no plenário" value={int(e.cadeiras)} sub={e.cadeirasPorNatureza.map(row => `${int(row.cadeiras)} ${row.grupo.toLowerCase().replace('ies', 'IES')}`).join(' · ')} />
-      <Indicador ficha="k-repasses" ctx={ctx} label="Repasses em 12 meses" value={brl(e.total)} variacao={{ value: change(e.total, e.totalAntes), label: 'vs. 12 meses anteriores' }} sub={canais.map(canal => `${brl(e.repassePorAno.filter(row => row.canal === canal && row.ano === e.anos.at(-1)).reduce((sum, row) => sum + row.valor, 0))} ${canal.toLowerCase()}s no ano corrente`).join(' · ')} />
-      <Indicador ficha="k-vigentes" ctx={ctx} label="Instrumentos vigentes" value={int(vigentes)} sub={`convênios, contratos e patrocínios com vigência na data de referência · ${int(e.linhas.filter(row => row.vigentes).length)} organizações`} />
+      <Indicador ficha="k-repasses" ctx={ctx} label="Repasses em 12 meses" value={brl(e.total)} variacao={{ value: change(e.total, e.totalAntes), label: 'em relação aos 12 meses anteriores' }} sub={canais.map(canal => `${brl(e.repassePorAno.filter(row => row.canal === canal && row.ano === e.anos.at(-1)).reduce((sum, row) => sum + row.valor, 0))} ${canal.toLowerCase()}s no ano corrente`).join(' · ')} />
+      <Indicador ficha="k-vigentes" ctx={ctx} label="Instrumentos vigentes" value={int(vigentes)} sub={`convênios, contratos e patrocínios em vigor, com ${int(e.linhas.filter(row => row.vigentes).length)} organizações`} />
     </section>
     <Bloco ctx={ctx} id="ec" area="ec" title="Quem ocupa as cadeiras do plenário" question="Quantos conselheiros foram indicados por entidades de classe, por instituições de ensino públicas e por instituições privadas, e quantas organizações há em cada grupo."><Cadeiras ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="er" area="er" title="Repasses por ano" question="Pagamentos feitos a entidades e instituições de ensino por convênios, contratos e patrocínios, pela data do pagamento. Você pode abrir por tipo de organização ou por tipo de instrumento. O ano corrente ainda está incompleto."><Repasses ctx={ctx} /></Bloco>
@@ -44,7 +44,7 @@ function Cadeiras({ ctx }: { ctx: CockpitCtx }) {
       label: { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, formatter: (params: any) => `${int(params.value)} · ${int(rows[params.dataIndex].organizacoes)} org.` } }],
   }), [rows, tokens, cores]); // eslint-disable-line react-hooks/exhaustive-deps
   return <div className="stack">
-    <p className="kpi-line"><b>{int(ctx.entidades.cadeiras)}</b> cadeiras ocupadas por indicação de organizações registradas · composição demonstrativa fixa</p>
+    <p className="kpi-line"><b>{int(ctx.entidades.cadeiras)}</b> cadeiras do plenário são ocupadas por indicação de organizações registradas. A composição mostrada é demonstrativa.</p>
     <Chart option={option} tokens={tokens} label="Cadeiras no plenário por natureza da organização" />
   </div>;
 }
@@ -73,7 +73,7 @@ function Ies({ ctx }: { ctx: CockpitCtx }) {
     return { natureza, n: mine.length, ead: mine.length ? mine.reduce((sum, row) => sum + (row.ead ?? 0), 0) / mine.length : null, cadeiras: mine.reduce((sum, row) => sum + row.cadeiras, 0), repasses: mine.reduce((sum, row) => sum + row.repassadoAno, 0), vigentes: mine.reduce((sum, row) => sum + row.vigentes, 0) }; });
   return <div className="tres is-two">
     {rows.map(row => <div key={row.natureza} className="tres-item is-tall"><span>IES {row.natureza.toLowerCase()}s</span><strong>{int(row.n)}</strong><small>EaD médio {row.ead === null ? '—' : pct(row.ead)} · {int(row.cadeiras)} cadeiras · {brl(row.repasses)} em 12 meses · {int(row.vigentes)} instrumentos vigentes</small></div>)}
-    <p className="duo-note">Parte EaD pela oferta de concluintes do Censo. Leitura descritiva, sem juízo sobre representatividade.</p>
+    <p className="duo-note">A parte a distância (EaD) é calculada pelos concluintes informados no Censo da Educação Superior. O bloco descreve a situação e não avalia a representatividade.</p>
   </div>;
 }
 

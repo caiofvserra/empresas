@@ -39,7 +39,7 @@ const Situacao = ({ situacao, tokens }: { situacao: SituacaoCruzamento; tokens: 
 function Frentes({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, contagem = (situacao: SituacaoCruzamento) => frentes.filter(row => row.situacao === situacao).length;
   return <div className="stack">
-    <p className="kpi-line"><b>{contagem('No painel')}</b> no painel · <b>{contagem('Parcial')}</b> parciais · <b>{contagem('Planejada')}</b> planejadas · <b>{contagem('Depende de acordo')}</b> dependem de acordo · {regrasLeitura.length} cruzamentos na matriz</p>
+    <p className="kpi-line"><b>{contagem('No painel')}</b> frentes já estão no painel, <b>{contagem('Parcial')}</b> estão em parte, <b>{contagem('Planejada')}</b> estão planejadas e <b>{contagem('Depende de acordo')}</b> dependem de acordo. A tabela de cruzamentos tem {regrasLeitura.length} linhas.</p>
     <div className="table-wrap"><table className="metodo is-dense">
       <thead><tr><th>Frente</th><th>Potencial mais relevante</th><th>Coleta</th><th>Situação</th><th>No painel</th></tr></thead>
       <tbody>{frentes.map(row => <tr key={row.id}><td><b>{row.frente}</b><small>{row.fontes}</small></td><td>{row.potencial}</td><td><span className={`coleta is-${chave(row.coleta)}`}>{row.coleta}</span></td><td><Situacao situacao={row.situacao} tokens={tokens} /></td><td><small>{row.noPainel}</small></td></tr>)}</tbody>
@@ -66,7 +66,7 @@ const decisaoClasse: Record<Decisao, string> = { Corrigida: 'is-confirmado', Rot
 function Lacunas() {
   const contagem = (decisao: Decisao) => lacunas.filter(row => row.decisao === decisao).length;
   return <div className="stack">
-    <p className="kpi-line"><b>{contagem('Corrigida')}</b> corrigidas · <b>{contagem('Retirada')}</b> retiradas · <b>{contagem('Rotulada')}</b> rotuladas como demonstrativas</p>
+    <p className="kpi-line"><b>{contagem('Corrigida')}</b> medidas foram corrigidas, <b>{contagem('Retirada')}</b> foram retiradas e <b>{contagem('Rotulada')}</b> passaram a ser marcadas como demonstrativas.</p>
     <div className="table-wrap"><table className="metodo">
       <thead><tr><th>#</th><th>Lacuna</th><th>Decisão</th><th>O que mudou</th><th>Falta para produção</th></tr></thead>
       <tbody>{lacunas.map(row => <tr key={row.n}><td>{row.n}</td><td><b>{row.titulo}</b></td><td><span className={`status ${decisaoClasse[row.decisao]}`}>{row.decisao}</span></td><td>{row.oQueMudou}</td><td><small>{row.falta}</small></td></tr>)}</tbody>
@@ -134,7 +134,7 @@ const corFerramenta = (tokens: CockpitCtx['tokens']): Record<SituacaoFerramenta,
 function Ferramentas({ ctx }: { ctx: CockpitCtx }) {
   const cores = corFerramenta(ctx.tokens);
   return <div className="stack">
-    <p className="kpi-line"><b>{int(ferramentasIa.filter(row => row.situacao === 'No painel').length)}</b> no painel · <b>{int(ferramentasIa.filter(row => row.situacao === 'Protótipo').length)}</b> em protótipo · <b>{int(ferramentasIa.filter(row => row.situacao === 'Planejada').length)}</b> planejadas · nenhuma saída vira fato sem validação humana e taxa de falso positivo medida</p>
+    <p className="kpi-line"><b>{int(ferramentasIa.filter(row => row.situacao === 'No painel').length)}</b> ferramentas já estão no painel, <b>{int(ferramentasIa.filter(row => row.situacao === 'Protótipo').length)}</b> estão em protótipo e <b>{int(ferramentasIa.filter(row => row.situacao === 'Planejada').length)}</b> estão planejadas. Nenhum resultado delas é tratado como fato antes de ser conferido por uma pessoa e de se medir quantas vezes a ferramenta erra.</p>
     <div className="table-wrap"><table className="metodo">
       <thead><tr><th>Ferramenta</th><th>Tipo</th><th>Alimenta</th><th>Entrada e saída</th><th>Validação</th><th>Situação</th></tr></thead>
       <tbody>{ferramentasIa.map(row => <tr key={row.nome}><td><b>{row.nome}</b></td><td>{row.tipo}</td><td><small>{row.bloco}</small></td><td><small>{row.entrada}</small><small>→ {row.saida}</small></td><td><small>{row.validacao}</small></td><td><span className="chip" style={{ borderColor: cores[row.situacao] }}><i className="dot" style={{ background: cores[row.situacao] }} />{row.situacao}</span></td></tr>)}</tbody>
@@ -153,7 +153,7 @@ function Radar({ ctx }: { ctx: CockpitCtx }) {
       <button role="radio" aria-checked={casa === null} className={casa === null ? 'on' : ''} onClick={() => setCasa(null)}>Todas · {proposicoes.length}</button>
       {casasLegislativas.map(item => <button key={item} role="radio" aria-checked={casa === item} className={casa === item ? 'on' : ''} onClick={() => setCasa(casa === item ? null : item)}>{item} · {proposicoes.filter(row => row.casa === item).length}</button>)}
     </div>
-    <p className="kpi-line">{porFamilia.map(row => <span key={row.familia} className="chip" style={{ marginRight: 4 }}>{row.familia} · {row.n}</span>)}</p>
+    <p className="kpi-line">{porFamilia.map(row => <span key={row.familia} className="chip" style={{ marginRight: 4 }}>{row.familia}: {row.n}</span>)}</p>
     <div className="table-wrap"><table className="metodo is-dense">
       <thead><tr><th>Casa e proposição</th><th>Família de assunto</th><th>Ementa</th><th>Etapa</th><th>Última tramitação</th><th>Relevância</th></tr></thead>
       <tbody>{rows.map(row => <tr key={row.id}><td><b>{row.casa}</b><small>{row.sigla}</small></td><td>{row.familia}</td><td><small>{row.ementa}</small></td><td><span className="chip"><i className="dot" style={{ background: cores[row.etapa] }} />{row.etapa}</span></td><td>{data(row.ultimaTramitacao)}</td><td><span className={`status is-${row.relevancia === 'Revisada' ? 'confirmado' : 'candidato'}`}>{row.relevancia}</span></td></tr>)}</tbody>
@@ -177,7 +177,7 @@ function Gate({ ctx }: { ctx: CockpitCtx }) {
 function ParceriasTabela() {
   const blocos = (id: string) => Object.values(fichas).filter(ficha => (parceriasDe(ficha) as string[]).includes(id)).length;
   return <div className="stack">
-    <p className="kpi-line"><b>{parcerias.length}</b> parcerias · <b>{parcerias.filter(row => row.prioridade === 'A').length}</b> de prioridade A · <b>{Object.values(fichas).filter(row => row.parceria).length}</b> blocos marcados com “!”</p>
+    <p className="kpi-line"><b>{parcerias.length}</b> parcerias estão previstas, e <b>{parcerias.filter(row => row.prioridade === 'A').length}</b> delas têm prioridade alta. <b>{Object.values(fichas).filter(row => row.parceria).length}</b> blocos do painel levam o sinal “!” porque dependem de alguma delas.</p>
     <div className="table-wrap"><table className="metodo is-dense">
       <thead><tr><th>Parceiro</th><th>Prioridade</th><th>O que precisa entregar</th><th>Chave</th><th>Base prevista</th><th>Camadas no painel</th></tr></thead>
       <tbody>{parcerias.map(row => <tr key={row.id}><td><b>{row.parceiro}</b><small>{blocos(row.id)} bloco{blocos(row.id) === 1 ? '' : 's'} <Parceria id={row.id} compacto /></small></td><td>{row.prioridade}</td><td><small>{row.entrega}</small></td><td><small>{row.chave}</small></td><td className="nao"><small>{row.basePrevista}</small></td><td><small>{row.camadas}</small></td></tr>)}</tbody>
