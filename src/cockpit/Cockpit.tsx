@@ -14,7 +14,7 @@ import { buildInstalacoes, buildObras, buildSociedades, quadroInstalacoes, quadr
 import { datasHistorico, pontoHistorico } from '../observatorio/historico';
 import type { PontoHistorico } from '../observatorio/historico';
 import { aberturasRfb, buildDemandaPlanejada, concentracaoMercado, permanenciaCoorte, quadroDemanda } from '../domain/mercado';
-import { buildCno, buildCredenciamentos, buildDespesaTce, buildJucesp, buildLicencas, buildPericias, buildSociosPf, buildVinculos, coorteNominal, quadroCno, quadroCredenciamentos, quadroJucesp, quadroLicencas, quadroPericias, quadroSociosPf, quadroTce, quadroVinculos } from '../domain/parcerias';
+import { buildCno, buildCredenciamentos, buildDespesaTce, buildJucesp, buildLicencas, buildPericias, buildSociosPf, buildVinculos, coorteNominal, quadroCno, quadroCredenciamentos, quadroDenominacao, quadroJucesp, quadroLicencas, quadroPericias, quadroSociosPf, quadroTce, quadroVinculos } from '../domain/parcerias';
 import type { EnterpriseModel } from '../enterprise-v10/types';
 import { EngineeringEmblem } from '../components/EngineeringIdentity';
 import { selectEnterpriseScope } from '../enterprise-v10/filters';
@@ -102,10 +102,11 @@ function modelo(key: string, scope: Scope) {
   if (!value) { value = buildEnterpriseModel(scope); modelos.set(key, value); if (modelos.size > 16) modelos.delete(modelos.keys().next().value!); }
   return value;
 }
-const filtros = (greIds: string[], period: number): Filters => ({ ...defaultFilters, greIds, period });
+const filtros = (greIds: string[], period: number, cityId = ''): Filters => ({ ...defaultFilters, greIds, period, cityIds: cityId ? [cityId] : [] });
 const camaraMap = camaraDaEmpresa(dataset);
 const hoje = dataset.snapshotDate;
 const datasReferencia = datasReferenciaDe(dataset);
+const cidadesDe = (greId: string) => dataset.cities.filter(row => !greId || row.greId === greId).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
 /** Camadas construídas uma vez por base lida em D (cache por referência da base). */
 const camadas = new WeakMap<Dataset, Camadas>();
 type Camadas = { f: ReturnType<typeof buildFiscalizacao>; profissionais: ReturnType<typeof buildProfissionais>; emprego: ReturnType<typeof buildEmpregoCbo>; formacao: ReturnType<typeof buildFormacao>; entidades: ReturnType<typeof buildEntidades>; conselho: ReturnType<typeof buildConselho>; sociedades: ReturnType<typeof buildSociedades>; obras: ReturnType<typeof buildObras>; instalacoes: ReturnType<typeof buildInstalacoes>;
@@ -127,6 +128,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const [page, setPage] = useState<PageId>(() => { const hash = window.location.hash.slice(1), saved = pages.some(item => item.id === hash) ? hash : ler<string>('pagina', pages[0].id); return pages.some(item => item.id === saved) ? saved as PageId : pages[0].id; });
   const [gre, setGre] = useState('');
   const [camara, setCamara] = useState('');
+  const [cidade, setCidade] = useState('');
   const [period, setPeriod] = useState(12);
   const leve = painel.id === 'empresas';
   const [anchorSel, setAnchorSel] = useState<string | null>(null);
@@ -171,12 +173,12 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   }, [detail, modal, pages]);
 
   const subset = useMemo(() => camara ? view.companies.filter(row => camaraMap.get(row.id) === camara).map(row => row.id) : undefined, [view, camara]);
-  const scope = useMemo(() => selectEnterpriseScope(view, filtros(gre ? [gre] : [], period), subset), [view, gre, period, subset]);
-  const historyScope = useMemo(() => selectEnterpriseScope(view, filtros(gre ? [gre] : [], 24), subset), [view, gre, subset]);
+  const scope = useMemo(() => selectEnterpriseScope(view, filtros(gre ? [gre] : [], period, cidade), subset), [view, gre, period, subset, cidade]);
+  const historyScope = useMemo(() => selectEnterpriseScope(view, filtros(gre ? [gre] : [], 24, cidade), subset), [view, gre, subset, cidade]);
   const stateScope = useMemo(() => gre ? selectEnterpriseScope(view, filtros([], period), subset) : scope, [view, gre, period, subset, scope]);
   const stateHistoryScope = useMemo(() => gre ? selectEnterpriseScope(view, filtros([], 24), subset) : historyScope, [view, gre, subset, historyScope]);
-  const model = useMemo(() => modelo(`${anchor}|${gre}|${camara}|${period}`, scope), [scope]); // eslint-disable-line react-hooks/exhaustive-deps
-  const history = useMemo(() => modelo(`${anchor}|${gre}|${camara}|24`, historyScope), [historyScope]); // eslint-disable-line react-hooks/exhaustive-deps
+  const model = useMemo(() => modelo(`${anchor}|${gre}|${cidade}|${camara}|${period}`, scope), [scope]); // eslint-disable-line react-hooks/exhaustive-deps
+  const history = useMemo(() => modelo(`${anchor}|${gre}|${cidade}|${camara}|24`, historyScope), [historyScope]); // eslint-disable-line react-hooks/exhaustive-deps
   const stateModel = useMemo(() => modelo(`${anchor}||${camara}|${period}`, stateScope), [stateScope]); // eslint-disable-line react-hooks/exhaustive-deps
   const stateHistory = useMemo(() => modelo(`${anchor}||${camara}|24`, stateHistoryScope), [stateHistoryScope]); // eslint-disable-line react-hooks/exhaustive-deps
   const base = useMemo(() => camadasDe(view), [view]);
@@ -190,10 +192,10 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     const linhas = linhasGre(stateModel, stateHistory, stateScope, regionais, period, stateMalha, stateArts.atual);
     const cobradas = model.metrics.compliance.denominatorCompanyIds?.length ?? 0;
     const norte = { cobertura: cobertura(scope, model), contagens: contagens(scope, model), conversao: conversao(f, gre || null), receita: receitaAtribuivel(view, f, gre || null, period), tempo: tempoAteAgir(view, f, gre || null, period, tipoLabel) };
-    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), aberturas: aberturasRfb(view, gre || null, 24), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
+    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), aberturas: aberturasRfb(view, gre || null, 24, cidade || null), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
     return { resumo, regionais, contratos, malha, arts, linhas, ponte: ponteBase(model, scope, f, period), rec: receita(history, f, gre || null, period),
       inadimplencia: cobradas ? devedoras(model).size / cobradas * 100 : null, cao: caoService(scope).median, norte, mercado };
-  }, [view, f, gre, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
+  }, [view, f, gre, cidade, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
   // Camadas da V20: profissionais, formação, entidades, controle interno e forças-tarefas, todas lidas em D.
   const extra = useMemo(() => {
     const greId = gre || null;
@@ -207,19 +209,18 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     const frentes = { sociedades: quadroSociedades(base.sociedades, view, scope.companyIds, greId), obras: quadroObras(base.obras, view, scope.companyIds, greId), instalacoes: quadroInstalacoes(base.instalacoes, view, greId) };
     const parcerias = { cno: quadroCno(base.cno, view, scope.companyIds, greId), licencas: quadroLicencas(base.licencas, view, scope.companyIds, greId), pericias: quadroPericias(base.pericias, view, base.profissionais, greId), tce: quadroTce(base.tce, derived.contratos),
       sociosPf: quadroSociosPf(base.sociosPf, view, base.profissionais, scope.companyIds, greId), coorteNominal: coorteNominal(base.formacao, base.profissionais, view, greId), vinculos: quadroVinculos(base.vinculos, view, scope.companyIds, greId),
-      credenciamentos: quadroCredenciamentos(base.credenciamentos, view, scope.companyIds, greId), jucesp: quadroJucesp(base.jucesp, view, scope.companyIds, greId) };
+      credenciamentos: quadroCredenciamentos(base.credenciamentos, view, scope.companyIds, greId), jucesp: quadroJucesp(base.jucesp, view, scope.companyIds, greId),
+      denominacao: quadroDenominacao(base.sociosPf, view, base.profissionais, scope.companyIds, greId) };
     return { profissionais, formacao, entidades, conselho, forcas, frentes, parcerias };
   }, [base, view, anchor, f, gre, period, scope, derived.contratos]);
   const insights = useMemo(() => leitura({ metas, ponte: derived.ponte, cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo: derived.resumo, rec: derived.rec, saldo: model.metrics.overdue.value ?? 0,
     inadimplencia: derived.inadimplencia, linhas: derived.linhas, malha: derived.malha, arts: { atual: derived.arts.atual.length, antes: derived.arts.antes }, cao: derived.cao, estrutura,
     conversao: derived.norte.conversao.atual, tempo: derived.norte.tempo, profissionais: extra.profissionais.resumo, formacao: extra.formacao, conselho: extra.conselho, forcas: extra.forcas }), [metas, derived, model, estrutura, extra]);
 
-  // No painel de Empresas, os destaques são só os das páginas dele; no geral, um destaque de empresas abre o painel de Empresas.
-  const destaques = leve ? insights.filter(item => pages.some(row => row.id === item.page)) : insights;
   const irPara = (target: PageId) => { if (pages.some(item => item.id === target)) setPage(target); else window.location.href = enderecoPainel(painelDaPagina(target), target); };
   const change = (work: () => void) => transition(work);
   const ctx: CockpitCtx = { dataset: view, f, scope, model, history, period, greId: gre || null, camara: camara || null, janela: janelaDe(f.anchor, period), resumo: derived.resumo, regionais: derived.regionais, tokens,
-    open: setDetail, filterGre: id => change(() => setGre(previous => previous === id ? '' : id)), page, go: irPara, dark,
+    open: setDetail, filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara, dark, cidadeId: cidade || null, enxuto: leve, camaraDe: camaraMap,
     anchor, hoje, datasReferencia, setAnchor: value => change(() => setAnchorSel(value && value < hoje ? value : null)),
     historyScope, stateScope, stateModel, stateHistory, linhas: derived.linhas, ponte: derived.ponte, rec: derived.rec, contratos: derived.contratos, malha: derived.malha, estrutura, arts: derived.arts,
     metas, insights, focus, toggleFocus: id => setFocus(previous => previous === id ? null : id), norte: derived.norte, mercado: derived.mercado, ...extra,
@@ -238,13 +239,16 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
         <button onClick={() => setTheme(dark ? 'light' : 'dark')} aria-label={dark ? 'Usar tema claro' : 'Usar tema escuro'} title={dark ? 'Tema claro' : 'Tema escuro'}>{dark ? <Sun size={17} /> : <Moon size={17} />}<span>{dark ? 'Claro' : 'Escuro'}</span></button>
       </div>
     </nav>
-    <div className="ck-main">
-      <header className="ck-header">
-        <div className="ck-title"><span className="ck-eyebrow" title="Inteligência Estratégica Crea-SP, programa de dados da EDAD (SUPTEC)">{painel.nome} <span className="ck-legenda-parceria" title="Os blocos e as regras com este sinal mostram o que um acordo com outro órgão permitiria medir. Até o acordo ser fechado, os números são demonstrativos."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span></span><h1>{current.title}</h1><p>{current.subtitle}</p></div>
-        <div className="ck-pulse" aria-label="Destaques do período">
-          <span className="ck-pulse-dot" aria-hidden="true" />
-          <div className="ck-pulse-track">{[...destaques, ...destaques].map((item, index) => <button key={index} className={`is-${item.tone}`} aria-hidden={index >= destaques.length} tabIndex={index >= destaques.length ? -1 : 0} onClick={() => irPara(item.page)}><b>{item.strong}</b> {item.text}</button>)}</div>
-        </div>
+    <div className={`ck-main ${leve ? 'is-enxuto' : ''}`}>
+      {leve ? <header className="ck-header is-enxuto">
+        <div className="ck-title" title={current.subtitle}><span className="ck-eyebrow">{painel.nome} <span className="ck-legenda-parceria" title="Os blocos com este sinal mostram o que um acordo com outro órgão permitiria medir. Até o acordo ser fechado, os números são demonstrativos."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span></span><h1>{current.title}</h1></div>
+        <section className="ck-filters is-inline" aria-label="Filtros">
+          <label className="ck-select"><select aria-label="Regional" value={gre} onChange={event => change(() => { setGre(event.target.value); setCidade(''); })}><option value="">Todas as regionais</option>{dataset.gres.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
+          <label className="ck-select"><select aria-label="Município" value={cidade} onChange={event => change(() => { const id = event.target.value; setCidade(id); if (id) setGre(dataset.cities.find(row => row.id === id)?.greId ?? ''); })}><option value="">Todos os municípios</option>{cidadesDe(gre).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
+          <label className="ck-select"><select aria-label="Câmara" value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas as câmaras</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+          <div className="seg" role="radiogroup" aria-label="Período" title={`De ${data(ctx.janela.start)} a ${data(ctx.janela.end)}, comparado com ${data(ctx.janela.prevStart)} a ${data(ctx.janela.prevEnd)}`}>{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => setPeriod(value))}>{value} meses</button>)}</div>
+          {(gre || cidade || camara || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setPeriod(12); setAnchorSel(null); })} title="Limpar filtros"><RotateCcw size={14} />Limpar</button>}
+        </section>
         <div className="ck-meta">
           <span className="demo" title="Dados internos fictícios, gerados para demonstrar o modelo. Dados públicos reais trazem selo próprio.">Demonstrativo</span>
           <label className={`ck-ref ${emD ? 'is-passado' : ''}`} title="Data de referência: o painel inteiro é recalculado com a base como estava nessa data. Nenhum valor é sobrescrito; a mesma base lida em datas diferentes dá os números de cada dia.">
@@ -255,17 +259,31 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
             </select><ChevronDown size={14} />
           </label>
         </div>
-      </header>
-      <section className="ck-filters" aria-label="Filtros">
-        <label className="ck-select"><span>Regional</span><select value={gre} onChange={event => change(() => setGre(event.target.value))}><option value="">Todas</option>{dataset.gres.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
-        <label className="ck-select"><span>Câmara</span><select value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
-        <div className="seg" role="radiogroup" aria-label="Período">{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => setPeriod(value))}>{value} meses</button>)}</div>
-        <span className="ck-window">De {data(ctx.janela.start)} a {data(ctx.janela.end)}, comparado com {data(ctx.janela.prevStart)} a {data(ctx.janela.prevEnd)}.{emD && <> Situação em <strong>{data(anchor)}</strong>.</>}</span>
-        {(gre || camara || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCamara(''); setPeriod(12); setAnchorSel(null); })}><RotateCcw size={14} />Limpar filtros</button>}
-      </section>
+      </header> : <>
+      <header className="ck-header">
+          <div className="ck-title"><span className="ck-eyebrow" title="Inteligência Estratégica Crea-SP, programa de dados da EDAD (SUPTEC)">{painel.nome} <span className="ck-legenda-parceria" title="Os blocos e as regras com este sinal mostram o que um acordo com outro órgão permitiria medir. Até o acordo ser fechado, os números são demonstrativos."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span></span><h1>{current.title}</h1><p>{current.subtitle}</p></div>
+          <div className="ck-meta">
+            <span className="demo" title="Dados internos fictícios, gerados para demonstrar o modelo. Dados públicos reais trazem selo próprio.">Demonstrativo</span>
+            <label className={`ck-ref ${emD ? 'is-passado' : ''}`} title="Data de referência: o painel inteiro é recalculado com a base como estava nessa data. Nenhum valor é sobrescrito; a mesma base lida em datas diferentes dá os números de cada dia.">
+              <CalendarClock size={15} aria-hidden="true" /><span>Data de referência</span>
+              <select value={anchorSel ?? ''} onChange={event => ctx.setAnchor(event.target.value || null)} aria-label="Data de referência do painel">
+                <option value="">Hoje · {data(hoje)}</option>
+                {[...datasReferencia].reverse().map(value => <option key={value} value={value}>{data(value)}</option>)}
+              </select><ChevronDown size={14} />
+            </label>
+          </div>
+        </header>
+        <section className="ck-filters" aria-label="Filtros">
+          <label className="ck-select"><span>Regional</span><select value={gre} onChange={event => change(() => setGre(event.target.value))}><option value="">Todas</option>{dataset.gres.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
+          <label className="ck-select"><span>Câmara</span><select value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+          <div className="seg" role="radiogroup" aria-label="Período">{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => setPeriod(value))}>{value} meses</button>)}</div>
+          <span className="ck-window">De {data(ctx.janela.start)} a {data(ctx.janela.end)}, comparado com {data(ctx.janela.prevStart)} a {data(ctx.janela.prevEnd)}.{emD && <> Situação em <strong>{data(anchor)}</strong>.</>}</span>
+          {(gre || camara || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCamara(''); setPeriod(12); setAnchorSel(null); })}><RotateCcw size={14} />Limpar filtros</button>}
+        </section>
+      </>}
       <main className={`ck-page ck-page-${page} ${focus ? 'has-focus' : ''}`} key={page}><current.Page ctx={ctx} /></main>
       <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{int(scope.companies.length)} empresas no recorte</strong>
-        <span className="ck-status-note">{pending ? 'Recalculando…' : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : leve ? 'As teclas 1 a 4 trocam de página. Os filtros do alto valem para todas as páginas. Clique numa barra, faixa ou ponto para ver as empresas daquele item.' : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
+        <span className="ck-status-note">{pending ? 'Recalculando…' : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : leve ? 'Clique num item para ver as empresas. O (i) explica cada bloco.' : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
     </div>
     {detail && <Drawer ctx={ctx} detail={detail} onClose={() => setDetail(null)} />}
     {modal === 'metas' && <Janela title="Metas do painel" subtitle="As metas usadas nos cartões, no quadro das regionais e nos destaques. Elas ficam salvas neste navegador." onClose={() => setModal(null)}><MetasForm metas={metas} onChange={setMetas} /></Janela>}

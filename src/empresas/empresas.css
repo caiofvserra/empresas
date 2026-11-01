@@ -1,8 +1,72 @@
-/* Painel de Empresas: grade de cada página (alturas fixas: gráficos ECharts em linhas 1fr crescem sem parar). */
-.ck-grid-mercado { grid-template-rows: auto 330px 480px 460px 400px 340px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "tc tc tc tc cv cv cv cv cv cv cv cv" "cg cg cg cg cg cg reg reg reg reg reg reg" "mc mc mc mc mc mc cn cn cn cn cn cn" "sk sk sk sk sk sk sk cp cp cp cp cp" "an an an an an an kc kc kc kc kc kc"; height: auto; }
-.ck-grid-evolucao { grid-template-rows: auto 480px 400px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "ec ec ec ec ec ec ec ec ec ec ec ec" "es es es es es es ab ab ab ab ab ab"; height: auto; }
-.ck-grid-rt { grid-template-rows: auto 400px 380px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "qt qt qt qt qt qt am am am am am am" "ar ar ar ar ar ar sa sa sa sa sa sa"; height: auto; }
-.ck-grid-vinculos { grid-template-rows: 400px 400px 380px; grid-template-areas: "qs qs qs qs qs qs sp sp sp sp sp sp" "in in in in in in vn vn vn vn vn vn" "cr cr cr cr cr cr jc jc jc jc jc jc"; height: auto; }
+/*
+ * Painel de Empresas: cada página cabe numa tela de computador, sem rolagem (regra do Caio, 01/11/2026). As linhas da grade
+ * dividem a altura da tela (minmax(0, 1fr)) e a grade ocupa 100% da página; os blocos têm larguras diferentes, como num
+ * relatório do Power BI. Só abaixo de 700 px de altura, ou em telas estreitas, a página volta a rolar.
+ */
+.ck-main.is-enxuto { grid-template-rows: auto minmax(0, 1fr) auto; }
+.ck-header.is-enxuto { grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; padding: 7px 16px; }
+.ck-header.is-enxuto .ck-title h1 { font-size: 19px; white-space: nowrap; }
+.ck-filters.is-inline { padding: 0; border: 0; background: transparent; flex-wrap: wrap; gap: 6px 12px; justify-content: center; }
+.ck-filters.is-inline { flex-wrap: nowrap; }
+.ck-filters.is-inline .ck-select select { min-width: 0; width: clamp(100px, 8.5vw, 210px); height: 28px; }
+.ck-main.is-enxuto .tile > header { flex-wrap: nowrap; }
+.ck-main.is-enxuto .tile > header > div { min-width: 0; }
+.ck-main.is-enxuto .tile > header h3 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1500px) { .ck-header.is-enxuto .ck-legenda-parceria, .ck-header.is-enxuto .ck-ref > span { display: none; } .ck-header.is-enxuto .ck-title h1 { font-size: 17px; } .ck-main.is-enxuto .ind-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+.ck-filters.is-inline .seg button { padding: 4px 9px; }
+.ck-main.is-enxuto .ck-status { padding: 4px 16px; }
+
+@media (min-width: 1101px) and (min-height: 700px) {
+  .ck-main.is-enxuto .ck-page { overflow: hidden; padding: 10px 14px; }
+  .ck-main.is-enxuto .ck-grid { height: 100%; gap: 10px; }
+}
+.ck-main.is-enxuto .ck .tile, .ck-main.is-enxuto .tile { padding: 8px 11px 8px; }
+.ck-main.is-enxuto .tile > header h3 { font-size: 13px; }
+.ck-main.is-enxuto .ind { padding: 7px 11px; }
+.ck-main.is-enxuto .ind-row strong { font-size: 21px; }
+
+.ck-grid-mercado { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "mp mp mp mp mp tm tm tm tm reg reg reg"
+  "mp mp mp mp mp tm tm tm tm cv cv cv"
+  "sk sk sk sk sk cp cp cp cp ic ic ic"; }
+.ck-grid-evolucao { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "ec ec ec ec ec ec ec hm hm hm hm hm"
+  "es es es es es ab ab ab ab ab ab ab"; }
+.ck-grid-rt { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "ar ar ar ar ar ar ar am am am am am"
+  "qt qt qt qt qt sa sa sa sa sa sa sa"; }
+.ck-grid-vinculos { grid-template-rows: repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "qs qs qs qs qs dn dn dn dn sp sp sp"
+  "qs qs qs qs qs in in in in vn vn vn"
+  "cr cr cr cr cr cr jc jc jc jc jc jc"; }
+@media (max-height: 699px) and (min-width: 1101px) {
+  .ck-grid-mercado { grid-template-rows: auto repeat(3, 230px); }
+  .ck-grid-evolucao, .ck-grid-rt { grid-template-rows: auto repeat(2, 300px); }
+  .ck-grid-vinculos { grid-template-rows: repeat(3, 260px); }
+}
+.ck-grid-mercado, .ck-grid-evolucao, .ck-grid-rt, .ck-grid-vinculos { align-content: stretch; }
+
+/* Mapa com legenda de cor por cima */
+.mapa-wrap { position: relative; flex: 1; min-height: 0; display: flex; }
+.mapa-wrap > .chart { flex: 1; }
+.mapa-legenda { position: absolute; left: 4px; bottom: 2px; display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: var(--muted); pointer-events: none; }
+.mapa-legenda i { width: 16px; height: 7px; border-radius: 2px; }
+.mapa-legenda span { margin: 0 4px; }
+
+/* Lista por fonte (instalações): número grande, barra fina e complemento */
+.fonte-list { flex: 1; min-height: 0; margin: 0; padding: 0; list-style: none; display: grid; grid-auto-rows: minmax(0, 1fr); gap: 4px; }
+.fonte-list button { width: 100%; height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 4px auto; column-gap: 8px; row-gap: 2px; align-content: center; padding: 3px 7px; border: 0; border-radius: 8px; background: transparent; text-align: left; color: var(--ink); }
+.fonte-list button:hover:not(:disabled) { background: var(--soft); }
+.fonte-nome { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fonte-nome i { flex: none; width: 9px; height: 9px; border-radius: 2px; }
+.fonte-list b { font-size: 15px; font-weight: 800; }
+.fonte-barra { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--soft); overflow: hidden; }
+.fonte-barra em { display: block; height: 100%; border-radius: 2px; }
+.fonte-list small { grid-column: 1 / -1; font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
 .ck-rail-painel { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 10px; padding: 7px 2px 6px; border-top: 1px solid rgba(255,255,255,.14); border-radius: 0 0 12px 12px; color: #FABD07; font-size: 10px; font-weight: 700; line-height: 1.15; text-align: center; text-decoration: none; }
 .ck-rail-painel:hover { color: #FFFFFF; background: rgba(255,255,255,.09); }
 .ck-rail-painel span { display: inline-flex; align-items: center; gap: 1px; }
@@ -12,6 +76,7 @@
 .side-serie small { display: block; font-size: 10px; color: var(--muted); }
 @media (max-width: 1100px) {
   .ck-rail-painel { flex: none; min-width: 72px; margin: 0; border: 0; }
+  .ck-header.is-enxuto { grid-template-columns: minmax(0, 1fr); }
+  .ck-filters.is-inline { justify-content: flex-start; }
+  .mapa-wrap { min-height: 360px; }
 }
-
-.ck-grid-mercado, .ck-grid-evolucao, .ck-grid-rt, .ck-grid-vinculos { align-content: start; }

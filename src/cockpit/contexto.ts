@@ -15,7 +15,7 @@ import type { ResultadoFt } from '../painel/forcas';
 import type { QuadroInstalacoes, QuadroObras, QuadroSociedades } from '../domain/frentes';
 import type { Historico } from '../observatorio/historico';
 import type { Aberturas, Concentracao, Permanencia, QuadroDemanda } from '../domain/mercado';
-import type { QuadroCno, QuadroCoorteNominal, QuadroCredenciamentos, QuadroJucesp, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
+import type { QuadroCno, QuadroCoorteNominal, QuadroCredenciamentos, QuadroDenominacao, QuadroJucesp, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
 
 /** Indicadores-norte do programa Inteligência Estratégica Crea-SP no recorte. */
 export interface Norte { cobertura: Cobertura; contagens: Contagens; conversao: { coortes: Coorte[]; atual: Coorte | null; anterior: Coorte | null }; receita: ReceitaAtribuivel; tempo: TempoAteAgir }
@@ -26,6 +26,8 @@ export interface Norte { cobertura: Cobertura; contagens: Contagens; conversao: 
  */
 export interface CockpitCtx extends Ctx {
   page: PageId; go: (page: PageId) => void; dark: boolean;
+  /** Painel de Empresas: município escolhido no alto da tela (dentro da regional), visual enxuto (a explicação de cada bloco fica no (i)) e câmara de cada empresa. */
+  cidadeId: string | null; enxuto: boolean; camaraDe: Map<string, string>;
   /** Data de referência D: a base é lida como estava em D; `hoje` é o corte mais recente do cenário. */
   anchor: string; hoje: string; datasReferencia: string[]; setAnchor: (value: string | null) => void;
   historyScope: Scope; stateScope: Scope; stateModel: EnterpriseModel; stateHistory: EnterpriseModel;
@@ -45,5 +47,7 @@ export interface CockpitCtx extends Ctx {
 }
 export interface Parcerias { cno: QuadroCno; licencas: QuadroLicencas; pericias: QuadroPericias; tce: QuadroTce; sociosPf: QuadroSociosPf; coorteNominal: QuadroCoorteNominal; vinculos: QuadroVinculos;
   /** Painel de Empresas: credenciamentos no DETRAN-SP e no INMETRO, e atos da Junta Comercial (JUCESP). */
-  credenciamentos: QuadroCredenciamentos; jucesp: QuadroJucesp }
+  credenciamentos: QuadroCredenciamentos; jucesp: QuadroJucesp;
+  /** Nome com “engenharia” ou “engenheiro” e quem dirige a empresa (Lei 5.194/66, arts. 4º e 5º); depende do CPF completo dos sócios. */
+  denominacao: QuadroDenominacao }
 export interface Mercado { concentracao: Concentracao; demanda: QuadroDemanda; aberturas: Aberturas; permanencia: Permanencia[] }

@@ -20,12 +20,24 @@ Ordem sugerida: Empresas, Fiscalização e malha fina, Profissionais e formaçã
 
 ## O que o painel de Empresas tem
 
-- **Mercado e registro.** Empresas registradas, parte do mercado registrada, atividade obrigatória sem nenhum registro, anuidade em dia e cadastro incompleto. Três contagens, Receita comparada com o cadastro, registro obrigatório em cada regional, situação do registro e da anuidade, mercado de cada câmara (novo desenho), atividades com mais estabelecimentos sem registro (novo), do mercado à ART, câmara e porte, tempo desde o primeiro registro (novo) e capital social (novo).
-- **Evolução.** Entradas, saídas, aberturas na Receita, permanência e emprego formal. O gráfico que compara a economia (emprego formal, PIB e crédito "!") com as empresas de engenharia abertas na Receita e as que se registraram no Crea-SP, com o primeiro mês igual a 100. Entradas e saídas mês a mês e aberturas com permanência.
-- **RT e ART.** Responsável técnico, RT que saiu sem substituto, ARTs, valor declarado e registradas sem ART. Responsáveis técnicos das empresas, ARTs por modalidade, ARTs mês a mês (novo) e empresas sem ART por câmara.
-- **Vínculos.** Sócios empresas e sócios pessoas físicas ("!") lado a lado, usinas, postos, minas e financiamentos, empregados técnicos por empresa ("!", veio da aba Profissionais), empresas credenciadas no DETRAN-SP e no INMETRO ("!", novo) e empresas que passaram a ter engenharia no contrato social pela Junta Comercial ("!", novo).
+Desde 01/11/2026 (segundo retorno do Caio) cada página cabe numa tela de computador Full HD (1920×1080), sem rolagem, com blocos de larguras diferentes. O bloco mostra só o título e o gráfico; a explicação de leitura foi para o (i). Os gráficos variam de tipo para não ficar tudo em barras.
 
-Regional, câmara, período (3, 6, 12 ou 24 meses) e data de referência ficam no alto da tela e valem para todas as páginas. Clicar numa barra, faixa ou ponto abre as empresas daquele item; nenhum clique abre o resumo genérico da regional.
+- **Mercado e registro.** Cinco indicadores (empresas registradas, parte do mercado registrada, atividade obrigatória sem nenhum registro, anuidade em dia e cadastro incompleto). Mapa do estado com uma bolha por município e o território de cada regional pintado pela parte registrada. Mapa de árvore do mercado por câmara e atividade (CNAE), colorido pela parte registrada. Anel com a situação do registro por dentro e a anuidade por fora. Receita comparada com o cadastro. Funil do mercado à ART. Registradas por câmara e porte. Matriz de calor do tempo de registro cruzado com o capital social.
+- **Evolução.** Entradas, saídas, aberturas na Receita, permanência e emprego formal. Economia (emprego formal, PIB e crédito "!") comparada com as empresas abertas na Receita e as que se registraram no Crea-SP, com o primeiro mês igual a 100. Calor dos novos registros por câmara e mês. Entradas e saídas mês a mês. Aberturas na Receita com a permanência das registradas.
+- **RT e ART.** Responsável técnico, RT que saiu sem substituto, ARTs, valor declarado e registradas sem ART. ARTs mês a mês com o mesmo mês do ano anterior, rosa das ARTs por modalidade, responsáveis técnicos e barras radiais das registradas sem ART por câmara.
+- **Vínculos.** Rede dos maiores grupos de empresas sócias, nome com "engenharia" e diretoria ("!", novo), sócios que são profissionais ("!"), usinas, postos, minas e financiamentos, empregados técnicos por empresa ("!"), credenciadas no DETRAN-SP e no INMETRO ("!") e engenharia incluída no contrato social pela Junta Comercial ("!").
+
+Regional, município, câmara, período (3, 6, 12 ou 24 meses) e data de referência ficam numa única linha no alto da tela e valem para todas as páginas. Escolher um município leva o painel inteiro para ele e aproxima o mapa. O emprego formal sai em totais por regional, por isso, com um município escolhido, a série de emprego é a da regional dele. Clicar num elemento abre as empresas daquele elemento; nenhum clique abre o resumo genérico da regional. A barra de destaques que passava rolando no alto da tela saiu dos dois painéis.
+
+## Sócios engenheiros: o que a lei pede
+
+A Lei 5.194/66 não exige que os sócios sejam engenheiros para a empresa se registrar. O que ela exige é a participação efetiva de um profissional habilitado, o responsável técnico (art. 8º, parágrafo único, e art. 59). A composição da sociedade só importa para o nome:
+
+- "Engenheiro", "arquiteto" ou "engenheiro-agrônomo" no nome só cabem quando a pessoa jurídica é composta **exclusivamente** de profissionais com esses títulos (art. 4º).
+- "Engenharia", "arquitetura" ou "agronomia" no nome só cabem quando a diretoria é composta, **na maioria**, de profissionais registrados (art. 5º).
+- O registro só é concedido se o nome condiz com a finalidade e com a qualificação de quem compõe a empresa (art. 59, § 1º).
+
+O bloco "Nome com engenharia e diretoria", na página Vínculos, aplica o art. 5º às 250 empresas do cenário com "engenharia" no nome. Ele depende do CPF completo dos sócios, que só a Receita fornece por acordo, por isso leva o "!" e é demonstrativo. As Resoluções 1.002/2002 (código de ética) e 1.160/2025 (anexos de ART e CAT) não tratam da composição societária.
 
 ## O que saiu e por quê
 

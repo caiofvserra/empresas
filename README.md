@@ -57,6 +57,8 @@ Os textos do painel são lidos pela Presidência e pelas superintendências, por
 - Cada informação fica num lugar só.
 - Clicar num elemento detalha aquele elemento (as empresas da barra, faixa ou ponto), nunca abre um resumo genérico.
 - Regional, câmara, período e data são filtros do painel inteiro; não se repete o mesmo gráfico por regional ou por 24 meses.
+- Cada página cabe numa tela de computador, sem rolagem, com blocos de larguras diferentes. O bloco mostra o título e o gráfico; a pergunta e o cuidado de leitura ficam no (i).
+- Os tipos de gráfico variam (mapa, mapa de árvore, calor, rede, rosa, anel, barras radiais, linhas). Nada de faixa de texto rolando na tela.
 
 ## Histórico
 
