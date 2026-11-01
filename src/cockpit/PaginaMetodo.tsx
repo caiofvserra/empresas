@@ -9,7 +9,9 @@ const chave = (value: string) => value.toLowerCase().normalize('NFD').replace(/[
 import { regras, regrasPendentes, statusAjuda } from './cruzamentos';
 import type { CockpitCtx } from './contexto';
 import { Status } from './PaginaMalha';
-import { Bloco } from './ui';
+import { Bloco, Parceria } from './ui';
+import { parcerias } from '../domain/parcerias';
+import { fichas, parceriasDe } from './fichas';
 
 /**
  * Aba 11 · Método: o que o projeto elaborou e a V20 aplica. Regras de leitura do plano rev. 2, decisão sobre as 12 lacunas do V18,
@@ -27,6 +29,7 @@ export default function PaginaMetodo({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="ia" area="ia" title="IA e análises avançadas" question="O que roda fora da ferramenta de BI e alimenta o painel: classificadores, pareamento, anomalia, extração e previsão. Toda saída entra como candidato, com validação humana."><Ferramentas ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="rn" area="rn" title="Radar normativo: Câmara, Senado e ALESP" question="Proposições por casa, família de assunto, etapa e data da última tramitação, com a estrutura dos dados abertos. Lista demonstrativa: as proposições são fictícias até o conector. Clique numa casa para filtrar." help="Proposição em tramitação não é norma vigente. A coleta em produção segue a data de tramitação (não só o ano de apresentação) e guarda ID e URI; a relevância por regra textual é revisada por pessoa."><Radar ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="gt" area="gt" title="Gate de promoção de fontes ao núcleo" question="Os sete passos da revisão independente de 29/10 e o passo que cada fonte das camadas novas alcançou com a evidência disponível. Nenhuma fonte entra no núcleo operacional antes do passo 7."><Gate ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="pc" area="pc" title="Parcerias que o painel pressupõe" question="Cada acordo que as camadas marcadas com “!” precisam: o parceiro, o que ele entrega, a chave, a prioridade do plano de 29/10, a base prevista e onde a camada está. Nenhum está firmado." help="Prioridade A: primeiros acordos sugeridos no plano. Até o acordo, as camadas são demonstrativas e os indícios ficam fora das contagens confirmadas."><ParceriasTabela /></Bloco>
   </div>;
 }
 
@@ -167,6 +170,17 @@ function Gate({ ctx }: { ctx: CockpitCtx }) {
       <tbody>{prontidaoFontes.map(row => <tr key={row.fonte}><td><b>{row.fonte}</b></td><td><small>{frentePorId[row.frente]?.frente}</small></td>
         <td><span className="gate-bar" title={`${row.passo} de ${passos}`}>{Array.from({ length: passos }, (_, index) => <i key={index} style={{ background: index < row.passo ? (row.passo >= 5 ? tokens.good : tokens.blue) : tokens.soft }} />)}<b>{row.passo}/{passos}</b></span></td>
         <td><small>{row.evidencia}</small></td><td className="nao"><small>{row.pendente}</small></td><td><small>{row.noPainel}</small></td></tr>)}</tbody>
+    </table></div>
+  </div>;
+}
+
+function ParceriasTabela() {
+  const blocos = (id: string) => Object.values(fichas).filter(ficha => (parceriasDe(ficha) as string[]).includes(id)).length;
+  return <div className="stack">
+    <p className="kpi-line"><b>{parcerias.length}</b> parcerias · <b>{parcerias.filter(row => row.prioridade === 'A').length}</b> de prioridade A · <b>{Object.values(fichas).filter(row => row.parceria).length}</b> blocos marcados com “!”</p>
+    <div className="table-wrap"><table className="metodo is-dense">
+      <thead><tr><th>Parceiro</th><th>Prioridade</th><th>O que precisa entregar</th><th>Chave</th><th>Base prevista</th><th>Camadas no painel</th></tr></thead>
+      <tbody>{parcerias.map(row => <tr key={row.id}><td><b>{row.parceiro}</b><small>{blocos(row.id)} bloco{blocos(row.id) === 1 ? '' : 's'} <Parceria id={row.id} compacto /></small></td><td>{row.prioridade}</td><td><small>{row.entrega}</small></td><td><small>{row.chave}</small></td><td className="nao"><small>{row.basePrevista}</small></td><td><small>{row.camadas}</small></td></tr>)}</tbody>
     </table></div>
   </div>;
 }

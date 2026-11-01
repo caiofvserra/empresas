@@ -5,7 +5,9 @@ import { faixasIdade, situacaoEm } from '../domain/profissionais';
 import type { Grupo, Profissional } from '../domain/profissionais';
 import type { CockpitCtx } from './contexto';
 import { pisoLegal as piso } from './publico';
-import { Bloco, Indicador, linhasProfissionais, proporcao } from './ui';
+import { Bloco, Indicador, linhasProfissionais, linhasEmpresas, proporcao } from './ui';
+import { brl } from '../painel/ui';
+import { faixasVinculos } from '../domain/parcerias';
 
 /**
  * Aba 3 · Profissionais, com a mesma profundidade de Empresas: situação, modalidade, nível, regional, idade e gênero, carga de
@@ -36,6 +38,8 @@ export default function PaginaProfissionais({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="pe" area="pe" title="Emprego formal em ocupações de engenharia" question="Estoque CLT no último mês disponível e saldo de 12 meses, por CBO, em agregado (Novo CAGED e RAIS). Inclui ocupações com rótulo “analista”." ><Emprego ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ps" area="ps" title="Remuneração mediana × piso" question="Salário mediano por CBO contra o piso exigível (base congelada pelo STF) e a leitura do Confea, ambos para 8 h. Agregado e descritivo."><Remuneracao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="pt" area="pt" title="Registros, cancelamentos e ARTs por mês" question="Contagens mensais pela data do evento, no período."><Mensal ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="pp" area="pp" title="Perícias judiciais: nomeações e rastreabilidade" question="Nomeações de peritos nos últimos 24 meses (TJSP), por especialidade; rastreabilidade da ponte com a ART e peritos nomeados sem registro ativo em D. Clique numa especialidade." help="Nomeação, perícia entregue e pagamento são medidas diferentes; honorários arbitrados não são pagamentos. Classe ou assunto do processo não prova necessidade de engenheiro."><Pericias ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="vn" area="vn" title="Vínculos CLT em ocupações técnicas, por empresa" question="Empregados em CBO de engenharia por empresa-raiz (RAIS identificada, só contagens), por faixa: registradas e sem registro do universo; registradas com empregados técnicos e sem RT vigente." help="Vínculo não é profissional registrado nem RT. Sem salário individual: a remuneração continua só em agregado por CBO. Contexto, não indício."><Vinculos ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -167,4 +171,58 @@ function Mensal({ ctx }: { ctx: CockpitCtx }) {
     ],
   }), [rows, tokens]);
   return <Chart option={option} tokens={tokens} label="Registros novos, cancelamentos e ARTs por mês" />;
+}
+
+function Pericias({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.parcerias.pericias, rows = q.porEspecialidade;
+  const option = useMemo(() => ({
+    grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'category', data: rows.map(row => short(row.especialidade)), axisLabel: { color: tokens.muted, fontSize: 10, interval: 0, rotate: 20 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
+    series: [
+      { type: 'bar', name: 'Nomeações', barWidth: 16, data: rows.map(row => row.n), itemStyle: { color: tokens.blue } },
+      { type: 'line', name: 'Perito sem registro ativo', data: rows.map(row => row.semRegistroAtivo), symbol: 'circle', symbolSize: 7, lineStyle: { width: 0 }, itemStyle: { color: tokens.warn } },
+    ],
+  }), [rows, tokens]);
+  const abrirPeritos = () => q.peritosSemRegistroAtivo.length && ctx.open({ kind: 'linhas', eyebrow: 'Candidato · depende de parceria (TJSP)', title: 'Peritos nomeados sem registro ativo', what: 'Profissionais nomeados peritos nos últimos 24 meses cujo registro está cancelado ou interrompido na data de referência.', use: 'Conferir a situação e a especialidade antes de qualquer contato com o juízo; a nomeação é ato do tribunal.', listTitle: 'Profissionais',
+    rows: linhasProfissionais(ctx, q.peritosSemRegistroAtivo, row => { const n = q.nomeacoesSemRegistroAtivo.filter(item => item.profissionalId === row.id).length; return { value: `${n} nomeação${n === 1 ? '' : 'ões'}`, note: situacaoEm(row, ctx.anchor) ?? '—', sort: n }; }) });
+  return <div className="split">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.nomeacoes.length)}</b> nomeações em <b>{int(q.processos)}</b> processos e {int(q.comarcas)} comarcas · rastreabilidade com a ART {q.rastreabilidade === null ? '—' : pct(q.rastreabilidade)} · cobertura de chaves {q.coberturaChaves === null ? '—' : pct(q.coberturaChaves)} · honorários arbitrados {brl(q.honorariosArbitrados)}</p>
+      <Chart option={option} tokens={tokens} label="Nomeações de peritos por especialidade" onPick={params => { const row = rows[params.dataIndex]; if (!row) return; const lista = q.nomeacoes.filter(item => item.especialidade === row.especialidade); ctx.open({ kind: 'linhas', title: `Nomeações · ${row.especialidade}`, what: 'Nomeações com número CNJ, comarca, data e ponte com a ART, lidas na data de referência.', use: 'Honorários arbitrados não são pagamentos efetuados.', listTitle: 'Nomeações', rows: lista.map(item => ({ key: item.id, title: item.processo, subtitle: `${ctx.dataset.cities.find(city => city.id === item.cityId)?.name ?? '—'} · ${item.data.split('-').reverse().join('/')}`, value: brl(item.honorariosArbitrados), note: `ponte ${item.ponte.toLowerCase()}${item.profissionalId ? '' : ' · perito não localizado'}`, sortValue: item.honorariosArbitrados })) }); }} />
+    </div>
+    <ul className="side-list" aria-label="Ponte com a ART e peritos">
+      {q.porPonte.map(row => <li key={row.ponte}><button disabled><i style={{ background: row.ponte === 'Confirmada' ? tokens.good : row.ponte === 'Sem chave' ? tokens.muted : tokens.accent }} /><span>Ponte {row.ponte.toLowerCase()}</span><b>{int(row.n)}</b></button></li>)}
+      <li><button onClick={abrirPeritos}><i style={{ background: tokens.warn }} /><span>Peritos nomeados sem registro ativo em D</span><b>{int(q.peritosSemRegistroAtivo.length)}</b></button></li>
+      <li><button disabled><i style={{ background: tokens.line }} /><span>Nomeações sem perito localizado</span><b>{int(q.naoLocalizadas)}</b></button></li>
+      <li className="side-note">Depende do acordo com o TJSP (identidade do perito e especialidade); DJE e e-SAJ só por captura homologada. Demonstrativo.</li>
+    </ul>
+  </div>;
+}
+
+function Vinculos({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.parcerias.vinculos, rows = q.porFaixa;
+  const option = useMemo(() => ({
+    grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'category', data: faixasVinculos.map(faixa => `${faixa} técnico${faixa === 'nenhum' ? '' : 's'}`), axisLabel: { color: tokens.muted, fontSize: 10, interval: 0 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
+    series: [
+      { type: 'bar', name: 'Registradas', stack: 'v', barWidth: 22, data: rows.map(row => row.registradas), itemStyle: { color: tokens.good } },
+      { type: 'bar', name: 'Sem registro (universo)', stack: 'v', data: rows.map(row => row.semRegistro), itemStyle: { color: tokens.warn, borderRadius: [3, 3, 0, 0] } },
+    ],
+  }), [rows, tokens]);
+  const abrir = (titulo: string, ids: string[], what: string, use: string) => ids.length && ctx.open({ kind: 'linhas', eyebrow: 'Contexto · depende de parceria (MTE)', title: titulo, what, use, listTitle: 'Empresas, mais vínculos técnicos primeiro', rows: linhasEmpresas(ctx, ids, id => { const row = q.empresas.find(item => item.companyId === id)!; return { value: `${int(row.vinculosTecnicos)} técnico${row.vinculosTecnicos === 1 ? '' : 's'}`, note: `${int(row.vinculosTotal)} vínculos no total`, sort: row.vinculosTecnicos }; }) });
+  return <div className="split">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.vinculosTecnicos)}</b> vínculos em CBO de engenharia em <b>{int(q.comTecnicos.length)}</b> empresas · {int(q.vinculosTotal)} vínculos no total das empresas com dado</p>
+      <Chart option={option} tokens={tokens} label="Empresas por faixa de vínculos técnicos e situação do registro" />
+    </div>
+    <ul className="side-list" aria-label="Leituras dos vínculos">
+      <li><button onClick={() => abrir('Registradas com empregados técnicos e sem RT vigente', q.registradasSemRt, 'Empresas registradas com ao menos um vínculo CLT em CBO de engenharia e nenhum responsável técnico vigente na data de referência.', 'Conferir se há atividade técnica e orientar a anotação do RT. Empregado em CBO técnico não é RT.')}><i style={{ background: tokens.accent }} /><span>Registradas com técnicos e sem RT vigente</span><b>{int(q.registradasSemRt.length)}</b></button></li>
+      <li><button onClick={() => abrir('Universo sem registro com empregados técnicos', q.semRegistroComTecnicos, 'Estabelecimentos com CNAE da lista, sem registro vigente, com vínculos em CBO de engenharia.', 'Prioriza a análise do CNAE sem registro; o vínculo não prova atividade privativa.')}><i style={{ background: tokens.warn }} /><span>Universo sem registro com técnicos</span><b>{int(q.semRegistroComTecnicos.length)}</b></button></li>
+      <li className="side-note">Depende do acordo com o MTE (RAIS identificada ou eSocial), só contagens por CNPJ e CBO; nenhum salário individual. Demonstrativo.</li>
+    </ul>
+  </div>;
 }

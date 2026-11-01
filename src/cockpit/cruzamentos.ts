@@ -7,13 +7,17 @@ import { classeDoEstabelecimento } from '../observatorio/norte';
 import { buildProfissionais } from '../domain/profissionais';
 import { toDay } from '../domain/hash';
 import { buildObras, buildSociedades, quadroSociedades } from '../domain/frentes';
+import { buildCno, buildLicencas, quadroCno, quadroLicencas } from '../domain/parcerias';
+import type { ParceriaId } from '../domain/parcerias';
 
 /**
  * V20 · malha fina v2 do Prumo: indícios por regra, cada um com status de ligação, fonte, data e versão da regra.
  * Nenhum indício vira auto: a lista é para análise. Às seis regras da V19 somam-se cinco regras internas novas, todas
  * calculadas só com dados que o Crea-SP já tem ou coleta automaticamente: padrão anormal de ART, obra pública sem ART de
  * fiscalização, atividade recente com débito, sucessão de empresas e nome de engenharia sem registro. A V21 acrescenta a regra de
- * contexto do QSA aberto (sócio PJ de engenharia sem registro) e passa a ler a execução das obras no Obrasgov (CIPI).
+ * contexto do QSA aberto (sócio PJ de engenharia sem registro) e passa a ler a execução das obras no Obrasgov (CIPI). A V22 acrescenta
+ * duas regras que dependem de parceria (coleta "Convênio", marcadas com "!"): obra do CNO sem ART localizada e alvará ou licença de
+ * obra sem ART ligada ao processo. Elas usam camadas demonstrativas até o acordo e ficam fora das contagens confirmadas.
  */
 const unique = (values: string[]) => [...new Set(values)].sort();
 
@@ -27,11 +31,14 @@ export const statusAjuda: Record<StatusLigacao, string> = {
 };
 
 export type IndicioId = 'cnaeSim' | 'cnaePassivel' | 'contratoSemRegistro' | 'contratoSemVinculo' | 'rtSemSubstituto' | 'cnpjInativo'
-  | 'atividadeComDebito' | 'artAnormal' | 'obraSemArtFiscalizacao' | 'sucessao' | 'nomeEngenharia' | 'socioPj';
-export interface Regra { id: IndicioId; label: string; status: StatusLigacao; regra: string; fonte: string; versao: string; naoConcluir: string; coleta: 'Interna' | 'Automática' | 'Convênio' }
+  | 'atividadeComDebito' | 'artAnormal' | 'obraSemArtFiscalizacao' | 'sucessao' | 'nomeEngenharia' | 'socioPj' | 'cnoSemArt' | 'licencaSemArt';
+export interface Regra { id: IndicioId; label: string; status: StatusLigacao; regra: string; fonte: string; versao: string; naoConcluir: string; coleta: 'Interna' | 'Automática' | 'Convênio';
+  /** V22: a regra só sai do demonstrativo com o acordo deste parceiro ("!" na tabela). */
+  parceria?: ParceriaId }
 export const VERSAO_REGRAS = 'v1 · 31/10/2026';
 export const VERSAO_REGRAS_V2 = 'v2 · 01/11/2026';
 export const VERSAO_REGRAS_V3 = 'v3 · 01/11/2026';
+export const VERSAO_REGRAS_V4 = 'v4 · 01/11/2026 (parceria)';
 export const regras: Regra[] = [
   { id: 'contratoSemRegistro', status: 'Confirmado', label: 'Contrato técnico com fornecedor sem registro na data', fonte: 'PNCP × cadastro PJ', versao: VERSAO_REGRAS, coleta: 'Automática',
     regra: 'Contrato público de obra, serviço técnico, manutenção ou consultoria cujo estabelecimento contratado (CNPJ completo) não tinha registro vigente na data do contrato.',
@@ -63,6 +70,12 @@ export const regras: Regra[] = [
   { id: 'nomeEngenharia', status: 'Candidato', label: 'Nome de engenharia sem registro', fonte: 'Receita (razão social, nome fantasia) × cadastro PJ', versao: VERSAO_REGRAS_V2, coleta: 'Automática',
     regra: 'Estabelecimento ativo na Receita, sem registro ou visto vigente, cuja razão social ou nome fantasia contém “engenharia”, “engenheiro”, “construtora” ou “projetos”, qualquer que seja o CNAE.',
     naoConcluir: 'Que a empresa exerce atividade privativa: o nome é indício de apresentação ao mercado, não prova de atividade. Em produção, o classificador de nomes passa por validação humana.' },
+  { id: 'cnoSemArt', status: 'Candidato', label: 'Obra do CNO sem ART localizada', fonte: 'CNO autorizado (Receita Federal) × ART', versao: VERSAO_REGRAS_V4, coleta: 'Convênio', parceria: 'rfb-cno',
+    regra: 'Obra inscrita no CNO em SP, ativa ou paralisada, com dados mínimos e empresa do universo no papel de executora, cujo campo ART está vazio ou não corresponde a ART da mesma empresa na base do Crea-SP.',
+    naoConcluir: 'Que a executora atua sem ART: o campo do CNO é preenchido pelo responsável tributário e a ART pode estar em nome do profissional ou de outra chave. Primeiro, orientar o preenchimento.' },
+  { id: 'licencaSemArt', status: 'Candidato', label: 'Alvará ou licença de obra sem ART ligada', fonte: 'Alvarás (prefeituras), AVCB (Corpo de Bombeiros), licenças (CETESB) × ART', versao: VERSAO_REGRAS_V4, coleta: 'Convênio', parceria: 'prefeituras',
+    regra: 'Alvará de construção ou reforma, AVCB ou licença de instalação vigente em D sem ART ligada ao processo ou à obra. Aponta a executora identificada no processo; sem ela, a titular do universo.',
+    naoConcluir: 'Que falta ART: a ligação exige a chave do processo, e a ART pode existir sob outro número. Titular não é projetista nem executora.' },
   { id: 'socioPj', status: 'Contexto', label: 'Sócio PJ de engenharia sem registro', fonte: 'QSA aberto (Receita) × lista CNAE Crea-SP × cadastro PJ', versao: VERSAO_REGRAS_V3, coleta: 'Automática',
     regra: 'Empresa registrada cujo quadro societário aberto tem sócio pessoa jurídica com CNAE da lista do Crea-SP e sem registro ou visto localizado no corte. Só sócios PJ: o CPF do sócio PF é mascarado.',
     naoConcluir: 'Controle, favorecimento ou que o sócio exerce atividade técnica: a sociedade é declarada, não provada, e a holding pode não prestar serviço. Contexto para a análise da empresa investida.' },
@@ -75,7 +88,7 @@ export const regraPorId = Object.fromEntries(regras.map(row => [row.id, row])) a
 /** Regras do plano para a malha fina que o cenário ainda não sustenta. */
 export const regrasPendentes = [
   { label: 'RT de empresas demais, longe demais', motivo: 'exige domicílio do profissional e regra aprovada pelas câmaras' },
-  { label: 'Perito nomeado sem registro', motivo: 'exige a captura das nomeações no DJE e no e-SAJ (fora da coleta automática até o acordo com o TJSP)' },
+  { label: 'Perito nomeado sem registro ativo', motivo: 'aponta profissional, não empresa; está em Profissionais · perícias judiciais, que depende do acordo com o TJSP (!)' },
 ];
 
 export const TERMOS_ENGENHARIA = /engenharia|engenheir|construtora|projetos/i;
@@ -141,6 +154,10 @@ export function malhaFina(scope: Scope, model: EnterpriseModel, f: Fiscalizacao,
   // Sócio PJ de engenharia sem registro (QSA aberto): contexto para a empresa investida registrada.
   const socioPj = quadroSociedades(buildSociedades(dataset), dataset, scope.companyIds, null).investidasRegistradasComSocioEngenhariaSemRegistro.slice().sort();
 
+  // Regras que dependem de parceria (camadas demonstrativas): obra do CNO sem ART localizada e alvará ou licença de obra sem ART ligada.
+  const cnoSemArt = quadroCno(buildCno(dataset), dataset, scope.companyIds, null).executorasSemArt;
+  const licencaSemArt = quadroLicencas(buildLicencas(dataset), dataset, scope.companyIds, null).obrasSemArt;
+
   // Sucessão de empresas: baixa nos últimos 24 meses e abertura no mesmo município e CNAE em até 180 dias.
   const rtDe = new Map<string, Set<string>>();
   for (const link of dataset.technicalLinks) rtDe.set(link.companyId, (rtDe.get(link.companyId) ?? new Set()).add(link.professionalId));
@@ -174,6 +191,7 @@ export function malhaFina(scope: Scope, model: EnterpriseModel, f: Fiscalizacao,
     sucessao: unique(sucessoes.map(row => row.nova)),
     nomeEngenharia: empresaDe(nomesSemRegistro),
     socioPj,
+    cnoSemArt, licencaSemArt,
     cnaePassivel: empresaDe(semRegistroPassivel),
   };
   const indicios = regras.map(regra => ({ ...regra, empresas: grupos[regra.id], comAcao: grupos[regra.id].filter(company => acted.has(company)) }));

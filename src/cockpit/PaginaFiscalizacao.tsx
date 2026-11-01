@@ -14,6 +14,8 @@ import type { ResultadoFt } from '../painel/forcas';
 import { situacoesObra } from '../domain/frentes';
 import type { SituacaoObra } from '../domain/frentes';
 import { etapasPca } from '../domain/mercado';
+import { fontesLicenca, pontesTce } from '../domain/parcerias';
+import type { FonteLicenca, PapelCno, SituacaoCno } from '../domain/parcerias';
 import { nomeEmpresa } from './ui';
 
 /** Aba 5 · Fiscalização: os atos do rito (ação, notificação, auto, multa, julgamento, dívida ativa), o resultado (regularização e registro) e as forças-tarefas contra o seu grupo de comparação. Tudo lido na data de referência. */
@@ -50,6 +52,9 @@ export default function PaginaFiscalizacao({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="ht" area="ht" title="Autos de infração por regional e mês" question="Últimos 12 meses. Mostra a constância da atuação de cada regional. Clique numa célula para ver os autos."><AutosRegionais ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ob" area="ob" title="Obras públicas: situação, ponte com o contrato e ART" question="Obras do Obrasgov (CIPI) ligadas aos contratos do PNCP, por regional do local de execução; situação em D, grau da ponte e ART de fiscalização. Clique numa regional para as obras." help="Ponte: CIPI no contrato (confirmada), candidata (objeto, local e período) ou não identificada. Obra com ART de execução e sem ART de fiscalização vai à malha fina."><Obras ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="mp" area="mp" title="Mercado público técnico: concentração e demanda planejada" question="Participação de cada fornecedor (raiz do CNPJ) na carteira técnica do período, com os cinco maiores e o HHI; e a demanda dos planos anuais de contratação por etapa de materialização." help="Concentração descreve estrutura de mercado, não favorecimento. Plano de contratação não é gasto garantido; etapas não se somam."><MercadoPublico ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="cn" area="cn" title="Obras do CNO: campo ART e cobertura da conciliação" question="Obras inscritas no CNO em SP com responsável do universo: dados mínimos, campo ART preenchido e ART localizada na base, mais o papel do responsável. Clique numa etapa." help="Responsável tributário não é construtora nem RT. Falta de ponte não prova ausência de ART. SP é filtrado pelo local da obra, não pelo responsável."><Cno ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="li" area="li" title="Licenças e alvarás: titular, executora e ART" question="Alvarás (prefeituras), AVCB (Corpo de Bombeiros) e licenças (CETESB, IBAMA, ANA) por fonte: titulares com registro, executora identificada e ART ligada ao processo. Clique numa fonte." help="Licença expirada não é atividade atual. Titular não equivale a projetista ou executora; a ART só se liga pela chave do processo ou da obra."><Licencas ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="tc" area="tc" title="Etapas financeiras dos contratos (TCE-SP)" question="Contratado (PNCP), empenhado, liquidado e pago (TCE-SP e TCM-SP) dos contratos técnicos do período, lado a lado; cobertura da ponte e os maiores órgãos." help="As quatro etapas nunca se somam. Não é parecer de regularidade do tribunal. A capital exige o complemento do TCM-SP."><Tce ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -220,6 +225,79 @@ function MercadoPublico({ ctx }: { ctx: CockpitCtx }) {
       {d.porEtapa.map(row => <li key={row.etapa}><button disabled><i style={{ background: row.etapa === 'Planejado' ? tokens.accent : row.etapa === 'Contratação publicada' ? tokens.blue : tokens.good }} /><span>{row.etapa}<br /><small>{int(row.n)} itens do PCA</small></span><b>{brl(row.valor)}</b></button></li>)}
       {d.porExercicio.map(row => <li key={row.exercicio}><button disabled><i style={{ background: tokens.muted }} /><span><small>Exercício {row.exercicio}: {int(row.n)} itens, {brl(row.planejado)} sem materialização</small></span><b>{brl(row.valor)}</b></button></li>)}
       <li className="side-note">Etapas ({etapasPca.join(' → ').toLowerCase()}) não se somam como demanda adicional. PNCP · PCA (captura diária), cenário demonstrativo.</li>
+    </ul>
+  </div>;
+}
+
+function Cno({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.parcerias.cno;
+  const etapas = useMemo(() => [{ label: 'Obras do CNO em SP', rows: q.obras }, { label: 'Com dados mínimos', rows: q.comDadosMinimos }, { label: 'Campo ART preenchido', rows: q.comCampoArt }, { label: 'ART localizada na base', rows: q.comArtLocalizada }], [q]);
+  const corSituacao: Record<SituacaoCno, string> = { Ativa: tokens.blue, Paralisada: tokens.warn, Encerrada: tokens.muted }, corPapel: Record<PapelCno, string> = { Executora: tokens.good, 'Responsável tributário': tokens.accent, Proprietário: tokens.soft };
+  const option = useMemo(() => ({
+    grid: { top: 6, right: 48, bottom: 2, left: 2, containLabel: true }, tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: etapas.map(row => row.label), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
+    series: [{ type: 'bar', name: 'Obras', barWidth: 16, data: etapas.map((row, index) => ({ value: row.rows.length, itemStyle: { color: index === 3 ? tokens.good : index === 0 ? tokens.soft : tokens.blue, borderColor: index === 0 ? tokens.line : undefined, borderWidth: index === 0 ? 1 : 0, borderRadius: [0, 3, 3, 0] } })), label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => `${int(params.value)}${params.dataIndex ? ` · ${pct(params.value / Math.max(1, etapas[0].rows.length) * 100)}` : ''}` } }],
+  }), [etapas, tokens]);
+  const abrir = (index: number) => { const rows = etapas[index]?.rows ?? []; if (rows.length) ctx.open({ kind: 'linhas', eyebrow: 'Depende de parceria (CNO autorizado)', title: `Obras do CNO · ${etapas[index].label.toLowerCase()}`, what: 'Obras inscritas no CNO com local em SP e responsável do universo, lidas na data de referência.', use: 'O papel do responsável (executora, responsável tributário, proprietário) muda o que a ART deve cobrir.', listTitle: 'Obras', rows: rows.map(row => ({ key: row.id, companyId: row.companyId, title: nomeEmpresa(ctx, row.companyId), subtitle: `CNO ${row.cno} · ${row.papel} · ${row.situacao}`, value: row.artLocalizada ? 'ART localizada' : row.campoArt ? 'ART não localizada' : 'campo ART vazio', note: `inscrita em ${row.inscricao.split('-').reverse().join('/')}`, sortValue: row.artLocalizada ? 0 : 1 })) }); };
+  return <div className="split">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.obras.length)}</b> obras · cobertura da conciliação {q.cobertura === null ? '—' : <b>{pct(q.cobertura)}</b>} (ART localizada ÷ com dados mínimos) · campo ART preenchido em {q.preenchimento === null ? '—' : pct(q.preenchimento)} · <b>{int(q.executorasSemArt.length)}</b> executoras de obra ativa sem ART localizada</p>
+      <Chart option={option} tokens={tokens} label="Funil da conciliação das obras do CNO" onPick={params => abrir(params.dataIndex)} />
+    </div>
+    <ul className="side-list" aria-label="Situação e papel">
+      {q.porSituacao.map(row => <li key={row.situacao}><button disabled><i style={{ background: corSituacao[row.situacao] }} /><span>{row.situacao}</span><b>{int(row.n)}</b></button></li>)}
+      {q.porPapel.map(row => <li key={row.papel}><button disabled><i style={{ background: corPapel[row.papel] }} /><span><small>Papel: {row.papel} · {int(row.registradas)} registradas</small></span><b>{int(row.n)}</b></button></li>)}
+      <li><button onClick={() => q.executorasSemArt.length && ctx.open({ kind: 'empresas', title: 'Executoras de obra do CNO sem ART localizada', what: 'Empresas no papel de executora em obra ativa ou paralisada do CNO, com campo ART vazio ou não correspondente.', use: 'Regra da malha fina (candidato). Orientar o preenchimento antes de notificar.', ids: q.executorasSemArt, eyebrow: 'Candidato · depende de parceria' })}><i style={{ background: tokens.warn }} /><span>Executoras sem ART localizada</span><b>{int(q.executorasSemArt.length)}</b></button></li>
+      <li className="side-note">Depende do CNO autorizado (Receita Federal e Serpro); não é cadastro aberto. Demonstrativo.</li>
+    </ul>
+  </div>;
+}
+
+function Licencas({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.parcerias.licencas, rows = q.porFonte;
+  const option = useMemo(() => ({
+    grid: { top: 44, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.fonte}</b><br/>${int(row.n)} licenças (${int(row.vigentes)} vigentes) · ${int(row.titularRegistrado)} titulares com registro<br/>${int(row.obras)} de obra ou instalação · ${int(row.executoraIdentificada)} com executora identificada · ${int(row.artPonte)} com ART ligada`; } },
+    xAxis: { type: 'category', data: rows.map(row => row.fonte === 'Alvará municipal' ? 'Alvará' : row.fonte), axisLabel: { color: tokens.muted, fontSize: 10, interval: 0 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
+    series: [
+      { type: 'bar', name: 'Titular com registro', stack: 'l', barWidth: 22, data: rows.map(row => row.titularRegistrado), itemStyle: { color: tokens.good } },
+      { type: 'bar', name: 'Titular sem registro', stack: 'l', data: rows.map(row => row.n - row.titularRegistrado), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1, borderRadius: [3, 3, 0, 0] } },
+      { type: 'line', name: 'ART ligada ao processo', data: rows.map(row => row.artPonte), symbol: 'circle', symbolSize: 7, lineStyle: { width: 0 }, itemStyle: { color: tokens.blue } },
+    ],
+  }), [rows, tokens]);
+  const abrir = (fonte: FonteLicenca) => { const lista = q.licencas.filter(row => row.fonte === fonte); if (lista.length) ctx.open({ kind: 'linhas', eyebrow: 'Depende de parceria', title: `Licenças e alvarás · ${fonte}`, what: 'Licenças, alvarás e autos com titular do universo, lidos na data de referência (fase pela vigência em D).', use: 'Titular não é executora. A ART só se liga pela chave do processo.', listTitle: 'Licenças', rows: lista.map(row => ({ key: row.id, companyId: row.companyId, title: nomeEmpresa(ctx, row.companyId), subtitle: `${row.tipo} · ${row.processo} · ${row.fase}`, value: row.obra ? (row.artPonte ? 'ART ligada' : 'sem ART ligada') : 'não é obra', note: row.executoraId ? `executora: ${nomeEmpresa(ctx, row.executoraId)}` : 'executora não identificada', sortValue: row.obra && !row.artPonte ? 1 : 0 })) }); };
+  return <div className="split">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.licencas.length)}</b> licenças e alvarás de {int(q.titularesDistintos)} titulares ({int(q.vigentes.length)} vigentes) · titular com registro {q.taxaTitular === null ? '—' : pct(q.taxaTitular)} · executora identificada {q.taxaExecutora === null ? '—' : pct(q.taxaExecutora)} · ART ligada {q.taxaArt === null ? '—' : pct(q.taxaArt)} (as duas sobre licenças de obra)</p>
+      <Chart option={option} tokens={tokens} label="Licenças e alvarás por fonte e registro do titular" onPick={params => { const row = rows[params.dataIndex]; if (row) abrir(row.fonte); }} />
+    </div>
+    <ul className="side-list" aria-label="Fontes e indícios">
+      {fontesLicenca.map(fonte => { const row = rows.find(item => item.fonte === fonte)!; return <li key={fonte}><button onClick={() => abrir(fonte)}><i style={{ background: tokens.blue }} /><span>{fonte}<small>{int(row.vigentes)} vigentes · {int(row.obras)} de obra</small></span><b>{int(row.n)}</b></button></li>; })}
+      <li><button onClick={() => q.obrasSemArt.length && ctx.open({ kind: 'empresas', title: 'Alvará ou licença de obra vigente sem ART ligada', what: 'Executora identificada no processo ou, sem ela, titular do universo, em licença de obra vigente sem ART ligada ao processo.', use: 'Regra da malha fina (candidato). A ART pode existir sob outro número.', ids: q.obrasSemArt, eyebrow: 'Candidato · depende de parceria' })}><i style={{ background: tokens.warn }} /><span>Obra vigente sem ART ligada</span><b>{int(q.obrasSemArt.length)}</b></button></li>
+      <li className="side-note">Depende de acordos com as prefeituras, o Corpo de Bombeiros e a CETESB; IBAMA e ANA públicos não trazem CNPJ confiável. Demonstrativo.</li>
+    </ul>
+  </div>;
+}
+
+function Tce({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.parcerias.tce, orgaos = useMemo(() => new Map(ctx.dataset.buyers.map(row => [row.id, row.name.replace(' (simulação)', '').replace('Administração municipal de ', 'Prefeitura de ').replace(' demonstrativo', '')])), [ctx.dataset]);
+  const etapas = useMemo(() => [{ label: 'Contratado (PNCP)', valor: q.contratado, cor: tokens.soft }, { label: 'Empenhado', valor: q.empenhado, cor: tokens.blue }, { label: 'Liquidado', valor: q.liquidado, cor: tokens.accent }, { label: 'Pago', valor: q.pago, cor: tokens.good }], [q, tokens]);
+  const option = useMemo(() => ({
+    grid: { top: 6, right: 70, bottom: 2, left: 2, containLabel: true }, tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (value: number) => brl(value) },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: etapas.map(row => row.label), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
+    series: [{ type: 'bar', name: 'Valor', barWidth: 16, data: etapas.map((row, index) => ({ value: row.valor, itemStyle: { color: row.cor, borderColor: index === 0 ? tokens.line : undefined, borderWidth: index === 0 ? 1 : 0, borderRadius: [0, 3, 3, 0] } })), label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => `${brl(params.value)}${params.dataIndex ? ` · ${pct(params.value / Math.max(1, q.contratado) * 100)}` : ''}` } }],
+  }), [etapas, tokens, q.contratado]);
+  const abrirOrgao = (buyerId: string) => { const lista = q.etapas.filter(row => row.buyerId === buyerId); if (lista.length) ctx.open({ kind: 'linhas', eyebrow: 'Depende de parceria (TCE-SP)', title: `Etapas financeiras · ${orgaos.get(buyerId) ?? buyerId}`, what: 'Contratos técnicos do período com as etapas publicadas pelo tribunal, lidas na data de referência.', use: 'Pago menor que contratado é execução em curso, não irregularidade.', listTitle: 'Contratos', rows: lista.map(row => ({ key: row.contractId, companyId: row.companyId, title: nomeEmpresa(ctx, row.companyId), subtitle: `${row.fonte} · ponte ${row.ponte.toLowerCase()}`, value: `${brl(row.pago)} pagos`, note: `${brl(row.contratado)} contratados · ${brl(row.empenhado)} empenhados · ${brl(row.liquidado)} liquidados`, sortValue: row.contratado })) }); };
+  return <div className="split">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.etapas.length)}</b> de {int(q.contratosNoPeriodo)} contratos do período com etapas publicadas · ponte validada em {q.coberturaPonte === null ? '—' : <b>{pct(q.coberturaPonte)}</b>} · <b>{int(q.semPagamento.length)}</b> com ponte validada e nenhum pagamento</p>
+      <Chart option={option} tokens={tokens} label="Valor contratado, empenhado, liquidado e pago" />
+    </div>
+    <ul className="side-list" aria-label="Ponte e órgãos">
+      {pontesTce.map(ponte => { const row = q.porPonte.find(item => item.ponte === ponte)!; return <li key={ponte}><button disabled><i style={{ background: ponte === 'Validada' ? tokens.good : ponte === 'Sem ponte' ? tokens.muted : tokens.accent }} /><span>Ponte {ponte.toLowerCase()}<small>{brl(row.contratado)} contratados</small></span><b>{int(row.n)}</b></button></li>; })}
+      {q.porOrgao.slice(0, 2).map(row => <li key={row.buyerId}><button onClick={() => abrirOrgao(row.buyerId)}><i style={{ background: tokens.blue }} /><span>{orgaos.get(row.buyerId) ?? row.buyerId}<small>{int(row.contratos)} contratos · {brl(row.pago)} pagos</small></span><b>{brl(row.contratado)}</b></button></li>)}
+      <li className="side-note">Depende do acordo com o TCE-SP (e TCM-SP na capital); primeiro acordo sugerido no plano. Demonstrativo.</li>
     </ul>
   </div>;
 }

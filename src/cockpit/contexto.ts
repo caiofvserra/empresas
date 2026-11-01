@@ -15,6 +15,7 @@ import type { ResultadoFt } from '../painel/forcas';
 import type { QuadroInstalacoes, QuadroObras, QuadroSociedades } from '../domain/frentes';
 import type { Historico } from '../observatorio/historico';
 import type { Aberturas, Concentracao, DensidadeGre, Permanencia, QuadroDemanda } from '../domain/mercado';
+import type { ContextoGre, QuadroCno, QuadroCoorteNominal, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
 
 /** Indicadores-norte do Prumo no recorte. */
 export interface Norte { cobertura: Cobertura; contagens: Contagens; conversao: { coortes: Coorte[]; atual: Coorte | null; anterior: Coorte | null }; receita: ReceitaAtribuivel; tempo: TempoAteAgir }
@@ -39,5 +40,8 @@ export interface CockpitCtx extends Ctx {
   historico: Historico;
   /** V21: medidas de mercado e de dinâmica da base do levantamento (UC34, UC33, UC31, UC05, UC04). */
   mercado: Mercado;
+  /** V22: camadas que dependem de parceria (marcadas com "!"): CNO, licenças e alvarás, perícias, TCE-SP, contexto econômico, sócios PF, coorte nominal e vínculos. */
+  parcerias: Parcerias;
 }
+export interface Parcerias { cno: QuadroCno; licencas: QuadroLicencas; pericias: QuadroPericias; tce: QuadroTce; contexto: ContextoGre[]; sociosPf: QuadroSociosPf; coorteNominal: QuadroCoorteNominal; vinculos: QuadroVinculos }
 export interface Mercado { concentracao: Concentracao; demanda: QuadroDemanda; densidade: DensidadeGre[]; aberturas: Aberturas; permanencia: Permanencia[] }
