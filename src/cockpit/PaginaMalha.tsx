@@ -2,11 +2,11 @@ import { useMemo } from 'react';
 import { Chart } from '../painel/chart';
 import { camaraDaEmpresa, camaras, grausVinculo, situacoesFornecedor } from '../painel/analise';
 import type { ContratoPublico, GrauVinculo, SituacaoFornecedor } from '../painel/analise';
-import { brl, data, int, money, pct, short } from '../painel/ui';
+import { brl, data, int, mes, money, pct, short } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
-import { LIMITE_ART, PRAZO_SUCESSAO, TERMOS_ENGENHARIA, regrasPendentes, statusAjuda } from './cruzamentos';
+import { LIMITE_ART, PRAZO_SUCESSAO, TERMOS_ENGENHARIA, regras, regrasPendentes, statusAjuda } from './cruzamentos';
 import type { Indicio, StatusLigacao } from './cruzamentos';
-import { Bloco, linhasEmpresas, nomeEmpresa } from './ui';
+import { Bloco, carregando, linhasEmpresas, nomeEmpresa } from './ui';
 
 /**
  * Aba 6 · Malha fina v2: indícios por regra, com status de ligação (confirmado, candidato, contexto), fonte, forma de coleta e
@@ -24,6 +24,7 @@ export default function PaginaMalha({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="mf5" area="mf5" title="Sucessão de empresas após baixa" question={`Registro baixado ou cancelado nos últimos 24 meses e outra empresa aberta no mesmo município, com o mesmo CNAE principal, em até ${PRAZO_SUCESSAO} dias. RT em comum eleva a prioridade.`} help="Não diz que a nova empresa é a mesma nem que herda débitos: isso depende de análise societária e jurídica."><Sucessoes ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="mf6" area="mf6" title="Obras sem ART de fiscalização e nomes de engenharia" question="Obras públicas com ART de execução identificada e nenhuma ART de fiscalização; e CNPJs ativos sem registro cujo nome contém termos de engenharia, qualquer que seja o CNAE." help="A ART de fiscalização pode estar sob outra chave: orientar o órgão antes de notificar. O nome é indício de apresentação ao mercado, não prova de atividade."><ObrasNomes ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="mf9" area="mf9" title="Cobertura × emprego em engenharia, por regional" question="Contexto agregado: cobertura do mercado contra a variação do emprego em ocupações de engenharia (RAIS/CAGED, por município e CBO). Tamanho: empresas registradas." help="Emprego é agregado por município, CNAE e CBO e não se liga a CNPJ ou CPF. Linhas tracejadas: médias das regionais."><Quadrante ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mh" area="mh" title="Indícios por data de referência" question="A malha fina recalculada com a base como estava no fim de cada um dos 12 meses anteriores: empresas com indício, confirmadas e com ação; e cada regra na primeira e na última data." help="Mesma leitura do seletor de data, mês a mês; nada é sobrescrito. Diferença entre datas é variação do indício, não resultado da fiscalização."><HistoricoMalha ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -221,5 +222,32 @@ function ObrasNomes({ ctx }: { ctx: CockpitCtx }) {
     </div>
     <ul className="side-list" aria-label="Obras sem ART de fiscalização">{obras.slice(0, 6).map(row => <li key={row.id}><span className="side-row"><span>{nomeEmpresa(ctx, row.companyId)}</span><b>{brl(row.valor)}</b><small>{row.objeto} · {data(row.data)}</small></span></li>)}
       <li className="side-note">Maiores obras sem ART de fiscalização. Lido na data de referência.</li></ul>
+  </div>;
+}
+
+/* ---------- V21 · indícios por data de referência ---------- */
+function HistoricoMalha({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, h = ctx.historico, pontos = h.pontos, regrasAtivas = regras;
+  const option = useMemo(() => pontos.length ? {
+    grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: pontos.map(p => mes(p.data.slice(0, 7))), axisLabel: { color: tokens.muted, fontSize: 10 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
+    series: [
+      { type: 'line', name: 'Empresas com indício', data: pontos.map(p => p.comIndicio), symbol: 'circle', symbolSize: 5, lineStyle: { color: tokens.blue, width: 2 }, itemStyle: { color: tokens.blue } },
+      { type: 'line', name: 'Confirmadas', data: pontos.map(p => p.confirmadas), symbol: 'circle', symbolSize: 5, lineStyle: { color: tokens.warn, width: 2 }, itemStyle: { color: tokens.warn } },
+      { type: 'line', name: 'Com ação fiscal', data: pontos.map(p => p.comAcao), symbol: 'circle', symbolSize: 5, lineStyle: { color: tokens.good, width: 2 }, itemStyle: { color: tokens.good } },
+    ],
+  } : {}, [pontos, tokens]);
+  const primeiro = pontos[0], ultimo = pontos[pontos.length - 1];
+  return <div className="split is-wide">
+    <div className="stack">
+      <p className="kpi-line">{h.completo ? <><b>{int(pontos.length)}</b> datas, de {data(h.datas[0])} a {data(h.datas[h.datas.length - 1])}</> : <>Calculando <b>{int(pontos.length)}</b> de {int(h.datas.length)} datas…</>} · regional aplicada; a câmara não se aplica ao histórico</p>
+      {pontos.length ? <Chart option={option} tokens={tokens} label="Empresas com indício, confirmadas e com ação, por data de referência" /> : carregando}
+    </div>
+    <ul className="side-list" aria-label="Regras na primeira e na última data">
+      {primeiro && ultimo ? regrasAtivas.map(regra => { const a = primeiro.porRegra[regra.id] ?? 0, b = ultimo.porRegra[regra.id] ?? 0; return <li key={regra.id}><button disabled><i style={{ background: b > a ? tokens.warn : b < a ? tokens.good : tokens.muted }} /><span><small>{regra.label}</small></span><b>{int(a)} → {int(b)}</b></button></li>; }) : <li className="side-note">Aguardando o primeiro ponto…</li>}
+      <li className="side-note">Primeira → última data do histórico, por regra.</li>
+    </ul>
   </div>;
 }

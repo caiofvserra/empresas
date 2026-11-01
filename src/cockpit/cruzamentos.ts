@@ -5,13 +5,15 @@ import { devedoras, saneamento } from '../painel/analise';
 import type { ContratoPublico } from '../painel/analise';
 import { classeDoEstabelecimento } from '../observatorio/norte';
 import { buildProfissionais } from '../domain/profissionais';
-import { chance, toDay } from '../domain/hash';
+import { toDay } from '../domain/hash';
+import { buildObras, buildSociedades, quadroSociedades } from '../domain/frentes';
 
 /**
- * V20 · malha fina v2 do Observatório: indícios por regra, cada um com status de ligação, fonte, data e versão da regra.
+ * V20 · malha fina v2 do Prumo: indícios por regra, cada um com status de ligação, fonte, data e versão da regra.
  * Nenhum indício vira auto: a lista é para análise. Às seis regras da V19 somam-se cinco regras internas novas, todas
  * calculadas só com dados que o Crea-SP já tem ou coleta automaticamente: padrão anormal de ART, obra pública sem ART de
- * fiscalização, atividade recente com débito, sucessão de empresas e nome de engenharia sem registro.
+ * fiscalização, atividade recente com débito, sucessão de empresas e nome de engenharia sem registro. A V21 acrescenta a regra de
+ * contexto do QSA aberto (sócio PJ de engenharia sem registro) e passa a ler a execução das obras no Obrasgov (CIPI).
  */
 const unique = (values: string[]) => [...new Set(values)].sort();
 
@@ -25,10 +27,11 @@ export const statusAjuda: Record<StatusLigacao, string> = {
 };
 
 export type IndicioId = 'cnaeSim' | 'cnaePassivel' | 'contratoSemRegistro' | 'contratoSemVinculo' | 'rtSemSubstituto' | 'cnpjInativo'
-  | 'atividadeComDebito' | 'artAnormal' | 'obraSemArtFiscalizacao' | 'sucessao' | 'nomeEngenharia';
+  | 'atividadeComDebito' | 'artAnormal' | 'obraSemArtFiscalizacao' | 'sucessao' | 'nomeEngenharia' | 'socioPj';
 export interface Regra { id: IndicioId; label: string; status: StatusLigacao; regra: string; fonte: string; versao: string; naoConcluir: string; coleta: 'Interna' | 'Automática' | 'Convênio' }
 export const VERSAO_REGRAS = 'v1 · 31/10/2026';
 export const VERSAO_REGRAS_V2 = 'v2 · 01/11/2026';
+export const VERSAO_REGRAS_V3 = 'v3 · 01/11/2026';
 export const regras: Regra[] = [
   { id: 'contratoSemRegistro', status: 'Confirmado', label: 'Contrato técnico com fornecedor sem registro na data', fonte: 'PNCP × cadastro PJ', versao: VERSAO_REGRAS, coleta: 'Automática',
     regra: 'Contrato público de obra, serviço técnico, manutenção ou consultoria cujo estabelecimento contratado (CNPJ completo) não tinha registro vigente na data do contrato.',
@@ -48,8 +51,8 @@ export const regras: Regra[] = [
   { id: 'contratoSemVinculo', status: 'Candidato', label: 'Contrato técnico sem ART identificada', fonte: 'PNCP × ART', versao: VERSAO_REGRAS, coleta: 'Automática',
     regra: 'Contrato com chave para a busca, sem ART que cite o contrato e sem ART candidata da mesma empresa entre 30 dias antes e 60 depois.',
     naoConcluir: 'Que falta ART: a busca por empresa e período pode não achar a ART certa.' },
-  { id: 'obraSemArtFiscalizacao', status: 'Candidato', label: 'Obra pública sem ART de fiscalização', fonte: 'PNCP × ART (execução e fiscalização)', versao: VERSAO_REGRAS_V2, coleta: 'Automática',
-    regra: 'Contrato público de obra com ART de execução identificada (confirmada ou candidata) e nenhuma ART de fiscalização da obra registrada por profissional do órgão contratante ou de empresa contratada para fiscalizar.',
+  { id: 'obraSemArtFiscalizacao', status: 'Candidato', label: 'Obra pública sem ART de fiscalização', fonte: 'PNCP × Obrasgov (CIPI) × ART (execução e fiscalização)', versao: VERSAO_REGRAS_V3, coleta: 'Automática',
+    regra: 'Obra pública iniciada segundo o Obrasgov (em execução, paralisada ou concluída) com ponte ao contrato do PNCP (CIPI no contrato ou candidata) ou ART de execução identificada, e nenhuma ART de fiscalização da obra registrada por profissional do órgão contratante ou de empresa contratada para fiscalizar.',
     naoConcluir: 'Que o órgão descumpre a Lei 6.496/77: a ART de fiscalização pode estar sob outro contrato ou outra chave. Primeiro, orientar o órgão.' },
   { id: 'artAnormal', status: 'Candidato', label: 'Padrão anormal de ART por profissional', fonte: 'ART (autor, empresa, regional)', versao: VERSAO_REGRAS_V2, coleta: 'Interna',
     regra: 'Profissional com ARTs nos últimos 12 meses acima de três vezes a mediana dos autores (mínimo de 6) e para cinco ou mais empresas ou em quatro ou mais regionais. As empresas listadas são as dessas ARTs.',
@@ -60,6 +63,9 @@ export const regras: Regra[] = [
   { id: 'nomeEngenharia', status: 'Candidato', label: 'Nome de engenharia sem registro', fonte: 'Receita (razão social, nome fantasia) × cadastro PJ', versao: VERSAO_REGRAS_V2, coleta: 'Automática',
     regra: 'Estabelecimento ativo na Receita, sem registro ou visto vigente, cuja razão social ou nome fantasia contém “engenharia”, “engenheiro”, “construtora” ou “projetos”, qualquer que seja o CNAE.',
     naoConcluir: 'Que a empresa exerce atividade privativa: o nome é indício de apresentação ao mercado, não prova de atividade. Em produção, o classificador de nomes passa por validação humana.' },
+  { id: 'socioPj', status: 'Contexto', label: 'Sócio PJ de engenharia sem registro', fonte: 'QSA aberto (Receita) × lista CNAE Crea-SP × cadastro PJ', versao: VERSAO_REGRAS_V3, coleta: 'Automática',
+    regra: 'Empresa registrada cujo quadro societário aberto tem sócio pessoa jurídica com CNAE da lista do Crea-SP e sem registro ou visto localizado no corte. Só sócios PJ: o CPF do sócio PF é mascarado.',
+    naoConcluir: 'Controle, favorecimento ou que o sócio exerce atividade técnica: a sociedade é declarada, não provada, e a holding pode não prestar serviço. Contexto para a análise da empresa investida.' },
   { id: 'cnaePassivel', status: 'Contexto', label: 'CNAE “Passível” sem registro localizado', fonte: 'Receita (CNPJ, CNAE) × lista CNAE Crea-SP × cadastro PJ', versao: VERSAO_REGRAS, coleta: 'Automática',
     regra: 'Como a regra “Sim”, mas só com CNAE “Passível de obrigação”: depende da atividade básica e dos serviços efetivamente prestados.',
     naoConcluir: 'Que existe obrigação de registro sem avaliação normativa.' },
@@ -91,8 +97,6 @@ export interface Malha {
   obrasSemFiscalizacao: ContratoPublico[]; obrasComExecucao: ContratoPublico[];
   sucessoes: Sucessao[]; nomesSemRegistro: string[];
 }
-/** ART de fiscalização de obra pública: no cenário, sorteada por chave do contrato (55% das obras com execução identificada); em produção, campo próprio da ART. */
-export const temArtFiscalizacao = (contratoId: string) => chance(`fisc:${contratoId}`) < 0.55;
 
 export function malhaFina(scope: Scope, model: EnterpriseModel, f: Fiscalizacao, contratos: ContratoPublico[]): Malha {
   const dataset = scope.dataset, anchor = scope.anchor, places = new Map(dataset.establishments.map(row => [row.id, row]));
@@ -129,9 +133,13 @@ export function malhaFina(scope: Scope, model: EnterpriseModel, f: Fiscalizacao,
     .map(([id, row]) => ({ id, nome: modelo.porId.get(id)?.nome ?? id, arts: row.arts, empresas: row.empresas.size, regionais: row.regionais.size })).sort((a, b) => b.arts - a.arts);
   const empresasArtAnormal = unique(autoresAnormais.flatMap(row => [...porAutor.get(row.id)!.empresas]));
 
-  // Obra pública sem ART de fiscalização: obras com execução identificada (confirmada ou candidata) e sem ART de fiscalização.
-  const obrasComExecucao = contratos.filter(row => row.categoria === 'Obras' && (row.vinculo === 'Confirmado por documento' || row.vinculo === 'Candidato para revisão'));
-  const obrasSemFiscalizacao = obrasComExecucao.filter(row => !temArtFiscalizacao(row.id));
+  // Obra pública sem ART de fiscalização: obra iniciada no Obrasgov com ponte ao contrato (CIPI ou candidata) ou ART de execução identificada, e sem ART de fiscalização.
+  const obraDe = new Map(buildObras(dataset).obras.map(row => [row.contractId, row]));
+  const obrasComExecucao = contratos.filter(row => { const obra = obraDe.get(row.id); return row.categoria === 'Obras' && obra && obra.situacao !== 'Não iniciada' && (obra.ponte !== 'Não identificada' || row.vinculo === 'Confirmado por documento' || row.vinculo === 'Candidato para revisão'); });
+  const obrasSemFiscalizacao = obrasComExecucao.filter(row => !obraDe.get(row.id)!.artFiscalizacao);
+
+  // Sócio PJ de engenharia sem registro (QSA aberto): contexto para a empresa investida registrada.
+  const socioPj = quadroSociedades(buildSociedades(dataset), dataset, scope.companyIds, null).investidasRegistradasComSocioEngenhariaSemRegistro.slice().sort();
 
   // Sucessão de empresas: baixa nos últimos 24 meses e abertura no mesmo município e CNAE em até 180 dias.
   const rtDe = new Map<string, Set<string>>();
@@ -165,6 +173,7 @@ export function malhaFina(scope: Scope, model: EnterpriseModel, f: Fiscalizacao,
     artAnormal: empresasArtAnormal,
     sucessao: unique(sucessoes.map(row => row.nova)),
     nomeEngenharia: empresaDe(nomesSemRegistro),
+    socioPj,
     cnaePassivel: empresaDe(semRegistroPassivel),
   };
   const indicios = regras.map(regra => ({ ...regra, empresas: grupos[regra.id], comAcao: grupos[regra.id].filter(company => acted.has(company)) }));

@@ -12,8 +12,11 @@ import type { QuadroFormacao } from '../domain/formacao';
 import type { QuadroEntidades } from '../domain/entidades';
 import type { QuadroConselho } from '../domain/conselho';
 import type { ResultadoFt } from '../painel/forcas';
+import type { QuadroInstalacoes, QuadroObras, QuadroSociedades } from '../domain/frentes';
+import type { Historico } from '../observatorio/historico';
+import type { Aberturas, Concentracao, DensidadeGre, Permanencia, QuadroDemanda } from '../domain/mercado';
 
-/** Indicadores-norte do Observatório no recorte. */
+/** Indicadores-norte do Prumo no recorte. */
 export interface Norte { cobertura: Cobertura; contagens: Contagens; conversao: { coortes: Coorte[]; atual: Coorte | null; anterior: Coorte | null }; receita: ReceitaAtribuivel; tempo: TempoAteAgir }
 
 /**
@@ -31,4 +34,10 @@ export interface CockpitCtx extends Ctx {
   norte: Norte;
   profissionais: { modelo: ModeloProfissionais; resumo: ResumoProfissionais; cbo: RemuneracaoCbo[] };
   formacao: QuadroFormacao; entidades: QuadroEntidades; conselho: QuadroConselho; forcas: ResultadoFt[];
+  /** V21: camadas das frentes com fonte automática (QSA aberto, Obrasgov, ANEEL/ANP/ANM/BNDES) e o histórico por data de referência. */
+  frentes: { sociedades: QuadroSociedades; obras: QuadroObras; instalacoes: QuadroInstalacoes };
+  historico: Historico;
+  /** V21: medidas de mercado e de dinâmica da base do levantamento (UC34, UC33, UC31, UC05, UC04). */
+  mercado: Mercado;
 }
+export interface Mercado { concentracao: Concentracao; demanda: QuadroDemanda; densidade: DensidadeGre[]; aberturas: Aberturas; permanencia: Permanencia[] }

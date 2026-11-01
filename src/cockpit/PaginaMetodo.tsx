@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Chart } from '../painel/chart';
-import { int } from '../painel/ui';
-import { casos, coletaDe, coletas, ferramentasIa, fontes, frentePorId, frentes, lacunas, niveisEvidencia, regrasLeitura, situacoesCaso, usoNoPainel } from '../observatorio/governanca';
-import type { Coleta, Decisao, SituacaoCaso, SituacaoCruzamento, SituacaoFerramenta } from '../observatorio/governanca';
+import { data, int } from '../painel/ui';
+import { casasLegislativas, casos, coletaDe, coletas, familiasNormativas, ferramentasIa, fontes, frentePorId, frentes, gatePromocao, lacunas, niveisEvidencia, prontidaoFontes, proposicoes, regrasLeitura, situacoesCaso, usoNoPainel } from '../observatorio/governanca';
+import type { CasaLegislativa, Coleta, Decisao, EtapaProposicao, SituacaoCaso, SituacaoCruzamento, SituacaoFerramenta } from '../observatorio/governanca';
 
 /** Classe CSS a partir de um rótulo com acento (Automática → automatica). */
 const chave = (value: string) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -25,6 +25,8 @@ export default function PaginaMetodo({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="mr" area="mr" title="Regras da malha fina" question="As 11 regras da V20 com status da ligação, fonte, forma de coleta, versão e o que não se pode concluir de cada uma." help={`Confirmado: ${statusAjuda.Confirmado} Candidato: ${statusAjuda.Candidato} Contexto: ${statusAjuda.Contexto}`}><RegrasMalha /></Bloco>
     <Bloco ctx={ctx} id="ft" area="ft" title="Atlas de 98 fontes, por tema, evidência e coleta" question="Catálogo unificado (atlas + levantamento). Só fontes de coleta automática periódica ou por convênio entram no painel. Clique numa célula para listar."><Fontes ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ia" area="ia" title="IA e análises avançadas" question="O que roda fora da ferramenta de BI e alimenta o painel: classificadores, pareamento, anomalia, extração e previsão. Toda saída entra como candidato, com validação humana."><Ferramentas ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="rn" area="rn" title="Radar normativo: Câmara, Senado e ALESP" question="Proposições por casa, família de assunto, etapa e data da última tramitação, com a estrutura dos dados abertos. Lista demonstrativa: as proposições são fictícias até o conector. Clique numa casa para filtrar." help="Proposição em tramitação não é norma vigente. A coleta em produção segue a data de tramitação (não só o ano de apresentação) e guarda ID e URI; a relevância por regra textual é revisada por pessoa."><Radar ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="gt" area="gt" title="Gate de promoção de fontes ao núcleo" question="Os sete passos da revisão independente de 29/10 e o passo que cada fonte das camadas novas alcançou com a evidência disponível. Nenhuma fonte entra no núcleo operacional antes do passo 7."><Gate ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -133,6 +135,38 @@ function Ferramentas({ ctx }: { ctx: CockpitCtx }) {
     <div className="table-wrap"><table className="metodo">
       <thead><tr><th>Ferramenta</th><th>Tipo</th><th>Alimenta</th><th>Entrada e saída</th><th>Validação</th><th>Situação</th></tr></thead>
       <tbody>{ferramentasIa.map(row => <tr key={row.nome}><td><b>{row.nome}</b></td><td>{row.tipo}</td><td><small>{row.bloco}</small></td><td><small>{row.entrada}</small><small>→ {row.saida}</small></td><td><small>{row.validacao}</small></td><td><span className="chip" style={{ borderColor: cores[row.situacao] }}><i className="dot" style={{ background: cores[row.situacao] }} />{row.situacao}</span></td></tr>)}</tbody>
+    </table></div>
+  </div>;
+}
+
+/* ---------- V21 · radar normativo e gate de promoção de fontes ---------- */
+const corEtapa = (tokens: CockpitCtx['tokens']): Record<EtapaProposicao, string> => ({ Apresentada: tokens.muted, 'Em comissão': tokens.blue, 'Pronta para o plenário': tokens.accent, 'Aprovada na casa': tokens.warn, Sancionada: tokens.good, Arquivada: tokens.line });
+function Radar({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, [casa, setCasa] = useState<CasaLegislativa | null>(null), cores = corEtapa(tokens);
+  const rows = useMemo(() => (casa ? proposicoes.filter(row => row.casa === casa) : proposicoes).slice().sort((a, b) => b.ultimaTramitacao.localeCompare(a.ultimaTramitacao)), [casa]);
+  const porFamilia = useMemo(() => familiasNormativas.map(familia => ({ familia, n: rows.filter(row => row.familia === familia).length })).filter(row => row.n > 0), [rows]);
+  return <div className="stack">
+    <div className="seg is-wrap" role="radiogroup" aria-label="Casa legislativa">
+      <button role="radio" aria-checked={casa === null} className={casa === null ? 'on' : ''} onClick={() => setCasa(null)}>Todas · {proposicoes.length}</button>
+      {casasLegislativas.map(item => <button key={item} role="radio" aria-checked={casa === item} className={casa === item ? 'on' : ''} onClick={() => setCasa(casa === item ? null : item)}>{item} · {proposicoes.filter(row => row.casa === item).length}</button>)}
+    </div>
+    <p className="kpi-line">{porFamilia.map(row => <span key={row.familia} className="chip" style={{ marginRight: 4 }}>{row.familia} · {row.n}</span>)}</p>
+    <div className="table-wrap"><table className="metodo is-dense">
+      <thead><tr><th>Casa e proposição</th><th>Família de assunto</th><th>Ementa</th><th>Etapa</th><th>Última tramitação</th><th>Relevância</th></tr></thead>
+      <tbody>{rows.map(row => <tr key={row.id}><td><b>{row.casa}</b><small>{row.sigla}</small></td><td>{row.familia}</td><td><small>{row.ementa}</small></td><td><span className="chip"><i className="dot" style={{ background: cores[row.etapa] }} />{row.etapa}</span></td><td>{data(row.ultimaTramitacao)}</td><td><span className={`status is-${row.relevancia === 'Revisada' ? 'confirmado' : 'candidato'}`}>{row.relevancia}</span></td></tr>)}</tbody>
+    </table></div>
+  </div>;
+}
+
+function Gate({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, passos = gatePromocao.length;
+  return <div className="stack">
+    <ol className="gate" aria-label="Passos do gate">{gatePromocao.map((passo, index) => <li key={index}><b>{index + 1}</b><small>{passo}</small></li>)}</ol>
+    <div className="table-wrap"><table className="metodo is-dense">
+      <thead><tr><th>Fonte</th><th>Frente</th><th>Passo alcançado</th><th>Evidência (29/10)</th><th>Pendente</th><th>No painel</th></tr></thead>
+      <tbody>{prontidaoFontes.map(row => <tr key={row.fonte}><td><b>{row.fonte}</b></td><td><small>{frentePorId[row.frente]?.frente}</small></td>
+        <td><span className="gate-bar" title={`${row.passo} de ${passos}`}>{Array.from({ length: passos }, (_, index) => <i key={index} style={{ background: index < row.passo ? (row.passo >= 5 ? tokens.good : tokens.blue) : tokens.soft }} />)}<b>{row.passo}/{passos}</b></span></td>
+        <td><small>{row.evidencia}</small></td><td className="nao"><small>{row.pendente}</small></td><td><small>{row.noPainel}</small></td></tr>)}</tbody>
     </table></div>
   </div>;
 }

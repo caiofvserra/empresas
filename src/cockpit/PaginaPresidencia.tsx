@@ -10,6 +10,7 @@ import type { NorteId } from '../observatorio/norte';
 import type { CockpitCtx } from './contexto';
 import type { LinhaGre } from './medidas';
 import { Bloco, Indicador } from './ui';
+import { carregando } from './ui';
 
 /**
  * Aba 1 · Presidência: os quatro indicadores-norte com ficha, um cartão por assunto (os doze assuntos do painel, cada um com a
@@ -51,6 +52,7 @@ export default function PaginaPresidencia({ ctx }: { ctx: CockpitCtx }) {
     </section>
     <MapaRegional ctx={ctx} />
     <Bloco ctx={ctx} id="sc" area="sc" title="Quadro das regionais" question="Cada regional em todos os assuntos. Setas comparam com as metas; cores marcam as maiores lacunas. Clique numa linha para o resumo da regional."><Quadro ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="hs" area="hs" title="Histórico por data de referência" question="Os indicadores-norte e a base, recalculados com a base como estava no último dia de cada um dos 12 meses anteriores a D. Nada é sobrescrito: é a mesma leitura do seletor de data, mês a mês." help="Cada ponto é um recálculo completo (cerca de 1 s); a série aparece aos poucos. Em produção, é a tabela diária de indicadores do DW."><Historico ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="lt" area="lt" title="Leitura do período" question="Destaques calculados a cada filtro e data de referência. Clique numa frase para abrir o assunto." className="t-leitura">
       <ul className="leitura">{ctx.insights.map((item, index) => <li key={index} className={`is-${item.tone}`}><button onClick={() => ctx.go(item.page)}><i aria-hidden="true" /><span><b>{item.strong}</b> {item.text}</span></button></li>)}</ul>
     </Bloco>
@@ -208,4 +210,32 @@ function Norte({ ctx, id, area }: { ctx: CockpitCtx; id: NorteId; area: string }
       <dt>Leitura</dt><dd>{item.leitura}</dd><dt>Desconhecido</dt><dd>{item.desconhecido}</dd><dt>Dono</dt><dd>{item.dono}</dd><dt>No protótipo</dt><dd>{item.prototipo}</dd>
     </dl> : <div className="norte"><p className="norte-valor"><strong>{valor}</strong><span>{sub}</span></p><div className="norte-chart">{chart}</div></div>}
   </Bloco>;
+}
+
+/* ---------- V21 · histórico dos indicadores-norte por data de referência ---------- */
+function Historico({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, h = ctx.historico, pontos = h.pontos;
+  const series = useMemo(() => [
+    { nome: 'Empresas registradas', cor: tokens.brand, valor: (p: typeof pontos[number]) => p.registradas, fmt: (v: number) => int(v) },
+    { nome: 'Cobertura cadastral', cor: tokens.blue, valor: (p: typeof pontos[number]) => p.cobertura, fmt: (v: number) => pct(v, 1) },
+    { nome: 'Conversão em 180 dias', cor: tokens.good, valor: (p: typeof pontos[number]) => p.conversao, fmt: (v: number) => pct(v) },
+    { nome: 'Receita atribuível (12 m)', cor: tokens.accent, valor: (p: typeof pontos[number]) => p.receita, fmt: (v: number) => brl(v) },
+    { nome: 'Tempo até agir (mediana)', cor: tokens.warn, valor: (p: typeof pontos[number]) => p.tempo, fmt: (v: number) => `${int(v)} d` },
+  ], [tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  const option = useMemo(() => {
+    if (!pontos.length) return {};
+    const n = series.length, largura = 100 / n;
+    return {
+      tooltip: { trigger: 'axis', formatter: (items: any[]) => { const p = pontos[items[0].dataIndex]; return `<b>${data(p.data)}</b><br/>${series.map(serie => { const value = serie.valor(p); return `${serie.nome}: ${value === null ? '—' : serie.fmt(value)}`; }).join('<br/>')}`; } },
+      title: series.map((serie, index) => ({ text: serie.nome, left: `${index * largura + 1}%`, top: 0, textStyle: { color: tokens.muted, fontSize: 10, fontWeight: 600 } })),
+      grid: series.map((_, index) => ({ left: `${index * largura + 1}%`, width: `${largura - 3}%`, top: 24, bottom: 22, containLabel: true })),
+      xAxis: series.map((_, index) => ({ type: 'category', gridIndex: index, data: pontos.map(p => mes(p.data.slice(0, 7))), axisLabel: { color: tokens.muted, fontSize: 9, interval: 3 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } })),
+      yAxis: series.map((_, index) => ({ type: 'value', gridIndex: index, scale: true, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 9, formatter: (value: number) => index === 3 ? brl(value) : index === 0 ? int(value) : index === 4 ? `${value}d` : `${value}%` } })),
+      series: series.map((serie, index) => ({ type: 'line', name: serie.nome, xAxisIndex: index, yAxisIndex: index, data: pontos.map(p => serie.valor(p)), connectNulls: false, symbol: 'circle', symbolSize: 5, lineStyle: { color: serie.cor, width: 2 }, itemStyle: { color: serie.cor }, areaStyle: { color: serie.cor, opacity: 0.08 } })),
+    };
+  }, [pontos, series, tokens]);
+  return <div className="stack">
+    <p className="kpi-line">{h.completo ? <><b>{int(pontos.length)}</b> datas de referência, de {data(h.datas[0])} a {data(h.datas[h.datas.length - 1])}</> : <>Calculando <b>{int(pontos.length)}</b> de {int(h.datas.length)} datas…</>} · mesmo recorte de regional; a câmara não se aplica ao histórico</p>
+    {pontos.length ? <Chart option={option} tokens={tokens} label="Histórico dos indicadores-norte por data de referência" /> : carregando}
+  </div>;
 }

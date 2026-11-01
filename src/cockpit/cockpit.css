@@ -1,4 +1,4 @@
-/* V20 · Observatório Crea-SP: trilho de 11 assuntos à esquerda, cabeçalho com destaques e data de referência, grade em 12 colunas por aba, ficha (i) em todo bloco e cartão. Tokens de cor vêm de painel.css (claro e escuro). */
+/* V21 · Prumo · inteligência estratégica do Crea-SP: trilho de 11 assuntos à esquerda, cabeçalho com destaques e data de referência, grade em 12 colunas por aba, ficha (i) em todo bloco e cartão. Tokens de cor vêm de painel.css (claro e escuro). */
 .ck { height: 100dvh; min-height: 640px; display: grid; grid-template-columns: 84px minmax(0, 1fr); background: var(--bg); color: var(--ink); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 .ck[aria-busy="true"] .ck-page { opacity: .7; transition: opacity .2s; }
 
@@ -53,15 +53,15 @@
 .ck-page { min-height: 0; overflow: auto; padding: 12px 18px 14px; animation: ck-enter .3s ease-out; }
 @keyframes ck-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .ck-grid { display: grid; gap: 12px; grid-template-columns: repeat(12, minmax(0, 1fr)); height: 100%; }
-.ck-grid-presidencia { grid-template-rows: 268px auto minmax(360px, 1.1fr) minmax(280px, 1fr); grid-template-areas: "n1 n1 n1 n2 n2 n2 n3 n3 n3 n4 n4 n4" "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map sc sc sc sc sc sc sc" "map map map map map lt lt lt lt lt lt lt"; height: auto; }
+.ck-grid-presidencia { grid-template-rows: 268px auto minmax(360px, 1.1fr) minmax(280px, 1fr) 300px; grid-template-areas: "n1 n1 n1 n2 n2 n2 n3 n3 n3 n4 n4 n4" "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map sc sc sc sc sc sc sc" "map map map map map lt lt lt lt lt lt lt" "hs hs hs hs hs hs hs hs hs hs hs hs"; height: auto; }
 .ck-grid-profissionais { grid-template-rows: auto repeat(3, 360px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "pm pm pm pm pm pi pi pi pi pg pg pg" "pn pn pn pn pr pr pr pr pa pa pa pa" "pe pe pe pe ps ps ps ps pt pt pt pt"; height: auto; }
 .ck-grid-formacao { grid-template-rows: auto 400px 380px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "fc fc fc fc fc fc fc fs fs fs fs fs" "fi fi fi fi fi fi fm fm fm fn fn fn"; height: auto; }
 .ck-grid-entidades { grid-template-rows: auto 400px 420px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "ec ec ec ec ec er er er er ee ee ee" "et et et et et et et et et et et et"; height: auto; }
 .ck-grid-controle { grid-template-rows: auto repeat(3, 360px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "cf cf cf cf cf cn cn cn cn cs cs cs" "cd cd cd cd cr cr cr cr cc cc cc cc" "cp cp cp cp ck ck ck ck dp dp dp dp"; height: auto; }
-.ck-grid-cadastro { grid-template-rows: auto 330px repeat(5, minmax(340px, 1fr)); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "tc tc tc cv cv cv cv cv cg cg cg cg" "reg reg reg es es es es es pt pt pt pt" "mk mk mk mk mk sk sk sk sk cp cp cp" "pz pz pz pz mu mu mu mu mu mu mu mu" "qt qt qt qt ah ah ah ah ah am am am" "ca ca ca ca rg rg rg rg sa sa sa sa"; height: auto; }
-.ck-grid-fiscalizacao { grid-template-rows: auto minmax(420px, 1.2fr) minmax(330px, 1fr) 340px minmax(300px, auto) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map map map ca ca ca ca ca" "me me me me cu cu cu cu it it it it" "cv cv cv cv cv cv ta ta ta ta ta ta" "ft ft ft ft ft ft ft ft ft ft ft ft" "ht ht ht ht ht ht ht ht ht ht ht ht"; height: auto; }
-.ck-grid-malha { grid-template-rows: minmax(430px, 1.2fr) repeat(3, minmax(360px, 1fr)); grid-template-areas: "mf1 mf1 mf1 mf1 mf1 mf1 mf8 mf8 mf8 mf8 mf8 mf8" "mf2 mf2 mf2 mf2 mf7 mf7 mf7 mf7 mf3 mf3 mf3 mf3" "mf4 mf4 mf4 mf4 mf5 mf5 mf5 mf5 mf6 mf6 mf6 mf6" "mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9"; height: auto; }
-.ck-grid-metodo { grid-template-rows: 560px 640px 640px 640px; grid-template-areas: "fr fr fr fr fr fr fr lc lc lc lc lc" "rl rl rl rl rl rl rl rl rl rl rl rl" "uc uc uc uc uc uc mr mr mr mr mr mr" "ft ft ft ft ft ft ia ia ia ia ia ia"; height: auto; }
+.ck-grid-cadastro { grid-template-rows: auto 330px repeat(7, 400px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "tc tc tc cv cv cv cv cv cg cg cg cg" "reg reg reg es es es es es pt pt pt pt" "mk mk mk mk mk sk sk sk sk cp cp cp" "pz pz pz pz mu mu mu mu mu mu mu mu" "qt qt qt qt ah ah ah ah ah am am am" "ca ca ca ca rg rg rg rg sa sa sa sa" "qs qs qs qs qs qs in in in in in in" "dn dn dn dn dn ab ab ab ab ab ab ab"; height: auto; }
+.ck-grid-fiscalizacao { grid-template-rows: auto 480px 400px 340px auto 400px 420px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map map map ca ca ca ca ca" "me me me me cu cu cu cu it it it it" "cv cv cv cv cv cv ta ta ta ta ta ta" "ft ft ft ft ft ft ft ft ft ft ft ft" "ht ht ht ht ht ht ht ht ht ht ht ht" "ob ob ob ob ob ob mp mp mp mp mp mp"; height: auto; }
+.ck-grid-malha { grid-template-rows: 460px repeat(4, 400px); grid-template-areas: "mf1 mf1 mf1 mf1 mf1 mf1 mf8 mf8 mf8 mf8 mf8 mf8" "mf2 mf2 mf2 mf2 mf7 mf7 mf7 mf7 mf3 mf3 mf3 mf3" "mf4 mf4 mf4 mf4 mf5 mf5 mf5 mf5 mf6 mf6 mf6 mf6" "mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9" "mh mh mh mh mh mh mh mh mh mh mh mh"; height: auto; }
+.ck-grid-metodo { grid-template-rows: 560px 640px 640px 640px 600px; grid-template-areas: "fr fr fr fr fr fr fr lc lc lc lc lc" "rl rl rl rl rl rl rl rl rl rl rl rl" "uc uc uc uc uc uc mr mr mr mr mr mr" "ft ft ft ft ft ft ia ia ia ia ia ia" "rn rn rn rn rn rn rn gt gt gt gt gt"; height: auto; }
 .ck-grid-receita { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "yoy yoy yoy yoy yoy yoy yoy rg rg rg rg rg" "tr tr tr tr tr tr tr or or or or or"; }
 .ck-grid-atendimento { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "as as as as as as cw cw cw cw cw cw" "mm mm mm mm mm mm qa qa qa qa qa qa"; }
 .ck-page.has-focus .ck-grid { grid-template-areas: none; grid-template-rows: minmax(0, 1fr); height: 100%; }
@@ -225,18 +225,18 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 @media (max-width: 1600px) {
   .ck-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .ck-cards.is-six { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .ck-grid-presidencia { grid-template-rows: 268px auto minmax(380px, 1.1fr) minmax(300px, 1fr); }
+  .ck-grid-presidencia { grid-template-rows: 268px auto minmax(380px, 1.1fr) minmax(300px, 1fr) 300px; }
 }
 @media (max-width: 1500px), (max-height: 860px) {
   .ck-grid { height: auto; }
-  .ck-grid-presidencia { grid-template-rows: 268px auto 400px 330px; }
+  .ck-grid-presidencia { grid-template-rows: 268px auto 400px 330px 300px; }
   .ck-grid-receita, .ck-grid-atendimento, .ck-grid-formacao { grid-template-rows: auto 340px 340px; }
   .ck-grid-entidades { grid-template-rows: auto 340px 380px; }
   .ck-grid-profissionais, .ck-grid-controle { grid-template-rows: auto repeat(3, 340px); }
-  .ck-grid-cadastro { grid-template-rows: auto 330px repeat(5, 340px); }
-  .ck-grid-malha { grid-template-rows: 440px 360px 360px 360px; }
-  .ck-grid-fiscalizacao { grid-template-rows: auto 440px 340px 340px auto 340px; }
-  .ck-grid-metodo { grid-template-rows: 560px 600px 600px 600px; }
+  .ck-grid-cadastro { grid-template-rows: auto 330px repeat(7, 380px); }
+  .ck-grid-malha { grid-template-rows: 440px repeat(4, 380px); }
+  .ck-grid-fiscalizacao { grid-template-rows: auto 440px 380px 340px auto 380px 400px; }
+  .ck-grid-metodo { grid-template-rows: 560px 600px 600px 600px 600px; }
   .ind-row strong { font-size: 21px; } .ind { padding: 8px 10px; }
   .ck-title h1 { font-size: 18px; } .ck-header { grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; }
   .geo-layout { grid-template-columns: minmax(0, 1fr) 176px; }
@@ -278,7 +278,7 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 }
 @media (prefers-reduced-motion: reduce) { .ck-pulse-track, .ck-pulse-dot, .ck-live.is-busy, .ck-page { animation: none; } .ind, .ck-rail button, .multiple { transition: none; } }
 
-/* ---------- Observatório: indicadores-norte, fichas, status de ligação, método ---------- */
+/* ---------- Prumo: indicadores-norte, fichas, status de ligação, método ---------- */
 .t-norte .tile-body { display: flex; flex-direction: column; min-height: 0; }
 .norte { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; }
 .norte-valor { margin: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -343,3 +343,13 @@ th[aria-sort="ascending"] .th-sort, th[aria-sort="descending"] .th-sort { color:
 .duo.is-sede { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
 .gauge-stack.is-even { grid-template-rows: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 640px) { .tres.is-two { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; } .duo.is-sede { grid-template-columns: minmax(0, 1fr); } .ficha-card { position: fixed; top: auto; right: 12px; left: 12px; bottom: 12px; width: auto; } }
+
+/* ---------- V21: gate de promoção de fontes ---------- */
+.gate { margin: 0 0 6px; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.gate li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 5px; align-items: start; padding: 6px 7px; border: 1px solid var(--line); border-radius: 8px; background: var(--neutral-bg); }
+.gate li b { width: 18px; height: 18px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10.5px; color: var(--surface); background: var(--blue); }
+.gate li small { font-size: 10px; line-height: 1.3; color: var(--muted); }
+.gate-bar { display: inline-flex; align-items: center; gap: 2px; }
+.gate-bar i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.gate-bar b { margin-left: 5px; font-size: 11px; }
+@media (max-width: 1500px) { .gate { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

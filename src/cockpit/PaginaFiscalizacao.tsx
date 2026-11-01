@@ -11,6 +11,10 @@ import { Bloco, FichaPop, Indicador } from './ui';
 import { fichaDe } from './fichas';
 import { PRAZO_RESULTADO } from '../painel/forcas';
 import type { ResultadoFt } from '../painel/forcas';
+import { situacoesObra } from '../domain/frentes';
+import type { SituacaoObra } from '../domain/frentes';
+import { etapasPca } from '../domain/mercado';
+import { nomeEmpresa } from './ui';
 
 /** Aba 5 · Fiscalização: os atos do rito (ação, notificação, auto, multa, julgamento, dívida ativa), o resultado (regularização e registro) e as forças-tarefas contra o seu grupo de comparação. Tudo lido na data de referência. */
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
@@ -44,6 +48,8 @@ export default function PaginaFiscalizacao({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="ta" area="ta" title="Tempo até agir, por regional" question="Mediana de dias entre a entrada do indício na base e a primeira ação fiscal, para indícios que entraram no período." help="Indicador-norte 4. Mediana de Kaplan-Meier: indícios ainda sem ação entram como abertos (censurados), não como zero. Regional sem mediana: mais da metade dos indícios segue sem ação."><TempoAgir ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ft" area="ft" title="Forças-tarefas e grupo de comparação" question="Cada força-tarefa (tema, regional, período) contra as demais ações do mesmo tipo e período fora dela: regularização em 180 dias, receita em 365 dias e mediana de dias. Fecha quando todas as ações completaram 180 dias." help="Associação no tempo, não causa: a força-tarefa escolhe os alvos e os grupos não são comparáveis em tudo. Lista demonstrativa; em produção, a lista da SUPFIS e um campo de origem na ação."><Forcas ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ht" area="ht" title="Autos de infração por regional e mês" question="Últimos 12 meses. Mostra a constância da atuação de cada regional. Clique numa célula para ver os autos."><AutosRegionais ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="ob" area="ob" title="Obras públicas: situação, ponte com o contrato e ART" question="Obras do Obrasgov (CIPI) ligadas aos contratos do PNCP, por regional do local de execução; situação em D, grau da ponte e ART de fiscalização. Clique numa regional para as obras." help="Ponte: CIPI no contrato (confirmada), candidata (objeto, local e período) ou não identificada. Obra com ART de execução e sem ART de fiscalização vai à malha fina."><Obras ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mp" area="mp" title="Mercado público técnico: concentração e demanda planejada" question="Participação de cada fornecedor (raiz do CNPJ) na carteira técnica do período, com os cinco maiores e o HHI; e a demanda dos planos anuais de contratação por etapa de materialização." help="Concentração descreve estrutura de mercado, não favorecimento. Plano de contratação não é gasto garantido; etapas não se somam."><MercadoPublico ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -157,5 +163,63 @@ function Forcas({ ctx }: { ctx: CockpitCtx }) {
         <td>{brl(item.grupo.receita)}<small>{int(item.grupo.empresasPagantes)} empresas · comparação {brl(item.comparacao.receita)}</small></td>
         <td>{item.grupo.medianaDias === null ? '—' : `${int(item.grupo.medianaDias)} d`}<small>comparação {item.comparacao.medianaDias === null ? '—' : `${int(item.comparacao.medianaDias)} d`}</small></td></tr>)}</tbody>
     </table></div>
+  </div>;
+}
+
+/* ---------- V21 · obras do Obrasgov e mercado público ---------- */
+function Obras({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.frentes.obras, gres = useMemo(() => new Map(ctx.dataset.gres.map(row => [row.id, short(row.name)])), [ctx.dataset]);
+  const rows = useMemo(() => q.porGre.filter(row => row.obras > 0).sort((a, b) => b.obras - a.obras), [q]);
+  const corSituacao: Record<SituacaoObra, string> = { 'Não iniciada': tokens.muted, 'Em execução': tokens.blue, Paralisada: tokens.warn, Concluída: tokens.good };
+  const option = useMemo(() => ({
+    grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${gres.get(row.greId)}</b><br/>${int(row.obras)} obras (${brl(row.valor)}) · ${int(row.emExecucao)} em execução<br/>${int(row.semArt)} com ART de execução e sem ART de fiscalização`; } },
+    xAxis: { type: 'category', data: rows.map(row => gres.get(row.greId) ?? row.greId), axisLabel: { color: tokens.muted, fontSize: 10, interval: 0, rotate: 30 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
+    series: [
+      { type: 'bar', name: 'Em execução', stack: 'o', barWidth: 16, data: rows.map(row => row.emExecucao), itemStyle: { color: tokens.blue } },
+      { type: 'bar', name: 'Demais situações', stack: 'o', data: rows.map(row => row.obras - row.emExecucao), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1 } },
+      { type: 'line', name: 'Sem ART de fiscalização', data: rows.map(row => row.semArt), symbol: 'circle', symbolSize: 7, lineStyle: { width: 0 }, itemStyle: { color: tokens.warn } },
+    ],
+  }), [rows, gres, tokens]);
+  const abrir = (greId: string) => { const obras = q.obras.filter(row => row.greId === greId); if (obras.length) ctx.open({ kind: 'linhas', title: `Obras públicas · ${gres.get(greId)}`, what: 'Obras do Obrasgov com local de execução na regional, ligadas ao contrato do PNCP e lidas na data de referência.', use: 'Local de execução vem do Obrasgov, não da sede do fornecedor nem do órgão.', listTitle: 'Obras', rows: obras.map(row => ({ key: row.id, companyId: row.companyId, title: nomeEmpresa(ctx, row.companyId), subtitle: `${row.objeto} · ${row.situacao} · ${row.ponte}`, value: brl(row.valor), note: row.artFiscalizacao ? 'ART de fiscalização localizada' : 'sem ART de fiscalização', sortValue: row.valor })) }); };
+  return <div className="split is-wide">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.obras.length)}</b> obras ({brl(q.valorTotal)}) · <b>{int(q.iniciadas.length)}</b> iniciadas · <b>{int(q.semArtFiscalizacao.length)}</b> com ART de execução e sem ART de fiscalização{q.taxaSemArt === null ? '' : ` (${pct(q.taxaSemArt)} das iniciadas)`}</p>
+      <Chart option={option} tokens={tokens} label="Obras públicas por regional do local de execução" onPick={params => { const row = rows[params.dataIndex]; if (row) abrir(row.greId); }} />
+    </div>
+    <ul className="side-list" aria-label="Situação e ponte">
+      {q.porSituacao.map(row => <li key={row.situacao}><button disabled><i style={{ background: corSituacao[row.situacao as SituacaoObra] }} /><span>{row.situacao}</span><b>{int(row.n)}</b></button></li>)}
+      {q.porPonte.map(row => <li key={row.ponte}><button disabled><i style={{ background: row.ponte === 'CIPI no contrato' ? tokens.good : row.ponte === 'Não identificada' ? tokens.muted : tokens.accent }} /><span><small>Ponte: {row.ponte}</small></span><b>{int(row.n)}</b></button></li>)}
+      <li className="side-note">Situações: {situacoesObra.join(', ').toLowerCase()}. Obrasgov e PNCP (captura diária); ART interna.</li>
+    </ul>
+  </div>;
+}
+
+function MercadoPublico({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, c = ctx.mercado.concentracao, d = ctx.mercado.demanda, top = useMemo(() => c.fornecedores.slice(0, 15), [c]);
+  const option = useMemo(() => {
+    let acumulado = 0; const linha = top.map(row => { acumulado += row.participacao; return acumulado; });
+    return {
+      grid: { top: 10, right: 44, bottom: 2, left: 2, containLabel: true },
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = top[items[0].dataIndex]; return `<b>${nomeEmpresa(ctx, row.companyId)}</b><br/>${brl(row.valor)} em ${int(row.contratos)} contrato(s) · ${pct(row.participacao, 1)} da carteira<br/>acumulado: ${pct(linha[items[0].dataIndex], 1)}${row.registradaEmTodos ? '' : '<br/>sem registro na data de ao menos um contrato'}`; } },
+      xAxis: { type: 'category', data: top.map((_, index) => `${index + 1}º`), axisLabel: { color: tokens.muted, fontSize: 10 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+      yAxis: [{ type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10, formatter: '{value}%' } }, { type: 'value', max: 100, axisLabel: { color: tokens.muted, fontSize: 10, formatter: '{value}%' }, splitLine: { show: false } }],
+      series: [
+        { type: 'bar', name: 'Participação', barWidth: 14, data: top.map(row => ({ value: row.participacao, itemStyle: { color: row.registradaEmTodos ? tokens.blue : tokens.warn } })) },
+        { type: 'line', name: 'Acumulado', yAxisIndex: 1, data: linha, symbol: 'circle', symbolSize: 5, lineStyle: { color: tokens.ink, width: 1.5 }, itemStyle: { color: tokens.ink } },
+      ],
+    };
+  }, [top, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <div className="split is-wide">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(c.n)}</b> fornecedores em <b>{int(c.contratos)}</b> contratos técnicos ({brl(c.total)}) · cinco maiores: <b>{c.top5 === null ? '—' : pct(c.top5, 1)}</b> · HHI <b>{c.hhi === null ? '—' : int(c.hhi)}</b> · {c.valorRegistrado === null ? '—' : pct(c.valorRegistrado)} do valor com fornecedor registrado na data</p>
+      <Chart option={option} tokens={tokens} label="Participação dos quinze maiores fornecedores na carteira técnica" onPick={params => { const row = top[params.dataIndex]; if (row) ctx.open({ kind: 'empresas', title: `${nomeEmpresa(ctx, row.companyId)} · fornecedor público`, what: `${int(row.contratos)} contrato(s) técnico(s) no período, ${brl(row.valor)}.`, use: 'Participação descreve o mercado, não favorecimento. Conferir registro e ART na data de cada contrato (Malha fina).', ids: [row.companyId] }); }} />
+    </div>
+    <ul className="side-list" aria-label="Demanda planejada">
+      {d.porEtapa.map(row => <li key={row.etapa}><button disabled><i style={{ background: row.etapa === 'Planejado' ? tokens.accent : row.etapa === 'Contratação publicada' ? tokens.blue : tokens.good }} /><span>{row.etapa}<br /><small>{int(row.n)} itens do PCA</small></span><b>{brl(row.valor)}</b></button></li>)}
+      {d.porExercicio.map(row => <li key={row.exercicio}><button disabled><i style={{ background: tokens.muted }} /><span><small>Exercício {row.exercicio}: {int(row.n)} itens, {brl(row.planejado)} sem materialização</small></span><b>{brl(row.valor)}</b></button></li>)}
+      <li className="side-note">Etapas ({etapasPca.join(' → ').toLowerCase()}) não se somam como demanda adicional. PNCP · PCA (captura diária), cenário demonstrativo.</li>
+    </ul>
   </div>;
 }
