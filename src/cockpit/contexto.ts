@@ -17,7 +17,7 @@ import type { Historico } from '../observatorio/historico';
 import type { Aberturas, Concentracao, DensidadeGre, Permanencia, QuadroDemanda } from '../domain/mercado';
 import type { ContextoGre, QuadroCno, QuadroCoorteNominal, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
 
-/** Indicadores-norte do Prumo no recorte. */
+/** Indicadores-norte do programa Inteligência Estratégica Crea-SP no recorte. */
 export interface Norte { cobertura: Cobertura; contagens: Contagens; conversao: { coortes: Coorte[]; atual: Coorte | null; anterior: Coorte | null }; receita: ReceitaAtribuivel; tempo: TempoAteAgir }
 
 /**

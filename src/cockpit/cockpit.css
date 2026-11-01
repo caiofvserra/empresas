@@ -1,4 +1,4 @@
-/* V21 · Prumo · inteligência estratégica do Crea-SP: trilho de 11 assuntos à esquerda, cabeçalho com destaques e data de referência, grade em 12 colunas por aba, ficha (i) em todo bloco e cartão. Tokens de cor vêm de painel.css (claro e escuro). */
+/* V21 · Inteligência Estratégica Crea-SP: trilho de 11 assuntos à esquerda, cabeçalho com destaques e data de referência, grade em 12 colunas por aba, ficha (i) em todo bloco e cartão. Tokens de cor vêm de painel.css (claro e escuro). */
 .ck { height: 100dvh; min-height: 640px; display: grid; grid-template-columns: 84px minmax(0, 1fr); background: var(--bg); color: var(--ink); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 .ck[aria-busy="true"] .ck-page { opacity: .7; transition: opacity .2s; }
 
@@ -288,7 +288,7 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 }
 @media (prefers-reduced-motion: reduce) { .ck-pulse-track, .ck-pulse-dot, .ck-live.is-busy, .ck-page { animation: none; } .ind, .ck-rail button, .multiple { transition: none; } }
 
-/* ---------- Prumo: indicadores-norte, fichas, status de ligação, método ---------- */
+/* ---------- Inteligência Estratégica: indicadores-norte, fichas, status de ligação, método ---------- */
 .t-norte .tile-body { display: flex; flex-direction: column; min-height: 0; }
 .norte { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; }
 .norte-valor { margin: 0; display: flex; flex-direction: column; gap: 2px; }

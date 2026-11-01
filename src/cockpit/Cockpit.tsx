@@ -51,7 +51,7 @@ import '../painel/painel.css';
 import './cockpit.css';
 
 /**
- * V21 · Prumo · inteligência estratégica do Crea-SP. Protótipo completo, revisado: 11 assuntos, data de referência (o painel como
+ * V21 · Inteligência Estratégica Crea-SP (nome escolhido em 01/11/2026; antes Prumo, antes Observatório). Protótipo completo, revisado: 11 assuntos, data de referência (o painel como
  * estava em D, sem sobrescrever nenhum valor), ficha (i) em todo bloco e cartão, profissionais e formação com a mesma
  * profundidade das empresas, entidades e IES, controle interno, forças-tarefas com grupo de comparação e malha fina v2.
  */
@@ -207,7 +207,7 @@ export default function Cockpit() {
     </nav>
     <div className="ck-main">
       <header className="ck-header">
-        <div className="ck-title"><span className="ck-eyebrow" title="Prumo · inteligência estratégica do Crea-SP">Prumo · V22 <span className="ck-legenda-parceria" title="Blocos e regras com este marcador medem o que um acordo permitiria; até o acordo, a camada é demonstrativa."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span></span><h1>{current.title}</h1><p>{current.subtitle}</p></div>
+        <div className="ck-title"><span className="ck-eyebrow" title="Inteligência Estratégica Crea-SP · programa de dados estratégicos da EDAD (SUPTEC)">Inteligência Estratégica · V22 <span className="ck-legenda-parceria" title="Blocos e regras com este marcador medem o que um acordo permitiria; até o acordo, a camada é demonstrativa."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span></span><h1>{current.title}</h1><p>{current.subtitle}</p></div>
         <div className="ck-pulse" aria-label="Destaques do período">
           <span className="ck-pulse-dot" aria-hidden="true" />
           <div className="ck-pulse-track">{[...insights, ...insights].map((item, index) => <button key={index} className={`is-${item.tone}`} aria-hidden={index >= insights.length} tabIndex={index >= insights.length ? -1 : 0} onClick={() => setPage(item.page)}><b>{item.strong}</b> {item.text}</button>)}</div>

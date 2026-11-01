@@ -1,6 +1,6 @@
-# Prumo · inteligência estratégica do Crea-SP
+# Inteligência Estratégica Crea-SP
 
-Protótipo do painel de inteligência estratégica do Crea-SP, na **V22 · Prumo** (onze abas; antes chamado Observatório Crea-SP). O que mudou está em [docs/V22.md](docs/V22.md) e [docs/V21.md](docs/V21.md). Blocos e regras marcados com "!" dependem de parceria: mostram o que um acordo permitiria medir e ficam demonstrativos até ele existir. A dona do programa é a EDAD, unidade de dados da SUPTEC. Os dados internos do painel são demonstrativos; os dados públicos são reais e mostram fonte e data. Não há `.pbix` nem conexão institucional validada.
+Protótipo do painel do programa **Inteligência Estratégica Crea-SP**, na V22 (onze abas; o programa chamou-se Prumo e, antes, Observatório Crea-SP). O que mudou está em [docs/V22.md](docs/V22.md) e [docs/V21.md](docs/V21.md). Blocos e regras marcados com "!" dependem de parceria: mostram o que um acordo permitiria medir e ficam demonstrativos até ele existir. A dona do programa é a EDAD, unidade de dados da SUPTEC. Os dados internos do painel são demonstrativos; os dados públicos são reais e mostram fonte e data. Não há `.pbix` nem conexão institucional validada.
 
 ## O que está aqui
 
@@ -12,7 +12,7 @@ Protótipo do painel de inteligência estratégica do Crea-SP, na **V22 · Prumo
 | `src/painel/`, `src/gestao-v14/` (medidas e widgets), `src/enterprise-v10/` (modelo e filtros) | Módulos que o painel reaproveita das versões anteriores |
 | `docs/V22.md`, `docs/V21.md`, `docs/DESIGN_SYSTEM_V13.md`, `docs/NORMAS.md` | O que a V22 e a V21 acrescentam, identidade visual e base normativa |
 | `entrega/painel-gestao-creasp.html` | V22 em um único HTML, para abrir sem servidor |
-| `observatorio/` | Plano em etapas (revisão 2), atlas de 98 fontes públicas e catálogo unificado em CSV e XLSX, publicados com o nome anterior |
+| `observatorio/` | Plano em etapas (revisão 2), atlas de 98 fontes públicas e catálogo unificado em CSV e XLSX, publicados com os nomes anteriores (Observatório, Prumo) |
 | `planejamento-fontes-2026-10/` | Levantamento de 29/10/2026: 104 entradas de fontes, 34 casos de uso com fórmula, arquitetura, revisão independente e revisão crítica do V18. Retrato datado |
 | `scripts/refresh-sources.ts`, `scripts/integrations/`, `src/integrations/catalog.ts` | Coletor PNCP com histórico, cobertura e testes; ponto de partida dos conectores |
 | `integrations/power-query/`, `integrations/powerbi-theme-creasp-v13.json` | Consultas de exemplo para SQL Server e Db2 via gateway e o tema Power BI |
