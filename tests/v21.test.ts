@@ -54,7 +54,7 @@ test('obras do Obrasgov: uma por contrato de obras, situação pelas datas, pont
   const malha = malhaFina(scope, model, f, contratosPublicos(scope, 12));
   const obraDe = new Map(layer.obras.map(row => [row.contractId, row]));
   assert.ok(malha.obrasSemFiscalizacao.every(row => obraDe.get(row.id) && !obraDe.get(row.id)!.artFiscalizacao));
-  assert.ok(regras.some(row => row.id === 'socioPj') && regras.length === 12, 'regra do sócio PJ entrou na malha fina');
+  assert.ok(regras.some(row => row.id === 'socioPj') && regras.filter(row => row.coleta !== 'Convênio').length === 12, 'regra do sócio PJ entrou na malha fina');
 });
 
 test('instalações e investimentos: agente por CNPJ, quatro fontes, por regional e novas em 12 meses', () => {
@@ -150,7 +150,7 @@ test('radar normativo e gate de promoção: estrutura completa, rótulo demonstr
   assert.ok(proposicoes.every(row => /exemplo/i.test(row.sigla)), 'toda proposição se declara exemplo (fictícia)');
   assert.ok(casasLegislativas.every(casa => proposicoes.some(row => row.casa === casa)));
   assert.equal(gatePromocao.length, 7);
-  assert.ok(prontidaoFontes.length >= 10 && prontidaoFontes.every(row => row.passo >= 1 && row.passo <= 7 && frentePorId[row.frente] && row.evidencia && row.pendente && row.noPainel));
+  assert.ok(prontidaoFontes.length >= 10 && prontidaoFontes.every(row => row.passo >= 0 && row.passo <= 7 && frentePorId[row.frente] && row.evidencia && row.pendente && row.noPainel));
   assert.ok(prontidaoFontes.every(row => row.passo < 7), 'nenhuma fonte nova chegou ao núcleo operacional');
   // As situações do Método acompanham as camadas: as frentes com fonte automática saíram de "Planejada".
   assert.ok(!frentes.some(row => row.situacao === 'Planejada'), 'nenhuma frente segue planejada');

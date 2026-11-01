@@ -166,7 +166,7 @@ test('forças-tarefas: resultado em 180 dias contra grupo de comparação do mes
 test('malha fina v2: 11 regras com forma de coleta, regras novas com indícios coerentes', () => {
   const scope = selectEnterpriseScope(dataset, { ...defaultFilters, period: 12 }), model = buildEnterpriseModel(scope);
   const malha = malhaFina(scope, model, f, contratosPublicos(scope, 12));
-  assert.equal(regras.length, 12);
+  assert.equal(regras.length, 14); // 12 da V21 mais as duas regras de convênio da V22 (CNO e licenças), marcadas com parceria
   assert.ok(regras.every(row => ['Interna', 'Automática', 'Convênio'].includes(row.coleta)));
   assert.ok(!regras.some(row => /salário|salario\.com|portal salário/i.test(`${row.fonte} ${row.regra}`)), 'Portal Salário fora');
   assert.ok(malha.autoresAnormais.every(row => row.arts >= Math.max(LIMITE_ART, 3 * malha.medianaArts) && (row.regionais >= 4 || row.empresas >= 5)), 'autor anormal: volume acima do limite e dispersão');

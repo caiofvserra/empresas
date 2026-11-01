@@ -1,23 +1,31 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import type { ReactNode, SyntheticEvent } from 'react';
 import { ArrowDownRight, ArrowUpRight, Info, Maximize2, Minimize2, Minus } from 'lucide-react';
+import { parceriaPorId } from '../domain/parcerias';
+import type { ParceriaId } from '../domain/parcerias';
 import { mainEstablishments } from '../gestao-v14/metrics';
 import { Spark } from '../painel/chart';
 import { data, pct } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
-import { fichaDe } from './fichas';
+import { fichaDe, parceriasDe } from './fichas';
 import type { FichaBloco } from './fichas';
 import type { Profissional } from '../domain/profissionais';
 
 /**
  * Componentes do cockpit V20: bloco com ampliação e ficha (i), cartão de indicador com ficha e selo de dado real.
  * A ficha diz o que o bloco mede, como calcula, de onde vêm os dados, qual cruzamento e regra usa, o que não permite concluir,
- * quando foi calculado (a data de referência do painel) e quem responde por ele.
+ * quando foi calculado (a data de referência do painel) e quem responde por ele. Desde a V22, um bloco cuja ficha declara `parceria`
+ * mostra o marcador "!" no título: o indicador só sai do demonstrativo quando o acordo com aquele parceiro existir.
  */
+/** Marcador "!" de indicador que depende de parceria; o título diz qual acordo falta. */
+export function Parceria({ id, compacto }: { id: ParceriaId; compacto?: boolean }) {
+  const p = parceriaPorId[id];
+  return <span className={`selo selo-parceria ${compacto ? 'is-compacto' : ''}`} role="img" aria-label={`Depende de parceria com ${p.parceiro}`} title={`Depende de parceria: ${p.parceiro}. ${p.entrega}.`}>!</span>;
+}
 export function Bloco({ ctx, id, area, title, question, help, badge, actions, children, className }: { ctx: CockpitCtx; id: string; area: string; title: string; question?: string; help?: string; badge?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
   const focus = ctx.focus === id, ficha = fichaDe(ctx.page, id);
-  return <section className={`tile ck-tile ${focus ? 'is-focus' : ''} ${className ?? ''}`} style={{ gridArea: area }} aria-label={title}>
-    <header><div><h3>{title}{badge}</h3>{question && <p>{question}</p>}</div>
+  return <section className={`tile ck-tile ${focus ? 'is-focus' : ''} ${ficha?.parceria ? 'is-parceria' : ''} ${className ?? ''}`} style={{ gridArea: area }} aria-label={title}>
+    <header><div><h3>{title}{parceriasDe(ficha).map(id => <Parceria key={id} id={id} />)}{badge}</h3>{question && <p>{question}</p>}</div>
       <div className="tile-tools">{actions}
         <FichaPop ficha={ficha} titulo={title} leitura={help} anchor={ctx.anchor} />
         <button className="icon-btn ghost-icon" aria-label={focus ? `Restaurar ${title}` : `Ampliar ${title}`} title={focus ? 'Restaurar (Esc)' : 'Ampliar'} onClick={() => ctx.toggleFocus(id)}>{focus ? <Minimize2 size={14} /> : <Maximize2 size={14} />}</button>
@@ -47,6 +55,7 @@ export function FichaPop({ ficha, titulo, leitura, anchor }: { ficha?: FichaBloc
         {ficha.cruzamento && <><dt>Cruzamento</dt><dd>{ficha.cruzamento}</dd></>}
         <dt>Regra e versão</dt><dd>{ficha.regra}</dd>
         <dt>Limitações</dt><dd>{ficha.limites}</dd>
+        {parceriasDe(ficha).map(id => <Fragment key={id}><dt>Depende de parceria</dt><dd className="ficha-parceria"><b>{parceriaPorId[id].parceiro}</b> precisa entregar: {parceriaPorId[id].entrega.charAt(0).toLowerCase()}{parceriaPorId[id].entrega.slice(1)}. Chave: {parceriaPorId[id].chave}. Até o acordo, a camada é demonstrativa.</dd></Fragment>)}
         {leitura && <><dt>Leitura</dt><dd>{leitura}</dd></>}
         <dt>Último cálculo</dt><dd>Calculado ao abrir, com a base lida em {data(anchor)} (data de referência do painel).</dd>
         <dt>Dono</dt><dd>{ficha.dono}</dd>
@@ -80,7 +89,8 @@ export function Indicador({ aspecto, label, value, variacao, spark, cor, meta, s
   const className = `ind ${destaque ? 'is-destaque' : ''} ${ficha ? 'has-ficha' : ''}`;
   const card = onOpen ? <button className={className} onClick={onOpen} title={`${label}: ver detalhe`}>{body}</button> : <div className={className}>{body}</div>;
   if (!ficha || !ctx) return card;
-  return <div className="ind-shell">{card}<FichaPop ficha={fichaDe(ctx.page, ficha)} titulo={label} anchor={ctx.anchor} /></div>;
+  const registro = fichaDe(ctx.page, ficha);
+  return <div className="ind-shell">{card}{registro?.parceria && <span className="ind-parceria">{parceriasDe(registro).map(id => <Parceria key={id} id={id} compacto />)}</span>}<FichaPop ficha={registro} titulo={label} anchor={ctx.anchor} /></div>;
 }
 
 /** Linhas do painel lateral para uma lista de empresas, com valor e observação próprios de cada visual. */

@@ -54,14 +54,14 @@
 @keyframes ck-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .ck-grid { display: grid; gap: 12px; grid-template-columns: repeat(12, minmax(0, 1fr)); height: 100%; }
 .ck-grid-presidencia { grid-template-rows: 268px auto minmax(360px, 1.1fr) minmax(280px, 1fr) 300px; grid-template-areas: "n1 n1 n1 n2 n2 n2 n3 n3 n3 n4 n4 n4" "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map sc sc sc sc sc sc sc" "map map map map map lt lt lt lt lt lt lt" "hs hs hs hs hs hs hs hs hs hs hs hs"; height: auto; }
-.ck-grid-profissionais { grid-template-rows: auto repeat(3, 360px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "pm pm pm pm pm pi pi pi pi pg pg pg" "pn pn pn pn pr pr pr pr pa pa pa pa" "pe pe pe pe ps ps ps ps pt pt pt pt"; height: auto; }
-.ck-grid-formacao { grid-template-rows: auto 400px 380px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "fc fc fc fc fc fc fc fs fs fs fs fs" "fi fi fi fi fi fi fm fm fm fn fn fn"; height: auto; }
+.ck-grid-profissionais { grid-template-rows: auto repeat(4, 360px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "pm pm pm pm pm pi pi pi pi pg pg pg" "pn pn pn pn pr pr pr pr pa pa pa pa" "pe pe pe pe ps ps ps ps pt pt pt pt" "pp pp pp pp pp pp pp vn vn vn vn vn"; height: auto; }
+.ck-grid-formacao { grid-template-rows: auto 400px 380px 380px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "fc fc fc fc fc fc fc fs fs fs fs fs" "fi fi fi fi fi fi fm fm fm fn fn fn" "fp fp fp fp fp fp fp fp fp fp fp fp"; height: auto; }
 .ck-grid-entidades { grid-template-rows: auto 400px 420px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "ec ec ec ec ec er er er er ee ee ee" "et et et et et et et et et et et et"; height: auto; }
 .ck-grid-controle { grid-template-rows: auto repeat(3, 360px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "cf cf cf cf cf cn cn cn cn cs cs cs" "cd cd cd cd cr cr cr cr cc cc cc cc" "cp cp cp cp ck ck ck ck dp dp dp dp"; height: auto; }
-.ck-grid-cadastro { grid-template-rows: auto 330px repeat(7, 400px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "tc tc tc cv cv cv cv cv cg cg cg cg" "reg reg reg es es es es es pt pt pt pt" "mk mk mk mk mk sk sk sk sk cp cp cp" "pz pz pz pz mu mu mu mu mu mu mu mu" "qt qt qt qt ah ah ah ah ah am am am" "ca ca ca ca rg rg rg rg sa sa sa sa" "qs qs qs qs qs qs in in in in in in" "dn dn dn dn dn ab ab ab ab ab ab ab"; height: auto; }
-.ck-grid-fiscalizacao { grid-template-rows: auto 480px 400px 340px auto 400px 420px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map map map ca ca ca ca ca" "me me me me cu cu cu cu it it it it" "cv cv cv cv cv cv ta ta ta ta ta ta" "ft ft ft ft ft ft ft ft ft ft ft ft" "ht ht ht ht ht ht ht ht ht ht ht ht" "ob ob ob ob ob ob mp mp mp mp mp mp"; height: auto; }
-.ck-grid-malha { grid-template-rows: 460px repeat(4, 400px); grid-template-areas: "mf1 mf1 mf1 mf1 mf1 mf1 mf8 mf8 mf8 mf8 mf8 mf8" "mf2 mf2 mf2 mf2 mf7 mf7 mf7 mf7 mf3 mf3 mf3 mf3" "mf4 mf4 mf4 mf4 mf5 mf5 mf5 mf5 mf6 mf6 mf6 mf6" "mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9" "mh mh mh mh mh mh mh mh mh mh mh mh"; height: auto; }
-.ck-grid-metodo { grid-template-rows: 560px 640px 640px 640px 600px; grid-template-areas: "fr fr fr fr fr fr fr lc lc lc lc lc" "rl rl rl rl rl rl rl rl rl rl rl rl" "uc uc uc uc uc uc mr mr mr mr mr mr" "ft ft ft ft ft ft ia ia ia ia ia ia" "rn rn rn rn rn rn rn gt gt gt gt gt"; height: auto; }
+.ck-grid-cadastro { grid-template-rows: auto 330px repeat(8, 400px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "tc tc tc cv cv cv cv cv cg cg cg cg" "reg reg reg es es es es es pt pt pt pt" "mk mk mk mk mk sk sk sk sk cp cp cp" "pz pz pz pz mu mu mu mu mu mu mu mu" "qt qt qt qt ah ah ah ah ah am am am" "ca ca ca ca rg rg rg rg sa sa sa sa" "qs qs qs qs qs qs in in in in in in" "dn dn dn dn dn ab ab ab ab ab ab ab" "sp sp sp sp sp sp ec ec ec ec ec ec"; height: auto; }
+.ck-grid-fiscalizacao { grid-template-rows: auto 480px 400px 340px auto 400px 420px 440px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map map map ca ca ca ca ca" "me me me me cu cu cu cu it it it it" "cv cv cv cv cv cv ta ta ta ta ta ta" "ft ft ft ft ft ft ft ft ft ft ft ft" "ht ht ht ht ht ht ht ht ht ht ht ht" "ob ob ob ob ob ob mp mp mp mp mp mp" "cn cn cn cn li li li li tc tc tc tc"; height: auto; }
+.ck-grid-malha { grid-template-rows: 640px repeat(4, 400px); grid-template-areas: "mf1 mf1 mf1 mf1 mf1 mf1 mf8 mf8 mf8 mf8 mf8 mf8" "mf2 mf2 mf2 mf2 mf7 mf7 mf7 mf7 mf3 mf3 mf3 mf3" "mf4 mf4 mf4 mf4 mf5 mf5 mf5 mf5 mf6 mf6 mf6 mf6" "mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9" "mh mh mh mh mh mh mh mh mh mh mh mh"; height: auto; }
+.ck-grid-metodo { grid-template-rows: 560px 640px 640px 640px 600px 560px; grid-template-areas: "fr fr fr fr fr fr fr lc lc lc lc lc" "rl rl rl rl rl rl rl rl rl rl rl rl" "uc uc uc uc uc uc mr mr mr mr mr mr" "ft ft ft ft ft ft ia ia ia ia ia ia" "rn rn rn rn rn rn rn gt gt gt gt gt" "pc pc pc pc pc pc pc pc pc pc pc pc"; height: auto; }
 .ck-grid-receita { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "yoy yoy yoy yoy yoy yoy yoy rg rg rg rg rg" "tr tr tr tr tr tr tr or or or or or"; }
 .ck-grid-atendimento { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "as as as as as as cw cw cw cw cw cw" "mm mm mm mm mm mm qa qa qa qa qa qa"; }
 .ck-page.has-focus .ck-grid { grid-template-areas: none; grid-template-rows: minmax(0, 1fr); height: 100%; }
@@ -81,16 +81,24 @@
 .help::after { content: attr(data-tip); position: absolute; z-index: 30; right: 0; top: 28px; width: 300px; padding: 10px 12px; border-radius: 10px; background: #01224D; color: #FFFFFF; font-size: 11.5px; font-weight: 400; line-height: 1.5; text-transform: none; letter-spacing: 0; box-shadow: 0 12px 30px rgba(1,34,77,.35); opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity .15s, transform .15s; }
 .help:hover::after, .help:focus::after { opacity: 1; transform: none; }
 .selo { display: inline-flex; align-items: center; height: 18px; padding: 0 7px; border-radius: 999px; background: var(--good-bg); color: var(--good); font: 700 9.5px/1 var(--body); letter-spacing: .03em; white-space: nowrap; vertical-align: middle; }
+.selo.selo-parceria { background: var(--warn); color: #fff; width: 18px; padding: 0; justify-content: center; font-size: 12px; font-weight: 900; margin-left: 8px; cursor: help; }
+.selo.selo-parceria.is-compacto { width: 16px; height: 16px; font-size: 11px; margin: 0; }
+.ck .tile.is-parceria > header h3 .selo-parceria { vertical-align: 1px; }
+.ind-shell > .ind-parceria { position: absolute; top: 10px; right: 36px; display: flex; gap: 3px; }
+.ficha-parceria { border-left: 3px solid var(--warn); padding-left: 8px; }
+.ck-legenda-parceria { display: inline-flex; align-items: center; gap: 5px; margin-left: 10px; color: var(--muted); font-size: 10px; letter-spacing: 0; text-transform: none; font-weight: 600; white-space: nowrap; vertical-align: middle; }
+.ck-legenda-parceria .selo-parceria { margin: 0; }
 .stack { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; }
 .kpi-line { margin: 0; font-size: 11.5px; color: var(--muted); line-height: 1.4; }
 .kpi-line b { color: var(--ink); font-size: 12.5px; }
 .split { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 10px; }
 .split.is-wide { grid-template-columns: minmax(0, 1fr) 220px; }
-.side-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; justify-content: center; gap: 3px; min-height: 0; overflow: auto; }
+.side-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; justify-content: safe center; gap: 3px; min-height: 0; overflow: auto; }
 .side-list button { width: 100%; display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 7px; padding: 5px 6px; border: 0; border-radius: 7px; background: transparent; font-size: 11.5px; text-align: left; }
 .side-list button:hover { background: var(--soft); }
 .side-list i { width: 10px; height: 10px; border-radius: 3px; }
 .side-list b { font-size: 12.5px; }
+.side-list span > small { display: block; color: var(--muted); font-size: 10.5px; line-height: 1.2; }
 .side-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 8px; padding: 3px 6px; font-size: 11.5px; }
 .side-row > span { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .side-row small { grid-column: 1 / 3; font-size: 10.5px; color: var(--muted); }
@@ -230,13 +238,15 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 @media (max-width: 1500px), (max-height: 860px) {
   .ck-grid { height: auto; }
   .ck-grid-presidencia { grid-template-rows: 268px auto 400px 330px 300px; }
-  .ck-grid-receita, .ck-grid-atendimento, .ck-grid-formacao { grid-template-rows: auto 340px 340px; }
+  .ck-grid-receita, .ck-grid-atendimento { grid-template-rows: auto 340px 340px; }
+  .ck-grid-formacao { grid-template-rows: auto 340px 340px 360px; }
   .ck-grid-entidades { grid-template-rows: auto 340px 380px; }
-  .ck-grid-profissionais, .ck-grid-controle { grid-template-rows: auto repeat(3, 340px); }
-  .ck-grid-cadastro { grid-template-rows: auto 330px repeat(7, 380px); }
-  .ck-grid-malha { grid-template-rows: 440px repeat(4, 380px); }
-  .ck-grid-fiscalizacao { grid-template-rows: auto 440px 380px 340px auto 380px 400px; }
-  .ck-grid-metodo { grid-template-rows: 560px 600px 600px 600px 600px; }
+  .ck-grid-controle { grid-template-rows: auto repeat(3, 340px); }
+  .ck-grid-profissionais { grid-template-rows: auto repeat(4, 340px); }
+  .ck-grid-cadastro { grid-template-rows: auto 330px repeat(8, 380px); }
+  .ck-grid-malha { grid-template-rows: 600px repeat(4, 380px); }
+  .ck-grid-fiscalizacao { grid-template-rows: auto 440px 380px 340px auto 380px 400px 420px; }
+  .ck-grid-metodo { grid-template-rows: 560px 600px 600px 600px 600px 560px; }
   .ind-row strong { font-size: 21px; } .ind { padding: 8px 10px; }
   .ck-title h1 { font-size: 18px; } .ck-header { grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; }
   .geo-layout { grid-template-columns: minmax(0, 1fr) 176px; }

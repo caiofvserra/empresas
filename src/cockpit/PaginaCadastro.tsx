@@ -10,6 +10,7 @@ import type { FonteInstalacao } from '../domain/frentes';
 import type { CockpitCtx } from './contexto';
 import { artPorCamara, artPorModalidade, artRegionalMes, artsPeriodo, camaraPorte, entradasSaidas, pagamento, prazoRegistro } from './medidas';
 import { Bloco, Indicador } from './ui';
+import type { QualificacaoPf } from '../domain/parcerias';
 
 /**
  * Aba 2 · Empresas: três contagens que não se somam, conciliação Receita × Crea-SP com “Sim” e “Passível” separados, cobertura
@@ -57,6 +58,8 @@ export default function PaginaCadastro({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="in" area="in" title="Instalações e investimentos com agente identificado" question="ANEEL (usinas e agentes), ANP (instalações e revendas), ANM (processos com titular) e BNDES (operações), por regional, com o agente identificado por CNPJ e sua presença no cadastro." help="Contexto: o agente é operador, titular ou financiado; não é, por isso, projetista, instalador ou responsável técnico."><Instalacoes ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="dn" area="dn" title="Densidade empresarial por regional" question="Estabelecimentos elegíveis (Receita ativa, CNAE da lista) por 10 mil habitantes contra a cobertura cadastral. Tamanho: população. Clique para o resumo da regional."><Densidade ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ab" area="ab" title="Dinâmica da base: aberturas na Receita e permanência" question="Estabelecimentos com CNAE da lista abertos nos últimos 24 meses e quantos já têm registro ou visto; permanência das coortes de empresas registradas há 3, 6 e 12 meses."><Dinamica ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="sp" area="sp" title="Sócios pessoa física identificados" question="Sócios PF do QSA com CPF completo (acordo com a Receita) cruzados com o cadastro profissional: quantos são profissionais do sistema, quantos são RT da própria empresa e onde um sócio profissional ativo poderia ser o RT que falta." help="Sócio não é RT nem empregado. A identificação exige o CPF completo, que o QSA aberto mascara. Contexto para a análise da empresa, não indício."><SociosPf ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="ec" area="ec" title="Contexto econômico por regional: PIB e crédito" question="PIB por habitante (IBGE, público) e saldo de crédito PJ nos CNAEs da lista por estabelecimento elegível (Banco Central, agregado por acordo), contra a cobertura cadastral. Tamanho: estabelecimentos elegíveis." help="Crédito, PIB e produtividade são do território, nunca de um CNPJ. Cobertura alta em regional de crédito baixo e cobertura baixa em regional de crédito alto são leituras diferentes para a fiscalização e para o relacionamento."><ContextoEconomico ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -354,6 +357,55 @@ function Dinamica({ ctx }: { ctx: CockpitCtx }) {
     <ul className="side-list" aria-label="Permanência das coortes">
       {coortes.map(row => <li key={row.mesesAtras}><button onClick={() => row.saidas.length && ctx.open({ kind: 'empresas', title: `Saíram da base em ${row.mesesAtras} meses`, what: `Empresas com registro ou visto vigente em ${data(row.d0)} e sem registro vigente na data de referência.`, use: 'Perda de vínculo institucional; cadastro vigente não prova atividade e a saída não tem causa atribuída.', ids: row.saidas })}><i style={{ background: row.taxa !== null && row.taxa >= 90 ? tokens.good : tokens.warn }} /><span>Coorte de {row.mesesAtras} meses ({data(row.d0)})<br /><small>{int(row.permanecem.length)} de {int(row.coorte.length)} permanecem · {int(row.saidas.length)} saíram</small></span><b>{row.taxa === null ? '—' : pct(row.taxa, 1)}</b></button></li>)}
       <li className="side-note">Coorte fixa de raízes vigentes em D − n meses; quem entrou depois não conta. Aberturas: fotografia mensal da Receita, com defasagem.</li>
+    </ul>
+  </div>;
+}
+
+function SociosPf({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.parcerias.sociosPf;
+  const option = useMemo(() => ({
+    grid: { top: 24, right: 40, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: q.porQualificacao.map(row => row.qualificacao), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
+    series: [
+      { type: 'bar', name: 'Profissionais do sistema Confea/Crea', stack: 'q', barWidth: 14, data: q.porQualificacao.map(row => row.profissionais), itemStyle: { color: tokens.blue } },
+      { type: 'bar', name: 'Demais sócios PF', stack: 'q', data: q.porQualificacao.map(row => row.n - row.profissionais), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(q.porQualificacao[params.dataIndex].n) } },
+    ],
+  }), [q, tokens]);
+  const abrir = (titulo: string, ids: string[], what: string, use: string) => ids.length && ctx.open({ kind: 'empresas', title: titulo, what, use, ids, eyebrow: 'Contexto · depende de parceria (CPF completo do QSA)' });
+  return <div className="split">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.empresasComSocioPf.length)}</b> empresas com sócio PF identificado · <b>{int(q.sociosProfissionais.length)}</b> sócios são profissionais do sistema ({int(q.sociosProfissionaisAtivos)} ativos) · <b>{int(q.socioEhRt.length)}</b> são RT da própria empresa</p>
+      <Chart option={option} tokens={tokens} label="Sócios pessoa física por qualificação e presença no cadastro profissional" />
+    </div>
+    <ul className="side-list" aria-label="Leituras do quadro societário">
+      <li><button onClick={() => abrir('Registradas sem RT com sócio profissional ativo', q.registradasSemRtComSocioProfissional, 'Empresas registradas sem vínculo de RT vigente cujo sócio é profissional com registro ativo.', 'Orientar a anotação do RT: o sócio pode ser o responsável natural. Sociedade não é vínculo de responsabilidade.')}><i style={{ background: tokens.accent }} /><span>Registradas sem RT com sócio profissional ativo</span><b>{int(q.registradasSemRtComSocioProfissional.length)}</b></button></li>
+      <li><button onClick={() => abrir('Registradas com sócio profissional inativo', q.registradasComSocioProfissionalInativo, 'Empresas registradas cujo sócio profissional está com registro cancelado ou interrompido na data de referência.', 'Contexto para o relacionamento com o profissional; nada a notificar à empresa por isso.')}><i style={{ background: tokens.muted }} /><span>Registradas com sócio profissional cancelado ou interrompido</span><b>{int(q.registradasComSocioProfissionalInativo.length)}</b></button></li>
+      <li><button disabled><i style={{ background: tokens.blue }} /><span>Sócio profissional é RT da própria empresa</span><b>{int(q.socioEhRt.length)}</b></button></li>
+      <li className="side-note">Depende do acordo com a Receita Federal (CPF completo); o QSA aberto mascara o CPF. JUCESP complementa os atos. Demonstrativo.</li>
+    </ul>
+  </div>;
+}
+
+function ContextoEconomico({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, rows = useMemo(() => ctx.parcerias.contexto.filter(row => row.pibPorHabitante && row.elegiveis > 0), [ctx.parcerias.contexto]);
+  const option = useMemo(() => {
+    const maxEleg = Math.max(1, ...rows.map(row => row.elegiveis)), coberturas = rows.map(row => row.registradas / row.elegiveis * 100);
+    return {
+      grid: { top: 18, right: 16, bottom: 4, left: 4, containLabel: true },
+      tooltip: { formatter: (params: any) => { const row = rows[params.dataIndex]; return `<b>${short(row.name)}</b><br/>PIB por habitante: ${brl(row.pibPorHabitante ?? 0)} · VAB: ${brl(row.vab)}<br/>Crédito PJ nos CNAEs da lista: ${brl(row.creditoSaldo)} em ${int(row.creditoOperacoes)} operações<br/>${brl(row.creditoPorElegivel ?? 0)} por estabelecimento elegível · cobertura ${pct(row.registradas / row.elegiveis * 100)}`; } },
+      xAxis: { type: 'value', name: 'PIB por habitante', nameLocation: 'middle', nameGap: 22, nameTextStyle: { color: tokens.muted, fontSize: 10 }, axisLabel: { color: tokens.muted, fontSize: 10, formatter: (value: number) => brl(value) }, splitLine: { lineStyle: { color: tokens.line } } },
+      yAxis: { type: 'value', min: Math.max(0, Math.floor(Math.min(...coberturas) / 10) * 10 - 10), max: Math.min(100, Math.ceil(Math.max(...coberturas) / 10) * 10 + 10), axisLabel: { color: tokens.muted, fontSize: 10, formatter: '{value}%' }, splitLine: { lineStyle: { color: tokens.line } } },
+      series: [{ type: 'scatter', data: rows.map((row, index) => [row.pibPorHabitante, coberturas[index]]), symbolSize: (_: any, params: any) => 8 + 26 * Math.sqrt(rows[params.dataIndex].elegiveis / maxEleg),
+        itemStyle: { color: tokens.blue, opacity: 0.75, borderColor: tokens.surface, borderWidth: 1 }, label: { show: true, position: 'top', color: tokens.ink, fontSize: 9.5, formatter: (params: any) => short(rows[params.dataIndex].name) }, labelLayout: { hideOverlap: true } }],
+    };
+  }, [rows, tokens]);
+  const credito = useMemo(() => rows.slice().sort((a, b) => (b.creditoPorElegivel ?? 0) - (a.creditoPorElegivel ?? 0)).slice(0, 4), [rows]);
+  return <div className="split">
+    <Chart option={option} tokens={tokens} label="PIB por habitante contra cobertura cadastral, por regional" onPick={params => { const row = rows[params.dataIndex]; if (row) ctx.open({ kind: 'gre', id: row.greId }); }} />
+    <ul className="side-list" aria-label="Crédito por estabelecimento elegível">
+      {credito.map(row => <li key={row.greId}><button onClick={() => ctx.open({ kind: 'gre', id: row.greId })}><i style={{ background: tokens.accent }} /><span>{short(row.name)}<small>{brl(row.creditoSaldo)} · {int(row.creditoOperacoes)} operações</small></span><b>{brl(row.creditoPorElegivel ?? 0)}</b></button></li>)}
+      <li className="side-note">PIB e VAB: IBGE (anual, público). Crédito por município e CNAE: só em agregado, pelo acordo com o Banco Central. Demonstrativo.</li>
     </ul>
   </div>;
 }

@@ -6,7 +6,7 @@ import { brl, data, int, mes, money, pct, short } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
 import { LIMITE_ART, PRAZO_SUCESSAO, TERMOS_ENGENHARIA, regras, regrasPendentes, statusAjuda } from './cruzamentos';
 import type { Indicio, StatusLigacao } from './cruzamentos';
-import { Bloco, carregando, linhasEmpresas, nomeEmpresa } from './ui';
+import { Bloco, Parceria, carregando, linhasEmpresas, nomeEmpresa } from './ui';
 
 /**
  * Aba 6 · Malha fina v2: indícios por regra, com status de ligação (confirmado, candidato, contexto), fonte, forma de coleta e
@@ -43,7 +43,7 @@ function Regras({ ctx }: { ctx: CockpitCtx }) {
       <thead><tr><th>Regra</th><th>Status</th><th>Coleta</th><th>Empresas</th><th>Sem ação fiscal</th></tr></thead>
       <tbody>{malha.indicios.map(item => { const sem = item.empresas.length - item.comAcao.length;
         return <tr key={item.id} tabIndex={0} onClick={() => abrir(item, false)} onKeyDown={event => { if (event.key === 'Enter') abrir(item, false); }}>
-          <td><b>{item.label}</b><small>{item.fonte} · regra {item.versao}</small></td><td><Status status={item.status} /></td><td><span className={`coleta is-${item.coleta.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`}>{item.coleta}</span></td>
+          <td><b>{item.label}{item.parceria && <Parceria id={item.parceria} compacto />}</b><small>{item.fonte} · regra {item.versao}</small></td><td><Status status={item.status} /></td><td><span className={`coleta is-${item.coleta.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`}>{item.coleta}</span></td>
           <td><span className="cellbar"><i style={{ width: `${item.empresas.length / max * 100}%` }} /><em>{int(item.empresas.length)}</em></span></td>
           <td><button className="link" onClick={event => { event.stopPropagation(); abrir(item, true); }}>{int(sem)} · {pct(sem / Math.max(1, item.empresas.length) * 100)}</button></td></tr>; })}</tbody>
     </table></div>

@@ -1,17 +1,17 @@
 # Prumo · inteligência estratégica do Crea-SP
 
-Protótipo do painel de inteligência estratégica do Crea-SP, na **V21 · Prumo** (onze abas; antes chamado Observatório Crea-SP). O que mudou está em [docs/V21.md](docs/V21.md). A dona do programa é a EDAD, unidade de dados da SUPTEC. Os dados internos do painel são demonstrativos; os dados públicos são reais e mostram fonte e data. Não há `.pbix` nem conexão institucional validada.
+Protótipo do painel de inteligência estratégica do Crea-SP, na **V22 · Prumo** (onze abas; antes chamado Observatório Crea-SP). O que mudou está em [docs/V22.md](docs/V22.md) e [docs/V21.md](docs/V21.md). Blocos e regras marcados com "!" dependem de parceria: mostram o que um acordo permitiria medir e ficam demonstrativos até ele existir. A dona do programa é a EDAD, unidade de dados da SUPTEC. Os dados internos do painel são demonstrativos; os dados públicos são reais e mostram fonte e data. Não há `.pbix` nem conexão institucional validada.
 
 ## O que está aqui
 
 | Pasta ou arquivo | Conteúdo |
 |---|---|
-| `src/cockpit/` | Painel V21: Presidência, Empresas, Profissionais, Formação, Fiscalização, Malha fina, Receita, Entidades, Controle, Atendimento e Método. Abre em `/` e em `/painel.html` |
-| `src/observatorio/` | Indicadores-norte com fichas, histórico por data de referência, frentes e matriz de cruzamentos, decisão sobre as 12 lacunas do V18, casos de uso, radar normativo, gate de fontes e atlas |
-| `src/domain/` | Cenário determinístico e camadas: profissionais, formação, entidades, conselho, frentes (QSA PJ, Obrasgov, ANEEL/ANP/ANM/BNDES) e mercado (concentração, PCA, densidade, aberturas, permanência) |
+| `src/cockpit/` | Painel V22: Presidência, Empresas, Profissionais, Formação, Fiscalização, Malha fina, Receita, Entidades, Controle, Atendimento e Método. Abre em `/` e em `/painel.html` |
+| `src/observatorio/` | Indicadores-norte com fichas, histórico por data de referência, frentes e matriz de cruzamentos, decisão sobre as 12 lacunas do V18, casos de uso, radar normativo, gate de fontes, parcerias e atlas |
+| `src/domain/` | Cenário determinístico e camadas: profissionais, formação, entidades, conselho, frentes (QSA PJ, Obrasgov, ANEEL/ANP/ANM/BNDES), mercado (concentração, PCA, densidade, aberturas, permanência) e parcerias (CNO, licenças e alvarás, perícias, TCE-SP, crédito e PIB, sócios PF, coorte nominal, vínculos por empresa) |
 | `src/painel/`, `src/gestao-v14/` (medidas e widgets), `src/enterprise-v10/` (modelo e filtros) | Módulos que o painel reaproveita das versões anteriores |
-| `docs/V21.md`, `docs/DESIGN_SYSTEM_V13.md`, `docs/NORMAS.md` | O que a V21 acrescenta, identidade visual e base normativa |
-| `entrega/painel-gestao-creasp.html` | V21 em um único HTML, para abrir sem servidor |
+| `docs/V22.md`, `docs/V21.md`, `docs/DESIGN_SYSTEM_V13.md`, `docs/NORMAS.md` | O que a V22 e a V21 acrescentam, identidade visual e base normativa |
+| `entrega/painel-gestao-creasp.html` | V22 em um único HTML, para abrir sem servidor |
 | `observatorio/` | Plano em etapas (revisão 2), atlas de 98 fontes públicas e catálogo unificado em CSV e XLSX, publicados com o nome anterior |
 | `planejamento-fontes-2026-10/` | Levantamento de 29/10/2026: 104 entradas de fontes, 34 casos de uso com fórmula, arquitetura, revisão independente e revisão crítica do V18. Retrato datado |
 | `scripts/refresh-sources.ts`, `scripts/integrations/`, `src/integrations/catalog.ts` | Coletor PNCP com histórico, cobertura e testes; ponto de partida dos conectores |
@@ -24,8 +24,8 @@ Node.js 20 ou mais novo.
 
 ```bash
 npm ci
-npm run dev            # abre a V21 em http://localhost:5173/
-npm test               # testes de domínio, painel, fiscalização, V20, V21 e coletor
+npm run dev            # abre a V22 em http://localhost:5173/
+npm test               # testes de domínio, painel, fiscalização, V20, V21, V22 e coletor
 npm run build          # TypeScript e build do site
 npm run build:painel   # gera entrega/painel-gestao-creasp.html
 npm run sources:refresh -- --config integrations/refresh-sources.example.json
@@ -41,7 +41,7 @@ A configuração do coletor vem **desabilitada**. Ela não configura servidor, g
 - A situação no Crea-SP é lida na data do fato, não na data de hoje; a data de referência lê a base como estava em D e nunca sobrescreve valores.
 - Emprego, salário e formação públicos ficam em agregado (município, CNAE, CBO, curso); não se ligam a um CNPJ ou CPF.
 - Município do órgão, do fornecedor e da execução são campos diferentes.
-- Só entram fontes com coleta automática periódica ou com acordo previsto; cada fonte nova passa pelo gate de sete passos antes do núcleo operacional.
+- Só entram fontes com coleta automática periódica ou com acordo previsto; cada fonte nova passa pelo gate de sete passos antes do núcleo operacional. O que depende de acordo aparece marcado com "!" e demonstrativo até a parceria existir.
 
 As regras completas estão no [plano](observatorio/plano-observatorio-crea-sp.html) e em [ARQUITETURA.md](planejamento-fontes-2026-10/ARQUITETURA.md). As 12 lacunas do V18 estão em [REVISAO_REPOSITORIO.md](planejamento-fontes-2026-10/REVISAO_REPOSITORIO.md); a decisão sobre cada uma está na aba Método.
 

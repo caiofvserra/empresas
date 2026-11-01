@@ -27,6 +27,7 @@ export default function PaginaFormacao({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="fi" area="fi" title="Por instituição de ensino" question="Coortes fechadas somadas: concluintes, registrados, taxa de registro, parte EaD e cadeiras no plenário. Ordene pelas colunas."><TabelaIes ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="fm" area="fm" title="Por modalidade" question="Concluintes das coortes fechadas e taxa de registro em 24 meses."><Modalidades ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="fn" area="fn" title="Por canal e natureza da IES" question="Taxa de registro em 24 meses: presencial contra EaD, e IES pública contra privada."><CanalNatureza ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="fp" area="fp" title="Coorte nominal das IES parceiras" question="Diplomados das IES com lista nominal autorizada e o primeiro registro no Crea-SP até 3, 6, 12 e 24 meses do fim do ano de conclusão, por coorte. Vale só para as IES parceiras." help="Não extrapolar para todas as IES de SP nem tratar a comparação agregada INEP × Crea como conversão individual. Registro anterior à conclusão fica à parte. Coorte recente não fecha e aparece sem taxa."><CoorteNominal ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -117,5 +118,27 @@ function CanalNatureza({ ctx }: { ctx: CockpitCtx }) {
   return <div className="stack">
     <Chart option={option} tokens={tokens} label="Taxa de registro em 24 meses por canal e natureza da IES" />
     <p className="kpi-line">EaD médio das IES: {q.porNatureza.map(row => `${row.natureza.toLowerCase()} ${row.ead === null ? '—' : pct(row.ead)}`).join(' · ')}. Diferenças refletem também perfil e região dos alunos.</p>
+  </div>;
+}
+
+function CoorteNominal({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, q = ctx.parcerias.coorteNominal, coortes = q.coortes, prazos = [3, 6, 12, 24], cores = [tokens.soft, tokens.accent, tokens.blue, tokens.good];
+  const option = useMemo(() => ({
+    grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = coortes[items[0].dataIndex]; return `<b>Coorte ${row.ano}</b> · ${int(row.diplomados)} diplomados das IES parceiras<br/>${row.ate.map(item => `${item.meses} meses: ${item.fechada ? `${int(item.registrados)} (${pct(item.taxa ?? 0, 1)})` : 'ainda não fechou'}`).join('<br/>')}<br/>${int(row.registroAnterior)} com registro anterior à conclusão`; } },
+    xAxis: { type: 'category', data: coortes.map(row => String(row.ano)), axisLabel: { color: tokens.muted, fontSize: 10 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+    yAxis: { type: 'value', max: Math.min(100, Math.ceil(Math.max(5, ...coortes.flatMap(row => row.ate.map(item => item.taxa ?? 0))) * 1.25 / 5) * 5), splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10, formatter: '{value}%' } },
+    series: prazos.map((meses, index) => ({ type: 'bar', name: `até ${meses} meses`, barGap: '10%', data: coortes.map(row => { const item = row.ate[index]; return item.fechada ? item.taxa : null; }), itemStyle: { color: cores[index], borderColor: index === 0 ? tokens.line : undefined, borderWidth: index === 0 ? 1 : 0 } })),
+  }), [coortes, tokens, cores]);
+  const ultima = q.ultimaFechada;
+  return <div className="split is-wide">
+    <div className="stack">
+      <p className="kpi-line"><b>{int(q.iesParceiras)}</b> de {int(q.iesTotal)} IES com lista nominal{q.coberturaIes === null ? '' : ` (${pct(q.coberturaIes)})`} · última coorte fechada: {ultima ? <><b>{ultima.ano}</b>, {int(ultima.diplomados)} diplomados, {pct(ultima.ate[3].taxa ?? 0, 1)} registrados em 24 meses ({pct(ultima.ate[2].taxa ?? 0, 1)} em 12)</> : '—'}</p>
+      <Chart option={option} tokens={tokens} label="Primeiro registro até 3, 6, 12 e 24 meses da conclusão, por coorte das IES parceiras" onPick={params => { const row = coortes[params.dataIndex]; if (row?.registrados.length) ctx.open({ kind: 'linhas', eyebrow: 'Coorte nominal · depende de parceria (IES)', title: `Coorte ${row.ano} · registrados após a conclusão`, what: 'Pessoas da lista nominal autorizada das IES parceiras com primeiro registro depois do fim do ano de conclusão.', use: 'Agregado na apresentação; a lista nominal fica restrita à EDAD e à área de relacionamento.', listTitle: 'Profissionais', rows: linhasProfissionais(ctx, row.registrados, item => ({ value: item.registroEm.split('-').reverse().join('/'), note: item.iesId, sort: -Date.parse(item.registroEm) })) }); }} />
+    </div>
+    <ul className="side-list" aria-label="Coortes fechadas">
+      {coortes.filter(row => row.ate[3].fechada).slice(-4).reverse().map(row => <li key={row.ano}><button disabled><i style={{ background: tokens.good }} /><span>Coorte {row.ano}<small>{int(row.diplomados)} diplomados · {int(row.registroAnterior)} já registrados antes</small></span><b>{pct(row.ate[3].taxa ?? 0, 1)}</b></button></li>)}
+      <li className="side-note">Depende de termo com cada IES (lista nominal com CPF) e base legal de finalidade; o INEP público não traz nomes. Demonstrativo.</li>
+    </ul>
   </div>;
 }
