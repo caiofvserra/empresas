@@ -51,9 +51,9 @@ export default function PaginaPresidencia({ ctx }: { ctx: CockpitCtx }) {
         sub={estrutura?.atendimento.medianaDias == null ? 'calculando…' : `mediana de ${int(estrutura.atendimento.medianaDias)} dias`} onOpen={() => ctx.go('atendimento')} />
     </section>
     <MapaRegional ctx={ctx} />
-    <Bloco ctx={ctx} id="sc" area="sc" title="Quadro das regionais" question="Cada regional em todos os assuntos. Setas comparam com as metas; cores marcam as maiores lacunas. Clique numa linha para o resumo da regional."><Quadro ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="hs" area="hs" title="Histórico por data de referência" question="Os indicadores-norte e a base, recalculados com a base como estava no último dia de cada um dos 12 meses anteriores a D. Nada é sobrescrito: é a mesma leitura do seletor de data, mês a mês." help="Cada ponto é um recálculo completo (cerca de 1 s); a série aparece aos poucos. Em produção, é a tabela diária de indicadores do DW."><Historico ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="lt" area="lt" title="Leitura do período" question="Destaques calculados a cada filtro e data de referência. Clique numa frase para abrir o assunto." className="t-leitura">
+    <Bloco ctx={ctx} id="sc" area="sc" title="As regionais em todos os assuntos" question="Cada regional numa linha, com todos os assuntos do painel. As setas comparam com as metas e as cores marcam as maiores diferenças. Clique numa linha para ver o resumo da regional."><Quadro ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="hs" area="hs" title="Os indicadores principais nos últimos 12 meses" question="Os quatro indicadores principais e o total de empresas registradas, recalculados com a base como estava no último dia de cada um dos 12 meses anteriores. Nenhum valor é alterado." help="Cada ponto é um recálculo completo e leva cerca de um segundo, por isso a série aparece aos poucos. Em produção, virá de uma tabela diária do armazém de dados."><Historico ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="lt" area="lt" title="Destaques do período" question="Frases geradas a partir dos números de cada assunto, que mudam com os filtros e com a data escolhida. Clique numa frase para abrir o assunto." className="t-leitura">
       <ul className="leitura">{ctx.insights.map((item, index) => <li key={index} className={`is-${item.tone}`}><button onClick={() => ctx.go(item.page)}><i aria-hidden="true" /><span><b>{item.strong}</b> {item.text}</span></button></li>)}</ul>
     </Bloco>
   </div>;
@@ -110,7 +110,7 @@ function MapaRegional({ ctx }: { ctx: CockpitCtx }) {
     };
   }, [territorio, rotulos, classes, config, tokens, destaque, ctx.greId]); // eslint-disable-line react-hooks/exhaustive-deps
   const pick = (params: any) => { const greId = params.componentType === 'geo' ? territorio?.get(params.name) : params.data?.greId; if (greId) ctx.open({ kind: 'gre', id: greId }); };
-  return <Bloco ctx={ctx} id="map" area="map" title="Mapa das regionais" question="Território de cada GRE pintado pelos seus municípios. Escolha o indicador; as cores dividem as regionais em cinco faixas."
+  return <Bloco ctx={ctx} id="map" area="map" title="Mapa das regionais" question="Cada regional pintada de acordo com o indicador escolhido. As cores dividem as regionais em cinco faixas."
     actions={<label className="ck-select is-compact"><span className="sr-only">Indicador do mapa</span><select value={metrica} onChange={event => setMetrica(event.target.value as Metrica)}>{(Object.keys(metricas) as Metrica[]).map(id => <option key={id} value={id}>{metricas[id].label}</option>)}</select><ChevronDown size={14} /></label>}>
     <div className="geo-layout">
       <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa das regionais: ${config.label}`} onPick={pick} /> : <div className="loading">Carregando malha municipal…</div>}
