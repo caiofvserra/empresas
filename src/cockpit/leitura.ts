@@ -9,8 +9,15 @@ import type { QuadroConselho } from '../domain/conselho';
 import type { ResultadoFt } from '../painel/forcas';
 
 /** V20 · leitura do período: frases curtas com o destaque de cada assunto, recalculadas a cada filtro e data de referência. */
-export type PageId = 'presidencia' | 'cadastro' | 'profissionais' | 'formacao' | 'fiscalizacao' | 'malha' | 'receita' | 'entidades' | 'controle' | 'atendimento' | 'metodo';
-export const pageIds: PageId[] = ['presidencia', 'cadastro', 'profissionais', 'formacao', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento', 'metodo'];
+/** Abas do painel geral e páginas do painel de Empresas (o primeiro painel separado, de 01/11/2026). */
+export type PaginaGeral = 'presidencia' | 'profissionais' | 'formacao' | 'fiscalizacao' | 'malha' | 'receita' | 'entidades' | 'controle' | 'atendimento' | 'metodo';
+export type PaginaEmpresas = 'mercado' | 'evolucao' | 'rt' | 'vinculos';
+export type PageId = PaginaGeral | PaginaEmpresas;
+export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'profissionais', 'formacao', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento', 'metodo'];
+export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos'];
+export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas];
+/** Painel em que cada página está: um destaque de outro painel abre aquele painel. */
+export const painelDaPagina = (page: PageId): 'geral' | 'empresas' => (pageIdsEmpresas as PageId[]).includes(page) ? 'empresas' : 'geral';
 export interface Metas { cobertura: number; rt: number; adimplencia: number; recuperacao: number; regularizacao: number; atendimento: number }
 export const metasPadrao: Metas = { cobertura: 65, rt: 40, adimplencia: 60, recuperacao: 30, regularizacao: 50, atendimento: 80 };
 export interface Insight { tone: 'good' | 'bad' | 'neutral'; strong: string; text: string; page: PageId }
@@ -30,14 +37,14 @@ const vs = (value: number | null) => value === null ? 'sem dado do ano anterior 
 export function leitura(input: LeituraInput): Insight[] {
   const { metas, ponte, resumo, rec, malha, estrutura } = input, out: Insight[] = [];
   const net = ponte.final - ponte.abertura, entradas = ponte.espontaneas.length + ponte.viaFiscalizacao.length + ponte.retornos.length;
-  out.push({ tone: net >= 0 ? 'good' : 'bad', strong: `${net >= 0 ? '+' : ''}${int(net)} empresas`, text: `na base no período. Entraram ${int(ponte.espontaneas.length)} por conta própria, ${int(ponte.viaFiscalizacao.length)} depois de fiscalização e ${int(ponte.retornos.length)} que voltaram, e saíram ${int(ponte.saidas.length)}.`, page: 'cadastro' });
+  out.push({ tone: net >= 0 ? 'good' : 'bad', strong: `${net >= 0 ? '+' : ''}${int(net)} empresas`, text: `na base no período. Entraram ${int(ponte.espontaneas.length)} por conta própria, ${int(ponte.viaFiscalizacao.length)} depois de fiscalização e ${int(ponte.retornos.length)} que voltaram, e saíram ${int(ponte.saidas.length)}.`, page: 'evolucao' });
   const autos = change(resumo.autos.length, resumo.autosPrev);
   out.push({ tone: 'neutral', strong: `${int(resumo.autos.length)} autos de infração`, text: `em ${int(resumo.acoes.length)} ações fiscalizatórias (${vs(autos)}). Depois da ação, ${int(resumo.regularizacoes.length)} empresas se regularizaram.`, page: 'fiscalizacao' });
   if (entradas) out.push({ tone: 'good', strong: `${int(ponte.viaFiscalizacao.length)} registros`, text: `vieram depois de uma ação da fiscalização, ou ${pct(ponte.viaFiscalizacao.length / entradas * 100)} das empresas que entraram na base no período.`, page: 'fiscalizacao' });
   const receita = rec.totalAntes === null ? null : change(rec.total, rec.totalAntes);
   out.push({ tone: receita === null || receita >= 0 ? 'good' : 'bad', strong: brl(rec.total), text: `foram arrecadados de empresas (${vs(receita)}), dos quais ${brl(rec.multas)} vieram de multas.`, page: 'receita' });
   if (input.inadimplencia !== null) out.push({ tone: input.inadimplencia > 100 - metas.adimplencia ? 'bad' : 'good', strong: brl(input.saldo), text: `estão vencidos, e ${pct(input.inadimplencia)} das empresas cobradas estão em atraso. A meta é ter ${metas.adimplencia}% em dia.`, page: 'receita' });
-  if (input.cobertura !== null) out.push({ tone: input.cobertura >= metas.cobertura ? 'good' : 'bad', strong: pct(input.cobertura), text: `dos estabelecimentos com atividade de engenharia na Receita têm registro ou visto no Crea-SP, ${Math.abs(input.cobertura - metas.cobertura).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos ${input.cobertura >= metas.cobertura ? 'acima' : 'abaixo'} da meta de ${metas.cobertura}%.`, page: 'cadastro' });
+  if (input.cobertura !== null) out.push({ tone: input.cobertura >= metas.cobertura ? 'good' : 'bad', strong: pct(input.cobertura), text: `dos estabelecimentos com atividade de engenharia na Receita têm registro ou visto no Crea-SP, ${Math.abs(input.cobertura - metas.cobertura).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos ${input.cobertura >= metas.cobertura ? 'acima' : 'abaixo'} da meta de ${metas.cobertura}%.`, page: 'mercado' });
   const lacuna = [...input.linhas].sort((a, b) => b.semRegistro - a.semRegistro)[0];
   if (lacuna?.semRegistro) out.push({ tone: 'neutral', strong: lacuna.curto, text: `é a regional com mais estabelecimentos de engenharia sem registro encontrado: ${int(lacuna.semRegistro)}. Não estar no cadastro não quer dizer que a empresa esteja irregular.`, page: 'presidencia' });
   if (input.conversao?.taxa != null) out.push({ tone: input.conversao.taxa >= metas.regularizacao ? 'good' : 'bad', strong: pct(input.conversao.taxa), text: `das ações de ${input.conversao.trimestre.replace('-', ' ')} terminaram em regularização em até 180 dias. A ação pode não ter sido a causa.`, page: 'fiscalizacao' });
@@ -49,8 +56,7 @@ export function leitura(input: LeituraInput): Insight[] {
   if (semRegistro.length) out.push({ tone: 'bad', strong: brl(semRegistro.reduce((total, row) => total + row.valor, 0)), text: `em ${int(semRegistro.length)} contratos públicos de engenharia foram para fornecedores sem registro na data do contrato.`, page: 'malha' });
   const semVinculo = malha.contratosComChave.filter(row => row.vinculo === 'Não identificado').length;
   if (malha.contratosComChave.length) out.push({ tone: 'neutral', strong: `${int(semVinculo)} contratos`, text: `públicos seguem sem ART identificada, entre ${int(malha.contratosComChave.length)} com dados para a busca. São prioridade para verificar, e não infrações.`, page: 'malha' });
-  out.push({ tone: input.arts.antes && input.arts.atual < input.arts.antes ? 'bad' : 'good', strong: `${int(input.arts.atual)} ARTs`, text: `de empresas no período (${vs(change(input.arts.atual, input.arts.antes))}). ${input.rt === null ? '—' : pct(input.rt)} das empresas registradas têm responsável técnico.`, page: 'cadastro' });
-  if (input.cao !== null) out.push({ tone: input.cao <= 60 ? 'good' : 'bad', strong: `${int(input.cao)} dias`, text: 'é o prazo típico da certidão de acervo operacional, do pedido à emissão.', page: 'cadastro' });
+  out.push({ tone: input.arts.antes && input.arts.atual < input.arts.antes ? 'bad' : 'good', strong: `${int(input.arts.atual)} ARTs`, text: `de empresas no período (${vs(change(input.arts.atual, input.arts.antes))}). ${input.rt === null ? '—' : pct(input.rt)} das empresas registradas têm responsável técnico.`, page: 'rt' });
   const p = input.profissionais;
   if (p) {
     out.push({ tone: p.novos.length >= p.novosAntes ? 'good' : 'bad', strong: `${int(p.novos.length)} registros profissionais novos`, text: `no período (${vs(change(p.novos.length, p.novosAntes))}), contra ${int(p.cancelamentos.length)} cancelamentos e ${int(p.interrupcoes)} interrupções.`, page: 'profissionais' });

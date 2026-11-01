@@ -14,8 +14,8 @@ import type { QuadroConselho } from '../domain/conselho';
 import type { ResultadoFt } from '../painel/forcas';
 import type { QuadroInstalacoes, QuadroObras, QuadroSociedades } from '../domain/frentes';
 import type { Historico } from '../observatorio/historico';
-import type { Aberturas, Concentracao, DensidadeGre, Permanencia, QuadroDemanda } from '../domain/mercado';
-import type { ContextoGre, QuadroCno, QuadroCoorteNominal, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
+import type { Aberturas, Concentracao, Permanencia, QuadroDemanda } from '../domain/mercado';
+import type { QuadroCno, QuadroCoorteNominal, QuadroCredenciamentos, QuadroJucesp, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
 
 /** Indicadores-norte do programa Inteligência Estratégica Crea-SP no recorte. */
 export interface Norte { cobertura: Cobertura; contagens: Contagens; conversao: { coortes: Coorte[]; atual: Coorte | null; anterior: Coorte | null }; receita: ReceitaAtribuivel; tempo: TempoAteAgir }
@@ -43,5 +43,7 @@ export interface CockpitCtx extends Ctx {
   /** V22: camadas que dependem de parceria (marcadas com "!"): CNO, licenças e alvarás, perícias, TCE-SP, contexto econômico, sócios PF, coorte nominal e vínculos. */
   parcerias: Parcerias;
 }
-export interface Parcerias { cno: QuadroCno; licencas: QuadroLicencas; pericias: QuadroPericias; tce: QuadroTce; contexto: ContextoGre[]; sociosPf: QuadroSociosPf; coorteNominal: QuadroCoorteNominal; vinculos: QuadroVinculos }
-export interface Mercado { concentracao: Concentracao; demanda: QuadroDemanda; densidade: DensidadeGre[]; aberturas: Aberturas; permanencia: Permanencia[] }
+export interface Parcerias { cno: QuadroCno; licencas: QuadroLicencas; pericias: QuadroPericias; tce: QuadroTce; sociosPf: QuadroSociosPf; coorteNominal: QuadroCoorteNominal; vinculos: QuadroVinculos;
+  /** Painel de Empresas: credenciamentos no DETRAN-SP e no INMETRO, e atos da Junta Comercial (JUCESP). */
+  credenciamentos: QuadroCredenciamentos; jucesp: QuadroJucesp }
+export interface Mercado { concentracao: Concentracao; demanda: QuadroDemanda; aberturas: Aberturas; permanencia: Permanencia[] }

@@ -1,0 +1,17 @@
+/* Painel de Empresas: grade de cada página (alturas fixas: gráficos ECharts em linhas 1fr crescem sem parar). */
+.ck-grid-mercado { grid-template-rows: auto 330px 480px 460px 400px 340px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "tc tc tc tc cv cv cv cv cv cv cv cv" "cg cg cg cg cg cg reg reg reg reg reg reg" "mc mc mc mc mc mc cn cn cn cn cn cn" "sk sk sk sk sk sk sk cp cp cp cp cp" "an an an an an an kc kc kc kc kc kc"; height: auto; }
+.ck-grid-evolucao { grid-template-rows: auto 480px 400px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "ec ec ec ec ec ec ec ec ec ec ec ec" "es es es es es es ab ab ab ab ab ab"; height: auto; }
+.ck-grid-rt { grid-template-rows: auto 400px 380px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "qt qt qt qt qt qt am am am am am am" "ar ar ar ar ar ar sa sa sa sa sa sa"; height: auto; }
+.ck-grid-vinculos { grid-template-rows: 400px 400px 380px; grid-template-areas: "qs qs qs qs qs qs sp sp sp sp sp sp" "in in in in in in vn vn vn vn vn vn" "cr cr cr cr cr cr jc jc jc jc jc jc"; height: auto; }
+.ck-rail-painel { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 10px; padding: 7px 2px 6px; border-top: 1px solid rgba(255,255,255,.14); border-radius: 0 0 12px 12px; color: #FABD07; font-size: 10px; font-weight: 700; line-height: 1.15; text-align: center; text-decoration: none; }
+.ck-rail-painel:hover { color: #FFFFFF; background: rgba(255,255,255,.09); }
+.ck-rail-painel span { display: inline-flex; align-items: center; gap: 1px; }
+.side-list .side-head { font-size: 10.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding: 0 2px 2px; }
+.side-serie { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 0 7px; align-items: center; padding: 4px 6px; font-size: 11.5px; }
+.side-serie > i { width: 10px; height: 10px; border-radius: 2px; }
+.side-serie small { display: block; font-size: 10px; color: var(--muted); }
+@media (max-width: 1100px) {
+  .ck-rail-painel { flex: none; min-width: 72px; margin: 0; border: 0; }
+}
+
+.ck-grid-mercado, .ck-grid-evolucao, .ck-grid-rt, .ck-grid-vinculos { align-content: start; }

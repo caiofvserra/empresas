@@ -5,9 +5,8 @@ import { faixasIdade, situacaoEm } from '../domain/profissionais';
 import type { Grupo, Profissional } from '../domain/profissionais';
 import type { CockpitCtx } from './contexto';
 import { pisoLegal as piso } from './publico';
-import { Bloco, Indicador, linhasProfissionais, linhasEmpresas, proporcao } from './ui';
+import { Bloco, Indicador, linhasProfissionais, proporcao } from './ui';
 import { brl } from '../painel/ui';
-import { faixasVinculos } from '../domain/parcerias';
 
 /**
  * Aba 3 · Profissionais, com a mesma profundidade de Empresas: situação, modalidade, nível, regional, idade e gênero, carga de
@@ -39,7 +38,6 @@ export default function PaginaProfissionais({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="ps" area="ps" title="Salário típico e piso salarial" question="Salário do meio da distribuição em cada ocupação, comparado com o piso legal (na base fixada pelo STF) e com a leitura do Confea, os dois para 8 horas diárias. Os números são somados por ocupação e só descrevem a situação."><Remuneracao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="pt" area="pt" title="Registros, cancelamentos e ARTs por mês" question="Quantos registros novos, cancelamentos e ARTs houve em cada mês do período."><Mensal ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="pp" area="pp" title="Perícias judiciais" question="Peritos nomeados pelo Tribunal de Justiça nos últimos 24 meses, por especialidade. Mostra em quantos casos se encontrou a ART da perícia e quantos peritos não têm registro ativo hoje. Clique numa especialidade para ver as nomeações." help="Nomeação, perícia entregue e pagamento são coisas diferentes, e honorário arbitrado não é honorário pago. O tipo de processo, sozinho, não prova que a perícia exigia engenheiro."><Pericias ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="vn" area="vn" title="Empregados em ocupações técnicas, por empresa" question="Quantos empregados com carteira em ocupações de engenharia cada empresa tem, contados pela RAIS identificada que o Ministério do Trabalho só fornece por acordo. Mostra também empresas registradas que têm esses empregados e não têm responsável técnico." help="Ter um empregado em ocupação técnica não significa ter um profissional registrado nem um responsável técnico. Salários individuais não entram."><Vinculos ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -201,28 +199,3 @@ function Pericias({ ctx }: { ctx: CockpitCtx }) {
   </div>;
 }
 
-function Vinculos({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, q = ctx.parcerias.vinculos, rows = q.porFaixa;
-  const option = useMemo(() => ({
-    grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    xAxis: { type: 'category', data: faixasVinculos.map(faixa => `${faixa} técnico${faixa === 'nenhum' ? '' : 's'}`), axisLabel: { color: tokens.muted, fontSize: 10, interval: 0 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
-    series: [
-      { type: 'bar', name: 'Registradas', stack: 'v', barWidth: 22, data: rows.map(row => row.registradas), itemStyle: { color: tokens.good } },
-      { type: 'bar', name: 'Sem registro (universo)', stack: 'v', data: rows.map(row => row.semRegistro), itemStyle: { color: tokens.warn, borderRadius: [3, 3, 0, 0] } },
-    ],
-  }), [rows, tokens]);
-  const abrir = (titulo: string, ids: string[], what: string, use: string) => ids.length && ctx.open({ kind: 'linhas', eyebrow: 'Contexto que depende de acordo com o Ministério do Trabalho', title: titulo, what, use, listTitle: 'Empresas, mais vínculos técnicos primeiro', rows: linhasEmpresas(ctx, ids, id => { const row = q.empresas.find(item => item.companyId === id)!; return { value: `${int(row.vinculosTecnicos)} técnico${row.vinculosTecnicos === 1 ? '' : 's'}`, note: `${int(row.vinculosTotal)} vínculos no total`, sort: row.vinculosTecnicos }; }) });
-  return <div className="split">
-    <div className="stack">
-      <p className="kpi-line"><b>{int(q.vinculosTecnicos)}</b> empregados em ocupações de engenharia trabalham em <b>{int(q.comTecnicos.length)}</b> empresas. Essas empresas têm {int(q.vinculosTotal)} empregados ao todo.</p>
-      <Chart option={option} tokens={tokens} label="Empresas por faixa de vínculos técnicos e situação do registro" />
-    </div>
-    <ul className="side-list" aria-label="Leituras dos vínculos">
-      <li><button onClick={() => abrir('Registradas com empregados técnicos e sem RT vigente', q.registradasSemRt, 'Empresas registradas com ao menos um vínculo CLT em CBO de engenharia e nenhum responsável técnico vigente na data de referência.', 'Conferir se há atividade técnica e orientar a anotação do RT. Empregado em CBO técnico não é RT.')}><i style={{ background: tokens.accent }} /><span>Registradas com técnicos e sem RT vigente</span><b>{int(q.registradasSemRt.length)}</b></button></li>
-      <li><button onClick={() => abrir('Universo sem registro com empregados técnicos', q.semRegistroComTecnicos, 'Estabelecimentos com CNAE da lista, sem registro vigente, com vínculos em CBO de engenharia.', 'Prioriza a análise do CNAE sem registro; o vínculo não prova atividade privativa.')}><i style={{ background: tokens.warn }} /><span>Universo sem registro com técnicos</span><b>{int(q.semRegistroComTecnicos.length)}</b></button></li>
-      <li className="side-note">Depende de acordo com o Ministério do Trabalho (RAIS identificada ou eSocial). O painel usa só contagens por empresa e ocupação, sem nenhum salário individual. Os números são demonstrativos.</li>
-    </ul>
-  </div>;
-}
