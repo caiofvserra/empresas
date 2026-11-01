@@ -6,12 +6,17 @@ import type { Malha } from './cruzamentos';
 import type { Estrutura } from './estrutura';
 import type { Insight, Metas, PageId } from './leitura';
 import type { LinhaGre, artsPeriodo } from './medidas';
+import type { Cobertura, Contagens, Coorte, ReceitaAtribuivel, TempoAteAgir } from '../observatorio/norte';
 
-/** Estado calculado do cockpit V18: o contexto da V17 (fiscalização, regionais, painel lateral) mais os demais assuntos. */
+/** Indicadores-norte do Observatório no recorte. */
+export interface Norte { cobertura: Cobertura; contagens: Contagens; conversao: { coortes: Coorte[]; atual: Coorte | null; anterior: Coorte | null }; receita: ReceitaAtribuivel; tempo: TempoAteAgir }
+
+/** Estado calculado do cockpit V19 (evolução da V18): o contexto da V17 (fiscalização, regionais, painel lateral) mais os demais assuntos. */
 export interface CockpitCtx extends Ctx {
   page: PageId; go: (page: PageId) => void; dark: boolean;
   historyScope: Scope; stateScope: Scope; stateModel: EnterpriseModel; stateHistory: EnterpriseModel;
   linhas: LinhaGre[]; ponte: Ponte; rec: Receita; contratos: ContratoPublico[]; malha: Malha; estrutura: Estrutura | null;
   arts: ReturnType<typeof artsPeriodo>; metas: Metas; insights: Insight[];
   focus: string | null; toggleFocus: (id: string) => void;
+  norte: Norte;
 }

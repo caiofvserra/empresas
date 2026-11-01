@@ -1,6 +1,6 @@
 # Referências normativas e decisões de modelagem
 
-Pesquisa em fontes oficiais realizada em **9 de outubro de 2026**. Este documento distingue conteúdo normativo consultado de recomendações para o modelo. **Na V7, o BI é somente de leitura:** normas são referências de definição, não fontes de contagem de resultados. Fatos e eventos virão de SQL Server/Db2 via gateway ou APIs/ETLs homologados; a demonstração não consulta cadastros oficiais, emite documentos, determina obrigação individual de registro ou caracteriza infrações. Regras de integração vigentes: [ATUALIZACAO_AUTOMATICA_V7.md](ATUALIZACAO_AUTOMATICA_V7.md).
+Pesquisa em fontes oficiais realizada em **9 de outubro de 2026**. Este documento distingue conteúdo normativo consultado de recomendações para o modelo. **Na V7, o BI é somente de leitura:** normas são referências de definição, não fontes de contagem de resultados. Fatos e eventos virão de SQL Server/Db2 via gateway ou APIs/ETLs homologados; a demonstração não consulta cadastros oficiais, emite documentos, determina obrigação individual de registro ou caracteriza infrações. As regras de integração da V7 foram retiradas do repositório em 29/10/2026 e continuam no histórico do Git; o desenho atual de fontes está em [observatorio/](../observatorio/README.md) e em [planejamento-fontes-2026-10/](../planejamento-fontes-2026-10/README.md).
 
 ## Normas consultadas e alterações identificadas
 

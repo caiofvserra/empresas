@@ -1,0 +1,689 @@
+<title>Observatório Crea-SP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Raleway:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: documento de planejamento em coluna única larga, faixas por seção, identidade Crea-SP (azul institucional + amarelo de destaque) */
+:root{
+  --bg:#F5F6F9;
+  --surface:#FFFFFF;
+  --surface-2:#EDF1F8;
+  --ink:#0E1B33;
+  --muted:#4E5B73;
+  --line:#D8DEE9;
+  --primary:#082D74;
+  --primary-deep:#01224D;
+  --accent:#FABD07;
+  --accent-ink:#2A1F00;
+  --accent-soft:#FFF4CF;
+  --tertiary:#3182CE;
+  --tint:#E3EBF8;
+  --ok:#1F7A4D;
+  --warn:#9A6200;
+  --font-display:"Raleway","Segoe UI",system-ui,sans-serif;
+  --font-body:"Lato","Segoe UI",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1322;--surface:#121D31;--surface-2:#18253D;--ink:#E7ECF5;--muted:#A3AFC4;--line:#26344F;
+    --primary:#9DBBF2;--primary-deep:#06142B;--accent:#FABD07;--accent-ink:#2A1F00;--accent-soft:#3A2F0B;
+    --tertiary:#6AA8EA;--tint:#1B2C4C;--ok:#5FC795;--warn:#E9B44C;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1322;--surface:#121D31;--surface-2:#18253D;--ink:#E7ECF5;--muted:#A3AFC4;--line:#26344F;
+  --primary:#9DBBF2;--primary-deep:#06142B;--accent:#FABD07;--accent-ink:#2A1F00;--accent-soft:#3A2F0B;
+  --tertiary:#6AA8EA;--tint:#1B2C4C;--ok:#5FC795;--warn:#E9B44C;color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--tertiary)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;line-height:1.2;margin:0}
+h2{font-size:clamp(1.5rem,1.2rem + 1.2vw,2rem);font-weight:800;color:var(--ink)}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+.prose{max-width:68ch}
+.eyebrow{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+code,.mono{font-family:var(--font-mono);font-size:.86em}
+.num{font-variant-numeric:tabular-nums}
+
+/* Cabeçalho */
+.masthead{background:var(--primary-deep);color:#F2F5FB}
+.masthead .wrap{padding-block:56px 40px;display:grid;gap:22px}
+.masthead .eyebrow{color:#AFC0DE}
+.masthead h1{font-size:clamp(2.2rem,1.6rem + 3vw,3.6rem);font-weight:800;letter-spacing:-.01em;color:#FFFFFF}
+.masthead h1 .mark{box-shadow:inset 0 -.18em 0 var(--accent)}
+.masthead .lede{font-size:1.15rem;max-width:62ch;color:#D9E2F2}
+.names{display:flex;flex-wrap:wrap;gap:10px}
+.names span{font-size:.85rem;border:1px solid #3A5584;border-radius:999px;padding:4px 12px;color:#D9E2F2}
+.names span b{color:#FFFFFF}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.toc a{font-size:.85rem;color:#FFFFFF;text-decoration:none;background:#0E3A82;border-radius:6px;padding:5px 10px}
+.toc a:hover{background:#174C9F}
+
+section{padding-block:48px;border-bottom:1px solid var(--line)}
+section .head{display:grid;gap:8px;margin-bottom:24px}
+
+/* Norte */
+.north{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:20px}
+.north div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:6px;align-content:start}
+.north b{font-family:var(--font-display);font-size:1rem}
+.north small{color:var(--muted);font-size:.85rem;line-height:1.45}
+.north small .fx{display:inline;font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-right:4px}
+.thesis{font-family:var(--font-display);font-weight:700;font-size:clamp(1.15rem,1rem + .6vw,1.45rem);line-height:1.35;max-width:52ch;border-left:4px solid var(--accent);padding-left:16px}
+
+/* Ponto de partida */
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:6px;align-content:start}
+.fact .k{font-family:var(--font-display);font-weight:800;font-size:1.05rem;color:var(--primary)}
+.fact p{font-size:.92rem;color:var(--muted)}
+
+/* Teses de valor */
+.values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.value{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:12px;align-content:start}
+.value header{display:flex;gap:12px;align-items:baseline}
+.value .tag{font-family:var(--font-mono);font-size:.75rem;background:var(--accent);color:var(--accent-ink);border-radius:4px;padding:1px 6px;flex:none}
+.value dl{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:6px 12px;margin:0;font-size:.92rem}
+.value dt{color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+.value dd{margin:0}
+.value.lead{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
+
+/* Diagrama */
+.figure{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto}
+.figure svg{display:block;min-width:820px;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.85rem;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.n-int rect{fill:var(--tint);stroke:var(--primary);stroke-width:1.5}
+.n-ext rect{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+.n-dim rect{fill:var(--surface);stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 4}
+.n-t{fill:var(--ink);font-family:var(--font-display);font-weight:700;font-size:14px}
+.n-s{fill:var(--muted);font-family:var(--font-body);font-size:11.5px}
+.edge{stroke:var(--muted);stroke-width:1.3;fill:none}
+.e-l{fill:var(--primary);font-family:var(--font-body);font-size:11px;font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+
+/* Roteiro */
+.gantt{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 16px 8px}
+.g-row{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:12px;align-items:center;padding-block:7px;border-bottom:1px dashed var(--line)}
+.g-row:last-child{border-bottom:0}
+.g-row .lbl{font-size:.9rem;font-weight:700}
+.g-row .lbl span{font-family:var(--font-mono);font-weight:500;color:var(--muted);margin-right:6px}
+.track{position:relative;height:22px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(12.5% - 1px),var(--line) calc(12.5% - 1px),var(--line) 12.5%)}
+.bar{position:absolute;top:3px;height:16px;border-radius:4px;background:var(--primary)}
+.bar.par{background:var(--tertiary)}
+.bar.ext{background:var(--accent)}
+.g-axis .track{background:none;height:18px}
+.g-axis .track span{position:absolute;transform:translateX(-50%);font-family:var(--font-mono);font-size:.72rem;color:var(--muted)}
+.g-axis .track span:first-child{transform:none}
+.g-axis .track span:last-child{transform:translateX(-100%)}
+
+.stages{display:grid;gap:14px;margin-top:20px}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:grid;grid-template-columns:minmax(0,14rem) minmax(0,1fr);gap:8px 24px}
+.stage .id{display:grid;gap:4px;align-content:start}
+.stage .id .eyebrow{color:var(--primary)}
+.stage .id .when{font-family:var(--font-mono);font-size:.8rem;color:var(--muted)}
+.stage ul{margin:0;padding-left:1.1rem;display:grid;gap:4px;font-size:.93rem}
+.stage .done{margin-top:10px;font-size:.88rem;background:var(--surface-2);border-radius:6px;padding:8px 12px}
+.stage .done b{color:var(--ok)}
+
+/* Tabelas */
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:760px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--font-display);font-weight:700;font-size:.82rem;color:var(--muted);background:var(--surface-2);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.first{font-weight:700;min-width:11rem}
+.wave{display:inline-block;font-family:var(--font-mono);font-size:.74rem;border-radius:4px;padding:1px 7px;white-space:nowrap}
+.w1{background:var(--primary);color:var(--surface)}
+.w2{background:var(--tertiary);color:#FFFFFF}
+.w3{background:var(--accent);color:var(--accent-ink)}
+.w4{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.pri{font-family:var(--font-mono);font-weight:500;font-size:.8rem;white-space:nowrap}
+.pri.a{color:var(--ok)} .pri.b{color:var(--warn)} .pri.c{color:var(--muted)}
+.group-row td{background:var(--tint);font-family:var(--font-display);font-weight:800;font-size:.85rem;color:var(--primary)}
+
+/* Exploração */
+.explore{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px;align-content:start}
+.ex p{font-size:.92rem;color:var(--muted)}
+.ex .needs{font-size:.8rem;font-family:var(--font-mono);color:var(--primary)}
+
+/* Governança */
+.raci{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.raci div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;gap:4px;align-content:start}
+.raci b{font-family:var(--font-mono);font-size:.85rem;color:var(--primary)}
+.raci span{font-size:.9rem}
+
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.list li{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:.93rem}
+.list li b{display:block;font-family:var(--font-display)}
+pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;font-family:var(--font-mono);font-size:.82rem;line-height:1.55;color:var(--ink)}
+pre .c{color:var(--muted)}
+
+.decide{display:grid;gap:12px;counter-reset:d}
+.decide li{list-style:none;background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;padding:14px 16px;display:grid;gap:4px}
+.decide li b{font-family:var(--font-display)}
+.decide{padding:0;margin:0}
+.note{font-size:.88rem;color:var(--muted);max-width:75ch;margin-top:14px}
+footer{padding-block:32px;color:var(--muted);font-size:.85rem}
+
+@media (max-width:900px){
+  .north{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .facts,.explore,.raci{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .values,.cols{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:600px){
+  .north,.facts,.explore,.raci{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-template-columns:minmax(0,1fr)}
+  .g-row{grid-template-columns:minmax(0,1fr);gap:4px}
+  .value dl{grid-template-columns:minmax(0,1fr)}
+  .value dt{padding-top:6px}
+  .masthead .wrap{padding-block:40px 32px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Projeto de dados estratégicos do Crea-SP · Plano em etapas · versão de 29/10/2026, revisão 2</p>
+    <h1><span class="mark">Observatório</span> Crea-SP</h1>
+    <p class="lede">Inteligência estratégica da engenharia, da agronomia e das geociências paulistas. Um programa que junta as bases internas do Conselho com dados públicos e de parceiros para decidir onde fiscalizar, quem trazer para o registro, onde a sociedade corre risco e o que o Crea-SP deve propor ao poder público.</p>
+    <div class="names" aria-label="Nomes avaliados">
+      <span><b>Observatório Crea-SP</b> · recomendado: serve à gestão interna e a uma face pública</span>
+      <span>Radar Crea-SP · mais operacional, centrado em fiscalização</span>
+      <span>Atlas da Engenharia Paulista · mais editorial, centrado em publicação</span>
+    </div>
+    <nav class="toc" aria-label="Seções">
+      <a href="#norte">Visão e norte</a>
+      <a href="#partida">Ponto de partida</a>
+      <a href="#valor">Valor estratégico</a>
+      <a href="#grafo">Grafo de chaves</a>
+      <a href="#etapas">Etapas</a>
+      <a href="#paineis">Painéis primeiro</a>
+      <a href="#integracoes">Integrações</a>
+      <a href="#acordos">Acordos</a>
+      <a href="#exploracao">Exploração avançada</a>
+      <a href="#governanca">Governança e riscos</a>
+      <a href="#decisoes">Decisões</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section id="norte"><div class="wrap">
+  <div class="head"><p class="eyebrow">Visão</p><h2>Do cadastro que reage ao conselho que antecipa</h2></div>
+  <p class="thesis">Toda decisão relevante do Crea-SP, de onde mandar um fiscal até o que dizer ao legislador, apoiada em dado confiável, atualizado e cruzado com o que outros órgãos já sabem.</p>
+  <p class="prose" style="margin-top:16px">O Crea-SP já registra quem pode exercer (profissionais e empresas) e o que foi declarado (ARTs). O que falta é enxergar o que acontece fora do sistema: a empresa aberta ontem com CNAE de engenharia, a obra licenciada pela prefeitura sem ART, o contrato público ganho por quem não tem responsável técnico. O valor do projeto está nesses cruzamentos. Quatro indicadores-norte orientam todas as etapas:</p>
+  <div class="north">
+    <div><b>Cobertura cadastral estimada</b><small><b class="fx">Fórmula</b> estabelecimentos ativos em SP (CNPJ completo) com CNAE principal ou secundário da lista Crea-SP e registro ou visto vigente, ÷ todos esses estabelecimentos.<br><b class="fx">Data</b> competência do arquivo da Receita e corte do cadastro no mesmo mês.<br><b class="fx">Leitura</b> mostrar à parte vigente, só histórico e sem correspondência, e “Sim” à parte de “Passível”. Sem correspondência não quer dizer irregular.</small></div>
+    <div><b>Conversão da fiscalização</b><small><b class="fx">Fórmula</b> ações fiscais iniciadas no trimestre com regularização (registro, RT, ART ou baixa) em até 180 dias, ÷ ações iniciadas no trimestre.<br><b class="fx">Data</b> coorte pela data da ação.<br><b class="fx">Leitura</b> associação no tempo, não prova de que a ação causou a regularização.</small></div>
+    <div><b>Receita atribuível</b><small><b class="fx">Fórmula</b> anuidades, ARTs e multas efetivamente recebidas de casos abertos a partir de um indício do Observatório, em até 12 meses da abertura.<br><b class="fx">Data</b> data do pagamento, não do lançamento.<br><b class="fx">Leitura</b> associação, não efeito causal; estornos descontados.</small></div>
+    <div><b>Tempo até agir</b><small><b class="fx">Fórmula</b> mediana de dias entre a entrada do indício na base e a primeira ação fiscal registrada sobre ele.<br><b class="fx">Corte</b> por GRE e tipo de indício.<br><b class="fx">Leitura</b> indícios ainda sem ação entram como abertos, não como zero.</small></div>
+  </div>
+  <p class="note">Linha de base de cada indicador medida na Etapa 0. As metas só devem ser fixadas depois de dois ciclos de medição. Cada indicador terá ficha completa (unidade, fórmula, denominador, grão, data de referência, filtros, tratamento do desconhecido e responsável pela validação), no formato dos 34 casos de uso do anexo técnico em <code>planejamento-fontes-2026-10/CASOS_USO.md</code>.</p>
+</div></section>
+
+<section id="partida"><div class="wrap">
+  <div class="head"><p class="eyebrow">Ponto de partida</p><h2>O que já temos, tirado dos anexos e do repositório</h2></div>
+  <div class="facts">
+    <div class="fact"><span class="k">UDE já existe no organograma</span><p>A Unidade de Inteligência de Dados e Informações Estratégicas, no Gabinete (organograma de março de 2026), é a dona natural do Observatório. A EDAD, na SUPTEC, cuida da administração de dados.</p></div>
+    <div class="fact"><span class="k">14 GREs como recorte territorial</span><p>De Araçatuba (GRE 1) a Santo André (GRE 14), subdivididas em UGIs e UOPs. Todo painel deve descer até município e subir até GRE.</p></div>
+    <div class="fact"><span class="k">Lista CNAE Crea-SP</span><p>Revisão de março de 2025: 702 subclasses, 638 marcadas “Sim” (obrigação de registro) e 64 “Passível de obrigação”. É o universo de análise para medir o mercado fora do Conselho; o CNAE sozinho não prova obrigação nem atividade efetiva.</p></div>
+    <div class="fact"><span class="k">ART rica em chaves</span><p>Pela Res. Confea 1.137/2023 a ART traz CNPJ/CPF do contratante, valor, endereço e coordenadas da obra e se usa recurso público. Dá para cruzar com contratos, alvarás e mapas.</p></div>
+    <div class="fact"><span class="k">Rito fiscal normatizado</span><p>Lei 5.194/66 (registro, art. 59), Lei 6.496/77 (ART) e Res. 1.008/2004 (ação, notificação, auto, defesa, julgamento, dívida ativa). Cada etapa vira um evento datado no modelo.</p></div>
+    <div class="fact"><span class="k">Protótipos V4 a V18</span><p>O repositório já tem o painel de empresas (V18, oito abas, catálogo de indicadores) com dados internos demonstrativos e fontes públicas reais. Bases internas em SQL Server e Db2 via gateway.</p></div>
+  </div>
+</div></section>
+
+<section id="valor"><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Criação de valor estratégico · o centro do projeto</p>
+    <h2>Oito teses de valor, cada uma com a decisão que muda</h2>
+    <p class="prose">Um painel só cria valor quando muda uma decisão de alguém com nome e cargo. Cada tese abaixo diz a pergunta, o cruzamento que responde, a decisão que muda, como provar que deu resultado e qual unidade é dona. As duas primeiras são as de retorno mais rápido.</p>
+  </div>
+  <div class="values">
+    <article class="value lead">
+      <header><span class="tag">T1</span><h3>Trazer o mercado de fora para dentro</h3></header>
+      <dl>
+        <dt>Pergunta</dt><dd>Quantos estabelecimentos ativos em SP têm CNAE da lista do Crea-SP e não têm registro localizado? Onde estão?</dd>
+        <dt>Cruzamento</dt><dd>CNPJ completo da Receita (aberto, mensal) × lista CNAE Crea-SP, com “Sim” e “Passível” separados × cadastro PJ na data do arquivo, por município, GRE e câmara.</dd>
+        <dt>Decisão</dt><dd>Lista priorizada para análise, orientação e campanha de registro; contato no momento da abertura da empresa. Nenhum auto sai só do CNAE.</dd>
+        <dt>Prova de valor</dt><dd>Novos registros e anuidades vindos da lista; cobertura subindo por câmara.</dd>
+        <dt>Dono</dt><dd>SUPFIS, com SUPCOR na abordagem orientativa.</dd>
+      </dl>
+    </article>
+    <article class="value lead">
+      <header><span class="tag">T2</span><h3>Achar a obra e o serviço sem ART identificada</h3></header>
+      <dl>
+        <dt>Pergunta</dt><dd>Que obras e serviços técnicos outros órgãos já conhecem e não têm ART identificada?</dd>
+        <dt>Cruzamento</dt><dd>Contratos do PNCP e do TCE-SP, alvarás municipais, AVCB dos Bombeiros e geração distribuída solar da ANEEL × ARTs. Vínculo em três graus: confirmado por documento (nº do contrato ou processo na ART), candidato (mesmo CNPJ, local e período, para revisão) e não identificado. A taxa sempre informa quantos registros tinham chave suficiente para a busca.</dd>
+        <dt>Decisão</dt><dd>Verificação dirigida aos contratos e licenças sem vínculo identificado, começando pelos de maior valor. Vínculo não identificado é prioridade para verificar, não infração.</dd>
+        <dt>Prova de valor</dt><dd>ARTs registradas após notificação; valor das ARTs recuperadas.</dd>
+        <dt>Dono</dt><dd>SUPFIS (GPF e GREs).</dd>
+      </dl>
+    </article>
+    <article class="value">
+      <header><span class="tag">T3</span><h3>Responsabilidade técnica de verdade</h3></header>
+      <dl>
+        <dt>Pergunta</dt><dd>Há profissionais que são RT de empresas demais, longe demais, sem nunca assinar ART por elas?</dd>
+        <dt>Cruzamento</dt><dd>Vínculos de RT × ARTs assinadas × distância entre domicílio e sedes. Sócios entram só com CPF completo (Conecta ou acordo): o quadro societário aberto mascara o CPF, e nome sozinho não identifica o profissional.</dd>
+        <dt>Decisão</dt><dd>Apuração de possível acobertamento (art. 6º da Lei 5.194/66) e encaminhamento ético.</dd>
+        <dt>Prova de valor</dt><dd>Casos confirmados pelas câmaras; queda de RTs sem atividade.</dd>
+        <dt>Dono</dt><dd>SUPFIS e SUPCOL.</dd>
+      </dl>
+    </article>
+    <article class="value">
+      <header><span class="tag">T4</span><h3>Renovar a base de profissionais</h3></header>
+      <dl>
+        <dt>Pergunta</dt><dd>Quantos se formam em engenharia e agronomia em SP por ano, onde, e quantos chegam ao registro?</dd>
+        <dt>Cruzamento</dt><dd>Duas camadas. INEP (concluintes por curso, IES e município) é agregado e só permite comparar com os registros novos lado a lado. A taxa real exige a lista nominal de formandos das IES (registro na colação), nas instituições que aderirem.</dd>
+        <dt>Decisão</dt><dd>Quais IES priorizar para o registro na colação, Crea Jovem e estágio.</dd>
+        <dt>Prova de valor</dt><dd>Percentual de concluintes registrados em até 12 meses, nas IES com lista nominal, sempre com a cobertura de IES informada.</dd>
+        <dt>Dono</dt><dd>SUPCOR (EAPEIE) e GPP.</dd>
+      </dl>
+    </article>
+    <article class="value">
+      <header><span class="tag">T5</span><h3>Valorizar o profissional no mercado</h3></header>
+      <dl>
+        <dt>Pergunta</dt><dd>Quanto ganham engenheiros contratados em SP e que parcela recebe abaixo do salário mínimo profissional da Lei 4.950-A/66, considerada a jornada contratada?</dd>
+        <dt>Cruzamento</dt><dd>Microdados não identificados da RAIS e do Novo CAGED pelas famílias CBO de engenharia (2142 a 2149, 2221, 2134) × município × CNAE do empregador × horas contratadas. O piso é de 6 salários mínimos para 6 horas e muda com a jornada; a regra é versionada e validada pela GAJ. Resultado só em agregado: não identifica empresa nem empregado.</dd>
+        <dt>Decisão</dt><dd>Posicionamento público, pauta com o Ministério do Trabalho e dados para entidades de classe.</dd>
+        <dt>Prova de valor</dt><dd>Publicações e citações; ações conjuntas com o MTE.</dd>
+        <dt>Dono</dt><dd>Presidência, SUPCOR e entidades de classe.</dd>
+      </dl>
+    </article>
+    <article class="value">
+      <header><span class="tag">T6</span><h3>Proteger a sociedade onde o risco é maior</h3></header>
+      <dl>
+        <dt>Pergunta</dt><dd>Em que municípios e atividades se concentram acidentes, barragens de risco, obras paralisadas e ocorrências da Defesa Civil?</dd>
+        <dt>Cruzamento</dt><dd>SNISB (ANA), obras paralisadas do TCE-SP, acidentes de trabalho por CNAE (SmartLab do MPT), Defesa Civil SP × fiscalização realizada.</dd>
+        <dt>Decisão</dt><dd>Programas de fiscalização preventiva por categoria de risco.</dd>
+        <dt>Prova de valor</dt><dd>Cobertura fiscal das áreas de risco; tempo de resposta a ocorrências.</dd>
+        <dt>Dono</dt><dd>SUPFIS e Presidência.</dd>
+      </dl>
+    </article>
+    <article class="value">
+      <header><span class="tag">T7</span><h3>Gastar melhor o tempo do fiscal e do caixa</h3></header>
+      <dl>
+        <dt>Pergunta</dt><dd>Qual GRE converte mais por ação? Que débitos têm mais chance de recuperação?</dd>
+        <dt>Cruzamento</dt><dd>Fiscalização × financeiro × dívida ativa × atendimento, por GRE, UGI e origem do caso.</dd>
+        <dt>Decisão</dt><dd>Alocação de fiscais, ordem de cobrança e protesto, metas por regional.</dd>
+        <dt>Prova de valor</dt><dd>Custo por regularização; taxa de recuperação da dívida.</dd>
+        <dt>Dono</dt><dd>SUPFIS, SUPADF e Equipe de Dívida Ativa.</dd>
+      </dl>
+    </article>
+    <article class="value">
+      <header><span class="tag">T8</span><h3>Antecipar a agenda pública</h3></header>
+      <dl>
+        <dt>Pergunta</dt><dd>Que projetos de lei, normas e decisões judiciais tocam o exercício profissional? Onde a Justiça precisa de perícia de engenharia?</dd>
+        <dt>Cruzamento</dt><dd>APIs da Câmara, do Senado e da ALESP, DOU e DOE-SP, DataJud do CNJ por assunto e comarca.</dd>
+        <dt>Decisão</dt><dd>Agenda institucional da Presidência; oferta de peritos registrados aos tribunais.</dd>
+        <dt>Prova de valor</dt><dd>Proposições acompanhadas a tempo; manifestações protocoladas.</dd>
+        <dt>Dono</dt><dd>Gabinete, Assessorias e GAJ.</dd>
+      </dl>
+    </article>
+  </div>
+</div></section>
+
+<section id="grafo"><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Mapa de cruzamentos</p>
+    <h2>Grafo de chaves: como as bases se encontram</h2>
+    <p class="prose">Cada caixa é uma entidade; cada linha, a chave que liga duas bases. O mapa detalhado de APIs vem da frente de pesquisa paralela e se encaixa nestas caixas. A regra prática: CNPJ completo, CPF/RNP, número da ART e código IBGE do município são as quatro chaves que todo conector precisa entregar limpas.</p>
+  </div>
+  <div class="figure">
+    <svg viewBox="0 0 1020 500" role="img" aria-labelledby="g-t g-d">
+      <title id="g-t">Grafo de chaves do Observatório Crea-SP</title>
+      <desc id="g-d">Entidades internas (empresa, profissional, ART, ação fiscal, débito) ligadas a fontes externas (Receita, contratos públicos, alvarás, INEP, DataJud, RAIS) por CNPJ, CPF, número de ART e município.</desc>
+      <!-- arestas -->
+      <line class="edge" x1="215" y1="70" x2="285" y2="70"/>
+      <line class="edge" x1="545" y1="70" x2="475" y2="70"/>
+      <line class="edge" x1="215" y1="200" x2="285" y2="200"/>
+      <line class="edge" x1="475" y1="200" x2="545" y2="200"/>
+      <line class="edge" x1="805" y1="200" x2="735" y2="200"/>
+      <line class="edge" x1="475" y1="330" x2="545" y2="330"/>
+      <line class="edge" x1="380" y1="98" x2="380" y2="172"/>
+      <line class="edge" x1="640" y1="98" x2="640" y2="172"/>
+      <line class="edge" x1="900" y1="172" x2="900" y2="98"/>
+      <line class="edge" x1="380" y1="228" x2="380" y2="302"/>
+      <line class="edge" x1="640" y1="228" x2="640" y2="302"/>
+      <line class="edge" x1="470" y1="98" x2="550" y2="172"/>
+      <line class="edge" x1="550" y1="228" x2="470" y2="302"/>
+      <line class="edge" x1="190" y1="302" x2="300" y2="228"/>
+      <line class="edge" x1="380" y1="358" x2="420" y2="427"/>
+      <line class="edge" x1="640" y1="358" x2="600" y2="427"/>
+      <line class="edge" x1="120" y1="358" x2="330" y2="445"/>
+      <line class="edge" x1="900" y1="358" x2="690" y2="445"/>
+      <!-- rótulos das arestas -->
+      <text class="e-l" x="250" y="62" text-anchor="middle">endereço</text>
+      <text class="e-l" x="510" y="62" text-anchor="middle">contratante</text>
+      <text class="e-l" x="250" y="192" text-anchor="middle">curso</text>
+      <text class="e-l" x="510" y="192" text-anchor="middle">vínculo RT</text>
+      <text class="e-l" x="770" y="192" text-anchor="middle">CNPJ</text>
+      <text class="e-l" x="510" y="322" text-anchor="middle">multa</text>
+      <text class="e-l" x="388" y="139">RNP</text>
+      <text class="e-l" x="648" y="139">fornecedor</text>
+      <text class="e-l" x="908" y="139">CNAE</text>
+      <text class="e-l" x="388" y="269">autuado</text>
+      <text class="e-l" x="648" y="269">devedor</text>
+      <text class="e-l" x="510" y="139" text-anchor="middle">contratada</text>
+      <text class="e-l" x="510" y="269" text-anchor="middle">autuada</text>
+      <text class="e-l" x="232" y="268" text-anchor="middle">perito</text>
+      <text class="e-l" x="215" y="410" text-anchor="middle">comarca</text>
+      <text class="e-l" x="805" y="410" text-anchor="middle">município</text>
+      <!-- nós linha 1 -->
+      <g class="n-ext"><rect x="25" y="42" width="190" height="56" rx="8"/><text class="n-t" x="120" y="66" text-anchor="middle">Alvarás · AVCB · GD</text><text class="n-s" x="120" y="84" text-anchor="middle">prefeituras, Bombeiros, ANEEL</text></g>
+      <g class="n-int"><rect x="285" y="42" width="190" height="56" rx="8"/><text class="n-t" x="380" y="66" text-anchor="middle">ART</text><text class="n-s" x="380" y="84" text-anchor="middle">nº · valor · coordenadas</text></g>
+      <g class="n-ext"><rect x="545" y="42" width="190" height="56" rx="8"/><text class="n-t" x="640" y="66" text-anchor="middle">Contratos públicos</text><text class="n-s" x="640" y="84" text-anchor="middle">PNCP · TCE-SP</text></g>
+      <g class="n-dim"><rect x="805" y="42" width="190" height="56" rx="8"/><text class="n-t" x="900" y="66" text-anchor="middle">CNAE subclasse</text><text class="n-s" x="900" y="84" text-anchor="middle">→ câmara especializada</text></g>
+      <!-- nós linha 2 -->
+      <g class="n-ext"><rect x="25" y="172" width="190" height="56" rx="8"/><text class="n-t" x="120" y="196" text-anchor="middle">Cursos de engenharia</text><text class="n-s" x="120" y="214" text-anchor="middle">INEP · e-MEC</text></g>
+      <g class="n-int"><rect x="285" y="172" width="190" height="56" rx="8"/><text class="n-t" x="380" y="196" text-anchor="middle">Profissional</text><text class="n-s" x="380" y="214" text-anchor="middle">CPF · RNP · título</text></g>
+      <g class="n-int"><rect x="545" y="172" width="190" height="56" rx="8"/><text class="n-t" x="640" y="196" text-anchor="middle">Empresa</text><text class="n-s" x="640" y="214" text-anchor="middle">CNPJ raiz e estabelecimento</text></g>
+      <g class="n-ext"><rect x="805" y="172" width="190" height="56" rx="8"/><text class="n-t" x="900" y="196" text-anchor="middle">Receita Federal</text><text class="n-s" x="900" y="214" text-anchor="middle">CNPJ · CNAE · sócios</text></g>
+      <!-- nós linha 3 -->
+      <g class="n-ext"><rect x="25" y="302" width="190" height="56" rx="8"/><text class="n-t" x="120" y="326" text-anchor="middle">Perícias judiciais</text><text class="n-s" x="120" y="344" text-anchor="middle">DataJud · TJSP</text></g>
+      <g class="n-int"><rect x="285" y="302" width="190" height="56" rx="8"/><text class="n-t" x="380" y="326" text-anchor="middle">Ação fiscal e auto</text><text class="n-s" x="380" y="344" text-anchor="middle">rito da Res. 1.008/2004</text></g>
+      <g class="n-int"><rect x="545" y="302" width="190" height="56" rx="8"/><text class="n-t" x="640" y="326" text-anchor="middle">Débito e dívida ativa</text><text class="n-s" x="640" y="344" text-anchor="middle">anuidade · multa · protesto</text></g>
+      <g class="n-ext"><rect x="805" y="302" width="190" height="56" rx="8"/><text class="n-t" x="900" y="326" text-anchor="middle">Emprego e salário</text><text class="n-s" x="900" y="344" text-anchor="middle">RAIS · CAGED · CBO</text></g>
+      <!-- dimensão territorial -->
+      <g class="n-dim"><rect x="330" y="427" width="360" height="56" rx="8"/><text class="n-t" x="510" y="451" text-anchor="middle">Município IBGE (7 dígitos) → UGI → GRE</text><text class="n-s" x="510" y="469" text-anchor="middle">dimensão comum a todas as bases</text></g>
+    </svg>
+    <div class="legend">
+      <span><i style="background:var(--tint);border:1.5px solid var(--primary)"></i>Base interna do Crea-SP</span>
+      <span><i style="background:var(--accent-soft);border:1.5px solid var(--accent)"></i>Fonte externa</span>
+      <span><i style="background:var(--surface);border:1.5px dashed var(--muted)"></i>Dimensão de referência</span>
+    </div>
+  </div>
+  <h3 style="margin:32px 0 8px">Regras de leitura dos cruzamentos</h3>
+  <p class="prose" style="margin-bottom:14px">Toda ligação recebe um de três status: <b>confirmada</b> por documento, <b>candidata</b> (semelhança de nome, endereço ou período, para revisão humana) ou <b>contexto agregado</b>. Candidatas ficam fora das contagens confirmadas. A situação no Crea-SP é sempre consultada na data do fato, não na data de hoje.</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Cruzamento</th><th>O que se pode concluir</th><th>O que não se pode concluir</th></tr></thead>
+      <tbody>
+        <tr><td class="first">Receita × Crea-SP</td><td>Estabelecimento com ou sem registro vigente na data do arquivo da Receita</td><td>Que a empresa é irregular só pelo CNAE ou pela falta de correspondência</td></tr>
+        <tr><td class="first">Contrato público × ART</td><td>Vínculo confirmado (nº do contrato ou processo na ART) ou candidato para revisão</td><td>Que falta ART porque a busca por CNPJ e período não achou; que qualquer ART da empresa cobre o contrato</td></tr>
+        <tr><td class="first">Obra ou instalação × empresa</td><td>Participação com papel explícito: operador, executora, proprietário, concessionária</td><td>Que o operador ou o proprietário executou a obra</td></tr>
+        <tr><td class="first">Quadro societário × profissional</td><td>Sociedade identificada quando há CPF completo</td><td>Que o sócio é RT, empregado ou diretor técnico; o QSA aberto mascara o CPF</td></tr>
+        <tr><td class="first">RAIS e CAGED × empresas</td><td>Emprego e salário por município, CNAE, CBO e jornada, em agregado</td><td>Quanto uma empresa paga ou se ela descumpre o piso</td></tr>
+        <tr><td class="first">INEP × registro</td><td>Concluintes e registros novos lado a lado, por área e região</td><td>Taxa de registro dos formados sem a lista nominal das IES</td></tr>
+        <tr><td class="first">DataJud × perícia</td><td>Processos por classe, assunto e comarca</td><td>Que houve perícia ou que o perito é engenheiro</td></tr>
+        <tr><td class="first">Geografia</td><td>Município do órgão, do fornecedor e da execução, cada um no seu campo</td><td>Que a obra fica onde está o órgão contratante ou a sede do fornecedor</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Regras completas, com grão de cada fato e temporalidade obrigatória, em <code>planejamento-fontes-2026-10/ARQUITETURA.md</code> no repositório.</p>
+</div></section>
+
+<section id="etapas"><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Roteiro em 24 meses</p>
+    <h2>Oito etapas, com sobreposição planejada</h2>
+    <p class="prose">As etapas se sobrepõem de propósito: acordos com outros órgãos levam meses e começam cedo, enquanto os primeiros painéis usam só dados internos e fontes abertas. Cada etapa tem um critério objetivo de saída.</p>
+  </div>
+  <div class="gantt" role="img" aria-label="Cronograma das etapas de 0 a 24 meses">
+    <div class="g-row g-axis"><span></span><div class="track"><span style="left:0">mês 0</span><span style="left:25%">6</span><span style="left:50%">12</span><span style="left:75%">18</span><span style="left:100%">24</span></div></div>
+    <div class="g-row"><span class="lbl"><span>E0</span>Fundação e governança</span><div class="track"><span class="bar" style="left:0;width:8.33%"></span></div></div>
+    <div class="g-row"><span class="lbl"><span>E1</span>Base interna confiável</span><div class="track"><span class="bar" style="left:4.17%;width:16.67%"></span></div></div>
+    <div class="g-row"><span class="lbl"><span>E2</span>Painéis da onda 1</span><div class="track"><span class="bar" style="left:12.5%;width:12.5%"></span></div></div>
+    <div class="g-row"><span class="lbl"><span>E3</span>Integrações públicas rotineiras</span><div class="track"><span class="bar" style="left:16.67%;width:25%"></span></div></div>
+    <div class="g-row"><span class="lbl"><span>E4</span>Malha fina e ondas 2 e 3</span><div class="track"><span class="bar" style="left:25%;width:37.5%"></span></div></div>
+    <div class="g-row"><span class="lbl"><span>E5</span>Acordos interinstitucionais</span><div class="track"><span class="bar ext" style="left:8.33%;width:66.67%"></span></div></div>
+    <div class="g-row"><span class="lbl"><span>E6</span>Exploração avançada</span><div class="track"><span class="bar par" style="left:37.5%;width:62.5%"></span></div></div>
+    <div class="g-row"><span class="lbl"><span>E7</span>Observatório público</span><div class="track"><span class="bar par" style="left:50%;width:50%"></span></div></div>
+  </div>
+
+  <div class="stages">
+    <article class="stage">
+      <div class="id"><span class="eyebrow">E0</span><h3>Fundação e governança</h3><span class="when">meses 0 a 2</span></div>
+      <div>
+        <ul>
+          <li>Termo de abertura assinado pela Presidência, com a UDE como dona do programa e a GPP ligando ao planejamento estratégico.</li>
+          <li>Comitê de dados: UDE, EDAD (SUPTEC), SUPFIS, SUPADF, DPO/LGPD e um representante das GREs.</li>
+          <li>Inventário das bases internas: cadastro PF e PJ, ART/CAT/CAO, fiscalização, financeiro e dívida ativa, CreaOne e protocolos, colegiados, ouvidoria e denúncias. Para cada uma: sistema, dono, tabelas, histórico disponível.</li>
+          <li>Bases legais da LGPD e relatório de impacto para os cruzamentos com dados pessoais.</li>
+          <li>Linha de base dos quatro indicadores-norte e confirmação do nome.</li>
+        </ul>
+        <p class="done"><b>Pronto quando</b> cada base interna tiver dono, acesso de leitura concedido e entrada no inventário.</p>
+      </div>
+    </article>
+    <article class="stage">
+      <div class="id"><span class="eyebrow">E1</span><h3>Base interna confiável</h3><span class="when">meses 1 a 5</span></div>
+      <div>
+        <ul>
+          <li>Ambiente de dados com área de chegada e camada curada, ligado ao gateway que já atende SQL Server e Db2.</li>
+          <li>Modelo canônico com unidades separadas: empresa-raiz, estabelecimento, profissional, registro, vínculo de RT, ART, ação fiscal, auto, débito e atendimento.</li>
+          <li>Dimensões padrão: município IBGE ligado a UGI e GRE, CNAE subclasse ligado a câmara especializada, calendário e competência.</li>
+          <li>Três contagens que nunca se somam como sinônimos: raiz CNPJ (empresa), estabelecimento (CNPJ completo) e registro.</li>
+          <li>Três universos de SP: estabelecimento localizado em SP, atividade executada em SP (mesmo por empresa de fora) e empresa paulista atuando fora. Município do órgão, do fornecedor e da execução em campos separados; o que a fonte não informa fica nulo.</li>
+          <li>Toda carga guarda competência da origem, data do evento, vigência, data de extração e versão da regra. Estoque, fluxo, evento e coorte são medidas separadas, e a situação é lida na data do fato.</li>
+          <li>Testes de qualidade automáticos e dicionário de dados publicado internamente.</li>
+        </ul>
+        <p class="done"><b>Pronto quando</b> os totais baterem com o Relatório de Gestão e com os relatórios oficiais, com toda diferença explicada.</p>
+      </div>
+    </article>
+    <article class="stage">
+      <div class="id"><span class="eyebrow">E2</span><h3>Painéis da onda 1</h3><span class="when">meses 3 a 6</span></div>
+      <div>
+        <ul>
+          <li>Painel da Presidência, painel de Empresas e cobertura (evolução do V18) e painel de Fiscalização.</li>
+          <li>Antes de usar o V18 como especificação, decidir cada uma das 12 lacunas da revisão do repositório: corrigir, rotular como demonstrativo ou retirar. Exemplos: ART “ligada” ao contrato por qualquer ART da empresa entre 30 dias antes e 60 depois, CBO mecânico atribuído à Eng. Química, sócios e salários simulados.</li>
+          <li>Segurança por linha para cada GRE ver a própria regional, atualização automática diária ou semanal.</li>
+          <li>Rito mensal de resultados com as GREs, usando os painéis como pauta.</li>
+        </ul>
+        <p class="done"><b>Pronto quando</b> os painéis forem usados em duas reuniões de diretoria seguidas.</p>
+      </div>
+    </article>
+    <article class="stage">
+      <div class="id"><span class="eyebrow">E3</span><h3>Integrações públicas rotineiras</h3><span class="when">meses 4 a 10</span></div>
+      <div>
+        <ul>
+          <li>Um conector por fonte, com competência, data de captura, volume, rejeições e hash: CNPJ da Receita (mensal), PNCP (diário), IBGE e Seade, BCB, RAIS e CAGED, INEP, ANEEL, DataJud, Câmara, Senado e ALESP.</li>
+          <li>Catálogo único de fontes (Atlas de Fontes unificado, em CSV e XLSX), com nível de evidência de cada fonte e script de validação versionado.</li>
+          <li>Alerta quando uma fonte atrasa ou muda de formato.</li>
+        </ul>
+        <p class="done"><b>Pronto quando</b> cada conector rodar três ciclos seguidos sem intervenção manual.</p>
+      </div>
+    </article>
+    <article class="stage">
+      <div class="id"><span class="eyebrow">E4</span><h3>Malha fina e painéis das ondas 2 e 3</h3><span class="when">meses 6 a 15</span></div>
+      <div>
+        <ul>
+          <li>Malha fina v1: indícios por regra (CNAE da lista sem registro localizado, contrato público sem ART identificada, RT sem atividade, empresa baixada com registro ativo).</li>
+          <li>Cada indício carrega status (confirmado, candidato ou contexto), fonte, data e versão da regra. Nenhum indício vira auto automaticamente.</li>
+          <li>Ciclo fechado: cada indício vira caso no sistema de fiscalização e o resultado volta para o Observatório. Sem esse retorno não há como medir acerto nem valor.</li>
+          <li>Painéis de obras públicas, profissionais e formação, arrecadação e dívida, mercado de trabalho, atendimento e risco.</li>
+        </ul>
+        <p class="done"><b>Pronto quando</b> a taxa de confirmação de cada tipo de indício estiver medida e publicada para a SUPFIS.</p>
+      </div>
+    </article>
+    <article class="stage">
+      <div class="id"><span class="eyebrow">E5</span><h3>Acordos interinstitucionais</h3><span class="when">meses 2 a 18</span></div>
+      <div>
+        <ul>
+          <li>Primeiro bloco: TCE-SP, Prefeitura de São Paulo, Corpo de Bombeiros e JUCESP. Detalhes na seção de acordos.</li>
+          <li>Modelo padrão de acordo de cooperação técnica preparado pela GAJ, com cláusulas de LGPD, finalidade e contrapartida.</li>
+          <li>Piloto de 90 dias por acordo antes de ampliar.</li>
+        </ul>
+        <p class="done"><b>Pronto quando</b> ao menos dois acordos estiverem com dados chegando por rotina automática.</p>
+      </div>
+    </article>
+    <article class="stage">
+      <div class="id"><span class="eyebrow">E6</span><h3>Exploração avançada</h3><span class="when">meses 9 a 24</span></div>
+      <div>
+        <ul>
+          <li>Grafo de relacionamentos, classificação automática de objetos de contrato, score de risco, previsão de arrecadação, roteirização de fiscais e consulta em linguagem natural.</li>
+          <li>Cada iniciativa entra como piloto com hipótese, métrica e prazo; só vira produto se superar a regra simples que já existe.</li>
+        </ul>
+        <p class="done"><b>Pronto quando</b> um modelo estiver em uso pela fiscalização com ganho medido sobre a malha fina por regra.</p>
+      </div>
+    </article>
+    <article class="stage">
+      <div class="id"><span class="eyebrow">E7</span><h3>Observatório público</h3><span class="when">meses 12 a 24</span></div>
+      <div>
+        <ul>
+          <li>Portal com indicadores agregados da engenharia paulista: empresas, profissionais, formação, mercado de trabalho, obras públicas.</li>
+          <li>Anuário da Engenharia Paulista e notas técnicas trimestrais; dados abertos agregados para pesquisadores e imprensa.</li>
+        </ul>
+        <p class="done"><b>Pronto quando</b> o primeiro anuário for publicado e citado fora do Sistema Confea/Crea.</p>
+      </div>
+    </article>
+  </div>
+</div></section>
+
+<section id="paineis"><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Ordem dos painéis</p>
+    <h2>Quais painéis primeiro</h2>
+    <p class="prose">Critério de ordem: muda uma decisão já na primeira versão, usa dado interno ou aberto (sem esperar acordo), tem dono engajado e reaproveita o que o repositório já tem.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Painel</th><th>Pergunta principal</th><th>Dados</th><th>Depende de acordo</th><th>Onda</th></tr></thead>
+      <tbody>
+        <tr><td class="first">Presidência</td><td>Como estão base, ARTs, arrecadação e fiscalização por GRE, contra o ano anterior?</td><td>Internos</td><td>Não</td><td><span class="wave w1">Onda 1</span></td></tr>
+        <tr><td class="first">Empresas e cobertura</td><td>Quanto do mercado formal de engenharia está registrado, por câmara e GRE?</td><td>Internos + CNPJ aberto</td><td>Não</td><td><span class="wave w1">Onda 1</span></td></tr>
+        <tr><td class="first">Fiscalização</td><td>Quanto produzimos, onde o rito trava e quanto vira regularização?</td><td>Internos</td><td>Não</td><td><span class="wave w1">Onda 1</span></td></tr>
+        <tr><td class="first">Obras públicas e ART</td><td>Quais contratos de engenharia em SP não têm ART identificada, e quantos tinham chave para a busca?</td><td>PNCP + ART; TCE-SP depois</td><td>Parcial (TCE-SP)</td><td><span class="wave w2">Onda 2</span></td></tr>
+        <tr><td class="first">Malha fina v1</td><td>Que empresas fiscalizar primeiro, e por quê?</td><td>Internos + CNPJ + PNCP</td><td>Não</td><td><span class="wave w2">Onda 2</span></td></tr>
+        <tr><td class="first">Arrecadação e dívida ativa</td><td>Quanto recebemos, quanto está vencido e o que tem mais chance de recuperar?</td><td>Internos</td><td>Não</td><td><span class="wave w2">Onda 2</span></td></tr>
+        <tr><td class="first">Profissionais e formação</td><td>Quantos se formam, quantos se registram (taxa real nas IES com lista nominal), quantos interrompem o registro?</td><td>Internos + INEP</td><td>Não</td><td><span class="wave w2">Onda 2</span></td></tr>
+        <tr><td class="first">Mercado de trabalho e salário</td><td>Quantos engenheiros estão empregados e quanto ganham frente ao piso legal, por jornada?</td><td>RAIS, CAGED</td><td>Não (agregado)</td><td><span class="wave w3">Onda 3</span></td></tr>
+        <tr><td class="first">Atendimento e serviços</td><td>Quanto tempo leva cada serviço e onde estão as filas?</td><td>CreaOne, protocolos, agendamento, ouvidoria</td><td>Não</td><td><span class="wave w3">Onda 3</span></td></tr>
+        <tr><td class="first">Risco e segurança</td><td>Onde o risco à sociedade é maior e a fiscalização está presente?</td><td>ANA, Defesa Civil, SmartLab, TCE-SP</td><td>Parcial</td><td><span class="wave w3">Onda 3</span></td></tr>
+        <tr><td class="first">Licenças municipais × ART</td><td>Quais alvarás e AVCBs não têm ART identificada?</td><td>Prefeituras, Bombeiros</td><td>Sim</td><td><span class="wave w4">Onda 4</span></td></tr>
+        <tr><td class="first">Agenda pública e perícias</td><td>O que tramita no Legislativo e onde a Justiça pede perícia de engenharia?</td><td>Câmara, Senado, ALESP, DataJud</td><td>Não</td><td><span class="wave w4">Onda 4</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">O painel de Empresas não começa do zero: o catálogo V18 (oito abas, IDs VG, CAD, FIS e malha fina) vira a especificação, trocando os dados demonstrativos pelos reais da Etapa 1, depois de resolvidas as 12 lacunas da revisão (<code>planejamento-fontes-2026-10/REVISAO_REPOSITORIO.md</code>).</p>
+</div></section>
+
+<section id="integracoes"><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Integrações</p>
+    <h2>Cinco grupos de fontes, do mais fácil ao que exige acordo</h2>
+    <p class="prose">Resumo por grupo para planejar esforço. A lista completa de fontes, acesso, frequência e nível de evidência está no <a href="https://claude.ai/artifact/E12vAccMh1ubBVEbQorzFj">Atlas de Fontes do Crea-SP</a>, incluindo dados.gov.br e o catálogo Conecta gov.br.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Grupo</th><th>Fontes</th><th>Chave de ligação</th><th>Acesso</th></tr></thead>
+      <tbody>
+        <tr><td class="first">A. Sistemas do Crea-SP</td><td>Cadastro PF e PJ, ART/CAT/CAO, fiscalização (ações, notificações, autos), financeiro e dívida ativa, CreaOne e protocolos, colegiados, ouvidoria, programas (Capacita, CreaLab, Anuidade Zero)</td><td class="mono">CNPJ, CPF, RNP, nº ART, nº auto</td><td>SQL Server e Db2 via gateway</td></tr>
+        <tr><td class="first">B. Sistema Confea/Crea</td><td>Cadastro Nacional de ART (SIC), registro nacional, vistos de outros CREAs, normativos</td><td class="mono">RNP, nº ART</td><td>Solicitação ao Confea</td></tr>
+        <tr><td class="first">C. Federais abertas</td><td>Receita (CNPJ, CNAE, sócios), PNCP, IBGE (SIDRA, malhas, CEMPRE, PIB municipal), BCB, RAIS e CAGED, INEP, ANEEL, ANATEL, ANP, ANA, CEIS/CNEP, DataJud, Câmara, Senado, DOU, SmartLab</td><td class="mono">CNPJ, município, CNAE, CBO</td><td>Livre, rotina automática</td></tr>
+        <tr><td class="first">D. Estado e municípios de SP</td><td>TCE-SP, Seade, ALESP, DOE-SP, JUCESP, CETESB, Bombeiros (Via Fácil), Defesa Civil, Prefeitura de SP (GeoSampa e licenciamento), outras prefeituras</td><td class="mono">CNPJ, endereço, coordenadas</td><td>Parte aberta, parte por acordo</td></tr>
+        <tr><td class="first">E. Credenciadas</td><td>APIs do Conecta gov.br (CNPJ completo, CPF), RAIS identificada, comunicações de acidente de trabalho</td><td class="mono">CNPJ, CPF</td><td>Convênio ou adesão, verificar elegibilidade</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<section id="acordos"><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Acordos com outras instituições</p>
+    <h2>O que cada parceiro entrega e o que o Crea-SP oferece em troca</h2>
+    <p class="prose">Acordo que só pede dado não anda. Em cada linha há uma contrapartida concreta. A negociação passa pela URI e pela UCP (SUPADF), com minuta da GAJ e aval do DPO. Prioridade A começa no mês 2.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Instituição</th><th>Crea-SP recebe</th><th>Crea-SP oferece</th><th>Uso</th><th>Prioridade</th></tr></thead>
+      <tbody>
+        <tr class="group-row"><td colspan="5">Controle externo e Justiça</td></tr>
+        <tr><td class="first">TCE-SP</td><td>Contratos, obras e licitações municipais e estaduais; obras paralisadas</td><td>Verificação de registro, RT e ART das contratadas; alerta de empresa irregular em licitação</td><td>T2, T6</td><td><span class="pri a">A</span></td></tr>
+        <tr><td class="first">Ministério Público de SP</td><td>Denúncias e inquéritos com tema de engenharia</td><td>Laudos sobre exercício ilegal; dados de responsabilidade técnica</td><td>T3, T6</td><td><span class="pri b">B</span></td></tr>
+        <tr><td class="first">TJSP e CNJ</td><td>Perícias por assunto e comarca; cadastro de peritos</td><td>Validação de registro e atribuição dos peritos engenheiros</td><td>T8</td><td><span class="pri b">B</span></td></tr>
+        <tr class="group-row"><td colspan="5">Licenciamento e segurança</td></tr>
+        <tr><td class="first">Prefeitura de São Paulo (depois, sedes de GRE)</td><td>Alvarás de construção, habite-se, licenças de funcionamento</td><td>Checagem automática de ART no licenciamento; painel do município</td><td>T2</td><td><span class="pri a">A</span></td></tr>
+        <tr><td class="first">Corpo de Bombeiros (PMESP)</td><td>Projetos e AVCB/CLCB emitidos (Via Fácil)</td><td>Verificação do responsável técnico do projeto</td><td>T2, T6</td><td><span class="pri a">A</span></td></tr>
+        <tr><td class="first">CETESB</td><td>Licenças ambientais e atividades que exigem RT</td><td>Situação de registro e RT das licenciadas</td><td>T2</td><td><span class="pri b">B</span></td></tr>
+        <tr><td class="first">Defesa Civil SP</td><td>Ocorrências e áreas de risco</td><td>Apoio técnico e fiscalização dirigida após eventos</td><td>T6</td><td><span class="pri b">B</span></td></tr>
+        <tr class="group-row"><td colspan="5">Registro empresarial e trabalho</td></tr>
+        <tr><td class="first">JUCESP</td><td>Abertura e alteração de empresas quase em tempo real</td><td>Orientação ao empreendedor sobre registro no ato da abertura</td><td>T1</td><td><span class="pri a">A</span></td></tr>
+        <tr><td class="first">Receita e Serpro (Conecta gov.br)</td><td>CNPJ completo com sócios, consulta CPF</td><td>Uso dentro das regras do catálogo</td><td>T1, T3</td><td><span class="pri b">B</span></td></tr>
+        <tr><td class="first">Ministério do Trabalho (SRT-SP)</td><td>Dados de vínculo por CBO e empregador</td><td>Casos de descumprimento do salário mínimo profissional</td><td>T5</td><td><span class="pri c">C</span></td></tr>
+        <tr class="group-row"><td colspan="5">Ensino, pesquisa e setor produtivo</td></tr>
+        <tr><td class="first">USP, Unicamp, Unesp e IES privadas</td><td>Concluintes por curso; pesquisa aplicada e estágio em ciência de dados</td><td>Dados agregados para pesquisa; registro na colação</td><td>T4, E6</td><td><span class="pri b">B</span></td></tr>
+        <tr><td class="first">Confea e outros CREAs</td><td>Base nacional de ART e registro, comparação entre regionais</td><td>Modelos e painéis do Observatório como referência</td><td>T3, T7</td><td><span class="pri b">B</span></td></tr>
+        <tr><td class="first">Sebrae-SP, Fiesp, Seade</td><td>Estudos setoriais, cadastro de indústrias, projeções</td><td>Indicadores da engenharia para estudos conjuntos</td><td>T1, E7</td><td><span class="pri c">C</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Como autarquia, o Crea-SP pode tratar dados pessoais para cumprir sua competência legal (LGPD, arts. 7º, III, e 23) e compartilhar com outros órgãos na forma do art. 26. Cada acordo ainda precisa de finalidade escrita, minimização e prazo.</p>
+</div></section>
+
+<section id="exploracao"><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Possibilidades mais aprofundadas</p>
+    <h2>Exploração avançada, depois que a base estiver de pé</h2>
+    <p class="prose">Nenhuma destas entra antes da Etapa 4: todas dependem de chaves limpas e do resultado das fiscalizações para aprender.</p>
+  </div>
+  <div class="explore">
+    <div class="ex"><h3>Grafo de relacionamentos</h3><p>Empresa, sócio, RT, ART e contratante como rede. Mostra RT emprestado, grupos de CNPJs com os mesmos sócios e empresa que reabre com outro CNPJ depois de acumular dívida.</p><span class="needs">CNPJ + sócios + vínculos RT</span></div>
+    <div class="ex"><h3>Leitura automática de objetos</h3><p>Classificar o texto de contratos do PNCP e do TCE-SP e as descrições de ART por câmara especializada, separando o que é engenharia do que não é.</p><span class="needs">PNCP + ARTs rotuladas</span></div>
+    <div class="ex"><h3>Score de risco de irregularidade</h3><p>Modelo treinado nos resultados das fiscalizações para ordenar a malha fina. Deve ser explicável e auditável para sustentar o auto.</p><span class="needs">E4 com retorno de resultados</span></div>
+    <div class="ex"><h3>Previsão de arrecadação e ARTs</h3><p>Séries mensais por GRE combinadas a crédito imobiliário, IBC-Br e emprego na construção, para orçamento e metas.</p><span class="needs">Internos + BCB + CAGED</span></div>
+    <div class="ex"><h3>Roteirização de fiscais</h3><p>Rotas diárias por UGI que maximizam valor esperado por quilômetro, usando coordenadas de ARTs, alvarás e indícios.</p><span class="needs">Coordenadas + score</span></div>
+    <div class="ex"><h3>Geoanálise de obras</h3><p>Comparar ARTs com coordenadas a alvarás, geração distribuída solar e mudanças de uso do solo (MapBiomas) para achar obra sem responsável.</p><span class="needs">ART georreferenciada</span></div>
+    <div class="ex"><h3>Monitor legislativo e regulatório</h3><p>Leitura diária de proposições e diários oficiais com resumo semanal do que afeta a profissão e o Conselho.</p><span class="needs">APIs Câmara, Senado, ALESP</span></div>
+    <div class="ex"><h3>Evasão de profissionais</h3><p>Quem interrompe o registro, quando e por quê. Permite ações de retenção antes da saída.</p><span class="needs">Histórico de registro</span></div>
+    <div class="ex"><h3>Consulta em linguagem natural</h3><p>Gestores perguntam ao Observatório em português e recebem número com fonte e data, só sobre a camada curada e respeitando o perfil de acesso.</p><span class="needs">Camada curada + dicionário</span></div>
+  </div>
+</div></section>
+
+<section id="governanca"><div class="wrap">
+  <div class="head"><p class="eyebrow">Quem faz o quê</p><h2>Governança e riscos</h2></div>
+  <div class="raci">
+    <div><b>UDE · Gabinete</b><span>Dona do Observatório: prioridades, catálogo de indicadores, qualidade e comunicação dos resultados.</span></div>
+    <div><b>EDAD e UINFRA · SUPTEC</b><span>Engenharia de dados, conectores, ambiente, segurança da informação.</span></div>
+    <div><b>GPP</b><span>Liga indicadores ao planejamento estratégico e às metas institucionais.</span></div>
+    <div><b>SUPFIS · GPF, UPF e GREs</b><span>Principal cliente: usa a malha fina e devolve o resultado de cada caso.</span></div>
+    <div><b>SUPADF · URI, UCP e financeiro</b><span>Acordos com outros órgãos, arrecadação e dívida.</span></div>
+    <div><b>DPO/LGPD e GAJ · SECEX</b><span>Bases legais, relatório de impacto, minutas de acordo.</span></div>
+  </div>
+  <h3 style="margin:28px 0 12px">Riscos principais</h3>
+  <div class="cols">
+    <div>
+      <ul class="list">
+        <li><b>Base interna inconsistente</b>Datas faltando, CNPJ sem zeros, eventos sem histórico. Mitigação: Etapa 1 com testes e conciliação contra relatórios oficiais antes de qualquer painel.</li>
+        <li><b>Indício tratado como infração</b>CNAE ou texto de contrato não prova obrigação. Mitigação: indício gera lista para análise, nunca auto automático; cada ligação tem status confirmado, candidato ou contexto; regras de leitura publicadas neste plano.</li>
+        <li><b>Acordos que não saem do papel</b>Mitigação: contrapartida clara, piloto de 90 dias e começar pelos parceiros onde o ganho é dos dois lados.</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="list">
+        <li><b>LGPD e exposição</b>Cruzamentos com CPF e sócios. Mitigação: pseudonimização na camada analítica, acesso por perfil, registro de finalidade.</li>
+        <li><b>Painel que ninguém usa</b>Mitigação: cada painel tem dono, rito mensal e medida de uso; o que não for usado em três meses é revisto ou retirado.</li>
+        <li><b>Dependência de uma pessoa</b>Mitigação: código, regras e dicionário versionados no repositório; documentação por conector.</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <h3 style="margin-bottom:12px">Estrutura sugerida para o repositório refeito</h3>
+    <pre><span class="c"># observatorio-crea-sp</span>
+docs/          <span class="c">visão, catálogo de indicadores, fichas, decisões</span>
+catalogo/      <span class="c">fontes, APIs, grafo de chaves, frequência de cada carga</span>
+ingestao/      <span class="c">um conector por fonte: receita_cnpj, pncp, ibge, bcb, rais_caged, inep, aneel, datajud…</span>
+modelo/        <span class="c">camada curada em SQL versionado: dimensões (município, GRE, CNAE, câmara) e fatos</span>
+malha-fina/    <span class="c">regras de indício versionadas e testadas, uma por arquivo</span>
+paineis/       <span class="c">projetos Power BI em formato .pbip (texto, comparável no Git) e protótipos web</span>
+publico/       <span class="c">anuário, notas técnicas e dados abertos agregados</span></pre>
+  </div>
+</div></section>
+
+<section id="decisoes" style="border-bottom:0"><div class="wrap">
+  <div class="head"><p class="eyebrow">Para seguir</p><h2>Quatro decisões que destravam a Etapa 0</h2></div>
+  <ol class="decide">
+    <li><b>Nome do programa</b>Confirmar Observatório Crea-SP ou escolher outra opção.</li>
+    <li><b>Patrocínio e dono</b>Confirmar se a UDE assume o programa e quem na Presidência assina o termo de abertura.</li>
+    <li><b>Primeiro painel com dado real</b>Recomendação: Empresas e cobertura, porque o protótipo V18 já existe e o CNPJ da Receita é aberto.</li>
+    <li><b>Primeiro acordo a abrir</b>Recomendação: TCE-SP, pela troca equilibrada (ele ganha verificação de ART das contratadas, o Crea-SP ganha contratos municipais).</li>
+  </ol>
+</div></section>
+</main>
+
+<footer><div class="wrap">Plano preparado a partir dos anexos do projeto (organograma de março de 2026, Leis 5.194/66 e 6.496/77, Res. Confea 1.002/2002 e 1.137/2023, lista CNAE Crea-SP rev. mar/2025, páginas de serviços e fiscalização) e do repositório caiofvserra/empresas. Revisão 2 (29/10/2026): indicadores em fichas, teses T1 a T5 e regras de leitura ajustadas a partir do levantamento complementar em <code>planejamento-fontes-2026-10/</code>. Prazos são estimativas de planejamento, não compromissos.</div></footer>
