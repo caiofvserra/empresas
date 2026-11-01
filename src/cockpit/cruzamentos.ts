@@ -11,7 +11,7 @@ import { buildCno, buildLicencas, quadroCno, quadroLicencas } from '../domain/pa
 import type { ParceriaId } from '../domain/parcerias';
 
 /**
- * V20 · malha fina v2 do Prumo: indícios por regra, cada um com status de ligação, fonte, data e versão da regra.
+ * V20 · malha fina v2 do Inteligência Estratégica Crea-SP: indícios por regra, cada um com status de ligação, fonte, data e versão da regra.
  * Nenhum indício vira auto: a lista é para análise. Às seis regras da V19 somam-se cinco regras internas novas, todas
  * calculadas só com dados que o Crea-SP já tem ou coleta automaticamente: padrão anormal de ART, obra pública sem ART de
  * fiscalização, atividade recente com débito, sucessão de empresas e nome de engenharia sem registro. A V21 acrescenta a regra de
