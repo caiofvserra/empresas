@@ -7,7 +7,7 @@ import { addDays, between, chance, dateBetween, share, sum, toDay, weighted } fr
 /**
  * V20 · Profissionais com a mesma profundidade de Empresas. Camada DEMONSTRATIVA: 4.800 pessoas fictícias, sem CPF, com registro,
  * modalidade, nível, situação ao longo do tempo, domicílio, formação (IES do cenário) e autoria das ARTs do cenário.
- * Os 600 primeiros são os responsáveis técnicos já existentes na base de empresas. Em produção: cadastro profissional do Crea-SP,
+ * Os 1.600 primeiros são os responsáveis técnicos já existentes na base de empresas. Em produção: cadastro profissional do Crea-SP,
  * ARTs (autor), anuidades PF e, em agregado por CBO e município, Novo CAGED e RAIS.
  */
 export type Nivel = 'Engenheiro' | 'Tecnólogo' | 'Técnico';

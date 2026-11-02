@@ -111,8 +111,8 @@ export function generateDataset(seed = 20260930): Dataset {
     const city = pick(cityWeighted);
     const parent = establishmentsPerCompany.get(company.id)?.[0];
     const openedAt = branch
-      ? earlier(addDays(parent!.openedAt, integer(100, 720)), '2026-03-01')
-      : index % 5 === 0 ? between('2023-10-01', '2025-12-01') : between('2012-01-01', '2023-09-01');
+      ? (addDays(parent!.openedAt, 100) <= '2026-08-31' ? between(addDays(parent!.openedAt, 100), earlier(addDays(parent!.openedAt, 720), '2026-08-31')) : earlier(between(addDays(parent!.openedAt, 30), '2026-08-31'), '2026-08-31'))
+      : index % 5 === 0 ? between('2023-10-01', '2026-08-31') : between('2012-01-01', '2023-09-01');
     const cnaeMain = sampleCnaeCodes[(index + integer(0, 3)) % sampleCnaeCodes.length];
     const secondary = [sampleCnaeCodes[(index + 5) % 12], sampleCnaeCodes[(index + 8) % 12]].filter(code => code !== cnaeMain);
     const cnpjBase = `${company.rootCnpj}${branch ? '0002' : '0001'}`;
@@ -167,21 +167,31 @@ export function generateDataset(seed = 20260930): Dataset {
   eligibleEstablishments.forEach((establishment, index) => {
     let predecessorCeased: string | undefined;
     if (historicalIds.has(establishment.id)) {
-      const start = between(later(addDays(establishment.openedAt, 15), '2020-01-01'), '2023-08-01');
-      const end = between(later(addDays(start, 180), '2023-10-01'), '2024-08-01');
+      // Registro antigo, encerrado anos atrás: a empresa voltou depois (o cenário precisa de empresas que saíram e retornaram).
+      const start = between(later(addDays(establishment.openedAt, 15), '2013-01-01'), '2022-06-30');
+      const end = between(later(addDays(start, 180), '2019-01-01'), '2022-12-31');
       predecessorCeased = createRegistration(establishment, start, [{ type: 'Novo registro', date: start },
         { type: index % 4 === 0 ? 'Baixa' : 'Cancelamento', date: end }], true);
     }
-    const minimum = later(addDays(establishment.openedAt, 20), predecessorCeased ? addDays(predecessorCeased, 30) : '2021-01-01');
-    const start = between(minimum, '2026-06-30');
+    // Estoque e fluxo (02/11/2026): quase três em cada quatro registros vêm de anos atrás, e o resto se espalha pelos últimos
+    // três anos até perto da data de referência. Antes, todos começavam entre 2021 e 2026, e a base parecia triplicar em dois anos.
+    const minimum = later(addDays(establishment.openedAt, 20), predecessorCeased ? addDays(predecessorCeased, 30) : '2014-01-01');
+    const recente = minimum > '2023-09-30' || random() >= .8;
+    // Empresa aberta há pouco se registra em até oito meses; as antigas que entram agora se espalham pelos três anos.
+    const start = !recente ? between(minimum, '2023-09-30')
+      : minimum > '2023-09-30' ? between(minimum, earlier(addDays(minimum, 90), '2026-09-20'))
+      : between('2023-10-01', '2026-09-20');
     const available = Math.floor((timestamp(SNAPSHOT) - timestamp(start)) / DAY);
     const dayAt = (fraction: number) => addDays(start, Math.floor(available * fraction));
     const events: { type: MovementType; date: string }[] = [{ type: 'Novo registro', date: start }];
-    switch (index % 10) {
-      case 0: events.push({ type: 'Cancelamento', date: dayAt(.7) }); break;
-      case 1: events.push({ type: 'Baixa', date: dayAt(.72) }); break;
-      case 2: events.push({ type: 'Baixa', date: dayAt(.4) }, { type: 'Reativação', date: dayAt(.68) }); break;
-      case 3: events.push({ type: 'Baixa', date: dayAt(.35) }, { type: 'Reativação', date: dayAt(.6) }, { type: 'Cancelamento', date: dayAt(.87) }); break;
+    // A saída se espalha no tempo (não se concentra perto da data de referência), e registro de poucos dias não tem evento.
+    const saidaEm = () => between(later(addDays(start, 90), '2016-01-01'), addDays(SNAPSHOT, -10));
+    switch (available < 120 ? 19 : index % 20) {
+      case 0: events.push({ type: 'Cancelamento', date: saidaEm() }); break;
+      case 1: events.push({ type: 'Baixa', date: saidaEm() }); break;
+      case 2: case 12: events.push({ type: 'Baixa', date: dayAt(.4) }, { type: 'Reativação', date: dayAt(.68) }); break;
+      case 3: { const volta = dayAt(.35), fim = between(later(addDays(volta, 90), '2016-01-01'), addDays(SNAPSHOT, -10));
+        events.push({ type: 'Baixa', date: dayAt(.2) }, { type: 'Reativação', date: volta }, ...(fim <= addDays(SNAPSHOT, -10) ? [{ type: 'Cancelamento' as MovementType, date: fim }] : [])); break; }
       default: break;
     }
     createRegistration(establishment, start, events, false);
@@ -190,54 +200,71 @@ export function generateDataset(seed = 20260930): Dataset {
   const firstNames = ['Ana', 'Bruno', 'Camila', 'Daniel', 'Elisa', 'Felipe', 'Gabriela', 'Hugo', 'Isabela', 'João'];
   const lastNames = ['Almeida', 'Barros', 'Costa', 'Duarte', 'Esteves', 'Ferraz', 'Gomes', 'Lima', 'Moraes', 'Nunes'];
   const modalities = ['Civil', 'Elétrica', 'Mecânica', 'Agronomia', 'Segurança do trabalho'];
-  const professionals: Professional[] = Array.from({ length: 600 }, (_, index) => ({
+  const professionals: Professional[] = Array.from({ length: 1600 }, (_, index) => ({
     id: id('PRO-', index), name: `${firstNames[index % 10]} ${lastNames[Math.floor(index / 10) % 10]} ${String(index + 1).padStart(3, '0')}`,
     registration: `DEMO-SP-${String(index + 1).padStart(6, '0')}`, modality: modalities[index % modalities.length],
   }));
   const registeredCompanies = companies.filter(company => !company.externalOnly);
-  const technicalLinks: TechnicalLink[] = Array.from({ length: 1500 }, (_, index) => {
-    const company = registeredCompanies[(Math.floor(index / 2) * 31) % registeredCompanies.length];
-    const professional = professionals[(index * 13 + Math.floor(index / 2)) % professionals.length];
+  // Responsáveis técnicos (02/11/2026): quase toda empresa registrada tem RT, como a lei exige. Os 300 primeiros vínculos formam
+  // pares na mesma empresa (RTs simultâneos ou troca de RT); os demais são um vínculo por empresa, em empresas distintas.
+  const PARES = 300;
+  const technicalLinks: TechnicalLink[] = Array.from({ length: 2400 }, (_, index) => {
+    const posicao = index < PARES ? Math.floor(index / 2) : PARES / 2 + (index - PARES);
+    const company = registeredCompanies[(posicao * 31) % registeredCompanies.length];
+    // Um terço dos vínculos cai nos 400 primeiros profissionais, para haver quem responda por três empresas ou mais.
+    const professional = professionals[(index * 13 + Math.floor(index / 2)) % (index % 3 === 0 ? 400 : professionals.length)];
     const firstRegistration = registrationsPerCompany.get(company.id)!.reduce((a, b) => a.startedAt < b.startedAt ? a : b);
     const startDate = between(firstRegistration.startedAt, '2026-05-31');
-    const ended = index % 2 === 0 || index % 11 === 0;
+    const ended = index < PARES ? index % 2 === 0 || index % 11 === 0 : index % 9 === 0;
     return { id: id('VRT-', index), companyId: company.id, professionalId: professional.id,
       startDate, modality: professional.modality,
-      ...(ended ? { endDate: between(addDays(startDate, 15), SNAPSHOT) } : {}),
+      ...(ended ? { endDate: earlier(between(addDays(startDate, 15), SNAPSHOT), SNAPSHOT) } : {}),
     };
   });
   // Ajuste determinístico dos pares, depois de consumir o mesmo fluxo aleatório:
   // algumas empresas têm RTS simultâneos em modalidades distintas; outras
   // preservam uma troca cronológica, com encerramento antes do novo vínculo.
   // Nenhuma nova chamada ao PRNG altera ARTs ou as demais entidades aprovadas.
-  for (let pair = 0; pair < technicalLinks.length / 2; pair++) {
+  for (let pair = 0; pair < PARES / 2; pair++) {
     const previous = technicalLinks[pair * 2];
     const successor = technicalLinks[pair * 2 + 1];
     if (pair % 5 === 0) {
       delete previous.endDate;
       delete successor.endDate;
-      successor.startDate = later(addDays(previous.startDate, 7), successor.startDate);
+      successor.startDate = earlier(later(addDays(previous.startDate, 7), successor.startDate), SNAPSHOT);
     } else {
       const availableDays = Math.floor((timestamp(SNAPSHOT) - timestamp(previous.startDate)) / DAY);
       const transitionAfter = Math.min(180, Math.max(30, Math.floor(availableDays * .55)));
-      previous.endDate = addDays(previous.startDate, transitionAfter);
+      previous.endDate = earlier(addDays(previous.startDate, transitionAfter), addDays(SNAPSHOT, -2));
       successor.startDate = addDays(previous.endDate, 1);
       if (pair % 7 === 0) {
         const remainingDays = Math.floor((timestamp(SNAPSHOT) - timestamp(successor.startDate)) / DAY);
-        successor.endDate = addDays(successor.startDate, Math.max(15, Math.floor(remainingDays * .6)));
+        successor.endDate = earlier(addDays(successor.startDate, Math.max(15, Math.floor(remainingDays * .6))), SNAPSHOT);
       } else delete successor.endDate;
     }
   }
   const descriptions = ['Projeto de infraestrutura urbana', 'Execução de obra civil', 'Instalação elétrica',
     'Manutenção de redes e sistemas', 'Laudo técnico e avaliação', 'Ensaios de materiais', 'Supervisão de obra', 'Projeto de saneamento'];
+  // ARTs (02/11/2026): espalhadas pelos últimos 36 meses em proporção aos dias em que cada registro esteve ativo, para a série
+  // mensal acompanhar o tamanho da base. Antes, a data era sorteada dentro do intervalo de cada registro, e a série parecia
+  // multiplicar por oito em dois anos.
+  const ART_INICIO = '2023-10-01';
+  // Modalidade da ART perto da distribuição dos profissionais: civil 45%, elétrica 20%, mecânica 20%, agronomia 5%, segurança 10%.
+  const pesoModalidadeArt = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 4];
+  const trechos = registrations.flatMap(registration => activeIntervals.get(registration.id)!
+    .map(interval => ({ registration, start: later(interval.start, ART_INICIO), end: interval.end }))
+    .filter(trecho => trecho.start <= trecho.end)
+    .map(trecho => ({ ...trecho, dias: Math.floor((timestamp(trecho.end) - timestamp(trecho.start)) / DAY) + 1 })));
+  const acumulado: number[] = []; let totalDias = 0;
+  for (const trecho of trechos) { totalDias += trecho.dias; acumulado.push(totalDias); }
+  const trechoEm = (dia: number) => { let lo = 0, hi = acumulado.length - 1; while (lo < hi) { const mid = (lo + hi) >> 1; if (acumulado[mid] > dia) hi = mid; else lo = mid + 1; } return trechos[lo]; };
   const arts: Art[] = Array.from({ length: 7000 }, (_, index) => {
-    const registration = registrations[(index * 37) % registrations.length];
-    const interval = pick(activeIntervals.get(registration.id)!);
-    const date = between(interval.start, interval.end);
+    const trecho = trechoEm(integer(0, totalDias - 1)), registration = trecho.registration;
+    const date = between(trecho.start, trecho.end);
     const completed = index % 4 !== 0;
     return { id: id('ART-DEMO-', index), companyId: registration.companyId, registrationId: registration.id,
       date, description: descriptions[index % descriptions.length], value: integer(20, 2500) * 1000,
-      status: completed ? 'Baixada' : 'Registrada', modality: modalities[index % modalities.length],
+      status: completed ? 'Baixada' : 'Registrada', modality: modalities[pesoModalidadeArt[index % pesoModalidadeArt.length]],
       ...(completed ? { endDate: earlier(addDays(date, integer(20, 240)), SNAPSHOT) } : {}),
     };
   });
@@ -267,8 +294,9 @@ export function generateDataset(seed = 20260930): Dataset {
       : between(later(interval.start, '2023-10-01'), later(later(interval.start, '2023-10-01'), earlier(interval.end, '2026-08-31')));
     const amount = integer(12, 95) * 25;
     const mode = index % 10;
-    const paidAmount = future || mode >= 7 ? 0 : mode === 6 ? Math.round(amount * .4 * 100) / 100 : amount;
-    const recovered = paidAmount > 0 && mode <= 1;
+    // Dois em cada dez boletos ficam sem pagamento e um é pago em parte: inadimplência perto de um quarto das registradas.
+    const paidAmount = future || mode >= 8 ? 0 : mode === 7 ? Math.round(amount * .4 * 100) / 100 : amount;
+    const recovered = paidAmount > 0 && mode <= 1 && dueDate <= addDays(SNAPSHOT, -16);
     const paymentDate = paidAmount === 0 ? undefined
       : recovered ? between(addDays(dueDate, 15), SNAPSHOT)
         : between(later(interval.start, addDays(dueDate, -20)), earlier(addDays(dueDate, 15), SNAPSHOT));

@@ -47,7 +47,7 @@ const demonstratedIndicators: ReportIndicatorDefinition[] = [
     concept: 'Profissionais com presença registrada e identificador demonstrativo validado em formação/orientação no recorte.',
     formula: 'DISTINCTCOUNT(participation.professionalId WHERE attended = true AND professionalId informado); deduplicar no período completo, sem somar os distintos mensais.',
     unit: 'profissional identificado distinto',
-    limitations: 'A identidade referencia os 600 profissionais fictícios existentes. A participação sem identificador permanece fora dos distintos e é exibida separadamente. Não é estimativa do total de público único; não inclui automaticamente usuários de coworking ou solicitações de serviço.',
+    limitations: 'A identidade referencia os 1.600 profissionais fictícios existentes. A participação sem identificador permanece fora dos distintos e é exibida separadamente. Não é estimativa do total de público único; não inclui automaticamente usuários de coworking ou solicitações de serviço.',
   }),
   demo({
     id: 'institutionalIdentification', name: 'Cobertura de identificação das presenças',
@@ -193,7 +193,7 @@ const demonstratedIndicators: ReportIndicatorDefinition[] = [
     concept: 'Parcela dos profissionais fictícios domiciliados no território que possuem presença identificada em formação/orientação no recorte.',
     formula: 'COUNT(interseção de distinctParticipants com baselineProfessionalIds) / COUNT(baselineProfessionalIds); baseline = registrados até o corte, pelo domicílio. null sem cadastro de referência.',
     unit: 'proporção de profissionais do cadastro de referência', owner: owners.planning,
-    limitations: 'Visitantes de outros municípios não entram no numerador do alcance local, embora contem como participantes da oferta. Cadastro é demonstrativo com 600 pessoas; não representa cobertura real de engenheiros de SP. Alcance não comprova benefício nem equidade de acesso.',
+    limitations: 'Visitantes de outros municípios não entram no numerador do alcance local, embora contem como participantes da oferta. Cadastro é demonstrativo com 1.600 pessoas; não representa cobertura real de engenheiros de SP. Alcance não comprova benefício nem equidade de acesso.',
   }),
   demo({
     id: 'institutionalServiceDemand', name: 'Solicitações de serviço criadas no período',

@@ -156,7 +156,8 @@ test('forças-tarefas: resultado em 180 dias contra grupo de comparação do mes
     assert.ok(item.comparacao.acoes.every(row => !marcas.has(row.id) && row.tipo === item.ft.tema && row.date >= item.ft.inicio && row.date <= item.ft.fim), 'comparação: mesmo tipo e período, fora de qualquer força-tarefa');
     assert.ok(!item.comparacao.acoes.some(row => item.grupo.acoes.includes(row)));
     assert.ok(item.grupo.regularizadas.every(row => row.regularizedAt && days(row.date, row.regularizedAt) <= PRAZO_RESULTADO));
-    assert.equal(item.fechada, item.grupo.acoes.every(row => days(row.date, hoje) >= PRAZO_RESULTADO));
+    // Fechada pela data de fim da força-tarefa: se fechou, toda ação do grupo já completou o prazo de resultado.
+    assert.ok(!item.fechada || item.grupo.acoes.every(row => days(row.date, hoje) >= PRAZO_RESULTADO));
     if (item.grupo.taxa !== null && item.comparacao.taxa !== null) assert.ok(Math.abs(item.diferenca! - (item.grupo.taxa - item.comparacao.taxa)) < 1e-9);
     else assert.equal(item.diferenca, null);
   }

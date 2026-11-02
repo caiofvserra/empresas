@@ -8,7 +8,7 @@ O painel único ficou pesado e não permite regras de acesso diferentes para cad
 
 | Painel | Conteúdo | Quem acessa |
 |---|---|---|
-| Empresas (pronto) | Mercado e registro, evolução, responsáveis técnicos e ARTs, sócios, instalações e empregados | Superintendências e regionais; cada regional vê só a sua |
+| Empresas (pronto) | Registro e mercado, evolução, responsáveis técnicos e ARTs, sócios, instalações e empregados | Superintendências e regionais; cada regional vê só a sua |
 | Fiscalização e malha fina | Ações, autos, forças-tarefas, contratos públicos, obras e a lista de indícios | SUPFIS e regionais, com a lista nominal só para quem fiscaliza |
 | Profissionais e formação | Profissionais, formação e registro, emprego e salário em totais, perícias | Superintendências; regionais veem só a sua |
 | Gestão do Conselho | Receita e cobrança, controle interno, entidades e instituições de ensino, atendimento | Presidência e superintendências administrativas; diárias e pessoal com acesso restrito |
@@ -22,7 +22,7 @@ Ordem sugerida: Empresas, Fiscalização e malha fina, Profissionais e formaçã
 
 Desde 01/11/2026 (segundo retorno do Caio) cada página cabe numa tela de computador Full HD (1920×1080), sem rolagem, com blocos de larguras diferentes. O bloco mostra só o título e o gráfico; a explicação de leitura foi para o (i). Os gráficos variam de tipo para não ficar tudo em barras.
 
-- **Mercado e registro.** Cinco indicadores (empresas registradas, parte do mercado registrada, atividade obrigatória sem nenhum registro, anuidade em dia e cadastro incompleto). Mapa do estado com o limite de cada município, pintado pela regional no indicador escolhido (parte do mercado registrada, CNPJs sem registro, empresas registradas, variação, RT, anuidade atrasada, ARTs ou empregos técnicos), com a lista das regionais em ordem ao lado. Mapa de árvore do mercado por câmara e atividade (CNAE), colorido pela parte registrada. Anel com a situação do registro por dentro e a anuidade por fora. Receita comparada com o cadastro. Funil do mercado à ART. Registradas por câmara e porte. Matriz de calor do tempo de registro cruzado com o capital social.
+- **Registro e mercado.** Cinco indicadores (empresas registradas, parte do mercado registrada, atividade obrigatória sem nenhum registro, anuidade em dia e cadastro incompleto). Mapa do estado com o limite de cada município, pintado pela regional no indicador escolhido (parte do mercado registrada, CNPJs sem registro, empresas registradas, variação, RT, anuidade atrasada, ARTs ou empregos técnicos), com a lista das regionais em ordem ao lado. Mapa de árvore do mercado por câmara e atividade (CNAE), colorido pela parte registrada. Anel com a situação do registro por dentro e a anuidade por fora. Receita comparada com o cadastro. Funil do mercado à ART. Registradas por câmara e porte. Matriz de calor do tempo de registro cruzado com o capital social.
 - **Evolução.** Entradas, saídas, aberturas na Receita, permanência e emprego formal. Economia (emprego formal, PIB e crédito "!") comparada com as empresas abertas na Receita e as que se registraram no Crea-SP, com o primeiro mês igual a 100. Calor dos novos registros por câmara e mês. Entradas e saídas mês a mês. Aberturas na Receita com a permanência das registradas.
 - **RT e ART.** Responsável técnico, RT que saiu sem substituto, ARTs, valor declarado e registradas sem ART. ARTs mês a mês com o mesmo mês do ano anterior, ARTs por modalidade a cada 100 profissionais ativos da mesma modalidade, com a média, responsáveis técnicos e barras de 100% com a parte das registradas sem ART em cada câmara.
 - **Vínculos.** Nome com "engenharia" e diretoria ("!", novo), sócios que são profissionais ("!"), usinas, postos, minas e financiamentos, empregados técnicos por empresa ("!"), credenciadas no DETRAN-SP e no INMETRO ("!") e engenharia incluída no contrato social pela Junta Comercial ("!").
@@ -58,6 +58,27 @@ Nenhum acordo é certo. Por isso cada parceria tem um caminho que não depende d
 | Instituições de ensino parceiras | Comparar o número de formados por curso e instituição do Censo da Educação Superior com os registros novos do Crea-SP pela instituição que o profissional declara no pedido de registro. Perde-se o acompanhamento pessoa a pessoa. |
 | Ministério do Trabalho (RAIS identificada e eSocial) | Continuar com o emprego formal em totais por município e ocupação (RAIS e Novo CAGED públicos). Por empresa, não há substituto: o bloco sai do demonstrativo e fica só a leitura regional. |
 | Banco Central (crédito em totais) | Usar a estatística bancária por município (ESTBAN) e o painel de crédito por atividade e estado (SCR.data), ambos públicos e mensais. Perde-se o cruzamento de município com atividade ao mesmo tempo. |
+
+## Reavaliação de 02/11/2026
+
+O Caio pediu para conferir se o painel está bom, condizente com os dados e com o objetivo (um painel de empresas para a administração do Crea-SP). O que foi conferido e o que mudou:
+
+| Ponto | O que havia | O que foi feito |
+|---|---|---|
+| Nome da primeira aba | "Mercado", que soava como análise de mercado | Virou "Registro", com o título "Registro e mercado": a página responde quantas empresas estão registradas e quanto do mercado isso cobre |
+| Responsável técnico | O cenário dava RT a só 26% das registradas, e 1.377 empresas apareciam "sem vínculo carregado". Na vida real quase toda empresa registrada tem RT, porque a lei exige | O cenário passou a ter vínculo de RT para a grande maioria das registradas (78% com RT vigente, 7% com RT que saiu sem substituto, 15% sem vínculo carregado), e há profissionais que respondem por 3 e 4 empresas |
+| Evolução da base | Todos os registros começavam entre 2021 e 2026, então a base parecia triplicar em dois anos; as saídas saltavam de 5 para 150 por mês em 2026 | Três em cada quatro registros vêm de anos atrás (estoque), e o fluxo de entradas e saídas é parelho: cerca de 30 entradas e 15 saídas por mês, base crescendo perto de 10% ao ano |
+| ARTs | A série parecia multiplicar por oito em dois meses, e o cartão dizia "+197% em relação ao ano anterior" | As ARTs se espalham pelos últimos 36 meses em proporção ao tamanho da base: cerca de 200 por mês, com variação anual de um dígito |
+| Empresas abertas na Receita | As aberturas paravam em dezembro de 2025, e a série caía 63% | As aberturas seguem até agosto de 2026, com o atraso normal do arquivo da Receita |
+| ARTs por modalidade | A modalidade da ART era sorteada por igual entre cinco, o que dava 310 ARTs por 100 profissionais de segurança do trabalho e 40 na civil | A modalidade da ART segue a distribuição dos profissionais (civil 45%, elétrica 20%, mecânica 20%, segurança 10%, agronomia 5%) |
+| Anuidade | 41% das registradas com anuidade vencida | Perto de 30%, que é a ordem de grandeza conhecida |
+| Nome com "engenharia" | Mais da metade das empresas com "engenharia" no nome não atendia ao art. 5º | Empresa com "engenharia" no nome tem chance maior de ter profissional entre os sócios; a parte que não atende caiu para cerca de 40%, ainda um número de demonstração |
+| Texto dentro do bloco | O quadro de responsáveis técnicos trazia uma frase de leitura dentro do bloco | A frase foi para o (i), como nos demais blocos |
+| Contagem de entradas e saídas | A contagem mensal do modelo contava a mesma empresa duas vezes quando dois estabelecimentos dela entravam no mesmo mês, e o gráfico contava uma | As duas contagens passaram a ser por empresa |
+
+Conferências que bateram: o cartão de empresas registradas é o mesmo número do funil e do anel; a parte do mercado registrada do cartão é a mesma da conciliação ("Sim" e "Passível") e do mapa; "RT que saiu sem substituto" é o mesmo número no cartão e no quadro; "registradas sem ART" bate com o funil e com as barras por câmara; "continuam registradas depois de 12 meses" bate entre o cartão e a lista de permanência. Os dois números de "sem registro" na primeira página são contas diferentes de propósito: 362 são os estabelecimentos de atividade obrigatória que nunca apareceram no cadastro; 376 são todos os que nunca apareceram, inclusive os de atividade "passível"; a ficha (i) de cada um diz isso.
+
+Quanto ao objetivo, o painel responde às perguntas que a administração faz sobre empresas: quantas estão registradas e quanto do mercado isso cobre, onde e em que atividades estão as que faltam, se as registradas têm responsável técnico e registram ART, se pagam a anuidade e se o cadastro está completo, como a base evolui e com quem as empresas se ligam. O que ele não traz de propósito: a receita em reais e o custo da fiscalização ficam no painel de gestão, e as ações de fiscalização detalhadas ficam no painel de fiscalização e malha fina. O cenário continua demonstrativo (selo no alto da tela): os números servem para mostrar a leitura, não o Crea-SP.
 
 ## O que saiu e por quê
 
