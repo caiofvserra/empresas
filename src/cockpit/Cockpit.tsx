@@ -75,7 +75,7 @@ const paginasGeral: PaginaDef[] = [
 ];
 /** Painel de Empresas: o primeiro painel separado do painel geral (01/11/2026), com filtros de regional, câmara, período e data que valem para todas as páginas. */
 const paginasEmpresas: PaginaDef[] = [
-  { id: 'mercado', label: 'Mercado', title: 'Mercado e registro', subtitle: 'Quantas empresas com atividade de engenharia existem, quantas estão registradas no Crea-SP e em que atividades estão as que faltam', icon: Building2, Page: PaginaMercado },
+  { id: 'mercado', label: 'Registro', title: 'Registro e mercado', subtitle: 'Quantas empresas estão registradas no Crea-SP, quanto do mercado de engenharia isso cobre e em que atividades e regionais estão as que faltam', icon: Building2, Page: PaginaMercado },
   { id: 'evolucao', label: 'Evolução', title: 'Evolução das empresas', subtitle: 'Como a economia, a abertura de empresas de engenharia e os registros no Crea-SP andaram juntos, e quantas empresas entram e saem da base', icon: TrendingUp, Page: PaginaEvolucao },
   { id: 'rt', label: 'RT e ART', title: 'Responsáveis técnicos e ARTs', subtitle: 'Quantas empresas registradas têm responsável técnico, quantas empresas cada profissional assume e quantas ARTs as empresas registram', icon: FileSignature, Page: PaginaRt },
   { id: 'vinculos', label: 'Vínculos', title: 'Sócios, instalações e empregados', subtitle: 'Com quem as empresas se ligam: sócios, instalações e financiamentos de setores regulados, empregados técnicos, credenciamentos e alterações no contrato social', icon: Network, Page: PaginaVinculos },

@@ -23,6 +23,8 @@
 .ck-main.is-enxuto .ck .tile, .ck-main.is-enxuto .tile { padding: 8px 11px 8px; }
 .ck-main.is-enxuto .tile > header h3 { font-size: 13px; }
 .ck-main.is-enxuto .ind { padding: 7px 11px; }
+/* No painel de Empresas, a frase de leitura dentro do bloco (quadro técnico) vai para o (i). */
+.ck-main.is-enxuto .tile-body .insight { display: none; }
 .ck-main.is-enxuto .ind-row strong { font-size: 21px; }
 
 .ck-grid-mercado { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:

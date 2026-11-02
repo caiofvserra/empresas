@@ -290,8 +290,9 @@ export function buildSociosPf(dataset: Dataset, modelo: ModeloProfissionais = bu
     for (let n = 0; n < quantos; n++) {
       const key = `pf:${company.id}:${n}`, desde = dateBetween(`${key}:desde`, abertura.get(company.id) ?? '2012-01-01', anchor); if (desde > anchor) continue;
       // Parte dos sócios profissionais é o próprio RT (atual ou antigo) da empresa: sociedade e responsabilidade técnica coincidem com frequência.
-      const sorteio = chance(`${key}:prof`);
-      const profissional = n === 0 && meusRts.length && sorteio < 0.3 ? modelo.porId.get(meusRts[between(`${key}:rt`, 0, meusRts.length - 1)])! : profissionais.length && sorteio < 0.4 ? profissionais[between(`${key}:pi`, 0, profissionais.length - 1)] : null;
+      // Empresa com “engenharia” no nome costuma ter profissional entre os sócios: a chance sobe de 40% para 70%.
+      const sorteio = chance(`${key}:prof`), limiteProfissional = /engenharia|agronomia|engenheir/i.test(company.name) ? 0.7 : 0.4;
+      const profissional = n === 0 && meusRts.length && sorteio < 0.3 ? modelo.porId.get(meusRts[between(`${key}:rt`, 0, meusRts.length - 1)])! : profissionais.length && sorteio < limiteProfissional ? profissionais[between(`${key}:pi`, 0, profissionais.length - 1)] : null;
       socios.push({ id: key, empresaId: company.id, nome: profissional ? profissional.nome : `${pick(`${key}:nome`, nomesPf)} (demonstrativo)`, qualificacao: n === 0 ? 'Sócio-administrador' : weighted<QualificacaoPf>(`${key}:q`, ['Sócio', 'Administrador', 'Sócio-administrador'], [6, 1, 3]),
         participacao: between(`${key}:p`, 5, 90), desde, profissionalId: profissional?.id ?? null });
     }

@@ -41,7 +41,7 @@ function date(value: string, label: string): void {
 test('normalized sample has the specified scale and unique entity keys', () => {
   const counts: Partial<Record<keyof Dataset, number>> = {
     companies: 3000, establishments: 3600, registrations: 4500,
-    professionals: 600, technicalLinks: 1500, arts: 7000, caos: 800,
+    professionals: 1600, technicalLinks: 2400, arts: 7000, caos: 800,
     invoices: 3500, contracts: 1200, cases: 900,
   };
   for (const [name, count] of Object.entries(counts)) {

@@ -6,7 +6,7 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 
 | Pasta ou arquivo | Conteúdo |
 |---|---|
-| `src/empresas/` | Painel de Empresas: Mercado, Evolução, RT e ART, Vínculos. Abre em `/empresas.html` |
+| `src/empresas/` | Painel de Empresas: Registro, Evolução, RT e ART, Vínculos. Abre em `/empresas.html` |
 | `src/cockpit/` | Painel geral: Presidência, Profissionais, Formação, Fiscalização, Malha fina, Receita, Entidades, Controle, Atendimento e Método. Abre em `/` e em `/painel.html`. A estrutura comum aos dois painéis (filtros, data de referência, fichas, painel lateral) também mora aqui |
 | `src/observatorio/` | Indicadores-norte com fichas, histórico por data de referência, frentes e matriz de cruzamentos, decisão sobre as 12 lacunas do V18, casos de uso, radar normativo, gate de fontes, parcerias e atlas |
 | `src/domain/` | Cenário determinístico e camadas: profissionais, formação, entidades, conselho, frentes (QSA PJ, Obrasgov, ANEEL/ANP/ANM/BNDES), mercado (concentração, PCA, densidade, aberturas, permanência) e parcerias (CNO, licenças e alvarás, perícias, TCE-SP, crédito e PIB, sócios PF, coorte nominal, vínculos por empresa) |

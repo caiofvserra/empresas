@@ -192,7 +192,7 @@ export function buildEnterpriseModel(scope: Scope, suppliedEvidence?: Enterprise
     const monthlyPaid = paid.filter(row => row.paymentDate?.startsWith(month));
     const monthlyRecovered = openingPaid.filter(row => row.paymentDate?.startsWith(month));
     const end = dateText(monthEnd);
-    return { month, base: currentActiveIds.length, entered: entered.length, exited: exited.length, arts: monthlyArts.length,
+    return { month, base: currentActiveIds.length, entered: ids(entered).length, exited: ids(exited).length, arts: monthlyArts.length,
       artCompanies: ids(monthlyArts.map(row => row.companyId)).length, receipts: monthlyPaid.reduce((sum, row) => sum + cents(row.paidAmount), 0) / 100,
       recovered: monthlyRecovered.reduce((sum, row) => sum + Math.min(cents(row.paidAmount), balance(row, openingCut, anchor) ?? 0), 0) / 100,
       overdue: invoices.filter(row => row.dueDate < end).reduce((sum, row) => sum + (balance(row, end, anchor) ?? 0), 0) / 100,
