@@ -57,7 +57,7 @@ export function FichaPop({ ficha, titulo, leitura, anchor }: { ficha?: FichaBloc
         <dt>Versão da regra</dt><dd>{ficha.regra}</dd>
         <dt>Limitações</dt><dd>{ficha.limites}</dd>
         {ficha.extra?.map(([rotulo, texto]) => <Fragment key={rotulo}><dt>{rotulo}</dt><dd>{texto}</dd></Fragment>)}
-        {parceriasDe(ficha).map(id => <Fragment key={id}><dt>Depende de parceria</dt><dd className="ficha-parceria"><b>{parceriaPorId[id].parceiro}</b> precisa entregar: {parceriaPorId[id].entrega.charAt(0).toLowerCase()}{parceriaPorId[id].entrega.slice(1)}. Os dados se ligam por: {parceriaPorId[id].chave}. Até o acordo ser fechado, os números são demonstrativos.</dd></Fragment>)}
+        {parceriasDe(ficha).map(id => <Fragment key={id}><dt>Depende de parceria</dt><dd className="ficha-parceria"><b>{parceriaPorId[id].parceiro}</b> precisa entregar: {parceriaPorId[id].entrega.charAt(0).toLowerCase()}{parceriaPorId[id].entrega.slice(1)}. Os dados se ligam por: {parceriaPorId[id].chave}. Até o acordo ser fechado, os números são demonstrativos.</dd><dt>Se o acordo não sair</dt><dd className="ficha-planob">{parceriaPorId[id].planoB}</dd></Fragment>)}
         {leitura && <><dt>Leitura</dt><dd>{leitura}</dd></>}
         <dt>Último cálculo</dt><dd>Calculado ao abrir o painel, com a base como estava em {data(anchor)}, a data escolhida no alto da tela.</dd>
         {ficha.acao && <><dt>Ação sugerida</dt><dd className="ficha-acao">{ficha.acao}</dd></>}

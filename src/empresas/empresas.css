@@ -37,24 +37,16 @@
 .ck-grid-rt { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
   "ar ar ar ar ar ar ar am am am am am"
-  "qt qt qt qt qt sa sa sa sa sa sa sa"; }
-.ck-grid-vinculos { grid-template-rows: repeat(3, minmax(0, 1fr)); grid-template-areas:
-  "qs qs qs qs qs dn dn dn dn sp sp sp"
-  "qs qs qs qs qs in in in in vn vn vn"
-  "cr cr cr cr cr cr jc jc jc jc jc jc"; }
+  "qt qt qt qt qt qt qt sa sa sa sa sa"; }
+.ck-grid-vinculos { grid-template-rows: repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "dn dn dn dn sp sp sp sp sp in in in"
+  "vn vn vn vn cr cr cr cr jc jc jc jc"; }
 @media (max-height: 699px) and (min-width: 1101px) {
   .ck-grid-mercado { grid-template-rows: auto repeat(3, 230px); }
   .ck-grid-evolucao, .ck-grid-rt { grid-template-rows: auto repeat(2, 300px); }
-  .ck-grid-vinculos { grid-template-rows: repeat(3, 260px); }
+  .ck-grid-vinculos { grid-template-rows: repeat(2, 320px); }
 }
 .ck-grid-mercado, .ck-grid-evolucao, .ck-grid-rt, .ck-grid-vinculos { align-content: stretch; }
-
-/* Mapa com legenda de cor por cima */
-.mapa-wrap { position: relative; flex: 1; min-height: 0; display: flex; }
-.mapa-wrap > .chart { flex: 1; }
-.mapa-legenda { position: absolute; left: 4px; bottom: 2px; display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: var(--muted); pointer-events: none; }
-.mapa-legenda i { width: 16px; height: 7px; border-radius: 2px; }
-.mapa-legenda span { margin: 0 4px; }
 
 /* Lista por fonte (instalações): número grande, barra fina e complemento */
 .fonte-list { flex: 1; min-height: 0; margin: 0; padding: 0; list-style: none; display: grid; grid-auto-rows: minmax(0, 1fr); gap: 4px; }
@@ -74,9 +66,17 @@
 .side-serie { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 0 7px; align-items: center; padding: 4px 6px; font-size: 11.5px; }
 .side-serie > i { width: 10px; height: 10px; border-radius: 2px; }
 .side-serie small { display: block; font-size: 10px; color: var(--muted); }
+/* Atalho para uma lista de empresas: sem quadrado colorido, para não parecer uma segunda legenda do gráfico ao lado. */
+.side-list button.is-acao { grid-template-columns: minmax(0, 1fr) auto; border-left: 2px solid var(--line); border-radius: 0 7px 7px 0; }
+.side-list button.is-acao:hover:not(:disabled) { border-left-color: var(--accent); }
+/* Mapa das regionais no painel de Empresas: lista mais compacta para caber as regionais sem rolagem. */
+.geo-layout.is-compacto { grid-template-columns: minmax(0, 1fr) 150px; gap: 6px; }
+.geo-layout.is-compacto .geo-rank button { padding: 2px 5px 4px; font-size: 10.5px; gap: 5px; }
+.geo-layout.is-compacto .geo-rank em { bottom: 1px; }
+.geo-layout.is-compacto .geo-legend { font-size: 9.5px; gap: 2px 8px; }
 @media (max-width: 1100px) {
   .ck-rail-painel { flex: none; min-width: 72px; margin: 0; border: 0; }
   .ck-header.is-enxuto { grid-template-columns: minmax(0, 1fr); }
   .ck-filters.is-inline { justify-content: flex-start; }
-  .mapa-wrap { min-height: 360px; }
+  .geo-layout.is-compacto { min-height: 360px; }
 }

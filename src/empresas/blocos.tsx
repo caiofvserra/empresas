@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { complianceFlow } from '../gestao-v14/metrics';
 import { Chart, useSpMap } from '../painel/chart';
 import { brl, data, int, mes, pct } from '../painel/ui';
@@ -8,17 +8,20 @@ import { classesCnae, correspondencias } from '../observatorio/norte';
 import { fontesInstalacao } from '../domain/frentes';
 import type { FonteInstalacao } from '../domain/frentes';
 import { faixasVinculos } from '../domain/parcerias';
-import { artsMensais, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico, territorio } from '../domain/empresas';
-import type { LinhaCnae, LinhaTerritorio, RamoMercado } from '../domain/empresas';
+import { artsMensais, artsPorProfissional, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico, territorio } from '../domain/empresas';
+import type { LinhaCnae, RamoMercado } from '../domain/empresas';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { artPorCamara, artPorModalidade, camaraPorte, entradasSaidas, pagamento } from '../cockpit/medidas';
+import { artPorCamara, camaraPorte, entradasSaidas, pagamento } from '../cockpit/medidas';
+import type { LinhaGre } from '../cockpit/medidas';
 import { linhasEmpresas } from '../cockpit/ui';
 
 /**
  * Blocos do painel de Empresas. Regras do Caio (01/11/2026): clicar num item abre as empresas daquele item, nunca o resumo
  * genérico da regional; regional, município, câmara, período e data são filtros do alto da tela e valem para o painel inteiro;
  * cada página cabe numa tela de computador sem rolagem; o bloco mostra só o título e o gráfico, e a explicação fica no (i);
- * os tipos de gráfico variam (mapa, mapa de árvore, calor, rede, rosa, anel, barras radiais), sem ficar tudo em barras.
+ * os tipos de gráfico variam (mapa com o limite dos municípios, mapa de árvore, calor, anel, fluxo), sem ficar tudo em barras.
+ * Em 02/11/2026 saíram a rede de empresas sócias (pouca informação nova), o mapa de bolhas, a rosa e as barras em círculo, que
+ * dificultavam comparar; e um quadrado colorido só aparece quando é legenda de verdade.
  */
 
 /** Um anel só: por dentro, a situação do registro; por fora, a anuidade das registradas. Substitui as duas roscas lado a lado. */
@@ -110,59 +113,39 @@ export function Conciliacao({ ctx }: { ctx: CockpitCtx }) {
       if (ids.length) ctx.open({ kind: 'cnpjs', title: `“${classe}” · ${nome.toLowerCase()}`, what: 'CNPJs completos ativos na Receita com CNAE da lista do Crea-SP nesta classe e correspondência.', use: nome === 'Sem correspondência' ? 'Sem correspondência não quer dizer irregular. Confirmar atividade antes de orientar ou notificar.' : undefined, ids }); }} />;
 }
 
-/** ARTs por modalidade em rosa: o raio de cada pétala é o número de ARTs. */
+/** ARTs a cada 100 profissionais ativos da mesma modalidade: compara as modalidades sem que a maior ganhe só por ser maior. */
 export function ArtModalidade({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => artPorModalidade(ctx.arts.atual), [ctx.arts]);
+  const { tokens } = ctx, r = useMemo(() => artsPorProfissional(ctx.arts.atual, ctx.profissionais.modelo.profissionais, ctx.anchor, ctx.greId, ctx.cidadeId), [ctx.arts, ctx.profissionais, ctx.anchor, ctx.greId, ctx.cidadeId]);
+  const rows = r.linhas.filter(row => row.porCem !== null);
   const option = useMemo(() => ({
-    tooltip: { trigger: 'item', formatter: (item: any) => { const row = rows[item.dataIndex]; return `<b>${row.modalidade}</b><br/>${int(row.quantidade)} ARTs · ${brl(row.valor)} declarados<br/>${int(row.ids.length)} empresas`; } },
-    series: [{ type: 'pie', roseType: 'radius', radius: ['14%', '78%'], center: ['50%', '52%'], padAngle: 1, itemStyle: { borderRadius: 4, borderColor: tokens.surface, borderWidth: 1 },
-      label: { color: tokens.ink, fontSize: 10, formatter: (item: any) => `{n|${item.name}}\n{v|${int(item.value)}}`, rich: { n: { color: tokens.muted, fontSize: 9.5 }, v: { color: tokens.ink, fontSize: 10.5, fontWeight: 700 } } }, labelLine: { length: 4, length2: 6 },
-      data: rows.map((row, index) => ({ name: row.modalidade, value: row.quantidade, itemStyle: { color: [tokens.blue, tokens.accent, tokens.brand, tokens.heat[1], tokens.good, tokens.warn, tokens.cat[4]][index % 7] } })) }],
-  }), [rows, tokens]);
-  return <Chart option={option} tokens={tokens} label="ARTs de empresas por modalidade" onPick={params => { const row = rows[params.dataIndex]; if (row) ctx.open({ kind: 'empresas', title: `ARTs de ${row.modalidade.toLowerCase()}`, what: 'Empresas com ART desta modalidade no período.', ids: row.ids }); }} />;
+    grid: { top: 18, right: 44, bottom: 2, left: 2, containLabel: true },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.modalidade}</b><br/><b>${row.porCem!.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}</b> ARTs a cada 100 profissionais ativos<br/>${int(row.arts)} ARTs de ${int(row.empresas.length)} empresas no período<br/>${int(row.ativos)} profissionais ativos da modalidade<br/><span style="opacity:.75">clique para ver as empresas</span>`; } },
+    xAxis: { type: 'value', show: false },
+    yAxis: { type: 'category', inverse: true, data: rows.map(row => row.modalidade), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
+    series: [{ type: 'bar', barWidth: '58%', barMaxWidth: 30, data: rows.map(row => ({ value: row.porCem, itemStyle: { color: r.geral !== null && row.porCem! >= r.geral ? tokens.blue : tokens.heat[1], borderRadius: [0, 3, 3, 0] } })),
+      label: { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, fontWeight: 700, formatter: (item: any) => item.value.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) },
+      markLine: r.geral === null ? undefined : { silent: true, symbol: 'none', lineStyle: { color: tokens.ink, type: 'dashed', width: 1 }, label: { position: 'end', color: tokens.muted, fontSize: 9.5, formatter: `média ${r.geral.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}` }, data: [{ xAxis: r.geral }] } }],
+  }), [rows, r.geral, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <Chart option={option} tokens={tokens} label="ARTs de empresas a cada 100 profissionais ativos, por modalidade" onPick={params => { const row = rows[params.dataIndex]; if (row?.empresas.length) ctx.open({ kind: 'empresas', title: `ARTs de ${row.modalidade.toLowerCase()}`, what: `Empresas com ART desta modalidade no período. São ${int(row.arts)} ARTs para ${int(row.ativos)} profissionais ativos da modalidade no recorte.`, ids: row.empresas }); }} />;
 }
 
-/** Barras em volta de um círculo: cada anel é uma câmara, e o arco é a parte das registradas sem ART no período. */
+/** Barras de 100% por câmara: a parte das registradas com ART no período e a parte sem nenhuma ART. As câmaras com mais empresas sem ART ficam no alto. */
 export function SemArt({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => artPorCamara(ctx.dataset, ctx.model), [ctx.dataset, ctx.model]);
+  const { tokens } = ctx, rows = useMemo(() => artPorCamara(ctx.dataset, ctx.model).map(row => ({ ...row, comArt: row.ativas.filter(id => !row.semArt.includes(id)), taxa: row.semArt.length / Math.max(1, row.ativas.length) * 100 })).sort((a, b) => b.taxa - a.taxa), [ctx.dataset, ctx.model]);
   const option = useMemo(() => ({
-    tooltip: { trigger: 'item', formatter: (item: any) => { const row = rows[item.dataIndex]; return `<b>${row.camara}</b><br/>${int(row.semArt.length)} de ${int(row.ativas.length)} empresas registradas sem ART no período`; } },
-    polar: { radius: ['18%', '86%'], center: ['50%', '54%'] },
-    angleAxis: { max: 100, startAngle: 90, show: false },
-    radiusAxis: { type: 'category', data: rows.map(row => row.camara), axisLine: { show: false }, axisTick: { show: false }, axisLabel: { show: false } },
-    series: [{ type: 'bar', coordinateSystem: 'polar', barWidth: '62%', roundCap: true, showBackground: true, backgroundStyle: { color: tokens.soft }, data: rows.map(row => row.semArt.length / Math.max(1, row.ativas.length) * 100),
-      itemStyle: { color: tokens.warn }, label: { show: true, position: 'start', formatter: (item: any) => `${rows[item.dataIndex].camara}  ${pct(item.value)}`, color: tokens.ink, fontSize: 10, fontWeight: 700 } }],
+    grid: { top: 22, right: 8, bottom: 2, left: 2, containLabel: true },
+    legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.camara}</b><br/>${int(row.semArt.length)} de ${int(row.ativas.length)} empresas registradas sem ART no período (<b>${pct(row.taxa)}</b>)<br/><span style="opacity:.75">clique para ver as empresas</span>`; } },
+    xAxis: { type: 'value', max: 100, show: false },
+    yAxis: { type: 'category', inverse: true, data: rows.map(row => `${row.camara}  ${int(row.ativas.length)}`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
+    series: [
+      { name: 'Sem ART no período', type: 'bar', stack: 's', barWidth: '50%', barMaxWidth: 30, data: rows.map(row => row.taxa), itemStyle: { color: tokens.warn, borderRadius: [3, 0, 0, 3] },
+        label: { show: true, position: 'insideLeft', color: '#1A202C', fontSize: 10.5, fontWeight: 800, formatter: (item: any) => item.value >= 8 ? pct(item.value) : '' } },
+      { name: 'Com ART', type: 'bar', stack: 's', data: rows.map(row => 100 - row.taxa), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1, borderRadius: [0, 3, 3, 0] } },
+    ],
   }), [rows, tokens]);
-  return <Chart option={option} tokens={tokens} label="Empresas registradas sem ART no período por câmara" onPick={params => { const row = rows[params.dataIndex]; if (row?.semArt.length) ctx.open({ kind: 'empresas', title: `${row.camara}: registradas sem ART no período`, what: 'Empresas com registro ativo sem nenhuma ART registrada no período.', use: 'Verifique se a empresa está em atividade; se estiver, oriente sobre a obrigação de ART (Lei 6.496/77).', ids: row.semArt }); }} />;
-}
-
-/** A rede dos maiores grupos societários: cada ponto é uma empresa, e cada linha liga a empresa à sócia. Verde é registrada. */
-export function RedeSocietaria({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, dataset } = ctx, q = ctx.frentes.sociedades;
-  const rede = useMemo(() => {
-    const grupos = q.grupos.slice(0, 8), membros = new Set(grupos.flatMap(row => row.empresas)), anchor = dataset.snapshotDate;
-    const registrada = new Set(dataset.registrations.filter(row => row.status === 'Ativo' && row.startedAt <= anchor && (!row.ceasedAt || row.ceasedAt > anchor)).map(row => row.companyId));
-    const nomes = new Map(dataset.companies.map(row => [row.id, row.name])), ligacoes = new Map<string, [string, string]>();
-    for (const row of ctx.frentes.sociedades.socios) if (row.socioCompanyId && membros.has(row.empresaId) && membros.has(row.socioCompanyId)) ligacoes.set(`${row.empresaId}|${row.socioCompanyId}`, [row.empresaId, row.socioCompanyId]);
-    const grau = new Map<string, number>(); for (const [a, b] of ligacoes.values()) { grau.set(a, (grau.get(a) ?? 0) + 1); grau.set(b, (grau.get(b) ?? 0) + 1); }
-    return { nos: [...membros].map(id => ({ id, name: nomes.get(id) ?? id, registrada: registrada.has(id), grau: grau.get(id) ?? 0 })), ligacoes: [...ligacoes.values()], registradas: [...membros].filter(id => registrada.has(id)).length, membros: membros.size };
-  }, [q, dataset, ctx.frentes.sociedades.socios]);
-  const option = useMemo(() => ({
-    tooltip: { trigger: 'item', formatter: (item: any) => item.dataType === 'node' ? `<b>${item.data.name}</b><br/>${item.data.registrada ? 'Registrada no Crea-SP' : 'Sem registro ativo'}<br/>${int(item.data.grau)} ligações societárias` : '' },
-    series: [{ type: 'graph', layout: 'force', roam: true, zoom: 1.5, draggable: false, force: { repulsion: 70, edgeLength: [16, 36], gravity: 0.22, layoutAnimation: false }, left: 6, right: 6, top: 6, bottom: 6,
-      data: rede.nos.map(no => ({ ...no, symbolSize: 10 + Math.min(14, no.grau * 3), itemStyle: { color: no.registrada ? tokens.good : tokens.warn, borderColor: tokens.surface, borderWidth: 1 } })),
-      links: rede.ligacoes.map(([source, target]) => ({ source, target })), lineStyle: { color: tokens.muted, opacity: 0.45, width: 1 }, emphasis: { focus: 'adjacency', lineStyle: { width: 2 } }, label: { show: false } }],
-  }), [rede, tokens]);
-  return <div className="split">
-    <Chart option={option} tokens={tokens} label="Rede dos maiores grupos societários" onPick={params => { if (params.dataType !== 'node') return; const grupo = q.grupos.find(row => row.empresas.includes(params.data.id));
-      if (grupo) ctx.open({ kind: 'empresas', title: `Grupo societário de ${params.data.name}`, what: 'Empresas com atividade de engenharia ligadas entre si porque uma é sócia da outra, segundo o quadro de sócios publicado pela Receita.', use: 'A ligação é societária, não técnica. Veja o registro e o RT de cada empresa antes de qualquer leitura.', ids: grupo.empresas }); }} />
-    <ul className="side-list" aria-label="Sócios empresas">
-      <li><span className="side-serie"><i style={{ background: tokens.good }} /><span>Registradas na rede</span><b>{int(rede.registradas)}</b></span></li>
-      <li><span className="side-serie"><i style={{ background: tokens.warn }} /><span>Sem registro ativo</span><b>{int(rede.membros - rede.registradas)}</b></span></li>
-      <li><button onClick={() => q.empresasComSocioPj.length && ctx.open({ kind: 'empresas', title: 'Empresas com outra empresa como sócia', what: 'Empresas com atividade de engenharia que têm ao menos uma empresa no quadro de sócios publicado pela Receita.', ids: q.empresasComSocioPj })}><i style={{ background: tokens.blue }} /><span>Têm empresa como sócia</span><b>{int(q.empresasComSocioPj.length)}</b></button></li>
-      <li><button onClick={() => q.investidasRegistradasComSocioEngenhariaSemRegistro.length && ctx.open({ kind: 'empresas', title: 'Registradas com sócia de engenharia sem registro', what: 'Empresas registradas que têm como sócia outra empresa com atividade da lista do Crea-SP, mas sem registro encontrado.', use: 'A sócia pode não exercer a atividade.', ids: q.investidasRegistradasComSocioEngenhariaSemRegistro })}><i style={{ background: tokens.bad }} /><span>Sócia de engenharia sem registro</span><b>{int(q.investidasRegistradasComSocioEngenhariaSemRegistro.length)}</b></button></li>
-    </ul>
-  </div>;
+  return <Chart option={option} tokens={tokens} label="Empresas registradas com e sem ART no período, por câmara" onPick={params => { const row = rows[params.dataIndex]; if (!row) return; const sem = params.seriesIndex === 0, ids = sem ? row.semArt : row.comArt;
+    if (ids.length) ctx.open({ kind: 'empresas', title: `${row.camara}: registradas ${sem ? 'sem ART' : 'com ART'} no período`, what: sem ? 'Empresas com registro ativo sem nenhuma ART registrada no período.' : 'Empresas com registro ativo e ao menos uma ART no período.', use: sem ? 'Verifique se a empresa está em atividade; se estiver, oriente sobre a obrigação de ART (Lei 6.496/77).' : undefined, ids }); }} />;
 }
 
 /** Instalações de setores regulados e financiamentos do BNDES: uma linha por fonte, com o número e o valor, no recorte de regional e município. */
@@ -199,7 +182,7 @@ export function Dinamica({ ctx }: { ctx: CockpitCtx }) {
       <Chart option={option} tokens={tokens} label="Estabelecimentos abertos na Receita por mês e situação no cadastro" onPick={() => a.ids.length && ctx.open({ kind: 'cnpjs', title: 'Abertos na Receita em 24 meses', what: 'Estabelecimentos com CNAE da lista do Crea-SP abertos nos últimos 24 meses antes da data de referência (data de abertura da Receita).', use: 'Aberturas são mercado novo; a correspondência no cadastro é uma decomposição, não um filtro. Sem registro não quer dizer irregular.', ids: a.ids })} />
     <ul className="side-list" aria-label="Permanência das coortes">
       <li className="side-head">Continuam registradas</li>
-      {coortes.map(row => <li key={row.mesesAtras}><button onClick={() => row.saidas.length && ctx.open({ kind: 'empresas', title: `Saíram da base em ${row.mesesAtras} meses`, what: `Empresas com registro ou visto vigente em ${data(row.d0)} e sem registro vigente na data de referência.`, use: 'Perda de vínculo institucional; cadastro vigente não prova atividade e a saída não tem causa atribuída.', ids: row.saidas })}><i style={{ background: row.taxa !== null && row.taxa >= 90 ? tokens.good : tokens.warn }} /><span>Registradas há {row.mesesAtras} meses<br /><small>{int(row.permanecem.length)} de {int(row.coorte.length)} seguem registradas</small></span><b>{row.taxa === null ? '—' : pct(row.taxa, 1)}</b></button></li>)}
+      {coortes.map(row => <li key={row.mesesAtras}><button onClick={() => row.saidas.length && ctx.open({ kind: 'empresas', title: `Saíram da base em ${row.mesesAtras} meses`, what: `Empresas com registro ou visto vigente em ${data(row.d0)} e sem registro vigente na data de referência.`, use: 'Perda de vínculo institucional; cadastro vigente não prova atividade e a saída não tem causa atribuída.', ids: row.saidas })} className="is-acao"><span>Registradas há {row.mesesAtras} meses<br /><small>{int(row.permanecem.length)} de {int(row.coorte.length)} seguem registradas</small></span><b>{row.taxa === null ? '—' : pct(row.taxa, 1)}</b></button></li>)}
     </ul>
   </div>;
 }
@@ -211,7 +194,7 @@ export function SociosPf({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: q.porQualificacao.map(row => row.qualificacao), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
     series: [
-      { type: 'bar', name: 'Profissionais do sistema Confea/Crea', stack: 'q', barWidth: 14, data: q.porQualificacao.map(row => row.profissionais), itemStyle: { color: tokens.blue } },
+      { type: 'bar', name: 'Profissionais do sistema Confea/Crea', stack: 'q', barWidth: '45%', barMaxWidth: 28, data: q.porQualificacao.map(row => row.profissionais), itemStyle: { color: tokens.blue } },
       { type: 'bar', name: 'Demais sócios PF', stack: 'q', data: q.porQualificacao.map(row => row.n - row.profissionais), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(q.porQualificacao[params.dataIndex].n) } },
     ],
   }), [q, tokens]);
@@ -219,9 +202,9 @@ export function SociosPf({ ctx }: { ctx: CockpitCtx }) {
   return <div className="split">
     <Chart option={option} tokens={tokens} label="Sócios pessoa física por qualificação e presença no cadastro profissional" />
     <ul className="side-list" aria-label="Leituras do quadro societário">
-      <li><button onClick={() => abrir('Registradas sem RT com sócio profissional ativo', q.registradasSemRtComSocioProfissional, 'Empresas registradas sem vínculo de RT vigente cujo sócio é profissional com registro ativo.', 'Orientar a anotação do RT: o sócio pode ser o responsável natural. Sociedade não é vínculo de responsabilidade.')}><i style={{ background: tokens.accent }} /><span>Registradas sem RT com sócio profissional ativo</span><b>{int(q.registradasSemRtComSocioProfissional.length)}</b></button></li>
-      <li><button onClick={() => abrir('Registradas com sócio profissional inativo', q.registradasComSocioProfissionalInativo, 'Empresas registradas cujo sócio profissional está com registro cancelado ou interrompido na data de referência.', 'Contexto para o relacionamento com o profissional; nada a notificar à empresa por isso.')}><i style={{ background: tokens.muted }} /><span>Sócio profissional cancelado ou interrompido</span><b>{int(q.registradasComSocioProfissionalInativo.length)}</b></button></li>
-      <li><button disabled><i style={{ background: tokens.blue }} /><span>Sócio profissional é RT da própria empresa</span><b>{int(q.socioEhRt.length)}</b></button></li>
+      <li><button className="is-acao" onClick={() => abrir('Registradas sem RT com sócio profissional ativo', q.registradasSemRtComSocioProfissional, 'Empresas registradas sem vínculo de RT vigente cujo sócio é profissional com registro ativo.', 'Orientar a anotação do RT: o sócio pode ser o responsável natural. Sociedade não é vínculo de responsabilidade.')}><span>Registradas sem RT com sócio profissional ativo</span><b>{int(q.registradasSemRtComSocioProfissional.length)}</b></button></li>
+      <li><button className="is-acao" onClick={() => abrir('Registradas com sócio profissional inativo', q.registradasComSocioProfissionalInativo, 'Empresas registradas cujo sócio profissional está com registro cancelado ou interrompido na data de referência.', 'Contexto para o relacionamento com o profissional; nada a notificar à empresa por isso.')}><span>Sócio profissional cancelado ou interrompido</span><b>{int(q.registradasComSocioProfissionalInativo.length)}</b></button></li>
+      <li><button className="is-acao" disabled><span>Sócio profissional é RT da própria empresa</span><b>{int(q.socioEhRt.length)}</b></button></li>
     </ul>
   </div>;
 }
@@ -242,52 +225,84 @@ export function Vinculos({ ctx }: { ctx: CockpitCtx }) {
   return <div className="split">
     <Chart option={option} tokens={tokens} label="Empresas por faixa de vínculos técnicos e situação do registro" />
     <ul className="side-list" aria-label="Leituras dos vínculos">
-      <li><button onClick={() => abrir('Registradas com empregados técnicos e sem RT vigente', q.registradasSemRt, 'Empresas registradas com ao menos um vínculo CLT em CBO de engenharia e nenhum responsável técnico vigente na data de referência.', 'Conferir se há atividade técnica e orientar a anotação do RT. Empregado em CBO técnico não é RT.')}><i style={{ background: tokens.accent }} /><span>Registradas com técnicos e sem RT vigente</span><b>{int(q.registradasSemRt.length)}</b></button></li>
-      <li><button onClick={() => abrir('Universo sem registro com empregados técnicos', q.semRegistroComTecnicos, 'Estabelecimentos com CNAE da lista, sem registro vigente, com vínculos em CBO de engenharia.', 'Prioriza a análise do CNAE sem registro; o vínculo não prova atividade privativa.')}><i style={{ background: tokens.warn }} /><span>Universo sem registro com técnicos</span><b>{int(q.semRegistroComTecnicos.length)}</b></button></li>
+      <li><button className="is-acao" onClick={() => abrir('Registradas com empregados técnicos e sem RT vigente', q.registradasSemRt, 'Empresas registradas com ao menos um vínculo CLT em CBO de engenharia e nenhum responsável técnico vigente na data de referência.', 'Conferir se há atividade técnica e orientar a anotação do RT. Empregado em CBO técnico não é RT.')}><span>Registradas com técnicos e sem RT vigente</span><b>{int(q.registradasSemRt.length)}</b></button></li>
+      <li><button className="is-acao" onClick={() => abrir('Universo sem registro com empregados técnicos', q.semRegistroComTecnicos, 'Estabelecimentos com CNAE da lista, sem registro vigente, com vínculos em CBO de engenharia.', 'Prioriza a análise do CNAE sem registro; o vínculo não prova atividade privativa.')}><span>Universo sem registro com técnicos</span><b>{int(q.semRegistroComTecnicos.length)}</b></button></li>
     </ul>
   </div>;
 }
 
 /* ---------- Painel de Empresas · visuais novos ---------- */
-/** Cor de 0 a 100% registrado: do vermelho (pouco registrado) ao azul (muito registrado). */
+/** Cor de 0 a 100% registrado: do vermelho (pouco registrado) ao azul (muito registrado). Usada no mapa de árvore. */
 const rampaCobertura = (dark: boolean) => dark ? ['#FF7B7B', '#E5703B', '#C9A227', '#4A7FC1', '#7FB0E6'] : ['#C53030', '#E5703B', '#D69E2E', '#3182CE', '#082D74'];
 const corCobertura = (taxa: number | null, dark: boolean, minimo = 40, maximo = 90) => { if (taxa === null) return dark ? '#2D3748' : '#E2E8F0'; const cores = rampaCobertura(dark), t = Math.max(0, Math.min(0.999, (taxa - minimo) / (maximo - minimo))); return cores[Math.floor(t * cores.length)]; };
 
-/** Mapa do estado: o território de cada regional pintado pela parte registrada, e uma bolha por município (tamanho = estabelecimentos). */
-export function MapaMercado({ ctx }: { ctx: CockpitCtx }) {
-  const centroids = useSpMap(), { tokens, dark } = ctx;
-  const t = useMemo(() => territorio(ctx.scope, ctx.model), [ctx.scope, ctx.model]);
+/** Indicadores do mapa. `alerta` pinta do amarelo ao vermelho (quanto mais, pior); os demais vão do azul claro ao escuro. */
+export type MetricaMapa = 'cobertura' | 'semRegistro' | 'empresas' | 'crescimento' | 'rt' | 'inadimplencia' | 'arts' | 'emprego';
+type Abre = 'faltam' | 'ativas' | 'devedoras';
+export const metricasMapa: Record<MetricaMapa, { label: string; get: (row: LinhaGre) => number | null; fmt: (value: number) => string; alerta?: boolean; menorPrimeiro?: boolean; abre: Abre }> = {
+  cobertura: { label: 'Parte do mercado registrada', get: row => row.cobertura, fmt: value => pct(value), menorPrimeiro: true, abre: 'faltam' },
+  semRegistro: { label: 'CNPJs da lista sem registro', get: row => row.semRegistro, fmt: int, alerta: true, abre: 'faltam' },
+  empresas: { label: 'Empresas registradas', get: row => row.base, fmt: int, abre: 'ativas' },
+  crescimento: { label: 'Variação das registradas', get: row => row.crescimento, fmt: value => `${value >= 0 ? '+' : ''}${pct(value)}`, menorPrimeiro: true, abre: 'ativas' },
+  rt: { label: 'Registradas com RT', get: row => row.rt, fmt: value => pct(value), menorPrimeiro: true, abre: 'ativas' },
+  inadimplencia: { label: 'Anuidade atrasada', get: row => row.inadimplencia, fmt: value => pct(value), alerta: true, abre: 'devedoras' },
+  arts: { label: 'ARTs de empresas no período', get: row => row.arts, fmt: int, abre: 'ativas' },
+  emprego: { label: 'Empregos técnicos', get: row => row.empregoTecnico, fmt: int, abre: 'ativas' },
+};
+const rampaMapa = (alerta: boolean, dark: boolean) => alerta
+  ? (dark ? ['#3A2E22', '#7A5A10', '#C9851F', '#E5703B', '#FF7B7B'] : ['#FFF4D6', '#FFD98A', '#F6AD55', '#E5703B', '#C53030'])
+  : (dark ? ['#1A2D52', '#2F548C', '#4A7FC1', '#7FB0E6', '#D4EDFF'] : ['#EAF1FA', '#BBD5F2', '#7FB0E6', '#3182CE', '#082D74']);
+
+/**
+ * Mapa do estado com o limite de cada município (pedido do Caio em 02/11/2026: nada de bolhas). Cada município é pintado pela
+ * regional a que pertence, no indicador escolhido, em cinco faixas; ao lado, as regionais em ordem. Com uma regional ou um
+ * município escolhido no alto da tela, o mapa aproxima dele, e o município escolhido ganha contorno.
+ */
+export function MapaMercado({ ctx, metrica }: { ctx: CockpitCtx; metrica: MetricaMapa }) {
+  const centroids = useSpMap(), { tokens, dark, linhas } = ctx, config = metricasMapa[metrica];
+  const [destaque, setDestaque] = useState<string | null>(null);
   const regioes = useMemo(() => centroids ? territorioGre(ctx.dataset, centroids) : null, [centroids, ctx.dataset]);
-  const foco = useMemo(() => { if (!regioes || !centroids) return null; const cidade = ctx.cidadeId ? ctx.dataset.cities.find(row => row.id === ctx.cidadeId) : undefined;
-    // Com uma regional ou um município escolhido, o mapa aproxima dele; o resto do estado fica apagado ao fundo.
-    if (cidade) return { center: centroids.get(cidade.name), zoom: 3.2 }; if (ctx.greId) return { center: rotulosGre(regioes, centroids).get(ctx.greId), zoom: 2.2 }; return null; }, [regioes, centroids, ctx.greId, ctx.cidadeId, ctx.dataset]);
-  const porGre = useMemo(() => new Map(t.gres.map(row => [row.id, row])), [t]), cidades = useMemo(() => new Map(ctx.dataset.cities.map(row => [row.id, row])), [ctx.dataset]);
-  const maior = Math.max(1, ...t.cidades.map(row => row.total));
-  // A escala de cor vai da regional ou município menos registrado ao mais registrado, para as diferenças aparecerem.
-  const taxas = [...t.cidades, ...t.gres].map(row => row.taxa).filter((value): value is number => value !== null);
-  const piso = Math.floor(Math.min(...taxas, 100) / 5) * 5, teto = Math.max(piso + 10, Math.ceil(Math.max(...taxas, 0) / 5) * 5);
-  const cor = (taxa: number | null) => corCobertura(taxa, dark, piso, teto);
+  const rotulos = useMemo(() => regioes && centroids ? rotulosGre(regioes, centroids) : null, [regioes, centroids]);
+  const t = useMemo(() => territorio(ctx.scope, ctx.model), [ctx.scope, ctx.model]);
+  const cidadePorNome = useMemo(() => new Map(t.cidades.map(row => [row.nome, row])), [t]);
+  const cidade = ctx.cidadeId ? ctx.dataset.cities.find(row => row.id === ctx.cidadeId) : undefined;
+  const classes = useMemo(() => {
+    const rows = linhas.filter(row => config.get(row) !== null).sort((a, b) => config.get(a)! - config.get(b)!), cores = rampaMapa(Boolean(config.alerta), dark);
+    const cls = new Map(rows.map((row, index) => [row.id, Math.min(4, Math.floor(index / rows.length * 5))]));
+    const faixas = cores.map((cor, index) => { const membros = rows.filter(row => cls.get(row.id) === index).map(row => config.get(row)!); return { cor, min: membros.length ? Math.min(...membros) : null, max: membros.length ? Math.max(...membros) : null }; });
+    return { cls, cores, faixas };
+  }, [linhas, config, dark]);
+  const porId = useMemo(() => new Map(linhas.map(row => [row.id, row])), [linhas]);
+  const cor = (greId: string) => { const index = classes.cls.get(greId); return index === undefined ? tokens.line : classes.cores[index]; };
+  const ranking = [...linhas].filter(row => config.get(row) !== null).sort((a, b) => config.menorPrimeiro ? config.get(a)! - config.get(b)! : config.get(b)! - config.get(a)!);
+  const maximo = Math.max(...ranking.map(row => Math.abs(config.get(row)!)), 1);
   const option = useMemo(() => {
-    if (!regioes || !centroids) return null;
+    if (!regioes || !rotulos || !centroids) return null;
+    const foco = cidade ? { center: centroids.get(cidade.name), zoom: 3.2 } : ctx.greId ? { center: rotulos.get(ctx.greId), zoom: 2.2 } : null;
+    const dica = (nome: string, greId: string) => { const row = porId.get(greId); if (!row) return nome; const value = config.get(row), local = cidadePorNome.get(nome);
+      return `<b>${nome}</b> · ${row.name}<br/>${config.label} na regional: <b>${value === null ? '—' : config.fmt(value)}</b>${local ? `<br/>No município: ${int(local.total)} estabelecimentos da lista, ${local.taxa === null ? '—' : pct(local.taxa)} registrados` : ''}<br/><span style="opacity:.8">${int(row.base)} registradas · ${row.cobertura === null ? '—' : pct(row.cobertura)} do mercado · ${int(row.semRegistro)} sem registro</span><br/><span style="opacity:.7">clique para ver as empresas</span>`; };
     return {
-      tooltip: { trigger: 'item', formatter: (item: any) => { const row = item.componentType === 'geo' ? porGre.get(regioes.get(item.name) ?? '') : item.data?.linha as LinhaTerritorio | undefined; if (!row) return item.name;
-        return `<b>${row.nome}</b>${item.componentType === 'geo' ? ' (regional)' : ''}<br/>${int(row.total)} estabelecimentos com atividade de engenharia<br/>${int(row.registrados.length)} registrados · <b>${row.taxa === null ? '—' : pct(row.taxa)}</b><br/>${int(row.semRegistro.length)} nunca apareceram no cadastro<br/><span style="opacity:.75">clique para ver os que faltam</span>`; } },
+      tooltip: { trigger: 'item', formatter: (item: any) => item.componentType === 'geo' ? dica(item.name, regioes.get(item.name) ?? '') : dica(porId.get(item.data?.greId)?.name ?? '', item.data?.greId ?? '') },
       geo: { map: 'spPainel', roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
-        itemStyle: { areaColor: tokens.soft, borderColor: tokens.surface, borderWidth: 0.3 }, emphasis: { itemStyle: { areaColor: tokens.line }, label: { show: false } },
-        regions: [...regioes].map(([name, greId]) => { const row = porGre.get(greId), fora = Boolean(ctx.greId && greId !== ctx.greId);
-          return { name, itemStyle: fora ? { areaColor: tokens.soft, opacity: 1, borderColor: tokens.line, borderWidth: 0.3 } : { areaColor: row ? cor(row.taxa) : tokens.soft, opacity: 0.45, borderColor: tokens.surface, borderWidth: 0.3 } }; }) },
-      series: [{ type: 'scatter', coordinateSystem: 'geo', zlevel: 2,
-        data: t.cidades.map(row => { const cidade = cidades.get(row.id), at = cidade ? centroids.get(cidade.name) : undefined; if (!at) return null;
-          const escolhida = ctx.cidadeId === row.id;
-          return { name: row.nome, linha: row, value: [...at, row.total], symbolSize: 6 + Math.sqrt(row.total / maior) * 30, itemStyle: { color: cor(row.taxa), opacity: 0.92, borderColor: escolhida ? tokens.ink : tokens.surface, borderWidth: escolhida ? 2 : 1 } }; }).filter(Boolean),
-        label: { show: true, position: 'right', fontSize: 9.5, color: tokens.ink, formatter: (item: any) => item.data.linha.total / maior > 0.18 ? item.name : '', textBorderColor: tokens.surface, textBorderWidth: 2 }, labelLayout: { hideOverlap: true } }],
+        itemStyle: { areaColor: tokens.soft, borderColor: tokens.surface, borderWidth: 0.35 }, emphasis: { itemStyle: { areaColor: tokens.accent }, label: { show: false } },
+        regions: [...regioes].map(([name, greId]) => { const apagado = destaque ? destaque !== greId : Boolean(ctx.greId && ctx.greId !== greId), escolhido = cidade?.name === name;
+          return { name, itemStyle: { areaColor: cor(greId), opacity: apagado ? 0.3 : 1, borderColor: escolhido ? tokens.ink : tokens.surface, borderWidth: escolhido ? 1.6 : 0.35 } }; }) },
+      series: [{ type: 'scatter', coordinateSystem: 'geo', symbolSize: 1, itemStyle: { color: 'transparent' }, silent: true,
+        data: [...rotulos].map(([greId, at]) => { const row = porId.get(greId), value = row ? config.get(row) : null; return { name: row?.curto ?? greId, greId, valor: value === null ? '—' : config.fmt(value), value: at }; }),
+        label: { show: true, formatter: (item: any) => `{n|${item.name}}\n{v|${item.data.valor}}`, rich: { n: { color: '#1A202C', fontSize: 9.5, fontWeight: 700, textBorderColor: 'rgba(255,255,255,.85)', textBorderWidth: 2.5 }, v: { color: '#1A202C', fontSize: 10.5, fontWeight: 800, textBorderColor: 'rgba(255,255,255,.85)', textBorderWidth: 2.5 } } },
+        labelLayout: { hideOverlap: true } }],
     };
-  }, [regioes, centroids, t, porGre, cidades, maior, tokens, dark, ctx.greId, ctx.cidadeId, piso, teto, foco]); // eslint-disable-line react-hooks/exhaustive-deps
-  const abrir = (row: LinhaTerritorio | undefined) => { if (!row) return; const ids = row.semRegistro.length ? row.semRegistro : row.registrados;
-    if (ids.length) ctx.open({ kind: 'cnpjs', title: `${row.nome}: ${row.semRegistro.length ? 'nunca apareceram no cadastro' : 'registrados'}`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP neste lugar, na data escolhida.', use: row.semRegistro.length ? 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.' : undefined, ids }); };
-  return <div className="mapa-wrap">
-    {option ? <Chart option={option} tokens={tokens} label="Mapa do mercado de engenharia por município" onPick={params => abrir(params.componentType === 'geo' ? porGre.get(regioes?.get(params.name) ?? '') : params.data?.linha)} /> : <div className="loading">Carregando o mapa…</div>}
-    <div className="mapa-legenda" aria-hidden="true"><span>{piso}%</span>{rampaCobertura(dark).map(value => <i key={value} style={{ background: value }} />)}<span>{teto}% registrado</span></div>
+  }, [regioes, rotulos, centroids, classes, config, tokens, destaque, ctx.greId, cidade, porId, cidadePorNome]); // eslint-disable-line react-hooks/exhaustive-deps
+  const abrir = (greId: string | undefined) => { const row = greId ? porId.get(greId) : undefined; if (!row) return;
+    if (config.abre === 'faltam') { if (row.semRegistroIds.length) ctx.open({ kind: 'cnpjs', title: `${row.name}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP nesta regional e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.semRegistroIds }); return; }
+    const devedoras = config.abre === 'devedoras', ids = devedoras ? row.devedoras : row.ativas;
+    if (ids.length) ctx.open({ kind: 'empresas', title: `${row.name}: ${devedoras ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: devedoras ? 'Empresas registradas nesta regional com anuidade vencida na data escolhida.' : 'Empresas com registro ativo nesta regional na data escolhida.', ids }); };
+  return <div className="geo-layout is-compacto">
+    <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa das regionais por município: ${config.label}`} onPick={params => abrir(params.componentType === 'geo' ? regioes?.get(params.name) : params.data?.greId)} /> : <div className="loading">Carregando o mapa…</div>}
+      <ul className="geo-legend" aria-label="Faixas do mapa">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === null ? '—' : item.min === item.max ? config.fmt(item.min) : `${config.fmt(item.min)} a ${config.fmt(item.max!)}`}</li>)}</ul></div>
+    <ol className="geo-rank" onMouseLeave={() => setDestaque(null)} aria-label={`Regionais por ${config.label}`}>{ranking.map(row => { const value = config.get(row)!;
+      return <li key={row.id}><button onClick={() => abrir(row.id)} onMouseEnter={() => setDestaque(row.id)} onFocus={() => setDestaque(row.id)} className={ctx.greId === row.id ? 'is-selected' : ''}>
+        <i style={{ background: cor(row.id) }} /><span>{row.curto}</span><b>{config.fmt(value)}</b><em style={{ width: `${Math.abs(value) / maximo * 100}%` }} /></button></li>; })}</ol>
   </div>;
 }
 
@@ -348,7 +363,7 @@ export function RegistrosCalor({ ctx }: { ctx: CockpitCtx }) {
 /** Nome com “engenharia” e quem dirige a empresa (Lei 5.194/66, arts. 4º e 5º). Depende do CPF completo dos sócios. */
 export function Denominacao({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, q = ctx.parcerias.denominacao, eyebrow = 'Demonstração que depende de acordo com a Receita Federal (CPF completo dos sócios)';
-  const partes = [{ name: 'Diretoria atende à lei', ids: q.atendem, color: tokens.good }, { name: 'Diretoria não atende', ids: q.naoAtendem, color: tokens.bad }, { name: 'Sem dirigente identificado', ids: q.semDirigente, color: tokens.line }];
+  const partes = [{ name: 'Diretoria com maioria de profissionais', ids: q.atendem, color: tokens.good }, { name: 'Diretoria sem maioria de profissionais', ids: q.naoAtendem, color: tokens.bad }, { name: 'Sem dirigente identificado', ids: q.semDirigente, color: tokens.line }];
   const total = partes.reduce((soma, part) => soma + part.ids.length, 0);
   const option = useMemo(() => ({
     tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${int(item.value)} empresas · ${pct(item.percent)}` },
@@ -359,9 +374,8 @@ export function Denominacao({ ctx }: { ctx: CockpitCtx }) {
   return <div className="split">
     <Chart option={option} tokens={tokens} label="Empresas com engenharia no nome pela composição da diretoria" onPick={params => { const part = partes[params.dataIndex]; if (part) abrir(`Nome com engenharia: ${part.name.toLowerCase()}`, part.ids); }} />
     <ul className="side-list" aria-label="Nome e diretoria">
-      <li><button onClick={() => abrir('Registradas cujo nome não condiz com a diretoria', q.naoAtendemRegistradas)}><i style={{ background: tokens.bad }} /><span>Registradas, diretoria sem maioria de profissionais</span><b>{int(q.naoAtendemRegistradas.length)}</b></button></li>
-      <li><button onClick={() => abrir('Nome com engenharia e diretoria sem maioria de profissionais', q.naoAtendem)}><i style={{ background: tokens.warn }} /><span>Todas sem maioria de profissionais</span><b>{int(q.naoAtendem.length)}</b></button></li>
-      <li><button onClick={() => abrir('Nome com engenharia e diretoria com maioria de profissionais', q.atendem)}><i style={{ background: tokens.good }} /><span>Diretoria com maioria de profissionais</span><b>{int(q.atendem.length)}</b></button></li>
+      {partes.map(part => <li key={part.name}><button onClick={() => abrir(`Nome com engenharia: ${part.name.toLowerCase()}`, part.ids)}><i style={{ background: part.color }} /><span>{part.name}</span><b>{int(part.ids.length)}</b></button></li>)}
+      <li><button className="is-acao" onClick={() => abrir('Registradas cujo nome não condiz com a diretoria', q.naoAtendemRegistradas)}><span>Destas, registradas sem maioria de profissionais</span><b>{int(q.naoAtendemRegistradas.length)}</b></button></li>
     </ul>
   </div>;
 }
@@ -379,8 +393,7 @@ export function Ritmo({ ctx, r }: { ctx: CockpitCtx; r: ReturnType<typeof ritmoE
   const { tokens } = ctx;
   const cores: Record<typeof seriesRitmo[number]['key'], string> = { emprego: tokens.muted, pib: tokens.heat[1], credito: tokens.warn, aberturas12: tokens.blue, registros12: tokens.accent };
   const option = useMemo(() => ({
-    grid: { top: 34, right: 12, bottom: 2, left: 4, containLabel: true },
-    legend: { top: 0, left: 0, itemWidth: 14, itemHeight: 8, itemGap: 12, textStyle: { color: tokens.muted, fontSize: 10.5 } },
+    grid: { top: 8, right: 12, bottom: 2, left: 4, containLabel: true },
     tooltip: { trigger: 'axis', formatter: (items: any[]) => { const ponto = r.pontos[items[0].dataIndex];
       const valor = (key: string) => key === 'pib' || key === 'credito' ? brl((ponto as any)[key]) : `${int((ponto as any)[key])}${key === 'emprego' ? ' empregados' : ''}`;
       return `<b>${mes(ponto.month)}</b><br/>${items.map(item => { const s = seriesRitmo[item.seriesIndex]; return `${item.marker}${s.nome}: <b>${item.value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}</b> <span style="opacity:.75">(${valor(s.key)}, ${s.fonte})</span>`; }).join('<br/>')}`; } },
@@ -429,7 +442,7 @@ export function Credenciamentos({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => `${row.atividade} (${row.fonte})`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
     series: [
-      { type: 'bar', name: 'Registradas com RT', stack: 'c', barWidth: 13, data: rows.map(row => row.comRt.length), itemStyle: { color: tokens.good } },
+      { type: 'bar', name: 'Registradas com RT', stack: 'c', barWidth: '55%', barMaxWidth: 22, data: rows.map(row => row.comRt.length), itemStyle: { color: tokens.good } },
       { type: 'bar', name: 'Registradas sem RT', stack: 'c', data: rows.map(row => row.registradasSemRt.length), itemStyle: { color: tokens.accent } },
       { type: 'bar', name: 'Sem registro', stack: 'c', data: rows.map(row => row.semRegistro.length), itemStyle: { color: tokens.bad, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(rows[params.dataIndex].empresas.length) } },
     ],
@@ -439,8 +452,8 @@ export function Credenciamentos({ ctx }: { ctx: CockpitCtx }) {
     <Chart option={option} tokens={tokens} label="Empresas credenciadas por atividade e situação no cadastro" onPick={params => { const row = rows[params.dataIndex]; if (!row) return; const ids = [row.comRt, row.registradasSemRt, row.semRegistro][params.seriesIndex] ?? [];
       if (ids.length) ctx.open({ kind: 'empresas', eyebrow, title: `${row.atividade} (${row.fonte}): ${params.seriesName.toLowerCase()}`, what: 'Empresas com credenciamento vigente nesta atividade na data escolhida, pela situação no cadastro do Crea-SP.', use: 'O credenciamento mostra que a empresa exerce atividade técnica. Confirme a atribuição antes de orientar sobre registro ou RT.', ids }); }} />
     <ul className="side-list" aria-label="Leituras dos credenciamentos">
-      <li><button onClick={() => q.semRegistro.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Credenciadas sem registro no Crea-SP', what: 'Empresas com credenciamento vigente no DETRAN-SP ou no INMETRO e sem registro ativo no Crea-SP na data escolhida.', use: 'Prioridade para orientação: a atividade credenciada costuma exigir responsável técnico.', ids: q.semRegistro })}><i style={{ background: tokens.bad }} /><span>Credenciadas sem registro</span><b>{int(q.semRegistro.length)}</b></button></li>
-      <li><button onClick={() => q.registradasSemRt.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Credenciadas registradas sem RT', what: 'Empresas credenciadas, registradas e sem responsável técnico vigente na data escolhida.', ids: q.registradasSemRt })}><i style={{ background: tokens.accent }} /><span>Registradas sem RT vigente</span><b>{int(q.registradasSemRt.length)}</b></button></li>
+      <li><button className="is-acao" onClick={() => q.semRegistro.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Credenciadas sem registro no Crea-SP', what: 'Empresas com credenciamento vigente no DETRAN-SP ou no INMETRO e sem registro ativo no Crea-SP na data escolhida.', use: 'Prioridade para orientação: a atividade credenciada costuma exigir responsável técnico.', ids: q.semRegistro })}><span>Credenciadas sem registro</span><b>{int(q.semRegistro.length)}</b></button></li>
+      <li><button className="is-acao" onClick={() => q.registradasSemRt.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Credenciadas registradas sem RT', what: 'Empresas credenciadas, registradas e sem responsável técnico vigente na data escolhida.', ids: q.registradasSemRt })}><span>Registradas sem RT vigente</span><b>{int(q.registradasSemRt.length)}</b></button></li>
     </ul>
   </div>;
 }
@@ -449,23 +462,23 @@ export function Credenciamentos({ ctx }: { ctx: CockpitCtx }) {
 export function Jucesp({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, q = ctx.parcerias.jucesp, rows = q.trimestres;
   const option = useMemo(() => ({
-    grid: { top: 26, right: 6, bottom: 2, left: 4, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    grid: { top: 26, right: 6, bottom: 2, left: 4, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     xAxis: { type: 'category', data: rows.map(row => row.trimestre.replace('-', ' ')), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
     yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
     series: [
-      { type: 'bar', name: 'Aberturas com engenharia', stack: 'j', barWidth: '52%', data: rows.map(row => row.aberturas), itemStyle: { color: tokens.blue } },
-      { type: 'bar', name: 'Alterações que incluíram engenharia', stack: 'j', data: rows.map(row => row.alteracoes), itemStyle: { color: tokens.brand, borderRadius: [3, 3, 0, 0] } },
-      { type: 'line', name: 'Registraram-se depois no Crea-SP', data: rows.map(row => row.registradasDepois), symbol: 'circle', symbolSize: 5, lineStyle: { color: tokens.good, width: 2 }, itemStyle: { color: tokens.good } },
+      { type: 'bar', name: 'Aberturas', stack: 'j', barWidth: '52%', data: rows.map(row => row.aberturas), itemStyle: { color: tokens.blue } },
+      { type: 'bar', name: 'Alterações do contrato', stack: 'j', data: rows.map(row => row.alteracoes), itemStyle: { color: tokens.brand, borderRadius: [3, 3, 0, 0] } },
+      { type: 'line', name: 'Registradas depois', data: rows.map(row => row.registradasDepois), symbol: 'circle', symbolSize: 5, lineStyle: { color: tokens.good, width: 2 }, itemStyle: { color: tokens.good } },
     ],
   }), [rows, tokens]);
   const eyebrow = 'Demonstração que depende de acordo com a Junta Comercial (JUCESP)';
   return <div className="split">
     <Chart option={option} tokens={tokens} label="Atos da Junta Comercial que incluíram engenharia, por trimestre" />
     <ul className="side-list" aria-label="Leituras dos atos da Junta">
-      <li><button onClick={() => q.alteracoesSemRegistro.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Incluíram engenharia no contrato e seguem sem registro', what: 'Empresas que, nos últimos 24 meses, alteraram o contrato social para incluir atividade da lista do Crea-SP e não têm registro ativo na data escolhida.', use: 'É o aviso mais cedo de empresa nova na área: orientar sobre o registro antes de qualquer ação fiscal.', ids: q.alteracoesSemRegistro })}><i style={{ background: tokens.warn }} /><span>Alteraram o contrato e seguem sem registro</span><b>{int(q.alteracoesSemRegistro.length)}</b></button></li>
-      <li><button onClick={() => q.registradasDepois.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Registraram-se depois do ato na Junta', what: 'Empresas que fizeram o primeiro registro no Crea-SP depois do ato que incluiu a atividade de engenharia.', ids: q.registradasDepois })}><i style={{ background: tokens.good }} /><span>Registraram-se depois do ato</span><b>{int(q.registradasDepois.length)}</b></button></li>
-      <li><button onClick={() => q.semRegistro.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Atos com engenharia sem registro no Crea-SP', what: 'Empresas abertas ou alteradas nos últimos 24 meses com atividade da lista e sem registro ativo na data escolhida.', ids: q.semRegistro })}><i style={{ background: tokens.bad }} /><span>Abertas ou alteradas, sem registro</span><b>{int(q.semRegistro.length)}</b></button></li>
+      <li><button className="is-acao" onClick={() => q.alteracoesSemRegistro.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Incluíram engenharia no contrato e seguem sem registro', what: 'Empresas que, nos últimos 24 meses, alteraram o contrato social para incluir atividade da lista do Crea-SP e não têm registro ativo na data escolhida.', use: 'É o aviso mais cedo de empresa nova na área: orientar sobre o registro antes de qualquer ação fiscal.', ids: q.alteracoesSemRegistro })}><span>Alteraram o contrato e seguem sem registro</span><b>{int(q.alteracoesSemRegistro.length)}</b></button></li>
+      <li><button className="is-acao" onClick={() => q.registradasDepois.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Registraram-se depois do ato na Junta', what: 'Empresas que fizeram o primeiro registro no Crea-SP depois do ato que incluiu a atividade de engenharia.', ids: q.registradasDepois })}><span>Registraram-se depois do ato</span><b>{int(q.registradasDepois.length)}</b></button></li>
+      <li><button className="is-acao" onClick={() => q.semRegistro.length && ctx.open({ kind: 'empresas', eyebrow, title: 'Atos com engenharia sem registro no Crea-SP', what: 'Empresas abertas ou alteradas nos últimos 24 meses com atividade da lista e sem registro ativo na data escolhida.', ids: q.semRegistro })}><span>Abertas ou alteradas, sem registro</span><b>{int(q.semRegistro.length)}</b></button></li>
     </ul>
   </div>;
 }

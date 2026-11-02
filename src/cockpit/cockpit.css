@@ -78,6 +78,7 @@
 .ck .tile.is-parceria > header h3 .selo-parceria { vertical-align: 1px; }
 .ind-shell > .ind-parceria { position: absolute; top: 10px; right: 36px; display: flex; gap: 3px; }
 .ficha-parceria { border-left: 3px solid var(--warn); padding-left: 8px; }
+.ficha-planob { border-left: 3px solid var(--good); padding-left: 8px; }
 .ck-legenda-parceria { display: inline-flex; align-items: center; gap: 5px; margin-left: 10px; color: var(--muted); font-size: 10px; letter-spacing: 0; text-transform: none; font-weight: 600; white-space: nowrap; vertical-align: middle; }
 .ck-legenda-parceria .selo-parceria { margin: 0; }
 .stack { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; }

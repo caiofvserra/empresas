@@ -2,7 +2,9 @@ import type { Dataset } from './types';
 import type { Scope } from './engine';
 import type { EnterpriseModel } from '../enterprise-v10/types';
 import { between, chance, sum } from './hash';
-import { buildEmpregoCbo, cbos } from './profissionais';
+import { buildEmpregoCbo, cbos, modalidadeAntiga, situacaoEm } from './profissionais';
+import type { Profissional } from './profissionais';
+import type { Art } from './types';
 import { creditoCidade, pibCidade } from './parcerias';
 import { classeDoEstabelecimento } from '../observatorio/norte';
 
@@ -188,4 +190,23 @@ export function registrosPorCamara(scope: Scope, camaraDe: Map<string, string>, 
   }
   const linhas = [...camaras].map(([camara, porMes]) => ({ camara, total: sum([...porMes.values()].map(ids => ids.length)), porMes })).sort((a, b) => b.total - a.total);
   return { months, linhas };
+}
+
+/* ---------- ARTs por modalidade, em proporção aos profissionais ativos da mesma modalidade ---------- */
+export interface LinhaArtModalidade { modalidade: string; arts: number; ativos: number; porCem: number | null; empresas: string[] }
+/**
+ * Pedido do Caio (02/11/2026): comparar as modalidades pelo número de ARTs de empresas a cada 100 profissionais ativos da mesma
+ * modalidade na data escolhida, e não pelo número bruto, que só repete o tamanho de cada modalidade. Os profissionais seguem o
+ * recorte de regional e município do alto da tela. Modalidade sem ART no período fica de fora.
+ */
+export function artsPorProfissional(arts: Art[], profissionais: Profissional[], anchor: string, greId: string | null, cityId: string | null) {
+  const ativos = new Map<string, number>();
+  for (const row of profissionais) if ((!greId || row.greId === greId) && (!cityId || row.cityId === cityId) && situacaoEm(row, anchor) === 'Ativo') ativos.set(row.modalidade, (ativos.get(row.modalidade) ?? 0) + 1);
+  const porModalidade = new Map<string, Art[]>();
+  for (const art of arts) { const modalidade = modalidadeAntiga[art.modality] ?? art.modality; porModalidade.set(modalidade, [...(porModalidade.get(modalidade) ?? []), art]); }
+  const linhas: LinhaArtModalidade[] = [...porModalidade].map(([modalidade, rows]) => { const n = ativos.get(modalidade) ?? 0;
+    return { modalidade, arts: rows.length, ativos: n, porCem: n ? rows.length / n * 100 : null, empresas: [...new Set(rows.map(row => row.companyId))] }; })
+    .sort((a, b) => (b.porCem ?? -1) - (a.porCem ?? -1));
+  const totalArts = sum(linhas.map(row => row.arts)), totalAtivos = sum(linhas.map(row => row.ativos));
+  return { linhas, geral: totalAtivos ? totalArts / totalAtivos * 100 : null };
 }

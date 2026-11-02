@@ -7,7 +7,7 @@ import { defaultFilters } from '../src/domain/types.ts';
 import { datasetAt } from '../src/domain/tempo.ts';
 import { selectEnterpriseScope } from '../src/enterprise-v10/filters.ts';
 import { buildEnterpriseModel } from '../src/enterprise-v10/model.ts';
-import { antiguidadeRegistro, artsMensais, cadastroIncompleto, cnaesDoMercado, faixasAntiguidade, idadeCapital, mercadoEmArvore, porCapital, registrosPorCamara, ritmoEconomico, territorio } from '../src/domain/empresas.ts';
+import { antiguidadeRegistro, artsMensais, cadastroIncompleto, cnaesDoMercado, faixasAntiguidade, idadeCapital, artsPorProfissional, mercadoEmArvore, porCapital, registrosPorCamara, ritmoEconomico, territorio } from '../src/domain/empresas.ts';
 import { camaraDaEmpresa, camaraPorCnae } from '../src/painel/analise.ts';
 import { buildProfissionais } from '../src/domain/profissionais.ts';
 import { buildCredenciamentos, buildJucesp, buildSociosPf, parcerias, quadroCredenciamentos, quadroDenominacao, quadroJucesp } from '../src/domain/parcerias.ts';
@@ -130,4 +130,34 @@ test('painel de Empresas enxuto: sem barra de aviso rolante, sem notas de rodap�
   assert.ok(ui.includes('!ctx.enxuto'), 'a pergunta do bloco precisa ir para o (i) no painel de Empresas');
   const css = readFileSync(join(import.meta.dirname, '..', 'src', 'empresas', 'empresas.css'), 'utf8');
   for (const grade of ['mercado', 'evolucao', 'rt', 'vinculos']) assert.match(css, new RegExp(`\\.ck-grid-${grade} \\{ grid-template-rows: [^;]*minmax\\(0, 1fr\\)`), `a grade ${grade} precisa dividir a altura da tela`);
+});
+
+test('ARTs por modalidade em proporção aos profissionais ativos da mesma modalidade, com a média geral', () => {
+  const profissionais = buildProfissionais(dataset).profissionais, anchor = dataset.snapshotDate, arts = dataset.arts.filter(row => row.date <= anchor && row.date > '2025-11-01');
+  const r = artsPorProfissional(arts, profissionais, anchor, null, null);
+  assert.ok(r.linhas.length >= 3, 'precisa de várias modalidades para comparar');
+  assert.equal(sum(r.linhas.map(row => row.arts)), arts.length, 'toda ART entra numa modalidade');
+  assert.ok(r.linhas.some(row => row.modalidade === 'Mecânica e metalúrgica'), 'mecânica da ART vira mecânica e metalúrgica do profissional');
+  for (const row of r.linhas) if (row.porCem !== null) assert.ok(Math.abs(row.porCem - row.arts / row.ativos * 100) < 1e-9);
+  for (let i = 1; i < r.linhas.length; i++) assert.ok((r.linhas[i - 1].porCem ?? -1) >= (r.linhas[i].porCem ?? -1), 'ordem pela taxa');
+  const gre = dataset.gres[0].id, local = artsPorProfissional(arts, profissionais, anchor, gre, null);
+  assert.ok(sum(local.linhas.map(row => row.ativos)) < sum(r.linhas.map(row => row.ativos)), 'o filtro de regional reduz os profissionais');
+});
+
+test('plano B: toda parceria tem um caminho se o acordo não sair, e a ficha e o Método mostram', () => {
+  for (const row of parcerias) assert.ok(row.planoB && row.planoB.length > 40, `plano B de ${row.id}`);
+  const ui = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'ui.tsx'), 'utf8'), metodo = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'PaginaMetodo.tsx'), 'utf8');
+  assert.ok(ui.includes('Se o acordo não sair') && ui.includes('.planoB'), 'a ficha precisa mostrar o plano B');
+  assert.ok(metodo.includes('row.planoB'), 'o Método precisa listar o plano B');
+});
+
+test('painel de Empresas: sem mapa de bolhas, sem rede de sócias e sem quadrado colorido que pareça uma segunda legenda', () => {
+  const blocos = readFileSync(join(import.meta.dirname, '..', 'src', 'empresas', 'blocos.tsx'), 'utf8');
+  assert.ok(!blocos.includes("type: 'graph'") && !blocos.includes('RedeSocietaria'), 'a rede de empresas sócias saiu');
+  assert.ok(!blocos.includes("roseType") && !blocos.includes("coordinateSystem: 'polar'"), 'rosa e barras em círculo saíram');
+  assert.ok(!/symbolSize: 6 \+ Math\.sqrt/.test(blocos), 'o mapa de bolhas saiu');
+  assert.ok(blocos.includes("map: 'spPainel'") && blocos.includes('geo-rank'), 'o mapa tem o limite dos municípios e a lista das regionais');
+  // Quadrado colorido em botão de atalho só se for legenda do gráfico ao lado; os atalhos usam is-acao.
+  assert.ok(!/<button (?!className="is-acao")[^>]*><i style=\{\{ background: tokens\./.test(blocos), 'atalho com quadrado colorido parece legenda');
+  assert.ok(!/legend:[^\n]*\n[^\n]*tooltip: \{ trigger: 'axis', formatter: \(items: any\[\]\) => \{ const ponto/.test(blocos), 'o ritmo econômico já tem a lista ao lado como legenda');
 });
