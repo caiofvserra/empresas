@@ -1,15 +1,15 @@
 import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco } from '../cockpit/ui';
-import { Credenciamentos, Denominacao, Instalacoes, Jucesp, RedeSocietaria, SociosPf, Vinculos } from './blocos';
+import { Credenciamentos, Denominacao, Instalacoes, Jucesp, SociosPf, Vinculos } from './blocos';
 
 /**
- * Painel de Empresas, página 4: com quem a empresa se liga. Sócios empresas (quadro aberto da Receita), sócios pessoas físicas,
- * instalações e financiamentos de setores regulados, empregados técnicos, credenciamentos e atos da Junta Comercial. Os blocos
- * marcados com "!" dependem de acordo e são demonstrativos até ele existir.
+ * Painel de Empresas, página 4: com quem a empresa se liga. Sócios pessoas físicas e nome da empresa, instalações e
+ * financiamentos de setores regulados, empregados técnicos, credenciamentos e atos da Junta Comercial. Os blocos
+ * marcados com "!" dependem de acordo e são demonstrativos até ele existir; cada um tem um plano B na ficha. A rede de empresas
+ * sócias saiu em 02/11/2026: as sócias sem registro já aparecem pela atividade na Receita, então a rede não trazia caso novo.
  */
 export default function PaginaVinculos({ ctx }: { ctx: CockpitCtx }) {
   return <div className="ck-grid ck-grid-vinculos">
-    <Bloco ctx={ctx} id="qs" area="qs" title="Rede de empresas sócias" question="Os oito maiores grupos de empresas ligadas porque uma é sócia da outra, pelo quadro de sócios publicado pela Receita. Cada ponto é uma empresa: verde é registrada, laranja não tem registro ativo. Clique num ponto para ver o grupo." help="Ser sócia não prova controle da empresa nem responsabilidade técnica. Arraste e use a roda do mouse para aproximar."><RedeSocietaria ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="sp" area="sp" title="Sócios que são profissionais" question="Com o CPF completo dos sócios, que só a Receita pode fornecer por acordo, mostra quantos sócios são profissionais registrados, quantos são o responsável técnico da própria empresa e onde um sócio poderia assumir a responsabilidade que falta." help="Ser sócio não faz da pessoa responsável técnica nem empregada. Serve para entender a empresa, não para apontar irregularidade. Os números são demonstrativos até o acordo com a Receita."><SociosPf ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="dn" area="dn" title="Nome com engenharia e diretoria" question="Empresas com “engenharia” ou “agronomia” na razão social, pela composição da diretoria. A Lei 5.194/66 (art. 5º) só permite essas palavras no nome quando a maioria da diretoria é de profissionais registrados; “engenheiro” no nome pede sociedade só de profissionais (art. 4º)." help="A lei não exige sócio engenheiro para a empresa se registrar: o que ela exige é o responsável técnico (art. 8º, parágrafo único, e art. 59). O nome é que precisa condizer com quem dirige a empresa (art. 59, § 1º). Depende do CPF completo dos sócios, que só a Receita fornece por acordo."><Denominacao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="in" area="in" title="Usinas, postos, minas e financiamentos" question="Usinas e agentes de energia (ANEEL), instalações e revendas de combustível (ANP), processos de mineração (ANM) e financiamentos do BNDES ligados à empresa pelo CNPJ, no recorte escolhido. Clique numa fonte para ver os agentes." help="A empresa aparece aqui porque opera, é titular ou recebeu o financiamento. Isso não faz dela a projetista, a instaladora ou a responsável técnica."><Instalacoes ctx={ctx} /></Bloco>

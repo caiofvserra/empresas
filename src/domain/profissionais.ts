@@ -24,7 +24,7 @@ export interface Profissional {
 }
 export interface ModeloProfissionais { profissionais: Profissional[]; autoria: Map<string, string>; porId: Map<string, Profissional>; anchor: string }
 
-const modalidadeAntiga: Record<string, Modalidade> = { Civil: 'Civil', Elétrica: 'Elétrica', Mecânica: 'Mecânica e metalúrgica', Agronomia: 'Agronomia', 'Segurança do trabalho': 'Segurança do trabalho' };
+export const modalidadeAntiga: Record<string, Modalidade> = { Civil: 'Civil', Elétrica: 'Elétrica', Mecânica: 'Mecânica e metalúrgica', Agronomia: 'Agronomia', 'Segurança do trabalho': 'Segurança do trabalho' };
 const pesosModalidade = [46, 20, 19, 4, 5, 2, 1, 3];
 const femininos = ['Ana', 'Camila', 'Elisa', 'Gabriela', 'Isabela', 'Larissa', 'Natália', 'Paula', 'Sofia', 'Vitória'];
 const masculinos = ['Bruno', 'Daniel', 'Felipe', 'Hugo', 'João', 'Marcos', 'Otávio', 'Rafael', 'Tiago', 'William'];

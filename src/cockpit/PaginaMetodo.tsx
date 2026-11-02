@@ -177,10 +177,10 @@ function Gate({ ctx }: { ctx: CockpitCtx }) {
 function ParceriasTabela() {
   const blocos = (id: string) => Object.values(fichas).filter(ficha => (parceriasDe(ficha) as string[]).includes(id)).length;
   return <div className="stack">
-    <p className="kpi-line"><b>{parcerias.length}</b> parcerias estão previstas, e <b>{parcerias.filter(row => row.prioridade === 'A').length}</b> delas têm prioridade alta. <b>{Object.values(fichas).filter(row => row.parceria).length}</b> blocos do painel levam o sinal “!” porque dependem de alguma delas.</p>
+    <p className="kpi-line"><b>{parcerias.length}</b> parcerias estão previstas, e <b>{parcerias.filter(row => row.prioridade === 'A').length}</b> delas têm prioridade alta. <b>{Object.values(fichas).filter(row => row.parceria).length}</b> blocos do painel levam o sinal “!” porque dependem de alguma delas. Como nenhum acordo é certo, cada parceria tem um plano B com dados públicos ou pedidos pela Lei de Acesso à Informação, mais fraco, mas que não depende de convênio.</p>
     <div className="table-wrap"><table className="metodo is-dense">
-      <thead><tr><th>Parceiro</th><th>Prioridade</th><th>O que precisa entregar</th><th>Como os dados se ligam</th><th>Base prevista</th><th>Onde aparece no painel</th></tr></thead>
-      <tbody>{parcerias.map(row => <tr key={row.id}><td><b>{row.parceiro}</b><small>{blocos(row.id)} bloco{blocos(row.id) === 1 ? '' : 's'} <Parceria id={row.id} compacto /></small></td><td>{row.prioridade}</td><td><small>{row.entrega}</small></td><td><small>{row.chave}</small></td><td className="nao"><small>{row.basePrevista}</small></td><td><small>{row.camadas}</small></td></tr>)}</tbody>
+      <thead><tr><th>Parceiro</th><th>Prioridade</th><th>O que precisa entregar</th><th>Como os dados se ligam</th><th>Base prevista</th><th>Se o acordo não sair</th><th>Onde aparece no painel</th></tr></thead>
+      <tbody>{parcerias.map(row => <tr key={row.id}><td><b>{row.parceiro}</b><small>{blocos(row.id)} bloco{blocos(row.id) === 1 ? '' : 's'} <Parceria id={row.id} compacto /></small></td><td>{row.prioridade}</td><td><small>{row.entrega}</small></td><td><small>{row.chave}</small></td><td className="nao"><small>{row.basePrevista}</small></td><td><small>{row.planoB}</small></td><td><small>{row.camadas}</small></td></tr>)}</tbody>
     </table></div>
   </div>;
 }

@@ -58,7 +58,9 @@ Os textos do painel são lidos pela Presidência e pelas superintendências, por
 - Clicar num elemento detalha aquele elemento (as empresas da barra, faixa ou ponto), nunca abre um resumo genérico.
 - Regional, câmara, período e data são filtros do painel inteiro; não se repete o mesmo gráfico por regional ou por 24 meses.
 - Cada página cabe numa tela de computador, sem rolagem, com blocos de larguras diferentes. O bloco mostra o título e o gráfico; a pergunta e o cuidado de leitura ficam no (i).
-- Os tipos de gráfico variam (mapa, mapa de árvore, calor, rede, rosa, anel, barras radiais, linhas). Nada de faixa de texto rolando na tela.
+- Os tipos de gráfico variam (mapa com o limite dos municípios, mapa de árvore, calor, anel, fluxo, barras e linhas), sem sacrificar a comparação: nada de mapa de bolhas, rosa ou barras em círculo. Nada de faixa de texto rolando na tela.
+- Quadrado colorido só onde é legenda. Atalho para uma lista de empresas ao lado do gráfico não leva quadrado.
+- Todo bloco com "!" tem um plano B na ficha, para o caso de o acordo não sair.
 
 ## Histórico
 

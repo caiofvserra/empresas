@@ -1,11 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { complianceFlow } from '../gestao-v14/metrics';
 import { int, pct } from '../painel/ui';
 import { cadastroIncompleto } from '../domain/empresas';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { pagamento } from '../cockpit/medidas';
 import { Bloco, Indicador } from '../cockpit/ui';
-import { ArvoreMercado, CamaraPorte, Conciliacao, Funil, IdadeCapital, MapaMercado, Situacoes } from './blocos';
+import { ArvoreMercado, CamaraPorte, Conciliacao, Funil, IdadeCapital, MapaMercado, Situacoes, metricasMapa } from './blocos';
+import type { MetricaMapa } from './blocos';
 
 /** Painel de Empresas, página 1: o tamanho do mercado de engenharia, quanto dele está registrado e em que atividades estão as que faltam. */
 export default function PaginaMercado({ ctx }: { ctx: CockpitCtx }) {
@@ -13,6 +15,7 @@ export default function PaginaMercado({ ctx }: { ctx: CockpitCtx }) {
   const flow = useMemo(() => complianceFlow(model, scope), [model, scope]);
   const pay = pagamento(model), ativas = model.metadata.activeCompanyIds, incompleto = useMemo(() => cadastroIncompleto(scope, model), [scope, model]);
   const semRegistro = c.porClasse.Sim['Sem correspondência'];
+  const [metrica, setMetrica] = useState<MetricaMapa>('cobertura');
   return <div className="ck-grid ck-grid-mercado">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores do mercado e do registro">
       <Indicador ficha="k-empresas" ctx={ctx} label="Empresas registradas" value={int(n.raizes)} sub={`${int(n.estabelecimentos)} estabelecimentos e ${int(n.registros)} registros e vistos`}
@@ -26,7 +29,8 @@ export default function PaginaMercado({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ficha="k-cadastro" ctx={ctx} label="Registradas com cadastro incompleto" value={int(incompleto.ids.length)} sub={incompleto.porTipo[0] ? `a pendência mais comum: ${incompleto.porTipo[0].tipo}` : 'nenhuma pendência aberta'}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas registradas com cadastro incompleto', what: 'Empresas registradas com pendência aberta no cadastro, como atividade não informada, regional não identificada ou município diferente do da Receita.', use: 'Corrigir o cadastro antes de usar a empresa em qualquer contagem por câmara, atividade ou regional.', ids: incompleto.ids })} />
     </section>
-    <Bloco ctx={ctx} id="mp" area="mp" title="Mapa do mercado" question="Cada bolha é um município: o tamanho é o número de estabelecimentos com atividade de engenharia, e a cor, a parte deles que está registrada. O fundo pinta o território de cada regional pela mesma conta." help="Arraste e use a roda do mouse para aproximar. Clique numa bolha ou numa regional para ver os CNPJs que nunca apareceram no cadastro. Escolha um município no alto da tela para levar o painel inteiro para ele."><MapaMercado ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mp" area="mp" title="Mapa das regionais" question="Cada município aparece com o seu limite e é pintado pela regional a que pertence, no indicador escolhido. As cores dividem as regionais em cinco faixas, e a lista ao lado as põe em ordem." help="Passe o mouse num município para ver também os números dele. Clique num município ou numa regional da lista para ver as empresas ou os CNPJs daquela regional. Escolha uma regional ou um município no alto da tela para aproximar o mapa."
+      actions={<label className="ck-select is-compact"><span className="sr-only">Indicador do mapa</span><select value={metrica} onChange={event => setMetrica(event.target.value as MetricaMapa)}>{(Object.keys(metricasMapa) as MetricaMapa[]).map(id => <option key={id} value={id}>{metricasMapa[id].label}</option>)}</select><ChevronDown size={14} /></label>}><MapaMercado ctx={ctx} metrica={metrica} /></Bloco>
     <Bloco ctx={ctx} id="tm" area="tm" title="Mercado por câmara e atividade" question="Cada retângulo grande é uma câmara, e os de dentro são as atividades (CNAE) da lista do Crea-SP. O tamanho é o número de estabelecimentos, e a cor, a parte registrada: vermelho é pouco registrado, azul é muito." help="Clique numa atividade para ver os CNPJs sem registro dela. Não estar no cadastro não quer dizer irregular."><ArvoreMercado ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="reg" area="reg" title="Registro e anuidade" question="Por dentro, as empresas com atividade de engenharia pela situação do registro. Por fora, as registradas pela situação da anuidade."><Situacoes ctx={ctx} flow={flow} /></Bloco>
     <Bloco ctx={ctx} id="cv" area="cv" title="Receita comparada com o cadastro" question="Estabelecimentos ativos na Receita com atividade da lista do Crea-SP, separados entre os que têm registro, os que só tiveram registro no passado e os que nunca apareceram no cadastro." help="“Sim” reúne as atividades em que o registro é obrigatório; “Passível” reúne as que dependem de análise. O número ao lado da barra é a parte registrada."><Conciliacao ctx={ctx} /></Bloco>
