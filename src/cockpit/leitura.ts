@@ -9,15 +9,17 @@ import type { QuadroConselho } from '../domain/conselho';
 import type { ResultadoFt } from '../painel/forcas';
 
 /** V20 · leitura do período: frases curtas com o destaque de cada assunto, recalculadas a cada filtro e data de referência. */
-/** Abas do painel geral e páginas do painel de Empresas (o primeiro painel separado, de 01/11/2026). */
-export type PaginaGeral = 'presidencia' | 'profissionais' | 'formacao' | 'fiscalizacao' | 'malha' | 'receita' | 'entidades' | 'controle' | 'atendimento' | 'metodo';
+/** Abas do painel geral e páginas dos painéis separados: Empresas (01/11/2026) e Profissionais (03/11/2026). */
+export type PaginaGeral = 'presidencia' | 'fiscalizacao' | 'malha' | 'receita' | 'entidades' | 'controle' | 'atendimento' | 'metodo';
 export type PaginaEmpresas = 'mercado' | 'evolucao' | 'rt' | 'vinculos';
-export type PageId = PaginaGeral | PaginaEmpresas;
-export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'profissionais', 'formacao', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento', 'metodo'];
+export type PaginaProfissionais = 'profissionais' | 'fluxo' | 'atuacao' | 'formacao' | 'trabalho';
+export type PageId = PaginaGeral | PaginaEmpresas | PaginaProfissionais;
+export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento', 'metodo'];
 export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos'];
-export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas];
+export const pageIdsProfissionais: PaginaProfissionais[] = ['profissionais', 'fluxo', 'atuacao', 'formacao', 'trabalho'];
+export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageIdsProfissionais];
 /** Painel em que cada página está: um destaque de outro painel abre aquele painel. */
-export const painelDaPagina = (page: PageId): 'geral' | 'empresas' => (pageIdsEmpresas as PageId[]).includes(page) ? 'empresas' : 'geral';
+export const painelDaPagina = (page: PageId): 'geral' | 'empresas' | 'profissionais' => (pageIdsEmpresas as PageId[]).includes(page) ? 'empresas' : (pageIdsProfissionais as PageId[]).includes(page) ? 'profissionais' : 'geral';
 export interface Metas { cobertura: number; rt: number; adimplencia: number; recuperacao: number; regularizacao: number; atendimento: number }
 export const metasPadrao: Metas = { cobertura: 65, rt: 40, adimplencia: 60, recuperacao: 30, regularizacao: 50, atendimento: 80 };
 export interface Insight { tone: 'good' | 'bad' | 'neutral'; strong: string; text: string; page: PageId }

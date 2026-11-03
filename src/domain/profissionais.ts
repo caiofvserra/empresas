@@ -22,7 +22,11 @@ export interface Profissional {
   /** Anuidade PF em dia desde o registro, exceto a partir desta data (demonstrativo). */
   inadimplenteDesde?: string;
 }
-export interface ModeloProfissionais { profissionais: Profissional[]; autoria: Map<string, string>; porId: Map<string, Profissional>; anchor: string }
+export interface ModeloProfissionais { profissionais: Profissional[]; autoria: Map<string, string>; porId: Map<string, Profissional>; anchor: string;
+  /** Vínculo de RT (id) para o profissional do cenário que responde por ele. */
+  rtDe: Map<string, string> }
+/** Profissional que responde pelo vínculo de RT no cenário de Profissionais. */
+export const rtDoVinculo = (modelo: ModeloProfissionais, link: { id: string; professionalId: string }) => modelo.rtDe.get(link.id) ?? link.professionalId;
 
 export const modalidadeAntiga: Record<string, Modalidade> = { Civil: 'Civil', Elétrica: 'Elétrica', Mecânica: 'Mecânica e metalúrgica', Agronomia: 'Agronomia', 'Segurança do trabalho': 'Segurança do trabalho', Química: 'Química', 'Geologia e minas': 'Geologia e minas', Agrimensura: 'Agrimensura' };
 const pesosModalidade = [46, 20, 19, 4, 5, 2, 1, 3];
@@ -35,20 +39,38 @@ export function buildProfissionais(dataset: Dataset): ModeloProfissionais {
   const saved = cache.get(dataset); if (saved) return saved;
   const anchor = dataset.snapshotDate, ies = buildEntidades(dataset).organizacoes.filter(row => row.grupo === 'IES');
   const cities = dataset.cities, cityWeights = cities.map(city => city.name === 'São Paulo' ? 12 : city.name === 'Campinas' ? 5 : ['Ribeirão Preto', 'Sorocaba', 'São José dos Campos', 'Santos', 'Guarulhos', 'Santo André'].includes(city.name) ? 3 : 1);
+  const TOTAL = 4800, chave = (index: number) => dataset.professionals[index]?.id ?? `PRO-${String(index + 1).padStart(5, '0')}`;
+  const modalidadeDe = (index: number): Modalidade => { const base = dataset.professionals[index]; return base ? modalidadeAntiga[base.modality] ?? 'Civil' : weighted(`${chave(index)}:mod`, modalidades, pesosModalidade); };
+  // Quem responde por cada vínculo de RT (03/11/2026). A base de demonstração liga 2.400 vínculos a só 1.600 profissionais, e quase
+  // todo RT parecia responder por duas empresas. Aqui, os 150 primeiros profissionais da base continuam com vários vínculos; os demais
+  // vínculos vão para profissionais distintos da mesma modalidade, e a maioria dos RTs responde por uma empresa só, como no registro real.
+  const indiceBase = new Map(dataset.professionals.map((row, index) => [row.id, index]));
+  const livres = new Map<Modalidade, number[]>();
+  for (let index = 150; index < TOTAL; index++) { const modalidade = modalidadeDe(index); livres.set(modalidade, [...(livres.get(modalidade) ?? []), index]); }
+  const rtDe = new Map<string, string>();
+  for (const link of dataset.technicalLinks) {
+    if ((indiceBase.get(link.professionalId) ?? 0) < 150) continue;
+    const pool = livres.get(modalidadeAntiga[link.modality] ?? 'Civil') ?? [];
+    if (pool.length) rtDe.set(link.id, chave(pool[between(`rt:${link.id}`, 0, pool.length - 1)]));
+  }
+  const rtId = (link: { id: string; professionalId: string }) => rtDe.get(link.id) ?? link.professionalId;
   const linksBy = new Map<string, string>();
-  for (const link of dataset.technicalLinks) if (!linksBy.has(link.professionalId) || link.startDate < linksBy.get(link.professionalId)!) linksBy.set(link.professionalId, link.startDate);
+  for (const link of dataset.technicalLinks) { const id = rtId(link); if (!linksBy.has(id) || link.startDate < linksBy.get(id)!) linksBy.set(id, link.startDate); }
   const profissionais: Profissional[] = [];
-  for (let index = 0; index < 4800; index++) {
+  for (let index = 0; index < TOTAL; index++) {
     const base = dataset.professionals[index], key = base ? base.id : `PRO-${String(index + 1).padStart(5, '0')}`;
     // Participação feminina perto da observada no Sistema Confea/Crea (cerca de um quinto dos registrados); o nome segue o gênero sorteado.
     const genero: Genero = chance(`${key}:genero`) < 0.22 ? 'Feminino' : 'Masculino', nomes = genero === 'Feminino' ? femininos : masculinos;
     const primeiro = nomes[between(`${key}:nome`, 0, nomes.length - 1)];
-    const modalidade = base ? modalidadeAntiga[base.modality] ?? 'Civil' : weighted(`${key}:mod`, modalidades, pesosModalidade);
+    const modalidade = modalidadeDe(index);
     const nivel = weighted<Nivel>(`${key}:nivel`, niveis, [74, 9, 17]);
-    // Registro: mais recentes pesam mais (base cresce); quem é RT registrou antes do primeiro vínculo.
-    const anoProposto = 2026 - Math.floor(Math.pow(chance(`${key}:ano`), 1.6) * 45);
-    const limite = linksBy.get(key), ano = limite ? Math.min(anoProposto, Number(limite.slice(0, 4)) - 1) : anoProposto;
-    const registroEm = dateBetween(`${key}:reg`, `${ano}-01-01`, ano >= 2026 ? anchor : `${ano}-12-31`);
+    // Registro: os registros novos crescem devagar, cerca de 3% ao ano, ao longo de 45 anos (a base cresce sem saltos). Antes de
+    // 03/11/2026 o sorteio concentrava registros no ano corrente e os registros novos pareciam dobrar em um ano. Quem é RT
+    // registrou antes do primeiro vínculo.
+    const taxa = 0.03, anosAtras = -Math.log(1 - chance(`${key}:ano`) * (1 - Math.exp(-taxa * 45))) / taxa;
+    const proposto = addDays(anchor, -Math.round(anosAtras * 365.25));
+    const limite = linksBy.get(key), ano = limite && proposto >= `${limite.slice(0, 4)}-01-01` ? Number(limite.slice(0, 4)) - 1 - between(`${key}:recuo`, 0, 12) : Number(proposto.slice(0, 4));
+    const registroEm = limite && ano < Number(proposto.slice(0, 4)) ? dateBetween(`${key}:reg`, `${ano}-01-01`, `${ano}-12-31`) : proposto;
     const nascimento = ano - between(`${key}:idade`, nivel === 'Técnico' ? 19 : 23, 34);
     const interrupcoes: Profissional['interrupcoes'] = [];
     let canceladoEm: string | undefined;
@@ -75,11 +97,11 @@ export function buildProfissionais(dataset: Dataset): ModeloProfissionais {
   for (const art of dataset.arts) {
     const modalidade = modalidadeAntiga[art.modality] ?? 'Civil';
     const rts = (links.get(art.companyId) ?? []).filter(link => (modalidadeAntiga[link.modality] ?? 'Civil') === modalidade && link.startDate <= art.date && (!link.endDate || link.endDate > art.date));
-    if (rts.length) { autoria.set(art.id, rts[between(`autor:${art.id}`, 0, rts.length - 1)].professionalId); continue; }
+    if (rts.length) { autoria.set(art.id, rtId(rts[between(`autor:${art.id}`, 0, rts.length - 1)])); continue; }
     const pool = (porModalidade.get(modalidade) ?? profissionais).filter(row => row.registroEm <= art.date && (!row.canceladoEm || row.canceladoEm > art.date));
     if (pool.length) autoria.set(art.id, pool[between(`autor:${art.id}`, 0, pool.length - 1)].id);
   }
-  const value = { profissionais, autoria, porId, anchor };
+  const value = { profissionais, autoria, porId, anchor, rtDe };
   cache.set(dataset, value); return value;
 }
 
@@ -110,26 +132,32 @@ export interface ResumoProfissionais {
 const inside = (date: string | undefined, start: string, end: string) => Boolean(date && date >= start && date <= end);
 const shift = (date: string, months: number) => { const d = new Date(`${date}T00:00:00Z`); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + months, 1)).toISOString().slice(0, 10); };
 
+/** Recorte do painel de Profissionais: município do endereço e modalidade, além da regional. */
+export interface FiltroProfissional { cityId?: string | null; modalidade?: string | null }
+/** O profissional está no recorte (regional, município e modalidade escolhidos no alto da tela)? */
+export const noRecorte = (row: Profissional | undefined, greId: string | null, filtro: FiltroProfissional = {}) => Boolean(row && (!greId || row.greId === greId) && (!filtro.cityId || row.cityId === filtro.cityId) && (!filtro.modalidade || row.modalidade === filtro.modalidade));
+
 /** Tudo lido em D (dataset.snapshotDate da base lida); período de `period` meses até D e o mesmo período um ano antes. */
-export function resumoProfissionais(modelo: ModeloProfissionais, dataset: Dataset, greId: string | null, period: number): ResumoProfissionais {
+export function resumoProfissionais(modelo: ModeloProfissionais, dataset: Dataset, greId: string | null, period: number, filtro: FiltroProfissional = {}): ResumoProfissionais {
   const anchor = dataset.snapshotDate, start = shift(anchor, -(period - 1)), prevEnd = shift(anchor, -12), prevStart = shift(start, -12);
   const prevEndDay = addDays(shift(prevEnd, 1), -1);
-  const mine = modelo.profissionais.filter(row => !greId || row.greId === greId);
+  const dentro = (row: Profissional | undefined) => noRecorte(row, greId, filtro);
+  const mine = modelo.profissionais.filter(dentro);
   const registrados = mine.filter(row => row.registroEm <= anchor);
   const com = (situacao: SituacaoProfissional) => registrados.filter(row => situacaoEm(row, anchor) === situacao);
   const ativos = com('Ativo'), interrompidos = com('Interrompido'), cancelados = com('Cancelado');
   const grupo = (nome: string, filtro: (row: Profissional) => boolean, antes: (row: Profissional) => boolean): Grupo => ({ nome, ids: ativos.filter(filtro).map(row => row.id), antes: mine.filter(row => row.registroEm <= prevEndDay && situacaoEm(row, prevEndDay) === 'Ativo' && antes(row)).length });
   const gres = new Map(dataset.gres.map(row => [row.id, row.name]));
-  const arts = dataset.arts.filter(row => inside(row.date, start, anchor)).filter(row => { const autor = modelo.autoria.get(row.id); return autor && (!greId || modelo.porId.get(autor)?.greId === greId); });
-  const artsAntes = dataset.arts.filter(row => inside(row.date, prevStart, prevEndDay)).filter(row => { const autor = modelo.autoria.get(row.id); return autor && (!greId || modelo.porId.get(autor)?.greId === greId); }).length;
+  const arts = dataset.arts.filter(row => inside(row.date, start, anchor)).filter(row => { const autor = modelo.autoria.get(row.id); return autor && dentro(modelo.porId.get(autor)); });
+  const artsAntes = dataset.arts.filter(row => inside(row.date, prevStart, prevEndDay)).filter(row => { const autor = modelo.autoria.get(row.id); return autor && dentro(modelo.porId.get(autor)); }).length;
   const porAutor = new Map<string, Art[]>();
   for (const art of arts) { const autor = modelo.autoria.get(art.id)!; porAutor.set(autor, [...(porAutor.get(autor) ?? []), art]); }
-  const faixas: [string, number, number][] = [['nenhuma', 0, 0], ['1 a 2', 1, 2], ['3 a 10', 3, 10], ['11 a 30', 11, 30], ['mais de 30', 31, Infinity]];
+  const faixas: [string, number, number][] = [['nenhuma ART', 0, 0], ['1 ART', 1, 1], ['2 ARTs', 2, 2], ['3 ARTs', 3, 3], ['4 ou mais', 4, Infinity]];
   const faixasArt = faixas.map(([nome, min, max]) => ({ nome, ids: ativos.filter(row => { const n = porAutor.get(row.id)?.length ?? 0; return n >= min && n <= max; }).map(row => row.id) }));
   const top = [...porAutor].map(([id, rows]) => ({ id, nome: modelo.porId.get(id)?.nome ?? id, arts: rows.length, empresas: new Set(rows.map(row => row.companyId)).size })).sort((a, b) => b.arts - a.arts).slice(0, 8);
   const vinculos = dataset.technicalLinks.filter(row => row.startDate <= anchor && (!row.endDate || row.endDate > anchor));
   const porRt = new Map<string, number>();
-  for (const link of vinculos) if (!greId || modelo.porId.get(link.professionalId)?.greId === greId) porRt.set(link.professionalId, (porRt.get(link.professionalId) ?? 0) + 1);
+  for (const link of vinculos) { const id = rtDoVinculo(modelo, link); if (dentro(modelo.porId.get(id))) porRt.set(id, (porRt.get(id) ?? 0) + 1); }
   const cargas: [string, number, number][] = [['1 empresa', 1, 1], ['2 empresas', 2, 2], ['3 empresas', 3, 3], ['4 ou mais', 4, Infinity]];
   const idades = ativos.map(row => idadeEm(row, anchor)).sort((a, b) => a - b);
   const months = Array.from({ length: period }, (_, index) => shift(start, index).slice(0, 7));
@@ -151,19 +179,21 @@ export function resumoProfissionais(modelo: ModeloProfissionais, dataset: Datase
 }
 
 /* ---------- Emprego formal agregado por CBO (Novo CAGED / RAIS, demonstrativo) ---------- */
-export interface CboInfo { cbo: string; label: string; engenharia: boolean; rotuloAnalista: boolean; piso: boolean; base: number }
+export interface CboInfo { cbo: string; label: string; engenharia: boolean; rotuloAnalista: boolean; piso: boolean; base: number;
+  /** Tamanho relativo da ocupação no emprego formal (o engenheiro civil é a maior) e modalidade do Crea-SP a que ela corresponde. */
+  peso: number; modalidade?: Modalidade }
 /** Rótulos oficiais da CBO; medianas de referência fictícias, calibradas para a ordem de grandeza observada em fontes públicas. */
 export const cbos: CboInfo[] = [
-  { cbo: '2142-05', label: 'Engenheiro civil', engenharia: true, rotuloAnalista: false, piso: true, base: 9700 },
-  { cbo: '2143-05', label: 'Engenheiro eletricista', engenharia: true, rotuloAnalista: false, piso: true, base: 10900 },
-  { cbo: '2144-05', label: 'Engenheiro mecânico', engenharia: true, rotuloAnalista: false, piso: true, base: 10400 },
-  { cbo: '2145-05', label: 'Engenheiro químico', engenharia: true, rotuloAnalista: false, piso: true, base: 10100 },
-  { cbo: '2221-10', label: 'Engenheiro agrônomo', engenharia: true, rotuloAnalista: false, piso: true, base: 7900 },
-  { cbo: '2149-15', label: 'Engenheiro de segurança do trabalho', engenharia: true, rotuloAnalista: false, piso: true, base: 9300 },
-  { cbo: '2021-10', label: 'Engenheiro de controle e automação', engenharia: true, rotuloAnalista: false, piso: true, base: 11900 },
-  { cbo: '2142-70', label: 'Eng. civil · transportes e trânsito (“analista de projetos viários”)', engenharia: true, rotuloAnalista: true, piso: true, base: 5800 },
-  { cbo: '2124-05', label: 'Analista de desenvolvimento de sistemas', engenharia: false, rotuloAnalista: true, piso: false, base: 8400 },
-  { cbo: '3121-05', label: 'Técnico em construção civil', engenharia: false, rotuloAnalista: false, piso: false, base: 4300 },
+  { cbo: '2142-05', label: 'Engenheiro civil', engenharia: true, rotuloAnalista: false, piso: true, base: 9700, peso: 3, modalidade: 'Civil' },
+  { cbo: '2143-05', label: 'Engenheiro eletricista', engenharia: true, rotuloAnalista: false, piso: true, base: 10900, peso: 1.6, modalidade: 'Elétrica' },
+  { cbo: '2144-05', label: 'Engenheiro mecânico', engenharia: true, rotuloAnalista: false, piso: true, base: 10400, peso: 1.5, modalidade: 'Mecânica e metalúrgica' },
+  { cbo: '2145-05', label: 'Engenheiro químico', engenharia: true, rotuloAnalista: false, piso: true, base: 10100, peso: 0.6, modalidade: 'Química' },
+  { cbo: '2221-10', label: 'Engenheiro agrônomo', engenharia: true, rotuloAnalista: false, piso: true, base: 7900, peso: 0.8, modalidade: 'Agronomia' },
+  { cbo: '2149-15', label: 'Engenheiro de segurança do trabalho', engenharia: true, rotuloAnalista: false, piso: true, base: 9300, peso: 0.9, modalidade: 'Segurança do trabalho' },
+  { cbo: '2021-10', label: 'Engenheiro de controle e automação', engenharia: true, rotuloAnalista: false, piso: true, base: 11900, peso: 0.6, modalidade: 'Elétrica' },
+  { cbo: '2142-70', label: 'Eng. civil · transportes e trânsito (“analista de projetos viários”)', engenharia: true, rotuloAnalista: true, piso: true, base: 5800, peso: 0.3, modalidade: 'Civil' },
+  { cbo: '2124-05', label: 'Analista de desenvolvimento de sistemas', engenharia: false, rotuloAnalista: true, piso: false, base: 8400, peso: 3.5 },
+  { cbo: '3121-05', label: 'Técnico em construção civil', engenharia: false, rotuloAnalista: false, piso: false, base: 4300, peso: 2.2 },
 ];
 export interface EmpregoCbo { cbo: string; greId: string; month: string; estoque: number; admissoes: number; desligamentos: number; salarioMediano: number }
 const empregoCache = new WeakMap<Dataset, EmpregoCbo[]>();
@@ -172,9 +202,12 @@ export function buildEmpregoCbo(dataset: Dataset): EmpregoCbo[] {
   const rows: EmpregoCbo[] = [];
   for (const info of cbos) for (const gre of dataset.gres) {
     const peso = gre.id === 'GRE5' ? 9 : ['GRE2', 'GRE13', 'GRE14'].includes(gre.id) ? 3 : 1;
-    let estoque = between(`emp:${info.cbo}:${gre.id}`, 40, 220) * peso;
+    let estoque = Math.round(between(`emp:${info.cbo}:${gre.id}`, 60, 140) * peso * info.peso);
     dataset.months.forEach((month, index) => {
-      const admissoes = between(`emp:${info.cbo}:${gre.id}:${month}:a`, 0, Math.ceil(estoque * (info.rotuloAnalista ? 0.045 : 0.03))), desligamentos = between(`emp:${info.cbo}:${gre.id}:${month}:d`, 0, Math.ceil(estoque * 0.03));
+      // Desligamentos acompanham as admissões (03/11/2026): sorteados à parte, o saldo oscilava mais de 1% do estoque por mês e o
+      // emprego parecia subir e cair em ondas. Agora a rotatividade fica entre 1,2% e 2% ao mês e o estoque cresce devagar, perto de 2% ao ano.
+      const admissoes = between(`emp:${info.cbo}:${gre.id}:${month}:a`, Math.floor(estoque * 0.012), Math.ceil(estoque * 0.02));
+      const desligamentos = Math.round(admissoes * between(`emp:${info.cbo}:${gre.id}:${month}:d`, info.rotuloAnalista ? 72 : 80, info.rotuloAnalista ? 96 : 100) / 100);
       estoque = Math.max(10, estoque + admissoes - desligamentos);
       const salarioMediano = Math.round(info.base * (1 + index * 0.0035) * (gre.id === 'GRE5' ? 1.08 : 0.97) * (0.96 + chance(`emp:${info.cbo}:${gre.id}:${month}:s`) * 0.08) / 10) * 10;
       rows.push({ cbo: info.cbo, greId: gre.id, month, estoque, admissoes, desligamentos, salarioMediano });

@@ -7,7 +7,7 @@ import { selectEnterpriseScope } from '../src/enterprise-v10/filters.ts';
 import { buildEnterpriseModel } from '../src/enterprise-v10/model.ts';
 import { buildFiscalizacao } from '../src/painel/fiscalizacao.ts';
 import { contratosPublicos } from '../src/painel/analise.ts';
-import { buildProfissionais, situacaoEm } from '../src/domain/profissionais.ts';
+import { buildProfissionais, rtDoVinculo, situacaoEm } from '../src/domain/profissionais.ts';
 import { buildFormacao } from '../src/domain/formacao.ts';
 import { datasHistorico } from '../src/observatorio/historico.ts';
 import { malhaFina, regras } from '../src/cockpit/cruzamentos.ts';
@@ -90,7 +90,7 @@ test('sócios pessoa física: identificação por CPF, RT da própria empresa e 
   const layer = buildSociosPf(dataset, modelo), q = quadroSociosPf(layer, dataset, modelo, null, null);
   assert.ok(q.socios.length > 100 && q.socios.every(row => row.desde <= hoje));
   assert.ok(q.sociosProfissionais.every(row => row.profissionalId && modelo.porId.has(row.profissionalId)));
-  assert.ok(q.socioEhRt.length > 0 && q.socioEhRt.every(row => dataset.technicalLinks.some(link => link.companyId === row.empresaId && link.professionalId === row.profissionalId && link.startDate <= hoje && (!link.endDate || link.endDate > hoje))));
+  assert.ok(q.socioEhRt.length > 0 && q.socioEhRt.every(row => dataset.technicalLinks.some(link => link.companyId === row.empresaId && rtDoVinculo(modelo, link) === row.profissionalId && link.startDate <= hoje && (!link.endDate || link.endDate > hoje))));
   const registradas = new Set(model.metadata.activeCompanyIds);
   assert.ok(q.registradasSemRtComSocioProfissional.every(id => registradas.has(id)) && q.registradasComSocioProfissionalInativo.every(id => registradas.has(id)));
   assert.equal(q.porQualificacao.reduce((a, b) => a + b.n, 0), q.socios.length);

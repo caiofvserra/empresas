@@ -1,0 +1,60 @@
+# Painel de Profissionais
+
+Segundo painel separado do painel geral, de 03/11/2026. Abre em `/profissionais.html` no site e em `entrega/painel-profissionais-creasp.html` sem servidor. As abas Profissionais e Formação saíram do painel geral e vieram para cá, junto com o emprego e o salário em totais e as perícias judiciais. O painel geral tem atalhos no menu lateral para os de Empresas e de Profissionais; os dois temáticos não têm o caminho de volta, porque são entregues sozinhos (pedido de 03/11/2026).
+
+Segue as mesmas regras de tela do painel de Empresas: cada página cabe numa tela Full HD (1920×1080) sem rolagem, os blocos têm larguras diferentes, o bloco mostra só o título e o gráfico e a explicação de leitura fica no (i). Os gráficos variam de tipo. Regional, município, modalidade, período (3, 6, 12 ou 24 meses) e data de referência ficam numa linha só, no alto da tela, e valem para todas as páginas. No lugar do filtro de câmara, que serve às empresas, este painel tem o filtro de modalidade. Clicar num elemento abre a lista dos profissionais daquele elemento.
+
+## O que cada página tem
+
+- **Registro.** Cinco indicadores: profissionais com registro ativo, registro interrompido ou cancelado, anuidade em dia (contra a meta), mulheres entre os ativos e ativos com 60 anos ou mais. Mapa do estado com o limite de cada município, pintado pela regional no indicador escolhido (ativos, variação em um ano, registros novos, anuidade atrasada, mulheres, 60 anos ou mais, ARTs a cada 100 ativos, ativos sem ART, responsáveis técnicos), com a lista das regionais em ordem ao lado. Mapa de árvore por modalidade e nível, uma cor por nível (engenheiro, técnico, tecnólogo), com a variação em um ano escrita em cada retângulo. Anel com os registrados em quatro situações (ativo em dia, ativo com anuidade atrasada, interrompido, cancelado). Idade e gênero. Idade em cada modalidade, com a porcentagem em cada célula.
+- **Evolução.** Registros novos, voltas, interrupções, cancelamentos e saldo do período (ativos no fim menos ativos no começo). Entradas e saídas mês a mês com o saldo. Ponte dos ativos: quantos eram no começo do período, quem entrou, quem saiu e quantos são agora. Registros novos por modalidade, no período e um ano antes. Quantos continuam ativos, por ano de registro.
+- **ART e RT.** ARTs do período, ativos que registraram ART, ARTs a cada 100 ativos, responsáveis técnicos e responsáveis por quatro empresas ou mais. ARTs a cada 100 ativos por modalidade, com a média escrita. ARTs dos últimos 12 meses com o mesmo mês um ano antes. Quantas ARTs cada profissional registra, com a lista dos que mais registraram. Empresas por responsável técnico. Parte dos ativos que registrou ART, por idade e modalidade.
+- **Formação.** Formados do último ano acompanhado por inteiro, registro em até 24 meses, ART no último ano e permanência dois anos depois. Formados e quantos se registram, por ano de formatura (os anos que ainda não fecharam 24 meses vêm marcados "em curso"). Registro por instituição de ensino, com a média e a cor da natureza. Formados e registrados, por modalidade. Formados presenciais e a distância, com a parte a distância escrita. Registro por canal e natureza. Turmas das instituições parceiras em até 12 e 24 meses ("!").
+- **Trabalho.** Empregos com carteira em ocupações de engenharia, saldo de contratações, salário típico, ocupações com salário típico abaixo do piso e nomeações de peritos ("!"). Emprego mês a mês com admissões e desligamentos. Empregos por ocupação, com o analista de sistemas e o técnico em construção civil como comparação. Salário típico de cada ocupação contra o piso exigível e a leitura do Confea, os dois para 8 horas. Saldo de contratações em um ano por regional, com o peso no estoque. Perícias judiciais por especialidade e situação do perito ("!"). Funil da ART das perícias ("!").
+
+Emprego e salário vêm em totais por município e ocupação (Novo CAGED e RAIS públicos), por isso não apontam empresa nem profissional e não provam descumprimento do piso. Com um município escolhido, a série de emprego é a da regional dele.
+
+## Parcerias e plano B
+
+Dois blocos dependem de acordo e levam o "!". Cada um tem um caminho sem convênio, que aparece na ficha (i):
+
+| Parceria | Bloco | Se o acordo não sair |
+|---|---|---|
+| TJSP (e os tribunais do trabalho e o federal da região) | Nomeações de peritos, perícias por especialidade, ART das perícias | Ler as nomeações publicadas no Diário da Justiça Eletrônico, pelo nome e pelo número de registro citado. Perde-se o valor dos honorários e parte das nomeações sem registro citado. |
+| Instituições de ensino parceiras | Turmas das instituições parceiras, pessoa a pessoa | Comparar o número de formados por curso e instituição do Censo da Educação Superior com os registros novos pela instituição que o profissional declara no pedido. Perde-se o acompanhamento pessoa a pessoa. |
+
+## O que foi conferido no cenário
+
+O cenário é demonstrativo (selo no alto da tela). Antes de entregar, cada página foi conferida no navegador em Full HD, e o que parecia implausível foi tratado como defeito do cenário:
+
+| Ponto | O que havia | O que foi feito |
+|---|---|---|
+| Registros novos | O sorteio concentrava registros no ano corrente, e os registros novos pareciam dobrar em um ano (+104%) | As datas de registro se espalham por 45 anos, com a base crescendo perto de 3% ao ano. Quem é responsável técnico registrou antes do primeiro vínculo |
+| Ocupações | O engenheiro de transportes tinha mais empregos que o engenheiro civil | Cada ocupação tem um peso próximo do real; a civil é a maior das engenharias |
+| Peritos | 38% dos peritos nomeados não tinham registro ativo | O perito vem dos ativos em 95% das nomeações, e 88% são identificados no cadastro |
+| Atividade dos formados | As turmas de 2016 a 2019 apareciam com 0% de atividade, porque o cenário só tem 36 meses de ARTs | "Atua" passou a ser ter ao menos uma ART nos 12 meses antes da data escolhida |
+| Empresas por RT | 62% dos responsáveis técnicos respondiam por duas empresas, porque a base liga 2.400 vínculos a só 1.600 profissionais | Os vínculos se espalham pelos profissionais da mesma modalidade: 72% respondem por uma empresa, 20% por duas, 6% por três e 2% por quatro ou mais |
+| Faixas de ARTs | As faixas "11 a 30" e "mais de 30" ficavam vazias | As faixas passaram a ser nenhuma, 1, 2, 3 e 4 ou mais. O cenário tem menos ARTs por profissional que o registro real, e a ficha (i) diz isso |
+| Emprego | Admissões e desligamentos sorteados à parte faziam o emprego subir e cair em ondas de mais de 1% ao mês | Os desligamentos acompanham as admissões; o emprego cresce devagar, perto de 2% ao ano |
+| Mapa de árvore | A cor da variação positiva se confundia com a borda das modalidades | A escala vai do vermelho ao azul médio, sem o azul-marinho da borda |
+
+## Leitura de cada gráfico
+
+O Caio pediu, no painel de Empresas, para verificar se cada gráfico se entende sem explicação. O critério foi aplicado aqui antes da entrega: a pessoa precisa saber, olhando só o gráfico, o que cada cor e cada tamanho querem dizer e qual é o número que importa. O que não passou foi trocado:
+
+| Gráfico | Problema de leitura | Como ficou |
+|---|---|---|
+| Registros novos por modalidade e mês (calor) | Só cor, sem número; uma modalidade grande deixava as outras todas iguais | Barras por modalidade: o período escolhido ao lado do mesmo período um ano antes, com o número e a variação |
+| Quem mudou de situação (fluxo) | As faixas cruzadas e os nomes "antes" e "agora" pediam explicação | Ponte: ativos no começo, mais registros novos e voltas, menos interrupções e cancelamentos, igual aos ativos de hoje; o saldo é o mesmo do cartão |
+| Mapa de árvore por modalidade e nível | Duas leituras ao mesmo tempo (tamanho e cor da variação) e nenhuma legenda | Uma cor por nível, com legenda; a variação vai escrita |
+| Anel de situação e anuidade | Dois anéis, o de dentro sem rótulo | Um anel só com quatro situações, todas rotuladas |
+| ARTs mês a mês por modalidade | Cinco áreas empilhadas de azuis parecidos e uma linha que só aparecia no segundo ano | Barras dos últimos 12 meses com a linha do mesmo mês um ano antes; a divisão por modalidade fica no bloco ao lado |
+| Formados que se registram, atuam e continuam | Duas barras, três linhas e dois eixos | Formados, registrados em 24 meses e a parte registrada; atuação e permanência ficam nos cartões |
+| Turmas das instituições parceiras | Quatro barras por ano | Duas barras (até 12 e até 24 meses), com a porcentagem |
+| Contratações por regional e ocupação (calor) | Quase todas as células perto de zero | Barras por regional com o saldo e o peso no estoque; o detalhe por ocupação fica no bloco de empregos por ocupação |
+
+Também ganharam legenda ou rótulo o que faltava: a média das ARTs por modalidade, o eixo e as cores do gráfico das instituições e a parte a distância dos formados.
+
+## O que mudou no painel geral
+
+O painel geral perdeu as abas Profissionais e Formação, que agora estão aqui. O texto que citava "a aba Profissionais" passou a citar o painel de Profissionais, página Trabalho.

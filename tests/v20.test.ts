@@ -48,9 +48,10 @@ test('data de referência: a base lida em D só tem o que existia em D e nada é
 
 test('ficha (i): todo bloco e cartão de todo painel tem ficha registrada, e toda ficha registrada é usada', () => {
   const raiz = join(import.meta.dirname, '..', 'src');
-  const paginaDe: Record<string, string> = { 'cockpit/PaginaPresidencia': 'presidencia', 'cockpit/PaginaProfissionais': 'profissionais', 'cockpit/PaginaFormacao': 'formacao', 'cockpit/PaginaFiscalizacao': 'fiscalizacao', 'cockpit/PaginaMalha': 'malha', 'cockpit/PaginaReceita': 'receita', 'cockpit/PaginaEntidades': 'entidades', 'cockpit/PaginaControle': 'controle', 'cockpit/PaginaAtendimento': 'atendimento', 'cockpit/PaginaMetodo': 'metodo',
-    'empresas/PaginaMercado': 'mercado', 'empresas/PaginaEvolucao': 'evolucao', 'empresas/PaginaRt': 'rt', 'empresas/PaginaVinculos': 'vinculos' };
-  const arquivos = ['cockpit', 'empresas'].flatMap(dir => readdirSync(join(raiz, dir)).filter(name => /^Pagina\w+\.tsx$/.test(name)).map(name => `${dir}/${name.replace('.tsx', '')}`));
+  const paginaDe: Record<string, string> = { 'cockpit/PaginaPresidencia': 'presidencia', 'cockpit/PaginaFiscalizacao': 'fiscalizacao', 'cockpit/PaginaMalha': 'malha', 'cockpit/PaginaReceita': 'receita', 'cockpit/PaginaEntidades': 'entidades', 'cockpit/PaginaControle': 'controle', 'cockpit/PaginaAtendimento': 'atendimento', 'cockpit/PaginaMetodo': 'metodo',
+    'empresas/PaginaMercado': 'mercado', 'empresas/PaginaEvolucao': 'evolucao', 'empresas/PaginaRt': 'rt', 'empresas/PaginaVinculos': 'vinculos',
+    'profissionais/PaginaProfissionais': 'profissionais', 'profissionais/PaginaFluxo': 'fluxo', 'profissionais/PaginaAtuacao': 'atuacao', 'profissionais/PaginaFormacao': 'formacao', 'profissionais/PaginaTrabalho': 'trabalho' };
+  const arquivos = ['cockpit', 'empresas', 'profissionais'].flatMap(dir => readdirSync(join(raiz, dir)).filter(name => /^Pagina\w+\.tsx$/.test(name)).map(name => `${dir}/${name.replace('.tsx', '')}`));
   assert.deepEqual(arquivos.map(name => paginaDe[name]).sort(), [...pageIds].sort(), 'uma página por aba, sem páginas sobrando');
   const usadas = new Set<string>();
   for (const name of arquivos) {
@@ -80,7 +81,7 @@ test('profissionais: situação, entradas e saídas, adimplência e autoria fech
   assert.ok(r.inadimplentes.every(row => row.inadimplenteDesde && row.inadimplenteDesde <= hoje));
   assert.ok(r.taxaAdimplencia === null || (r.taxaAdimplencia >= 0 && r.taxaAdimplencia <= 100));
   assert.equal(sum(r.faixasArt.map(item => item.ids.length)), r.ativos.length, 'faixas de ARTs particionam os ativos, inclusive quem não tem ART');
-  assert.ok(r.autores >= r.faixasArt.filter(item => item.nome !== 'nenhuma').reduce((n, item) => n + item.ids.length, 0), 'autores podem incluir não ativos');
+  assert.ok(r.autores >= r.faixasArt.filter(item => item.nome !== 'nenhuma ART').reduce((n, item) => n + item.ids.length, 0), 'autores podem incluir não ativos');
   assert.equal(sum(r.mensal.map(row => row.arts)), r.arts.length);
   assert.ok(r.top.every(row => modelo.porId.has(row.id)));
   const gre = dataset.gres[0].id, parcial = resumoProfissionais(modelo, dataset, gre, 12);

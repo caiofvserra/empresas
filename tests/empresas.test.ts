@@ -78,11 +78,11 @@ test('painel de Empresas: clicar detalha o item clicado, nunca abre o resumo gen
   }
 });
 
-test('painel geral: todas as abas do painel geral continuam no menu, e Empresas virou um painel à parte', () => {
+test('painel geral: as abas que ficaram continuam no menu, e Empresas e Profissionais viraram painéis à parte', () => {
   const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8');
   const geral = src.slice(src.indexOf('const paginasGeral'), src.indexOf('const paginasEmpresas'));
-  for (const id of ['presidencia', 'profissionais', 'formacao', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento', 'metodo']) assert.ok(geral.includes(`id: '${id}'`), `aba ${id} no painel geral`);
-  assert.ok(!geral.includes("id: 'cadastro'"));
+  for (const id of ['presidencia', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento', 'metodo']) assert.ok(geral.includes(`id: '${id}'`), `aba ${id} no painel geral`);
+  for (const id of ['cadastro', 'profissionais', 'formacao']) assert.ok(!geral.includes(`id: '${id}'`), `aba ${id} saiu do painel geral`);
 });
 
 test('as nove câmaras do Crea-SP aparecem no painel, com empresas em todas e a civil na frente (03/11/2026)', () => {
@@ -95,11 +95,11 @@ test('as nove câmaras do Crea-SP aparecem no painel, com empresas em todas e a 
   for (const code of dataset.companies.map(row => dataset.establishments.find(place => place.companyId === row.id)!.cnaeMain)) assert.ok(camaraPorCnae[code], `CNAE ${code} sem câmara`);
 });
 
-test('o painel de Empresas não tem atalho para o painel geral (pedido de 03/11/2026)', () => {
+test('os painéis de Empresas e de Profissionais não têm atalho para o painel geral (pedido de 03/11/2026)', () => {
   const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8');
-  const empresas = src.slice(src.indexOf("empresas: { id: 'empresas'"), src.indexOf('\n', src.indexOf("empresas: { id: 'empresas'")));
-  assert.ok(!empresas.includes('outro:'), 'o painel de Empresas não aponta para outro painel');
-  assert.ok(src.includes('{painel.outro && <a className="ck-rail-painel"'));
+  assert.ok(src.includes("{painel.id === 'geral' && <div className=\"ck-rail-paineis\">"), 'só o painel geral mostra atalhos para os outros painéis');
+  const atalhos = src.slice(src.indexOf('const atalhos'), src.indexOf('];', src.indexOf('const atalhos')));
+  assert.ok(!atalhos.includes("id: 'geral'"), 'nenhum atalho leva de volta ao painel geral');
 });
 
 test('mapa e município: regionais e municípios somam o mesmo mercado, e o filtro de município reduz o recorte', () => {

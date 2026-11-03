@@ -46,8 +46,6 @@
 @keyframes ck-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .ck-grid { display: grid; gap: 12px; grid-template-columns: repeat(12, minmax(0, 1fr)); height: 100%; }
 .ck-grid-presidencia { grid-template-rows: 268px auto minmax(360px, 1.1fr) minmax(280px, 1fr) 300px; grid-template-areas: "n1 n1 n1 n2 n2 n2 n3 n3 n3 n4 n4 n4" "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map sc sc sc sc sc sc sc" "map map map map map lt lt lt lt lt lt lt" "hs hs hs hs hs hs hs hs hs hs hs hs"; height: auto; }
-.ck-grid-profissionais { grid-template-rows: auto repeat(4, 360px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "pm pm pm pm pm pi pi pi pi pg pg pg" "pn pn pn pn pr pr pr pr pa pa pa pa" "pe pe pe pe ps ps ps ps pt pt pt pt" "pp pp pp pp pp pp pp pp pp pp pp pp"; height: auto; }
-.ck-grid-formacao { grid-template-rows: auto 400px 380px 380px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "fc fc fc fc fc fc fc fs fs fs fs fs" "fi fi fi fi fi fi fm fm fm fn fn fn" "fp fp fp fp fp fp fp fp fp fp fp fp"; height: auto; }
 .ck-grid-entidades { grid-template-rows: auto 400px 420px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "ec ec ec ec ec er er er er ee ee ee" "et et et et et et et et et et et et"; height: auto; }
 .ck-grid-controle { grid-template-rows: auto repeat(3, 360px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "cf cf cf cf cf cn cn cn cn cs cs cs" "cd cd cd cd cr cr cr cr cc cc cc cc" "cp cp cp cp ck ck ck ck dp dp dp dp"; height: auto; }
 
@@ -232,10 +230,8 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
   .ck-grid { height: auto; }
   .ck-grid-presidencia { grid-template-rows: 268px auto 400px 330px 300px; }
   .ck-grid-receita, .ck-grid-atendimento { grid-template-rows: auto 340px 340px; }
-  .ck-grid-formacao { grid-template-rows: auto 340px 340px 360px; }
   .ck-grid-entidades { grid-template-rows: auto 340px 380px; }
   .ck-grid-controle { grid-template-rows: auto repeat(3, 340px); }
-  .ck-grid-profissionais { grid-template-rows: auto repeat(4, 340px); }
 
   .ck-grid-malha { grid-template-rows: 600px repeat(4, 380px); }
   .ck-grid-fiscalizacao { grid-template-rows: auto 440px 380px 340px auto 380px 400px 420px; }

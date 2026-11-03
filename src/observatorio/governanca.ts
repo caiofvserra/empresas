@@ -72,7 +72,7 @@ export const lacunas: Lacuna[] = [
     oQueMudou: 'Saiu o bloco que sorteava sócios e diretores para aplicar o artigo 5º.',
     falta: 'CPF completo, por acordo com a Receita, documentos societários e parecer jurídico antes de qualquer regra.' },
   { n: 4, titulo: 'O emprego público em totais não pode ser ligado a empresas ou pessoas', decisao: 'Retirada',
-    oQueMudou: 'Saíram as ligações nominais entre empresa, engenheiro e salário, e os indícios de “empresa que emprega engenheiro sem registro”. Emprego e salário aparecem agora em totais por ocupação, na aba Profissionais.',
+    oQueMudou: 'Saíram as ligações nominais entre empresa, engenheiro e salário, e os indícios de “empresa que emprega engenheiro sem registro”. Emprego e salário aparecem agora em totais por ocupação, na aba Profissionais (desde 03/11/2026, no painel de Profissionais, página Trabalho).',
     falta: 'RAIS identificada ou eSocial, só com acordo e autorização do Ministério do Trabalho.' },
   { n: 5, titulo: 'O piso salarial precisa de uma regra jurídica com versão', decisao: 'Retirada',
     oQueMudou: 'Saiu o piso por empresa. O painel compara o salário típico de cada ocupação com duas leituras do piso, a do STF e a do Confea, sempre em totais e só para descrever.',
