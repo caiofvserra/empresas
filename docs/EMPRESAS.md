@@ -1,6 +1,6 @@
 # Painel de Empresas
 
-Primeiro painel separado do painel geral, de 01/11/2026. Abre em `/empresas.html` no site e em `entrega/painel-empresas-creasp.html` sem servidor. O painel geral continua em `/` e em `entrega/painel-gestao-creasp.html`, agora sem a aba Empresas; um botão no menu lateral leva de um painel ao outro.
+Primeiro painel separado do painel geral, de 01/11/2026. Abre em `/empresas.html` no site e em `entrega/painel-empresas-creasp.html` sem servidor. O painel geral continua em `/` e em `entrega/painel-gestao-creasp.html`, agora sem a aba Empresas. O painel geral tem um botão no menu lateral que leva ao de Empresas; o de Empresas não tem o caminho de volta, porque é entregue sozinho (pedido de 03/11/2026).
 
 ## Por que separar e como dividir
 
@@ -79,6 +79,11 @@ O Caio pediu para conferir se o painel está bom, condizente com os dados e com 
 Conferências que bateram: o cartão de empresas registradas é o mesmo número do funil e do anel; a parte do mercado registrada do cartão é a mesma da conciliação ("Sim" e "Passível") e do mapa; "RT que saiu sem substituto" é o mesmo número no cartão e no quadro; "registradas sem ART" bate com o funil e com as barras por câmara; "continuam registradas depois de 12 meses" bate entre o cartão e a lista de permanência. Os dois números de "sem registro" na primeira página são contas diferentes de propósito: 362 são os estabelecimentos de atividade obrigatória que nunca apareceram no cadastro; 376 são todos os que nunca apareceram, inclusive os de atividade "passível"; a ficha (i) de cada um diz isso.
 
 Quanto ao objetivo, o painel responde às perguntas que a administração faz sobre empresas: quantas estão registradas e quanto do mercado isso cobre, onde e em que atividades estão as que faltam, se as registradas têm responsável técnico e registram ART, se pagam a anuidade e se o cadastro está completo, como a base evolui e com quem as empresas se ligam. O que ele não traz de propósito: a receita em reais e o custo da fiscalização ficam no painel de gestão, e as ações de fiscalização detalhadas ficam no painel de fiscalização e malha fina. O cenário continua demonstrativo (selo no alto da tela): os números servem para mostrar a leitura, não o Crea-SP.
+
+## Ajustes de 03/11/2026
+
+- O painel passou a ter as nove câmaras especializadas do Crea-SP, com os nomes do sistema do Conselho: Civil, Elétrica, Mecânica e Metalúrgica, Segurança do Trabalho, Agronomia, Química, Ambiental e Sanitária, Agrimensura e Geologia e Minas. Antes eram quatro. A câmara de cada empresa continua estimada pela atividade principal (`camaraPorCnae` em `src/painel/analise.ts`); o cenário ganhou dez atividades novas e um sorteio com peso, para a civil ficar com pouco mais da metade das empresas e as câmaras menores com poucos por cento cada. As ARTs e os profissionais do cenário ganharam as modalidades química, geologia e minas e agrimensura.
+- O atalho "Geral" saiu da barra lateral do painel de Empresas, porque ele é entregue sozinho. O painel geral continua com o atalho para Empresas.
 
 ## O que saiu e por quê
 

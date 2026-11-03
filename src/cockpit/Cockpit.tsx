@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import type { ComponentType, ReactNode } from 'react';
-import { ArrowUpRight, BookOpenCheck, Building2, CalendarClock, ChevronDown, ClipboardCheck, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, LayoutGrid, Moon, Network, RotateCcw, ScanSearch, ShieldCheck, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
+import { ArrowUpRight, BookOpenCheck, Building2, CalendarClock, ChevronDown, ClipboardCheck, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, Network, RotateCcw, ScanSearch, ShieldCheck, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
 import { dataset } from '../domain/dataset';
 import { datasReferencia as datasReferenciaDe, datasetAt, fiscalizacaoAt } from '../domain/tempo';
 import { defaultFilters } from '../domain/types';
@@ -73,7 +73,7 @@ const paginasGeral: PaginaDef[] = [
   { id: 'atendimento', label: 'Atendimento', title: 'Atendimento e estrutura', subtitle: 'Se as solicitações são resolvidas no prazo, como os coworkings são usados e como está a qualidade do cadastro', icon: Headset, Page: PaginaAtendimento },
   { id: 'metodo', label: 'Método', title: 'Método, regras e fontes', subtitle: 'O que cada cruzamento permite concluir, o que foi corrigido no painel, as perguntas que ele responde, as regras da malha fina, as fontes de dados e o uso de inteligência artificial', icon: BookOpenCheck, Page: PaginaMetodo },
 ];
-/** Painel de Empresas: o primeiro painel separado do painel geral (01/11/2026), com filtros de regional, câmara, período e data que valem para todas as páginas. */
+/** Painel de Empresas: o primeiro painel separado do painel geral (01/11/2026), com filtros de regional, câmara, período e data que valem para todas as páginas. Não tem atalho de volta ao painel geral: o Caio pediu para remover em 03/11/2026, porque ele é entregue sozinho. */
 const paginasEmpresas: PaginaDef[] = [
   { id: 'mercado', label: 'Registro', title: 'Registro e mercado', subtitle: 'Quantas empresas estão registradas no Crea-SP, quanto do mercado de engenharia isso cobre e em que atividades e regionais estão as que faltam', icon: Building2, Page: PaginaMercado },
   { id: 'evolucao', label: 'Evolução', title: 'Evolução das empresas', subtitle: 'Como a economia, a abertura de empresas de engenharia e os registros no Crea-SP andaram juntos, e quantas empresas entram e saem da base', icon: TrendingUp, Page: PaginaEvolucao },
@@ -81,10 +81,10 @@ const paginasEmpresas: PaginaDef[] = [
   { id: 'vinculos', label: 'Vínculos', title: 'Sócios, instalações e empregados', subtitle: 'Com quem as empresas se ligam: sócios, instalações e financiamentos de setores regulados, empregados técnicos, credenciamentos e alterações no contrato social', icon: Network, Page: PaginaVinculos },
 ];
 export type PainelId = 'geral' | 'empresas';
-interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; outro: { id: PainelId; label: string; title: string } }
+interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; outro?: { id: PainelId; label: string; title: string } }
 const paineis: Record<PainelId, Painel> = {
   geral: { id: 'geral', nome: 'Inteligência Estratégica', paginas: paginasGeral, periodos: [3, 6, 12], storage: 'crea-observatorio-v20', outro: { id: 'empresas', label: 'Empresas', title: 'Abrir o painel de Empresas' } },
-  empresas: { id: 'empresas', nome: 'Inteligência Estratégica · Empresas', paginas: paginasEmpresas, periodos: [3, 6, 12, 24], storage: 'crea-empresas-v1', outro: { id: 'geral', label: 'Geral', title: 'Abrir o painel geral' } },
+  empresas: { id: 'empresas', nome: 'Inteligência Estratégica · Empresas', paginas: paginasEmpresas, periodos: [3, 6, 12, 24], storage: 'crea-empresas-v1' },
 };
 /** Endereço de outro painel: no site, empresas.html e index.html; na entrega em arquivo único, os dois HTML lado a lado na pasta entrega. */
 export function enderecoPainel(id: PainelId, pagina?: PageId) {
@@ -232,7 +232,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     <nav className="ck-rail" aria-label="Assuntos do painel">
       <div className="ck-logo" title="CREA-SP"><EngineeringEmblem /></div>
       {pages.map((item, index) => <button key={item.id} className={page === item.id ? 'on' : ''} aria-current={page === item.id ? 'page' : undefined} onClick={() => setPage(item.id)} title={`${item.title} (tecla ${item.id === 'metodo' ? 'M' : (index + 1) % 10})`}><item.icon size={18} /><span>{item.label}</span></button>)}
-      <a className="ck-rail-painel" href={enderecoPainel(painel.outro.id)} title={painel.outro.title}>{painel.outro.id === 'empresas' ? <Building2 size={18} /> : <LayoutGrid size={18} />}<span>{painel.outro.label}<ArrowUpRight size={10} /></span></a>
+      {painel.outro && <a className="ck-rail-painel" href={enderecoPainel(painel.outro.id)} title={painel.outro.title}><Building2 size={18} /><span>{painel.outro.label}<ArrowUpRight size={10} /></span></a>}
       <div className="ck-rail-bottom">
         <button onClick={() => setModal('metas')} title="Metas usadas nos cartões e no quadro das regionais"><Target size={17} /><span>Metas</span></button>
         <button onClick={() => setModal('fontes')} title="Fontes, métodos e limites"><Database size={17} /><span>Fontes</span></button>

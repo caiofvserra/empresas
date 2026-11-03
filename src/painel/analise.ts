@@ -207,19 +207,26 @@ export function saneamento(scope: Scope, model: EnterpriseModel) {
 }
 
 /* ---------- Câmara especializada (pela atividade principal da empresa) ---------- */
-export type Camara = 'Eng. Civil' | 'Eng. Elétrica' | 'Eng. Mec. e Metalúrgica' | 'Eng. Química';
-export const camaras: Camara[] = ['Eng. Civil', 'Eng. Elétrica', 'Eng. Mec. e Metalúrgica', 'Eng. Química'];
+export type Camara = 'Civil' | 'Elétrica' | 'Mecânica e Metalúrgica' | 'Segurança do Trabalho' | 'Agronomia' | 'Química' | 'Ambiental e Sanitária' | 'Agrimensura' | 'Geologia e Minas';
+/** As nove câmaras especializadas do Crea-SP, na ordem e com os nomes do sistema do Conselho (lista enviada pelo Caio em 03/11/2026). */
+export const camaras: Camara[] = ['Civil', 'Elétrica', 'Mecânica e Metalúrgica', 'Segurança do Trabalho', 'Agronomia', 'Química', 'Ambiental e Sanitária', 'Agrimensura', 'Geologia e Minas'];
 /** Correspondência demonstrativa CNAE → câmara; em produção, a câmara vem do cadastro de registro da empresa. */
 export const camaraPorCnae: Record<string, Camara> = {
-  '7112-0/00': 'Eng. Civil', '4120-4/00': 'Eng. Civil', '4399-1/03': 'Eng. Civil', '4211-1/01': 'Eng. Civil', '4299-5/99': 'Eng. Civil', '4322-3/01': 'Eng. Civil', '7119-7/03': 'Eng. Civil',
-  '4321-5/00': 'Eng. Elétrica', '4221-9/02': 'Eng. Elétrica', '3314-7/10': 'Eng. Mec. e Metalúrgica', '7739-0/02': 'Eng. Mec. e Metalúrgica', '7120-1/00': 'Eng. Química',
+  '7112-0/00': 'Civil', '4120-4/00': 'Civil', '4399-1/03': 'Civil', '4211-1/01': 'Civil', '4299-5/99': 'Civil', '4322-3/01': 'Civil', '7119-7/03': 'Civil',
+  '4321-5/00': 'Elétrica', '4221-9/02': 'Elétrica', '3314-7/10': 'Mecânica e Metalúrgica', '7739-0/02': 'Mecânica e Metalúrgica',
+  '7119-7/04': 'Segurança do Trabalho', '3292-2/02': 'Segurança do Trabalho',
+  '7490-1/03': 'Agronomia', '0161-0/01': 'Agronomia',
+  '7120-1/00': 'Química', '2013-4/02': 'Química',
+  '3900-5/00': 'Ambiental e Sanitária', '3600-6/01': 'Ambiental e Sanitária',
+  '7119-7/01': 'Agrimensura',
+  '7119-7/02': 'Geologia e Minas', '0810-0/06': 'Geologia e Minas',
 };
 const camaraCache = new WeakMap<Dataset, Map<string, Camara>>();
 export function camaraDaEmpresa(dataset: Dataset): Map<string, Camara> {
   const saved = camaraCache.get(dataset); if (saved) return saved;
   const main = new Map<string, Dataset['establishments'][number]>();
   for (const row of [...dataset.establishments].sort((a, b) => a.id.localeCompare(b.id))) { const previous = main.get(row.companyId); if (!previous || previous.branch !== 'Matriz' && row.branch === 'Matriz') main.set(row.companyId, row); }
-  const result = new Map([...main].map(([companyId, row]) => [companyId, camaraPorCnae[row.cnaeMain] ?? 'Eng. Civil'] as [string, Camara]));
+  const result = new Map([...main].map(([companyId, row]) => [companyId, camaraPorCnae[row.cnaeMain] ?? 'Civil'] as [string, Camara]));
   camaraCache.set(dataset, result); return result;
 }
 
@@ -251,7 +258,7 @@ export function mercadoPorCamara(scope: Scope, model: EnterpriseModel, f: Fiscal
   const rows = new Map(camaras.map(name => [name, { camara: name, total: 0, partes: Object.fromEntries(segmentosMercado.map(segment => [segment, [] as string[]])) as Record<SegmentoMercado, string[]> }]));
   for (const id of model.metadata.eligibleEstablishmentIds) {
     const place = establishments.get(id); if (!place) continue;
-    const item = rows.get(camara.get(place.companyId) ?? 'Eng. Civil')!; item.total++;
+    const item = rows.get(camara.get(place.companyId) ?? 'Civil')!; item.total++;
     const segment: SegmentoMercado = active.has(id) ? (debtors.has(place.companyId) ? 'Registro ativo, inadimplente' : 'Registro ativo, em dia') : acted.has(id) ? 'Sem registro, com ação' : 'Sem registro, sem ação';
     item.partes[segment].push(id);
   }

@@ -26,6 +26,20 @@ const id = (prefix: string, index: number, length = 5) => `${prefix}${String(ind
 export const sampleCnaeCodes = [
   '7112-0/00', '4120-4/00', '4321-5/00', '4399-1/03', '7120-1/00', '4221-9/02',
   '4211-1/01', '4299-5/99', '4322-3/01', '3314-7/10', '7119-7/03', '7739-0/02',
+  // Atividades das outras câmaras (03/11/2026): segurança do trabalho, agronomia, química, ambiental e sanitária, agrimensura, geologia e minas.
+  '7119-7/04', '3292-2/02', '7490-1/03', '0161-0/01', '2013-4/02', '3900-5/00', '3600-6/01', '7119-7/01', '7119-7/02', '0810-0/06',
+];
+/** Atividade principal sorteada com peso: a civil fica com pouco mais da metade das empresas, como no cadastro real, e as câmaras menores ficam com poucos por cento cada. */
+const pesoCnae = [
+  0, 1, 3, 6, 7, 8, 10, 0, 1, 3, 6, 7, 8, 10, 0, 1, 3, 6, 7, 8, 10, 0, 1, 8, 0, 1, // civil (26)
+  2, 5, 2, 5, 2, 5, // elétrica (6)
+  9, 11, 9, 11, 9, 11, // mecânica (6)
+  12, 13, // segurança (2)
+  14, 15, 14, // agronomia (3)
+  4, 16, // química (2)
+  17, 18, // ambiental (2)
+  19, // agrimensura (1)
+  20, 21, // geologia e minas (2)
 ];
 
 function checkDigits(base: string): string {
@@ -113,7 +127,7 @@ export function generateDataset(seed = 20260930): Dataset {
     const openedAt = branch
       ? (addDays(parent!.openedAt, 100) <= '2026-08-31' ? between(addDays(parent!.openedAt, 100), earlier(addDays(parent!.openedAt, 720), '2026-08-31')) : earlier(between(addDays(parent!.openedAt, 30), '2026-08-31'), '2026-08-31'))
       : index % 5 === 0 ? between('2023-10-01', '2026-08-31') : between('2012-01-01', '2023-09-01');
-    const cnaeMain = sampleCnaeCodes[(index + integer(0, 3)) % sampleCnaeCodes.length];
+    const cnaeMain = sampleCnaeCodes[pesoCnae[(index * 7 + integer(0, 3)) % pesoCnae.length]];
     const secondary = [sampleCnaeCodes[(index + 5) % 12], sampleCnaeCodes[(index + 8) % 12]].filter(code => code !== cnaeMain);
     const cnpjBase = `${company.rootCnpj}${branch ? '0002' : '0001'}`;
     const statusRoll = random();
@@ -199,7 +213,7 @@ export function generateDataset(seed = 20260930): Dataset {
 
   const firstNames = ['Ana', 'Bruno', 'Camila', 'Daniel', 'Elisa', 'Felipe', 'Gabriela', 'Hugo', 'Isabela', 'João'];
   const lastNames = ['Almeida', 'Barros', 'Costa', 'Duarte', 'Esteves', 'Ferraz', 'Gomes', 'Lima', 'Moraes', 'Nunes'];
-  const modalities = ['Civil', 'Elétrica', 'Mecânica', 'Agronomia', 'Segurança do trabalho'];
+  const modalities = ['Civil', 'Elétrica', 'Mecânica', 'Agronomia', 'Segurança do trabalho', 'Química', 'Geologia e minas', 'Agrimensura'];
   const professionals: Professional[] = Array.from({ length: 1600 }, (_, index) => ({
     id: id('PRO-', index), name: `${firstNames[index % 10]} ${lastNames[Math.floor(index / 10) % 10]} ${String(index + 1).padStart(3, '0')}`,
     registration: `DEMO-SP-${String(index + 1).padStart(6, '0')}`, modality: modalities[index % modalities.length],
@@ -249,8 +263,8 @@ export function generateDataset(seed = 20260930): Dataset {
   // mensal acompanhar o tamanho da base. Antes, a data era sorteada dentro do intervalo de cada registro, e a série parecia
   // multiplicar por oito em dois anos.
   const ART_INICIO = '2023-10-01';
-  // Modalidade da ART perto da distribuição dos profissionais: civil 45%, elétrica 20%, mecânica 20%, agronomia 5%, segurança 10%.
-  const pesoModalidadeArt = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 4];
+  // Modalidade da ART perto da distribuição dos profissionais: civil 44%, elétrica 18%, mecânica 16%, agronomia 6%, segurança 8%, química 4%, geologia 2%, agrimensura 2%.
+  const pesoModalidadeArt = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 7];
   const trechos = registrations.flatMap(registration => activeIntervals.get(registration.id)!
     .map(interval => ({ registration, start: later(interval.start, ART_INICIO), end: interval.end }))
     .filter(trecho => trecho.start <= trecho.end)
