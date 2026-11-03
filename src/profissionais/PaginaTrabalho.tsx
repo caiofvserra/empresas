@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Chart } from '../painel/chart';
 import { brl, int, mes, money, pct } from '../painel/ui';
-import { situacaoEm } from '../domain/profissionais';
+import { parteAbaixo, situacaoEm } from '../domain/profissionais';
 import type { Nomeacao } from '../domain/parcerias';
 import { empregoMensal, empregoRegionalOcupacao } from '../domain/painel-profissionais';
 import type { CockpitCtx } from '../cockpit/contexto';
@@ -31,7 +31,7 @@ export default function PaginaTrabalho({ ctx }: { ctx: CockpitCtx }) {
     </section>
     <Bloco ctx={ctx} id="ev" area="ev" title="Emprego com carteira mês a mês" question="Nas ocupações de engenharia, as admissões para cima e os desligamentos para baixo em cada mês, com a linha do total de empregos com carteira (eixo da direita)." help="Os números são totais do Novo CAGED e da RAIS, por ocupação e regional, e não identificam pessoas nem empresas. Com um município escolhido, a série é a da regional dele."><EmpregoMes ctx={ctx} serie={serie} /></Bloco>
     <Bloco ctx={ctx} id="pe" area="pe" title="Empregos por ocupação" question="Quantos empregos com carteira havia em cada ocupação no último mês disponível, com o saldo de contratações em 12 meses ao lado. As barras cinza são ocupações de fora da engenharia, mostradas para comparação." help="Inclui cargos com nome de “analista” que a classificação de ocupações (CBO) lista como engenheiro."><Emprego ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="ps" area="ps" title="Salário típico e piso" question="O salário do meio da distribuição em cada ocupação, comparado com o piso legal (na base fixada pelo STF) e com a leitura do Confea, os dois para 8 horas por dia." help="São totais por ocupação e só descrevem a situação. Não apontam empresa nem descumprimento do piso."><Remuneracao ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="ps" area="ps" title="Salário por ocupação e piso" question="Cada caixa mostra quanto ganha a metade do meio dos empregos da ocupação; as hastes vão de 10% a 90% e o traço no meio é a mediana. A linha vermelha é o piso legal (na base fixada pelo STF) e a amarela, a leitura do Confea, as duas para 8 horas. Embaixo do nome, a parte dos empregos abaixo do piso." help="São totais por ocupação e só descrevem a situação. Não apontam empresa nem descumprimento do piso."><Remuneracao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="eh" area="eh" title="Saldo de contratações em um ano, por regional" question="Admissões menos desligamentos nos últimos 12 meses, nas ocupações de engenharia, em cada regional. Ao lado, o quanto o saldo representa do total de empregos da regional. Azul contratou mais do que desligou; vermelho, o contrário."><RegionalOcupacao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="pp" area="pp" title="Perícias judiciais por especialidade" question="Peritos nomeados pelo Tribunal de Justiça nos últimos 24 meses, por especialidade, separados pela situação do perito no cadastro do Crea-SP." help="Nomeação, perícia entregue e pagamento são coisas diferentes, e honorário fixado pelo juiz não é honorário pago. O tipo de processo, sozinho, não prova que a perícia exigia engenheiro. Clique numa barra para ver as nomeações."><Pericias ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="pr" area="pr" title="ART das perícias" question="Das nomeações, quantas trazem os dados mínimos para procurar a ART (número do processo, órgão e perito identificado) e em quantas a ART foi encontrada." help="Não achar a ART não quer dizer que ela não existe. A ligação é confirmada só com o número do processo citado na ART."><Rastreabilidade ctx={ctx} /></Bloco>
@@ -67,22 +67,28 @@ function Emprego({ ctx }: { ctx: CockpitCtx }) {
   return <Chart option={option} tokens={tokens} label="Empregos com carteira por ocupação e saldo em 12 meses" />;
 }
 
+const milReais = (value: number) => `${(value / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mil`;
+/** Caixas de salário por ocupação: a caixa vai de 25% a 75% dos empregos, as hastes de 10% a 90%, e o traço do meio é a mediana.
+ * As linhas verticais são o piso exigível e a leitura do Confea, os dois para 8 horas. Ao lado, a parte dos empregos abaixo do piso. */
 function Remuneracao({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => ocupacoes(ctx).filter(row => row.estoque).sort((a, b) => a.salario - b.salario), [ctx.profissionais.cbo, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { tokens } = ctx, rows = useMemo(() => ocupacoes(ctx).filter(row => row.estoque).sort((a, b) => b.salario - a.salario), [ctx.profissionais.cbo, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+  const abaixo = (row: (typeof rows)[number]) => parteAbaixo(row.faixa, piso.exigivel8h);
+  const cor = (row: (typeof rows)[number]) => !row.piso ? tokens.muted : row.salario < piso.exigivel8h ? tokens.bad : tokens.blue;
   const option = useMemo(() => ({
-    grid: { top: 22, right: 46, bottom: 18, left: 2, containLabel: true },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.label}</b> · CBO ${row.cbo}<br/>Salário típico: ${money(row.salario)} · ${pct(row.salario / piso.exigivel8h * 100)} do piso exigível<br/><span style="opacity:.75">${int(row.estoque)} empregos em ${mes(row.mes)}${row.piso ? '' : ' · ocupação sem piso da Lei 4.950-A'}</span>`; } },
-    xAxis: { type: 'value', min: 0, max: (value: { max: number }) => Math.max(value.max, piso.confea8h) * 1.06, show: false },
-    yAxis: { type: 'category', data: rows.map(row => row.label.split('(')[0].replace('Eng. civil · ', 'Eng. ').trim()), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10, width: 140, overflow: 'truncate' } },
-    series: [
-      { type: 'bar', barWidth: 3, silent: true, data: rows.map(row => ({ value: row.salario, itemStyle: { color: !row.piso ? tokens.line : row.salario < piso.exigivel8h ? tokens.bad : tokens.blue } })),
-        markLine: { symbol: 'none', silent: true, label: { color: tokens.muted, fontSize: 9.5, position: 'end', formatter: (item: any) => item.name }, data: [
-          { xAxis: piso.exigivel8h, name: `piso ${money(piso.exigivel8h)}`, label: { position: 'start' }, lineStyle: { color: tokens.bad, type: 'solid', width: 1.5 } },
-          { xAxis: piso.confea8h, name: `Confea ${money(piso.confea8h)}`, lineStyle: { color: tokens.accent, type: 'dashed', width: 1.5 } }] } },
-      { type: 'scatter', symbolSize: 11, data: rows.map(row => ({ value: row.salario, itemStyle: { color: !row.piso ? tokens.muted : row.salario < piso.exigivel8h ? tokens.bad : tokens.blue, borderColor: tokens.surface, borderWidth: 2 } })), label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5, fontWeight: 700, formatter: (item: any) => money(item.value) } },
-    ],
-  }), [rows, tokens]);
-  return <Chart option={option} tokens={tokens} label="Salário típico por ocupação comparado com o piso exigível e a leitura do Confea" />;
+    grid: { top: 22, right: 8, bottom: 2, left: 2, containLabel: true },
+    title: { text: `{p|—} piso exigível ${milReais(piso.exigivel8h)}    {c|- - -} Confea ${milReais(piso.confea8h)}`, right: 4, top: 0, textStyle: { color: tokens.muted, fontSize: 10, fontWeight: 400, rich: { p: { color: tokens.bad, fontWeight: 800, fontSize: 12 }, c: { color: tokens.accent, fontWeight: 800, fontSize: 11 } } } },
+    tooltip: { trigger: 'item', formatter: (item: any) => { const row = rows[item.dataIndex]; if (!row) return ''; const f = row.faixa, a = abaixo(row);
+      return `<b>${row.label}</b> · CBO ${row.cbo}<br/>Metade dos empregos ganha entre <b>${money(f.p25)}</b> e <b>${money(f.p75)}</b><br/>Mediana: <b>${money(f.p50)}</b> · 10% ganham menos de ${money(f.p10)} e 10% mais de ${money(f.p90)}<br/>${row.piso ? `Abaixo do piso exigível: <b>${a === null ? '—' : pct(a)}</b> dos empregos` : 'Ocupação sem piso da Lei 4.950-A'}<br/><span style="opacity:.75">${int(row.estoque)} empregos em ${mes(row.mes)}</span>`; } },
+    xAxis: { type: 'value', min: (value: { min: number }) => Math.floor(value.min / 2000) * 2000, max: (value: { max: number }) => Math.max(value.max, piso.confea8h) * 1.04, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 9, formatter: (value: number) => `${int(value / 1000)} mil` } },
+    yAxis: { type: 'category', inverse: true, data: rows.map(row => row.label.split('(')[0].replace('Eng. civil · ', 'Eng. ').trim()), axisTick: { show: false }, axisLine: { show: false },
+      axisLabel: { color: tokens.ink, fontSize: 10, width: 150, overflow: 'truncate', formatter: (value: string, index: number) => { const row = rows[index], a = row ? abaixo(row) : null; return row?.piso && a !== null ? `${value}\n{a|${pct(a)} abaixo do piso}` : `${value}\n{s|sem piso legal}`; },
+        rich: { a: { color: tokens.muted, fontSize: 9, align: 'right' }, s: { color: tokens.muted, fontSize: 9, align: 'right' } } } },
+    series: [{ type: 'boxplot', boxWidth: [10, 20], data: rows.map(row => ({ value: [row.faixa.p10, row.faixa.p25, row.faixa.p50, row.faixa.p75, row.faixa.p90], itemStyle: { color: `${cor(row)}33`, borderColor: cor(row), borderWidth: 1.5 } })),
+      markLine: { symbol: 'none', silent: true, label: { show: false }, data: [
+        { xAxis: piso.exigivel8h, name: `piso ${milReais(piso.exigivel8h)}`, label: { position: 'start' }, lineStyle: { color: tokens.bad, type: 'solid', width: 1.5 } },
+        { xAxis: piso.confea8h, name: `Confea ${milReais(piso.confea8h)}`, label: { position: 'start' }, lineStyle: { color: tokens.accent, type: 'dashed', width: 1.5 } }] } }],
+  }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <Chart option={option} tokens={tokens} label="Distribuição do salário por ocupação comparada com o piso exigível e a leitura do Confea" />;
 }
 
 /** Saldo de contratações em 12 meses por regional, nas ocupações de engenharia, com o peso no estoque. */

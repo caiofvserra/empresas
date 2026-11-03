@@ -215,12 +215,23 @@ export function buildEmpregoCbo(dataset: Dataset): EmpregoCbo[] {
   }
   empregoCache.set(dataset, rows); return rows;
 }
-export interface RemuneracaoCbo extends CboInfo { estoque: number; saldo: number; salario: number; mes: string }
+/** Distribuição do salário de uma ocupação: os pontos de 10%, 25%, 50% (mediana), 75% e 90% e a parte dos empregos abaixo de um valor.
+ * Em produção vem dos microdados públicos da RAIS e do Novo CAGED (cada vínculo com CBO e remuneração, sem identificar a pessoa).
+ * No cenário, a forma é log-normal em torno da mediana, com dispersão própria de cada ocupação. */
+export interface FaixaSalarial { p10: number; p25: number; p50: number; p75: number; p90: number; dispersao: number }
+const normalAcumulada = (z: number) => { const t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2), p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; };
+export const parteAbaixo = (faixa: FaixaSalarial, valor: number) => faixa.p50 > 0 ? normalAcumulada(Math.log(valor / faixa.p50) / faixa.dispersao) * 100 : null;
+export interface RemuneracaoCbo extends CboInfo { estoque: number; saldo: number; salario: number; mes: string; faixa: FaixaSalarial }
 /** Último mês disponível até D, por CBO: estoque, saldo dos 12 meses e salário mediano ponderado pelo estoque das regionais. */
 export function remuneracaoPorCbo(emprego: EmpregoCbo[], anchor: string, greId: string | null): RemuneracaoCbo[] {
   const mes = anchor.slice(0, 7), mine = emprego.filter(row => row.month <= mes && (!greId || row.greId === greId));
   const ultimo = mine.reduce((latest, row) => row.month > latest ? row.month : latest, '');
   const inicio = shift(`${ultimo}-01`, -11).slice(0, 7);
   return cbos.map(info => { const rows = mine.filter(row => row.cbo === info.cbo && row.month === ultimo), estoque = sum(rows.map(row => row.estoque));
-    return { ...info, estoque, saldo: sum(mine.filter(row => row.cbo === info.cbo && row.month >= inicio && row.month <= ultimo).map(row => row.admissoes - row.desligamentos)), salario: estoque ? Math.round(sum(rows.map(row => row.salarioMediano * row.estoque)) / estoque) : 0, mes: ultimo }; });
+    const salario = estoque ? Math.round(sum(rows.map(row => row.salarioMediano * row.estoque)) / estoque) : 0;
+    // Dispersão: técnicos e analistas variam menos entre si; engenharias de controle, elétrica e civil (obra e projeto) variam mais.
+    const dispersao = (info.rotuloAnalista ? 0.36 : info.engenharia ? 0.34 : 0.28) + between(`faixa:${info.cbo}`, 0, 8) / 100;
+    const ponto = (z: number) => Math.round(salario * Math.exp(dispersao * z) / 10) * 10;
+    return { ...info, estoque, saldo: sum(mine.filter(row => row.cbo === info.cbo && row.month >= inicio && row.month <= ultimo).map(row => row.admissoes - row.desligamentos)), salario, mes: ultimo,
+      faixa: { p10: ponto(-1.2816), p25: ponto(-0.6745), p50: salario, p75: ponto(0.6745), p90: ponto(1.2816), dispersao } }; });
 }

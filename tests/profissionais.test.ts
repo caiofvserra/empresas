@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { dataset } from '../src/domain/dataset.ts';
-import { buildEmpregoCbo, buildProfissionais, remuneracaoPorCbo, resumoProfissionais, situacaoEm } from '../src/domain/profissionais.ts';
+import { buildEmpregoCbo, buildProfissionais, parteAbaixo, remuneracaoPorCbo, resumoProfissionais, situacaoEm } from '../src/domain/profissionais.ts';
 import { buildFormacao, quadroFormacao } from '../src/domain/formacao.ts';
 import { buildPericias, quadroPericias } from '../src/domain/parcerias.ts';
 import { artPorIdade, empregoMensal, empregoRegionalOcupacao, fluxoMensal, inicioPeriodo, modalidadeNivel, permanenciaPorAno, regionaisProfissionais, transicoes } from '../src/domain/painel-profissionais.ts';
@@ -106,4 +106,18 @@ test('cenário plausível: a maioria dos RTs responde por uma empresa e o empreg
   assert.ok(quatro / total < 0.06, 'RT de quatro empresas ou mais é exceção');
   const serie = empregoMensal(buildEmpregoCbo(dataset), dataset.snapshotDate, null, null);
   assert.ok(serie.every(row => Math.abs(row.saldo) / row.estoque < 0.006), 'saldo mensal pequeno perto do estoque');
+});
+
+test('salário em caixas e canal cruzado com natureza (03/11/2026)', () => {
+  const linhas = remuneracaoPorCbo(buildEmpregoCbo(dataset), dataset.snapshotDate, null).filter(row => row.estoque);
+  for (const row of linhas) {
+    const f = row.faixa;
+    assert.ok(f.p10 < f.p25 && f.p25 < f.p50 && f.p50 < f.p75 && f.p75 < f.p90, `${row.label}: pontos em ordem`);
+    assert.ok(Math.abs(parteAbaixo(f, f.p50)! - 50) < 0.5, 'metade dos empregos abaixo da mediana');
+  }
+  const q = quadroFormacao(buildFormacao(dataset), buildProfissionais(dataset), dataset, null);
+  for (const natureza of q.porNatureza) {
+    const grupos = q.porCanalNatureza.filter(row => row.natureza === natureza.natureza);
+    assert.equal(grupos.reduce((n, row) => n + row.concluintes, 0), natureza.concluintes, `${natureza.natureza}: formados batem`);
+  }
 });

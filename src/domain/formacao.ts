@@ -47,6 +47,10 @@ export interface QuadroFormacao {
   coortes: Coorte[]; porIes: LinhaIes[]; porModalidade: { modalidade: Modalidade; concluintes: number; registrados: number; taxa: number | null }[];
   porCanal: { canal: Canal; concluintes: number; registrados: number; taxa: number | null }[];
   porNatureza: { natureza: string; concluintes: number; registrados: number; taxa: number | null; ead: number | null }[];
+  /** Canal cruzado com a natureza da instituição: quatro grupos, cada um com formados, registrados em 24 meses e a parte registrada. */
+  porCanalNatureza: { natureza: string; canal: Canal; concluintes: number; registrados: number; taxa: number | null }[];
+  /** Parte registrada em 24 meses de todos os formados dos anos acompanhados, para servir de referência. */
+  taxaGeral: number | null;
   serie: { ano: number; presencial: number; ead: number; registrados: number }[]; anosFechados: number[];
 }
 /**
@@ -83,6 +87,10 @@ export function quadroFormacao(formacao: Formacao, modelo: ModeloProfissionais, 
   const porCanal = linha(['Presencial', 'EaD'] as Canal[], canal => concF.filter(row => row.canal === canal), canal => profsF.filter(row => canalDe(row) === canal)).map(row => ({ canal: row.item, concluintes: row.concluintes, registrados: row.registrados, taxa: row.taxa }));
   const porNatureza = linha(['Pública', 'Privada'], natureza => concF.filter(row => iesPorId.get(row.iesId)?.natureza === natureza), natureza => profsF.filter(row => iesPorId.get(row.iesId)?.natureza === natureza))
     .map(row => { const mine = escolas.filter(escola => escola.natureza === row.item); return { natureza: row.item, concluintes: row.concluintes, registrados: row.registrados, taxa: row.taxa, ead: mine.length ? sum(mine.map(escola => escola.ead ?? 0)) / mine.length : null }; });
+  const natDe = (iesId: string) => iesPorId.get(iesId)?.natureza;
+  const porCanalNatureza = (['Pública', 'Privada'] as const).flatMap(natureza => linha(['Presencial', 'EaD'] as Canal[], canal => concF.filter(row => row.canal === canal && natDe(row.iesId) === natureza), canal => profsF.filter(row => canalDe(row) === canal && natDe(row.iesId) === natureza))
+    .map(row => ({ natureza, canal: row.item, concluintes: row.concluintes, registrados: row.registrados, taxa: row.taxa })));
+  const taxaGeral = share(profsF.length, sum(concF.map(row => row.concluintes)));
   const serie = anos.map(ano => ({ ano, presencial: sum(conc.filter(row => row.ano === ano && row.canal === 'Presencial').map(row => row.concluintes)), ead: sum(conc.filter(row => row.ano === ano && row.canal === 'EaD').map(row => row.concluintes)), registrados: profs.filter(row => row.anoConclusao === ano).length }));
-  return { coortes, porIes, porModalidade, porCanal, porNatureza, serie, anosFechados: fechados };
+  return { coortes, porIes, porModalidade, porCanal, porNatureza, porCanalNatureza, taxaGeral, serie, anosFechados: fechados };
 }

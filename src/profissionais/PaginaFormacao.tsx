@@ -25,7 +25,7 @@ export default function PaginaFormacao({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="fi" area="fi" title="Registro por instituição de ensino" question="Cada ponto é uma instituição: quantos se formaram nela (para a direita, mais formados) e que parte se registrou em até 24 meses (para cima, mais registro), somando os anos já acompanhados por inteiro. Azul é pública; laranja, privada." help="A taxa varia mais nas instituições pequenas. O gráfico só descreve e não é um ranking oficial. Clique num ponto para ver os registrados da instituição."><Instituicoes ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="fm" area="fm" title="Formados e registrados, por modalidade" question="Formados e parte registrada em até 24 meses em cada modalidade, nos anos já acompanhados por inteiro."><Modalidades ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="fs" area="fs" title="Formados por ano, presencial e a distância" question="Quantos se formaram em cada ano em cursos presenciais e a distância, segundo o Censo da Educação Superior. Em cima de cada barra, a parte que estudou a distância."><Serie ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="fn" area="fn" title="Registro em 24 meses, por canal e natureza" question="Parte registrada em até 24 meses de quem estudou presencialmente e a distância, e de quem se formou em instituição pública e privada." help="As diferenças também refletem o perfil e a região dos alunos."><CanalNatureza ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="fn" area="fn" title="Registro em 24 meses, por tipo de instituição e canal" question="Em cada tipo de instituição (pública ou privada), a parte dos formados que se registrou no Crea-SP em até 24 meses, separando quem estudou presencialmente (azul) e a distância (amarelo). No alto, à direita, a parte de todos os formados juntos." help="As diferenças também refletem o perfil e a região dos alunos."><CanalNatureza ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="fp" area="fp" title="Turmas das instituições parceiras, pessoa a pessoa" question="Com a lista de formados que as instituições parceiras enviariam, mostra que parte de cada turma fez o primeiro registro no Crea-SP em até 12 e em até 24 meses depois da formatura." help="O resultado vale só para as instituições parceiras e não pode ser estendido a todas as de São Paulo. Quem já tinha registro antes de se formar é contado à parte. Turmas recentes ainda não têm resultado."><CoorteNominal ctx={ctx} /></Bloco>
   </div>;
 }
@@ -112,17 +112,24 @@ function Serie({ ctx }: { ctx: CockpitCtx }) {
   return <Chart option={option} tokens={tokens} label="Formados por ano, presencial e a distância" />;
 }
 
+/** Canal cruzado com a natureza: para cada tipo de instituição, a parte registrada de quem estudou presencialmente e a distância, com a média geral. */
 function CanalNatureza({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, q = ctx.formacao;
-  const rows = useMemo(() => [...q.porCanal.map(row => ({ nome: row.canal === 'EaD' ? 'A distância' : row.canal, concluintes: row.concluintes, registrados: row.registrados, taxa: row.taxa, grupo: 'Canal' })), ...q.porNatureza.map(row => ({ nome: `Instituição ${row.natureza.toLowerCase()}`, concluintes: row.concluintes, registrados: row.registrados, taxa: row.taxa, grupo: 'Natureza' }))], [q]);
+  const { tokens } = ctx, q = ctx.formacao, naturezas = ['Pública', 'Privada'], canais = [{ id: 'Presencial', nome: 'Presencial', cor: tokens.blue }, { id: 'EaD', nome: 'A distância', cor: tokens.accent }];
+  // Grupo com menos de 50 formados fica sem barra: a parte registrada de um grupo tão pequeno varia demais (e o canal do registrado é estimado).
+  const MINIMO = 50, celula = (natureza: string, canal: string) => q.porCanalNatureza.find(row => row.natureza === natureza && row.canal === canal);
+  const taxaDe = (natureza: string, canal: string) => { const c = celula(natureza, canal); return c && c.concluintes >= MINIMO ? c.taxa : null; };
   const option = useMemo(() => ({
-    grid: { top: 4, right: 50, bottom: 2, left: 2, containLabel: true },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.nome}</b><br/>${int(row.registrados)} registrados em 24 meses de ${int(row.concluintes)} formados<br/>Registro: <b>${row.taxa === null ? '—' : pct(row.taxa, 1)}</b>`; } },
-    xAxis: { type: 'value', max: 100, show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.nome), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
-    series: [{ type: 'bar', barWidth: '50%', data: rows.map(row => ({ value: row.taxa ?? 0, itemStyle: { color: row.grupo === 'Canal' ? tokens.blue : tokens.brand, borderRadius: [0, 4, 4, 0] } })), showBackground: true, backgroundStyle: { color: tokens.soft, borderRadius: 4 },
-      label: { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, fontWeight: 700, formatter: (params: any) => rows[params.dataIndex].taxa === null ? '—' : pct(params.value, 1) } }],
-  }), [rows, tokens]);
-  return <Chart option={option} tokens={tokens} label="Parte registrada em até 24 meses por canal e natureza da instituição" />;
+    grid: { top: 30, right: 8, bottom: 2, left: 4, containLabel: true }, legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
+    title: q.taxaGeral === null ? undefined : { text: `todos os formados juntos: ${pct(q.taxaGeral, 1)}`, right: 4, top: 0, textStyle: { color: tokens.muted, fontSize: 10, fontWeight: 400 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const natureza = naturezas[items[0].dataIndex];
+      return `<b>Instituição ${natureza.toLowerCase()}</b><br/>${canais.map(canal => { const c = celula(natureza, canal.id); return !c ? '' : c.concluintes < MINIMO ? `${canal.nome}: só ${int(c.concluintes)} formados, poucos para medir` : `${canal.nome}: <b>${c.taxa === null ? '—' : pct(c.taxa, 1)}</b> registrados em 24 meses (${int(c.registrados)} de ${int(c.concluintes)} formados)`; }).join('<br/>')}`; } },
+    xAxis: { type: 'category', data: naturezas.map(row => `Instituição ${row.toLowerCase()}`), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
+    yAxis: { type: 'value', min: 0, max: (value: { max: number }) => Math.ceil(value.max * 1.3 / 5) * 5, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 9.5, formatter: '{value}%' } },
+    series: canais.map((canal, index) => ({ name: canal.nome, type: 'bar', barWidth: '30%', barGap: '12%', itemStyle: { color: canal.cor, borderRadius: [4, 4, 0, 0] },
+      data: naturezas.map(natureza => taxaDe(natureza, canal.id) ?? { value: 0, poucos: true, itemStyle: { color: 'transparent' } }),
+      label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, fontWeight: 800, lineHeight: 13, formatter: (item: any) => { const c = celula(naturezas[item.dataIndex], canal.id); if (!c) return ''; return c.concluintes < MINIMO ? `{n|${canal.nome.toLowerCase()}:\npoucos formados}` : c.taxa === null ? '' : `${pct(c.taxa, 1)}\n{n|${int(c.concluintes)} formados}`; }, rich: { n: { fontSize: 9, fontWeight: 400, color: tokens.muted } } } })),
+  }), [q, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <Chart option={option} tokens={tokens} label="Parte registrada em até 24 meses por natureza da instituição e canal de ensino" />;
 }
 
 function CoorteNominal({ ctx }: { ctx: CockpitCtx }) {
