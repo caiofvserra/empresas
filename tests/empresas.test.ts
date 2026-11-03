@@ -8,7 +8,7 @@ import { datasetAt } from '../src/domain/tempo.ts';
 import { selectEnterpriseScope } from '../src/enterprise-v10/filters.ts';
 import { buildEnterpriseModel } from '../src/enterprise-v10/model.ts';
 import { antiguidadeRegistro, artsMensais, cadastroIncompleto, cnaesDoMercado, faixasAntiguidade, idadeCapital, artsPorProfissional, mercadoEmArvore, porCapital, registrosPorCamara, ritmoEconomico, territorio } from '../src/domain/empresas.ts';
-import { camaraDaEmpresa, camaraPorCnae } from '../src/painel/analise.ts';
+import { camaraDaEmpresa, camaraPorCnae, camaras } from '../src/painel/analise.ts';
 import { buildProfissionais } from '../src/domain/profissionais.ts';
 import { buildCredenciamentos, buildJucesp, buildSociosPf, parcerias, quadroCredenciamentos, quadroDenominacao, quadroJucesp } from '../src/domain/parcerias.ts';
 import { fichas, parceriasDe } from '../src/cockpit/fichas.ts';
@@ -83,6 +83,23 @@ test('painel geral: todas as abas do painel geral continuam no menu, e Empresas 
   const geral = src.slice(src.indexOf('const paginasGeral'), src.indexOf('const paginasEmpresas'));
   for (const id of ['presidencia', 'profissionais', 'formacao', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento', 'metodo']) assert.ok(geral.includes(`id: '${id}'`), `aba ${id} no painel geral`);
   assert.ok(!geral.includes("id: 'cadastro'"));
+});
+
+test('as nove câmaras do Crea-SP aparecem no painel, com empresas em todas e a civil na frente (03/11/2026)', () => {
+  assert.deepEqual(camaras, ['Civil', 'Elétrica', 'Mecânica e Metalúrgica', 'Segurança do Trabalho', 'Agronomia', 'Química', 'Ambiental e Sanitária', 'Agrimensura', 'Geologia e Minas']);
+  const porCamara = new Map<string, number>();
+  for (const camara of camaraDaEmpresa(dataset).values()) porCamara.set(camara, (porCamara.get(camara) ?? 0) + 1);
+  for (const camara of camaras) assert.ok((porCamara.get(camara) ?? 0) > 0, `empresas na câmara ${camara}`);
+  const civil = porCamara.get('Civil')!, total = sum([...porCamara.values()]);
+  assert.ok(civil / total > 0.45 && civil / total < 0.6, `civil com ${civil} de ${total}`);
+  for (const code of dataset.companies.map(row => dataset.establishments.find(place => place.companyId === row.id)!.cnaeMain)) assert.ok(camaraPorCnae[code], `CNAE ${code} sem câmara`);
+});
+
+test('o painel de Empresas não tem atalho para o painel geral (pedido de 03/11/2026)', () => {
+  const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8');
+  const empresas = src.slice(src.indexOf("empresas: { id: 'empresas'"), src.indexOf('\n', src.indexOf("empresas: { id: 'empresas'")));
+  assert.ok(!empresas.includes('outro:'), 'o painel de Empresas não aponta para outro painel');
+  assert.ok(src.includes('{painel.outro && <a className="ck-rail-painel"'));
 });
 
 test('mapa e município: regionais e municípios somam o mesmo mercado, e o filtro de município reduz o recorte', () => {
