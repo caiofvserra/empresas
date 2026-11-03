@@ -88,7 +88,7 @@ export const regraPorId = Object.fromEntries(regras.map(row => [row.id, row])) a
 /** Regras do plano para a malha fina que o cenário ainda não sustenta. */
 export const regrasPendentes = [
   { label: 'RT de muitas empresas, longe umas das outras', motivo: 'precisa do endereço do profissional e de uma regra aprovada pelas câmaras' },
-  { label: 'Perito nomeado sem registro ativo', motivo: 'aponta um profissional, e não uma empresa. Está no bloco de perícias judiciais da aba Profissionais, que depende do acordo com o TJSP (!)' },
+  { label: 'Perito nomeado sem registro ativo', motivo: 'aponta um profissional, e não uma empresa. Está no bloco de perícias judiciais do painel de Profissionais, página Trabalho, que depende do acordo com o TJSP (!)' },
 ];
 
 export const TERMOS_ENGENHARIA = /engenharia|engenheir|construtora|projetos/i;

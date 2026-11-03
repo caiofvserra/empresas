@@ -4,7 +4,7 @@ import type { Modalidade, Organizacao } from './entidades';
 import { modalidades } from './entidades';
 import { addDays, between, chance, share, sum } from './hash';
 import { adimplenteEm, buildProfissionais, situacaoEm } from './profissionais';
-import type { ModeloProfissionais, Profissional } from './profissionais';
+import type { FiltroProfissional, ModeloProfissionais, Profissional } from './profissionais';
 
 /**
  * V20 · Formação e ingresso: concluintes por IES, ano, modalidade e canal (presencial ou EaD) contra os registros novos no Crea-SP,
@@ -49,15 +49,20 @@ export interface QuadroFormacao {
   porNatureza: { natureza: string; concluintes: number; registrados: number; taxa: number | null; ead: number | null }[];
   serie: { ano: number; presencial: number; ead: number; registrados: number }[]; anosFechados: number[];
 }
-/** Tudo lido em D: registros e atividade posteriores a D não existem ainda. Atividade = ao menos uma ART como autor em 24 meses do registro. */
-export function quadroFormacao(formacao: Formacao, modelo: ModeloProfissionais, dataset: Dataset, greId: string | null): QuadroFormacao {
+/**
+ * Tudo lido em D: registros e atividade posteriores a D não existem ainda. Atividade = ao menos uma ART como autor nos 12 meses
+ * antes de D (desde 03/11/2026; antes era "em 24 meses do registro", que o cenário, com só 36 meses de ARTs, deixava em zero
+ * para as turmas antigas e fazia parecer uma tendência de alta).
+ */
+export function quadroFormacao(formacao: Formacao, modelo: ModeloProfissionais, dataset: Dataset, greId: string | null, filtro: FiltroProfissional = {}): QuadroFormacao {
   const anchor = dataset.snapshotDate, iesPorId = new Map(formacao.ies.map(row => [row.id, row]));
-  const escolas = formacao.ies.filter(row => !greId || row.greId === greId), escolaIds = new Set(escolas.map(row => row.id));
-  const conc = formacao.concluintes.filter(row => escolaIds.has(row.iesId) && `${row.ano}-12-31` <= anchor);
-  const profs = modelo.profissionais.filter(row => escolaIds.has(row.iesId) && row.registroEm <= anchor);
+  // Recorte pela sede da instituição (regional e município) e pela modalidade do curso.
+  const escolas = formacao.ies.filter(row => (!greId || row.greId === greId) && (!filtro.cityId || row.cityId === filtro.cityId) && (!filtro.modalidade || row.modalidades.includes(filtro.modalidade as Modalidade))), escolaIds = new Set(escolas.map(row => row.id));
+  const conc = formacao.concluintes.filter(row => escolaIds.has(row.iesId) && `${row.ano}-12-31` <= anchor && (!filtro.modalidade || row.modalidade === filtro.modalidade));
+  const profs = modelo.profissionais.filter(row => escolaIds.has(row.iesId) && row.registroEm <= anchor && (!filtro.modalidade || row.modalidade === filtro.modalidade));
   const artsPorAutor = new Map<string, string[]>();
   for (const art of dataset.arts) { const autor = modelo.autoria.get(art.id); if (autor) artsPorAutor.set(autor, [...(artsPorAutor.get(autor) ?? []), art.date]); }
-  const comAtividade = (row: Profissional) => (artsPorAutor.get(row.id) ?? []).some(date => date > row.registroEm && date <= addDays(row.registroEm, 730) && date <= anchor);
+  const desde = addDays(anchor, -365), comAtividade = (row: Profissional) => (artsPorAutor.get(row.id) ?? []).some(date => date > desde && date <= anchor);
   const anos = [...new Set(conc.map(row => row.ano))].sort();
   const coortes: Coorte[] = anos.map(ano => {
     const total = sum(conc.filter(row => row.ano === ano).map(row => row.concluintes)), registrados = profs.filter(row => row.anoConclusao === ano);

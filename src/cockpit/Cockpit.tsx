@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import type { ComponentType, ReactNode } from 'react';
-import { ArrowUpRight, BookOpenCheck, Building2, CalendarClock, ChevronDown, ClipboardCheck, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, Network, RotateCcw, ScanSearch, ShieldCheck, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
+import { ArrowUpRight, BookOpenCheck, Briefcase, Building2, CalendarClock, ChevronDown, ClipboardCheck, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, Network, RotateCcw, ScanSearch, ShieldCheck, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
 import { dataset } from '../domain/dataset';
 import { datasReferencia as datasReferenciaDe, datasetAt, fiscalizacaoAt } from '../domain/tempo';
 import { defaultFilters } from '../domain/types';
 import type { Dataset, Filters } from '../domain/types';
 import type { Scope } from '../domain/engine';
 import { buildProfissionais, buildEmpregoCbo, remuneracaoPorCbo, resumoProfissionais } from '../domain/profissionais';
+import { modalidades } from '../domain/entidades';
 import { buildFormacao, quadroFormacao } from '../domain/formacao';
 import { buildEntidades, quadroEntidades } from '../domain/entidades';
 import { buildConselho, quadroConselho } from '../domain/conselho';
@@ -38,8 +39,6 @@ import type { Metas, PageId } from './leitura';
 import { artsPeriodo, linhasGre } from './medidas';
 import { despesaPublicada, fonteConfea, formacaoSp, piso as pisoPublico, registrosNovos, resultados2025 } from './publico';
 import PaginaPresidencia from './PaginaPresidencia';
-import PaginaProfissionais from './PaginaProfissionais';
-import PaginaFormacao from './PaginaFormacao';
 import PaginaFiscalizacao from './PaginaFiscalizacao';
 import PaginaMalha from './PaginaMalha';
 import PaginaReceita from './PaginaReceita';
@@ -51,7 +50,13 @@ import PaginaMercado from '../empresas/PaginaMercado';
 import PaginaEvolucao from '../empresas/PaginaEvolucao';
 import PaginaRt from '../empresas/PaginaRt';
 import PaginaVinculos from '../empresas/PaginaVinculos';
+import PaginaProfissionais from '../profissionais/PaginaProfissionais';
+import PaginaFluxo from '../profissionais/PaginaFluxo';
+import PaginaAtuacao from '../profissionais/PaginaAtuacao';
+import PaginaFormacao from '../profissionais/PaginaFormacao';
+import PaginaTrabalho from '../profissionais/PaginaTrabalho';
 import '../empresas/empresas.css';
+import '../profissionais/profissionais.css';
 import '../painel/painel.css';
 import './cockpit.css';
 
@@ -63,8 +68,6 @@ import './cockpit.css';
 type PaginaDef = { id: PageId; label: string; title: string; subtitle: string; icon: ComponentType<{ size?: number }>; Page: ComponentType<{ ctx: CockpitCtx }> };
 const paginasGeral: PaginaDef[] = [
   { id: 'presidencia', label: 'Presidência', title: 'Presidência', subtitle: 'Os quatro indicadores principais, um resumo de cada assunto e a comparação das regionais com o ano anterior', icon: Landmark, Page: PaginaPresidencia },
-  { id: 'profissionais', label: 'Profissionais', title: 'Profissionais', subtitle: 'Quantos profissionais estão ativos, quantos entram e saem, quem são, se pagam a anuidade, quantas ARTs registram e quantos empregos formais existem na área', icon: HardHat, Page: PaginaProfissionais },
-  { id: 'formacao', label: 'Formação', title: 'Formação e registro', subtitle: 'Quantos se formam a cada ano e quantos se registram, trabalham e continuam no sistema, por instituição, modalidade e canal', icon: GraduationCap, Page: PaginaFormacao },
   { id: 'fiscalizacao', label: 'Fiscalização', title: 'Fiscalização', subtitle: 'Quantas ações a fiscalização faz, onde o processo demora, quantas terminam em regularização e qual foi o resultado das forças-tarefas', icon: ShieldCheck, Page: PaginaFiscalizacao },
   { id: 'malha', label: 'Malha fina', title: 'Malha fina', subtitle: 'Empresas apontadas pelo cruzamento de dados, separadas por regra e pela confiança do indício. A lista serve para análise e nunca gera auto de infração sozinha', icon: ScanSearch, Page: PaginaMalha },
   { id: 'receita', label: 'Receita', title: 'Receita e cobrança', subtitle: 'Quanto o Conselho arrecada das empresas, quanto está vencido, quanto da dívida é recuperado e como anda o orçamento', icon: Wallet, Page: PaginaReceita },
@@ -80,16 +83,34 @@ const paginasEmpresas: PaginaDef[] = [
   { id: 'rt', label: 'RT e ART', title: 'Responsáveis técnicos e ARTs', subtitle: 'Quantas empresas registradas têm responsável técnico, quantas empresas cada profissional assume e quantas ARTs as empresas registram', icon: FileSignature, Page: PaginaRt },
   { id: 'vinculos', label: 'Vínculos', title: 'Sócios, instalações e empregados', subtitle: 'Com quem as empresas se ligam: sócios, instalações e financiamentos de setores regulados, empregados técnicos, credenciamentos e alterações no contrato social', icon: Network, Page: PaginaVinculos },
 ];
-export type PainelId = 'geral' | 'empresas';
-interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; outro?: { id: PainelId; label: string; title: string } }
+/** Painel de Profissionais: o segundo painel separado do painel geral (03/11/2026), com filtros de regional, município, modalidade, período e data. */
+const paginasProfissionais: PaginaDef[] = [
+  { id: 'profissionais', label: 'Registro', title: 'Profissionais registrados', subtitle: 'Quantos profissionais têm registro ativo, onde moram, em que modalidade e nível, quem são e se pagam a anuidade', icon: HardHat, Page: PaginaProfissionais },
+  { id: 'fluxo', label: 'Evolução', title: 'Entradas e saídas do registro', subtitle: 'Quantos profissionais se registram, interrompem, voltam e cancelam o registro, mês a mês, e quantos de cada ano continuam ativos', icon: TrendingUp, Page: PaginaFluxo },
+  { id: 'atuacao', label: 'ART e RT', title: 'ARTs e responsabilidade técnica', subtitle: 'Quantos profissionais registram ART, em que modalidade e idade, quantas empresas cada responsável técnico assume', icon: FileSignature, Page: PaginaAtuacao },
+  { id: 'formacao', label: 'Formação', title: 'Formação e registro', subtitle: 'Quantos se formam a cada ano e quantos se registram, atuam e continuam no sistema, por instituição, modalidade e canal', icon: GraduationCap, Page: PaginaFormacao },
+  { id: 'trabalho', label: 'Trabalho', title: 'Emprego, salário e perícias', subtitle: 'Quantos empregos com carteira existem nas ocupações de engenharia, quanto pagam comparado com o piso e quantas perícias judiciais são feitas', icon: Briefcase, Page: PaginaTrabalho },
+];
+export type PainelId = 'geral' | 'empresas' | 'profissionais';
+interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; filtro: 'camara' | 'modalidade' }
 const paineis: Record<PainelId, Painel> = {
-  geral: { id: 'geral', nome: 'Inteligência Estratégica', paginas: paginasGeral, periodos: [3, 6, 12], storage: 'crea-observatorio-v20', outro: { id: 'empresas', label: 'Empresas', title: 'Abrir o painel de Empresas' } },
-  empresas: { id: 'empresas', nome: 'Inteligência Estratégica · Empresas', paginas: paginasEmpresas, periodos: [3, 6, 12, 24], storage: 'crea-empresas-v1' },
+  geral: { id: 'geral', nome: 'Inteligência Estratégica', paginas: paginasGeral, periodos: [3, 6, 12], storage: 'crea-observatorio-v20', filtro: 'camara' },
+  empresas: { id: 'empresas', nome: 'Inteligência Estratégica · Empresas', paginas: paginasEmpresas, periodos: [3, 6, 12, 24], storage: 'crea-empresas-v1', filtro: 'camara' },
+  profissionais: { id: 'profissionais', nome: 'Inteligência Estratégica · Profissionais', paginas: paginasProfissionais, periodos: [3, 6, 12, 24], storage: 'crea-profissionais-v1', filtro: 'modalidade' },
 };
-/** Endereço de outro painel: no site, empresas.html e index.html; na entrega em arquivo único, os dois HTML lado a lado na pasta entrega. */
+/** Atalhos do menu lateral, só no painel geral. Os painéis temáticos são entregues sozinhos e não têm caminho de volta (pedido do Caio, 03/11/2026). */
+const atalhos: { id: PainelId; label: string; title: string; icon: ComponentType<{ size?: number }> }[] = [
+  { id: 'empresas', label: 'Empresas', title: 'Abrir o painel de Empresas', icon: Building2 },
+  { id: 'profissionais', label: 'Profissionais', title: 'Abrir o painel de Profissionais', icon: HardHat },
+];
+/** Endereço de outro painel: no site, index.html, empresas.html e profissionais.html; na entrega em arquivo único, os HTML lado a lado na pasta entrega. */
+const arquivos: Record<PainelId, { site: string; entrega: string }> = {
+  geral: { site: 'index.html', entrega: 'painel-gestao-creasp.html' },
+  empresas: { site: 'empresas.html', entrega: 'painel-empresas-creasp.html' },
+  profissionais: { site: 'profissionais.html', entrega: 'painel-profissionais-creasp.html' },
+};
 export function enderecoPainel(id: PainelId, pagina?: PageId) {
-  const entrega = /painel-[a-z-]+\.html$/.test(window.location.pathname);
-  const arquivo = entrega ? (id === 'empresas' ? 'painel-empresas-creasp.html' : 'painel-gestao-creasp.html') : (id === 'empresas' ? 'empresas.html' : 'index.html');
+  const entrega = /painel-[a-z-]+\.html$/.test(window.location.pathname), arquivo = entrega ? arquivos[id].entrega : arquivos[id].site;
   return pagina ? `${arquivo}#${pagina}` : arquivo;
 }
 let STORAGE = 'crea-observatorio-v20';
@@ -128,9 +149,10 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const [page, setPage] = useState<PageId>(() => { const hash = window.location.hash.slice(1), saved = pages.some(item => item.id === hash) ? hash : ler<string>('pagina', pages[0].id); return pages.some(item => item.id === saved) ? saved as PageId : pages[0].id; });
   const [gre, setGre] = useState('');
   const [camara, setCamara] = useState('');
+  const [modalidade, setModalidade] = useState('');
   const [cidade, setCidade] = useState('');
   const [period, setPeriod] = useState(12);
-  const leve = painel.id === 'empresas';
+  const leve = painel.id !== 'geral', deProfissionais = painel.id === 'profissionais';
   const [anchorSel, setAnchorSel] = useState<string | null>(null);
   const [detail, setDetail] = useState<Detail | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark' | null>(() => { const salvo = ler<'light' | 'dark' | null>('tema', null); if (salvo) document.documentElement.dataset.theme = salvo; return salvo; }); // o tema salvo entra antes da primeira leitura das cores dos gráficos
@@ -198,21 +220,21 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   }, [view, f, gre, cidade, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
   // Camadas da V20: profissionais, formação, entidades, controle interno e forças-tarefas, todas lidas em D.
   const extra = useMemo(() => {
-    const greId = gre || null;
-    const profissionais = { modelo: base.profissionais, resumo: resumoProfissionais(base.profissionais, view, greId, period), cbo: remuneracaoPorCbo(base.emprego, anchor, greId) };
-    const formacao = quadroFormacao(base.formacao, base.profissionais, view, greId);
+    const greId = gre || null, recorte = { cityId: cidade || null, modalidade: modalidade || null };
+    const profissionais = { modelo: base.profissionais, resumo: resumoProfissionais(base.profissionais, view, greId, period, recorte), cbo: remuneracaoPorCbo(base.emprego, anchor, greId), emprego: base.emprego };
+    const formacao = quadroFormacao(base.formacao, base.profissionais, view, greId, recorte);
     const entidades = quadroEntidades(base.entidades, anchor, greId);
     const inicio = janelaDe(anchor, 12).start, acoesPorGre = new Map<string, number>();
     for (const row of f.acoes) if (row.date >= inicio && row.date <= anchor) acoesPorGre.set(row.greId, (acoesPorGre.get(row.greId) ?? 0) + 1);
     const conselho = quadroConselho(base.conselho, anchor, greId, acoesPorGre);
     const forcas = resultadosForcas(view, f, greId);
     const frentes = { sociedades: quadroSociedades(base.sociedades, view, scope.companyIds, greId), obras: quadroObras(base.obras, view, scope.companyIds, greId), instalacoes: quadroInstalacoes(base.instalacoes, view, greId) };
-    const parcerias = { cno: quadroCno(base.cno, view, scope.companyIds, greId), licencas: quadroLicencas(base.licencas, view, scope.companyIds, greId), pericias: quadroPericias(base.pericias, view, base.profissionais, greId), tce: quadroTce(base.tce, derived.contratos),
-      sociosPf: quadroSociosPf(base.sociosPf, view, base.profissionais, scope.companyIds, greId), coorteNominal: coorteNominal(base.formacao, base.profissionais, view, greId), vinculos: quadroVinculos(base.vinculos, view, scope.companyIds, greId),
+    const parcerias = { cno: quadroCno(base.cno, view, scope.companyIds, greId), licencas: quadroLicencas(base.licencas, view, scope.companyIds, greId), pericias: quadroPericias(base.pericias, view, base.profissionais, greId, recorte), tce: quadroTce(base.tce, derived.contratos),
+      sociosPf: quadroSociosPf(base.sociosPf, view, base.profissionais, scope.companyIds, greId), coorteNominal: coorteNominal(base.formacao, base.profissionais, view, greId, recorte), vinculos: quadroVinculos(base.vinculos, view, scope.companyIds, greId),
       credenciamentos: quadroCredenciamentos(base.credenciamentos, view, scope.companyIds, greId), jucesp: quadroJucesp(base.jucesp, view, scope.companyIds, greId),
       denominacao: quadroDenominacao(base.sociosPf, view, base.profissionais, scope.companyIds, greId) };
     return { profissionais, formacao, entidades, conselho, forcas, frentes, parcerias };
-  }, [base, view, anchor, f, gre, period, scope, derived.contratos]);
+  }, [base, view, anchor, f, gre, cidade, modalidade, period, scope, derived.contratos]);
   const insights = useMemo(() => leitura({ metas, ponte: derived.ponte, cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo: derived.resumo, rec: derived.rec, saldo: model.metrics.overdue.value ?? 0,
     inadimplencia: derived.inadimplencia, linhas: derived.linhas, malha: derived.malha, arts: { atual: derived.arts.atual.length, antes: derived.arts.antes }, cao: derived.cao, estrutura,
     conversao: derived.norte.conversao.atual, tempo: derived.norte.tempo, profissionais: extra.profissionais.resumo, formacao: extra.formacao, conselho: extra.conselho, forcas: extra.forcas }), [metas, derived, model, estrutura, extra]);
@@ -220,7 +242,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const irPara = (target: PageId) => { if (pages.some(item => item.id === target)) setPage(target); else window.location.href = enderecoPainel(painelDaPagina(target), target); };
   const change = (work: () => void) => transition(work);
   const ctx: CockpitCtx = { dataset: view, f, scope, model, history, period, greId: gre || null, camara: camara || null, janela: janelaDe(f.anchor, period), resumo: derived.resumo, regionais: derived.regionais, tokens,
-    open: setDetail, filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara, dark, cidadeId: cidade || null, enxuto: leve, camaraDe: camaraMap,
+    open: setDetail, filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara, dark, cidadeId: cidade || null, enxuto: leve, camaraDe: camaraMap, modalidade: modalidade || null,
     anchor, hoje, datasReferencia, setAnchor: value => change(() => setAnchorSel(value && value < hoje ? value : null)),
     historyScope, stateScope, stateModel, stateHistory, linhas: derived.linhas, ponte: derived.ponte, rec: derived.rec, contratos: derived.contratos, malha: derived.malha, estrutura, arts: derived.arts,
     metas, insights, focus, toggleFocus: id => setFocus(previous => previous === id ? null : id), norte: derived.norte, mercado: derived.mercado, ...extra,
@@ -232,7 +254,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     <nav className="ck-rail" aria-label="Assuntos do painel">
       <div className="ck-logo" title="CREA-SP"><EngineeringEmblem /></div>
       {pages.map((item, index) => <button key={item.id} className={page === item.id ? 'on' : ''} aria-current={page === item.id ? 'page' : undefined} onClick={() => setPage(item.id)} title={`${item.title} (tecla ${item.id === 'metodo' ? 'M' : (index + 1) % 10})`}><item.icon size={18} /><span>{item.label}</span></button>)}
-      {painel.outro && <a className="ck-rail-painel" href={enderecoPainel(painel.outro.id)} title={painel.outro.title}><Building2 size={18} /><span>{painel.outro.label}<ArrowUpRight size={10} /></span></a>}
+      {painel.id === 'geral' && <div className="ck-rail-paineis">{atalhos.map(item => <a key={item.id} className="ck-rail-painel" href={enderecoPainel(item.id)} title={item.title}><item.icon size={17} /><span>{item.label}<ArrowUpRight size={10} /></span></a>)}</div>}
       <div className="ck-rail-bottom">
         <button onClick={() => setModal('metas')} title="Metas usadas nos cartões e no quadro das regionais"><Target size={17} /><span>Metas</span></button>
         <button onClick={() => setModal('fontes')} title="Fontes, métodos e limites"><Database size={17} /><span>Fontes</span></button>
@@ -245,9 +267,11 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
         <section className="ck-filters is-inline" aria-label="Filtros">
           <label className="ck-select"><select aria-label="Regional" value={gre} onChange={event => change(() => { setGre(event.target.value); setCidade(''); })}><option value="">Todas as regionais</option>{dataset.gres.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
           <label className="ck-select"><select aria-label="Município" value={cidade} onChange={event => change(() => { const id = event.target.value; setCidade(id); if (id) setGre(dataset.cities.find(row => row.id === id)?.greId ?? ''); })}><option value="">Todos os municípios</option>{cidadesDe(gre).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
-          <label className="ck-select"><select aria-label="Câmara" value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas as câmaras</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+          {painel.filtro === 'modalidade'
+            ? <label className="ck-select"><select aria-label="Modalidade" value={modalidade} onChange={event => change(() => setModalidade(event.target.value))}><option value="">Todas as modalidades</option>{modalidades.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+            : <label className="ck-select"><select aria-label="Câmara" value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas as câmaras</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>}
           <div className="seg" role="radiogroup" aria-label="Período" title={`De ${data(ctx.janela.start)} a ${data(ctx.janela.end)}, comparado com ${data(ctx.janela.prevStart)} a ${data(ctx.janela.prevEnd)}`}>{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => setPeriod(value))}>{value} meses</button>)}</div>
-          {(gre || cidade || camara || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setPeriod(12); setAnchorSel(null); })} title="Limpar filtros"><RotateCcw size={14} />Limpar</button>}
+          {(gre || cidade || camara || modalidade || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setModalidade(''); setPeriod(12); setAnchorSel(null); })} title="Limpar filtros"><RotateCcw size={14} />Limpar</button>}
         </section>
         <div className="ck-meta">
           <span className="demo" title="Dados internos fictícios, gerados para demonstrar o modelo. Dados públicos reais trazem selo próprio.">Demonstrativo</span>
@@ -282,8 +306,8 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
         </section>
       </>}
       <main className={`ck-page ck-page-${page} ${focus ? 'has-focus' : ''}`} key={page}><current.Page ctx={ctx} /></main>
-      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{int(scope.companies.length)} empresas no recorte</strong>
-        <span className="ck-status-note">{pending ? 'Recalculando…' : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : leve ? 'Clique num item para ver as empresas. O (i) explica cada bloco.' : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
+      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{deProfissionais ? `${int(extra.profissionais.resumo.ativos.length)} profissionais ativos no recorte` : `${int(scope.companies.length)} empresas no recorte`}</strong>
+        <span className="ck-status-note">{pending ? 'Recalculando…' : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : leve ? `Clique num item para ver ${deProfissionais ? 'os profissionais' : 'as empresas'}. O (i) explica cada bloco.` : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
     </div>
     {detail && <Drawer ctx={ctx} detail={detail} onClose={() => setDetail(null)} />}
     {modal === 'metas' && <Janela title="Metas do painel" subtitle="As metas usadas nos cartões, no quadro das regionais e nos destaques. Elas ficam salvas neste navegador." onClose={() => setModal(null)}><MetasForm metas={metas} onChange={setMetas} /></Janela>}

@@ -1,0 +1,46 @@
+/*
+ * Painel de Profissionais (03/11/2026): as mesmas regras do painel de Empresas. Cada página cabe numa tela de computador, sem
+ * rolagem; as linhas da grade dividem a altura da tela e os blocos têm larguras diferentes. O visual enxuto (.is-enxuto) vem de
+ * empresas.css. Só abaixo de 700 px de altura, ou em telas estreitas, a página volta a rolar.
+ */
+.ck-grid-pf-registro { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "mp mp mp mp mp tm tm tm tm an an an"
+  "mp mp mp mp mp tm tm tm tm pi pi pi"
+  "mp mp mp mp mp mt mt mt mt pi pi pi"; }
+.ck-grid-pf-fluxo { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "me me me me me me me sk sk sk sk sk"
+  "hm hm hm hm hm hm pa pa pa pa pa pa"; }
+.ck-grid-pf-atuacao { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "am am am am am mm mm mm mm mm mm mm"
+  "fa fa fa fa fa cr cr cr ia ia ia ia"; }
+.ck-grid-pf-formacao { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "fc fc fc fc fc fi fi fi fi fm fm fm"
+  "fs fs fs fs fn fn fn fp fp fp fp fp"; }
+.ck-grid-pf-trabalho { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "ev ev ev ev ev pe pe pe pe ps ps ps"
+  "eh eh eh eh eh pp pp pp pp pr pr pr"; }
+.ck-grid-pf-registro, .ck-grid-pf-fluxo, .ck-grid-pf-atuacao, .ck-grid-pf-formacao, .ck-grid-pf-trabalho { align-content: stretch; }
+@media (max-height: 699px) and (min-width: 1101px) {
+  .ck-grid-pf-registro { grid-template-rows: auto repeat(3, 230px); }
+  .ck-grid-pf-fluxo, .ck-grid-pf-atuacao, .ck-grid-pf-formacao, .ck-grid-pf-trabalho { grid-template-rows: auto repeat(2, 300px); }
+}
+@media (max-width: 1100px) {
+  .ck-grid-pf-registro, .ck-grid-pf-fluxo, .ck-grid-pf-atuacao, .ck-grid-pf-formacao, .ck-grid-pf-trabalho { grid-template-rows: auto; grid-auto-rows: 340px; }
+}
+
+/* Lista ao lado de um gráfico: número grande e uma linha de texto sem botão. */
+.side-list .side-big { display: flex; flex-direction: column; padding: 0 6px 4px; }
+.side-list .side-big b { font-size: 22px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+.side-list .side-big small { font-size: 10.5px; color: var(--muted); }
+.side-serie.is-texto { grid-template-columns: minmax(0, 1fr) auto; font-size: 11px; color: var(--muted); }
+.side-serie.is-texto b { color: var(--ink); }
+/* Vários painéis no menu lateral: um atalho para cada outro painel. */
+.ck-rail-paineis { display: flex; flex-direction: column; margin-top: 10px; border-top: 1px solid rgba(255,255,255,.14); }
+.ck-rail-paineis .ck-rail-painel { margin-top: 0; border-top: 0; border-radius: 0; }
+.ck-rail-paineis .ck-rail-painel:last-child { border-radius: 0 0 12px 12px; }
+@media (max-width: 1100px) { .ck-rail-paineis { flex-direction: row; margin: 0; border: 0; } }

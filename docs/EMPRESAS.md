@@ -10,13 +10,13 @@ O painel único ficou pesado e não permite regras de acesso diferentes para cad
 |---|---|---|
 | Empresas (pronto) | Registro e mercado, evolução, responsáveis técnicos e ARTs, sócios, instalações e empregados | Superintendências e regionais; cada regional vê só a sua |
 | Fiscalização e malha fina | Ações, autos, forças-tarefas, contratos públicos, obras e a lista de indícios | SUPFIS e regionais, com a lista nominal só para quem fiscaliza |
-| Profissionais e formação | Profissionais, formação e registro, emprego e salário em totais, perícias | Superintendências; regionais veem só a sua |
+| Profissionais e formação (pronto, ver [PROFISSIONAIS.md](PROFISSIONAIS.md)) | Profissionais, formação e registro, emprego e salário em totais, perícias | Superintendências; regionais veem só a sua |
 | Gestão do Conselho | Receita e cobrança, controle interno, entidades e instituições de ensino, atendimento | Presidência e superintendências administrativas; diárias e pessoal com acesso restrito |
 | Presidência | Só os indicadores principais e um resumo de cada painel, sem listas nominais | Presidência e diretoria |
 
 No Power BI, cada painel tem o seu modelo de dados e a sua atualização, o que deixa cada arquivo leve. As tabelas comuns (calendário, município e regional, CNAE e câmara) vêm de um fluxo de dados único, para que os filtros funcionem igual em todos. A restrição por regional é uma regra de segurança por linha em cada modelo. O painel da Presidência lê os modelos dos outros e é feito por último. A aba Método vira um documento de apoio; a ficha (i) continua em cada bloco.
 
-Ordem sugerida: Empresas, Fiscalização e malha fina, Profissionais e formação, Gestão do Conselho e, por fim, Presidência.
+Ordem seguida: Empresas e depois Profissionais e formação (03/11/2026, a pedido do Caio). Faltam Fiscalização e malha fina, Gestão do Conselho e, por fim, Presidência.
 
 ## O que o painel de Empresas tem
 
