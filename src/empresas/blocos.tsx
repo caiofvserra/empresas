@@ -97,20 +97,22 @@ export function CamaraPorte({ ctx }: { ctx: CockpitCtx }) {
     if (part?.ids.length) ctx.open({ kind: 'empresas', title: `${row.camara}, ${part.porte.toLowerCase()}`, what: 'Empresas registradas desta câmara (atividade principal) e porte.', ids: part.ids }); }} />;
 }
 
+/** As duas classes da lista de atividades do Crea-SP, em palavras: a Receita diz "Sim" e "Passível de obrigação". */
+const nomeClasse: Record<string, string> = { Sim: 'Registro obrigatório', Passível: 'Registro a analisar' };
 export function Conciliacao({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, c = ctx.norte.cobertura, cores = [tokens.blue, tokens.heat[1], tokens.warn];
   const option = useMemo(() => ({
     grid: { top: 26, right: 40, bottom: 2, left: 2, containLabel: true },
     legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10.5 } },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const classe = classesCnae[items[0].dataIndex], total = correspondencias.reduce((sum, nome) => sum + c.porClasse[classe][nome].length, 0);
-      return `<b>“${classe}”</b> · ${int(total)} CNPJs<br/>${items.map(item => `${item.marker}${item.seriesName}: ${int(item.value)} (${pct(item.value / Math.max(1, total) * 100)})`).join('<br/>')}`; } },
+      return `<b>${nomeClasse[classe]}</b>: ${int(total)} CNPJs<br/>${items.map(item => `${item.marker}${item.seriesName}: ${int(item.value)} (${pct(item.value / Math.max(1, total) * 100)})`).join('<br/>')}`; } },
     xAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
-    yAxis: { type: 'category', inverse: true, data: classesCnae.map(row => `“${row}”`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
+    yAxis: { type: 'category', inverse: true, data: classesCnae.map(row => nomeClasse[row].replace(' ', '\n')), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5, lineHeight: 13 } },
     series: correspondencias.map((nome, index) => ({ name: nome, type: 'bar', stack: 'c', barWidth: 22, data: classesCnae.map(classe => c.porClasse[classe][nome].length), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
       label: index === correspondencias.length - 1 ? { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, formatter: (params: any) => { const classe = classesCnae[params.dataIndex]; const taxa = classe === 'Sim' ? c.taxaSim : c.taxaPassivel; return taxa === null ? '' : pct(taxa, 1); } } : undefined })),
   }), [c, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <Chart option={option} tokens={tokens} label="Conciliação dos CNPJs com CNAE da lista com o cadastro do Crea-SP" onPick={params => { const classe = classesCnae[params.dataIndex], nome = correspondencias[params.seriesIndex]; const ids = classe && nome ? c.porClasse[classe][nome] : [];
-      if (ids.length) ctx.open({ kind: 'cnpjs', title: `“${classe}” · ${nome.toLowerCase()}`, what: 'CNPJs completos ativos na Receita com CNAE da lista do Crea-SP nesta classe e correspondência.', use: nome === 'Sem correspondência' ? 'Sem correspondência não quer dizer irregular. Confirmar atividade antes de orientar ou notificar.' : undefined, ids }); }} />;
+      if (ids.length) ctx.open({ kind: 'cnpjs', title: `${nomeClasse[classe]}, ${nome.toLowerCase()}`, what: 'CNPJs completos ativos na Receita com CNAE da lista do Crea-SP nesta classe e correspondência.', use: nome === 'Sem correspondência' ? 'Sem correspondência não quer dizer irregular. Confirmar atividade antes de orientar ou notificar.' : undefined, ids }); }} />;
 }
 
 /** ARTs a cada 100 profissionais ativos da mesma modalidade: compara as modalidades sem que a maior ganhe só por ser maior. */
@@ -167,7 +169,7 @@ export function Instalacoes({ ctx }: { ctx: CockpitCtx }) {
 }
 
 export function Dinamica({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, a = ctx.mercado.aberturas, coortes = ctx.mercado.permanencia;
+  const { tokens, dark } = ctx, a = ctx.mercado.aberturas, coortes = ctx.mercado.permanencia;
   const option = useMemo(() => ({
     grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = a.meses[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.aberturas)} estabelecimentos abertos com CNAE da lista<br/>${int(row.comRegistro)} já com registro ou visto na data escolhida`; } },
@@ -175,9 +177,9 @@ export function Dinamica({ ctx }: { ctx: CockpitCtx }) {
     yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
     series: [
       { type: 'bar', name: 'Já registrados', stack: 'a', barWidth: 10, data: a.meses.map(row => row.comRegistro), itemStyle: { color: tokens.good } },
-      { type: 'bar', name: 'Sem registro na data escolhida', stack: 'a', data: a.meses.map(row => row.aberturas - row.comRegistro), itemStyle: { color: tokens.soft, borderColor: tokens.line, borderWidth: 1 } },
+      { type: 'bar', name: 'Sem registro na data escolhida', stack: 'a', data: a.meses.map(row => row.aberturas - row.comRegistro), itemStyle: { color: dark ? '#3D5E95' : tokens.soft, borderColor: tokens.line, borderWidth: 1 } },
     ],
-  }), [a, tokens]);
+  }), [a, tokens, dark]);
   return <div className="split is-wide">
       <Chart option={option} tokens={tokens} label="Estabelecimentos abertos na Receita por mês e situação no cadastro" onPick={() => a.ids.length && ctx.open({ kind: 'cnpjs', title: 'Abertos na Receita em 24 meses', what: 'Estabelecimentos com CNAE da lista do Crea-SP abertos nos últimos 24 meses antes da data de referência (data de abertura da Receita).', use: 'Aberturas são mercado novo; a correspondência no cadastro é uma decomposição, não um filtro. Sem registro não quer dizer irregular.', ids: a.ids })} />
     <ul className="side-list" aria-label="Permanência das coortes">
@@ -315,7 +317,7 @@ export function ArvoreMercado({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { formatter: (item: any) => { const d = item.data; if (!d?.linha) return d?.ramo ? `<b>${d.name}</b><br/>${int(d.value)} estabelecimentos · ${pct(d.ramo.registrados / Math.max(1, d.ramo.total) * 100)} registrados` : '';
       const row = d.linha as LinhaCnae; return `<b>${row.code}</b> ${row.label}<br/>${int(row.total)} estabelecimentos · ${row.cobertura === null ? '—' : pct(row.cobertura)} registrados<br/>${int(row.semRegistro.length)} sem registro<br/><span style="opacity:.75">clique para ver os CNPJs sem registro</span>`; } },
     series: [{ type: 'treemap', roam: false, nodeClick: false, breadcrumb: { show: false }, left: 0, right: 0, top: 0, bottom: 0, squareRatio: 1.2,
-      upperLabel: { show: true, height: 18, color: '#FFFFFF', fontSize: 10.5, fontWeight: 700, formatter: (item: any) => item.data?.ramo ? `${item.name} · ${pct(item.data.ramo.registrados / Math.max(1, item.data.ramo.total) * 100)} registrado` : item.name },
+      upperLabel: { show: true, height: 18, color: '#FFFFFF', fontSize: 10.5, fontWeight: 700, formatter: (item: any) => item.data?.ramo ? `${pct(item.data.ramo.registrados / Math.max(1, item.data.ramo.total) * 100)} · ${item.name}` : item.name },
       levels: [{ itemStyle: { borderColor: tokens.surface, borderWidth: 0, gapWidth: 3 } }, { itemStyle: { borderColor: dark ? '#1A2D52' : '#01224D', borderWidth: 2, gapWidth: 1 }, upperLabel: { show: true } }, { itemStyle: { borderColor: tokens.surface, borderWidth: 1, gapWidth: 1 } }],
       label: { show: true, fontSize: 9.5, color: '#FFFFFF', overflow: 'truncate', lineHeight: 12, formatter: (item: any) => { const row = item.data?.linha as LinhaCnae | undefined; return row ? `{p|${row.cobertura === null ? '' : pct(row.cobertura)}}\n${row.label}\n{c|${row.code}}` : item.name; }, rich: { p: { fontSize: 12, fontWeight: 800, color: '#FFFFFF' }, c: { fontSize: 8.5, color: 'rgba(255,255,255,.75)' } } },
       data: ramos.map(ramo => ({ name: ramo.camara, value: ramo.total, ramo, itemStyle: { color: dark ? '#1A2D52' : '#01224D' },
@@ -332,9 +334,9 @@ const curtoCapital = ['até 50 mil', '50 a 200 mil', '200 mil a 1 mi', '1 a 5 mi
 export function IdadeCapital({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, dark } = ctx, m = useMemo(() => idadeCapital(ctx.scope, ctx.model), [ctx.scope, ctx.model]), maior = Math.max(1, ...m.celulas.map(row => row.ids.length));
   const option = useMemo(() => ({
-    grid: { top: 4, right: 4, bottom: 34, left: 4, containLabel: true },
+    grid: { top: 4, right: 4, bottom: 38, left: 4, containLabel: true },
     tooltip: { formatter: (item: any) => { const cel = m.celulas[item.dataIndex]; return `Registradas há <b>${curtoIdade[cel.idade]}</b><br/>Capital social <b>${curtoCapital[cel.capital]}</b><br/>${int(cel.ids.length)} empresas`; } },
-    xAxis: { type: 'category', data: curtoCapital, splitArea: { show: false }, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 9.5, interval: 0, width: 56, overflow: 'break' }, name: 'capital social (R$)', nameLocation: 'middle', nameGap: 26, nameTextStyle: { color: tokens.muted, fontSize: 9.5 } },
+    xAxis: { type: 'category', data: curtoCapital, splitArea: { show: false }, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 9.5, interval: 0, formatter: (value: string) => value === '200 mil a 1 mi' ? '200 mil\na 1 mi' : value }, name: 'capital social (R$)', nameLocation: 'middle', nameGap: 32, nameTextStyle: { color: tokens.muted, fontSize: 9.5 } },
     yAxis: { type: 'category', data: curtoIdade, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 9.5 } },
     visualMap: { show: false, min: 0, max: maior, inRange: { color: dark ? ['#13233F', '#2F548C', '#7FB0E6'] : ['#EAF1FA', '#7FB0E6', '#082D74'] } },
     series: [{ type: 'heatmap', data: m.celulas.map(cel => ({ value: [cel.capital, cel.idade, cel.ids.length], label: { color: !dark && cel.ids.length > maior * 0.55 ? '#FFFFFF' : tokens.ink } })), itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 4 },
@@ -343,21 +345,25 @@ export function IdadeCapital({ ctx }: { ctx: CockpitCtx }) {
   return <Chart option={option} tokens={tokens} label="Empresas registradas por tempo de registro e capital social" onPick={params => { const cel = m.celulas[params.dataIndex]; if (cel?.ids.length) ctx.open({ kind: 'empresas', title: `Registradas há ${curtoIdade[cel.idade]}, capital ${curtoCapital[cel.capital]}`, what: 'Empresas com registro ativo na data escolhida, pelo tempo desde o primeiro registro e pelo capital social declarado à Receita.', ids: cel.ids }); }} />;
 }
 
-/** Calor dos novos registros: uma linha por câmara, uma coluna por mês. Mostra em que meses e em que área o cadastro cresceu. */
+/** Calor dos novos registros: uma linha por câmara, uma coluna por trimestre, com o número em cada célula. A cor compara cada câmara com ela mesma (o trimestre mais forte da linha fica mais escuro), para as câmaras pequenas também mostrarem o seu ritmo. */
 export function RegistrosCalor({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, dark } = ctx, r = useMemo(() => registrosPorCamara(ctx.historyScope, ctx.camaraDe, 24), [ctx.historyScope, ctx.camaraDe]);
-  const celulas = r.linhas.flatMap((linha, y) => r.months.map((month, x) => ({ x, y, ids: linha.porMes.get(month) ?? [] })));
-  const maior = Math.max(1, ...celulas.map(row => row.ids.length));
+  const trimestres = useMemo(() => { const lista: { chave: string; rotulo: string; meses: string[] }[] = [];
+    for (const month of r.months) { const [ano, m] = month.split('-').map(Number), tri = Math.floor((m - 1) / 3) + 1, chave = `${ano}-${tri}`, atual = lista[lista.length - 1];
+      if (atual?.chave === chave) atual.meses.push(month); else lista.push({ chave, rotulo: `${tri}º tri/${String(ano).slice(2)}`, meses: [month] }); }
+    return lista; }, [r.months]);
+  const celulas = r.linhas.flatMap((linha, y) => { const porTri = trimestres.map(tri => tri.meses.flatMap(month => linha.porMes.get(month) ?? [])), maiorDaLinha = Math.max(1, ...porTri.map(ids => ids.length));
+    return porTri.map((ids, x) => ({ x, y, ids, forca: ids.length / maiorDaLinha })); });
   const option = useMemo(() => ({
     grid: { top: 4, right: 4, bottom: 2, left: 4, containLabel: true },
-    tooltip: { formatter: (item: any) => { const cel = celulas[item.dataIndex]; return `<b>${r.linhas[cel.y].camara}</b>, ${mes(r.months[cel.x])}<br/>${int(cel.ids.length)} empresas fizeram o primeiro registro`; } },
-    xAxis: { type: 'category', data: r.months.map(mes), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 9.5, interval: 3 } },
+    tooltip: { formatter: (item: any) => { const cel = celulas[item.dataIndex]; return `<b>${r.linhas[cel.y].camara}</b>, ${trimestres[cel.x].rotulo}<br/>${int(cel.ids.length)} empresas fizeram o primeiro registro`; } },
+    xAxis: { type: 'category', data: trimestres.map(tri => tri.rotulo), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 9.5, interval: 0 } },
     yAxis: { type: 'category', inverse: true, data: r.linhas.map(row => `${row.camara}\n${int(row.total)} empresas`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10, lineHeight: 13 } },
-    visualMap: { show: false, min: 0, max: maior, inRange: { color: dark ? ['#13233F', '#2F548C', '#FABD07'] : ['#F1F5FA', '#7FB0E6', '#082D74'] } },
-    series: [{ type: 'heatmap', data: celulas.map(cel => [cel.x, cel.y, cel.ids.length]), itemStyle: { borderColor: tokens.surface, borderWidth: 1.5, borderRadius: 3 } },
-],
-  }), [r, celulas, maior, tokens, dark]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <Chart option={option} tokens={tokens} label="Novos registros de empresas por câmara e mês" onPick={params => { const cel = celulas[params.dataIndex]; if (cel?.ids.length) ctx.open({ kind: 'empresas', title: `${r.linhas[cel.y].camara}: primeiro registro em ${mes(r.months[cel.x])}`, what: 'Empresas que fizeram o primeiro registro no Crea-SP neste mês, pela câmara da atividade principal.', ids: cel.ids }); }} />;
+    visualMap: { show: false, min: 0, max: 1, inRange: { color: dark ? ['#13233F', '#2F548C', '#FABD07'] : ['#F1F5FA', '#7FB0E6', '#082D74'] } },
+    series: [{ type: 'heatmap', data: celulas.map(cel => ({ value: [cel.x, cel.y, cel.forca], label: { color: dark ? (cel.forca > 0.7 ? '#1A202C' : tokens.ink) : cel.forca > 0.55 ? '#FFFFFF' : tokens.ink } })), itemStyle: { borderColor: tokens.surface, borderWidth: 1.5, borderRadius: 3 },
+      label: { show: true, fontSize: 10, fontWeight: 700, formatter: (item: any) => { const cel = celulas[item.dataIndex]; return cel.ids.length ? int(cel.ids.length) : ''; } } }],
+  }), [r, trimestres, celulas, tokens, dark]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <Chart option={option} tokens={tokens} label="Novos registros de empresas por câmara e trimestre" onPick={params => { const cel = celulas[params.dataIndex]; if (cel?.ids.length) ctx.open({ kind: 'empresas', title: `${r.linhas[cel.y].camara}: primeiro registro no ${trimestres[cel.x].rotulo}`, what: 'Empresas que fizeram o primeiro registro no Crea-SP neste trimestre, pela câmara da atividade principal.', ids: cel.ids }); }} />;
 }
 
 /** Nome com “engenharia” e quem dirige a empresa (Lei 5.194/66, arts. 4º e 5º). Depende do CPF completo dos sócios. */

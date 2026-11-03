@@ -133,7 +133,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const leve = painel.id === 'empresas';
   const [anchorSel, setAnchorSel] = useState<string | null>(null);
   const [detail, setDetail] = useState<Detail | null>(null);
-  const [theme, setTheme] = useState<'light' | 'dark' | null>(() => ler<'light' | 'dark' | null>('tema', null));
+  const [theme, setTheme] = useState<'light' | 'dark' | null>(() => { const salvo = ler<'light' | 'dark' | null>('tema', null); if (salvo) document.documentElement.dataset.theme = salvo; return salvo; }); // o tema salvo entra antes da primeira leitura das cores dos gráficos
   const [metas, setMetas] = useState<Metas>(() => ({ ...metasPadrao, ...ler<Partial<Metas>>('metas', {}) }));
   const [focus, setFocus] = useState<string | null>(null);
   const [modal, setModal] = useState<'metas' | 'fontes' | null>(null);

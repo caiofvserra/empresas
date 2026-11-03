@@ -116,10 +116,10 @@ export function Quadro({ ctx }: { ctx: Ctx }) {
   const { tokens } = ctx, qt = useMemo(() => quadroTecnico(ctx.scope, ctx.model, ctx.f), [ctx.scope, ctx.model, ctx.f]);
   const acima = qt.distribuicao.filter(row => row.empresas > qt.limite).reduce((sum, row) => sum + row.profissionais.length, 0);
   const option = useMemo(() => ({
-    grid: { top: 18, right: 2, bottom: 2, left: 2, containLabel: true },
-    title: { text: 'Empresas por responsável técnico', left: 0, top: 0, textStyle: { color: tokens.ink, fontSize: 11, fontWeight: 700, fontFamily: 'Lato, sans-serif' } },
+    grid: { top: 30, right: 2, bottom: 20, left: 2, containLabel: true },
+    title: { text: `Quantas empresas cada RT assume (vermelho: mais de ${qt.limite})`, left: 0, top: 0, textStyle: { color: tokens.ink, fontSize: 11, fontWeight: 700, fontFamily: 'Lato, sans-serif' } },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => `${int(items[0].value)} profissionais respondem por ${items[0].name} empresa(s)` },
-    xAxis: { type: 'category', data: qt.distribuicao.map(row => row.empresas === 5 ? '5+' : String(row.empresas)), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted } },
+    xAxis: { type: 'category', data: qt.distribuicao.map(row => row.empresas === 5 ? '5+' : String(row.empresas)), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted }, name: 'empresas por profissional', nameLocation: 'middle', nameGap: 22, nameTextStyle: { color: tokens.muted, fontSize: 9.5 } },
     yAxis: { type: 'value', show: false },
     series: [{ type: 'bar', barWidth: '62%', data: qt.distribuicao.map(row => ({ value: row.profissionais.length, itemStyle: { color: row.empresas > qt.limite ? tokens.bad : tokens.heat[1], borderRadius: [3, 3, 0, 0] } })), label: { show: true, position: 'top', fontSize: 10, color: tokens.ink } }],
   }), [qt, tokens]);
