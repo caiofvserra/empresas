@@ -1,5 +1,6 @@
 import greMunicipios from './gre-municipios.json';
 import catalog from './cnae-catalog.json';
+import { populacaoMunicipio } from './municipios';
 import type {
   Art, Buyer, Cao, Cbo, City, Cnae, Company, Contract, Dataset, EmploymentFact,
   Establishment, Gre, InspectionCase, Invoice, Movement, MovementType, Professional,
@@ -16,6 +17,8 @@ export const datasetNotes = {
 };
 
 const SNAPSHOT = '2026-09-30';
+/** Quantos estabelecimentos cada município recebe antes do sorteio pela população (pedido do Caio: dados em todos os municípios). */
+const PISO_MUNICIPIO = 2;
 const DAY = 86400000;
 const timestamp = (date: string) => Date.parse(`${date}T00:00:00Z`);
 const dateString = (value: number) => new Date(value).toISOString().slice(0, 10);
@@ -90,6 +93,8 @@ export function generateDataset(seed = 20260930): Dataset {
     ['Limeira', '3526902', 4, 332, 163], ['Presidente Prudente', '3541406', 1, 100, 185],
     ['São Carlos', '3548906', 10, 300, 153], ['Franca', '3516200', 3, 355, 70],
     ['Barueri', '3505708', 5, 392, 232], ['Botucatu', '3507506', 11, 270, 219],
+    // A GRE 16 (Marília) não tinha cidade-sede; sem ela, a regional ficava sem emprego, compradores e demais camadas por sede.
+    ['Marília', '3529005', 16, 205, 182],
   ];
   const cities: City[] = citySeeds.map(([name, ibgeCode, gre, x, y]) => ({
     id: ibgeCode, name, ibgeCode, greId: `GRE${(greMunicipios as unknown as Record<string, [number, string]>)[ibgeCode]?.[0] ?? gre}`, x, y,
@@ -117,12 +122,24 @@ export function generateDataset(seed = 20260930): Dataset {
   }));
   const establishments: Establishment[] = [];
   const establishmentsPerCompany = new Map<string, Establishment[]>();
-  const cityWeighted = cities.flatMap(city => Array.from({ length: city.name === 'São Paulo' ? 12
-    : city.name === 'Campinas' ? 6 : ['Ribeirão Preto', 'Sorocaba', 'São José dos Campos'].includes(city.name) ? 3 : 1 }, () => city));
+  // Os estabelecimentos se espalham pelos 645 municípios (pedido do Caio em 04/11/2026: "coloque dados em todos os municípios"),
+  // com peso pela população elevada a 1,1 (a engenharia se concentra um pouco mais nas cidades grandes) e um piso para toda cidade
+  // pequena ter alguma empresa. A GRE de cada um vem da tabela oficial (`gre-municipios.json`).
+  const tabelaGre = greMunicipios as unknown as Record<string, [number, string]>;
+  const municipios = Object.keys(tabelaGre).sort().map(codigo => ({ id: codigo, greId: `GRE${tabelaGre[codigo][0]}`, peso: Math.max(6_000, populacaoMunicipio(codigo) ?? 6_000) ** 1.1 }));
+  const pesoTotal = municipios.reduce((total, row) => total + row.peso, 0), pesoAcumulado: number[] = [];
+  municipios.reduce((total, row) => { pesoAcumulado.push(total + row.peso); return total + row.peso; }, 0);
+  const sorteiaMunicipio = (u: number) => { const alvo = u * pesoTotal; let lo = 0, hi = pesoAcumulado.length - 1; while (lo < hi) { const mid = (lo + hi) >> 1; if (pesoAcumulado[mid] < alvo) lo = mid + 1; else hi = mid; } return municipios[lo]; };
+  // Vizinho da mesma GRE, para o "município divergente" entre o cadastro do Crea-SP e a Receita.
+  const porGre = new Map<string, typeof municipios>(); for (const row of municipios) porGre.set(row.greId, [...(porGre.get(row.greId) ?? []), row]);
+  let forcados = 0;
+  const vizinho = (row: (typeof municipios)[number]) => { const lista = porGre.get(row.greId)!; return lista[(lista.indexOf(row) + 1) % lista.length]; };
   for (let index = 0; index < 3600; index++) {
     const branch = index >= 3000;
     const company = companies[branch ? ((index - 3000) * 37 + 17) % 3000 : index];
-    const city = pick(cityWeighted);
+    // Piso: os primeiros estabelecimentos (só de empresas que entram na base) ocupam cada município PISO_MUNICIPIO vezes; o resto vai pelo peso.
+    const sorteio = random(), forcado = !branch && !company.externalOnly && forcados < PISO_MUNICIPIO * municipios.length;
+    const city = forcado ? municipios[forcados++ % municipios.length] : sorteiaMunicipio(sorteio);
     const parent = establishmentsPerCompany.get(company.id)?.[0];
     const openedAt = branch
       ? (addDays(parent!.openedAt, 100) <= '2026-08-31' ? between(addDays(parent!.openedAt, 100), earlier(addDays(parent!.openedAt, 720), '2026-08-31')) : earlier(between(addDays(parent!.openedAt, 30), '2026-08-31'), '2026-08-31'))
@@ -136,7 +153,7 @@ export function generateDataset(seed = 20260930): Dataset {
       branch: branch ? 'Filial' : 'Matriz', cityId: city.id, greId: city.greId,
       cnaeMain, cnaeSecondary: [...new Set(secondary)], openedAt,
       rfbStatus: statusRoll < .085 ? 'Baixada' : statusRoll < .115 ? 'Suspensa' : statusRoll < .14 ? 'Inapta' : 'Ativa',
-      creaCityId: index % 29 === 0 ? cities[(cities.indexOf(city) + 1) % cities.length].id : city.id,
+      creaCityId: index % 29 === 0 ? vizinho(city).id : city.id,
       updatedAt: SNAPSHOT,
     };
     establishments.push(establishment);

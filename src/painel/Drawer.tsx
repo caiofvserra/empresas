@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { municipioPorId } from '../domain/municipios';
 import { Copy, Filter, Search, X } from 'lucide-react';
 import type { Acao, Alvo, StatusMulta } from './fiscalizacao';
 import { tipoLabel } from './fiscalizacao';
@@ -57,7 +58,7 @@ function CompanyCard({ ctx, companyId }: { ctx: Ctx; companyId: string }) {
   const withRt = model.metrics.rtCoverage.companyIds.includes(companyId), rtGap = f.alvos.some(row => row.tipo === 'rt' && !row.regularizedAt && row.companyId === companyId);
   const acoes = f.acoes.filter(row => row.companyId === companyId);
   const contracts = dataset.contracts.filter(row => row.companyId === companyId);
-  const city = dataset.cities.find(row => row.id === main?.cityId)?.name ?? '—', gre = short(dataset.gres.find(row => row.id === main?.greId)?.name ?? '—');
+  const city = municipioPorId(dataset).get(main?.cityId ?? '')?.nome ?? '—', gre = short(dataset.gres.find(row => row.id === main?.greId)?.name ?? '—');
   const facts: [string, string][] = [
     ['Razão social', company?.name ?? '—'], ['Porte · câmara', `${company?.size ?? '—'} · ${camaraDaEmpresa(dataset).get(companyId) ?? '—'}`],
     ['Local', `${city} · ${gre}`], ['Situação na Receita', main?.rfbStatus ?? '—'],
@@ -73,7 +74,7 @@ function CompanyCard({ ctx, companyId }: { ctx: Ctx; companyId: string }) {
 function build(ctx: Ctx, detail: Detail): Content {
   const { dataset, resumo, f, greId, janela } = ctx;
   const companies = new Map(dataset.companies.map(row => [row.id, row])), places = new Map(dataset.establishments.map(row => [row.id, row]));
-  const cities = new Map(dataset.cities.map(row => [row.id, row.name]));
+  const cities = new Map([...municipioPorId(dataset).values()].map(row => [row.id, row.nome]));
   const acoesById = new Map(f.acoes.map(row => [row.id, row]));
   const name = (companyId: string) => companies.get(companyId)?.tradeName || companies.get(companyId)?.name || companyId;
   const where = (establishmentId: string) => { const place = places.get(establishmentId); return `${place?.cnpj ?? ''} · ${cities.get(place?.cityId ?? '') ?? '—'}`; };

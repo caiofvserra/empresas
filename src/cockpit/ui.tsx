@@ -102,7 +102,7 @@ export function Indicador({ aspecto, label, value, variacao, spark, cor, meta, s
 
 /** Linhas do painel lateral para uma lista de empresas, com valor e observação próprios de cada visual. */
 export function linhasEmpresas(ctx: CockpitCtx, ids: string[], info: (id: string) => { value: string; note: string; sort: number }) {
-  const companies = new Map(ctx.dataset.companies.map(row => [row.id, row])), main = mainEstablishments(ctx.dataset), cities = new Map(ctx.dataset.cities.map(row => [row.id, row.name]));
+  const companies = new Map(ctx.dataset.companies.map(row => [row.id, row])), main = mainEstablishments(ctx.dataset), cities = new Map([...municipioPorId(ctx.dataset).values()].map(row => [row.id, row.nome]));
   return [...new Set(ids)].map(id => { const company = companies.get(id), place = main.get(id), extra = info(id);
     return { key: id, companyId: id, title: company?.tradeName || company?.name || id, subtitle: `${company?.rootCnpj ?? ''} · ${cities.get(place?.cityId ?? '') ?? '—'}`, value: extra.value, note: extra.note, sortValue: extra.sort }; });
 }

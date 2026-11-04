@@ -9,6 +9,7 @@ import { selectEnterpriseScope } from '../src/enterprise-v10/filters.ts';
 import { buildEnterpriseModel } from '../src/enterprise-v10/model.ts';
 import { antiguidadeRegistro, artsMensais, cadastroIncompleto, cnaesDoMercado, faixasAntiguidade, idadeCapital, artsPorProfissional, agrupaOutras, mercadoEmArvore, porCapital, registrosPorCamara, ritmoEconomico, territorio } from '../src/domain/empresas.ts';
 import { camaraDaEmpresa, camaraPorCnae, camaras } from '../src/painel/analise.ts';
+import { faixasPorQuantil } from '../src/empresas/municipios.ts';
 import { buildProfissionais } from '../src/domain/profissionais.ts';
 import { buildCredenciamentos, buildJucesp, buildSociosPf, parcerias, quadroCredenciamentos, quadroDenominacao, quadroJucesp } from '../src/domain/parcerias.ts';
 import { fichas, parceriasDe } from '../src/cockpit/fichas.ts';
@@ -187,4 +188,11 @@ test('painel de Empresas: sem mapa de bolhas, sem rede de sócias e sem quadrado
   // Quadrado colorido em botão de atalho só se for legenda do gráfico ao lado; os atalhos usam is-acao.
   assert.ok(!/<button (?!className="is-acao")[^>]*><i style=\{\{ background: tokens\./.test(blocos), 'atalho com quadrado colorido parece legenda');
   assert.ok(!/legend:[^\n]*\n[^\n]*tooltip: \{ trigger: 'axis', formatter: \(items: any\[\]\) => \{ const ponto/.test(blocos), 'o ritmo econômico já tem a lista ao lado como legenda');
+});
+
+test('faixas do mapa por município aguentam valores repetidos e separam o zero', () => {
+  const contagens = [...Array(300).fill(0), ...Array(200).fill(1), 2, 3, 5, 8, 13, 40, 230], classe = faixasPorQuantil(contagens);
+  assert.equal(classe(0), 0); assert.ok(classe(1) >= 1); assert.ok(classe(230) > classe(1));
+  const taxas = [...Array(100).fill(100), 25, 40, 50, 60, 70, 75, 80, 85, 90, 95], c2 = faixasPorQuantil(taxas);
+  assert.ok(c2(25) < c2(100)); assert.ok(Math.max(...taxas.map(c2)) <= 4);
 });

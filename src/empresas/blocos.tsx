@@ -3,7 +3,8 @@ import type { complianceFlow } from '../gestao-v14/metrics';
 import { Chart, useSpMap, proporcaoSp } from '../painel/chart';
 import { brl, data, int, mes, pct } from '../painel/ui';
 import { camaraPorCnae, camaras } from '../painel/analise';
-import { valoresPorCidade } from './municipios';
+import { faixasPorQuantil, valoresPorCidade } from './municipios';
+import { municipioPorId } from '../domain/municipios';
 import { sum } from '../domain/hash';
 import { rotulosGre, territorioGre } from '../painel/territorio';
 import { classesCnae, correspondencias } from '../observatorio/norte';
@@ -271,11 +272,10 @@ export function MapaMercado({ ctx, metrica }: { ctx: CockpitCtx; metrica: Metric
   const rotulos = useMemo(() => regioes && centroids ? rotulosGre(regioes, centroids) : null, [regioes, centroids]);
   const cidades = useMemo(() => valoresPorCidade(ctx, metrica, ctx.period), [ctx.stateScope, ctx.stateModel, ctx.stateHistory, ctx.linhas, metrica, ctx.period]); // eslint-disable-line react-hooks/exhaustive-deps
   const porNome = useMemo(() => new Map([...cidades.values()].map(row => [row.nome, row])), [cidades]);
-  const cidade = ctx.cidadeId ? ctx.dataset.cities.find(row => row.id === ctx.cidadeId) : undefined;
+  const local = ctx.cidadeId ? municipioPorId(ctx.dataset).get(ctx.cidadeId) : undefined, cidade = local ? { name: local.nome } : undefined;
   const classes = useMemo(() => {
     const valores = [...cidades.values()].map(row => row.valor).filter((value): value is number => value !== null).sort((a, b) => a - b), cores = rampaMapa(Boolean(config.alerta), dark);
-    const cortes = [1, 2, 3, 4].map(k => valores[Math.min(valores.length - 1, Math.floor(valores.length * k / 5))]);
-    const classe = (value: number) => { let index = 0; while (index < 4 && value >= cortes[index] && cortes[index] > (index ? cortes[index - 1] : -Infinity)) index++; return index; };
+    const classe = faixasPorQuantil(valores);
     const faixas = cores.map((cor, index) => { const membros = valores.filter(value => classe(value) === index); return { cor, min: membros.length ? membros[0] : null, max: membros.length ? membros.at(-1)! : null }; }).filter(row => row.min !== null);
     return { classe, cores, faixas };
   }, [cidades, config, dark]);
@@ -309,7 +309,7 @@ export function MapaMercado({ ctx, metrica }: { ctx: CockpitCtx; metrica: Metric
     else ctx.open({ kind: 'empresas', title: `${nome}: ${config.abre === 'devedoras' ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: config.abre === 'devedoras' ? 'Empresas registradas com matriz neste município e anuidade vencida na data escolhida.' : 'Empresas com registro ativo e matriz neste município na data escolhida.', ids: row.ids }); };
   return <div className="geo-layout is-compacto">
     <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa por município: ${config.label}`} onPick={params => { if (params.componentType === 'geo') abrirCidade(params.name); }} /> : <div className="loading">Carregando o mapa…</div>}
-      <ul className="geo-legend" aria-label="Faixas dos municípios">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === item.max ? config.fmt(item.min!) : `${config.fmt(item.min!)} a ${config.fmt(item.max!)}`}</li>)}<li><i style={{ background: semDados(dark) }} />sem dados</li></ul></div>
+      <ul className="geo-legend" aria-label="Faixas dos municípios">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === item.max ? config.fmt(item.min!) : `${config.fmt(item.min!)} a ${config.fmt(item.max!)}`}</li>)}<li><i style={{ background: semDados(dark) }} />poucos dados</li></ul></div>
     <ol className="geo-rank is-gre" onMouseLeave={() => setDestaque(null)} aria-label={`GREs por ${config.label}`}><li className="geo-rank-head"><span>GRE</span><b>{config.curto}</b></li>{ranking.map(row => { const value = config.get(row)!;
       return <li key={row.id}><button onClick={() => abrirGre(row.id)} onMouseEnter={() => setDestaque(row.id)} onFocus={() => setDestaque(row.id)} className={ctx.greId === row.id ? 'is-selected' : ''}>
         <span>{row.curto}</span><b>{config.fmt(value)}</b><em style={{ width: `${Math.abs(value) / maximo * 100}%` }} /></button></li>; })}</ol>
@@ -338,7 +338,7 @@ export function ArvoreMercado({ ctx }: { ctx: CockpitCtx }) {
         return `{p|${row.cobertura === null ? '' : pct(row.cobertura)}}\n${row.label}\n{c|${row.agrupadas ? `${int(row.total)} estab.` : `${row.code} · ${int(row.total)} estab.`}}`; }, rich: { p: { fontSize: 12, fontWeight: 800, color: '#FFFFFF' }, c: { fontSize: 8.5, color: 'rgba(255,255,255,.75)' } } },
       data: ramos.map(ramo => ({ name: ramo.camara, ramo, itemStyle: { color: dark ? '#1A2D52' : '#01224D' },
         ...(ramo.total ? { value: ramo.total, children: ramo.atividades.map(linha => ({ name: linha.code, value: linha.total, linha, camara: ramo.camara, itemStyle: { color: linha.agrupadas ? (dark ? '#4A5568' : '#718096') : corCobertura(linha.cobertura, dark, piso, teto), ...(linha.agrupadas ? { decal: undefined } : {}) } })) }
-          : { value: Math.max(1, geral * 0.012) }) })) }],
+          : { value: geral * 0.012 }) })) }],
   }), [ramos, tokens, dark, piso, teto, geral]);
   return <Chart option={option} tokens={tokens} label="Mercado por câmara e atividade, com a parte registrada" onPick={params => { const d = params.data; if (!d) return;
     if (d.linha) { const row = d.linha as LinhaCnae, ids = row.semRegistro.length ? row.semRegistro : row.registrados, nome = row.agrupadas ? `${d.camara}, ${row.label.toLowerCase()}` : row.code;
