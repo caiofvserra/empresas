@@ -2,6 +2,7 @@ import type { Dataset } from './types';
 import { modalidades } from './entidades';
 import type { Modalidade } from './entidades';
 import { tituloPorCodigo } from './titulos';
+import { municipiosSp } from './municipios';
 import { addDays, share, sum } from './hash';
 import { adimplenteEm, cbos, fatorGenero, faixaIdade, faixasIdade, idadeEm, noRecorte, rtDoVinculo, situacaoEm } from './profissionais';
 import type { EmpregoCbo, FiltroProfissional, Genero, ModeloProfissionais, Profissional, SituacaoProfissional } from './profissionais';
@@ -34,7 +35,7 @@ export interface MedidasProfissionais {
 export interface RegionalProfissionais extends MedidasProfissionais { id: string; name: string; curto: string }
 export interface MunicipioProfissionais extends MedidasProfissionais { id: string; nome: string; greId: string }
 /** Abaixo deste número de ativos, as partes e taxas do município ficam vazias ("poucos dados"): poucas pessoas fazem a porcentagem pular. */
-export const MINIMO_MUNICIPIO = 20;
+export const MINIMO_MUNICIPIO = 10;
 export function regionaisProfissionais(modelo: ModeloProfissionais, dataset: Dataset, period: number, filtro: FiltroProfissional = {}) {
   const anchor = dataset.snapshotDate, start = inicioPeriodo(anchor, period), umAnoAntes = addDays(anchor, -365);
   const doRecorte = modelo.profissionais.filter(row => noRecorte(row, null, { modalidade: filtro.modalidade, genero: filtro.genero }) && row.registroEm <= anchor);
@@ -50,8 +51,8 @@ export function regionaisProfissionais(modelo: ModeloProfissionais, dataset: Dat
   };
   const linhas: RegionalProfissionais[] = dataset.gres.map(gre => ({ id: gre.id, name: gre.name, curto: gre.name, ...medidas(doRecorte.filter(row => row.greId === gre.id), 1) }));
   const porCidade = new Map<string, Profissional[]>();
-  for (const row of doRecorte) porCidade.set(row.cityId, [...(porCidade.get(row.cityId) ?? []), row]);
-  const municipios = new Map<string, MunicipioProfissionais>(dataset.cities.map(city => [city.id, { id: city.id, nome: city.name, greId: city.greId, ...medidas(porCidade.get(city.id) ?? [], MINIMO_MUNICIPIO) }]));
+  for (const row of doRecorte) { const lista = porCidade.get(row.cityId); if (lista) lista.push(row); else porCidade.set(row.cityId, [row]); }
+  const municipios = new Map<string, MunicipioProfissionais>(municipiosSp(dataset).map(city => [city.id, { id: city.id, nome: city.nome, greId: city.greId, ...medidas(porCidade.get(city.id) ?? [], MINIMO_MUNICIPIO) }]));
   const cidades = new Map([...municipios].map(([id, row]) => [id, row.ativos.length]));
   return { linhas, municipios, cidades };
 }

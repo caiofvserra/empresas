@@ -1,4 +1,5 @@
 import type { Dataset } from './types';
+import { municipiosSp, populacaoMunicipio } from './municipios';
 import type { ContratoPublico } from '../painel/analise';
 import { between, chance, dateBetween, pick, share, sum, toDate, toDay, weighted } from './hash';
 import { classeDoEstabelecimento } from '../observatorio/norte';
@@ -87,7 +88,8 @@ export function quadroDemanda(layer: DemandaPlanejada): QuadroDemanda {
 
 /* ---------- UC31 · densidade empresarial por regional ---------- */
 /** População demonstrativa do município (15 mil a 1,35 milhão), estável por município; em produção, IBGE · tabela 6579 (estimativa anual). */
-export const populacaoCidade = (cityId: string) => Math.round(15_000 * Math.exp(chance(`pop:${cityId}`) * 4.5));
+// População pelo porte do município (src/domain/municipios.ts), a mesma que espalha os profissionais; antes, um sorteio solto.
+export const populacaoCidade = (cityId: string) => populacaoMunicipio(cityId) ?? Math.round(15_000 * Math.exp(chance(`pop:${cityId}`) * 4.5));
 export interface DensidadeGre { greId: string; name: string; elegiveis: number; registradas: number; populacao: number; densidade: number | null; cobertura: number | null }
 const cacheDensidade = new WeakMap<Dataset, DensidadeGre[]>();
 /** Estabelecimentos elegíveis (Receita ativa, CNAE da lista) por 10 mil habitantes e cobertura cadastral, por GRE, lidos em D. */
@@ -95,7 +97,8 @@ export function densidadeRegional(view: Dataset): DensidadeGre[] {
   const saved = cacheDensidade.get(view); if (saved) return saved;
   const vigentes = new Set(view.registrations.filter(row => row.status === 'Ativo').map(row => row.establishmentId));
   const rows = view.gres.map(gre => {
-    const cidades = view.cities.filter(row => row.greId === gre.id), populacao = sum(cidades.map(row => populacaoCidade(row.id)));
+    // Todos os municípios da GRE pela tabela oficial (04/11/2026), não só as cidades-sede da amostra.
+    const cidades = municipiosSp(view).filter(row => row.greId === gre.id), populacao = sum(cidades.map(row => populacaoCidade(row.id)));
     const elegiveis = view.establishments.filter(row => row.greId === gre.id && row.rfbStatus === 'Ativa' && classeDoEstabelecimento(view, row) !== null);
     const registradas = elegiveis.filter(row => vigentes.has(row.id)).length;
     return { greId: gre.id, name: gre.name, elegiveis: elegiveis.length, registradas, populacao, densidade: populacao ? elegiveis.length / populacao * 10_000 : null, cobertura: share(registradas, elegiveis.length) };

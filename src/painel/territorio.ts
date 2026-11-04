@@ -1,16 +1,19 @@
 import type { Dataset } from '../domain/types';
+import { municipiosSp } from '../domain/municipios';
 
 /**
- * Território demonstrativo das GREs: cada município paulista fica com a GRE do município-sede da amostra mais próximo.
- * Em produção, usar a tabela oficial município → GRE (a mesma do painel de profissionais).
+ * Território das GREs no mapa: a GRE de cada município vem da tabela oficial do Crea-SP (src/domain/gre-municipios.json, desde
+ * 04/11/2026). Município fora da tabela fica com a GRE do município-sede da amostra mais próximo.
  */
 export function territorioGre(dataset: Dataset, centroids: Map<string, [number, number]>): Map<string, string> {
+  const oficial = new Map(municipiosSp(dataset).map(row => [row.nome, row.greId]));
   const seeds = dataset.cities.map(city => ({ greId: city.greId, at: centroids.get(city.name) })).filter((seed): seed is { greId: string; at: [number, number] } => Boolean(seed.at));
   const result = new Map<string, string>();
   for (const [name, [x, y]] of centroids) {
     let best = seeds[0], distance = Infinity;
     for (const seed of seeds) { const dx = (seed.at[0] - x) * Math.cos(y * Math.PI / 180), dy = seed.at[1] - y, d = dx * dx + dy * dy; if (d < distance) { distance = d; best = seed; } }
-    if (best) result.set(name, best.greId);
+    const tabela = oficial.get(name);
+    if (tabela) result.set(name, tabela); else if (best) result.set(name, best.greId);
   }
   return result;
 }

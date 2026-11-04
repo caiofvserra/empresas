@@ -8,6 +8,7 @@ import { modalidades } from './entidades';
 import type { Modalidade } from './entidades';
 import type { Formacao } from './formacao';
 import { populacaoCidade } from './mercado';
+import { municipiosSp } from './municipios';
 
 /**
  * V22 · Camadas que DEPENDEM DE PARCERIA: o levantamento de 29/10 as deixou fora da coleta automática porque a fonte só chega por
@@ -264,7 +265,7 @@ export function contextoEconomico(view: Dataset): ContextoGre[] {
   const saved = cacheCtx.get(view); if (saved) return saved;
   const vigentes = new Set(view.registrations.filter(row => row.status === 'Ativo').map(row => row.establishmentId));
   const rows = view.gres.map(gre => {
-    const cidades = view.cities.filter(row => row.greId === gre.id), populacao = sum(cidades.map(row => populacaoCidade(row.id)));
+    const cidades = municipiosSp(view).filter(row => row.greId === gre.id), populacao = sum(cidades.map(row => populacaoCidade(row.id)));
     const pib = sum(cidades.map(row => pibCidade(row.id))), vab = sum(cidades.map(row => vabCidade(row.id))), credito = cidades.map(row => creditoCidade(row.id));
     const elegiveis = view.establishments.filter(row => row.greId === gre.id && row.rfbStatus === 'Ativa' && classeDoEstabelecimento(view, row) !== null);
     const creditoSaldo = sum(credito.map(row => row.saldo));

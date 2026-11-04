@@ -4,6 +4,7 @@ import { brl, int, mes, money, pct } from '../painel/ui';
 import { parteAbaixo, situacaoEm } from '../domain/profissionais';
 import type { Nomeacao } from '../domain/parcerias';
 import { empregoMensal, empregoRegionalOcupacao } from '../domain/painel-profissionais';
+import { municipioPorId } from '../domain/municipios';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { pisoLegal as piso } from '../cockpit/publico';
 import { Bloco, Indicador, linhasProfissionais } from '../cockpit/ui';
@@ -14,7 +15,7 @@ import { Bloco, Indicador, linhasProfissionais } from '../cockpit/ui';
  * Com uma modalidade escolhida, ficam só as ocupações daquela modalidade; com um município, a série é a da regional dele.
  */
 const ocupacoes = (ctx: CockpitCtx) => ctx.profissionais.cbo.filter(row => !ctx.modalidade || row.modalidade === ctx.modalidade);
-const regionalDoRecorte = (ctx: CockpitCtx) => ctx.greId ?? (ctx.cidadeId ? ctx.dataset.cities.find(row => row.id === ctx.cidadeId)?.greId ?? null : null);
+const regionalDoRecorte = (ctx: CockpitCtx) => ctx.greId ?? (ctx.cidadeId ? municipioPorId(ctx.dataset).get(ctx.cidadeId)?.greId ?? null : null);
 
 export default function PaginaTrabalho({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = ocupacoes(ctx), eng = rows.filter(row => row.engenharia), q = ctx.parcerias.pericias;

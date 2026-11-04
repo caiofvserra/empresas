@@ -2,10 +2,11 @@ import { useMemo, useState } from 'react';
 import { Chart, useSpMap, proporcaoSp } from '../painel/chart';
 import { int, mes, pct } from '../painel/ui';
 import { rotulosGre, territorioGre } from '../painel/territorio';
+import { municipioPorId } from '../domain/municipios';
 import { faixasIdade, faixaIdade, idadeEm, situacaoEm } from '../domain/profissionais';
 import type { Profissional } from '../domain/profissionais';
 import { artPorIdade, artsMensaisPorModalidade, ativosNoInicio, fluxoMensal, modalidadeNivel, novosPorModalidade, permanenciaPorAno, regionaisProfissionais, transicoes } from '../domain/painel-profissionais';
-import type { MedidasProfissionais } from '../domain/painel-profissionais';
+import type { CelulaNivel, MedidasProfissionais } from '../domain/painel-profissionais';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { linhasProfissionais } from '../cockpit/ui';
 
@@ -29,8 +30,8 @@ const delta = (value: number | null) => value === null ? '—' : `${value >= 0 ?
 /* ---------- Registro ---------- */
 export type MetricaMapa = 'ativos' | 'variacao' | 'novos' | 'inadimplencia' | 'mulheres' | 'sessenta' | 'arts' | 'semArt' | 'rt';
 type Lista = 'ativos' | 'novos' | 'inadimplentes' | 'sessenta' | 'semArt' | 'rts';
-export const metricasMapa: Record<MetricaMapa, { label: string; get: (row: MedidasProfissionais) => number | null; curto: string; fmt: (value: number) => string; alerta?: boolean; menorPrimeiro?: boolean; lista: Lista; what: string }> = {
-  ativos: { label: 'Profissionais ativos', curto: 'ativos', get: row => row.ativos.length, fmt: int, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
+export const metricasMapa: Record<MetricaMapa, { label: string; get: (row: MedidasProfissionais) => number | null; curto: string; cortes?: number[]; fmt: (value: number) => string; alerta?: boolean; menorPrimeiro?: boolean; lista: Lista; what: string }> = {
+  ativos: { label: 'Profissionais ativos', curto: 'ativos', cortes: [1, 3, 10, 50], get: row => row.ativos.length, fmt: int, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
   variacao: { label: 'Variação em um ano', curto: 'variação', get: row => row.variacao, fmt: delta, menorPrimeiro: true, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
   novos: { label: 'Registros novos a cada 100 ativos', curto: 'novos/100', get: row => row.novosPorCem, fmt: value => value.toLocaleString('pt-BR', { maximumFractionDigits: 1 }), menorPrimeiro: true, lista: 'novos', what: 'Profissionais desta regional que fizeram o registro no período escolhido.' },
   inadimplencia: { label: 'Anuidade atrasada', curto: 'atrasada', get: row => row.inadimplencia, fmt: value => pct(value), alerta: true, lista: 'inadimplentes', what: 'Profissionais ativos desta regional com anuidade vencida na data escolhida.' },
@@ -59,13 +60,14 @@ export function MapaProfissionais({ ctx, metrica }: { ctx: CockpitCtx; metrica: 
   const t = useMemo(() => regionaisProfissionais(ctx.profissionais.modelo, ctx.dataset, ctx.period, filtroDe(ctx)), [ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
   const linhas = t.linhas, porId = useMemo(() => new Map(linhas.map(row => [row.id, row])), [linhas]);
   const porNome = useMemo(() => new Map([...t.municipios.values()].map(row => [row.nome, row])), [t]);
-  const cidade = ctx.cidadeId ? ctx.dataset.cities.find(row => row.id === ctx.cidadeId) : undefined;
+  const local = ctx.cidadeId ? municipioPorId(ctx.dataset).get(ctx.cidadeId) : undefined, cidade = local ? { name: local.nome } : undefined;
   const classes = useMemo(() => {
     const valores = [...t.municipios.values()].map(row => config.get(row)).filter((value): value is number => value !== null).sort((a, b) => a - b), cores = rampaMapa(Boolean(config.alerta), dark);
-    const cortes = [1, 2, 3, 4].map(k => valores[Math.min(valores.length - 1, Math.floor(valores.length * k / 5))]);
+    // Contagens usam cortes fixos (a maioria dos municípios tem poucos profissionais, e os quintis juntavam 5 a 1.000 numa faixa só).
+    const cortes = config.cortes ?? [1, 2, 3, 4].map(k => valores[Math.min(valores.length - 1, Math.floor(valores.length * k / 5))]);
     const classe = (value: number) => { let index = 0; while (index < 4 && value >= cortes[index] && cortes[index] > (index ? cortes[index - 1] : -Infinity)) index++; return index; };
     const faixas = cores.map((cor, index) => { const membros = valores.filter(value => classe(value) === index); return { cor, min: membros.length ? membros[0] : null, max: membros.length ? membros.at(-1)! : null }; }).filter(row => row.min !== null);
-    return { classe, cores, faixas };
+    return { classe, cores, faixas, temVazio: valores.length < t.municipios.size };
   }, [t, config, dark]);
   const corCidade = (nome: string) => { const row = porNome.get(nome), value = row ? config.get(row) : null; return value === null ? semDados(dark) : classes.cores[classes.classe(value)]; };
   const ranking = [...linhas].filter(row => config.get(row) !== null).sort((a, b) => config.menorPrimeiro ? config.get(a)! - config.get(b)! : config.get(b)! - config.get(a)!);
@@ -74,7 +76,7 @@ export function MapaProfissionais({ ctx, metrica }: { ctx: CockpitCtx; metrica: 
     if (!regioes || !rotulos || !centroids) return null;
     const foco = cidade ? { center: centroids.get(cidade.name), zoom: 3.2 } : ctx.greId ? { center: rotulos.get(ctx.greId), zoom: 2.2 } : null;
     const dica = (nome: string, greId: string) => { const local = porNome.get(nome), gre = porId.get(local?.greId ?? greId), daGre = gre ? config.get(gre) : null, value = local ? config.get(local) : null;
-      return `<b>${nome}</b> · ${gre?.name ?? ''}<br/>${config.label}: <b>${!local || !local.ativos.length ? 'sem profissionais no cenário' : value === null ? 'poucos dados' : config.fmt(value)}</b>${local?.ativos.length ? `<br/><span style="opacity:.8">${int(local.ativos.length)} profissionais ativos</span>` : ''}<br/><span style="opacity:.8">Na ${gre?.name ?? 'GRE'}: ${daGre === null ? '—' : config.fmt(daGre)}</span>${local?.ativos.length ? '<br/><span style="opacity:.7">clique para ver os profissionais do município</span>' : ''}`; };
+      return `<b>${nome}</b> · ${gre?.name ?? ''}<br/>${config.label}: <b>${!local ? 'sem dados' : value === null ? 'poucos dados' : config.fmt(value)}</b>${local?.ativos.length ? `<br/><span style="opacity:.8">${int(local.ativos.length)} profissionais ativos</span>` : ''}<br/><span style="opacity:.8">Na ${gre?.name ?? 'GRE'}: ${daGre === null ? '—' : config.fmt(daGre)}</span>${local?.ativos.length ? '<br/><span style="opacity:.7">clique para ver os profissionais do município</span>' : ''}`; };
     return {
       tooltip: { trigger: 'item', formatter: (item: any) => item.componentType === 'geo' ? dica(item.name, regioes.get(item.name) ?? '') : '' },
       geo: { map: 'spPainel', ...proporcaoSp, roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
@@ -93,7 +95,7 @@ export function MapaProfissionais({ ctx, metrica }: { ctx: CockpitCtx; metrica: 
   const abrirCidade = (nome: string) => { const row = porNome.get(nome); if (row) abrirProfissionais(ctx, `${nome}: ${config.label.toLowerCase()}`, listaDe(row), config.what.replace('nesta regional', 'neste município').replace('desta regional', 'deste município')); };
   return <div className="geo-layout is-compacto">
     <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa por município: ${config.label}`} onPick={params => { if (params.componentType === 'geo') abrirCidade(params.name); }} /> : <div className="loading">Carregando o mapa…</div>}
-      <ul className="geo-legend" aria-label="Faixas dos municípios">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === item.max ? config.fmt(item.min!) : `${config.fmt(item.min!)} a ${config.fmt(item.max!)}`}</li>)}<li><i style={{ background: semDados(dark) }} />sem dados</li></ul></div>
+      <ul className="geo-legend" aria-label="Faixas dos municípios">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === item.max ? config.fmt(item.min!) : `${config.fmt(item.min!)} a ${config.fmt(item.max!)}`}</li>)}{classes.temVazio && <li><i style={{ background: semDados(dark) }} />poucos dados</li>}</ul></div>
     <ol className="geo-rank is-gre" onMouseLeave={() => setDestaque(null)} aria-label={`GREs por ${config.label}`}><li className="geo-rank-head"><span>GRE</span><b>{config.curto}</b></li>{ranking.map(row => { const value = config.get(row)!;
       return <li key={row.id}><button onClick={() => abrirGre(row.id)} onMouseEnter={() => setDestaque(row.id)} onFocus={() => setDestaque(row.id)} className={ctx.greId === row.id ? 'is-selected' : ''}>
         <span>{row.name}</span><b>{config.fmt(value)}</b><em style={{ width: `${Math.abs(value) / maximo * 100}%` }} /></button></li>; })}</ol>
@@ -109,6 +111,18 @@ const corNivel = (nivel: string, tokens: CockpitCtx['tokens']) => nivel === 'Eng
  * catálogo do Confea (pedido do Caio em 04/11/2026); clicar num título abre a lista dos profissionais.
  */
 type Aberto = { modalidade: string; nivel?: string } | null;
+/**
+ * Fora de Segurança do Trabalho, a modalidade só tem graduação plena (engenheiro, agrônomo, geólogo...), e o nível não diz nada:
+ * o retângulo se divide pelos títulos com ao menos 15% dos ativos (até dois), e o resto vai junto em "outros títulos". No retângulo,
+ * "Engenheiro" vira "Eng." para o título caber; o nome inteiro fica na dica e nas barras.
+ */
+function titulosGrandes(celula: CelulaNivel, tokens: CockpitCtx['tokens']) {
+  const total = celula.ativos.length, grandes = celula.titulos.filter((t, index) => index < 2 && t.ativos.length >= total * 0.15), resto = celula.titulos.slice(grandes.length);
+  const filhos: any[] = grandes.map(titulo => ({ name: titulo.titulo, value: titulo.ativos.length, titulo, itemStyle: { color: corNivel(celula.nivel, tokens) } }));
+  const ativos = resto.reduce((n, t) => n + t.ativos.length, 0), antes = resto.reduce((n, t) => n + t.antes, 0);
+  if (ativos) filhos.push({ name: 'Outros títulos', value: ativos, outros: { modalidade: celula.modalidade, n: resto.length, ativos, variacao: antes ? (ativos - antes) / antes * 100 : null }, itemStyle: { color: '#4A72AD' } });
+  return filhos;
+}
 export function ArvoreModalidade({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, dark } = ctx, ramos = useMemo(() => modalidadeNivel(ctx.profissionais.modelo, ctx.dataset, ctx.greId, filtroDe(ctx)), [ctx.profissionais.modelo, ctx.dataset, ctx.greId, ctx.cidadeId, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
   const [aberto, setAberto] = useState<Aberto>(null);
@@ -117,7 +131,7 @@ export function ArvoreModalidade({ ctx }: { ctx: CockpitCtx }) {
   const emTitulos = Boolean(ramo && celulas.length);
   const marinho = dark ? '#1A2D52' : '#01224D';
   const option = useMemo(() => {
-    const legenda = { text: emTitulos ? 'tamanho = ativos   ·   clique num título para ver os profissionais' : '{a|■} engenheiros   {b|■} técnicos   {c|■} tecnólogos   ·   tamanho = ativos   ·   clique para ver os títulos',
+    const legenda = { text: emTitulos ? 'tamanho = ativos   ·   clique num título para ver os profissionais' : '{a|■} títulos de graduação plena   {c|■} tecnólogos e {b|■} técnicos, só em segurança do trabalho   ·   tamanho = ativos',
       ...(emTitulos ? { right: 0 } : { left: 0 }), top: 0, textStyle: { fontSize: 10, fontWeight: 400, color: tokens.muted, rich: { a: { color: corNivel('Engenheiro', tokens), fontSize: 12 }, b: { color: corNivel('Técnico', tokens), fontSize: 12 }, c: { color: corNivel('Tecnólogo', tokens), fontSize: 12 } } } };
     const rotulo = { show: true, fontSize: 10, color: '#FFFFFF', overflow: 'truncate', lineHeight: 13, rich: { n: { fontSize: 12.5, fontWeight: 800, color: '#FFFFFF' }, v: { fontSize: 9.5, color: 'rgba(255,255,255,.9)' } } };
     // Aberto, o bloco vira barras: um título por linha, do maior para o menor, com o número e a variação escritos. Num mapa de
@@ -125,7 +139,7 @@ export function ArvoreModalidade({ ctx }: { ctx: CockpitCtx }) {
     if (emTitulos) {
       const linhas = celulas.flatMap(celula => celula.titulos.map(titulo => ({ ...titulo, nivel: celula.nivel })));
       return {
-        title: { ...legenda, text: celulas.length > 1 ? '{a|■} engenheiros   {b|■} técnicos   {c|■} tecnólogos   ·   clique num título para ver os profissionais' : 'clique num título para ver os profissionais' },
+        title: { ...legenda, text: celulas.length > 1 ? '{a|■} engenheiros   {c|■} tecnólogos   {b|■} técnicos   ·   clique num título para ver os profissionais' : 'clique num título para ver os profissionais' },
         grid: { top: 24, right: 92, bottom: 2, left: 2, containLabel: true },
         tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const t = linhas[items[0].dataIndex]; return `<b>${t.titulo}</b><br/>Código ${t.codigo} no catálogo do Confea<br/>${int(t.ativos.length)} ativos · ${delta(t.variacao)} em um ano<br/><span style="opacity:.75">clique para ver os profissionais</span>`; } },
         xAxis: { type: 'value', show: false },
@@ -136,20 +150,30 @@ export function ArvoreModalidade({ ctx }: { ctx: CockpitCtx }) {
     }
     return {
       title: legenda,
-      tooltip: { formatter: (item: any) => { const d = item.data; if (d?.celula) { const c = d.celula; return `<b>${c.modalidade}</b> · ${c.nivel}s<br/>${int(c.ativos.length)} ativos · ${delta(c.variacao)} em um ano<br/>${c.titulos.length} ${c.titulos.length === 1 ? 'título' : 'títulos'} profissionais<br/><span style="opacity:.75">clique para ver os títulos</span>`; }
+      tooltip: { formatter: (item: any) => { const d = item.data;
+        if (d?.titulo) return `<b>${d.titulo.titulo}</b><br/>Código ${d.titulo.codigo} no catálogo do Confea<br/>${int(d.titulo.ativos.length)} ativos · ${delta(d.titulo.variacao)} em um ano<br/><span style="opacity:.75">clique para ver os profissionais</span>`;
+        if (d?.outros) return `<b>${d.outros.modalidade} · outros ${d.outros.n} títulos</b><br/>${int(d.outros.ativos)} ativos · ${delta(d.outros.variacao)} em um ano<br/><span style="opacity:.75">clique para ver todos os títulos</span>`;
+        if (d?.celula) { const c = d.celula; return `<b>${c.modalidade}</b> · ${c.nivel}s<br/>${int(c.ativos.length)} ativos · ${delta(c.variacao)} em um ano<br/>${c.titulos.length} ${c.titulos.length === 1 ? 'título' : 'títulos'} profissionais<br/><span style="opacity:.75">clique para ver os títulos</span>`; }
         return d?.ramo ? `<b>${d.name}</b><br/>${int(d.ramo.ativos)} ativos · ${delta(d.ramo.antes ? (d.ramo.ativos - d.ramo.antes) / d.ramo.antes * 100 : null)} em um ano<br/><span style="opacity:.75">clique para ver os títulos</span>` : ''; } },
       series: [{ type: 'treemap', roam: false, nodeClick: false, breadcrumb: { show: false }, left: 0, right: 0, top: 20, bottom: 0, squareRatio: 1.3,
         upperLabel: { show: true, height: 18, color: '#FFFFFF', fontSize: 10.5, fontWeight: 700, formatter: (item: any) => item.data?.ramo ? `${item.name} · ${int(item.data.ramo.ativos)}` : item.name },
         levels: [{ itemStyle: { borderColor: tokens.surface, borderWidth: 0, gapWidth: 3 } }, { itemStyle: { borderColor: marinho, borderWidth: 2, gapWidth: 1 }, upperLabel: { show: true } }, { itemStyle: { borderColor: tokens.surface, borderWidth: 1, gapWidth: 1 } }],
-        label: { ...rotulo, formatter: (item: any) => { const c = item.data?.celula; return c ? `${c.nivel}s\n{n|${int(c.ativos.length)}}\n{v|${delta(c.variacao)} em um ano}` : item.name; } },
+        // Fora de Segurança do Trabalho só há graduação plena (engenheiro, agrônomo, geólogo, geógrafo...): o retângulo não leva o nome do nível.
+        label: { ...rotulo, formatter: (item: any) => { const d = item.data ?? {}, c = d.celula, t = d.titulo, o = d.outros;
+          if (t) return `${t.titulo.replace(/^Engenheiro /, 'Eng. ')}\n{n|${int(t.ativos.length)}}\n{v|${delta(t.variacao)} em um ano}`;
+          if (o) return `Outros ${o.n} títulos\n{n|${int(o.ativos)}}\n{v|${delta(o.variacao)} em um ano}`;
+          return c ? `${c.nivel}s\n{n|${int(c.ativos.length)}}\n{v|${delta(c.variacao)} em um ano}` : item.name; } },
         data: ramos.map(ramo => ({ name: ramo.modalidade, value: ramo.ativos, ramo, itemStyle: { color: marinho },
-          children: ramo.niveis.map(celula => ({ name: `${ramo.modalidade} ${celula.nivel}`, value: celula.ativos.length, celula, itemStyle: { color: corNivel(celula.nivel, tokens) } })) })) }],
+          children: ramo.niveis.length > 1
+            ? ramo.niveis.map(celula => ({ name: `${ramo.modalidade} ${celula.nivel}`, value: celula.ativos.length, celula, itemStyle: { color: corNivel(celula.nivel, tokens) } }))
+            : titulosGrandes(ramo.niveis[0], tokens) })) }],
     };
   }, [ramos, tokens, dark, emTitulos, celulas, aberto, marinho]);
   return <div className="arvore-titulos">
     {emTitulos && <div className="arvore-volta"><button type="button" onClick={() => setAberto(null)}>← Todas as modalidades</button><b>{aberto!.modalidade}{aberto!.nivel ? ` · ${aberto!.nivel.toLowerCase()}s` : ''}</b></div>}
     <Chart option={option} tokens={tokens} label={emTitulos ? `Títulos profissionais dos ativos de ${aberto!.modalidade}` : 'Profissionais ativos por modalidade e nível, com a variação em um ano'} onPick={params => { const d = params.data; if (!d) return;
       if (d.titulo) abrirProfissionais(ctx, `${d.titulo.titulo}: ativos`, d.titulo.ativos, `Profissionais com registro ativo e título ${d.titulo.titulo} (código ${d.titulo.codigo} no catálogo do Confea) na data escolhida.`);
+      else if (d.outros) setAberto({ modalidade: d.outros.modalidade });
       else if (d.celula && !emTitulos) setAberto({ modalidade: d.celula.modalidade, nivel: d.celula.nivel });
       else if (d.celula) setAberto({ modalidade: aberto!.modalidade, nivel: d.celula.nivel });
       else if (d.ramo) setAberto({ modalidade: d.ramo.modalidade }); }} />
