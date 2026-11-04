@@ -2,13 +2,15 @@ import { useMemo, useState } from 'react';
 import type { complianceFlow } from '../gestao-v14/metrics';
 import { Chart, useSpMap } from '../painel/chart';
 import { brl, data, int, mes, pct } from '../painel/ui';
-import { camaraPorCnae } from '../painel/analise';
+import { camaraPorCnae, camaras } from '../painel/analise';
+import { valoresPorCidade } from './municipios';
+import { sum } from '../domain/hash';
 import { rotulosGre, territorioGre } from '../painel/territorio';
 import { classesCnae, correspondencias } from '../observatorio/norte';
 import { fontesInstalacao } from '../domain/frentes';
 import type { FonteInstalacao } from '../domain/frentes';
 import { faixasVinculos } from '../domain/parcerias';
-import { artsMensais, artsPorProfissional, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico, territorio } from '../domain/empresas';
+import { artsMensais, artsPorProfissional, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico } from '../domain/empresas';
 import type { LinhaCnae, RamoMercado } from '../domain/empresas';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { artPorCamara, camaraPorte, entradasSaidas, pagamento } from '../cockpit/medidas';
@@ -241,91 +243,105 @@ const corCobertura = (taxa: number | null, dark: boolean, minimo = 40, maximo = 
 /** Indicadores do mapa. `alerta` pinta do amarelo ao vermelho (quanto mais, pior); os demais vão do azul claro ao escuro. */
 export type MetricaMapa = 'cobertura' | 'semRegistro' | 'empresas' | 'crescimento' | 'rt' | 'inadimplencia' | 'arts' | 'emprego';
 type Abre = 'faltam' | 'ativas' | 'devedoras';
-export const metricasMapa: Record<MetricaMapa, { label: string; get: (row: LinhaGre) => number | null; fmt: (value: number) => string; alerta?: boolean; menorPrimeiro?: boolean; abre: Abre }> = {
-  cobertura: { label: 'Parte do mercado registrada', get: row => row.cobertura, fmt: value => pct(value), menorPrimeiro: true, abre: 'faltam' },
-  semRegistro: { label: 'CNPJs da lista sem registro', get: row => row.semRegistro, fmt: int, alerta: true, abre: 'faltam' },
-  empresas: { label: 'Empresas registradas', get: row => row.base, fmt: int, abre: 'ativas' },
-  crescimento: { label: 'Variação das registradas', get: row => row.crescimento, fmt: value => `${value >= 0 ? '+' : ''}${pct(value)}`, menorPrimeiro: true, abre: 'ativas' },
-  rt: { label: 'Registradas com RT', get: row => row.rt, fmt: value => pct(value), menorPrimeiro: true, abre: 'ativas' },
-  inadimplencia: { label: 'Anuidade atrasada', get: row => row.inadimplencia, fmt: value => pct(value), alerta: true, abre: 'devedoras' },
-  arts: { label: 'ARTs de empresas no período', get: row => row.arts, fmt: int, abre: 'ativas' },
-  emprego: { label: 'Empregos técnicos', get: row => row.empregoTecnico, fmt: int, abre: 'ativas' },
+export const metricasMapa: Record<MetricaMapa, { label: string; curto: string; base?: string; get: (row: LinhaGre) => number | null; fmt: (value: number) => string; alerta?: boolean; menorPrimeiro?: boolean; abre: Abre }> = {
+  cobertura: { label: 'Parte do mercado registrada', curto: 'registrada', base: 'estabelecimentos da lista', get: row => row.cobertura, fmt: value => pct(value), menorPrimeiro: true, abre: 'faltam' },
+  semRegistro: { label: 'CNPJs da lista sem registro', curto: 'sem registro', base: 'estabelecimentos da lista', get: row => row.semRegistro, fmt: int, alerta: true, abre: 'faltam' },
+  empresas: { label: 'Empresas registradas', curto: 'registradas', get: row => row.base, fmt: int, abre: 'ativas' },
+  crescimento: { label: 'Variação das registradas', curto: 'variação', base: 'registradas no início do período', get: row => row.crescimento, fmt: value => `${value >= 0 ? '+' : ''}${pct(value)}`, menorPrimeiro: true, abre: 'ativas' },
+  rt: { label: 'Registradas com RT', curto: 'com RT', base: 'empresas registradas', get: row => row.rt, fmt: value => pct(value), menorPrimeiro: true, abre: 'ativas' },
+  inadimplencia: { label: 'Anuidade atrasada', curto: 'atrasada', base: 'empresas registradas', get: row => row.inadimplencia, fmt: value => pct(value), alerta: true, abre: 'devedoras' },
+  arts: { label: 'ARTs de empresas no período', curto: 'ARTs', base: 'empresas registradas', get: row => row.arts, fmt: int, abre: 'ativas' },
+  emprego: { label: 'Empregos técnicos', curto: 'empregos', get: row => row.empregoTecnico, fmt: int, abre: 'ativas' },
 };
 const rampaMapa = (alerta: boolean, dark: boolean) => alerta
   ? (dark ? ['#3A2E22', '#7A5A10', '#C9851F', '#E5703B', '#FF7B7B'] : ['#FFF4D6', '#FFD98A', '#F6AD55', '#E5703B', '#C53030'])
   : (dark ? ['#1A2D52', '#2F548C', '#4A7FC1', '#7FB0E6', '#D4EDFF'] : ['#EAF1FA', '#BBD5F2', '#7FB0E6', '#3182CE', '#082D74']);
 
 /**
- * Mapa do estado com o limite de cada município (pedido do Caio em 02/11/2026: nada de bolhas). Cada município é pintado pela
- * regional a que pertence, no indicador escolhido, em cinco faixas; ao lado, as regionais em ordem. Com uma regional ou um
- * município escolhido no alto da tela, o mapa aproxima dele, e o município escolhido ganha contorno.
+ * Mapa do estado com o limite de cada município (pedido do Caio em 02/11/2026: nada de bolhas). Desde 04/11/2026 cada município é
+ * pintado pelo próprio valor no indicador escolhido, em cinco faixas; ao lado, as GREs em ordem, e passar o mouse numa GRE acende
+ * os municípios dela. Com uma GRE ou um município escolhido no alto da tela, o mapa aproxima dele, e o município escolhido ganha contorno.
  */
 export function MapaMercado({ ctx, metrica }: { ctx: CockpitCtx; metrica: MetricaMapa }) {
   const centroids = useSpMap(), { tokens, dark, linhas } = ctx, config = metricasMapa[metrica];
   const [destaque, setDestaque] = useState<string | null>(null);
   const regioes = useMemo(() => centroids ? territorioGre(ctx.dataset, centroids) : null, [centroids, ctx.dataset]);
   const rotulos = useMemo(() => regioes && centroids ? rotulosGre(regioes, centroids) : null, [regioes, centroids]);
-  const t = useMemo(() => territorio(ctx.scope, ctx.model), [ctx.scope, ctx.model]);
-  const cidadePorNome = useMemo(() => new Map(t.cidades.map(row => [row.nome, row])), [t]);
+  const cidades = useMemo(() => valoresPorCidade(ctx, metrica, ctx.period), [ctx.stateScope, ctx.stateModel, ctx.stateHistory, ctx.linhas, metrica, ctx.period]); // eslint-disable-line react-hooks/exhaustive-deps
+  const porNome = useMemo(() => new Map([...cidades.values()].map(row => [row.nome, row])), [cidades]);
   const cidade = ctx.cidadeId ? ctx.dataset.cities.find(row => row.id === ctx.cidadeId) : undefined;
   const classes = useMemo(() => {
-    const rows = linhas.filter(row => config.get(row) !== null).sort((a, b) => config.get(a)! - config.get(b)!), cores = rampaMapa(Boolean(config.alerta), dark);
-    const cls = new Map(rows.map((row, index) => [row.id, Math.min(4, Math.floor(index / rows.length * 5))]));
-    const faixas = cores.map((cor, index) => { const membros = rows.filter(row => cls.get(row.id) === index).map(row => config.get(row)!); return { cor, min: membros.length ? Math.min(...membros) : null, max: membros.length ? Math.max(...membros) : null }; });
-    return { cls, cores, faixas };
-  }, [linhas, config, dark]);
+    const valores = [...cidades.values()].map(row => row.valor).filter((value): value is number => value !== null).sort((a, b) => a - b), cores = rampaMapa(Boolean(config.alerta), dark);
+    const cortes = [1, 2, 3, 4].map(k => valores[Math.min(valores.length - 1, Math.floor(valores.length * k / 5))]);
+    const classe = (value: number) => { let index = 0; while (index < 4 && value >= cortes[index] && cortes[index] > (index ? cortes[index - 1] : -Infinity)) index++; return index; };
+    const faixas = cores.map((cor, index) => { const membros = valores.filter(value => classe(value) === index); return { cor, min: membros.length ? membros[0] : null, max: membros.length ? membros.at(-1)! : null }; }).filter(row => row.min !== null);
+    return { classe, cores, faixas };
+  }, [cidades, config, dark]);
   const porId = useMemo(() => new Map(linhas.map(row => [row.id, row])), [linhas]);
-  const cor = (greId: string) => { const index = classes.cls.get(greId); return index === undefined ? tokens.line : classes.cores[index]; };
+  const corCidade = (nome: string) => { const row = porNome.get(nome); return row?.valor === null || row?.valor === undefined ? tokens.line : classes.cores[classes.classe(row.valor)]; };
   const ranking = [...linhas].filter(row => config.get(row) !== null).sort((a, b) => config.menorPrimeiro ? config.get(a)! - config.get(b)! : config.get(b)! - config.get(a)!);
   const maximo = Math.max(...ranking.map(row => Math.abs(config.get(row)!)), 1);
   const option = useMemo(() => {
     if (!regioes || !rotulos || !centroids) return null;
     const foco = cidade ? { center: centroids.get(cidade.name), zoom: 3.2 } : ctx.greId ? { center: rotulos.get(ctx.greId), zoom: 2.2 } : null;
-    const dica = (nome: string, greId: string) => { const row = porId.get(greId); if (!row) return nome; const value = config.get(row), local = cidadePorNome.get(nome);
-      return `<b>${nome}</b> · ${row.name}<br/>${config.label} na regional: <b>${value === null ? '—' : config.fmt(value)}</b>${local ? `<br/>No município: ${int(local.total)} estabelecimentos da lista, ${local.taxa === null ? '—' : pct(local.taxa)} registrados` : ''}<br/><span style="opacity:.8">${int(row.base)} registradas · ${row.cobertura === null ? '—' : pct(row.cobertura)} do mercado · ${int(row.semRegistro)} sem registro</span><br/><span style="opacity:.7">clique para ver as empresas</span>`; };
+    const dica = (nome: string) => { const local = porNome.get(nome), gre = local ? porId.get(local.greId) : undefined; if (!local) return nome; const daGre = gre ? config.get(gre) : null;
+      return `<b>${nome}</b> · GRE ${gre?.curto ?? ''}<br/>${config.label}: <b>${local.valor === null ? (local.base ? 'poucos dados' : 'sem dados') : config.fmt(local.valor)}</b>${config.base ? `<br/><span style="opacity:.8">${int(local.base)} ${config.base}</span>` : ''}<br/><span style="opacity:.8">Na GRE: ${daGre === null ? '—' : config.fmt(daGre)}</span><br/><span style="opacity:.7">clique para ver ${config.abre === 'faltam' ? 'os CNPJs sem registro' : 'as empresas'} do município</span>`; };
     return {
-      tooltip: { trigger: 'item', formatter: (item: any) => item.componentType === 'geo' ? dica(item.name, regioes.get(item.name) ?? '') : dica(porId.get(item.data?.greId)?.name ?? '', item.data?.greId ?? '') },
+      tooltip: { trigger: 'item', formatter: (item: any) => item.componentType === 'geo' ? dica(item.name) : '' },
       geo: { map: 'spPainel', roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
         itemStyle: { areaColor: tokens.soft, borderColor: tokens.surface, borderWidth: 0.35 }, emphasis: { itemStyle: { areaColor: tokens.accent }, label: { show: false } },
         regions: [...regioes].map(([name, greId]) => { const apagado = destaque ? destaque !== greId : Boolean(ctx.greId && ctx.greId !== greId), escolhido = cidade?.name === name;
-          return { name, itemStyle: { areaColor: cor(greId), opacity: apagado ? 0.3 : 1, borderColor: escolhido ? tokens.ink : tokens.surface, borderWidth: escolhido ? 1.6 : 0.35 } }; }) },
+          return { name, itemStyle: { areaColor: corCidade(name), opacity: apagado ? 0.25 : 1, borderColor: escolhido ? tokens.ink : tokens.surface, borderWidth: escolhido ? 1.6 : 0.35 } }; }) },
       series: [{ type: 'scatter', coordinateSystem: 'geo', symbolSize: 1, itemStyle: { color: 'transparent' }, silent: true,
-        data: [...rotulos].map(([greId, at]) => { const row = porId.get(greId), value = row ? config.get(row) : null; return { name: row?.curto ?? greId, greId, valor: value === null ? '—' : config.fmt(value), value: at }; }),
-        label: { show: true, formatter: (item: any) => `{n|${item.name}}\n{v|${item.data.valor}}`, rich: { n: { color: '#1A202C', fontSize: 9.5, fontWeight: 700, textBorderColor: 'rgba(255,255,255,.85)', textBorderWidth: 2.5 }, v: { color: '#1A202C', fontSize: 10.5, fontWeight: 800, textBorderColor: 'rgba(255,255,255,.85)', textBorderWidth: 2.5 } } },
+        data: [...rotulos].map(([greId, at]) => ({ name: porId.get(greId)?.curto ?? greId, greId, value: at })),
+        label: { show: true, formatter: (item: any) => item.name, color: '#1A202C', fontSize: 9.5, fontWeight: 700, textBorderColor: 'rgba(255,255,255,.85)', textBorderWidth: 2.5 },
         labelLayout: { hideOverlap: true } }],
     };
-  }, [regioes, rotulos, centroids, classes, config, tokens, destaque, ctx.greId, cidade, porId, cidadePorNome]); // eslint-disable-line react-hooks/exhaustive-deps
-  const abrir = (greId: string | undefined) => { const row = greId ? porId.get(greId) : undefined; if (!row) return;
-    if (config.abre === 'faltam') { if (row.semRegistroIds.length) ctx.open({ kind: 'cnpjs', title: `${row.name}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP nesta regional e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.semRegistroIds }); return; }
+  }, [regioes, rotulos, centroids, classes, config, tokens, destaque, ctx.greId, cidade, porId, porNome]); // eslint-disable-line react-hooks/exhaustive-deps
+  const abrirGre = (greId: string | undefined) => { const row = greId ? porId.get(greId) : undefined; if (!row) return;
+    if (config.abre === 'faltam') { if (row.semRegistroIds.length) ctx.open({ kind: 'cnpjs', title: `GRE ${row.name}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP nesta GRE e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.semRegistroIds }); return; }
     const devedoras = config.abre === 'devedoras', ids = devedoras ? row.devedoras : row.ativas;
-    if (ids.length) ctx.open({ kind: 'empresas', title: `${row.name}: ${devedoras ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: devedoras ? 'Empresas registradas nesta regional com anuidade vencida na data escolhida.' : 'Empresas com registro ativo nesta regional na data escolhida.', ids }); };
+    if (ids.length) ctx.open({ kind: 'empresas', title: `GRE ${row.name}: ${devedoras ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: devedoras ? 'Empresas registradas nesta GRE com anuidade vencida na data escolhida.' : 'Empresas com registro ativo nesta GRE na data escolhida.', ids }); };
+  const abrirCidade = (nome: string) => { const row = porNome.get(nome); if (!row?.ids.length) return;
+    if (config.abre === 'faltam') ctx.open({ kind: 'cnpjs', title: `${nome}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP neste município e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.ids });
+    else ctx.open({ kind: 'empresas', title: `${nome}: ${config.abre === 'devedoras' ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: config.abre === 'devedoras' ? 'Empresas registradas com matriz neste município e anuidade vencida na data escolhida.' : 'Empresas com registro ativo e matriz neste município na data escolhida.', ids: row.ids }); };
   return <div className="geo-layout is-compacto">
-    <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa das regionais por município: ${config.label}`} onPick={params => abrir(params.componentType === 'geo' ? regioes?.get(params.name) : params.data?.greId)} /> : <div className="loading">Carregando o mapa…</div>}
-      <ul className="geo-legend" aria-label="Faixas do mapa">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === null ? '—' : item.min === item.max ? config.fmt(item.min) : `${config.fmt(item.min)} a ${config.fmt(item.max!)}`}</li>)}</ul></div>
-    <ol className="geo-rank" onMouseLeave={() => setDestaque(null)} aria-label={`Regionais por ${config.label}`}>{ranking.map(row => { const value = config.get(row)!;
-      return <li key={row.id}><button onClick={() => abrir(row.id)} onMouseEnter={() => setDestaque(row.id)} onFocus={() => setDestaque(row.id)} className={ctx.greId === row.id ? 'is-selected' : ''}>
-        <i style={{ background: cor(row.id) }} /><span>{row.curto}</span><b>{config.fmt(value)}</b><em style={{ width: `${Math.abs(value) / maximo * 100}%` }} /></button></li>; })}</ol>
+    <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa por município: ${config.label}`} onPick={params => { if (params.componentType === 'geo') abrirCidade(params.name); }} /> : <div className="loading">Carregando o mapa…</div>}
+      <ul className="geo-legend" aria-label="Faixas dos municípios">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === item.max ? config.fmt(item.min!) : `${config.fmt(item.min!)} a ${config.fmt(item.max!)}`}</li>)}<li><i style={{ background: tokens.line }} />sem dados</li></ul></div>
+    <ol className="geo-rank is-gre" onMouseLeave={() => setDestaque(null)} aria-label={`GREs por ${config.label}`}><li className="geo-rank-head"><span>GRE</span><b>{config.curto}</b></li>{ranking.map(row => { const value = config.get(row)!;
+      return <li key={row.id}><button onClick={() => abrirGre(row.id)} onMouseEnter={() => setDestaque(row.id)} onFocus={() => setDestaque(row.id)} className={ctx.greId === row.id ? 'is-selected' : ''}>
+        <span>{row.curto}</span><b>{config.fmt(value)}</b><em style={{ width: `${Math.abs(value) / maximo * 100}%` }} /></button></li>; })}</ol>
   </div>;
 }
 
-/** Mapa de árvore: cada retângulo grande é uma câmara, e os de dentro são as atividades (CNAE). Tamanho = estabelecimentos; cor = parte registrada. */
+/** Mapa de árvore: cada retângulo grande é uma câmara, e os de dentro são as atividades (CNAE). Tamanho = estabelecimentos enquadrados pela atividade; cor = parte registrada.
+ * As menores atividades de cada câmara, que juntas somam até 10% dela, viram "Outras atividades". Pequeno, o bloco mostra menos atividades por câmara (proporcional ao tamanho dela); ampliado, mostra todas acima da regra. Outras atividades fica sempre por último. */
+/** No bloco pequeno, cada câmara mostra com nome cerca de uma atividade a cada 7% do mercado que ela tem (no mínimo 2). */
+const atividadesNoBloco = (parte: number) => Math.max(2, Math.round(parte * 14));
 export function ArvoreMercado({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, dark } = ctx, ramos = useMemo(() => mercadoEmArvore(ctx.scope, ctx.model, camaraPorCnae), [ctx.scope, ctx.model]);
-  const taxas = ramos.flatMap(ramo => ramo.atividades.map(row => row.cobertura)).filter((value): value is number => value !== null);
+  const { tokens, dark } = ctx, ampliado = ctx.focus === 'tm';
+  const ramos = useMemo(() => mercadoEmArvore(ctx.scope, ctx.model, camaraPorCnae, { camaras, resto: 0.1, maxPorCamara: ampliado ? Number.POSITIVE_INFINITY : atividadesNoBloco }), [ctx.scope, ctx.model, ampliado]);
+  const taxas = ramos.flatMap(ramo => ramo.todas.map(row => row.cobertura)).filter((value): value is number => value !== null);
   const piso = Math.floor(Math.min(...taxas, 100) / 5) * 5, teto = Math.max(piso + 10, Math.ceil(Math.max(...taxas, 0) / 5) * 5);
+  const geral = Math.max(1, sum(ramos.map(ramo => ramo.total)));
   const option = useMemo(() => ({
-    tooltip: { formatter: (item: any) => { const d = item.data; if (!d?.linha) return d?.ramo ? `<b>${d.name}</b><br/>${int(d.value)} estabelecimentos · ${pct(d.ramo.registrados / Math.max(1, d.ramo.total) * 100)} registrados` : '';
-      const row = d.linha as LinhaCnae; return `<b>${row.code}</b> ${row.label}<br/>${int(row.total)} estabelecimentos · ${row.cobertura === null ? '—' : pct(row.cobertura)} registrados<br/>${int(row.semRegistro.length)} sem registro<br/><span style="opacity:.75">clique para ver os CNPJs sem registro</span>`; } },
-    series: [{ type: 'treemap', roam: false, nodeClick: false, breadcrumb: { show: false }, left: 0, right: 0, top: 0, bottom: 0, squareRatio: 1.2,
-      upperLabel: { show: true, height: 18, color: '#FFFFFF', fontSize: 10.5, fontWeight: 700, formatter: (item: any) => item.data?.ramo ? `${pct(item.data.ramo.registrados / Math.max(1, item.data.ramo.total) * 100)} · ${item.name}` : item.name },
+    tooltip: { formatter: (item: any) => { const d = item.data; if (!d?.linha) return d?.ramo ? `<b>${d.name}</b><br/>${d.ramo.total ? `${int(d.ramo.total)} estabelecimentos · ${pct(d.ramo.registrados / d.ramo.total * 100)} registrados<br/>${int(d.ramo.todas.length)} atividades da lista` : 'Nenhum estabelecimento da lista nesta câmara no recorte'}` : '';
+      const row = d.linha as LinhaCnae;
+      if (row.agrupadas) return `<b>${row.label}</b> de ${d.camara}<br/>${int(row.total)} estabelecimentos · ${row.cobertura === null ? '—' : pct(row.cobertura)} registrados<br/>${row.agrupadas.slice(0, 8).map(x => `${x.code} ${x.label}: ${int(x.total)}`).join('<br/>')}${row.agrupadas.length > 8 ? `<br/>e mais ${row.agrupadas.length - 8}` : ''}<br/><span style="opacity:.75">clique para ver os CNPJs sem registro</span>`;
+      return `<b>${row.code}</b> ${row.label}<br/>${int(row.total)} estabelecimentos com esta atividade como principal · ${row.cobertura === null ? '—' : pct(row.cobertura)} registrados<br/>${int(row.semRegistro.length)} sem registro${row.secundaria ? `<br/>Outros ${int(row.secundaria)} têm esta atividade como secundária (contados na principal)` : ''}<br/><span style="opacity:.75">clique para ver os CNPJs sem registro</span>`; } },
+    series: [{ type: 'treemap', roam: false, nodeClick: false, breadcrumb: { show: false }, left: 0, right: 0, top: 0, bottom: 0, squareRatio: 1.2, leafDepth: 2, sort: false,
+      upperLabel: { show: true, height: 18, color: '#FFFFFF', fontSize: 10.5, fontWeight: 700, overflow: 'truncate', formatter: (item: any) => { const ramo = item.data?.ramo as RamoMercado | undefined; return ramo ? `${ramo.total ? pct(ramo.registrados / ramo.total * 100) : '—'} · ${item.name}` : item.name; } },
       levels: [{ itemStyle: { borderColor: tokens.surface, borderWidth: 0, gapWidth: 3 } }, { itemStyle: { borderColor: dark ? '#1A2D52' : '#01224D', borderWidth: 2, gapWidth: 1 }, upperLabel: { show: true } }, { itemStyle: { borderColor: tokens.surface, borderWidth: 1, gapWidth: 1 } }],
-      label: { show: true, fontSize: 9.5, color: '#FFFFFF', overflow: 'truncate', lineHeight: 12, formatter: (item: any) => { const row = item.data?.linha as LinhaCnae | undefined; return row ? `{p|${row.cobertura === null ? '' : pct(row.cobertura)}}\n${row.label}\n{c|${row.code}}` : item.name; }, rich: { p: { fontSize: 12, fontWeight: 800, color: '#FFFFFF' }, c: { fontSize: 8.5, color: 'rgba(255,255,255,.75)' } } },
-      data: ramos.map(ramo => ({ name: ramo.camara, value: ramo.total, ramo, itemStyle: { color: dark ? '#1A2D52' : '#01224D' },
-        children: ramo.atividades.map(linha => ({ name: linha.code, value: linha.total, linha, itemStyle: { color: corCobertura(linha.cobertura, dark, piso, teto) } })) })) }],
-  }), [ramos, tokens, dark, piso, teto]);
+      label: { show: true, fontSize: 9.5, color: '#FFFFFF', overflow: 'truncate', lineHeight: 12, formatter: (item: any) => { const row = item.data?.linha as LinhaCnae | undefined; if (!row) return item.data?.ramo && !item.data.ramo.total ? 'sem estabelecimentos' : '';
+        return `{p|${row.cobertura === null ? '' : pct(row.cobertura)}}\n${row.label}\n{c|${row.agrupadas ? `${int(row.total)} estab.` : `${row.code} · ${int(row.total)} estab.`}}`; }, rich: { p: { fontSize: 12, fontWeight: 800, color: '#FFFFFF' }, c: { fontSize: 8.5, color: 'rgba(255,255,255,.75)' } } },
+      data: ramos.map(ramo => ({ name: ramo.camara, ramo, itemStyle: { color: dark ? '#1A2D52' : '#01224D' },
+        ...(ramo.total ? { value: ramo.total, children: ramo.atividades.map(linha => ({ name: linha.code, value: linha.total, linha, camara: ramo.camara, itemStyle: { color: linha.agrupadas ? (dark ? '#4A5568' : '#718096') : corCobertura(linha.cobertura, dark, piso, teto), ...(linha.agrupadas ? { decal: undefined } : {}) } })) }
+          : { value: Math.max(1, geral * 0.012) }) })) }],
+  }), [ramos, tokens, dark, piso, teto, geral]);
   return <Chart option={option} tokens={tokens} label="Mercado por câmara e atividade, com a parte registrada" onPick={params => { const d = params.data; if (!d) return;
-    if (d.linha) { const row = d.linha as LinhaCnae, ids = row.semRegistro.length ? row.semRegistro : row.registrados; if (ids.length) ctx.open({ kind: 'cnpjs', title: `${row.code}: ${row.semRegistro.length ? 'sem registro' : 'registrados'}`, what: `Estabelecimentos ativos na Receita cuja atividade da lista do Crea-SP é ${row.code} (${row.label}).`, use: row.semRegistro.length ? 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.' : undefined, ids }); }
-    else if (d.ramo) { const ids = (d.ramo as RamoMercado).atividades.flatMap(row => row.semRegistro); if (ids.length) ctx.open({ kind: 'cnpjs', title: `${d.name}: sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista desta câmara e sem registro na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids }); } }} />;
+    if (d.linha) { const row = d.linha as LinhaCnae, ids = row.semRegistro.length ? row.semRegistro : row.registrados, nome = row.agrupadas ? `${d.camara}, ${row.label.toLowerCase()}` : row.code;
+      if (ids.length) ctx.open({ kind: 'cnpjs', title: `${nome}: ${row.semRegistro.length ? 'sem registro' : 'registrados'}`, what: row.agrupadas ? `Estabelecimentos ativos na Receita das atividades menores de ${d.camara}: ${row.agrupadas.map(x => x.code).join(', ')}.` : `Estabelecimentos ativos na Receita cuja atividade da lista do Crea-SP é ${row.code} (${row.label}).`, use: row.semRegistro.length ? 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.' : undefined, ids }); }
+    else if (d.ramo) { const ids = (d.ramo as RamoMercado).todas.flatMap(row => row.semRegistro); if (ids.length) ctx.open({ kind: 'cnpjs', title: `${d.name}: sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista desta câmara e sem registro na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids }); } }} />;
 }
 
 /** Matriz de calor: tempo de registro nas linhas, capital social nas colunas. Cada célula é o número de empresas registradas. */

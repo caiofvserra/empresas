@@ -138,6 +138,8 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 .geo-rank button:hover, .geo-rank button.is-selected { background: var(--soft); }
 .geo-rank i { width: 10px; height: 10px; border-radius: 3px; border: 1px solid var(--line); }
 .geo-rank span { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.geo-rank.is-gre button { grid-template-columns: minmax(0, 1fr) auto; }
+.geo-rank-head { display: flex; justify-content: space-between; padding: 0 6px 3px; font-size: 9.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
 .geo-rank em { position: absolute; left: 6px; bottom: 2px; height: 2px; max-width: calc(100% - 12px); border-radius: 2px; background: var(--heat-2); opacity: .55; }
 .table-wrap { flex: 1; min-height: 0; overflow: auto; }
 .quadro-gre { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 11.5px; }
