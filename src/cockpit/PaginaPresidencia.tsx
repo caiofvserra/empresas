@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ArrowDownUp, ChevronDown } from 'lucide-react';
-import { Chart, Spark, useSpMap } from '../painel/chart';
+import { Chart, Spark, useSpMap, proporcaoSp } from '../painel/chart';
 import { devedoras } from '../painel/analise';
 import { rotulosGre, territorioGre } from '../painel/territorio';
 import { Segments, brl, data, int, mes, money, pct } from '../painel/ui';
@@ -99,7 +99,7 @@ function MapaRegional({ ctx }: { ctx: CockpitCtx }) {
       return `<b>${row.name}</b><br/>${config.label}: <b>${value === null ? '—' : config.fmt(value)}</b><br/><span style="opacity:.8">Empresas ${int(row.base)} · cobertura ${row.cobertura === null ? '—' : pct(row.cobertura)} · autos ${int(row.autos)} · inadimplência ${row.inadimplencia === null ? '—' : pct(row.inadimplencia)}</span><br/><span style="opacity:.7">clique para o resumo da regional</span>`; };
     return {
       tooltip: { trigger: 'item', formatter: (params: any) => tip(params.componentType === 'geo' ? territorio.get(params.name) ?? '' : params.data?.greId ?? '') },
-      geo: { map: 'spPainel', roam: true, scaleLimit: { min: 1, max: 5 }, left: 4, right: 4, top: 4, bottom: 4, selectedMode: false, tooltip: { show: true },
+      geo: { map: 'spPainel', ...proporcaoSp, roam: true, scaleLimit: { min: 1, max: 5 }, left: 4, right: 4, top: 4, bottom: 4, selectedMode: false, tooltip: { show: true },
         itemStyle: { areaColor: tokens.soft, borderColor: tokens.surface, borderWidth: 0.35 }, emphasis: { disabled: true },
         regions: [...territorio].map(([name, greId]) => { const faded = destaque ? destaque !== greId : Boolean(ctx.greId && ctx.greId !== greId), selected = ctx.greId === greId;
           return { name, itemStyle: { areaColor: color(greId), opacity: faded ? 0.3 : 1, borderColor: selected ? tokens.ink : tokens.surface, borderWidth: selected ? 0.8 : 0.35 } }; }) },
@@ -149,7 +149,7 @@ function Quadro({ ctx }: { ctx: CockpitCtx }) {
     <thead><tr><th>Regional</th>{colunas.map(item => <th key={item.key} aria-sort={sort.key === item.key ? (sort.dir === 1 ? 'ascending' : 'descending') : 'none'}>
       {item.key === 'spark' ? <span title={item.title}>{item.label}</span> : <button title={item.title} onClick={() => setSort({ key: item.key, dir: sort.key === item.key ? (sort.dir === 1 ? -1 : 1) : -1 })}>{item.label}{sort.key === item.key && <ArrowDownUp size={10} />}</button>}</th>)}</tr></thead>
     <tbody>{rows.map(row => <tr key={row.id} tabIndex={0} className={ctx.greId === row.id ? 'is-selected' : ''} onClick={() => ctx.open({ kind: 'gre', id: row.id })} onKeyDown={event => { if (event.key === 'Enter') ctx.open({ kind: 'gre', id: row.id }); }}>
-      <td className="gre-name"><b>{row.id.replace('GRE', '')}</b>{row.curto}</td>{colunas.map(item => <td key={item.key}>{item.cell(row)}</td>)}</tr>)}</tbody>
+      <td className="gre-name">{row.curto}</td>{colunas.map(item => <td key={item.key}>{item.cell(row)}</td>)}</tr>)}</tbody>
   </table></div>;
 }
 

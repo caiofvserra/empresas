@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Chart, useSpMap } from '../painel/chart';
+import { Chart, useSpMap, proporcaoSp } from '../painel/chart';
 import { brl, data, int, mes, money, pct, short } from '../painel/ui';
 import { rotulosGre, territorioGre } from '../painel/territorio';
 import { camaraDaEmpresa, camaras, grausVinculo, situacoesFornecedor } from '../painel/analise';
@@ -100,7 +100,7 @@ export function MapaFiscalizacao({ ctx, metrica }: { ctx: CockpitCtx; metrica: M
       return `<b>${nome}</b> · ${row.name}<br/>${config.label} na regional: <b>${value === null ? '—' : config.fmt(value)}</b>${noLocal !== null ? `<br/>No município: ${int(noLocal)} ações no período` : ''}<br/><span style="opacity:.8">${int(row.acoes.length)} ações · ${int(row.autos.length)} autos · ${row.taxa === null ? '—' : pct(row.taxa)} já regularizaram</span><br/><span style="opacity:.7">clique para ver as ações</span>`; };
     return {
       tooltip: { trigger: 'item', formatter: (item: any) => item.componentType === 'geo' ? dica(item.name, regioes.get(item.name) ?? '') : dica(porId.get(item.data?.greId)?.name ?? '', item.data?.greId ?? '') },
-      geo: { map: 'spPainel', roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
+      geo: { map: 'spPainel', ...proporcaoSp, roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
         itemStyle: { areaColor: tokens.soft, borderColor: tokens.surface, borderWidth: 0.35 }, emphasis: { itemStyle: { areaColor: tokens.accent }, label: { show: false } },
         regions: [...regioes].map(([name, greId]) => { const apagado = destaque ? destaque !== greId : Boolean(ctx.greId && ctx.greId !== greId), escolhido = cidade?.name === name;
           return { name, itemStyle: { areaColor: cor(greId), opacity: apagado ? 0.3 : 1, borderColor: escolhido ? tokens.ink : tokens.surface, borderWidth: escolhido ? 1.6 : 0.35 } }; }) },

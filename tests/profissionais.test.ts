@@ -8,6 +8,7 @@ import { buildFormacao, quadroFormacao } from '../src/domain/formacao.ts';
 import { buildPericias, quadroPericias } from '../src/domain/parcerias.ts';
 import { artPorIdade, empregoMensal, empregoRegionalOcupacao, fluxoMensal, inicioPeriodo, modalidadeNivel, permanenciaPorAno, regionaisProfissionais, transicoes } from '../src/domain/painel-profissionais.ts';
 import { fichas, parceriasDe } from '../src/cockpit/fichas.ts';
+import { tituloPorCodigo } from '../src/domain/titulos.ts';
 import { pageIdsGeral, pageIdsProfissionais, painelDaPagina } from '../src/cockpit/leitura.ts';
 
 const modelo = buildProfissionais(dataset), hoje = dataset.snapshotDate;
@@ -120,4 +121,39 @@ test('salário em caixas e canal cruzado com natureza (03/11/2026)', () => {
     const grupos = q.porCanalNatureza.filter(row => row.natureza === natureza.natureza);
     assert.equal(grupos.reduce((n, row) => n + row.concluintes, 0), natureza.concluintes, `${natureza.natureza}: formados batem`);
   }
+});
+
+test('regionais são GREs pelo número, sem nome de cidade', () => {
+  assert.ok(dataset.gres.every((gre, index) => gre.name === `GRE ${index + 1}`));
+  const r = regionaisProfissionais(modelo, dataset, 12);
+  assert.ok(r.linhas.every(row => /^GRE \d+$/.test(row.curto)));
+});
+
+test('mapa por município: soma dos municípios bate com a GRE, e município pequeno fica sem taxa', () => {
+  const r = regionaisProfissionais(modelo, dataset, 12);
+  for (const gre of r.linhas) assert.equal(sum([...r.municipios.values()].filter(row => row.greId === gre.id).map(row => row.ativos.length)), gre.ativos.length);
+  for (const row of r.municipios.values()) if (row.ativos.length < 20) assert.equal(row.inadimplencia, null);
+});
+
+test('filtro de gênero vale para registro, formados, emprego e salário', () => {
+  const todos = resumoProfissionais(modelo, dataset, null, 12), f = resumoProfissionais(modelo, dataset, null, 12, { genero: 'Feminino' }), m = resumoProfissionais(modelo, dataset, null, 12, { genero: 'Masculino' });
+  assert.equal(f.ativos.length + m.ativos.length, todos.ativos.length);
+  assert.ok(f.ativos.every(row => row.genero === 'Feminino'));
+  const formacao = buildFormacao(dataset), conc = (g: 'Feminino' | 'Masculino' | null) => sum(quadroFormacao(formacao, modelo, dataset, null, { genero: g }).coortes.map(row => row.concluintes));
+  assert.equal(conc('Feminino') + conc('Masculino'), conc(null));
+  const taxaF = quadroFormacao(formacao, modelo, dataset, null, { genero: 'Feminino' }).taxaGeral!, taxaM = quadroFormacao(formacao, modelo, dataset, null, { genero: 'Masculino' }).taxaGeral!;
+  assert.ok(taxaF > 8 && taxaF < taxaM, `registro das formadas ${taxaF}`);
+  const emprego = buildEmpregoCbo(dataset), cbo = (g: 'Feminino' | 'Masculino' | null) => remuneracaoPorCbo(emprego, hoje, null, g).find(row => row.cbo === '2142-05')!;
+  assert.ok(Math.abs(cbo('Feminino').estoque + cbo('Masculino').estoque - cbo(null).estoque) <= 1);
+  assert.ok(cbo('Feminino').salario < cbo(null).salario && cbo(null).salario < cbo('Masculino').salario);
+  const serie = (g: 'Feminino' | null) => empregoMensal(emprego, hoje, null, null, g).at(-1)!.estoque;
+  assert.ok(serie('Feminino') < serie(null) * 0.3);
+});
+
+test('título profissional segue o catálogo do Confea; técnico só o de segurança do trabalho', () => {
+  assert.ok(modelo.profissionais.every(row => tituloPorCodigo.get(row.titulo)?.modalidade === row.modalidade && tituloPorCodigo.get(row.titulo)?.nivel === row.nivel));
+  assert.ok(modelo.profissionais.filter(row => row.nivel === 'Técnico').every(row => row.modalidade === 'Segurança do trabalho'));
+  const civil = modalidadeNivel(modelo, dataset, null).find(row => row.modalidade === 'Civil')!.niveis.find(row => row.nivel === 'Engenheiro')!;
+  assert.equal(civil.titulos[0].codigo, '111-02-00');
+  assert.equal(sum(civil.titulos.map(row => row.ativos.length)), civil.ativos.length);
 });
