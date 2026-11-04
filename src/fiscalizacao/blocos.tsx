@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { municipioPorId } from '../domain/municipios';
 import { Chart, useSpMap, proporcaoSp } from '../painel/chart';
 import { brl, data, int, mes, money, pct, short } from '../painel/ui';
 import { rotulosGre, territorioGre } from '../painel/territorio';
@@ -83,7 +84,7 @@ export function MapaFiscalizacao({ ctx, metrica }: { ctx: CockpitCtx; metrica: M
   }, [ctx.dataset, ctx.fEstado, ctx.period, ctx.regionais]);
   const linhas = t.linhas, porId = useMemo(() => new Map(linhas.map(row => [row.id, row])), [linhas]);
   const cidadePorNome = useMemo(() => new Map(ctx.dataset.cities.map(row => [row.name, row])), [ctx.dataset]);
-  const cidade = ctx.cidadeId ? ctx.dataset.cities.find(row => row.id === ctx.cidadeId) : undefined;
+  const local = ctx.cidadeId ? municipioPorId(ctx.dataset).get(ctx.cidadeId) : undefined, cidade = local ? { id: local.id, name: local.nome } : undefined;
   const classes = useMemo(() => {
     const rows = linhas.filter(row => config.get(row) !== null).sort((a, b) => config.get(a)! - config.get(b)!), cores = rampaMapa(Boolean(config.alerta), dark);
     const cls = new Map(rows.map((row, index) => [row.id, Math.min(4, Math.floor(index / rows.length * 5))]));
@@ -370,7 +371,7 @@ export function ArtsAutores({ ctx }: { ctx: CockpitCtx }) {
 
 /** Pares de empresas (uma fecha, outra abre no lugar), pela regional da nova, separando os que têm o mesmo responsável técnico. */
 export function Sucessoes({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, malha } = ctx, rows = malha.sucessoes, cities = useMemo(() => new Map(ctx.dataset.cities.map(row => [row.id, row.name])), [ctx.dataset]);
+  const { tokens, malha } = ctx, rows = malha.sucessoes, cities = useMemo(() => new Map([...municipioPorId(ctx.dataset).values()].map(row => [row.id, row.nome])), [ctx.dataset]);
   const porGre = useMemo(() => { const gre = new Map(ctx.dataset.establishments.filter(row => row.branch === 'Matriz').map(row => [row.companyId, row.greId])), nomes = new Map(ctx.dataset.gres.map(row => [row.id, short(row.name)]));
     const map = new Map<string, typeof rows>(); for (const row of rows) { const id = gre.get(row.nova) ?? '—'; map.set(id, [...(map.get(id) ?? []), row]); }
     return [...map].map(([id, pares]) => ({ nome: nomes.get(id) ?? id, comRt: pares.filter(row => row.rtComum), sem: pares.filter(row => !row.rtComum) })).sort((a, b) => b.comRt.length + b.sem.length - a.comRt.length - a.sem.length).slice(0, 8); }, [rows, ctx.dataset]);

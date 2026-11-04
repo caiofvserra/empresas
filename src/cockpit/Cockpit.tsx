@@ -142,8 +142,7 @@ const filtros = (greIds: string[], period: number, cityId = ''): Filters => ({ .
 const camaraMap = camaraDaEmpresa(dataset);
 const hoje = dataset.snapshotDate;
 const datasReferencia = datasReferenciaDe(dataset);
-const cidadesDe = (greId: string) => dataset.cities.filter(row => !greId || row.greId === greId).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
-/** Painel de Profissionais (04/11/2026): o filtro de município lista os 645 municípios do estado, porque há profissionais em todos. */
+/** O filtro de município lista os 645 municípios do estado em todos os painéis (04/11/2026): há profissionais e empresas em todos. */
 const municipiosDe = (greId: string) => municipiosSp(dataset).filter(row => !greId || row.greId === greId).map(row => ({ id: row.id, name: row.nome, greId: row.greId })).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
 /** Camadas construídas uma vez por base lida em D (cache por referência da base). */
 const camadas = new WeakMap<Dataset, Camadas>();
@@ -286,7 +285,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
         <div className="ck-title" title={current.subtitle}><span className="ck-eyebrow">{painel.nome} <span className="ck-legenda-parceria" title="Os blocos com este sinal mostram o que um acordo com outro órgão permitiria medir. Até o acordo ser fechado, os números são demonstrativos."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span></span><h1>{current.title}</h1></div>
         <section className="ck-filters is-inline" aria-label="Filtros">
           <label className="ck-select"><select aria-label="Regional" value={gre} onChange={event => change(() => { setGre(event.target.value); setCidade(''); })}><option value="">Todas as regionais</option>{dataset.gres.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
-          <label className="ck-select"><select aria-label="Município" value={cidade} onChange={event => change(() => { const id = event.target.value; setCidade(id); if (id) setGre((painel.filtro === 'modalidade' ? municipiosDe('') : dataset.cities).find(row => row.id === id)?.greId ?? ''); })}><option value="">Todos os municípios</option>{(painel.filtro === 'modalidade' ? municipiosDe(gre) : cidadesDe(gre)).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
+          <label className="ck-select"><select aria-label="Município" value={cidade} onChange={event => change(() => { const id = event.target.value; setCidade(id); if (id) setGre(municipiosDe('').find(row => row.id === id)?.greId ?? ''); })}><option value="">Todos os municípios</option>{municipiosDe(gre).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
           {painel.filtro === 'modalidade'
             ? <><label className="ck-select"><select aria-label="Modalidade" value={modalidade} onChange={event => change(() => setModalidade(event.target.value))}><option value="">Todas as modalidades</option>{modalidades.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
               <label className="ck-select"><select aria-label="Gênero" value={genero} onChange={event => change(() => setGenero(event.target.value as '' | Genero))}><option value="">Mulheres e homens</option><option value="Feminino">Mulheres</option><option value="Masculino">Homens</option></select><ChevronDown size={14} /></label></>

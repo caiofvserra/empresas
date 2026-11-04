@@ -1,4 +1,5 @@
 import type { Art, Cao, Classification, Company, Contract, Dataset, EmploymentFact, Establishment, Filters, InspectionCase, Invoice, Movement, Priority, PublicRow, QualityEvent, Registration, TechnicalLink } from './types';
+import { municipioPorId } from './municipios';
 
 /** Pure analytical layer. Every count is derived from the same relational scope. */
 export interface Scope {
@@ -346,7 +347,7 @@ export function group(scope: Scope, dimension: 'city' | 'gre' | 'cnae' | 'size' 
   const add = (id: string, label: string, companyId: string) => { if (!id) return; labels.set(id, label); const members = buckets.get(id) ?? new Set<string>(); members.add(companyId); buckets.set(id, members); };
   for (const establishment of scope.establishments) {
     const company = companyLookup.get(establishment.companyId)!;
-    if (dimension === 'city') add(establishment.cityId, scope.dataset.cities.find(row => row.id === establishment.cityId)?.name ?? establishment.cityId, company.id);
+    if (dimension === 'city') add(establishment.cityId, municipioPorId(scope.dataset).get(establishment.cityId)?.nome ?? establishment.cityId, company.id);
     if (dimension === 'gre') add(establishment.greId, scope.dataset.gres.find(row => row.id === establishment.greId)?.name ?? establishment.greId, company.id);
     if (dimension === 'cnae') for (const code of [establishment.cnaeMain, ...establishment.cnaeSecondary]) add(code, scope.dataset.cnaes.find(row => row.code === code)?.label ?? code, company.id);
     if (dimension === 'size') add(company.size, company.size, company.id);
@@ -393,8 +394,8 @@ export function detectAnomalies(scope: Scope, period = scope.filters.period): An
     ids.add(establishment.companyId); byMonth.set(month, ids); births.set(key, byMonth); titles.set(key, title);
   };
   for (const establishment of scope.establishments) {
-    const city = scope.dataset.cities.find(row => row.id === establishment.cityId);
-    addBirth(`births-city:${establishment.cityId}`, `Aberturas empresariais em ${city?.name ?? establishment.cityId}`, establishment);
+    const city = municipioPorId(scope.dataset).get(establishment.cityId);
+    addBirth(`births-city:${establishment.cityId}`, `Aberturas empresariais em ${city?.nome ?? establishment.cityId}`, establishment);
     for (const code of [establishment.cnaeMain, ...establishment.cnaeSecondary]) addBirth(`births-cnae:${code}`, `Aberturas com CNAE ${code}`, establishment);
   }
   for (const [metric, byMonth] of births) channels.push({ metric, title: titles.get(metric)!, values: series.map(row => byMonth.get(row.date.slice(0, 7))?.size ?? 0), minimum: 5, members: month => [...(byMonth.get(month) ?? [])], limitation: 'Conta empresas com abertura de estabelecimento no mês; CNAEs principal e secundários podem se sobrepor. Não é estimativa de obrigação de registro.' });
@@ -436,7 +437,7 @@ export function exportCsv(scope: Scope, permissions: ExportPermissions, columns?
     const company = companies.get(establishment.companyId)!;
     const registrations = scope.registrations.filter(row => row.companyId === company.id);
     const invoices = scope.invoices.filter(row => row.companyId === company.id);
-    const row: Record<ExportColumn, string | number> = { companyId: company.id, name: company.name, tradeName: company.tradeName, cnpj: establishment.cnpj, branch: establishment.branch, city: scope.dataset.cities.find(city => city.id === establishment.cityId)?.name ?? '', gre: scope.dataset.gres.find(gre => gre.id === establishment.greId)?.name ?? '', cnae: establishment.cnaeMain, size: company.size, rfbStatus: establishment.rfbStatus, creaStatus: registrations.some(registration => registration.status === 'Ativo') ? 'Ativa' : registrations.length ? 'Inativa' : 'Sem correspondência', openAmount: sum(invoices, invoice => outstanding(invoice, scope.anchor)).toFixed(2), overdueAmount: sum(invoices.filter(invoice => invoice.dueDate < scope.anchor), invoice => outstanding(invoice, scope.anchor)).toFixed(2) };
+    const row: Record<ExportColumn, string | number> = { companyId: company.id, name: company.name, tradeName: company.tradeName, cnpj: establishment.cnpj, branch: establishment.branch, city: municipioPorId(scope.dataset).get(establishment.cityId)?.nome ?? '', gre: scope.dataset.gres.find(gre => gre.id === establishment.greId)?.name ?? '', cnae: establishment.cnaeMain, size: company.size, rfbStatus: establishment.rfbStatus, creaStatus: registrations.some(registration => registration.status === 'Ativo') ? 'Ativa' : registrations.length ? 'Inativa' : 'Sem correspondência', openAmount: sum(invoices, invoice => outstanding(invoice, scope.anchor)).toFixed(2), overdueAmount: sum(invoices.filter(invoice => invoice.dueDate < scope.anchor), invoice => outstanding(invoice, scope.anchor)).toFixed(2) };
     return selected.map(column => csvCell(row[column])).join(';');
   });
   return '\uFEFF' + [selected.map(column => csvCell(labels[column])).join(';'), ...lines].join('\r\n');

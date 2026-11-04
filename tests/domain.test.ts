@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { dataset, generateDataset } from '../src/domain/dataset';
 import type { Dataset, MovementType, RegistrationStatus } from '../src/domain/types';
+import { municipioPorId } from '../src/domain/municipios';
 
 const d = dataset;
 const byId = <T extends { id: string }>(rows: T[]) => new Map(rows.map(row => [row.id, row]));
@@ -88,11 +89,15 @@ test('CNPJ master is valid and unique, with one matriz and matching roots for ev
 
 test('establishments, registrations and movements preserve their foreign keys and company ownership', () => {
   for (const city of d.cities) assert(gres.has(city.greId), city.id);
+  // Os estabelecimentos ficam nos 645 municípios, com a GRE da tabela oficial; todo município tem pelo menos um.
+  const municipios = municipioPorId(d);
+  assert.equal(municipios.size, 645);
+  assert.equal(new Set(d.establishments.map(row => row.cityId)).size, 645);
   for (const establishment of d.establishments) {
-    assert(cities.has(establishment.cityId), establishment.id);
-    assert(cities.has(establishment.creaCityId), establishment.id);
+    assert(municipios.has(establishment.cityId), establishment.id);
+    assert(municipios.has(establishment.creaCityId), establishment.id);
     assert(gres.has(establishment.greId), establishment.id);
-    assert.equal(cities.get(establishment.cityId)!.greId, establishment.greId);
+    assert.equal(municipios.get(establishment.cityId)!.greId, establishment.greId);
     assert(cnaeCodes.has(establishment.cnaeMain), `${establishment.id}: unknown main CNAE`);
     for (const code of establishment.cnaeSecondary) assert(cnaeCodes.has(code), code);
     date(establishment.openedAt, establishment.id);
@@ -375,7 +380,7 @@ test('deliberately invalid and duplicate public rows are traceable through quali
   const publicCnpjs = new Map<string, typeof d.publicRows>();
   for (const row of d.publicRows) {
     assert(establishments.has(row.establishmentId), row.id);
-    assert(cities.has(row.cityId), row.id);
+    assert(municipioPorId(d).has(row.cityId), row.id);
     assert(!row.cnae || cnaeCodes.has(row.cnae), row.id);
     publicCnpjs.set(row.cnpj, [...(publicCnpjs.get(row.cnpj) ?? []), row]);
   }

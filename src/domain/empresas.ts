@@ -1,4 +1,5 @@
 import type { Dataset } from './types';
+import { municipioPorId, municipiosSp } from './municipios';
 import type { Scope } from './engine';
 import type { EnterpriseModel } from '../enterprise-v10/types';
 import { between, chance, sum } from './hash';
@@ -36,7 +37,7 @@ const somaMovel = (values: number[], index: number) => sum(values.slice(Math.max
  */
 export function ritmoEconomico(view: Dataset, greId: string | null, companyIds: Set<string> | null, meses = 24, cityId: string | null = null): Ritmo {
   const months = view.months.filter(month => month <= view.snapshotDate.slice(0, 7));
-  const cidades = view.cities.filter(row => (!greId || row.greId === greId) && (!cityId || row.id === cityId));
+  const cidades = municipiosSp(view).filter(row => (!greId || row.greId === greId) && (!cityId || row.id === cityId));
   const cidadeDe = new Map(view.establishments.map(row => [row.id, row.cityId]));
   const dentro = (companyId: string, gre: string, city?: string) => (!greId || gre === greId) && (!cityId || city === cityId) && (!companyIds || companyIds.has(companyId));
   const abertas = new Map<string, number>(), registros = new Map<string, number>(), primeira = new Map<string, { data: string; gre: string; city: string }>();
@@ -45,7 +46,7 @@ export function ritmoEconomico(view: Dataset, greId: string | null, companyIds: 
   for (const row of view.registrations) { const atual = primeira.get(row.companyId); if (!atual || row.startedAt < atual.data) primeira.set(row.companyId, { data: row.startedAt, gre: places.get(row.establishmentId)?.greId ?? '', city: cidadeDe.get(row.establishmentId) ?? '' }); }
   for (const [companyId, row] of primeira) if (dentro(companyId, row.gre, row.city)) registros.set(row.data.slice(0, 7), (registros.get(row.data.slice(0, 7)) ?? 0) + 1);
   // O emprego formal sai em totais por regional: com um município escolhido, a série é a da regional dele.
-  const greEmprego = greId ?? (cityId ? view.cities.find(row => row.id === cityId)?.greId ?? null : null);
+  const greEmprego = greId ?? (cityId ? municipioPorId(view).get(cityId)?.greId ?? null : null);
   const engenharia = new Set(cbos.filter(row => row.engenharia).map(row => row.cbo)), emprego = new Map<string, number>();
   for (const row of buildEmpregoCbo(view)) if (engenharia.has(row.cbo) && (!greEmprego || row.greId === greEmprego)) emprego.set(row.month, (emprego.get(row.month) ?? 0) + row.estoque);
   const serieAbertas = months.map(month => abertas.get(month) ?? 0), serieRegistros = months.map(month => registros.get(month) ?? 0);
@@ -142,7 +143,7 @@ export interface LinhaTerritorio { id: string; nome: string; greId: string; tota
  * regional é a soma dos seus municípios. A classe (registro obrigatório ou dependente de análise) não separa as linhas aqui.
  */
 export function territorio(scope: Scope, model: EnterpriseModel) {
-  const view = scope.dataset, places = new Map(view.establishments.map(row => [row.id, row])), cidades = new Map(view.cities.map(row => [row.id, row]));
+  const view = scope.dataset, places = new Map(view.establishments.map(row => [row.id, row])), cidades = new Map([...municipioPorId(view).values()].map(row => [row.id, { name: row.nome }]));
   const vigente = new Set(model.metadata.activeEligibleEstablishmentIds), historico = new Set(model.metadata.inactiveMatchedEstablishmentIds);
   const porCidade = new Map<string, LinhaTerritorio>(), porGre = new Map<string, LinhaTerritorio>();
   const linha = (map: Map<string, LinhaTerritorio>, id: string, nome: string, greId: string) => { let row = map.get(id); if (!row) { row = { id, nome, greId, total: 0, registrados: [], historico: [], semRegistro: [], taxa: null }; map.set(id, row); } return row; };
