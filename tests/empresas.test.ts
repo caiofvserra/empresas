@@ -7,7 +7,7 @@ import { defaultFilters } from '../src/domain/types.ts';
 import { datasetAt } from '../src/domain/tempo.ts';
 import { selectEnterpriseScope } from '../src/enterprise-v10/filters.ts';
 import { buildEnterpriseModel } from '../src/enterprise-v10/model.ts';
-import { antiguidadeRegistro, artsMensais, cadastroIncompleto, cnaesDoMercado, faixasAntiguidade, idadeCapital, artsPorProfissional, mercadoEmArvore, porCapital, registrosPorCamara, ritmoEconomico, territorio } from '../src/domain/empresas.ts';
+import { antiguidadeRegistro, artsMensais, cadastroIncompleto, cnaesDoMercado, faixasAntiguidade, idadeCapital, artsPorProfissional, agrupaOutras, mercadoEmArvore, porCapital, registrosPorCamara, ritmoEconomico, territorio } from '../src/domain/empresas.ts';
 import { camaraDaEmpresa, camaraPorCnae, camaras } from '../src/painel/analise.ts';
 import { buildProfissionais } from '../src/domain/profissionais.ts';
 import { buildCredenciamentos, buildJucesp, buildSociosPf, parcerias, quadroCredenciamentos, quadroDenominacao, quadroJucesp } from '../src/domain/parcerias.ts';
@@ -119,7 +119,17 @@ test('mapa e município: regionais e municípios somam o mesmo mercado, e o filt
 test('mapa de árvore, matriz de tempo e capital e calor de registros fecham com as contagens', () => {
   const ramos = mercadoEmArvore(scope, model, camaraPorCnae);
   assert.equal(sum(ramos.map(row => row.total)), sum(cnaesDoMercado(scope, model, Number.MAX_SAFE_INTEGER).map(row => row.total)));
-  for (const ramo of ramos) assert.equal(ramo.total, sum(ramo.atividades.map(row => row.total)));
+  for (const ramo of ramos) { assert.equal(ramo.total, sum(ramo.atividades.map(row => row.total))); assert.equal(ramo.total, sum(ramo.todas.map(row => row.total))); }
+  // Toda câmara aparece; "Outras atividades" junta as menores até 10% da câmara (sem limite de quantidade) e nunca uma atividade sozinha.
+  const todas = mercadoEmArvore(scope, model, camaraPorCnae, { camaras });
+  assert.deepEqual([...todas.map(row => row.camara)].filter(nome => camaras.includes(nome as never)).sort(), [...camaras].sort());
+  for (const ramo of todas) { const outras = ramo.atividades.find(row => row.agrupadas); if (!outras) continue;
+    assert.ok(outras.agrupadas!.length >= 2); assert.ok(outras.total <= ramo.total * 0.1 + 1e-9);
+    assert.equal(outras.total, sum(outras.agrupadas!.map(row => row.total))); }
+  const linhas = Array.from({ length: 12 }, (_, k) => ({ code: `c${k}`, label: `c${k}`, classe: 'Sim' as const, registrados: [], semRegistro: Array(k < 3 ? 30 : 2).fill('x'), total: k < 3 ? 30 : 2, cobertura: 0, secundaria: 0 }));
+  const regra = agrupaOutras(linhas, 0.1), compacto = agrupaOutras(linhas, 0.1, 4);
+  assert.equal(regra.at(-1)!.code, 'outras'); assert.equal(regra.at(-1)!.agrupadas!.length, 5); // 5×2 = 10 de 108 cabem em 10%
+  assert.equal(compacto.length, 5); assert.equal(compacto.at(-1)!.agrupadas!.length, 8);
   const m = idadeCapital(scope, model), ativas = model.metadata.activeCompanyIds.length;
   assert.equal(m.celulas.length, 25);
   assert.equal(sum(m.celulas.map(row => row.ids.length)), ativas);

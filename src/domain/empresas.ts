@@ -65,20 +65,22 @@ export function ritmoEconomico(view: Dataset, greId: string | null, companyIds: 
 }
 
 /* ---------- Atividades (CNAE) com mais estabelecimentos sem registro ---------- */
-export interface LinhaCnae { code: string; label: string; classe: 'Sim' | 'Passível'; registrados: string[]; semRegistro: string[]; total: number; cobertura: number | null }
+/** Uma atividade (CNAE) do mercado. `secundaria` conta os estabelecimentos que também têm esta atividade como secundária, mas já foram contados na atividade que os enquadra; `agrupadas` só existe na linha "Outras atividades". */
+export interface LinhaCnae { code: string; label: string; classe: 'Sim' | 'Passível'; registrados: string[]; semRegistro: string[]; total: number; cobertura: number | null; secundaria: number; agrupadas?: LinhaCnae[] }
 /** CNAE que põe o estabelecimento na lista: o principal, se estiver na lista; senão, o primeiro secundário que estiver. */
 export function cnaesDoMercado(scope: Scope, model: EnterpriseModel, limite = 12): LinhaCnae[] {
   const view = scope.dataset, cnaes = new Map(view.cnaes.map(row => [row.code, row])), places = new Map(scope.establishments.map(row => [row.id, row]));
-  const ativos = new Set(model.metadata.activeEligibleEstablishmentIds), rows = new Map<string, LinhaCnae>();
+  const ativos = new Set(model.metadata.activeEligibleEstablishmentIds), rows = new Map<string, LinhaCnae>(), secundaria = new Map<string, number>();
   for (const id of model.metadata.eligibleEstablishmentIds) {
     const place = places.get(id); if (!place) continue;
     const classe = classeDoEstabelecimento(view, place); if (!classe) continue;
     const listado = (code: string) => { const c = cnaes.get(code); return c && c.classification !== 'Não classificado'; };
     const code = listado(place.cnaeMain) ? place.cnaeMain : place.cnaeSecondary.find(listado) ?? place.cnaeMain;
-    const row = rows.get(code) ?? { code, label: cnaes.get(code)?.label ?? code, classe, registrados: [], semRegistro: [], total: 0, cobertura: null };
+    const row = rows.get(code) ?? { code, label: cnaes.get(code)?.label ?? code, classe, registrados: [], semRegistro: [], total: 0, cobertura: null, secundaria: 0 };
     (ativos.has(id) ? row.registrados : row.semRegistro).push(id); row.total++; rows.set(code, row);
+    for (const outro of new Set(place.cnaeSecondary)) if (outro !== code && listado(outro)) secundaria.set(outro, (secundaria.get(outro) ?? 0) + 1);
   }
-  return [...rows.values()].map(row => ({ ...row, cobertura: row.total ? row.registrados.length / row.total * 100 : null }))
+  return [...rows.values()].map(row => ({ ...row, secundaria: secundaria.get(row.code) ?? 0, cobertura: row.total ? row.registrados.length / row.total * 100 : null }))
     .sort((a, b) => b.semRegistro.length - a.semRegistro.length || b.total - a.total).slice(0, limite);
 }
 
@@ -156,14 +158,34 @@ export function territorio(scope: Scope, model: EnterpriseModel) {
 }
 
 /* ---------- Mercado por câmara e atividade, para o mapa de árvore ---------- */
-export interface RamoMercado { camara: string; total: number; registrados: number; atividades: LinhaCnae[] }
-/** As atividades da lista agrupadas pela câmara: o tamanho de cada retângulo é o número de estabelecimentos, e a cor, a parte registrada. */
-export function mercadoEmArvore(scope: Scope, model: EnterpriseModel, camaraDoCnae: Record<string, string>): RamoMercado[] {
-  const ramos = new Map<string, RamoMercado>();
+/**
+ * Regra de divisão do mapa de árvore:
+ * - cada estabelecimento entra uma vez só, na atividade que o enquadra (a principal; a secundária só quando a principal não está na lista), para as partes somarem o mercado da câmara;
+ * - o tamanho é o número desses estabelecimentos e a porcentagem é a parte deles com registro ativo;
+ * - em cada câmara, as atividades menores que juntas somam até `resto` (10%) do mercado dela vão para "Outras atividades";
+ * - `maxPorCamara` limita quantas atividades aparecem com nome (o bloco pequeno mostra menos; ampliado, mostra todas acima da regra dos 10%);
+ * - toda câmara de `camaras` aparece, mesmo sem estabelecimento.
+ */
+export interface RamoMercado { camara: string; total: number; registrados: number; atividades: LinhaCnae[]; todas: LinhaCnae[] }
+/** `maxPorCamara` pode ser um número ou uma função da parte da câmara no mercado todo (0 a 1), para câmaras maiores mostrarem mais atividades. */
+export interface OpcoesArvore { camaras?: readonly string[]; resto?: number; maxPorCamara?: number | ((parte: number) => number) }
+export function agrupaOutras(linhas: LinhaCnae[], resto = 0.1, maxPorCamara = Number.POSITIVE_INFINITY): LinhaCnae[] {
+  const ordem = [...linhas].sort((a, b) => b.total - a.total || a.code.localeCompare(b.code)), total = sum(ordem.map(row => row.total));
+  let corte = ordem.length, acumulado = 0;
+  while (corte > 1 && acumulado + ordem[corte - 1].total <= resto * total) { acumulado += ordem[corte - 1].total; corte--; }
+  corte = Math.min(corte, Math.max(1, maxPorCamara));
+  if (ordem.length - corte < 2) return ordem; // uma atividade sozinha fica com o próprio nome
+  const agrupadas = ordem.slice(corte), registrados = agrupadas.flatMap(row => row.registrados), semRegistro = agrupadas.flatMap(row => row.semRegistro), n = registrados.length + semRegistro.length;
+  return [...ordem.slice(0, corte), { code: 'outras', label: `Outras ${agrupadas.length} atividades`, classe: 'Sim', registrados, semRegistro, total: n, cobertura: n ? registrados.length / n * 100 : null, secundaria: 0, agrupadas }];
+}
+export function mercadoEmArvore(scope: Scope, model: EnterpriseModel, camaraDoCnae: Record<string, string>, opcoes: OpcoesArvore = {}): RamoMercado[] {
+  const ramos = new Map<string, RamoMercado>((opcoes.camaras ?? []).map(camara => [camara, { camara, total: 0, registrados: 0, atividades: [], todas: [] }]));
   for (const row of cnaesDoMercado(scope, model, Number.MAX_SAFE_INTEGER)) {
-    const camara = camaraDoCnae[row.code] ?? 'Sem câmara definida', ramo = ramos.get(camara) ?? { camara, total: 0, registrados: 0, atividades: [] };
-    ramo.total += row.total; ramo.registrados += row.registrados.length; ramo.atividades.push(row); ramos.set(camara, ramo);
+    const camara = camaraDoCnae[row.code] ?? 'Sem câmara definida', ramo = ramos.get(camara) ?? { camara, total: 0, registrados: 0, atividades: [], todas: [] };
+    ramo.total += row.total; ramo.registrados += row.registrados.length; ramo.todas.push(row); ramos.set(camara, ramo);
   }
+  const geral = sum([...ramos.values()].map(ramo => ramo.total)), limite = opcoes.maxPorCamara;
+  for (const ramo of ramos.values()) ramo.atividades = agrupaOutras(ramo.todas, opcoes.resto ?? 0.1, typeof limite === 'function' ? limite(geral ? ramo.total / geral : 0) : limite);
   return [...ramos.values()].sort((a, b) => b.total - a.total);
 }
 
