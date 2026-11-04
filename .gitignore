@@ -10,3 +10,4 @@ var/source-ingestion/
 dist-painel/
 dist-empresas/
 dist-profissionais/
+dist-fiscalizacao/

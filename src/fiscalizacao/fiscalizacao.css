@@ -1,0 +1,43 @@
+/*
+ * Painel de Fiscalização e malha fina (03/11/2026): as mesmas regras dos painéis de Empresas e de Profissionais. Cada página cabe
+ * numa tela de computador, sem rolagem; as linhas da grade dividem a altura da tela e os blocos têm larguras diferentes. O visual
+ * enxuto (.is-enxuto) vem de empresas.css. Só abaixo de 700 px de altura, ou em telas estreitas, a página volta a rolar.
+ */
+.ck-grid-fs-acoes { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "mp mp mp mp mp me me me me me me me"
+  "mp mp mp mp mp ds ds ds ds mu mu mu"
+  "mp mp mp mp mp or or or or mu mu mu"; }
+.ck-grid-fs-resultado { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "cv cv cv cv cv cv ft ft ft ft ft ft"
+  "bx bx bx bx ta ta ta ta rc rc rc rc"; }
+.ck-grid-fs-malha { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "mf1 mf1 mf1 mf1 mf1 mf2 mf2 mf2 mf2 mh mh mh"
+  "mf1 mf1 mf1 mf1 mf1 mf2 mf2 mf2 mf2 mf6 mf6 mf6"
+  "mf3 mf3 mf3 mf4 mf4 mf4 mf4 mf5 mf5 mf5 mf5 mf5"; }
+.ck-grid-fs-contratos { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "mf8 mf8 mf8 mf8 mf8 mf8 mf7 mf7 mf7 sl sl sl"
+  "mp mp mp mp mp pca pca pca tc tc tc tc"; }
+.ck-grid-fs-obras { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "ob ob ob ob ob ob os os os ol ol ol"
+  "cn cn cn cn cp cp cp li li li li li"; }
+.ck-grid-fs-acoes, .ck-grid-fs-resultado, .ck-grid-fs-malha, .ck-grid-fs-contratos, .ck-grid-fs-obras { align-content: stretch; }
+@media (max-height: 699px) and (min-width: 1101px) {
+  .ck-grid-fs-acoes, .ck-grid-fs-malha { grid-template-rows: auto repeat(3, 230px); }
+  .ck-grid-fs-resultado, .ck-grid-fs-contratos, .ck-grid-fs-obras { grid-template-rows: auto repeat(2, 300px); }
+}
+@media (max-width: 1100px) {
+  .ck-grid-fs-acoes, .ck-grid-fs-resultado, .ck-grid-fs-malha, .ck-grid-fs-contratos, .ck-grid-fs-obras { grid-template-rows: auto; grid-auto-rows: 340px; }
+}
+
+/* Lista que ocupa o bloco inteiro (os maiores contratos e obras sem ART): uma linha por item, sem rolagem dentro do bloco. */
+.side-list.is-cheia { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.side-list.is-cheia li { min-width: 0; }
+.side-list.is-cheia .is-acao { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; text-align: left; }
+.side-list.is-cheia .is-acao span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 11px; }
+.side-list.is-cheia .is-acao small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-list.is-cheia .side-note { font-size: 11px; color: var(--muted); padding: 6px; }

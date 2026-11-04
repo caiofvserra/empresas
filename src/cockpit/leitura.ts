@@ -9,17 +9,20 @@ import type { QuadroConselho } from '../domain/conselho';
 import type { ResultadoFt } from '../painel/forcas';
 
 /** V20 · leitura do período: frases curtas com o destaque de cada assunto, recalculadas a cada filtro e data de referência. */
-/** Abas do painel geral e páginas dos painéis separados: Empresas (01/11/2026) e Profissionais (03/11/2026). */
-export type PaginaGeral = 'presidencia' | 'fiscalizacao' | 'malha' | 'receita' | 'entidades' | 'controle' | 'atendimento' | 'metodo';
+/** Abas do painel geral e páginas dos painéis separados: Empresas (01/11/2026), Profissionais (03/11/2026) e Fiscalização (03/11/2026). */
+export type PaginaGeral = 'presidencia' | 'receita' | 'entidades' | 'controle' | 'atendimento' | 'metodo';
 export type PaginaEmpresas = 'mercado' | 'evolucao' | 'rt' | 'vinculos';
 export type PaginaProfissionais = 'profissionais' | 'fluxo' | 'atuacao' | 'formacao' | 'trabalho';
-export type PageId = PaginaGeral | PaginaEmpresas | PaginaProfissionais;
-export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento', 'metodo'];
+export type PaginaFiscalizacao = 'fiscalizacao' | 'resultado' | 'malha' | 'contratos' | 'obras';
+export type PageId = PaginaGeral | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao;
+export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'receita', 'entidades', 'controle', 'atendimento', 'metodo'];
 export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos'];
 export const pageIdsProfissionais: PaginaProfissionais[] = ['profissionais', 'fluxo', 'atuacao', 'formacao', 'trabalho'];
-export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageIdsProfissionais];
+export const pageIdsFiscalizacao: PaginaFiscalizacao[] = ['fiscalizacao', 'resultado', 'malha', 'contratos', 'obras'];
+export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao];
 /** Painel em que cada página está: um destaque de outro painel abre aquele painel. */
-export const painelDaPagina = (page: PageId): 'geral' | 'empresas' | 'profissionais' => (pageIdsEmpresas as PageId[]).includes(page) ? 'empresas' : (pageIdsProfissionais as PageId[]).includes(page) ? 'profissionais' : 'geral';
+export type PainelDaPagina = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao';
+export const painelDaPagina = (page: PageId): PainelDaPagina => (pageIdsEmpresas as PageId[]).includes(page) ? 'empresas' : (pageIdsProfissionais as PageId[]).includes(page) ? 'profissionais' : (pageIdsFiscalizacao as PageId[]).includes(page) ? 'fiscalizacao' : 'geral';
 export interface Metas { cobertura: number; rt: number; adimplencia: number; recuperacao: number; regularizacao: number; atendimento: number }
 export const metasPadrao: Metas = { cobertura: 65, rt: 40, adimplencia: 60, recuperacao: 30, regularizacao: 50, atendimento: 80 };
 export interface Insight { tone: 'good' | 'bad' | 'neutral'; strong: string; text: string; page: PageId }
@@ -49,15 +52,15 @@ export function leitura(input: LeituraInput): Insight[] {
   if (input.cobertura !== null) out.push({ tone: input.cobertura >= metas.cobertura ? 'good' : 'bad', strong: pct(input.cobertura), text: `dos estabelecimentos com atividade de engenharia na Receita têm registro ou visto no Crea-SP, ${Math.abs(input.cobertura - metas.cobertura).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos ${input.cobertura >= metas.cobertura ? 'acima' : 'abaixo'} da meta de ${metas.cobertura}%.`, page: 'mercado' });
   const lacuna = [...input.linhas].sort((a, b) => b.semRegistro - a.semRegistro)[0];
   if (lacuna?.semRegistro) out.push({ tone: 'neutral', strong: lacuna.curto, text: `é a regional com mais estabelecimentos de engenharia sem registro encontrado: ${int(lacuna.semRegistro)}. Não estar no cadastro não quer dizer que a empresa esteja irregular.`, page: 'presidencia' });
-  if (input.conversao?.taxa != null) out.push({ tone: input.conversao.taxa >= metas.regularizacao ? 'good' : 'bad', strong: pct(input.conversao.taxa), text: `das ações de ${input.conversao.trimestre.replace('-', ' ')} terminaram em regularização em até 180 dias. A ação pode não ter sido a causa.`, page: 'fiscalizacao' });
-  if (input.tempo?.mediana != null) out.push({ tone: 'neutral', strong: `${int(input.tempo.mediana)} dias`, text: `é o tempo típico entre o indício aparecer e a primeira ação, e ${int(input.tempo.abertos)} indícios do período ainda não tiveram ação.`, page: 'fiscalizacao' });
+  if (input.conversao?.taxa != null) out.push({ tone: input.conversao.taxa >= metas.regularizacao ? 'good' : 'bad', strong: pct(input.conversao.taxa), text: `das ações de ${input.conversao.trimestre.replace('-', ' ')} terminaram em regularização em até 180 dias. A ação pode não ter sido a causa.`, page: 'resultado' });
+  if (input.tempo?.mediana != null) out.push({ tone: 'neutral', strong: `${int(input.tempo.mediana)} dias`, text: `é o tempo típico entre o indício aparecer e a primeira ação, e ${int(input.tempo.abertos)} indícios do período ainda não tiveram ação.`, page: 'resultado' });
   const ft = input.forcas?.filter(row => row.fechada && row.diferenca !== null).at(-1);
-  if (ft) out.push({ tone: ft.diferenca! >= 0 ? 'good' : 'bad', strong: `${ft.diferenca! >= 0 ? '+' : ''}${ft.diferenca!.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} pontos`, text: `de regularização em 180 dias na força-tarefa ${ft.ft.id} (${int(ft.grupo.acoes.length)} ações), em relação às ações do mesmo tipo e período fora dela (${int(ft.comparacao.acoes.length)}).`, page: 'fiscalizacao' });
+  if (ft) out.push({ tone: ft.diferenca! >= 0 ? 'good' : 'bad', strong: `${ft.diferenca! >= 0 ? '+' : ''}${ft.diferenca!.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} pontos`, text: `de regularização em 180 dias na força-tarefa ${ft.ft.id} (${int(ft.grupo.acoes.length)} ações), em relação às ações do mesmo tipo e período fora dela (${int(ft.comparacao.acoes.length)}).`, page: 'resultado' });
   if (malha.empresas.length) out.push({ tone: 'neutral', strong: `${int(malha.confirmadas.length)} empresas`, text: `têm indício confirmado por documento ou CNPJ exato, entre ${int(malha.empresas.length)} com algum indício para análise. ${pct(malha.comAcao.length / malha.empresas.length * 100)} delas já tiveram ação fiscal.`, page: 'malha' });
   const semRegistro = malha.contratos.filter(row => row.situacao === 'Sem registro na data');
-  if (semRegistro.length) out.push({ tone: 'bad', strong: brl(semRegistro.reduce((total, row) => total + row.valor, 0)), text: `em ${int(semRegistro.length)} contratos públicos de engenharia foram para fornecedores sem registro na data do contrato.`, page: 'malha' });
+  if (semRegistro.length) out.push({ tone: 'bad', strong: brl(semRegistro.reduce((total, row) => total + row.valor, 0)), text: `em ${int(semRegistro.length)} contratos públicos de engenharia foram para fornecedores sem registro na data do contrato.`, page: 'contratos' });
   const semVinculo = malha.contratosComChave.filter(row => row.vinculo === 'Não identificado').length;
-  if (malha.contratosComChave.length) out.push({ tone: 'neutral', strong: `${int(semVinculo)} contratos`, text: `públicos seguem sem ART identificada, entre ${int(malha.contratosComChave.length)} com dados para a busca. São prioridade para verificar, e não infrações.`, page: 'malha' });
+  if (malha.contratosComChave.length) out.push({ tone: 'neutral', strong: `${int(semVinculo)} contratos`, text: `públicos seguem sem ART identificada, entre ${int(malha.contratosComChave.length)} com dados para a busca. São prioridade para verificar, e não infrações.`, page: 'contratos' });
   out.push({ tone: input.arts.antes && input.arts.atual < input.arts.antes ? 'bad' : 'good', strong: `${int(input.arts.atual)} ARTs`, text: `de empresas no período (${vs(change(input.arts.atual, input.arts.antes))}). ${input.rt === null ? '—' : pct(input.rt)} das empresas registradas têm responsável técnico.`, page: 'rt' });
   const p = input.profissionais;
   if (p) {

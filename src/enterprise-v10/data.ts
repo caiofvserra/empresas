@@ -26,7 +26,7 @@ export function buildEnterpriseEvidence(dataset: Dataset): EnterpriseEvidence {
   for (const art of dataset.arts) artsByCompany.set(art.companyId, [...(artsByCompany.get(art.companyId) ?? []), art]);
   const contractArt: ContractArtEvidence[] = [];
   for (const [index, contract] of dataset.contracts.entries()) {
-    if (index % 3 !== 0 || !classifyDigitalObject(contract.object).engineering) continue;
+    if (index % 3 === 2 || !classifyDigitalObject(contract.object).engineering) continue; // dois em cada três contratos com a ART citando o contrato (03/11/2026)
     const art = (artsByCompany.get(contract.companyId) ?? []).filter(row => row.date >= contract.date && row.date <= addDays(contract.date, 365) && row.date <= dataset.snapshotDate).sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id))[0];
     if (art) contractArt.push({ id: `DOC-${contract.id}-${art.id}`, contractId: contract.id, artId: art.id, companyId: contract.companyId,
       recordedAt: art.date, source: 'Ponte documental fictícia explícita V10; não inferida como evidência real por CNPJ ou texto.' });

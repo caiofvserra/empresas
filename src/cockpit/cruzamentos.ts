@@ -107,6 +107,8 @@ export interface Malha {
   contratos: ContratoPublico[]; contratosComChave: ContratoPublico[];
   /** Detalhe das regras novas da V20. */
   autoresAnormais: { id: string; nome: string; arts: number; empresas: number; regionais: number }[]; medianaArts: number;
+  /** ARTs de cada autor no último ano, para mostrar a distribuição e onde fica o limite da regra (painel de Fiscalização, 03/11/2026). */
+  volumesArt: number[]; limiteArt: number;
   obrasSemFiscalizacao: ContratoPublico[]; obrasComExecucao: ContratoPublico[];
   sucessoes: Sucessao[]; nomesSemRegistro: string[];
 }
@@ -201,5 +203,5 @@ export function malhaFina(scope: Scope, model: EnterpriseModel, f: Fiscalizacao,
   const confirmadas = unique(indicios.filter(item => item.status === 'Confirmado').flatMap(item => item.empresas));
   return { indicios, empresas, comAcao: empresas.filter(id => acted.has(id)), multiplos: empresas.filter(id => contagem.get(id)! > 1), confirmadas,
     semRegistro, semRegistroSim, semRegistroPassivel, cnpjInativo, contratos, contratosComChave,
-    autoresAnormais, medianaArts, obrasSemFiscalizacao, obrasComExecucao, sucessoes, nomesSemRegistro };
+    autoresAnormais, medianaArts, volumesArt: volumes, limiteArt: Math.max(LIMITE_ART, 3 * medianaArts), obrasSemFiscalizacao, obrasComExecucao, sucessoes, nomesSemRegistro };
 }

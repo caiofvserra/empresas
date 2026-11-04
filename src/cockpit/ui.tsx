@@ -10,6 +10,8 @@ import type { CockpitCtx } from './contexto';
 import { fichaDe, parceriasDe } from './fichas';
 import type { FichaBloco } from './fichas';
 import type { Profissional } from '../domain/profissionais';
+import { statusAjuda } from './cruzamentos';
+import type { StatusLigacao } from './cruzamentos';
 
 /**
  * Componentes do cockpit V20: bloco com ampliação e ficha (i), cartão de indicador com ficha e selo de dado real.
@@ -17,6 +19,8 @@ import type { Profissional } from '../domain/profissionais';
  * e quando foi calculado (a data de referência do painel). Desde a V22, um bloco cuja ficha declara `parceria`
  * mostra o marcador "!" no título: o indicador só sai do demonstrativo quando o acordo com aquele parceiro existir.
  */
+/** Confiança da ligação entre as bases (confirmado, candidato, contexto), usada na aba Método. Saiu da antiga aba Malha fina do painel geral em 03/11/2026. */
+export const Status = ({ status }: { status: StatusLigacao }) => <span className={`status is-${status.toLowerCase()}`} title={statusAjuda[status]}>{status}</span>;
 /** Marcador "!" de indicador que depende de parceria; o título diz qual acordo falta. */
 export function Parceria({ id, compacto }: { id: ParceriaId; compacto?: boolean }) {
   const p = parceriaPorId[id];
