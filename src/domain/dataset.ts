@@ -334,10 +334,19 @@ export function generateDataset(seed = 20260930): Dataset {
     { object: 'Serviços de operação e manutenção', category: 'Objeto ambíguo' },
   ];
   const contracts: Contract[] = Array.from({ length: 1200 }, (_, index) => {
-    const company = companies[(index * 37 + 11) % companies.length];
+    // Órgão público contrata quase sempre empresa que já tem registro, porque a licitação pede a certidão (03/11/2026): três em cada
+    // quatro contratos que cairiam numa empresa sem nenhum registro vão para uma empresa registrada. A escolha não consome sorteio.
+    const sorteada = companies[(index * 37 + 11) % companies.length];
+    const company = sorteada.externalOnly && index % 4 !== 0 ? registeredCompanies[(index * 37 + 11) % registeredCompanies.length] : sorteada;
     const establishment = pick(establishmentsPerCompany.get(company.id)!);
+    const buyerId = pick(buyers).id, sorteio = between(later(establishment.openedAt, '2023-10-01'), SNAPSHOT), inicio = later(establishment.openedAt, '2023-10-01');
+    // Quem ganha contrato de engenharia costuma registrar a ART do serviço (03/11/2026): em quatro de cada cinco contratos de empresa
+    // com ART na série, a data do contrato fica de 0 a 27 dias antes de uma ART dela. Antes, contrato e ART eram sorteados à parte, e
+    // sete em cada dez contratos públicos ficavam sem ART identificada. O sorteio da data continua consumido, para não mudar o resto.
+    const artsDaEmpresa = (artsPerCompany.get(company.id) ?? []).filter(art => art.date >= addDays(inicio, 27));
+    const date = index % 5 !== 0 && artsDaEmpresa.length ? addDays(artsDaEmpresa[(index * 7) % artsDaEmpresa.length].date, -(index % 28)) : sorteio;
     return { id: id('PNCP-DEMO-', index), companyId: company.id, establishmentId: establishment.id,
-      buyerId: pick(buyers).id, date: between(later(establishment.openedAt, '2023-10-01'), SNAPSHOT),
+      buyerId, date,
       ...contractTemplates[index % contractTemplates.length], value: integer(25, 7000) * 1000,
     };
   });

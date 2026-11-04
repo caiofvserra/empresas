@@ -1,6 +1,6 @@
 # Inteligência Estratégica Crea-SP
 
-Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, conduzido pela EDAD, unidade de dados da SUPTEC (o programa chamou-se Prumo e, antes, Observatório Crea-SP). Desde 01/11/2026 o painel único está sendo dividido por público e regra de acesso. O primeiro painel separado é o de **Empresas**, descrito em [docs/EMPRESAS.md](docs/EMPRESAS.md), junto com a recomendação de divisão dos demais. O segundo, de 03/11/2026, é o de **Profissionais**, descrito em [docs/PROFISSIONAIS.md](docs/PROFISSIONAIS.md). O painel geral continua com as outras oito abas; o que mudou nele está em [docs/V22.md](docs/V22.md) e [docs/V21.md](docs/V21.md). Blocos e regras marcados com "!" dependem de parceria: mostram o que um acordo permitiria medir e ficam demonstrativos até ele existir. Os dados internos são demonstrativos; os dados públicos são reais e mostram fonte e data. Não há `.pbix` nem conexão institucional validada.
+Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, conduzido pela EDAD, unidade de dados da SUPTEC (o programa chamou-se Prumo e, antes, Observatório Crea-SP). Desde 01/11/2026 o painel único está sendo dividido por público e regra de acesso. O primeiro painel separado é o de **Empresas**, descrito em [docs/EMPRESAS.md](docs/EMPRESAS.md), junto com a recomendação de divisão dos demais. O segundo, de 03/11/2026, é o de **Profissionais**, descrito em [docs/PROFISSIONAIS.md](docs/PROFISSIONAIS.md). O terceiro, também de 03/11/2026, é o de **Fiscalização e malha fina**, descrito em [docs/FISCALIZACAO.md](docs/FISCALIZACAO.md). O painel geral continua com as outras seis abas; o que mudou nele está em [docs/V22.md](docs/V22.md) e [docs/V21.md](docs/V21.md). Blocos e regras marcados com "!" dependem de parceria: mostram o que um acordo permitiria medir e ficam demonstrativos até ele existir. Os dados internos são demonstrativos; os dados públicos são reais e mostram fonte e data. Não há `.pbix` nem conexão institucional validada.
 
 ## O que está aqui
 
@@ -8,12 +8,13 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 |---|---|
 | `src/empresas/` | Painel de Empresas: Registro, Evolução, RT e ART, Vínculos. Abre em `/empresas.html` |
 | `src/profissionais/` | Painel de Profissionais: Registro, Evolução, ART e RT, Formação, Trabalho. Abre em `/profissionais.html` |
-| `src/cockpit/` | Painel geral: Presidência, Fiscalização, Malha fina, Receita, Entidades, Controle, Atendimento e Método. Abre em `/` e em `/painel.html`. A estrutura comum aos painéis (filtros, data de referência, fichas, painel lateral) também mora aqui |
+| `src/fiscalizacao/` | Painel de Fiscalização e malha fina: Ações, Resultado, Malha fina, Contratos, Obras. Abre em `/fiscalizacao.html` |
+| `src/cockpit/` | Painel geral: Presidência, Receita, Entidades, Controle, Atendimento e Método. Abre em `/` e em `/painel.html`. A estrutura comum aos painéis (filtros, data de referência, fichas, painel lateral) também mora aqui |
 | `src/observatorio/` | Indicadores-norte com fichas, histórico por data de referência, frentes e matriz de cruzamentos, decisão sobre as 12 lacunas do V18, casos de uso, radar normativo, gate de fontes, parcerias e atlas |
 | `src/domain/` | Cenário determinístico e camadas: profissionais, formação, entidades, conselho, frentes (QSA PJ, Obrasgov, ANEEL/ANP/ANM/BNDES), mercado (concentração, PCA, densidade, aberturas, permanência) e parcerias (CNO, licenças e alvarás, perícias, TCE-SP, crédito e PIB, sócios PF, coorte nominal, vínculos por empresa) |
 | `src/painel/`, `src/gestao-v14/` (medidas e widgets), `src/enterprise-v10/` (modelo e filtros) | Módulos que o painel reaproveita das versões anteriores |
-| `docs/EMPRESAS.md`, `docs/PROFISSIONAIS.md`, `docs/V22.md`, `docs/V21.md`, `docs/DESIGN_SYSTEM_V13.md`, `docs/NORMAS.md` | Os painéis de Empresas e de Profissionais e a divisão recomendada, o que a V22 e a V21 acrescentam, identidade visual e base normativa |
-| `entrega/painel-gestao-creasp.html`, `entrega/painel-empresas-creasp.html`, `entrega/painel-profissionais-creasp.html` | Painel geral e painéis de Empresas e de Profissionais, cada um em um único HTML, para abrir sem servidor na mesma pasta |
+| `docs/EMPRESAS.md`, `docs/PROFISSIONAIS.md`, `docs/FISCALIZACAO.md`, `docs/V22.md`, `docs/V21.md`, `docs/DESIGN_SYSTEM_V13.md`, `docs/NORMAS.md` | Os painéis de Empresas, de Profissionais e de Fiscalização e a divisão recomendada, o que a V22 e a V21 acrescentam, identidade visual e base normativa |
+| `entrega/painel-gestao-creasp.html`, `entrega/painel-empresas-creasp.html`, `entrega/painel-profissionais-creasp.html`, `entrega/painel-fiscalizacao-creasp.html` | Painel geral e painéis de Empresas, de Profissionais e de Fiscalização, cada um em um único HTML, para abrir sem servidor na mesma pasta |
 | `observatorio/` | Plano em etapas (revisão 2), atlas de 98 fontes públicas e catálogo unificado em CSV e XLSX, publicados com os nomes anteriores (Observatório, Prumo) |
 | `planejamento-fontes-2026-10/` | Levantamento de 29/10/2026: 104 entradas de fontes, 34 casos de uso com fórmula, arquitetura, revisão independente e revisão crítica do V18. Retrato datado |
 | `scripts/refresh-sources.ts`, `scripts/integrations/`, `src/integrations/catalog.ts` | Coletor PNCP com histórico, cobertura e testes; ponto de partida dos conectores |
@@ -26,8 +27,8 @@ Node.js 20 ou mais novo.
 
 ```bash
 npm ci
-npm run dev            # painel geral em http://localhost:5173/ de Empresas em http://localhost:5173/empresas.html e de Profissionais em http://localhost:5173/profissionais.html
-npm test               # testes de domínio, painéis, fiscalização, V20, V21, V22, Empresas, Profissionais e coletor
+npm run dev            # painel geral em http://localhost:5173/ de Empresas em http://localhost:5173/empresas.html de Profissionais em http://localhost:5173/profissionais.html e de Fiscalização em http://localhost:5173/fiscalizacao.html
+npm test               # testes de domínio, painéis, fiscalização, V20, V21, V22, Empresas, Profissionais, Fiscalização e coletor
 npm run build          # TypeScript e build do site
 npm run build:painel   # gera os três painéis em entrega/
 npm run sources:refresh -- --config integrations/refresh-sources.example.json

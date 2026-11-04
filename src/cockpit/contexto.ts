@@ -2,6 +2,7 @@ import type { Scope } from '../domain/engine';
 import type { EnterpriseModel } from '../enterprise-v10/types';
 import type { ContratoPublico, Ponte, Receita } from '../painel/analise';
 import type { Ctx } from '../painel/contexto';
+import type { Fiscalizacao } from '../painel/fiscalizacao';
 import type { Malha } from './cruzamentos';
 import type { Estrutura } from './estrutura';
 import type { Insight, Metas, PageId } from './leitura';
@@ -26,6 +27,8 @@ export interface Norte { cobertura: Cobertura; contagens: Contagens; conversao: 
  */
 export interface CockpitCtx extends Ctx {
   page: PageId; go: (page: PageId) => void; dark: boolean;
+  /** Painel de Fiscalização: a fiscalização do estado inteiro na câmara escolhida, sem o filtro de município (mapa e forças-tarefas). Nos outros painéis é igual a `f`. */
+  fEstado: Fiscalizacao;
   /** Painel de Empresas: município escolhido no alto da tela (dentro da regional), visual enxuto (a explicação de cada bloco fica no (i)) e câmara de cada empresa. */
   cidadeId: string | null; enxuto: boolean; camaraDe: Map<string, string>;
   /** Painel de Profissionais: modalidade escolhida no alto da tela (no lugar da câmara). */

@@ -8,8 +8,7 @@ import type { CasaLegislativa, Coleta, Decisao, EtapaProposicao, SituacaoCaso, S
 const chave = (value: string) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 import { regras, regrasPendentes, statusAjuda } from './cruzamentos';
 import type { CockpitCtx } from './contexto';
-import { Status } from './PaginaMalha';
-import { Bloco, Parceria } from './ui';
+import { Bloco, Parceria, Status } from './ui';
 import { parcerias } from '../domain/parcerias';
 import { fichas, parceriasDe } from './fichas';
 

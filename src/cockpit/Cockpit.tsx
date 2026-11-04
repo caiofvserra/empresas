@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import type { ComponentType, ReactNode } from 'react';
-import { ArrowUpRight, BookOpenCheck, Briefcase, Building2, CalendarClock, ChevronDown, ClipboardCheck, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, Network, RotateCcw, ScanSearch, ShieldCheck, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
+import { ArrowUpRight, BadgeCheck, BookOpenCheck, Briefcase, Building2, CalendarClock, ChevronDown, ClipboardCheck, Construction, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, Network, RotateCcw, ScanSearch, ScrollText, ShieldCheck, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
 import { dataset } from '../domain/dataset';
 import { datasReferencia as datasReferenciaDe, datasetAt, fiscalizacaoAt } from '../domain/tempo';
 import { defaultFilters } from '../domain/types';
@@ -39,8 +39,6 @@ import type { Metas, PageId } from './leitura';
 import { artsPeriodo, linhasGre } from './medidas';
 import { despesaPublicada, fonteConfea, formacaoSp, piso as pisoPublico, registrosNovos, resultados2025 } from './publico';
 import PaginaPresidencia from './PaginaPresidencia';
-import PaginaFiscalizacao from './PaginaFiscalizacao';
-import PaginaMalha from './PaginaMalha';
 import PaginaReceita from './PaginaReceita';
 import PaginaEntidades from './PaginaEntidades';
 import PaginaControle from './PaginaControle';
@@ -55,8 +53,14 @@ import PaginaFluxo from '../profissionais/PaginaFluxo';
 import PaginaAtuacao from '../profissionais/PaginaAtuacao';
 import PaginaFormacao from '../profissionais/PaginaFormacao';
 import PaginaTrabalho from '../profissionais/PaginaTrabalho';
+import PaginaAcoes from '../fiscalizacao/PaginaAcoes';
+import PaginaResultado from '../fiscalizacao/PaginaResultado';
+import PaginaMalha from '../fiscalizacao/PaginaMalha';
+import PaginaContratos from '../fiscalizacao/PaginaContratos';
+import PaginaObras from '../fiscalizacao/PaginaObras';
 import '../empresas/empresas.css';
 import '../profissionais/profissionais.css';
+import '../fiscalizacao/fiscalizacao.css';
 import '../painel/painel.css';
 import './cockpit.css';
 
@@ -68,8 +72,6 @@ import './cockpit.css';
 type PaginaDef = { id: PageId; label: string; title: string; subtitle: string; icon: ComponentType<{ size?: number }>; Page: ComponentType<{ ctx: CockpitCtx }> };
 const paginasGeral: PaginaDef[] = [
   { id: 'presidencia', label: 'Presidência', title: 'Presidência', subtitle: 'Os quatro indicadores principais, um resumo de cada assunto e a comparação das regionais com o ano anterior', icon: Landmark, Page: PaginaPresidencia },
-  { id: 'fiscalizacao', label: 'Fiscalização', title: 'Fiscalização', subtitle: 'Quantas ações a fiscalização faz, onde o processo demora, quantas terminam em regularização e qual foi o resultado das forças-tarefas', icon: ShieldCheck, Page: PaginaFiscalizacao },
-  { id: 'malha', label: 'Malha fina', title: 'Malha fina', subtitle: 'Empresas apontadas pelo cruzamento de dados, separadas por regra e pela confiança do indício. A lista serve para análise e nunca gera auto de infração sozinha', icon: ScanSearch, Page: PaginaMalha },
   { id: 'receita', label: 'Receita', title: 'Receita e cobrança', subtitle: 'Quanto o Conselho arrecada das empresas, quanto está vencido, quanto da dívida é recuperado e como anda o orçamento', icon: Wallet, Page: PaginaReceita },
   { id: 'entidades', label: 'Entidades', title: 'Entidades de classe e instituições de ensino', subtitle: 'As organizações que se relacionam com o Conselho, os repasses, convênios, contratos e patrocínios, e as cadeiras que ocupam no plenário', icon: Handshake, Page: PaginaEntidades },
   { id: 'controle', label: 'Controle', title: 'Controle interno', subtitle: 'Em que o Conselho gasta, com diárias, fornecedores, contratos e pessoal, e a despesa que ele publica no Portal da Transparência', icon: ClipboardCheck, Page: PaginaControle },
@@ -91,23 +93,34 @@ const paginasProfissionais: PaginaDef[] = [
   { id: 'formacao', label: 'Formação', title: 'Formação e registro', subtitle: 'Quantos se formam a cada ano e quantos se registram, atuam e continuam no sistema, por instituição, modalidade e canal', icon: GraduationCap, Page: PaginaFormacao },
   { id: 'trabalho', label: 'Trabalho', title: 'Emprego, salário e perícias', subtitle: 'Quantos empregos com carteira existem nas ocupações de engenharia, quanto pagam comparado com o piso e quantas perícias judiciais são feitas', icon: Briefcase, Page: PaginaTrabalho },
 ];
-export type PainelId = 'geral' | 'empresas' | 'profissionais';
+/** Painel de Fiscalização e malha fina: o terceiro painel separado do painel geral (03/11/2026), com filtros de regional, município, câmara, período e data. Reúne as antigas abas Fiscalização e Malha fina do painel geral. */
+const paginasFiscalizacao: PaginaDef[] = [
+  { id: 'fiscalizacao', label: 'Ações', title: 'Ações de fiscalização', subtitle: 'Quantas ações a fiscalização faz, onde, de que origem, quantas viram auto de infração e o que acontece com as multas', icon: ShieldCheck, Page: PaginaAcoes },
+  { id: 'resultado', label: 'Resultado', title: 'Resultado da fiscalização', subtitle: 'Quantas ações terminam em regularização, em quantos dias, quanto tempo o indício espera pela primeira ação e o resultado das forças-tarefas', icon: BadgeCheck, Page: PaginaResultado },
+  { id: 'malha', label: 'Malha fina', title: 'Malha fina', subtitle: 'Empresas apontadas pelo cruzamento de dados, separadas por regra e pela confiança do indício. A lista serve para análise e nunca gera auto de infração sozinha', icon: ScanSearch, Page: PaginaMalha },
+  { id: 'contratos', label: 'Contratos', title: 'Contratos públicos e ART', subtitle: 'Os contratos públicos técnicos do PNCP, a ART encontrada para cada um, a situação do fornecedor na data do contrato e quem ganha os contratos', icon: ScrollText, Page: PaginaContratos },
+  { id: 'obras', label: 'Obras', title: 'Obras e licenças', subtitle: 'As obras públicas e a ART de fiscalização, as obras privadas do cadastro da Receita e os alvarás e licenças, com a ART de cada uma', icon: Construction, Page: PaginaObras },
+];
+export type PainelId = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao';
 interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; filtro: 'camara' | 'modalidade' }
 const paineis: Record<PainelId, Painel> = {
   geral: { id: 'geral', nome: 'Inteligência Estratégica', paginas: paginasGeral, periodos: [3, 6, 12], storage: 'crea-observatorio-v20', filtro: 'camara' },
   empresas: { id: 'empresas', nome: 'Inteligência Estratégica · Empresas', paginas: paginasEmpresas, periodos: [3, 6, 12, 24], storage: 'crea-empresas-v1', filtro: 'camara' },
   profissionais: { id: 'profissionais', nome: 'Inteligência Estratégica · Profissionais', paginas: paginasProfissionais, periodos: [3, 6, 12, 24], storage: 'crea-profissionais-v1', filtro: 'modalidade' },
+  fiscalizacao: { id: 'fiscalizacao', nome: 'Inteligência Estratégica · Fiscalização', paginas: paginasFiscalizacao, periodos: [3, 6, 12, 24], storage: 'crea-fiscalizacao-v1', filtro: 'camara' },
 };
 /** Atalhos do menu lateral, só no painel geral. Os painéis temáticos são entregues sozinhos e não têm caminho de volta (pedido do Caio, 03/11/2026). */
 const atalhos: { id: PainelId; label: string; title: string; icon: ComponentType<{ size?: number }> }[] = [
   { id: 'empresas', label: 'Empresas', title: 'Abrir o painel de Empresas', icon: Building2 },
   { id: 'profissionais', label: 'Profissionais', title: 'Abrir o painel de Profissionais', icon: HardHat },
+  { id: 'fiscalizacao', label: 'Fiscalização', title: 'Abrir o painel de Fiscalização e malha fina', icon: ShieldCheck },
 ];
-/** Endereço de outro painel: no site, index.html, empresas.html e profissionais.html; na entrega em arquivo único, os HTML lado a lado na pasta entrega. */
+/** Endereço de outro painel: no site, index.html, empresas.html, profissionais.html e fiscalizacao.html; na entrega em arquivo único, os HTML lado a lado na pasta entrega. */
 const arquivos: Record<PainelId, { site: string; entrega: string }> = {
   geral: { site: 'index.html', entrega: 'painel-gestao-creasp.html' },
   empresas: { site: 'empresas.html', entrega: 'painel-empresas-creasp.html' },
   profissionais: { site: 'profissionais.html', entrega: 'painel-profissionais-creasp.html' },
+  fiscalizacao: { site: 'fiscalizacao.html', entrega: 'painel-fiscalizacao-creasp.html' },
 };
 export function enderecoPainel(id: PainelId, pagina?: PageId) {
   const entrega = /painel-[a-z-]+\.html$/.test(window.location.pathname), arquivo = entrega ? arquivos[id].entrega : arquivos[id].site;
@@ -152,7 +165,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const [modalidade, setModalidade] = useState('');
   const [cidade, setCidade] = useState('');
   const [period, setPeriod] = useState(12);
-  const leve = painel.id !== 'geral', deProfissionais = painel.id === 'profissionais';
+  const leve = painel.id !== 'geral', deProfissionais = painel.id === 'profissionais', deFiscalizacao = painel.id === 'fiscalizacao';
   const [anchorSel, setAnchorSel] = useState<string | null>(null);
   const [detail, setDetail] = useState<Detail | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark' | null>(() => { const salvo = ler<'light' | 'dark' | null>('tema', null); if (salvo) document.documentElement.dataset.theme = salvo; return salvo; }); // o tema salvo entra antes da primeira leitura das cores dos gráficos
@@ -174,15 +187,15 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   useEffect(() => { gravar('metas', metas); }, [metas]);
   // Atendimento, estrutura e orçamento vêm do modelo institucional (cerca de 1 s na primeira vez): calculado depois da primeira pintura.
   useEffect(() => { if (leve) return; let alive = true; setEstrutura(null); const id = window.setTimeout(() => { const value = estruturaDe(view, gre || null, period); if (alive) setEstrutura(value); }, 30); return () => { alive = false; window.clearTimeout(id); }; }, [view, gre, period, leve]);
-  // Histórico por data de referência: um ponto por mês (cerca de 1 s cada), calculado depois da estrutura, um de cada vez, com cache.
+  // Histórico por data de referência: um ponto por mês (cerca de 1 s cada), calculado depois da estrutura, um de cada vez, com cache. Nos painéis temáticos, só o de Fiscalização usa (bloco da malha fina mês a mês).
   useEffect(() => {
-    if (leve) return;
+    if (leve && !deFiscalizacao) return;
     let alive = true; const chave = `${view.snapshotDate}|${gre}`, datas = datasHistorico(view), fBase = camadasDe(view).f;
     setHistorico({ chave, pontos: [] });
     const passo = (index: number) => { if (!alive || index >= datas.length) return; const ponto = pontoHistorico(dataset, fBase, datas[index], gre || null); if (!alive) return; setHistorico(previous => previous.chave === chave ? { chave, pontos: [...previous.pontos, ponto] } : previous); window.setTimeout(() => passo(index + 1), 40); };
     const id = window.setTimeout(() => passo(0), 400);
     return () => { alive = false; window.clearTimeout(id); };
-  }, [view, gre, leve]);
+  }, [view, gre, leve, deFiscalizacao]);
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
@@ -204,10 +217,12 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const stateModel = useMemo(() => modelo(`${anchor}||${camara}|${period}`, stateScope), [stateScope]); // eslint-disable-line react-hooks/exhaustive-deps
   const stateHistory = useMemo(() => modelo(`${anchor}||${camara}|24`, stateHistoryScope), [stateHistoryScope]); // eslint-disable-line react-hooks/exhaustive-deps
   const base = useMemo(() => camadasDe(view), [view]);
-  const f = useMemo(() => { const all = base.f; return camara ? { ...all, acoes: all.acoes.filter(row => camaraMap.get(row.companyId) === camara), alvos: all.alvos.filter(row => camaraMap.get(row.companyId) === camara) } : all; }, [base, camara]);
+  // `fEstado` é a fiscalização do estado inteiro na câmara escolhida (mapa, forças-tarefas e comparação das regionais); `f` também segue o município no painel de Fiscalização.
+  const fEstado = useMemo(() => { const all = base.f; return camara ? { ...all, acoes: all.acoes.filter(row => camaraMap.get(row.companyId) === camara), alvos: all.alvos.filter(row => camaraMap.get(row.companyId) === camara) } : all; }, [base, camara]);
+  const f = useMemo(() => deFiscalizacao && cidade ? { ...fEstado, acoes: fEstado.acoes.filter(row => row.cityId === cidade), alvos: fEstado.alvos.filter(row => row.cityId === cidade) } : fEstado, [fEstado, cidade, deFiscalizacao]);
   const derived = useMemo(() => {
     const resumo = resumoFiscal(f, gre || null, period);
-    const regionais = porRegional(view, f, stateModel, period, camara ? { empresa: id => camaraMap.get(id) === camara, cnae: code => camaraPorCnae[code] === camara } : {});
+    const regionais = porRegional(view, fEstado, stateModel, period, camara ? { empresa: id => camaraMap.get(id) === camara, cnae: code => camaraPorCnae[code] === camara } : {});
     const contratos = contratosPublicos(scope, period), malha = malhaFina(scope, model, f, contratos);
     const stateMalha = gre ? malhaFina(stateScope, stateModel, f, contratosPublicos(stateScope, period)) : malha;
     const arts = artsPeriodo(scope, period), stateArts = gre ? artsPeriodo(stateScope, period) : arts;
@@ -217,7 +232,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), aberturas: aberturasRfb(view, gre || null, 24, cidade || null), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
     return { resumo, regionais, contratos, malha, arts, linhas, ponte: ponteBase(model, scope, f, period), rec: receita(history, f, gre || null, period),
       inadimplencia: cobradas ? devedoras(model).size / cobradas * 100 : null, cao: caoService(scope).median, norte, mercado };
-  }, [view, f, gre, cidade, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
+  }, [view, f, fEstado, gre, cidade, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
   // Camadas da V20: profissionais, formação, entidades, controle interno e forças-tarefas, todas lidas em D.
   const extra = useMemo(() => {
     const greId = gre || null, recorte = { cityId: cidade || null, modalidade: modalidade || null };
@@ -227,21 +242,21 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     const inicio = janelaDe(anchor, 12).start, acoesPorGre = new Map<string, number>();
     for (const row of f.acoes) if (row.date >= inicio && row.date <= anchor) acoesPorGre.set(row.greId, (acoesPorGre.get(row.greId) ?? 0) + 1);
     const conselho = quadroConselho(base.conselho, anchor, greId, acoesPorGre);
-    const forcas = resultadosForcas(view, f, greId);
+    const forcas = resultadosForcas(view, fEstado, greId);
     const frentes = { sociedades: quadroSociedades(base.sociedades, view, scope.companyIds, greId), obras: quadroObras(base.obras, view, scope.companyIds, greId), instalacoes: quadroInstalacoes(base.instalacoes, view, greId) };
     const parcerias = { cno: quadroCno(base.cno, view, scope.companyIds, greId), licencas: quadroLicencas(base.licencas, view, scope.companyIds, greId), pericias: quadroPericias(base.pericias, view, base.profissionais, greId, recorte), tce: quadroTce(base.tce, derived.contratos),
       sociosPf: quadroSociosPf(base.sociosPf, view, base.profissionais, scope.companyIds, greId), coorteNominal: coorteNominal(base.formacao, base.profissionais, view, greId, recorte), vinculos: quadroVinculos(base.vinculos, view, scope.companyIds, greId),
       credenciamentos: quadroCredenciamentos(base.credenciamentos, view, scope.companyIds, greId), jucesp: quadroJucesp(base.jucesp, view, scope.companyIds, greId),
       denominacao: quadroDenominacao(base.sociosPf, view, base.profissionais, scope.companyIds, greId) };
     return { profissionais, formacao, entidades, conselho, forcas, frentes, parcerias };
-  }, [base, view, anchor, f, gre, cidade, modalidade, period, scope, derived.contratos]);
+  }, [base, view, anchor, f, fEstado, gre, cidade, modalidade, period, scope, derived.contratos]);
   const insights = useMemo(() => leitura({ metas, ponte: derived.ponte, cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo: derived.resumo, rec: derived.rec, saldo: model.metrics.overdue.value ?? 0,
     inadimplencia: derived.inadimplencia, linhas: derived.linhas, malha: derived.malha, arts: { atual: derived.arts.atual.length, antes: derived.arts.antes }, cao: derived.cao, estrutura,
     conversao: derived.norte.conversao.atual, tempo: derived.norte.tempo, profissionais: extra.profissionais.resumo, formacao: extra.formacao, conselho: extra.conselho, forcas: extra.forcas }), [metas, derived, model, estrutura, extra]);
 
   const irPara = (target: PageId) => { if (pages.some(item => item.id === target)) setPage(target); else window.location.href = enderecoPainel(painelDaPagina(target), target); };
   const change = (work: () => void) => transition(work);
-  const ctx: CockpitCtx = { dataset: view, f, scope, model, history, period, greId: gre || null, camara: camara || null, janela: janelaDe(f.anchor, period), resumo: derived.resumo, regionais: derived.regionais, tokens,
+  const ctx: CockpitCtx = { dataset: view, f, fEstado, scope, model, history, period, greId: gre || null, camara: camara || null, janela: janelaDe(f.anchor, period), resumo: derived.resumo, regionais: derived.regionais, tokens,
     open: setDetail, filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara, dark, cidadeId: cidade || null, enxuto: leve, camaraDe: camaraMap, modalidade: modalidade || null,
     anchor, hoje, datasReferencia, setAnchor: value => change(() => setAnchorSel(value && value < hoje ? value : null)),
     historyScope, stateScope, stateModel, stateHistory, linhas: derived.linhas, ponte: derived.ponte, rec: derived.rec, contratos: derived.contratos, malha: derived.malha, estrutura, arts: derived.arts,
@@ -306,8 +321,8 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
         </section>
       </>}
       <main className={`ck-page ck-page-${page} ${focus ? 'has-focus' : ''}`} key={page}><current.Page ctx={ctx} /></main>
-      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{deProfissionais ? `${int(extra.profissionais.resumo.ativos.length)} profissionais ativos no recorte` : `${int(scope.companies.length)} empresas no recorte`}</strong>
-        <span className="ck-status-note">{pending ? 'Recalculando…' : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : leve ? `Clique num item para ver ${deProfissionais ? 'os profissionais' : 'as empresas'}. O (i) explica cada bloco.` : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
+      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{deProfissionais ? `${int(extra.profissionais.resumo.ativos.length)} profissionais ativos no recorte` : deFiscalizacao ? `${int(derived.resumo.acoes.length)} ações de fiscalização no recorte` : `${int(scope.companies.length)} empresas no recorte`}</strong>
+        <span className="ck-status-note">{pending ? 'Recalculando…' : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : leve ? `Clique num item para ver ${deProfissionais ? 'os profissionais' : deFiscalizacao ? 'as ações, as empresas ou os contratos' : 'as empresas'}. O (i) explica cada bloco.` : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
     </div>
     {detail && <Drawer ctx={ctx} detail={detail} onClose={() => setDetail(null)} />}
     {modal === 'metas' && <Janela title="Metas do painel" subtitle="As metas usadas nos cartões, no quadro das regionais e nos destaques. Elas ficam salvas neste navegador." onClose={() => setModal(null)}><MetasForm metas={metas} onChange={setMetas} /></Janela>}
