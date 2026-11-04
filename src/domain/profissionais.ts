@@ -3,6 +3,7 @@ import { buildEntidades } from './entidades';
 import type { Modalidade } from './entidades';
 import { modalidades } from './entidades';
 import { pesosNivel, titulosDe } from './titulos';
+import { municipiosSp } from './municipios';
 import { addDays, between, chance, dateBetween, share, sum, toDay, weighted } from './hash';
 
 /**
@@ -41,7 +42,8 @@ const cache = new WeakMap<Dataset, ModeloProfissionais>();
 export function buildProfissionais(dataset: Dataset): ModeloProfissionais {
   const saved = cache.get(dataset); if (saved) return saved;
   const anchor = dataset.snapshotDate, ies = buildEntidades(dataset).organizacoes.filter(row => row.grupo === 'IES');
-  const cities = dataset.cities, cityWeights = cities.map(city => city.name === 'São Paulo' ? 12 : city.name === 'Campinas' ? 5 : ['Ribeirão Preto', 'Sorocaba', 'São José dos Campos', 'Santos', 'Guarulhos', 'Santo André'].includes(city.name) ? 3 : 1);
+  // Município do endereço entre os 645 do estado, pelo porte de cada um (04/11/2026); antes, só as 24 cidades-sede da amostra.
+  const cities = municipiosSp(dataset), cityWeights = cities.map(city => city.populacao);
   const TOTAL = 4800, chave = (index: number) => dataset.professionals[index]?.id ?? `PRO-${String(index + 1).padStart(5, '0')}`;
   const modalidadeDe = (index: number): Modalidade => { const base = dataset.professionals[index]; return base ? modalidadeAntiga[base.modality] ?? 'Civil' : weighted(`${chave(index)}:mod`, modalidades, pesosModalidade); };
   // Quem responde por cada vínculo de RT (03/11/2026). A base de demonstração liga 2.400 vínculos a só 1.600 profissionais, e quase
