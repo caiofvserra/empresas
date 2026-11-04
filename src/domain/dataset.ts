@@ -1,3 +1,4 @@
+import greMunicipios from './gre-municipios.json';
 import catalog from './cnae-catalog.json';
 import type {
   Art, Buyer, Cao, Cbo, City, Cnae, Company, Contract, Dataset, EmploymentFact,
@@ -5,11 +6,11 @@ import type {
   PublicRow, QualityEvent, QualityKind, Registration, RegistrationStatus, TechnicalLink,
 } from './types';
 
-/** Dados sintéticos; o catálogo CNAE e os nomes das 14 GREs provêm dos anexos. */
+/** Dados sintéticos; o catálogo CNAE provém dos anexos; as 16 GREs e o município de cada uma, da tabela de GREs e UGIs do Crea-SP (04/11/2026). */
 export const datasetNotes = {
   nature: 'Empresas, CNPJs, vínculos, registros, valores, certidões e ocorrências são fictícios.',
-  greSource: 'Organograma CREA-SP, março/2026, páginas 12–19: nomes e numeração das 14 GREs.',
-  territorialMapping: 'A atribuição de municípios às GREs é demonstrativa. O organograma não documenta a cobertura territorial completa.',
+  greSource: 'Tabela GRE UGI UNIDADE Município do Crea-SP (04/11/2026): 16 GREs e 645 municípios.',
+  territorialMapping: 'A GRE de cada município segue a tabela oficial do Crea-SP; a capital, dividida em zonas na planilha, fica inteira na GRE 5.',
   employment: 'Emprego público demonstrativo agregado por município, CNAE, CBO e mês; sem identificação de trabalhador ou empregador.',
   sourceQuality: 'Linhas inválidas e duplicadas ficam apenas na origem pública simulada, com eventos de qualidade; o cadastro mestre mantém CNPJs válidos e únicos.',
 };
@@ -73,8 +74,9 @@ export function generateDataset(seed = 20260930): Dataset {
     const value = new Date(Date.UTC(2023, 9 + index, 1));
     return value.toISOString().slice(0, 7);
   });
-  // Regional é a GRE pelo número (pedido do Caio em 04/11/2026), não pelo nome de uma cidade.
-  const gres: Gre[] = Array.from({ length: 14 }, (_, index) => ({ id: `GRE${index + 1}`, name: `GRE ${index + 1}` }));
+  // Regional é a GRE pelo número (pedido do Caio em 04/11/2026), não pelo nome de uma cidade. São 16 GREs, pela tabela oficial
+  // município → GRE do Crea-SP (src/domain/gre-municipios.json); a GRE de cada cidade-sede vem dessa tabela.
+  const gres: Gre[] = Array.from({ length: 16 }, (_, index) => ({ id: `GRE${index + 1}`, name: `GRE ${index + 1}` }));
   const citySeeds: [string, string, number, number, number][] = [
     ['Araçatuba', '3502804', 1, 140, 85], ['Campinas', '3509502', 2, 355, 195],
     ['Ribeirão Preto', '3543402', 3, 320, 100], ['Piracicaba', '3538709', 4, 315, 179],
@@ -90,7 +92,7 @@ export function generateDataset(seed = 20260930): Dataset {
     ['Barueri', '3505708', 5, 392, 232], ['Botucatu', '3507506', 11, 270, 219],
   ];
   const cities: City[] = citySeeds.map(([name, ibgeCode, gre, x, y]) => ({
-    id: ibgeCode, name, ibgeCode, greId: `GRE${gre}`, x, y,
+    id: ibgeCode, name, ibgeCode, greId: `GRE${(greMunicipios as unknown as Record<string, [number, string]>)[ibgeCode]?.[0] ?? gre}`, x, y,
   }));
   const cbos: Cbo[] = [
     { code: '2142-05', label: 'Engenheiro civil', technical: true },

@@ -9,6 +9,7 @@ import { buildFiscalizacao } from '../src/painel/fiscalizacao.ts';
 import { contratosPublicos } from '../src/painel/analise.ts';
 import { buildInstalacoes, buildObras, buildSociedades, fontesInstalacao, pontesObra, quadroInstalacoes, quadroObras, quadroSociedades, situacoesObra } from '../src/domain/frentes.ts';
 import { aberturasRfb, buildDemandaPlanejada, concentracaoMercado, densidadeRegional, etapasPca, permanenciaCoorte, populacaoCidade, quadroDemanda } from '../src/domain/mercado.ts';
+import { municipiosSp } from '../src/domain/municipios.ts';
 import { datasHistorico, pontoHistorico } from '../src/observatorio/historico.ts';
 import { malhaFina, regras } from '../src/cockpit/cruzamentos.ts';
 import { casasLegislativas, familiasNormativas, frentePorId, gatePromocao, prontidaoFontes, proposicoes, regrasLeitura, frentes, casos } from '../src/observatorio/governanca.ts';
@@ -107,7 +108,8 @@ test('densidade por regional: população estável, elegíveis e cobertura por G
   const city = dataset.cities[0].id;
   assert.equal(populacaoCidade(city), populacaoCidade(city));
   assert.ok(populacaoCidade(city) >= 15_000 && populacaoCidade(city) <= 1_400_000);
-  assert.equal(sum(rows.map(row => row.populacao)), sum(dataset.cities.map(row => populacaoCidade(row.id))));
+  assert.equal(sum(rows.map(row => row.populacao)), sum(municipiosSp(dataset).map(row => populacaoCidade(row.id))), 'população somada sobre os 645 municípios');
+  assert.ok(sum(rows.map(row => row.populacao)) > 40_000_000, 'estado inteiro, não só as cidades-sede');
 });
 
 test('aberturas na Receita e permanência de coortes: janelas, decomposição e coorte fixa', () => {

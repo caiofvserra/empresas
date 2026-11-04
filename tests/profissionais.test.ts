@@ -132,7 +132,13 @@ test('regionais são GREs pelo número, sem nome de cidade', () => {
 test('mapa por município: soma dos municípios bate com a GRE, e município pequeno fica sem taxa', () => {
   const r = regionaisProfissionais(modelo, dataset, 12);
   for (const gre of r.linhas) assert.equal(sum([...r.municipios.values()].filter(row => row.greId === gre.id).map(row => row.ativos.length)), gre.ativos.length);
-  for (const row of r.municipios.values()) if (row.ativos.length < 20) assert.equal(row.inadimplencia, null);
+  for (const row of r.municipios.values()) if (row.ativos.length < 10) assert.equal(row.inadimplencia, null);
+  // Os profissionais se espalham pelos 645 municípios, pelo porte de cada um, e não só pelas 24 cidades-sede.
+  assert.equal(r.municipios.size, 645);
+  const comAlguem = [...r.municipios.values()].filter(row => row.ativos.length).length;
+  assert.ok(comAlguem > 350, `municípios com profissionais: ${comAlguem}`);
+  const capital = r.municipios.get('3550308')!.ativos.length / sum(r.linhas.map(row => row.ativos.length)) * 100;
+  assert.ok(capital > 20 && capital < 32, `parte da capital: ${capital}`);
 });
 
 test('filtro de gênero vale para registro, formados, emprego e salário', () => {
@@ -150,9 +156,10 @@ test('filtro de gênero vale para registro, formados, emprego e salário', () =>
   assert.ok(serie('Feminino') < serie(null) * 0.3);
 });
 
-test('título profissional segue o catálogo do Confea; técnico só o de segurança do trabalho', () => {
+test('título profissional segue o catálogo do Confea; técnico e tecnólogo só os de segurança do trabalho', () => {
   assert.ok(modelo.profissionais.every(row => tituloPorCodigo.get(row.titulo)?.modalidade === row.modalidade && tituloPorCodigo.get(row.titulo)?.nivel === row.nivel));
-  assert.ok(modelo.profissionais.filter(row => row.nivel === 'Técnico').every(row => row.modalidade === 'Segurança do trabalho'));
+  assert.ok(modelo.profissionais.filter(row => row.nivel !== 'Engenheiro').every(row => row.modalidade === 'Segurança do trabalho'));
+  assert.ok(modalidadeNivel(modelo, dataset, null).every(ramo => ramo.modalidade === 'Segurança do trabalho' || ramo.niveis.every(celula => celula.nivel === 'Engenheiro')));
   const civil = modalidadeNivel(modelo, dataset, null).find(row => row.modalidade === 'Civil')!.niveis.find(row => row.nivel === 'Engenheiro')!;
   assert.equal(civil.titulos[0].codigo, '111-02-00');
   assert.equal(sum(civil.titulos.map(row => row.ativos.length)), civil.ativos.length);

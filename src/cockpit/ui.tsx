@@ -1,3 +1,4 @@
+import { municipioPorId } from '../domain/municipios';
 import { tituloPorCodigo } from '../domain/titulos';
 import { Fragment, useState } from 'react';
 import type { ReactNode, SyntheticEvent } from 'react';
@@ -111,6 +112,6 @@ export const carregando = <div className="loading">Calculando…</div>;
 export const proporcao = (parte: number, todo: number, digits = 0) => `${parte.toLocaleString('pt-BR')} de ${todo.toLocaleString('pt-BR')}${todo ? ` (${pct(parte / todo * 100, digits)})` : ''}`;
 /** Linhas do painel lateral para uma lista de profissionais (sem ficha de empresa). */
 export function linhasProfissionais(ctx: CockpitCtx, rows: Profissional[], info: (row: Profissional) => { value: string; note: string; sort: number }) {
-  const cities = new Map(ctx.dataset.cities.map(row => [row.id, row.name]));
+  const cities = new Map([...municipioPorId(ctx.dataset).values()].map(row => [row.id, row.nome]));
   return rows.map(row => { const extra = info(row); return { key: row.id, title: row.nome, subtitle: `${tituloPorCodigo.get(row.titulo)?.titulo ?? `${row.modalidade} · ${row.nivel}`} · ${cities.get(row.cityId) ?? '—'}`, value: extra.value, note: extra.note, sortValue: extra.sort }; });
 }
