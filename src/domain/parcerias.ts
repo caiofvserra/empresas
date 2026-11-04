@@ -203,7 +203,9 @@ export interface QuadroPericias {
   peritosSemRegistroAtivo: Profissional[]; naoLocalizadas: number; nomeacoesSemRegistroAtivo: Nomeacao[];
 }
 export function quadroPericias(layer: Pericias, dataset: Dataset, modelo: ModeloProfissionais, greId: string | null, filtro: FiltroProfissional = {}): QuadroPericias {
-  const anchor = dataset.snapshotDate, nomeacoes = layer.nomeacoes.filter(row => row.data <= anchor && (!greId || row.greId === greId) && (!filtro.cityId || row.cityId === filtro.cityId) && (!filtro.modalidade || row.especialidade === filtro.modalidade));
+  const anchor = dataset.snapshotDate, nomeacoes = layer.nomeacoes.filter(row => row.data <= anchor && (!greId || row.greId === greId) && (!filtro.cityId || row.cityId === filtro.cityId) && (!filtro.modalidade || row.especialidade === filtro.modalidade)
+    // Com o filtro de gênero, só ficam as nomeações com o perito localizado no cadastro, porque o gênero vem do cadastro.
+    && (!filtro.genero || modelo.porId.get(row.profissionalId ?? '')?.genero === filtro.genero));
   const ativo = (id: string | null) => { const row = id ? modelo.porId.get(id) : undefined; return row ? situacaoEm(row, anchor) === 'Ativo' : false; };
   const semAtivo = nomeacoes.filter(row => !ativo(row.profissionalId)), comMinimos = nomeacoes.filter(row => row.dadosMinimos), confirmadas = comMinimos.filter(row => row.ponte === 'Confirmada');
   const meses: string[] = []; for (let m = 11; m >= 0; m--) meses.push(mesesAntes(anchor, m).slice(0, 7));
@@ -368,7 +370,7 @@ export function coorteNominal(formacao: Formacao, modelo: ModeloProfissionais, d
   // Só pessoas da lista nominal: IES parceira e curso (modalidade) que a IES oferece; o recorte regional segue o endereço profissional.
   const profissionais = modelo.profissionais.filter(row => parceiras.has(row.iesId) && modalidadesDa.get(row.iesId)?.has(row.modalidade) && row.registroEm <= anchor && noRecorte(row, greId, filtro));
   const coortes = formacao.anos.map(ano => {
-    const fim = `${ano}-12-31`, diplomados = sum(formacao.concluintes.filter(row => row.ano === ano && parceiras.has(row.iesId) && (!filtro.modalidade || row.modalidade === filtro.modalidade)).map(row => row.concluintes));
+    const fim = `${ano}-12-31`, diplomados = sum(formacao.concluintes.filter(row => row.ano === ano && parceiras.has(row.iesId) && (!filtro.modalidade || row.modalidade === filtro.modalidade) && (!filtro.genero || row.genero === filtro.genero)).map(row => row.concluintes));
     const pessoas = profissionais.filter(row => row.anoConclusao === ano), anteriores = pessoas.filter(row => row.registroEm <= fim), depois = pessoas.filter(row => row.registroEm > fim);
     const ate = [3, 6, 12, 24].map(meses => { const limite = mesesAntes(fim, -meses); const registrados = depois.filter(row => row.registroEm <= limite).length; const fechada = limite <= anchor; return { meses, registrados, taxa: fechada ? share(registrados, diplomados) : null, fechada }; });
     return { ano, iesParceiras: parceiras.size, diplomados, ate, registroAnterior: anteriores.length, registrados: depois };

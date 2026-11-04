@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
-import { Chart, useSpMap } from '../painel/chart';
+import { Chart, useSpMap, proporcaoSp } from '../painel/chart';
 import { int, mes, pct } from '../painel/ui';
 import { rotulosGre, territorioGre } from '../painel/territorio';
 import { faixasIdade, faixaIdade, idadeEm, situacaoEm } from '../domain/profissionais';
 import type { Profissional } from '../domain/profissionais';
 import { artPorIdade, artsMensaisPorModalidade, ativosNoInicio, fluxoMensal, modalidadeNivel, novosPorModalidade, permanenciaPorAno, regionaisProfissionais, transicoes } from '../domain/painel-profissionais';
-import type { RegionalProfissionais } from '../domain/painel-profissionais';
+import type { MedidasProfissionais } from '../domain/painel-profissionais';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { linhasProfissionais } from '../cockpit/ui';
 
@@ -15,7 +15,7 @@ import { linhasProfissionais } from '../cockpit/ui';
  * o bloco mostra só o título e o gráfico, e a explicação fica no (i); os gráficos variam (mapa com o limite dos municípios, mapa de
  * árvore, anel, calor, fluxo, barras e linhas), sem mapa de bolhas, rosa ou barras em círculo.
  */
-export const filtroDe = (ctx: CockpitCtx) => ({ cityId: ctx.cidadeId, modalidade: ctx.modalidade });
+export const filtroDe = (ctx: CockpitCtx) => ({ cityId: ctx.cidadeId, modalidade: ctx.modalidade, genero: ctx.genero });
 export const porIds = (ctx: CockpitCtx, ids: string[]) => ids.map(id => ctx.profissionais.modelo.porId.get(id)).filter((row): row is Profissional => Boolean(row));
 const dataBr = (value: string) => value.split('-').reverse().join('/');
 /** Abre a lista de profissionais de um item clicado. */
@@ -29,89 +29,131 @@ const delta = (value: number | null) => value === null ? '—' : `${value >= 0 ?
 /* ---------- Registro ---------- */
 export type MetricaMapa = 'ativos' | 'variacao' | 'novos' | 'inadimplencia' | 'mulheres' | 'sessenta' | 'arts' | 'semArt' | 'rt';
 type Lista = 'ativos' | 'novos' | 'inadimplentes' | 'sessenta' | 'semArt' | 'rts';
-export const metricasMapa: Record<MetricaMapa, { label: string; get: (row: RegionalProfissionais) => number | null; fmt: (value: number) => string; alerta?: boolean; menorPrimeiro?: boolean; lista: Lista; what: string }> = {
-  ativos: { label: 'Profissionais ativos', get: row => row.ativos.length, fmt: int, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
-  variacao: { label: 'Variação em um ano', get: row => row.variacao, fmt: delta, menorPrimeiro: true, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
-  novos: { label: 'Registros novos a cada 100 ativos', get: row => row.novosPorCem, fmt: value => value.toLocaleString('pt-BR', { maximumFractionDigits: 1 }), menorPrimeiro: true, lista: 'novos', what: 'Profissionais desta regional que fizeram o registro no período escolhido.' },
-  inadimplencia: { label: 'Anuidade atrasada', get: row => row.inadimplencia, fmt: value => pct(value), alerta: true, lista: 'inadimplentes', what: 'Profissionais ativos desta regional com anuidade vencida na data escolhida.' },
-  mulheres: { label: 'Mulheres entre os ativos', get: row => row.mulheres, fmt: value => pct(value), menorPrimeiro: true, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
-  sessenta: { label: 'Ativos com 60 anos ou mais', get: row => row.sessentaParte, fmt: value => pct(value), alerta: true, lista: 'sessenta', what: 'Profissionais ativos desta regional com 60 anos ou mais na data escolhida.' },
-  arts: { label: 'ARTs a cada 100 ativos', get: row => row.artsPorCem, fmt: value => value.toLocaleString('pt-BR', { maximumFractionDigits: 0 }), menorPrimeiro: true, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
-  semArt: { label: 'Ativos sem ART no período', get: row => row.semArtParte, fmt: value => pct(value), alerta: true, lista: 'semArt', what: 'Profissionais ativos desta regional que não registraram nenhuma ART como autor no período.' },
-  rt: { label: 'Responsáveis técnicos a cada 100 ativos', get: row => row.rtPorCem, fmt: value => value.toLocaleString('pt-BR', { maximumFractionDigits: 0 }), menorPrimeiro: true, lista: 'rts', what: 'Profissionais ativos desta regional que são responsáveis técnicos de pelo menos uma empresa.' },
+export const metricasMapa: Record<MetricaMapa, { label: string; get: (row: MedidasProfissionais) => number | null; curto: string; fmt: (value: number) => string; alerta?: boolean; menorPrimeiro?: boolean; lista: Lista; what: string }> = {
+  ativos: { label: 'Profissionais ativos', curto: 'ativos', get: row => row.ativos.length, fmt: int, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
+  variacao: { label: 'Variação em um ano', curto: 'variação', get: row => row.variacao, fmt: delta, menorPrimeiro: true, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
+  novos: { label: 'Registros novos a cada 100 ativos', curto: 'novos/100', get: row => row.novosPorCem, fmt: value => value.toLocaleString('pt-BR', { maximumFractionDigits: 1 }), menorPrimeiro: true, lista: 'novos', what: 'Profissionais desta regional que fizeram o registro no período escolhido.' },
+  inadimplencia: { label: 'Anuidade atrasada', curto: 'atrasada', get: row => row.inadimplencia, fmt: value => pct(value), alerta: true, lista: 'inadimplentes', what: 'Profissionais ativos desta regional com anuidade vencida na data escolhida.' },
+  mulheres: { label: 'Mulheres entre os ativos', curto: 'mulheres', get: row => row.mulheres, fmt: value => pct(value), menorPrimeiro: true, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
+  sessenta: { label: 'Ativos com 60 anos ou mais', curto: '60+', get: row => row.sessentaParte, fmt: value => pct(value), alerta: true, lista: 'sessenta', what: 'Profissionais ativos desta regional com 60 anos ou mais na data escolhida.' },
+  arts: { label: 'ARTs a cada 100 ativos', curto: 'ARTs/100', get: row => row.artsPorCem, fmt: value => value.toLocaleString('pt-BR', { maximumFractionDigits: 0 }), menorPrimeiro: true, lista: 'ativos', what: 'Profissionais com registro ativo nesta regional na data escolhida.' },
+  semArt: { label: 'Ativos sem ART no período', curto: 'sem ART', get: row => row.semArtParte, fmt: value => pct(value), alerta: true, lista: 'semArt', what: 'Profissionais ativos desta regional que não registraram nenhuma ART como autor no período.' },
+  rt: { label: 'Responsáveis técnicos a cada 100 ativos', curto: 'RT/100', get: row => row.rtPorCem, fmt: value => value.toLocaleString('pt-BR', { maximumFractionDigits: 0 }), menorPrimeiro: true, lista: 'rts', what: 'Profissionais ativos desta regional que são responsáveis técnicos de pelo menos uma empresa.' },
 };
 const rampaMapa = (alerta: boolean, dark: boolean) => alerta
   ? (dark ? ['#3A2E22', '#7A5A10', '#C9851F', '#E5703B', '#FF7B7B'] : ['#FFF4D6', '#FFD98A', '#F6AD55', '#E5703B', '#C53030'])
-  : (dark ? ['#1A2D52', '#2F548C', '#4A7FC1', '#7FB0E6', '#D4EDFF'] : ['#EAF1FA', '#BBD5F2', '#7FB0E6', '#3182CE', '#082D74']);
+  : (dark ? ['#2A4A7F', '#3B67A8', '#5B8FD0', '#8DBCEB', '#D4EDFF'] : ['#C3D9F2', '#93BCEA', '#5E9BDD', '#2B6CB0', '#082D74']);
+/** Município sem valor: cinza neutro, para não se confundir com a faixa mais clara do azul. */
+const semDados = (dark: boolean) => dark ? '#3A4250' : '#E3E6EA';
 
-/** Mapa do estado com o limite de cada município, pintado pela regional no indicador escolhido, e as regionais em ordem ao lado. */
+/**
+ * Mapa do estado com o limite de cada município. Desde 04/11/2026 (pedido do Caio) cada município é pintado pelo próprio valor no
+ * indicador escolhido, em cinco faixas, e o valor da GRE aparece só na lista ao lado; passar o mouse numa GRE acende os municípios
+ * dela. Município com menos de MINIMO_MUNICIPIO ativos fica sem valor nas partes e taxas ("poucos dados").
+ */
 export function MapaProfissionais({ ctx, metrica }: { ctx: CockpitCtx; metrica: MetricaMapa }) {
   const centroids = useSpMap(), { tokens, dark } = ctx, config = metricasMapa[metrica];
   const [destaque, setDestaque] = useState<string | null>(null);
   const regioes = useMemo(() => centroids ? territorioGre(ctx.dataset, centroids) : null, [centroids, ctx.dataset]);
   const rotulos = useMemo(() => regioes && centroids ? rotulosGre(regioes, centroids) : null, [regioes, centroids]);
-  const t = useMemo(() => regionaisProfissionais(ctx.profissionais.modelo, ctx.dataset, ctx.period, filtroDe(ctx)), [ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+  const t = useMemo(() => regionaisProfissionais(ctx.profissionais.modelo, ctx.dataset, ctx.period, filtroDe(ctx)), [ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
   const linhas = t.linhas, porId = useMemo(() => new Map(linhas.map(row => [row.id, row])), [linhas]);
-  const cidadePorNome = useMemo(() => new Map(ctx.dataset.cities.map(row => [row.name, row])), [ctx.dataset]);
+  const porNome = useMemo(() => new Map([...t.municipios.values()].map(row => [row.nome, row])), [t]);
   const cidade = ctx.cidadeId ? ctx.dataset.cities.find(row => row.id === ctx.cidadeId) : undefined;
   const classes = useMemo(() => {
-    const rows = linhas.filter(row => config.get(row) !== null).sort((a, b) => config.get(a)! - config.get(b)!), cores = rampaMapa(Boolean(config.alerta), dark);
-    const cls = new Map(rows.map((row, index) => [row.id, Math.min(4, Math.floor(index / rows.length * 5))]));
-    const faixas = cores.map((cor, index) => { const membros = rows.filter(row => cls.get(row.id) === index).map(row => config.get(row)!); return { cor, min: membros.length ? Math.min(...membros) : null, max: membros.length ? Math.max(...membros) : null }; });
-    return { cls, cores, faixas };
-  }, [linhas, config, dark]);
-  const cor = (greId: string) => { const index = classes.cls.get(greId); return index === undefined ? tokens.line : classes.cores[index]; };
+    const valores = [...t.municipios.values()].map(row => config.get(row)).filter((value): value is number => value !== null).sort((a, b) => a - b), cores = rampaMapa(Boolean(config.alerta), dark);
+    const cortes = [1, 2, 3, 4].map(k => valores[Math.min(valores.length - 1, Math.floor(valores.length * k / 5))]);
+    const classe = (value: number) => { let index = 0; while (index < 4 && value >= cortes[index] && cortes[index] > (index ? cortes[index - 1] : -Infinity)) index++; return index; };
+    const faixas = cores.map((cor, index) => { const membros = valores.filter(value => classe(value) === index); return { cor, min: membros.length ? membros[0] : null, max: membros.length ? membros.at(-1)! : null }; }).filter(row => row.min !== null);
+    return { classe, cores, faixas };
+  }, [t, config, dark]);
+  const corCidade = (nome: string) => { const row = porNome.get(nome), value = row ? config.get(row) : null; return value === null ? semDados(dark) : classes.cores[classes.classe(value)]; };
   const ranking = [...linhas].filter(row => config.get(row) !== null).sort((a, b) => config.menorPrimeiro ? config.get(a)! - config.get(b)! : config.get(b)! - config.get(a)!);
   const maximo = Math.max(...ranking.map(row => Math.abs(config.get(row)!)), 1);
   const option = useMemo(() => {
     if (!regioes || !rotulos || !centroids) return null;
     const foco = cidade ? { center: centroids.get(cidade.name), zoom: 3.2 } : ctx.greId ? { center: rotulos.get(ctx.greId), zoom: 2.2 } : null;
-    const dica = (nome: string, greId: string) => { const row = porId.get(greId); if (!row) return nome; const value = config.get(row), local = cidadePorNome.get(nome), noLocal = local ? t.cidades.get(local.id) ?? 0 : null;
-      return `<b>${nome}</b> · ${row.name}<br/>${config.label} na regional: <b>${value === null ? '—' : config.fmt(value)}</b>${noLocal !== null ? `<br/>No município: ${int(noLocal)} profissionais ativos` : ''}<br/><span style="opacity:.8">${int(row.ativos.length)} ativos · ${delta(row.variacao)} em um ano · ${row.inadimplencia === null ? '—' : pct(row.inadimplencia)} com anuidade atrasada</span><br/><span style="opacity:.7">clique para ver os profissionais</span>`; };
+    const dica = (nome: string, greId: string) => { const local = porNome.get(nome), gre = porId.get(local?.greId ?? greId), daGre = gre ? config.get(gre) : null, value = local ? config.get(local) : null;
+      return `<b>${nome}</b> · ${gre?.name ?? ''}<br/>${config.label}: <b>${!local || !local.ativos.length ? 'sem profissionais no cenário' : value === null ? 'poucos dados' : config.fmt(value)}</b>${local?.ativos.length ? `<br/><span style="opacity:.8">${int(local.ativos.length)} profissionais ativos</span>` : ''}<br/><span style="opacity:.8">Na ${gre?.name ?? 'GRE'}: ${daGre === null ? '—' : config.fmt(daGre)}</span>${local?.ativos.length ? '<br/><span style="opacity:.7">clique para ver os profissionais do município</span>' : ''}`; };
     return {
-      tooltip: { trigger: 'item', formatter: (item: any) => item.componentType === 'geo' ? dica(item.name, regioes.get(item.name) ?? '') : dica(porId.get(item.data?.greId)?.name ?? '', item.data?.greId ?? '') },
-      geo: { map: 'spPainel', roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
+      tooltip: { trigger: 'item', formatter: (item: any) => item.componentType === 'geo' ? dica(item.name, regioes.get(item.name) ?? '') : '' },
+      geo: { map: 'spPainel', ...proporcaoSp, roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
         itemStyle: { areaColor: tokens.soft, borderColor: tokens.surface, borderWidth: 0.35 }, emphasis: { itemStyle: { areaColor: tokens.accent }, label: { show: false } },
         regions: [...regioes].map(([name, greId]) => { const apagado = destaque ? destaque !== greId : Boolean(ctx.greId && ctx.greId !== greId), escolhido = cidade?.name === name;
-          return { name, itemStyle: { areaColor: cor(greId), opacity: apagado ? 0.3 : 1, borderColor: escolhido ? tokens.ink : tokens.surface, borderWidth: escolhido ? 1.6 : 0.35 } }; }) },
+          return { name, itemStyle: { areaColor: corCidade(name), opacity: apagado ? 0.25 : 1, borderColor: escolhido ? tokens.ink : tokens.surface, borderWidth: escolhido ? 1.6 : 0.35 } }; }) },
+      // Só o nome da GRE sobre o mapa, para orientar; o valor dela fica na lista ao lado.
       series: [{ type: 'scatter', coordinateSystem: 'geo', symbolSize: 1, itemStyle: { color: 'transparent' }, silent: true,
-        data: [...rotulos].map(([greId, at]) => { const row = porId.get(greId), value = row ? config.get(row) : null; return { name: row?.curto ?? greId, greId, valor: value === null ? '—' : config.fmt(value), value: at }; }),
-        label: { show: true, formatter: (item: any) => `{n|${item.name}}\n{v|${item.data.valor}}`, rich: { n: { color: '#1A202C', fontSize: 9.5, fontWeight: 700, textBorderColor: 'rgba(255,255,255,.85)', textBorderWidth: 2.5 }, v: { color: '#1A202C', fontSize: 10.5, fontWeight: 800, textBorderColor: 'rgba(255,255,255,.85)', textBorderWidth: 2.5 } } },
+        data: [...rotulos].map(([greId, at]) => ({ name: porId.get(greId)?.name ?? greId, value: at })),
+        label: { show: true, formatter: (item: any) => item.name, color: dark ? '#E2E8F0' : '#1A202C', fontSize: 9.5, fontWeight: 700, textBorderColor: dark ? 'rgba(8,20,40,.9)' : 'rgba(255,255,255,.85)', textBorderWidth: 2.5 },
         labelLayout: { hideOverlap: true } }],
     };
-  }, [regioes, rotulos, centroids, classes, config, tokens, destaque, ctx.greId, cidade, porId, cidadePorNome, t]); // eslint-disable-line react-hooks/exhaustive-deps
-  const abrir = (greId: string | undefined) => { const row = greId ? porId.get(greId) : undefined; if (!row) return;
-    const rows = config.lista === 'novos' ? row.novos : config.lista === 'inadimplentes' ? row.inadimplentes : config.lista === 'sessenta' ? row.sessenta : config.lista === 'semArt' ? row.semArt : config.lista === 'rts' ? row.rts : row.ativos;
-    abrirProfissionais(ctx, `${row.name}: ${config.label.toLowerCase()}`, rows, config.what); };
+  }, [regioes, rotulos, centroids, classes, config, tokens, destaque, ctx.greId, cidade, porId, porNome]); // eslint-disable-line react-hooks/exhaustive-deps
+  const listaDe = (row: MedidasProfissionais) => config.lista === 'novos' ? row.novos : config.lista === 'inadimplentes' ? row.inadimplentes : config.lista === 'sessenta' ? row.sessenta : config.lista === 'semArt' ? row.semArt : config.lista === 'rts' ? row.rts : row.ativos;
+  const abrirGre = (greId: string | undefined) => { const row = greId ? porId.get(greId) : undefined; if (row) abrirProfissionais(ctx, `${row.name}: ${config.label.toLowerCase()}`, listaDe(row), config.what); };
+  const abrirCidade = (nome: string) => { const row = porNome.get(nome); if (row) abrirProfissionais(ctx, `${nome}: ${config.label.toLowerCase()}`, listaDe(row), config.what.replace('nesta regional', 'neste município').replace('desta regional', 'deste município')); };
   return <div className="geo-layout is-compacto">
-    <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa das regionais por município: ${config.label}`} onPick={params => abrir(params.componentType === 'geo' ? regioes?.get(params.name) : params.data?.greId)} /> : <div className="loading">Carregando o mapa…</div>}
-      <ul className="geo-legend" aria-label="Faixas do mapa">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === null ? '—' : item.min === item.max ? config.fmt(item.min) : `${config.fmt(item.min)} a ${config.fmt(item.max!)}`}</li>)}</ul></div>
-    <ol className="geo-rank" onMouseLeave={() => setDestaque(null)} aria-label={`Regionais por ${config.label}`}>{ranking.map(row => { const value = config.get(row)!;
-      return <li key={row.id}><button onClick={() => abrir(row.id)} onMouseEnter={() => setDestaque(row.id)} onFocus={() => setDestaque(row.id)} className={ctx.greId === row.id ? 'is-selected' : ''}>
-        <i style={{ background: cor(row.id) }} /><span>{row.curto}</span><b>{config.fmt(value)}</b><em style={{ width: `${Math.abs(value) / maximo * 100}%` }} /></button></li>; })}</ol>
+    <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa por município: ${config.label}`} onPick={params => { if (params.componentType === 'geo') abrirCidade(params.name); }} /> : <div className="loading">Carregando o mapa…</div>}
+      <ul className="geo-legend" aria-label="Faixas dos municípios">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === item.max ? config.fmt(item.min!) : `${config.fmt(item.min!)} a ${config.fmt(item.max!)}`}</li>)}<li><i style={{ background: semDados(dark) }} />sem dados</li></ul></div>
+    <ol className="geo-rank is-gre" onMouseLeave={() => setDestaque(null)} aria-label={`GREs por ${config.label}`}><li className="geo-rank-head"><span>GRE</span><b>{config.curto}</b></li>{ranking.map(row => { const value = config.get(row)!;
+      return <li key={row.id}><button onClick={() => abrirGre(row.id)} onMouseEnter={() => setDestaque(row.id)} onFocus={() => setDestaque(row.id)} className={ctx.greId === row.id ? 'is-selected' : ''}>
+        <span>{row.name}</span><b>{config.fmt(value)}</b><em style={{ width: `${Math.abs(value) / maximo * 100}%` }} /></button></li>; })}</ol>
   </div>;
 }
 
 /** Cor da variação em um ano: vermelho para queda, cinza perto de zero, azul para alta. */
 // Tecnólogo em âmbar escuro, para o texto branco continuar legível (o amarelo da marca não dá contraste).
 const corNivel = (nivel: string, tokens: CockpitCtx['tokens']) => nivel === 'Engenheiro' ? tokens.blue : nivel === 'Técnico' ? tokens.good : '#B7791F';
-/** Mapa de árvore: cada retângulo grande é uma modalidade, e os de dentro são os níveis (uma cor por nível). Tamanho = ativos. A variação em um ano vai escrita. */
+/**
+ * Mapa de árvore: cada retângulo grande é uma modalidade, e os de dentro são os níveis (uma cor por nível). Tamanho = ativos.
+ * A variação em um ano vai escrita. Clicar num nível (ou no nome da modalidade) abre os títulos profissionais dele, pelo código do
+ * catálogo do Confea (pedido do Caio em 04/11/2026); clicar num título abre a lista dos profissionais.
+ */
+type Aberto = { modalidade: string; nivel?: string } | null;
 export function ArvoreModalidade({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, dark } = ctx, ramos = useMemo(() => modalidadeNivel(ctx.profissionais.modelo, ctx.dataset, ctx.greId, filtroDe(ctx)), [ctx.profissionais.modelo, ctx.dataset, ctx.greId, ctx.cidadeId, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
-  const option = useMemo(() => ({
-    title: { text: '{a|■} engenheiros   {b|■} técnicos   {c|■} tecnólogos   ·   tamanho = ativos', left: 0, top: 0, textStyle: { fontSize: 10, fontWeight: 400, color: tokens.muted, rich: { a: { color: corNivel('Engenheiro', tokens), fontSize: 12 }, b: { color: corNivel('Técnico', tokens), fontSize: 12 }, c: { color: corNivel('Tecnólogo', tokens), fontSize: 12 } } } },
-    tooltip: { formatter: (item: any) => { const d = item.data; if (d?.celula) { const c = d.celula; return `<b>${c.modalidade}</b> · ${c.nivel}s<br/>${int(c.ativos.length)} ativos · ${delta(c.variacao)} em um ano<br/><span style="opacity:.75">clique para ver os profissionais</span>`; }
-      return d?.ramo ? `<b>${d.name}</b><br/>${int(d.ramo.ativos)} ativos · ${delta(d.ramo.antes ? (d.ramo.ativos - d.ramo.antes) / d.ramo.antes * 100 : null)} em um ano` : ''; } },
-    series: [{ type: 'treemap', roam: false, nodeClick: false, breadcrumb: { show: false }, left: 0, right: 0, top: 20, bottom: 0, squareRatio: 1.3,
-      upperLabel: { show: true, height: 18, color: '#FFFFFF', fontSize: 10.5, fontWeight: 700, formatter: (item: any) => item.data?.ramo ? `${item.name} · ${int(item.data.ramo.ativos)}` : item.name },
-      levels: [{ itemStyle: { borderColor: tokens.surface, borderWidth: 0, gapWidth: 3 } }, { itemStyle: { borderColor: dark ? '#1A2D52' : '#01224D', borderWidth: 2, gapWidth: 1 }, upperLabel: { show: true } }, { itemStyle: { borderColor: tokens.surface, borderWidth: 1, gapWidth: 1 } }],
-      label: { show: true, fontSize: 10, color: '#FFFFFF', overflow: 'truncate', lineHeight: 13, formatter: (item: any) => { const c = item.data?.celula; return c ? `${c.nivel}s\n{n|${int(c.ativos.length)}}\n{v|${delta(c.variacao)} em um ano}` : item.name; }, rich: { n: { fontSize: 12.5, fontWeight: 800, color: '#FFFFFF' }, v: { fontSize: 9.5, color: 'rgba(255,255,255,.9)' } } },
-      data: ramos.map(ramo => ({ name: ramo.modalidade, value: ramo.ativos, ramo, itemStyle: { color: dark ? '#1A2D52' : '#01224D' },
-        children: ramo.niveis.map(celula => ({ name: `${ramo.modalidade} ${celula.nivel}`, value: celula.ativos.length, celula, itemStyle: { color: corNivel(celula.nivel, tokens) } })) })) }],
-  }), [ramos, tokens, dark]);
-  return <Chart option={option} tokens={tokens} label="Profissionais ativos por modalidade e nível, com a variação em um ano" onPick={params => { const d = params.data; if (!d) return;
-    if (d.celula) abrirProfissionais(ctx, `${d.celula.modalidade}: ${d.celula.nivel.toLowerCase()}s ativos`, d.celula.ativos, 'Profissionais com registro ativo nesta modalidade e neste nível na data escolhida.');
-    else if (d.ramo) abrirProfissionais(ctx, `${d.name}: ativos`, d.ramo.niveis.flatMap((row: { ativos: Profissional[] }) => row.ativos), 'Profissionais com registro ativo nesta modalidade na data escolhida.'); }} />;
+  const { tokens, dark } = ctx, ramos = useMemo(() => modalidadeNivel(ctx.profissionais.modelo, ctx.dataset, ctx.greId, filtroDe(ctx)), [ctx.profissionais.modelo, ctx.dataset, ctx.greId, ctx.cidadeId, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [aberto, setAberto] = useState<Aberto>(null);
+  const ramo = aberto ? ramos.find(row => row.modalidade === aberto.modalidade) : undefined;
+  const celulas = ramo ? ramo.niveis.filter(row => !aberto?.nivel || row.nivel === aberto.nivel) : [];
+  const emTitulos = Boolean(ramo && celulas.length);
+  const marinho = dark ? '#1A2D52' : '#01224D';
+  const option = useMemo(() => {
+    const legenda = { text: emTitulos ? 'tamanho = ativos   ·   clique num título para ver os profissionais' : '{a|■} engenheiros   {b|■} técnicos   {c|■} tecnólogos   ·   tamanho = ativos   ·   clique para ver os títulos',
+      ...(emTitulos ? { right: 0 } : { left: 0 }), top: 0, textStyle: { fontSize: 10, fontWeight: 400, color: tokens.muted, rich: { a: { color: corNivel('Engenheiro', tokens), fontSize: 12 }, b: { color: corNivel('Técnico', tokens), fontSize: 12 }, c: { color: corNivel('Tecnólogo', tokens), fontSize: 12 } } } };
+    const rotulo = { show: true, fontSize: 10, color: '#FFFFFF', overflow: 'truncate', lineHeight: 13, rich: { n: { fontSize: 12.5, fontWeight: 800, color: '#FFFFFF' }, v: { fontSize: 9.5, color: 'rgba(255,255,255,.9)' } } };
+    // Aberto, o bloco vira barras: um título por linha, do maior para o menor, com o número e a variação escritos. Num mapa de
+    // árvore, os títulos pequenos ficavam ilegíveis ao lado do principal (o engenheiro civil é perto de 80% dos engenheiros civis).
+    if (emTitulos) {
+      const linhas = celulas.flatMap(celula => celula.titulos.map(titulo => ({ ...titulo, nivel: celula.nivel })));
+      return {
+        title: { ...legenda, text: celulas.length > 1 ? '{a|■} engenheiros   {b|■} técnicos   {c|■} tecnólogos   ·   clique num título para ver os profissionais' : 'clique num título para ver os profissionais' },
+        grid: { top: 24, right: 92, bottom: 2, left: 2, containLabel: true },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const t = linhas[items[0].dataIndex]; return `<b>${t.titulo}</b><br/>Código ${t.codigo} no catálogo do Confea<br/>${int(t.ativos.length)} ativos · ${delta(t.variacao)} em um ano<br/><span style="opacity:.75">clique para ver os profissionais</span>`; } },
+        xAxis: { type: 'value', show: false },
+        yAxis: { type: 'category', inverse: true, data: linhas.map(t => t.titulo), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: linhas.length > 16 ? 9.5 : 10.5, width: 230, overflow: 'truncate' } },
+        series: [{ type: 'bar', barMaxWidth: 16, data: linhas.map(t => ({ value: t.ativos.length, titulo: t, itemStyle: { color: corNivel(t.nivel, tokens), borderRadius: [0, 3, 3, 0] } })),
+          label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, fontWeight: 700, formatter: (item: any) => `${int(item.value)}  {v|${delta(linhas[item.dataIndex].variacao)}}`, rich: { v: { color: tokens.muted, fontSize: 9.5, fontWeight: 400 } } } }],
+      };
+    }
+    return {
+      title: legenda,
+      tooltip: { formatter: (item: any) => { const d = item.data; if (d?.celula) { const c = d.celula; return `<b>${c.modalidade}</b> · ${c.nivel}s<br/>${int(c.ativos.length)} ativos · ${delta(c.variacao)} em um ano<br/>${c.titulos.length} ${c.titulos.length === 1 ? 'título' : 'títulos'} profissionais<br/><span style="opacity:.75">clique para ver os títulos</span>`; }
+        return d?.ramo ? `<b>${d.name}</b><br/>${int(d.ramo.ativos)} ativos · ${delta(d.ramo.antes ? (d.ramo.ativos - d.ramo.antes) / d.ramo.antes * 100 : null)} em um ano<br/><span style="opacity:.75">clique para ver os títulos</span>` : ''; } },
+      series: [{ type: 'treemap', roam: false, nodeClick: false, breadcrumb: { show: false }, left: 0, right: 0, top: 20, bottom: 0, squareRatio: 1.3,
+        upperLabel: { show: true, height: 18, color: '#FFFFFF', fontSize: 10.5, fontWeight: 700, formatter: (item: any) => item.data?.ramo ? `${item.name} · ${int(item.data.ramo.ativos)}` : item.name },
+        levels: [{ itemStyle: { borderColor: tokens.surface, borderWidth: 0, gapWidth: 3 } }, { itemStyle: { borderColor: marinho, borderWidth: 2, gapWidth: 1 }, upperLabel: { show: true } }, { itemStyle: { borderColor: tokens.surface, borderWidth: 1, gapWidth: 1 } }],
+        label: { ...rotulo, formatter: (item: any) => { const c = item.data?.celula; return c ? `${c.nivel}s\n{n|${int(c.ativos.length)}}\n{v|${delta(c.variacao)} em um ano}` : item.name; } },
+        data: ramos.map(ramo => ({ name: ramo.modalidade, value: ramo.ativos, ramo, itemStyle: { color: marinho },
+          children: ramo.niveis.map(celula => ({ name: `${ramo.modalidade} ${celula.nivel}`, value: celula.ativos.length, celula, itemStyle: { color: corNivel(celula.nivel, tokens) } })) })) }],
+    };
+  }, [ramos, tokens, dark, emTitulos, celulas, aberto, marinho]);
+  return <div className="arvore-titulos">
+    {emTitulos && <div className="arvore-volta"><button type="button" onClick={() => setAberto(null)}>← Todas as modalidades</button><b>{aberto!.modalidade}{aberto!.nivel ? ` · ${aberto!.nivel.toLowerCase()}s` : ''}</b></div>}
+    <Chart option={option} tokens={tokens} label={emTitulos ? `Títulos profissionais dos ativos de ${aberto!.modalidade}` : 'Profissionais ativos por modalidade e nível, com a variação em um ano'} onPick={params => { const d = params.data; if (!d) return;
+      if (d.titulo) abrirProfissionais(ctx, `${d.titulo.titulo}: ativos`, d.titulo.ativos, `Profissionais com registro ativo e título ${d.titulo.titulo} (código ${d.titulo.codigo} no catálogo do Confea) na data escolhida.`);
+      else if (d.celula && !emTitulos) setAberto({ modalidade: d.celula.modalidade, nivel: d.celula.nivel });
+      else if (d.celula) setAberto({ modalidade: aberto!.modalidade, nivel: d.celula.nivel });
+      else if (d.ramo) setAberto({ modalidade: d.ramo.modalidade }); }} />
+  </div>;
 }
 
 /** Um anel só, com os registrados em quatro situações: ativo em dia, ativo com anuidade atrasada, interrompido e cancelado. */
@@ -137,16 +179,20 @@ export function Piramide({ ctx }: { ctx: CockpitCtx }) {
   const celulas = useMemo(() => faixasIdade.map(faixa => { const rows = porIds(ctx, p.porIdade.find(row => row.nome === faixa)?.ids ?? []);
     return { faixa, mulheres: rows.filter(row => row.genero === 'Feminino'), homens: rows.filter(row => row.genero === 'Masculino') }; }), [p, ctx]);
   const maximo = Math.max(1, ...celulas.map(row => Math.max(row.mulheres.length, row.homens.length)));
+  // Com um gênero escolhido no alto da tela, a pirâmide vira barras de um lado só, porque o outro lado ficaria vazio.
+  const so = ctx.genero;
   const option = useMemo(() => ({
-    grid: { top: 22, right: 30, bottom: 2, left: 30, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = celulas[items[0].dataIndex]; return `<b>${row.faixa} anos</b><br/>${int(row.mulheres.length)} mulheres · ${int(row.homens.length)} homens<br/><span style="opacity:.75">clique para ver</span>`; } },
-    xAxis: { type: 'value', min: -maximo, max: maximo, show: false },
+    grid: { top: 22, right: 30, bottom: 2, left: so ? 2 : 30, containLabel: true }, legend: legenda(tokens),
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = celulas[items[0].dataIndex]; return `<b>${row.faixa} anos</b><br/>${so ? `${int((so === 'Feminino' ? row.mulheres : row.homens).length)} ${so === 'Feminino' ? 'mulheres' : 'homens'}` : `${int(row.mulheres.length)} mulheres · ${int(row.homens.length)} homens`}<br/><span style="opacity:.75">clique para ver</span>`; } },
+    xAxis: { type: 'value', min: so ? 0 : -maximo, max: maximo, show: false },
     yAxis: { type: 'category', data: celulas.map(row => row.faixa), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
-    series: [
+    series: so ? [
+      { name: so === 'Feminino' ? 'Mulheres' : 'Homens', type: 'bar', barWidth: '62%', data: celulas.map(row => (so === 'Feminino' ? row.mulheres : row.homens).length), itemStyle: { color: so === 'Feminino' ? tokens.accent : tokens.blue, borderRadius: [0, 4, 4, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(params.value) } },
+    ] : [
       { name: 'Mulheres', type: 'bar', stack: 'p', barWidth: '62%', data: celulas.map(row => -row.mulheres.length), itemStyle: { color: tokens.accent, borderRadius: [4, 0, 0, 4] }, label: { show: true, position: 'left', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(Math.abs(params.value)) } },
       { name: 'Homens', type: 'bar', stack: 'p', barWidth: '62%', data: celulas.map(row => row.homens.length), itemStyle: { color: tokens.blue, borderRadius: [0, 4, 4, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(params.value) } },
     ],
-  }), [celulas, tokens, maximo]);
+  }), [celulas, tokens, maximo, so]);
   return <Chart option={option} tokens={tokens} label="Profissionais ativos por faixa de idade e gênero" onPick={params => { const row = celulas[params.dataIndex]; if (!row) return; const mulheres = params.seriesName === 'Mulheres';
     abrirProfissionais(ctx, `${row.faixa} anos: ${mulheres ? 'mulheres' : 'homens'}`, mulheres ? row.mulheres : row.homens, 'Profissionais ativos nesta faixa de idade e gênero.'); }} />;
 }
@@ -170,7 +216,7 @@ export function IdadeModalidade({ ctx }: { ctx: CockpitCtx }) {
 }
 
 /* ---------- Evolução ---------- */
-export const useFluxo = (ctx: CockpitCtx) => useMemo(() => fluxoMensal(ctx.profissionais.modelo, ctx.dataset, ctx.greId, filtroDe(ctx), 24), [ctx.profissionais.modelo, ctx.dataset, ctx.greId, ctx.cidadeId, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+export const useFluxo = (ctx: CockpitCtx) => useMemo(() => fluxoMensal(ctx.profissionais.modelo, ctx.dataset, ctx.greId, filtroDe(ctx), 24), [ctx.profissionais.modelo, ctx.dataset, ctx.greId, ctx.cidadeId, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
 /** Entradas para cima, saídas para baixo, mês a mês, com o período escolhido destacado e a linha do saldo. */
 export function EntradasSaidasMes({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, janela } = ctx, rows = useFluxo(ctx);
@@ -197,7 +243,7 @@ export function EntradasSaidasMes({ ctx }: { ctx: CockpitCtx }) {
 
 /** Ponte dos ativos: quantos eram ativos no início do período, o que entrou, o que saiu e quantos são ativos na data escolhida. */
 export function PonteAtivos({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, t = useMemo(() => transicoes(ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.greId, filtroDe(ctx)), [ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.greId, ctx.cidadeId, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { tokens } = ctx, t = useMemo(() => transicoes(ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.greId, filtroDe(ctx)), [ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.greId, ctx.cidadeId, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
   const passos = useMemo(() => {
     const ids = (filtro: (row: { de: string; para: string }) => boolean) => t.fluxos.filter(filtro).flatMap(row => row.ids);
     const antes = ativosNoInicio(ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.greId, filtroDe(ctx)).ativos;
@@ -210,7 +256,7 @@ export function PonteAtivos({ ctx }: { ctx: CockpitCtx }) {
     ];
     const final = passos.reduce((n, row) => row.tipo === 'menos' ? n - row.ids.length : n + row.ids.length, 0);
     return [...passos, { nome: 'Ativos na data escolhida', tipo: 'total' as const, ids: ctx.profissionais.resumo.ativos.map(row => row.id), cor: tokens.blue, conta: final }];
-  }, [t, ctx.profissionais, ctx.greId, ctx.cidadeId, ctx.modalidade, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [t, ctx.profissionais, ctx.greId, ctx.cidadeId, ctx.modalidade, ctx.genero, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   const bases: number[] = []; let nivel = 0;
   for (const passo of passos) { if (passo.tipo === 'total') { bases.push(0); nivel = passo.ids.length; } else if (passo.tipo === 'mais') { bases.push(nivel); nivel += passo.ids.length; } else { nivel -= passo.ids.length; bases.push(nivel); } }
   const menor = Math.min(...passos.filter(row => row.tipo === 'total').map(row => row.ids.length), ...bases.filter(Boolean));
@@ -251,7 +297,7 @@ export function NovosModalidade({ ctx }: { ctx: CockpitCtx }) {
 
 /** Por ano de registro: barras com quantos se registraram e a linha com a parte que continua ativa. */
 export function PermanenciaAno({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => permanenciaPorAno(ctx.profissionais.modelo, ctx.dataset, ctx.greId, filtroDe(ctx), 15), [ctx.profissionais.modelo, ctx.dataset, ctx.greId, ctx.cidadeId, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { tokens } = ctx, rows = useMemo(() => permanenciaPorAno(ctx.profissionais.modelo, ctx.dataset, ctx.greId, filtroDe(ctx), 15), [ctx.profissionais.modelo, ctx.dataset, ctx.greId, ctx.cidadeId, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
   const option = useMemo(() => ({
     grid: { top: 26, right: 4, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens),
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>Registrados em ${row.ano}</b><br/>${int(row.registrados.length)} profissionais · ${int(row.ativos.length)} continuam ativos (${row.parte === null ? '—' : pct(row.parte)})<br/><span style="opacity:.75">clique para ver</span>`; } },
@@ -288,7 +334,7 @@ export function ArtsModalidade({ ctx }: { ctx: CockpitCtx }) {
 
 /** ARTs dos últimos 12 meses, em barras, e a linha com o mesmo mês um ano antes. */
 export function ArtsMes({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, r = useMemo(() => artsMensaisPorModalidade(ctx.profissionais.modelo, ctx.dataset, ctx.greId, filtroDe(ctx), 24), [ctx.profissionais.modelo, ctx.dataset, ctx.greId, ctx.cidadeId, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { tokens } = ctx, r = useMemo(() => artsMensaisPorModalidade(ctx.profissionais.modelo, ctx.dataset, ctx.greId, filtroDe(ctx), 24), [ctx.profissionais.modelo, ctx.dataset, ctx.greId, ctx.cidadeId, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
   const rows = useMemo(() => r.meses.slice(12).map((month, index) => ({ month, agora: r.series.reduce((n, serie) => n + serie.valores[index + 12], 0), antes: r.series.reduce((n, serie) => n + serie.valores[index], 0) })), [r]);
   const option = useMemo(() => ({
     grid: { top: 26, right: 6, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens),

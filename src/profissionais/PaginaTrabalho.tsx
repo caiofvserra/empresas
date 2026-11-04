@@ -20,7 +20,7 @@ export default function PaginaTrabalho({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = ocupacoes(ctx), eng = rows.filter(row => row.engenharia), q = ctx.parcerias.pericias;
   const estoque = eng.reduce((t, row) => t + row.estoque, 0), saldo = eng.reduce((t, row) => t + row.saldo, 0), salario = estoque ? eng.reduce((t, row) => t + row.salario * row.estoque, 0) / estoque : null;
   const abaixo = eng.filter(row => row.piso && row.salario < piso.exigivel8h);
-  const serie = useMemo(() => empregoMensal(ctx.profissionais.emprego, ctx.anchor, regionalDoRecorte(ctx), ctx.modalidade), [ctx.profissionais.emprego, ctx.anchor, ctx.greId, ctx.cidadeId, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+  const serie = useMemo(() => empregoMensal(ctx.profissionais.emprego, ctx.anchor, regionalDoRecorte(ctx), ctx.modalidade, ctx.genero), [ctx.profissionais.emprego, ctx.anchor, ctx.greId, ctx.cidadeId, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
   return <div className="ck-grid ck-grid-pf-trabalho">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores de emprego, salário e perícias">
       <Indicador destaque ficha="k-emprego" ctx={ctx} label="Empregos com carteira em engenharia" value={int(estoque)} spark={serie.slice(-12).map(row => row.estoque)} cor={tokens.blue} sub={eng[0] ? `em ${mes(eng[0].mes)}, último mês disponível` : 'sem dado no recorte'} />
@@ -55,7 +55,7 @@ function EmpregoMes({ ctx, serie }: { ctx: CockpitCtx; serie: ReturnType<typeof 
 }
 
 function Emprego({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => [...ocupacoes(ctx)].sort((a, b) => b.estoque - a.estoque), [ctx.profissionais.cbo, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { tokens } = ctx, rows = useMemo(() => [...ocupacoes(ctx)].sort((a, b) => b.estoque - a.estoque), [ctx.profissionais.cbo, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
   const option = useMemo(() => ({
     grid: { top: 4, right: 62, bottom: 2, left: 2, containLabel: true },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.label}</b> · CBO ${row.cbo}<br/>Empregos em ${mes(row.mes)}: ${int(row.estoque)}<br/>Saldo em 12 meses: ${row.saldo >= 0 ? '+' : ''}${int(row.saldo)}${row.rotuloAnalista ? '<br/><span style="opacity:.75">cargo com nome de “analista” que a CBO lista como sinônimo</span>' : ''}`; } },
@@ -71,7 +71,7 @@ const milReais = (value: number) => `${(value / 1000).toLocaleString('pt-BR', { 
 /** Caixas de salário por ocupação: a caixa vai de 25% a 75% dos empregos, as hastes de 10% a 90%, e o traço do meio é a mediana.
  * As linhas verticais são o piso exigível e a leitura do Confea, os dois para 8 horas. Ao lado, a parte dos empregos abaixo do piso. */
 function Remuneracao({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => ocupacoes(ctx).filter(row => row.estoque).sort((a, b) => b.salario - a.salario), [ctx.profissionais.cbo, ctx.modalidade]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { tokens } = ctx, rows = useMemo(() => ocupacoes(ctx).filter(row => row.estoque).sort((a, b) => b.salario - a.salario), [ctx.profissionais.cbo, ctx.modalidade, ctx.genero]); // eslint-disable-line react-hooks/exhaustive-deps
   const abaixo = (row: (typeof rows)[number]) => parteAbaixo(row.faixa, piso.exigivel8h);
   const cor = (row: (typeof rows)[number]) => !row.piso ? tokens.muted : row.salario < piso.exigivel8h ? tokens.bad : tokens.blue;
   const option = useMemo(() => ({
@@ -93,7 +93,7 @@ function Remuneracao({ ctx }: { ctx: CockpitCtx }) {
 
 /** Saldo de contratações em 12 meses por regional, nas ocupações de engenharia, com o peso no estoque. */
 function RegionalOcupacao({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, m = useMemo(() => empregoRegionalOcupacao(ctx.profissionais.emprego, ctx.dataset, ctx.anchor, ctx.modalidade), [ctx.profissionais.emprego, ctx.dataset, ctx.anchor, ctx.modalidade]);
+  const { tokens } = ctx, m = useMemo(() => empregoRegionalOcupacao(ctx.profissionais.emprego, ctx.dataset, ctx.anchor, ctx.modalidade, ctx.genero), [ctx.profissionais.emprego, ctx.dataset, ctx.anchor, ctx.modalidade, ctx.genero]);
   const escolhida = regionalDoRecorte(ctx);
   const rows = useMemo(() => m.gres.map((gre, y) => { const cels = m.celulas.filter(cel => cel.y === y && m.ocupacoes[cel.x].engenharia); const saldo = cels.reduce((n, cel) => n + cel.saldo, 0), estoque = cels.reduce((n, cel) => n + cel.estoque, 0);
     return { gre, nome: gre.name.split('·')[1]?.trim() ?? gre.name, saldo, estoque, parte: estoque ? saldo / estoque * 100 : null }; }).sort((a, b) => b.saldo - a.saldo), [m]);

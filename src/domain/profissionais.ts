@@ -2,6 +2,7 @@ import type { Art, Dataset } from './types';
 import { buildEntidades } from './entidades';
 import type { Modalidade } from './entidades';
 import { modalidades } from './entidades';
+import { pesosNivel, titulosDe } from './titulos';
 import { addDays, between, chance, dateBetween, share, sum, toDay, weighted } from './hash';
 
 /**
@@ -16,7 +17,9 @@ export type Genero = 'Feminino' | 'Masculino';
 export type SituacaoProfissional = 'Ativo' | 'Interrompido' | 'Cancelado';
 export const situacoesProfissional: SituacaoProfissional[] = ['Ativo', 'Interrompido', 'Cancelado'];
 export interface Profissional {
-  id: string; nome: string; modalidade: Modalidade; nivel: Nivel; genero: Genero; nascimento: number;
+  id: string; nome: string; modalidade: Modalidade; nivel: Nivel;
+  /** Código do título profissional no catálogo do Confea (ver titulos.ts). */
+  titulo: string; genero: Genero; nascimento: number;
   registroEm: string; canceladoEm?: string; interrupcoes: { inicio: string; fim?: string }[];
   greId: string; cityId: string; iesId: string; anoConclusao: number;
   /** Anuidade PF em dia desde o registro, exceto a partir desta data (demonstrativo). */
@@ -63,7 +66,10 @@ export function buildProfissionais(dataset: Dataset): ModeloProfissionais {
     const genero: Genero = chance(`${key}:genero`) < 0.22 ? 'Feminino' : 'Masculino', nomes = genero === 'Feminino' ? femininos : masculinos;
     const primeiro = nomes[between(`${key}:nome`, 0, nomes.length - 1)];
     const modalidade = modalidadeDe(index);
-    const nivel = weighted<Nivel>(`${key}:nivel`, niveis, [74, 9, 17]);
+    // Nível e título profissional (04/11/2026): técnico só o de Segurança do Trabalho, o único de nível técnico que ficou no Crea
+    // depois da Lei nº 13.639/2018; antes, 17% dos registrados de todas as modalidades eram técnicos. O título segue o catálogo do Confea.
+    const [nivelOpcoes, nivelPesos] = pesosNivel(modalidade), nivel = weighted<Nivel>(`${key}:nivel`, nivelOpcoes, nivelPesos);
+    const opcoes = titulosDe(modalidade, nivel), titulo = weighted(`${key}:titulo`, opcoes, opcoes.map(row => row.peso)).codigo;
     // Registro: os registros novos crescem devagar, cerca de 3% ao ano, ao longo de 45 anos (a base cresce sem saltos). Antes de
     // 03/11/2026 o sorteio concentrava registros no ano corrente e os registros novos pareciam dobrar em um ano. Quem é RT
     // registrou antes do primeiro vínculo.
@@ -83,7 +89,7 @@ export function buildProfissionais(dataset: Dataset): ModeloProfissionais {
     if (idadeRegistro > 1000 && chance(`${key}:canc`) < 0.11) canceladoEm = dateBetween(`${key}:canc-em`, addDays(registroEm, 900), anchor);
     const cityIndex = weighted(`${key}:city`, cities.map((_, position) => position), cityWeights), city = cities[cityIndex];
     const candidatas = ies.filter(row => row.modalidades.includes(modalidade)), escola = candidatas.length ? candidatas[between(`${key}:ies`, 0, candidatas.length - 1)] : ies[0];
-    profissionais.push({ id: key, nome: base?.name ?? `${primeiro} ${sobrenomes[between(`${key}:sob`, 0, sobrenomes.length - 1)]} ${String(index + 1).padStart(4, '0')}`, modalidade, nivel, genero, nascimento,
+    profissionais.push({ id: key, nome: base?.name ?? `${primeiro} ${sobrenomes[between(`${key}:sob`, 0, sobrenomes.length - 1)]} ${String(index + 1).padStart(4, '0')}`, modalidade, nivel, titulo, genero, nascimento,
       registroEm, ...(canceladoEm ? { canceladoEm } : {}), interrupcoes, greId: city.greId, cityId: city.id, iesId: escola.id, anoConclusao: ano - between(`${key}:conc`, 0, 3),
       ...(chance(`${key}:inad`) < 0.14 ? { inadimplenteDesde: dateBetween(`${key}:inad-em`, addDays(registroEm, 365), anchor) } : {}) });
   }
@@ -132,10 +138,10 @@ export interface ResumoProfissionais {
 const inside = (date: string | undefined, start: string, end: string) => Boolean(date && date >= start && date <= end);
 const shift = (date: string, months: number) => { const d = new Date(`${date}T00:00:00Z`); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + months, 1)).toISOString().slice(0, 10); };
 
-/** Recorte do painel de Profissionais: município do endereço e modalidade, além da regional. */
-export interface FiltroProfissional { cityId?: string | null; modalidade?: string | null }
-/** O profissional está no recorte (regional, município e modalidade escolhidos no alto da tela)? */
-export const noRecorte = (row: Profissional | undefined, greId: string | null, filtro: FiltroProfissional = {}) => Boolean(row && (!greId || row.greId === greId) && (!filtro.cityId || row.cityId === filtro.cityId) && (!filtro.modalidade || row.modalidade === filtro.modalidade));
+/** Recorte do painel de Profissionais: município do endereço, modalidade e gênero (desde 04/11/2026), além da regional. */
+export interface FiltroProfissional { cityId?: string | null; modalidade?: string | null; genero?: Genero | null }
+/** O profissional está no recorte (regional, município, modalidade e gênero escolhidos no alto da tela)? */
+export const noRecorte = (row: Profissional | undefined, greId: string | null, filtro: FiltroProfissional = {}) => Boolean(row && (!greId || row.greId === greId) && (!filtro.cityId || row.cityId === filtro.cityId) && (!filtro.modalidade || row.modalidade === filtro.modalidade) && (!filtro.genero || row.genero === filtro.genero));
 
 /** Tudo lido em D (dataset.snapshotDate da base lida); período de `period` meses até D e o mesmo período um ano antes. */
 export function resumoProfissionais(modelo: ModeloProfissionais, dataset: Dataset, greId: string | null, period: number, filtro: FiltroProfissional = {}): ResumoProfissionais {
@@ -181,19 +187,21 @@ export function resumoProfissionais(modelo: ModeloProfissionais, dataset: Datase
 /* ---------- Emprego formal agregado por CBO (Novo CAGED / RAIS, demonstrativo) ---------- */
 export interface CboInfo { cbo: string; label: string; engenharia: boolean; rotuloAnalista: boolean; piso: boolean; base: number;
   /** Tamanho relativo da ocupação no emprego formal (o engenheiro civil é a maior) e modalidade do Crea-SP a que ela corresponde. */
-  peso: number; modalidade?: Modalidade }
+  peso: number; modalidade?: Modalidade;
+  /** Parte das mulheres nos empregos da ocupação, em %. Em produção vem do campo sexo dos microdados da RAIS e do Novo CAGED. */
+  mulheres: number }
 /** Rótulos oficiais da CBO; medianas de referência fictícias, calibradas para a ordem de grandeza observada em fontes públicas. */
 export const cbos: CboInfo[] = [
-  { cbo: '2142-05', label: 'Engenheiro civil', engenharia: true, rotuloAnalista: false, piso: true, base: 9700, peso: 3, modalidade: 'Civil' },
-  { cbo: '2143-05', label: 'Engenheiro eletricista', engenharia: true, rotuloAnalista: false, piso: true, base: 10900, peso: 1.6, modalidade: 'Elétrica' },
-  { cbo: '2144-05', label: 'Engenheiro mecânico', engenharia: true, rotuloAnalista: false, piso: true, base: 10400, peso: 1.5, modalidade: 'Mecânica e metalúrgica' },
-  { cbo: '2145-05', label: 'Engenheiro químico', engenharia: true, rotuloAnalista: false, piso: true, base: 10100, peso: 0.6, modalidade: 'Química' },
-  { cbo: '2221-10', label: 'Engenheiro agrônomo', engenharia: true, rotuloAnalista: false, piso: true, base: 7900, peso: 0.8, modalidade: 'Agronomia' },
-  { cbo: '2149-15', label: 'Engenheiro de segurança do trabalho', engenharia: true, rotuloAnalista: false, piso: true, base: 9300, peso: 0.9, modalidade: 'Segurança do trabalho' },
-  { cbo: '2021-10', label: 'Engenheiro de controle e automação', engenharia: true, rotuloAnalista: false, piso: true, base: 11900, peso: 0.6, modalidade: 'Elétrica' },
-  { cbo: '2142-70', label: 'Eng. civil · transportes e trânsito (“analista de projetos viários”)', engenharia: true, rotuloAnalista: true, piso: true, base: 5800, peso: 0.3, modalidade: 'Civil' },
-  { cbo: '2124-05', label: 'Analista de desenvolvimento de sistemas', engenharia: false, rotuloAnalista: true, piso: false, base: 8400, peso: 3.5 },
-  { cbo: '3121-05', label: 'Técnico em construção civil', engenharia: false, rotuloAnalista: false, piso: false, base: 4300, peso: 2.2 },
+  { cbo: '2142-05', label: 'Engenheiro civil', engenharia: true, rotuloAnalista: false, piso: true, base: 9700, peso: 3, modalidade: 'Civil', mulheres: 22 },
+  { cbo: '2143-05', label: 'Engenheiro eletricista', engenharia: true, rotuloAnalista: false, piso: true, base: 10900, peso: 1.6, modalidade: 'Elétrica', mulheres: 11 },
+  { cbo: '2144-05', label: 'Engenheiro mecânico', engenharia: true, rotuloAnalista: false, piso: true, base: 10400, peso: 1.5, modalidade: 'Mecânica e metalúrgica', mulheres: 9 },
+  { cbo: '2145-05', label: 'Engenheiro químico', engenharia: true, rotuloAnalista: false, piso: true, base: 10100, peso: 0.6, modalidade: 'Química', mulheres: 38 },
+  { cbo: '2221-10', label: 'Engenheiro agrônomo', engenharia: true, rotuloAnalista: false, piso: true, base: 7900, peso: 0.8, modalidade: 'Agronomia', mulheres: 27 },
+  { cbo: '2149-15', label: 'Engenheiro de segurança do trabalho', engenharia: true, rotuloAnalista: false, piso: true, base: 9300, peso: 0.9, modalidade: 'Segurança do trabalho', mulheres: 21 },
+  { cbo: '2021-10', label: 'Engenheiro de controle e automação', engenharia: true, rotuloAnalista: false, piso: true, base: 11900, peso: 0.6, modalidade: 'Elétrica', mulheres: 12 },
+  { cbo: '2142-70', label: 'Eng. civil · transportes e trânsito (“analista de projetos viários”)', engenharia: true, rotuloAnalista: true, piso: true, base: 5800, peso: 0.3, modalidade: 'Civil', mulheres: 31 },
+  { cbo: '2124-05', label: 'Analista de desenvolvimento de sistemas', engenharia: false, rotuloAnalista: true, piso: false, base: 8400, peso: 3.5, mulheres: 19 },
+  { cbo: '3121-05', label: 'Técnico em construção civil', engenharia: false, rotuloAnalista: false, piso: false, base: 4300, peso: 2.2, mulheres: 14 },
 ];
 export interface EmpregoCbo { cbo: string; greId: string; month: string; estoque: number; admissoes: number; desligamentos: number; salarioMediano: number }
 const empregoCache = new WeakMap<Dataset, EmpregoCbo[]>();
@@ -222,16 +230,26 @@ export interface FaixaSalarial { p10: number; p25: number; p50: number; p75: num
 const normalAcumulada = (z: number) => { const t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2), p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; };
 export const parteAbaixo = (faixa: FaixaSalarial, valor: number) => faixa.p50 > 0 ? normalAcumulada(Math.log(valor / faixa.p50) / faixa.dispersao) * 100 : null;
 export interface RemuneracaoCbo extends CboInfo { estoque: number; saldo: number; salario: number; mes: string; faixa: FaixaSalarial }
+/**
+ * Emprego e salário de um gênero (filtro do alto da tela, 04/11/2026). O cenário guarda os totais da ocupação; aqui a parte de cada
+ * gênero sai da parte das mulheres na ocupação, e o salário típico delas fica cerca de 12% abaixo do dos homens na mesma ocupação,
+ * a ordem de grandeza da diferença que a RAIS mostra nas engenharias. Em produção, os dois saem direto dos microdados, que trazem o sexo.
+ */
+export function fatorGenero(info: CboInfo, genero: Genero | null | undefined) {
+  if (!genero) return { quantidade: 1, salario: 1 };
+  const f = info.mulheres / 100, homens = 1 / (f * 0.88 + (1 - f));
+  return genero === 'Feminino' ? { quantidade: f, salario: 0.88 * homens } : { quantidade: 1 - f, salario: homens };
+}
 /** Último mês disponível até D, por CBO: estoque, saldo dos 12 meses e salário mediano ponderado pelo estoque das regionais. */
-export function remuneracaoPorCbo(emprego: EmpregoCbo[], anchor: string, greId: string | null): RemuneracaoCbo[] {
+export function remuneracaoPorCbo(emprego: EmpregoCbo[], anchor: string, greId: string | null, genero: Genero | null = null): RemuneracaoCbo[] {
   const mes = anchor.slice(0, 7), mine = emprego.filter(row => row.month <= mes && (!greId || row.greId === greId));
   const ultimo = mine.reduce((latest, row) => row.month > latest ? row.month : latest, '');
   const inicio = shift(`${ultimo}-01`, -11).slice(0, 7);
-  return cbos.map(info => { const rows = mine.filter(row => row.cbo === info.cbo && row.month === ultimo), estoque = sum(rows.map(row => row.estoque));
-    const salario = estoque ? Math.round(sum(rows.map(row => row.salarioMediano * row.estoque)) / estoque) : 0;
+  return cbos.map(info => { const rows = mine.filter(row => row.cbo === info.cbo && row.month === ultimo), total = sum(rows.map(row => row.estoque)), fator = fatorGenero(info, genero);
+    const estoque = Math.round(total * fator.quantidade), salario = total ? Math.round(sum(rows.map(row => row.salarioMediano * row.estoque)) / total * fator.salario / 10) * 10 : 0;
     // Dispersão: técnicos e analistas variam menos entre si; engenharias de controle, elétrica e civil (obra e projeto) variam mais.
     const dispersao = (info.rotuloAnalista ? 0.36 : info.engenharia ? 0.34 : 0.28) + between(`faixa:${info.cbo}`, 0, 8) / 100;
     const ponto = (z: number) => Math.round(salario * Math.exp(dispersao * z) / 10) * 10;
-    return { ...info, estoque, saldo: sum(mine.filter(row => row.cbo === info.cbo && row.month >= inicio && row.month <= ultimo).map(row => row.admissoes - row.desligamentos)), salario, mes: ultimo,
+    return { ...info, estoque, saldo: Math.round(sum(mine.filter(row => row.cbo === info.cbo && row.month >= inicio && row.month <= ultimo).map(row => row.admissoes - row.desligamentos)) * fator.quantidade), salario, mes: ultimo,
       faixa: { p10: ponto(-1.2816), p25: ponto(-0.6745), p50: salario, p75: ponto(0.6745), p90: ponto(1.2816), dispersao } }; });
 }

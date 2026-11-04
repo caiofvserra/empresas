@@ -82,3 +82,10 @@ export function Spark({ values, color }: { values: number[]; color: string }) {
     <circle cx={points.at(-1)![0]} cy={points.at(-1)![1]} r="2.4" fill={color} />
   </svg>;
 }
+
+/**
+ * Proporção real do estado no mapa (pedido do Caio em 04/11/2026: o mapa aparecia esticado). Sem isto, o ECharts estica a malha
+ * para encher o bloco. `aspectScale` é o cosseno da latitude média de São Paulo (cerca de 22,5° S), que corrige a largura dos
+ * graus de longitude; `preserveAspect: 'contain'` faz o estado caber inteiro no bloco, centralizado, sem deformar.
+ */
+export const proporcaoSp = { aspectScale: Math.cos(22.5 * Math.PI / 180), preserveAspect: 'contain', preserveAspectAlign: 'center', preserveAspectVerticalAlign: 'middle' } as const;
