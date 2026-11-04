@@ -2,7 +2,7 @@ import { int } from '../painel/ui';
 import { ativosNoInicio } from '../domain/painel-profissionais';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco, Indicador } from '../cockpit/ui';
-import { EntradasSaidasMes, NovosModalidade, PermanenciaAno, PonteAtivos, abrirProfissionais, porIds, useFluxo } from './blocos';
+import { EntradasSaidasMes, NovosModalidade, PermanenciaAno, PonteAtivos, abrirProfissionais, filtroDe, porIds, useFluxo } from './blocos';
 
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 
@@ -12,7 +12,7 @@ export default function PaginaFluxo({ ctx }: { ctx: CockpitCtx }) {
   const doPeriodo = meses.filter(row => row.month >= janela.start.slice(0, 7) && row.month <= janela.end.slice(0, 7));
   const junta = (campo: 'novos' | 'cancelamentos' | 'interrupcoes' | 'reativacoes') => doPeriodo.flatMap(row => row[campo]);
   const novos = junta('novos'), cancelamentos = junta('cancelamentos'), interrupcoes = junta('interrupcoes'), reativacoes = junta('reativacoes');
-  const inicio = ativosNoInicio(ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.greId, { cityId: ctx.cidadeId, modalidade: ctx.modalidade }), saldo = p.ativos.length - inicio.ativos.length;
+  const inicio = ativosNoInicio(ctx.profissionais.modelo, ctx.dataset, ctx.period, ctx.greId, filtroDe(ctx)), saldo = p.ativos.length - inicio.ativos.length;
   return <div className="ck-grid ck-grid-pf-fluxo">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores de entradas e saídas">
       <Indicador destaque ficha="k-novos" ctx={ctx} label="Registros novos" value={int(novos.length)} variacao={{ value: change(p.novos.length, p.novosAntes) }} spark={doPeriodo.map(row => row.novos.length)} cor={tokens.blue} sub={`${int(Math.round(novos.length / Math.max(1, doPeriodo.length)))} por mês no período`}

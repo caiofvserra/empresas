@@ -1,3 +1,4 @@
+import type { Genero } from '../domain/profissionais';
 import type { Scope } from '../domain/engine';
 import type { EnterpriseModel } from '../enterprise-v10/types';
 import type { ContratoPublico, Ponte, Receita } from '../painel/analise';
@@ -33,6 +34,8 @@ export interface CockpitCtx extends Ctx {
   cidadeId: string | null; enxuto: boolean; camaraDe: Map<string, string>;
   /** Painel de Profissionais: modalidade escolhida no alto da tela (no lugar da câmara). */
   modalidade: string | null;
+  /** Painel de Profissionais: gênero escolhido no alto da tela (04/11/2026); nulo quando são os dois. */
+  genero: Genero | null;
   /** Data de referência D: a base é lida como estava em D; `hoje` é o corte mais recente do cenário. */
   anchor: string; hoje: string; datasReferencia: string[]; setAnchor: (value: string | null) => void;
   historyScope: Scope; stateScope: Scope; stateModel: EnterpriseModel; stateHistory: EnterpriseModel;

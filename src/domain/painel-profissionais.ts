@@ -1,9 +1,10 @@
 import type { Dataset } from './types';
 import { modalidades } from './entidades';
 import type { Modalidade } from './entidades';
+import { tituloPorCodigo } from './titulos';
 import { addDays, share, sum } from './hash';
-import { adimplenteEm, cbos, faixaIdade, faixasIdade, idadeEm, noRecorte, rtDoVinculo, situacaoEm } from './profissionais';
-import type { EmpregoCbo, FiltroProfissional, ModeloProfissionais, Profissional, SituacaoProfissional } from './profissionais';
+import { adimplenteEm, cbos, fatorGenero, faixaIdade, faixasIdade, idadeEm, noRecorte, rtDoVinculo, situacaoEm } from './profissionais';
+import type { EmpregoCbo, FiltroProfissional, Genero, ModeloProfissionais, Profissional, SituacaoProfissional } from './profissionais';
 
 /**
  * Medidas do painel de Profissionais (separado do painel geral em 03/11/2026). Tudo é lido na data de referência (a base como
@@ -24,28 +25,35 @@ function artsPorAutor(modelo: ModeloProfissionais, dataset: Dataset, start: stri
   return porAutor;
 }
 
-/* ---------- Mapa: uma linha por regional, no estado inteiro (o mapa mostra todas e aproxima da escolhida) ---------- */
-export interface RegionalProfissionais {
-  id: string; name: string; curto: string; ativos: Profissional[]; antes: number; variacao: number | null; novos: Profissional[]; novosPorCem: number | null;
+/* ---------- Mapa: uma linha por regional e uma por município, no estado inteiro (o mapa mostra todos e aproxima do escolhido) ---------- */
+export interface MedidasProfissionais {
+  ativos: Profissional[]; antes: number; variacao: number | null; novos: Profissional[]; novosPorCem: number | null;
   inadimplentes: Profissional[]; inadimplencia: number | null; mulheres: number | null; sessenta: Profissional[]; sessentaParte: number | null;
   arts: number; artsPorCem: number | null; semArt: Profissional[]; semArtParte: number | null; rts: Profissional[]; rtPorCem: number | null;
 }
+export interface RegionalProfissionais extends MedidasProfissionais { id: string; name: string; curto: string }
+export interface MunicipioProfissionais extends MedidasProfissionais { id: string; nome: string; greId: string }
+/** Abaixo deste número de ativos, as partes e taxas do município ficam vazias ("poucos dados"): poucas pessoas fazem a porcentagem pular. */
+export const MINIMO_MUNICIPIO = 20;
 export function regionaisProfissionais(modelo: ModeloProfissionais, dataset: Dataset, period: number, filtro: FiltroProfissional = {}) {
   const anchor = dataset.snapshotDate, start = inicioPeriodo(anchor, period), umAnoAntes = addDays(anchor, -365);
-  const doRecorte = modelo.profissionais.filter(row => noRecorte(row, null, { modalidade: filtro.modalidade }) && row.registroEm <= anchor);
+  const doRecorte = modelo.profissionais.filter(row => noRecorte(row, null, { modalidade: filtro.modalidade, genero: filtro.genero }) && row.registroEm <= anchor);
   const porAutor = artsPorAutor(modelo, dataset, start, anchor), rts = new Set(dataset.technicalLinks.filter(row => row.startDate <= anchor && (!row.endDate || row.endDate > anchor)).map(row => rtDoVinculo(modelo, row)));
-  const linhas: RegionalProfissionais[] = dataset.gres.map(gre => {
-    const mine = doRecorte.filter(row => row.greId === gre.id), ativos = mine.filter(row => situacaoEm(row, anchor) === 'Ativo');
+  const medidas = (mine: Profissional[], minimo: number): MedidasProfissionais => {
+    const ativos = mine.filter(row => situacaoEm(row, anchor) === 'Ativo'), n = ativos.length, conta = n >= minimo;
     const antes = mine.filter(row => row.registroEm <= umAnoAntes && situacaoEm(row, umAnoAntes) === 'Ativo').length, novos = mine.filter(row => dentroDe(row.registroEm, start, anchor));
     const inadimplentes = ativos.filter(row => !adimplenteEm(row, anchor)), sessenta = ativos.filter(row => idadeEm(row, anchor) >= 60), semArt = ativos.filter(row => !porAutor.get(row.id));
-    const arts = sum(ativos.map(row => porAutor.get(row.id) ?? 0)), comRt = ativos.filter(row => rts.has(row.id)), n = ativos.length;
-    return { id: gre.id, name: gre.name, curto: gre.name.split('·')[1]?.trim() ?? gre.name, ativos, antes, variacao: antes ? (n - antes) / antes * 100 : null, novos, novosPorCem: n ? novos.length / n * 100 : null,
-      inadimplentes, inadimplencia: share(inadimplentes.length, n), mulheres: share(ativos.filter(row => row.genero === 'Feminino').length, n), sessenta, sessentaParte: share(sessenta.length, n),
-      arts, artsPorCem: n ? arts / n * 100 : null, semArt, semArtParte: share(semArt.length, n), rts: comRt, rtPorCem: n ? comRt.length / n * 100 : null };
-  });
-  const cidades = new Map<string, number>();
-  for (const row of doRecorte) if (situacaoEm(row, anchor) === 'Ativo') cidades.set(row.cityId, (cidades.get(row.cityId) ?? 0) + 1);
-  return { linhas, cidades };
+    const arts = sum(ativos.map(row => porAutor.get(row.id) ?? 0)), comRt = ativos.filter(row => rts.has(row.id)), parte = (k: number) => conta ? share(k, n) : null, porCem = (k: number) => conta && n ? k / n * 100 : null;
+    return { ativos, antes, variacao: antes >= minimo && antes ? (n - antes) / antes * 100 : null, novos, novosPorCem: porCem(novos.length),
+      inadimplentes, inadimplencia: parte(inadimplentes.length), mulheres: parte(ativos.filter(row => row.genero === 'Feminino').length), sessenta, sessentaParte: parte(sessenta.length),
+      arts, artsPorCem: porCem(arts), semArt, semArtParte: parte(semArt.length), rts: comRt, rtPorCem: porCem(comRt.length) };
+  };
+  const linhas: RegionalProfissionais[] = dataset.gres.map(gre => ({ id: gre.id, name: gre.name, curto: gre.name, ...medidas(doRecorte.filter(row => row.greId === gre.id), 1) }));
+  const porCidade = new Map<string, Profissional[]>();
+  for (const row of doRecorte) porCidade.set(row.cityId, [...(porCidade.get(row.cityId) ?? []), row]);
+  const municipios = new Map<string, MunicipioProfissionais>(dataset.cities.map(city => [city.id, { id: city.id, nome: city.name, greId: city.greId, ...medidas(porCidade.get(city.id) ?? [], MINIMO_MUNICIPIO) }]));
+  const cidades = new Map([...municipios].map(([id, row]) => [id, row.ativos.length]));
+  return { linhas, municipios, cidades };
 }
 
 /* ---------- Situação no início do período e na data escolhida: só o que mudou ---------- */
@@ -131,35 +139,43 @@ export function artsMensaisPorModalidade(modelo: ModeloProfissionais, dataset: D
 /** Ocupações do recorte: as de engenharia; com uma modalidade escolhida, só as daquela modalidade. */
 export const ocupacoesDo = (modalidade: string | null) => cbos.filter(row => row.engenharia && (!modalidade || row.modalidade === modalidade));
 /** Mês a mês, até a data: estoque de empregos com carteira, admissões e desligamentos nas ocupações de engenharia do recorte. */
-export function empregoMensal(emprego: EmpregoCbo[], anchor: string, greId: string | null, modalidade: string | null) {
-  const codigos = new Set(ocupacoesDo(modalidade).map(row => row.cbo)), mes = anchor.slice(0, 7), porMes = new Map<string, { month: string; estoque: number; admissoes: number; desligamentos: number }>();
+export function empregoMensal(emprego: EmpregoCbo[], anchor: string, greId: string | null, modalidade: string | null, genero: Genero | null = null) {
+  const parte = new Map(ocupacoesDo(modalidade).map(row => [row.cbo, fatorGenero(row, genero).quantidade])), mes = anchor.slice(0, 7), porMes = new Map<string, { month: string; estoque: number; admissoes: number; desligamentos: number }>();
   for (const row of emprego) {
-    if (!codigos.has(row.cbo) || row.month > mes || (greId && row.greId !== greId)) continue;
+    const f = parte.get(row.cbo);
+    if (f === undefined || row.month > mes || (greId && row.greId !== greId)) continue;
     const item = porMes.get(row.month) ?? { month: row.month, estoque: 0, admissoes: 0, desligamentos: 0 };
-    item.estoque += row.estoque; item.admissoes += row.admissoes; item.desligamentos += row.desligamentos; porMes.set(row.month, item);
+    item.estoque += row.estoque * f; item.admissoes += row.admissoes * f; item.desligamentos += row.desligamentos * f; porMes.set(row.month, item);
   }
-  return [...porMes.values()].sort((a, b) => a.month.localeCompare(b.month)).map(row => ({ ...row, saldo: row.admissoes - row.desligamentos }));
+  return [...porMes.values()].sort((a, b) => a.month.localeCompare(b.month)).map(row => { const estoque = Math.round(row.estoque), admissoes = Math.round(row.admissoes), desligamentos = Math.round(row.desligamentos); return { month: row.month, estoque, admissoes, desligamentos, saldo: admissoes - desligamentos }; });
 }
 /** Regional por ocupação: saldo de contratações nos 12 meses até o último mês disponível e o estoque nesse mês. */
-export function empregoRegionalOcupacao(emprego: EmpregoCbo[], dataset: Dataset, anchor: string, modalidade: string | null) {
+export function empregoRegionalOcupacao(emprego: EmpregoCbo[], dataset: Dataset, anchor: string, modalidade: string | null, genero: Genero | null = null) {
   const ocupacoes = ocupacoesDo(modalidade), mes = anchor.slice(0, 7), validos = emprego.filter(row => row.month <= mes);
   const ultimo = validos.reduce((latest, row) => row.month > latest ? row.month : latest, ''), inicio = mesInicio(`${ultimo}-01`, -11).slice(0, 7);
   const celulas = dataset.gres.flatMap((gre, y) => ocupacoes.map((info, x) => { const rows = validos.filter(row => row.greId === gre.id && row.cbo === info.cbo);
-    return { x, y, greId: gre.id, cbo: info.cbo, saldo: sum(rows.filter(row => row.month >= inicio).map(row => row.admissoes - row.desligamentos)), estoque: rows.find(row => row.month === ultimo)?.estoque ?? 0 }; }));
+    const f = fatorGenero(info, genero).quantidade;
+    return { x, y, greId: gre.id, cbo: info.cbo, saldo: Math.round(sum(rows.filter(row => row.month >= inicio).map(row => row.admissoes - row.desligamentos)) * f), estoque: Math.round((rows.find(row => row.month === ultimo)?.estoque ?? 0) * f) }; }));
   return { ocupacoes, gres: dataset.gres, celulas, ultimo };
 }
 
-/* ---------- Modalidade e nível dos ativos, com a variação em relação a um ano antes ---------- */
+/* ---------- Modalidade, nível e título profissional dos ativos, com a variação em relação a um ano antes ---------- */
+export interface CelulaTitulo { codigo: string; titulo: string; ativos: Profissional[]; antes: number; variacao: number | null }
+export interface CelulaNivel { modalidade: Modalidade; nivel: string; ativos: Profissional[]; antes: number; variacao: number | null; titulos: CelulaTitulo[] }
 export function modalidadeNivel(modelo: ModeloProfissionais, dataset: Dataset, greId: string | null, filtro: FiltroProfissional = {}) {
-  const anchor = dataset.snapshotDate, umAnoAntes = addDays(anchor, -365), celulas = new Map<string, { modalidade: Modalidade; nivel: string; ativos: Profissional[]; antes: number }>();
+  const anchor = dataset.snapshotDate, umAnoAntes = addDays(anchor, -365), celulas = new Map<string, { modalidade: Modalidade; nivel: string; ativos: Profissional[]; antes: number; titulos: Map<string, { ativos: Profissional[]; antes: number }> }>();
   for (const row of modelo.profissionais) {
     if (!noRecorte(row, greId, filtro) || row.registroEm > anchor) continue;
-    const key = `${row.modalidade}|${row.nivel}`, item = celulas.get(key) ?? { modalidade: row.modalidade, nivel: row.nivel, ativos: [], antes: 0 };
-    if (situacaoEm(row, anchor) === 'Ativo') item.ativos.push(row);
-    if (row.registroEm <= umAnoAntes && situacaoEm(row, umAnoAntes) === 'Ativo') item.antes += 1;
-    celulas.set(key, item);
+    const key = `${row.modalidade}|${row.nivel}`, item = celulas.get(key) ?? { modalidade: row.modalidade, nivel: row.nivel, ativos: [] as Profissional[], antes: 0, titulos: new Map<string, { ativos: Profissional[]; antes: number }>() };
+    const titulo = item.titulos.get(row.titulo) ?? { ativos: [] as Profissional[], antes: 0 };
+    if (situacaoEm(row, anchor) === 'Ativo') { item.ativos.push(row); titulo.ativos.push(row); }
+    if (row.registroEm <= umAnoAntes && situacaoEm(row, umAnoAntes) === 'Ativo') { item.antes += 1; titulo.antes += 1; }
+    item.titulos.set(row.titulo, titulo); celulas.set(key, item);
   }
+  const variacao = (agora: number, antes: number) => antes ? (agora - antes) / antes * 100 : null;
   return modalidades.map(modalidade => { const filhos = [...celulas.values()].filter(row => row.modalidade === modalidade && row.ativos.length);
-    return { modalidade, ativos: sum(filhos.map(row => row.ativos.length)), antes: sum(filhos.map(row => row.antes)), niveis: filhos.map(row => ({ ...row, variacao: row.antes ? (row.ativos.length - row.antes) / row.antes * 100 : null })) }; })
+    const niveis: CelulaNivel[] = filhos.map(row => ({ modalidade: row.modalidade, nivel: row.nivel, ativos: row.ativos, antes: row.antes, variacao: variacao(row.ativos.length, row.antes),
+      titulos: [...row.titulos].filter(([, t]) => t.ativos.length).map(([codigo, t]) => ({ codigo, titulo: tituloPorCodigo.get(codigo)?.titulo ?? codigo, ativos: t.ativos, antes: t.antes, variacao: variacao(t.ativos.length, t.antes) })).sort((x, y) => y.ativos.length - x.ativos.length) }));
+    return { modalidade, ativos: sum(filhos.map(row => row.ativos.length)), antes: sum(filhos.map(row => row.antes)), niveis }; })
     .filter(row => row.ativos > 0).sort((a, b) => b.ativos - a.ativos);
 }

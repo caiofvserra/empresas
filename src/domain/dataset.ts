@@ -73,10 +73,8 @@ export function generateDataset(seed = 20260930): Dataset {
     const value = new Date(Date.UTC(2023, 9 + index, 1));
     return value.toISOString().slice(0, 7);
   });
-  const greNames = ['Araçatuba', 'Campinas', 'Ribeirão Preto', 'Piracicaba', 'Capital',
-    'São José dos Campos', 'Santos', 'Bauru', 'São José do Rio Preto', 'Araraquara',
-    'Sorocaba', 'Mogi Guaçu', 'Guarulhos', 'Santo André'];
-  const gres: Gre[] = greNames.map((name, index) => ({ id: `GRE${index + 1}`, name: `GRE${index + 1} · ${name}` }));
+  // Regional é a GRE pelo número (pedido do Caio em 04/11/2026), não pelo nome de uma cidade.
+  const gres: Gre[] = Array.from({ length: 14 }, (_, index) => ({ id: `GRE${index + 1}`, name: `GRE ${index + 1}` }));
   const citySeeds: [string, string, number, number, number][] = [
     ['Araçatuba', '3502804', 1, 140, 85], ['Campinas', '3509502', 2, 355, 195],
     ['Ribeirão Preto', '3543402', 3, 320, 100], ['Piracicaba', '3538709', 4, 315, 179],

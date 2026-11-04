@@ -4,7 +4,7 @@ import type { Modalidade, Organizacao } from './entidades';
 import { modalidades } from './entidades';
 import { addDays, between, chance, share, sum } from './hash';
 import { adimplenteEm, buildProfissionais, situacaoEm } from './profissionais';
-import type { FiltroProfissional, ModeloProfissionais, Profissional } from './profissionais';
+import type { FiltroProfissional, Genero, ModeloProfissionais, Profissional } from './profissionais';
 
 /**
  * V20 · Formação e ingresso: concluintes por IES, ano, modalidade e canal (presencial ou EaD) contra os registros novos no Crea-SP,
@@ -12,10 +12,13 @@ import type { FiltroProfissional, ModeloProfissionais, Profissional } from './pr
  * Em produção: Censo da Educação Superior (INEP, carga anual, microdados por curso e IES) × cadastro profissional (IES e ano de conclusão informados no registro).
  */
 export type Canal = 'Presencial' | 'EaD';
-export interface Concluintes { iesId: string; ano: number; modalidade: Modalidade; canal: Canal; concluintes: number }
+/** Concluintes por gênero desde 04/11/2026 (filtro do alto da tela); o Censo da Educação Superior traz o sexo dos concluintes por curso. */
+export interface Concluintes { iesId: string; ano: number; modalidade: Modalidade; canal: Canal; genero: Genero; concluintes: number }
 export interface Formacao { concluintes: Concluintes[]; anos: number[]; ies: Organizacao[]; anchor: string }
 
 const cache = new WeakMap<Dataset, Formacao>();
+/** Parte das mulheres entre os formados de cada modalidade (demonstrativo, na ordem de grandeza do Censo da Educação Superior). */
+const parteFormadas: Record<Modalidade, number> = { Civil: 0.32, 'Elétrica': 0.14, 'Mecânica e metalúrgica': 0.13, 'Química': 0.45, Agronomia: 0.36, 'Geologia e minas': 0.33, Agrimensura: 0.24, 'Segurança do trabalho': 0.3 };
 /** Concluintes derivados dos registrados: cada IES tem uma taxa de registro própria (pública maior, EaD menor), então concluintes = registrados ÷ taxa. */
 export function buildFormacao(dataset: Dataset): Formacao {
   const saved = cache.get(dataset); if (saved) return saved;
@@ -23,13 +26,19 @@ export function buildFormacao(dataset: Dataset): Formacao {
   const anos = Array.from({ length: 10 }, (_, index) => 2016 + index);
   const concluintes: Concluintes[] = [];
   for (const escola of ies) for (const ano of anos) for (const modalidade of escola.modalidades) {
-    const registrados = profissionais.filter(row => row.iesId === escola.id && row.anoConclusao === ano && row.modalidade === modalidade).length;
+    const daTurma = profissionais.filter(row => row.iesId === escola.id && row.anoConclusao === ano && row.modalidade === modalidade), registrados = daTurma.length;
     const taxaBase = escola.natureza === 'Pública' ? 0.58 : 0.42, ead = (escola.ead ?? 0) / 100;
     const key = `conc:${escola.id}:${ano}:${modalidade}`;
     const totalEstimado = Math.max(registrados, Math.round(registrados / (taxaBase * (1 - ead * 0.45) * (0.85 + chance(key) * 0.3))) + between(`${key}:extra`, 0, 2));
-    const eadParte = Math.round(totalEstimado * ead * (0.8 + chance(`${key}:ead`) * 0.4));
-    if (totalEstimado - eadParte > 0) concluintes.push({ iesId: escola.id, ano, modalidade, canal: 'Presencial', concluintes: totalEstimado - eadParte });
-    if (eadParte > 0) concluintes.push({ iesId: escola.id, ano, modalidade, canal: 'EaD', concluintes: eadParte });
+    // A turma se divide por gênero (04/11/2026) pela parte das mulheres entre os formados da modalidade, um pouco maior que entre os
+    // registrados, como no Censo da Educação Superior; nenhum gênero fica com menos formados do que registrados.
+    const mulheresReg = daTurma.filter(row => row.genero === 'Feminino').length, homensReg = registrados - mulheresReg;
+    const mulheres = Math.min(totalEstimado - homensReg, Math.max(mulheresReg, Math.round(totalEstimado * parteFormadas[modalidade] * (0.85 + chance(`${key}:fem`) * 0.3))));
+    for (const [genero, total] of [['Feminino', mulheres], ['Masculino', totalEstimado - mulheres]] as [Genero, number][]) {
+      const eadParte = Math.round(total * ead * (0.8 + chance(`${key}:${genero}:ead`) * 0.4));
+      if (total - eadParte > 0) concluintes.push({ iesId: escola.id, ano, modalidade, canal: 'Presencial', genero, concluintes: total - eadParte });
+      if (eadParte > 0) concluintes.push({ iesId: escola.id, ano, modalidade, canal: 'EaD', genero, concluintes: eadParte });
+    }
   }
   const value = { concluintes, anos, ies, anchor: dataset.snapshotDate };
   cache.set(dataset, value); return value;
@@ -62,8 +71,8 @@ export function quadroFormacao(formacao: Formacao, modelo: ModeloProfissionais, 
   const anchor = dataset.snapshotDate, iesPorId = new Map(formacao.ies.map(row => [row.id, row]));
   // Recorte pela sede da instituição (regional e município) e pela modalidade do curso.
   const escolas = formacao.ies.filter(row => (!greId || row.greId === greId) && (!filtro.cityId || row.cityId === filtro.cityId) && (!filtro.modalidade || row.modalidades.includes(filtro.modalidade as Modalidade))), escolaIds = new Set(escolas.map(row => row.id));
-  const conc = formacao.concluintes.filter(row => escolaIds.has(row.iesId) && `${row.ano}-12-31` <= anchor && (!filtro.modalidade || row.modalidade === filtro.modalidade));
-  const profs = modelo.profissionais.filter(row => escolaIds.has(row.iesId) && row.registroEm <= anchor && (!filtro.modalidade || row.modalidade === filtro.modalidade));
+  const conc = formacao.concluintes.filter(row => escolaIds.has(row.iesId) && `${row.ano}-12-31` <= anchor && (!filtro.modalidade || row.modalidade === filtro.modalidade) && (!filtro.genero || row.genero === filtro.genero));
+  const profs = modelo.profissionais.filter(row => escolaIds.has(row.iesId) && row.registroEm <= anchor && (!filtro.modalidade || row.modalidade === filtro.modalidade) && (!filtro.genero || row.genero === filtro.genero));
   const artsPorAutor = new Map<string, string[]>();
   for (const art of dataset.arts) { const autor = modelo.autoria.get(art.id); if (autor) artsPorAutor.set(autor, [...(artsPorAutor.get(autor) ?? []), art.date]); }
   const desde = addDays(anchor, -365), comAtividade = (row: Profissional) => (artsPorAutor.get(row.id) ?? []).some(date => date > desde && date <= anchor);

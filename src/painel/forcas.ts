@@ -10,12 +10,12 @@ import type { Acao, Fiscalizacao, Tipo } from './fiscalizacao';
  */
 export interface ForcaTarefa { id: string; nome: string; tema: Tipo; greId: string; inicio: string; fim: string; descricao: string }
 export const forcasTarefa: ForcaTarefa[] = [
-  { id: 'FT-01', nome: 'Registro de empresas de instalações · Capital', tema: 'registro', greId: 'GRE5', inicio: '2025-04-01', fim: '2025-06-30', descricao: 'CNPJs com CNAE 4321-5/00 e 4322-3/01 ativos na Receita sem registro: visita e notificação em lote.' },
+  { id: 'FT-01', nome: 'Registro de empresas de instalações · GRE 5', tema: 'registro', greId: 'GRE5', inicio: '2025-04-01', fim: '2025-06-30', descricao: 'CNPJs com CNAE 4321-5/00 e 4322-3/01 ativos na Receita sem registro: visita e notificação em lote.' },
   { id: 'FT-02', nome: 'Registro de construtoras · Campinas', tema: 'registro', greId: 'GRE2', inicio: '2024-10-01', fim: '2024-12-31', descricao: 'CNPJs de construção civil ativos na Receita sem registro, com contrato público no ano.' },
   { id: 'FT-03', nome: 'Registro em polos industriais · São José dos Campos', tema: 'registro', greId: 'GRE6', inicio: '2025-01-01', fim: '2025-03-31', descricao: 'Indústrias com CNAE da lista e sem registro, a partir do cruzamento com a Receita.' },
   { id: 'FT-04', nome: 'Registro de empresas de projetos · Sorocaba', tema: 'registro', greId: 'GRE11', inicio: '2025-10-01', fim: '2025-12-31', descricao: 'Escritórios de projeto e consultoria sem registro, identificados pelo CNAE e pelo nome.' },
-  { id: 'FT-05', nome: 'Registro de empresas de instalações · Capital, 2ª rodada', tema: 'registro', greId: 'GRE5', inicio: '2026-01-01', fim: '2026-03-31', descricao: 'Repetição da FT-01 nos CNPJs que não responderam à primeira notificação.' },
-  { id: 'FT-06', nome: 'Obras públicas sem ART · Capital', tema: 'art', greId: 'GRE5', inicio: '2026-04-01', fim: '2026-06-30', descricao: 'Contratos de obra do PNCP sem ART identificada, conferência em campo com o órgão contratante.' },
+  { id: 'FT-05', nome: 'Registro de empresas de instalações · GRE 5, 2ª rodada', tema: 'registro', greId: 'GRE5', inicio: '2026-01-01', fim: '2026-03-31', descricao: 'Repetição da FT-01 nos CNPJs que não responderam à primeira notificação.' },
+  { id: 'FT-06', nome: 'Obras públicas sem ART · GRE 5', tema: 'art', greId: 'GRE5', inicio: '2026-04-01', fim: '2026-06-30', descricao: 'Contratos de obra do PNCP sem ART identificada, conferência em campo com o órgão contratante.' },
 ];
 export const PRAZO_RESULTADO = 180;
 export const PRAZO_RECEITA = 365;

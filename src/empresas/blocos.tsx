@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { complianceFlow } from '../gestao-v14/metrics';
-import { Chart, useSpMap } from '../painel/chart';
+import { Chart, useSpMap, proporcaoSp } from '../painel/chart';
 import { brl, data, int, mes, pct } from '../painel/ui';
 import { camaraPorCnae, camaras } from '../painel/analise';
 import { valoresPorCidade } from './municipios';
@@ -255,7 +255,9 @@ export const metricasMapa: Record<MetricaMapa, { label: string; curto: string; b
 };
 const rampaMapa = (alerta: boolean, dark: boolean) => alerta
   ? (dark ? ['#3A2E22', '#7A5A10', '#C9851F', '#E5703B', '#FF7B7B'] : ['#FFF4D6', '#FFD98A', '#F6AD55', '#E5703B', '#C53030'])
-  : (dark ? ['#1A2D52', '#2F548C', '#4A7FC1', '#7FB0E6', '#D4EDFF'] : ['#EAF1FA', '#BBD5F2', '#7FB0E6', '#3182CE', '#082D74']);
+  : (dark ? ['#2A4A7F', '#3B67A8', '#5B8FD0', '#8DBCEB', '#D4EDFF'] : ['#C3D9F2', '#93BCEA', '#5E9BDD', '#2B6CB0', '#082D74']);
+/** Município sem valor: cinza neutro, para não se confundir com a faixa mais clara do azul. */
+const semDados = (dark: boolean) => dark ? '#3A4250' : '#E3E6EA';
 
 /**
  * Mapa do estado com o limite de cada município (pedido do Caio em 02/11/2026: nada de bolhas). Desde 04/11/2026 cada município é
@@ -278,36 +280,36 @@ export function MapaMercado({ ctx, metrica }: { ctx: CockpitCtx; metrica: Metric
     return { classe, cores, faixas };
   }, [cidades, config, dark]);
   const porId = useMemo(() => new Map(linhas.map(row => [row.id, row])), [linhas]);
-  const corCidade = (nome: string) => { const row = porNome.get(nome); return row?.valor === null || row?.valor === undefined ? tokens.line : classes.cores[classes.classe(row.valor)]; };
+  const corCidade = (nome: string) => { const row = porNome.get(nome); return row?.valor === null || row?.valor === undefined ? semDados(dark) : classes.cores[classes.classe(row.valor)]; };
   const ranking = [...linhas].filter(row => config.get(row) !== null).sort((a, b) => config.menorPrimeiro ? config.get(a)! - config.get(b)! : config.get(b)! - config.get(a)!);
   const maximo = Math.max(...ranking.map(row => Math.abs(config.get(row)!)), 1);
   const option = useMemo(() => {
     if (!regioes || !rotulos || !centroids) return null;
     const foco = cidade ? { center: centroids.get(cidade.name), zoom: 3.2 } : ctx.greId ? { center: rotulos.get(ctx.greId), zoom: 2.2 } : null;
     const dica = (nome: string) => { const local = porNome.get(nome), gre = local ? porId.get(local.greId) : undefined; if (!local) return nome; const daGre = gre ? config.get(gre) : null;
-      return `<b>${nome}</b> · GRE ${gre?.curto ?? ''}<br/>${config.label}: <b>${local.valor === null ? (local.base ? 'poucos dados' : 'sem dados') : config.fmt(local.valor)}</b>${config.base ? `<br/><span style="opacity:.8">${int(local.base)} ${config.base}</span>` : ''}<br/><span style="opacity:.8">Na GRE: ${daGre === null ? '—' : config.fmt(daGre)}</span><br/><span style="opacity:.7">clique para ver ${config.abre === 'faltam' ? 'os CNPJs sem registro' : 'as empresas'} do município</span>`; };
+      return `<b>${nome}</b> · ${gre?.curto ?? ''}<br/>${config.label}: <b>${local.valor === null ? (local.base ? 'poucos dados' : 'sem dados') : config.fmt(local.valor)}</b>${config.base ? `<br/><span style="opacity:.8">${int(local.base)} ${config.base}</span>` : ''}<br/><span style="opacity:.8">Na GRE: ${daGre === null ? '—' : config.fmt(daGre)}</span><br/><span style="opacity:.7">clique para ver ${config.abre === 'faltam' ? 'os CNPJs sem registro' : 'as empresas'} do município</span>`; };
     return {
       tooltip: { trigger: 'item', formatter: (item: any) => item.componentType === 'geo' ? dica(item.name) : '' },
-      geo: { map: 'spPainel', roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
+      geo: { map: 'spPainel', ...proporcaoSp, roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
         itemStyle: { areaColor: tokens.soft, borderColor: tokens.surface, borderWidth: 0.35 }, emphasis: { itemStyle: { areaColor: tokens.accent }, label: { show: false } },
         regions: [...regioes].map(([name, greId]) => { const apagado = destaque ? destaque !== greId : Boolean(ctx.greId && ctx.greId !== greId), escolhido = cidade?.name === name;
           return { name, itemStyle: { areaColor: corCidade(name), opacity: apagado ? 0.25 : 1, borderColor: escolhido ? tokens.ink : tokens.surface, borderWidth: escolhido ? 1.6 : 0.35 } }; }) },
       series: [{ type: 'scatter', coordinateSystem: 'geo', symbolSize: 1, itemStyle: { color: 'transparent' }, silent: true,
         data: [...rotulos].map(([greId, at]) => ({ name: porId.get(greId)?.curto ?? greId, greId, value: at })),
-        label: { show: true, formatter: (item: any) => item.name, color: '#1A202C', fontSize: 9.5, fontWeight: 700, textBorderColor: 'rgba(255,255,255,.85)', textBorderWidth: 2.5 },
+        label: { show: true, formatter: (item: any) => item.name, color: dark ? '#E2E8F0' : '#1A202C', fontSize: 9.5, fontWeight: 700, textBorderColor: dark ? 'rgba(8,20,40,.9)' : 'rgba(255,255,255,.85)', textBorderWidth: 2.5 },
         labelLayout: { hideOverlap: true } }],
     };
   }, [regioes, rotulos, centroids, classes, config, tokens, destaque, ctx.greId, cidade, porId, porNome]); // eslint-disable-line react-hooks/exhaustive-deps
   const abrirGre = (greId: string | undefined) => { const row = greId ? porId.get(greId) : undefined; if (!row) return;
-    if (config.abre === 'faltam') { if (row.semRegistroIds.length) ctx.open({ kind: 'cnpjs', title: `GRE ${row.name}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP nesta GRE e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.semRegistroIds }); return; }
+    if (config.abre === 'faltam') { if (row.semRegistroIds.length) ctx.open({ kind: 'cnpjs', title: `${row.name}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP nesta GRE e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.semRegistroIds }); return; }
     const devedoras = config.abre === 'devedoras', ids = devedoras ? row.devedoras : row.ativas;
-    if (ids.length) ctx.open({ kind: 'empresas', title: `GRE ${row.name}: ${devedoras ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: devedoras ? 'Empresas registradas nesta GRE com anuidade vencida na data escolhida.' : 'Empresas com registro ativo nesta GRE na data escolhida.', ids }); };
+    if (ids.length) ctx.open({ kind: 'empresas', title: `${row.name}: ${devedoras ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: devedoras ? 'Empresas registradas nesta GRE com anuidade vencida na data escolhida.' : 'Empresas com registro ativo nesta GRE na data escolhida.', ids }); };
   const abrirCidade = (nome: string) => { const row = porNome.get(nome); if (!row?.ids.length) return;
     if (config.abre === 'faltam') ctx.open({ kind: 'cnpjs', title: `${nome}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP neste município e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.ids });
     else ctx.open({ kind: 'empresas', title: `${nome}: ${config.abre === 'devedoras' ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: config.abre === 'devedoras' ? 'Empresas registradas com matriz neste município e anuidade vencida na data escolhida.' : 'Empresas com registro ativo e matriz neste município na data escolhida.', ids: row.ids }); };
   return <div className="geo-layout is-compacto">
     <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa por município: ${config.label}`} onPick={params => { if (params.componentType === 'geo') abrirCidade(params.name); }} /> : <div className="loading">Carregando o mapa…</div>}
-      <ul className="geo-legend" aria-label="Faixas dos municípios">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === item.max ? config.fmt(item.min!) : `${config.fmt(item.min!)} a ${config.fmt(item.max!)}`}</li>)}<li><i style={{ background: tokens.line }} />sem dados</li></ul></div>
+      <ul className="geo-legend" aria-label="Faixas dos municípios">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === item.max ? config.fmt(item.min!) : `${config.fmt(item.min!)} a ${config.fmt(item.max!)}`}</li>)}<li><i style={{ background: semDados(dark) }} />sem dados</li></ul></div>
     <ol className="geo-rank is-gre" onMouseLeave={() => setDestaque(null)} aria-label={`GREs por ${config.label}`}><li className="geo-rank-head"><span>GRE</span><b>{config.curto}</b></li>{ranking.map(row => { const value = config.get(row)!;
       return <li key={row.id}><button onClick={() => abrirGre(row.id)} onMouseEnter={() => setDestaque(row.id)} onFocus={() => setDestaque(row.id)} className={ctx.greId === row.id ? 'is-selected' : ''}>
         <span>{row.curto}</span><b>{config.fmt(value)}</b><em style={{ width: `${Math.abs(value) / maximo * 100}%` }} /></button></li>; })}</ol>

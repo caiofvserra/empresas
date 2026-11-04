@@ -7,6 +7,7 @@ import { defaultFilters } from '../domain/types';
 import type { Dataset, Filters } from '../domain/types';
 import type { Scope } from '../domain/engine';
 import { buildProfissionais, buildEmpregoCbo, remuneracaoPorCbo, resumoProfissionais } from '../domain/profissionais';
+import type { Genero } from '../domain/profissionais';
 import { modalidades } from '../domain/entidades';
 import { buildFormacao, quadroFormacao } from '../domain/formacao';
 import { buildEntidades, quadroEntidades } from '../domain/entidades';
@@ -163,6 +164,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const [gre, setGre] = useState('');
   const [camara, setCamara] = useState('');
   const [modalidade, setModalidade] = useState('');
+  const [genero, setGenero] = useState<'' | Genero>('');
   const [cidade, setCidade] = useState('');
   const [period, setPeriod] = useState(12);
   const leve = painel.id !== 'geral', deProfissionais = painel.id === 'profissionais', deFiscalizacao = painel.id === 'fiscalizacao';
@@ -235,8 +237,8 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   }, [view, f, fEstado, gre, cidade, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
   // Camadas da V20: profissionais, formação, entidades, controle interno e forças-tarefas, todas lidas em D.
   const extra = useMemo(() => {
-    const greId = gre || null, recorte = { cityId: cidade || null, modalidade: modalidade || null };
-    const profissionais = { modelo: base.profissionais, resumo: resumoProfissionais(base.profissionais, view, greId, period, recorte), cbo: remuneracaoPorCbo(base.emprego, anchor, greId), emprego: base.emprego };
+    const greId = gre || null, recorte = { cityId: cidade || null, modalidade: modalidade || null, genero: genero || null };
+    const profissionais = { modelo: base.profissionais, resumo: resumoProfissionais(base.profissionais, view, greId, period, recorte), cbo: remuneracaoPorCbo(base.emprego, anchor, greId, genero || null), emprego: base.emprego };
     const formacao = quadroFormacao(base.formacao, base.profissionais, view, greId, recorte);
     const entidades = quadroEntidades(base.entidades, anchor, greId);
     const inicio = janelaDe(anchor, 12).start, acoesPorGre = new Map<string, number>();
@@ -249,7 +251,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
       credenciamentos: quadroCredenciamentos(base.credenciamentos, view, scope.companyIds, greId), jucesp: quadroJucesp(base.jucesp, view, scope.companyIds, greId),
       denominacao: quadroDenominacao(base.sociosPf, view, base.profissionais, scope.companyIds, greId) };
     return { profissionais, formacao, entidades, conselho, forcas, frentes, parcerias };
-  }, [base, view, anchor, f, fEstado, gre, cidade, modalidade, period, scope, derived.contratos]);
+  }, [base, view, anchor, f, fEstado, gre, cidade, modalidade, genero, period, scope, derived.contratos]);
   const insights = useMemo(() => leitura({ metas, ponte: derived.ponte, cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo: derived.resumo, rec: derived.rec, saldo: model.metrics.overdue.value ?? 0,
     inadimplencia: derived.inadimplencia, linhas: derived.linhas, malha: derived.malha, arts: { atual: derived.arts.atual.length, antes: derived.arts.antes }, cao: derived.cao, estrutura,
     conversao: derived.norte.conversao.atual, tempo: derived.norte.tempo, profissionais: extra.profissionais.resumo, formacao: extra.formacao, conselho: extra.conselho, forcas: extra.forcas }), [metas, derived, model, estrutura, extra]);
@@ -257,7 +259,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const irPara = (target: PageId) => { if (pages.some(item => item.id === target)) setPage(target); else window.location.href = enderecoPainel(painelDaPagina(target), target); };
   const change = (work: () => void) => transition(work);
   const ctx: CockpitCtx = { dataset: view, f, fEstado, scope, model, history, period, greId: gre || null, camara: camara || null, janela: janelaDe(f.anchor, period), resumo: derived.resumo, regionais: derived.regionais, tokens,
-    open: setDetail, filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara, dark, cidadeId: cidade || null, enxuto: leve, camaraDe: camaraMap, modalidade: modalidade || null,
+    open: setDetail, filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara, dark, cidadeId: cidade || null, enxuto: leve, camaraDe: camaraMap, modalidade: modalidade || null, genero: genero || null,
     anchor, hoje, datasReferencia, setAnchor: value => change(() => setAnchorSel(value && value < hoje ? value : null)),
     historyScope, stateScope, stateModel, stateHistory, linhas: derived.linhas, ponte: derived.ponte, rec: derived.rec, contratos: derived.contratos, malha: derived.malha, estrutura, arts: derived.arts,
     metas, insights, focus, toggleFocus: id => setFocus(previous => previous === id ? null : id), norte: derived.norte, mercado: derived.mercado, ...extra,
@@ -277,16 +279,17 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
       </div>
     </nav>
     <div className={`ck-main ${leve ? 'is-enxuto' : ''}`}>
-      {leve ? <header className="ck-header is-enxuto">
+      {leve ? <header className={`ck-header is-enxuto ${painel.filtro === 'modalidade' ? 'tem-genero' : ''}`}>
         <div className="ck-title" title={current.subtitle}><span className="ck-eyebrow">{painel.nome} <span className="ck-legenda-parceria" title="Os blocos com este sinal mostram o que um acordo com outro órgão permitiria medir. Até o acordo ser fechado, os números são demonstrativos."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span></span><h1>{current.title}</h1></div>
         <section className="ck-filters is-inline" aria-label="Filtros">
           <label className="ck-select"><select aria-label="Regional" value={gre} onChange={event => change(() => { setGre(event.target.value); setCidade(''); })}><option value="">Todas as regionais</option>{dataset.gres.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
           <label className="ck-select"><select aria-label="Município" value={cidade} onChange={event => change(() => { const id = event.target.value; setCidade(id); if (id) setGre(dataset.cities.find(row => row.id === id)?.greId ?? ''); })}><option value="">Todos os municípios</option>{cidadesDe(gre).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
           {painel.filtro === 'modalidade'
-            ? <label className="ck-select"><select aria-label="Modalidade" value={modalidade} onChange={event => change(() => setModalidade(event.target.value))}><option value="">Todas as modalidades</option>{modalidades.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+            ? <><label className="ck-select"><select aria-label="Modalidade" value={modalidade} onChange={event => change(() => setModalidade(event.target.value))}><option value="">Todas as modalidades</option>{modalidades.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+              <label className="ck-select"><select aria-label="Gênero" value={genero} onChange={event => change(() => setGenero(event.target.value as '' | Genero))}><option value="">Mulheres e homens</option><option value="Feminino">Mulheres</option><option value="Masculino">Homens</option></select><ChevronDown size={14} /></label></>
             : <label className="ck-select"><select aria-label="Câmara" value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas as câmaras</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>}
           <div className="seg" role="radiogroup" aria-label="Período" title={`De ${data(ctx.janela.start)} a ${data(ctx.janela.end)}, comparado com ${data(ctx.janela.prevStart)} a ${data(ctx.janela.prevEnd)}`}>{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => setPeriod(value))}>{value} meses</button>)}</div>
-          {(gre || cidade || camara || modalidade || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setModalidade(''); setPeriod(12); setAnchorSel(null); })} title="Limpar filtros"><RotateCcw size={14} />Limpar</button>}
+          {(gre || cidade || camara || modalidade || genero || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setModalidade(''); setGenero(''); setPeriod(12); setAnchorSel(null); })} title="Limpar filtros"><RotateCcw size={14} />Limpar</button>}
         </section>
         <div className="ck-meta">
           <span className="demo" title="Dados internos fictícios, gerados para demonstrar o modelo. Dados públicos reais trazem selo próprio.">Demonstrativo</span>
