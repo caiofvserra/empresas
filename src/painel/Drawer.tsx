@@ -19,6 +19,8 @@ const statusAuto = (acao: Acao) => acao.auto ? `auto ${acao.auto.status.toLowerC
 
 export default function Drawer({ ctx, detail, onClose }: { ctx: Ctx; detail: Detail; onClose: () => void }) {
   const content = useMemo(() => build(ctx, detail), [ctx, detail]);
+  // Cartão sem lista (ARTs registradas, recebido depois de uma ação): o painel lateral abre só com a evolução mês a mês.
+  const semLista = Boolean(detail.evolucao) && !content.rows.length;
   const [query, setQuery] = useState(''), [open, setOpen] = useState<string | null>(null), [limit, setLimit] = useState(50), [copied, setCopied] = useState('');
   useEffect(() => { setQuery(''); setOpen(null); setLimit(50); setCopied(''); }, [detail]);
   const visible = content.rows.filter(row => !query || `${row.title} ${row.subtitle} ${row.note}`.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')));
@@ -37,6 +39,7 @@ export default function Drawer({ ctx, detail, onClose }: { ctx: Ctx; detail: Det
         {content.use && <p className="use"><b>Para agir:</b> {content.use}</p>}
         {detail.evolucao && <EvolucaoMensal serie={detail.evolucao} tokens={ctx.tokens} />}
         {content.summary.length > 0 && <dl className="summary">{content.summary.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>}
+        {!semLista && <>
         <div className="list-head"><h3>{content.listTitle}<span>{int(content.rows.length)}</span></h3>
           <div className="list-tools"><label className="search"><Search size={14} /><input id="busca-detalhe" placeholder="Buscar nome, CNPJ, município ou situação" value={query} onChange={event => setQuery(event.target.value)} /></label><button className="ghost" onClick={copy} disabled={!visible.length}><Copy size={14} />Copiar lista</button><button className="ghost" onClick={baixar} disabled={!visible.length}><Download size={14} />Baixar CSV</button></div>
           {copied && <p className="copied" role="status">{copied}</p>}
@@ -47,6 +50,7 @@ export default function Drawer({ ctx, detail, onClose }: { ctx: Ctx; detail: Det
         </li>)}</ol>
         {visible.length > limit && <button className="ghost more" onClick={() => setLimit(value => value + 100)}>Mostrar mais ({int(visible.length - limit)} restantes)</button>}
         {!visible.length && <p className="empty">Nada nesta seleção.</p>}
+        </>}
       </div>
     </aside>
   </div>;
