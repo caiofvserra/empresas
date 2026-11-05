@@ -17,9 +17,11 @@ export const tipos: Tipo[] = ['registro', 'rt', 'art'];
 /* ---------- Janela do período e a mesma janela um ano antes ---------- */
 export interface Janela { start: string; end: string; prevStart: string; prevEnd: string; months: string[] }
 const shiftMonths = (date: string, months: number) => { const [year, month, dayOfMonth] = date.split('-').map(Number); const value = new Date(Date.UTC(year, month - 1 + months, 1)); const last = new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth() + 1, 0)).getUTCDate(); value.setUTCDate(Math.min(dayOfMonth, last)); return value.toISOString().slice(0, 10); };
+/** Os gráficos mês a mês mostram 24 meses, ou o período inteiro quando ele passa de 24 (período livre, 05/11/2026). */
+export const mesesDaJanela = (period: number) => Math.max(24, period);
 export function janela(anchor: string, period: number): Janela {
-  const start = `${shiftMonths(anchor, -(period - 1)).slice(0, 7)}-01`;
-  const months = Array.from({ length: 24 }, (_, index) => shiftMonths(`${anchor.slice(0, 7)}-01`, index - 23).slice(0, 7));
+  const start = `${shiftMonths(anchor, -(period - 1)).slice(0, 7)}-01`, total = mesesDaJanela(period);
+  const months = Array.from({ length: total }, (_, index) => shiftMonths(`${anchor.slice(0, 7)}-01`, index - (total - 1)).slice(0, 7));
   return { start, end: anchor, prevStart: shiftMonths(start, -12), prevEnd: shiftMonths(anchor, -12), months };
 }
 const inside = (date: string | undefined, start: string, end: string) => Boolean(date && date >= start && date <= end);

@@ -365,3 +365,16 @@ th[aria-sort="ascending"] .th-sort, th[aria-sort="descending"] .th-sort { color:
 .exporta-menu p { margin: 4px 10px 6px; font-size: 11px; color: var(--muted); }
 .ck .tile > header .exporta-pop { flex: none; }
 @media print { .ck-rail, .ck-status, .tile-tools, .ck-filters .ghost, .drawer-backdrop, .ck-modal-backdrop { display: none !important; } .ck { background: #fff; } .ck-main { margin: 0; } }
+
+/* Período livre (05/11/2026): campo numérico dentro do seletor de período, para qualquer número de meses até o início do histórico. */
+.seg .seg-livre { display: inline-flex; align-items: center; gap: 3px; height: 24px; padding: 0 6px 0 4px; border-radius: 6px; color: var(--muted); font-size: 11px; font-weight: 700; }
+.seg .seg-livre input { width: 44px; height: 20px; padding: 0 4px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); color: var(--ink); font: 700 11.5px/1 inherit; text-align: center; -moz-appearance: textfield; appearance: textfield; }
+.seg .seg-livre input::-webkit-outer-spin-button, .seg .seg-livre input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+.seg .seg-livre input::placeholder { color: var(--muted); font-weight: 400; }
+.seg .seg-livre.on { background: var(--brand); color: var(--surface); } .seg .seg-livre.on input { border-color: transparent; }
+/* Filtros em uso no rodapé, cada um com o seu "x". */
+.ck-chips { display: flex; flex-wrap: nowrap; gap: 6px; margin: 0; padding: 0; list-style: none; min-width: 0; overflow: hidden; }
+.ck-chips li { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 4px 0 9px; border: 1px solid var(--line); border-radius: 11px; background: var(--soft); color: var(--ink); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.ck-chips li button { display: grid; place-items: center; width: 16px; height: 16px; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
+.ck-chips li button:hover { background: var(--line); color: var(--ink); }
+@page { size: A4 landscape; margin: 8mm; }
