@@ -125,7 +125,9 @@ export function Var({ value, kind = 'pct', goodUp = true, label = 'em relação 
  */
 export function Indicador({ aspecto, label, value, variacao, spark, cor, meta, sub, onOpen, destaque, ficha, ctx, serie }: { aspecto?: string; label: string; value: string; variacao?: Variacao; spark?: number[]; cor?: string; meta?: { atual: number | null; alvo: number }; sub?: ReactNode; onOpen?: () => void; destaque?: boolean; ficha?: string; ctx?: CockpitCtx; serie?: Evolucao }) {
   if (!variacao && serie && ctx) { const anual = variacaoAnual(serie, ctx.period); variacao = { ...anual, goodUp: serie.goodUp ?? true, label: 'em relação a um ano antes' }; }
-  const abrir = onOpen && serie ? () => abrirComEvolucao({ ...serie, nome: serie.nome ?? label }, onOpen) : onOpen;
+  // Cartão sem lista para abrir, mas com série: abre o painel lateral só com a evolução mês a mês (05/11/2026).
+  const soEvolucao = serie && ctx ? () => ctx.open({ kind: 'linhas', title: label, what: fichaDe(ctx.page, ficha ?? '')?.mede ?? 'O indicador mês a mês.', listTitle: '', rows: [], evolucao: { ...serie, nome: serie.nome ?? label } }) : undefined;
+  const abrir = onOpen && serie ? () => abrirComEvolucao({ ...serie, nome: serie.nome ?? label }, onOpen) : onOpen ?? soEvolucao;
   const body = <>
     {aspecto && <span className="ind-aspecto">{aspecto}</span>}
     <span className="ind-label" title={label}>{label}</span>
@@ -135,7 +137,7 @@ export function Indicador({ aspecto, label, value, variacao, spark, cor, meta, s
     {sub && <span className="ind-sub">{sub}</span>}
   </>;
   const className = `ind ${destaque ? 'is-destaque' : ''} ${ficha ? 'has-ficha' : ''}`;
-  const card = abrir ? <button className={className} onClick={abrir} title={serie ? `${label}: ver a evolução mês a mês e a lista` : `${label}: ver detalhe`}>{body}</button> : <div className={className}>{body}</div>;
+  const card = abrir ? <button className={className} onClick={abrir} title={!onOpen ? `${label}: ver a evolução mês a mês` : serie ? `${label}: ver a evolução mês a mês e a lista` : `${label}: ver detalhe`}>{body}</button> : <div className={className}>{body}</div>;
   if (!ficha || !ctx) return card;
   const registro = fichaDe(ctx.page, ficha);
   return <div className="ind-shell">{card}{registro?.parceria && <span className="ind-parceria"><Parcerias ids={parceriasDe(registro)} compacto /></span>}<FichaPop ficha={registro} titulo={label} anchor={ctx.anchor} /></div>;

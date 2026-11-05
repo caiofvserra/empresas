@@ -2,22 +2,23 @@ import { int, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { statusAjuda } from '../cockpit/cruzamentos';
 import { Bloco, Indicador } from '../cockpit/ui';
+import { useSeriesFiscalizacao } from './series';
 import { ArtsAutores, CnpjFechado, HistoricoMalha, NomesEngenharia, Regras, SemRegistroCamara, Sucessoes } from './blocos';
 
 /** Painel de Fiscalização, página 3: a malha fina, regra por regra, com a confiança do indício e o que já teve ação. Nenhum indício vira auto sozinho. */
 export default function PaginaMalha({ ctx }: { ctx: CockpitCtx }) {
-  const { malha, tokens } = ctx, semAcao = malha.empresas.filter(id => !malha.comAcao.includes(id));
+  const { malha, tokens } = ctx, series = useSeriesFiscalizacao(ctx), semAcao = malha.empresas.filter(id => !malha.comAcao.includes(id));
   const abrir = (title: string, what: string, ids: string[], use?: string) => { if (ids.length) ctx.open({ kind: 'empresas', title, what, use, ids }); };
   const serie = ctx.historico.pontos;
   return <div className="ck-grid ck-grid-fs-malha">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores da malha fina">
-      <Indicador destaque ficha="k-indicio" ctx={ctx} label="Empresas com algum indício" value={int(malha.empresas.length)} spark={serie.length > 1 ? serie.map(p => p.comIndicio) : undefined} cor={tokens.blue} sub="para análise, nunca para autuar direto"
+      <Indicador destaque ficha="k-indicio" ctx={ctx} label="Empresas com algum indício" serie={series.comIndicio} value={int(malha.empresas.length)} spark={serie.length > 1 ? serie.map(p => p.comIndicio) : undefined} cor={tokens.blue} sub="para análise, nunca para autuar direto"
         onOpen={() => abrir('Empresas com algum indício', 'Empresas apontadas por ao menos uma regra da malha fina na data escolhida.', malha.empresas, 'Comece pelas que têm indício confirmado e nenhuma ação.')} />
-      <Indicador ficha="k-confirmadas" ctx={ctx} label="Com indício confirmado" value={int(malha.confirmadas.length)} spark={serie.length > 1 ? serie.map(p => p.confirmadas) : undefined} cor={tokens.warn} sub={`${pct(malha.confirmadas.length / Math.max(1, malha.empresas.length) * 100)} das apontadas, ligadas por documento ou CNPJ exato`}
+      <Indicador ficha="k-confirmadas" ctx={ctx} label="Com indício confirmado" serie={series.confirmadas} value={int(malha.confirmadas.length)} spark={serie.length > 1 ? serie.map(p => p.confirmadas) : undefined} cor={tokens.warn} sub={`${pct(malha.confirmadas.length / Math.max(1, malha.empresas.length) * 100)} das apontadas, ligadas por documento ou CNPJ exato`}
         onOpen={() => abrir('Empresas com indício confirmado', 'Empresas com ao menos um indício ligado por documento ou CNPJ exato.', malha.confirmadas)} />
       <Indicador ficha="k-multiplos" ctx={ctx} label="Com dois indícios ou mais" value={int(malha.multiplos.length)} sub="sobem na fila de análise"
         onOpen={() => abrir('Empresas com dois indícios ou mais', 'Empresas apontadas por duas ou mais regras da malha fina.', malha.multiplos)} />
-      <Indicador ficha="k-comacao" ctx={ctx} label="Já tiveram ação fiscal" value={int(malha.comAcao.length)} spark={serie.length > 1 ? serie.map(p => p.comAcao) : undefined} cor={tokens.good} sub={`${pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)} das empresas apontadas`}
+      <Indicador ficha="k-comacao" ctx={ctx} label="Já tiveram ação fiscal" serie={series.comAcao} value={int(malha.comAcao.length)} spark={serie.length > 1 ? serie.map(p => p.comAcao) : undefined} cor={tokens.good} sub={`${pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)} das empresas apontadas`}
         onOpen={() => abrir('Empresas apontadas que já tiveram ação', 'Empresas com indício e ao menos uma ação de fiscalização.', malha.comAcao)} />
       <Indicador ficha="k-semacao" ctx={ctx} label="Ainda sem nenhuma ação" value={int(semAcao.length)} sub="é a fila de trabalho da fiscalização"
         onOpen={() => abrir('Empresas apontadas sem nenhuma ação', 'Empresas com indício e nenhuma ação de fiscalização até a data escolhida.', semAcao, 'Comece pelas que têm indício confirmado e mais de uma regra.')} />

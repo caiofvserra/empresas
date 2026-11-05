@@ -107,7 +107,9 @@ export function conversao(f: Fiscalizacao, greId: string | null, quantos = 8): {
 export const origensIndicio: Origem[] = ['Cruzamento Receita (CNAE)', 'Contrato público (PNCP)', 'Cadastro CREA'];
 export const PRAZO_ATRIBUICAO = 365;
 export interface Pagamento { companyId: string; acaoId: string; origem: Origem; data: string; valor: number; tipo: 'Anuidade' | 'Multa' }
-export interface ReceitaAtribuivel { pagamentos: Pagamento[]; total: number; totalAntes: number; anuidades: number; multas: number; porOrigem: { origem: Origem; valor: number; empresas: number }[]; casos: number; mensal: { month: string; valor: number }[] }
+export interface ReceitaAtribuivel { pagamentos: Pagamento[]; total: number; totalAntes: number; anuidades: number; multas: number; porOrigem: { origem: Origem; valor: number; empresas: number }[]; casos: number; mensal: { month: string; valor: number }[];
+  /** Recebido em cada mês da janela inteira (24 meses ou mais), para a evolução mês a mês do cartão (05/11/2026). */
+  serieMensal: { month: string; valor: number }[] }
 /**
  * Anuidades e multas efetivamente recebidas (data do pagamento) de empresas com caso aberto a partir de indício, em até 12 meses da abertura.
  * Cada pagamento é atribuído uma única vez, ao caso mais antigo que o cobre. Taxas de ART e estornos não existem no cenário.
@@ -132,6 +134,7 @@ export function receitaAtribuivel(dataset: Dataset, f: Fiscalizacao, greId: stri
     anuidades: sum(pagamentos.filter(row => row.tipo === 'Anuidade').map(row => row.valor)), multas: sum(pagamentos.filter(row => row.tipo === 'Multa').map(row => row.valor)),
     porOrigem: origensIndicio.map(origem => { const rows = pagamentos.filter(row => row.origem === origem); return { origem, valor: sum(rows.map(row => row.valor)), empresas: new Set(rows.map(row => row.companyId)).size }; }),
     casos: new Set(pagamentos.map(row => row.acaoId)).size,
+    serieMensal: w.months.map(month => ({ month, valor: sum(todos.filter(row => row.data.startsWith(month)).map(row => row.valor)) })),
     mensal: w.months.filter(month => `${month}-01` >= `${w.start.slice(0, 7)}-01`).map(month => ({ month, valor: sum(pagamentos.filter(row => row.data.startsWith(month)).map(row => row.valor)) })) };
 }
 
