@@ -9,6 +9,8 @@ import { parceriaPorId } from '../domain/parcerias';
 import type { ParceriaId } from '../domain/parcerias';
 import { mainEstablishments } from '../gestao-v14/metrics';
 import { Spark } from '../painel/chart';
+import { abrirComEvolucao, variacaoAnual } from '../painel/evolucao';
+import type { Evolucao } from '../painel/evolucao';
 import { data, pct } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
 import { fichaDe, parceriasDe } from './fichas';
@@ -116,8 +118,14 @@ export function Var({ value, kind = 'pct', goodUp = true, label = 'em relação 
   return <span className={`delta ${good ? 'is-good' : 'is-bad'}`}><Icon size={12} />{text}<em>{label}</em></span>;
 }
 
-/** Cartão de indicador: assunto, nome, valor, variação, série curta, meta, complemento e ficha (i) quando `ficha` e `ctx` são informados. */
-export function Indicador({ aspecto, label, value, variacao, spark, cor, meta, sub, onOpen, destaque, ficha, ctx }: { aspecto?: string; label: string; value: string; variacao?: Variacao; spark?: number[]; cor?: string; meta?: { atual: number | null; alvo: number }; sub?: ReactNode; onOpen?: () => void; destaque?: boolean; ficha?: string; ctx?: CockpitCtx }) {
+/**
+ * Cartão de indicador: assunto, nome, valor, variação, série curta, meta, complemento e ficha (i) quando `ficha` e `ctx` são informados.
+ * Com `serie` (05/11/2026), clicar no cartão abre o painel lateral com a evolução mês a mês acima da lista, e o cartão sem variação
+ * própria ganha a variação contra um ano antes.
+ */
+export function Indicador({ aspecto, label, value, variacao, spark, cor, meta, sub, onOpen, destaque, ficha, ctx, serie }: { aspecto?: string; label: string; value: string; variacao?: Variacao; spark?: number[]; cor?: string; meta?: { atual: number | null; alvo: number }; sub?: ReactNode; onOpen?: () => void; destaque?: boolean; ficha?: string; ctx?: CockpitCtx; serie?: Evolucao }) {
+  if (!variacao && serie && ctx) { const anual = variacaoAnual(serie, ctx.period); variacao = { ...anual, goodUp: serie.goodUp ?? true, label: 'em relação a um ano antes' }; }
+  const abrir = onOpen && serie ? () => abrirComEvolucao({ ...serie, nome: serie.nome ?? label }, onOpen) : onOpen;
   const body = <>
     {aspecto && <span className="ind-aspecto">{aspecto}</span>}
     <span className="ind-label" title={label}>{label}</span>
@@ -127,7 +135,7 @@ export function Indicador({ aspecto, label, value, variacao, spark, cor, meta, s
     {sub && <span className="ind-sub">{sub}</span>}
   </>;
   const className = `ind ${destaque ? 'is-destaque' : ''} ${ficha ? 'has-ficha' : ''}`;
-  const card = onOpen ? <button className={className} onClick={onOpen} title={`${label}: ver detalhe`}>{body}</button> : <div className={className}>{body}</div>;
+  const card = abrir ? <button className={className} onClick={abrir} title={serie ? `${label}: ver a evolução mês a mês e a lista` : `${label}: ver detalhe`}>{body}</button> : <div className={className}>{body}</div>;
   if (!ficha || !ctx) return card;
   const registro = fichaDe(ctx.page, ficha);
   return <div className="ind-shell">{card}{registro?.parceria && <span className="ind-parceria"><Parcerias ids={parceriasDe(registro)} compacto /></span>}<FichaPop ficha={registro} titulo={label} anchor={ctx.anchor} /></div>;

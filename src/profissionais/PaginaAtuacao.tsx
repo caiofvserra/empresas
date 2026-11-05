@@ -1,13 +1,14 @@
 import { int, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco, Indicador } from '../cockpit/ui';
+import { useSeriesProfissionais } from './series';
 import { ArtIdade, ArtsMes, ArtsModalidade, CargaRt, Concentracao, abrirProfissionais, porIds } from './blocos';
 
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 
 /** Painel de Profissionais, página 3: quem registra ART, em que modalidade e idade, e quantas empresas cada responsável técnico assume. */
 export default function PaginaAtuacao({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, p = ctx.profissionais.resumo, autores = new Set(p.arts.map(art => ctx.profissionais.modelo.autoria.get(art.id)));
+  const { tokens } = ctx, series = useSeriesProfissionais(ctx), p = ctx.profissionais.resumo, autores = new Set(p.arts.map(art => ctx.profissionais.modelo.autoria.get(art.id)));
   const comArt = p.ativos.filter(row => autores.has(row.id)), semArt = p.ativos.filter(row => !autores.has(row.id)), quatro = p.cargaRt[3]?.ids ?? [];
   return <div className="ck-grid ck-grid-pf-atuacao">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores de ART e responsabilidade técnica">
@@ -15,7 +16,7 @@ export default function PaginaAtuacao({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ficha="k-autores" ctx={ctx} label="Ativos que registraram ART" value={p.ativos.length ? pct(comArt.length / p.ativos.length * 100) : '—'} sub={`${int(semArt.length)} ativos sem nenhuma ART no período`}
         onOpen={() => abrirProfissionais(ctx, 'Ativos sem ART no período', semArt, 'Profissionais ativos que não registraram nenhuma ART como autor no período.', 'Pode ser trabalho sem ART (ensino, setor público, empregado) ou atividade parada. Não é indício sozinho.')} />
       <Indicador ficha="k-media" ctx={ctx} label="ARTs a cada 100 ativos" value={p.ativos.length ? (p.arts.length / p.ativos.length * 100).toLocaleString('pt-BR', { maximumFractionDigits: 0 }) : '—'} sub="no período escolhido, em todas as modalidades" />
-      <Indicador ficha="k-rt" ctx={ctx} label="Responsáveis técnicos" value={int(p.rtAtivos)} sub={`${p.ativos.length ? pct(p.rtAtivos / p.ativos.length * 100) : '—'} dos ativos respondem por alguma empresa`}
+      <Indicador ficha="k-rt" ctx={ctx} label="Responsáveis técnicos" serie={series.rts} value={int(p.rtAtivos)} sub={`${p.ativos.length ? pct(p.rtAtivos / p.ativos.length * 100) : '—'} dos ativos respondem por alguma empresa`}
         onOpen={() => abrirProfissionais(ctx, 'Responsáveis técnicos', porIds(ctx, p.cargaRt.flatMap(row => row.ids)), 'Profissionais com vínculo de responsável técnico vigente em pelo menos uma empresa.')} />
       <Indicador ficha="k-rt4" ctx={ctx} label="Responsáveis por 4 empresas ou mais" value={int(quatro.length)} sub="vale conferir tempo e área de atuação"
         onOpen={() => abrirProfissionais(ctx, 'Responsáveis técnicos de 4 empresas ou mais', porIds(ctx, quatro), 'Profissionais com vínculo de responsável técnico vigente em quatro empresas ou mais.', 'Verificar se há tempo e área de atuação compatíveis antes de qualquer tratativa.')} />

@@ -240,3 +240,16 @@ button.card { transition: border-color .15s, transform .15s; } button.card:hover
   .facts { grid-template-columns: minmax(0, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) { .drawer, .drawer-backdrop { animation: none; } button.card { transition: none; } }
+
+/* Evolução mês a mês no painel lateral, aberta por um cartão (05/11/2026). */
+.evolucao { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px 8px; border: 1px solid var(--line); border-radius: 10px; }
+.evolucao h3 { margin: 0; font: 800 12px/1.2 var(--display); letter-spacing: .02em; color: var(--ink); }
+.evolucao-comp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.evolucao-item { display: flex; flex-direction: column; gap: 2px; padding: 7px 9px; border-radius: 8px; background: var(--neutral-bg, rgba(127,127,127,.08)); min-width: 0; }
+.evolucao-item > span { font-size: 10.5px; color: var(--muted); }
+.evolucao-item > b { display: inline-flex; align-items: center; gap: 3px; font-size: 16px; font-weight: 800; }
+.evolucao-item > b.is-good { color: var(--good); } .evolucao-item > b.is-bad { color: var(--bad); } .evolucao-item > b.is-none { color: var(--muted); font-size: 13px; }
+.evolucao-item > small { font-size: 10.5px; line-height: 1.35; color: var(--muted); }
+.evolucao-chart { height: 190px; }
+.evolucao-chart .chart { width: 100%; height: 100%; }
+@media (max-width: 520px) { .evolucao-comp { grid-template-columns: 1fr; } }

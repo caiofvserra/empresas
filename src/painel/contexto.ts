@@ -4,6 +4,7 @@ import type { EnterpriseModel } from '../enterprise-v10/types';
 import type { Janela, Regional, ResumoFiscal, Segmento, SegmentoMercado } from './analise';
 import type { Tokens } from './chart';
 import type { Fiscalizacao, Origem, StatusMulta, Tipo } from './fiscalizacao';
+import type { Evolucao } from './evolucao';
 
 /** Estado calculado compartilhado pelas duas visões e pelo painel de detalhe. */
 export interface Ctx {
@@ -16,7 +17,9 @@ export interface Ctx {
 }
 /** Recorte que um item do gráfico carrega para a gaveta poder filtrar a página por ele. */
 export interface Recorte { gre?: string; cidade?: string; camara?: string }
-export type Detail =
+/** O que o painel lateral abre. Aberto por um cartão com série mensal, traz também `evolucao` (ver evolucao.ts). */
+export type Detail = DetailBase & { evolucao?: Evolucao };
+type DetailBase =
   | { kind: 'alvos'; tipo?: Tipo }
   | { kind: 'acoes' } | { kind: 'autos' } | { kind: 'regularizacoes' }
   | { kind: 'multas'; status?: StatusMulta }

@@ -7,6 +7,7 @@ import { tipoLabel } from './fiscalizacao';
 import { camaraDaEmpresa, segmentos } from './analise';
 import type { Ctx, Detail, Recorte } from './contexto';
 import { brl, data, int, money, pct, short } from './ui';
+import EvolucaoMensal from './EvolucaoMensal';
 
 /** Painel lateral: o que o número mede, como usar e a lista para agir (busca, ficha e cópia para planilha). */
 interface Row { key: string; companyId?: string; title: string; subtitle: string; value: string; note: string; sortValue: number; companies?: string[] }
@@ -34,6 +35,7 @@ export default function Drawer({ ctx, detail, onClose }: { ctx: Ctx; detail: Det
       <div className="drawer-body">
         <p className="what">{content.what}</p>
         {content.use && <p className="use"><b>Para agir:</b> {content.use}</p>}
+        {detail.evolucao && <EvolucaoMensal serie={detail.evolucao} tokens={ctx.tokens} />}
         {content.summary.length > 0 && <dl className="summary">{content.summary.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>}
         <div className="list-head"><h3>{content.listTitle}<span>{int(content.rows.length)}</span></h3>
           <div className="list-tools"><label className="search"><Search size={14} /><input id="busca-detalhe" placeholder="Buscar nome, CNPJ, município ou situação" value={query} onChange={event => setQuery(event.target.value)} /></label><button className="ghost" onClick={copy} disabled={!visible.length}><Copy size={14} />Copiar lista</button><button className="ghost" onClick={baixar} disabled={!visible.length}><Download size={14} />Baixar CSV</button></div>
