@@ -78,7 +78,7 @@
 
 /* Responsáveis técnicos (aba RT, 05/11/2026): barra segmentada e lista à esquerda, histograma de empresas por RT à direita. */
 .quadro-rt { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
-.quadro-rt-esq { min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+.quadro-rt-esq { min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 18px; gap: 8px; }
 .quadro-rt-esq .segments { height: 10px; }
 .quadro-rt-dir { min-height: 0; display: flex; flex-direction: column; }
 .quadro-rt .qt-list { gap: 2px; }

@@ -27,7 +27,7 @@ Desde 01/11/2026 (segundo retorno do Caio) cada página cabe numa tela de comput
 - **RT e ART.** Responsável técnico, RT que saiu sem substituto, ARTs, valor declarado e registradas sem ART. ARTs mês a mês com o mesmo mês do ano anterior, ARTs por modalidade a cada 100 profissionais ativos da mesma modalidade, com a média, responsáveis técnicos e barras de 100% com a parte das registradas sem ART em cada câmara.
 - **Vínculos.** Nome com "engenharia" e diretoria ("!", novo), sócios que são profissionais ("!"), usinas, postos, minas e financiamentos, empregados técnicos por empresa ("!"), credenciadas no DETRAN-SP e no INMETRO ("!") e engenharia incluída no contrato social pela Junta Comercial ("!").
 
-Regional, município, câmara, período (3, 6, 12 ou 24 meses) e data de referência ficam numa única linha no alto da tela e valem para todas as páginas. Escolher um município leva o painel inteiro para ele e aproxima o mapa. O emprego formal sai em totais por regional, por isso, com um município escolhido, a série de emprego é a da regional dele. Clicar num elemento abre as empresas daquele elemento; nenhum clique abre o resumo genérico da regional. A barra de destaques que passava rolando no alto da tela saiu dos dois painéis.
+Regional, município, câmara, período (3, 6, 12 ou 24 meses, ou qualquer número de meses digitado no campo "outro", até o início do histórico) e data de referência ficam numa única linha no alto da tela e valem para todas as páginas. O botão "Mais" abre o porte da empresa e a situação do CNPJ na Receita (05/11/2026). Os filtros em uso aparecem no rodapé, cada um com o seu "x", e ficam no endereço da página, para um link levar à mesma tela. Escolher um município leva o painel inteiro para ele e aproxima o mapa. O emprego formal sai em totais por regional, por isso, com um município escolhido, a série de emprego é a da regional dele. Clicar num elemento abre as empresas daquele elemento; nenhum clique abre o resumo genérico da regional. A barra de destaques que passava rolando no alto da tela saiu dos dois painéis.
 
 ## Sócios engenheiros: o que a lei pede
 
@@ -108,6 +108,21 @@ Revisão de leitura das abas "Registro e mercado" e "Evolução das empresas", c
 | Cartão "Empresas que entraram na base" | Somava primeiros registros e retornos sem dizer | "N pela primeira vez, N retornos; N após fiscalização"; a ficha explica o retorno e por que o calor de novos registros dá outro número |
 
 Cenário (`src/domain/dataset.ts`): a empresa nova passa a se registrar entre 2 e 10 meses depois da abertura, e uma pequena parte não se registra, de modo que perto de 57% das abertas em 24 meses já estão registradas (antes, 81%, acima da cobertura do estoque); os retornos caíram de 39% para perto de 14% das entradas (reativação só em registros antigos e a empresa que já teve registro raramente volta nos últimos três anos); as filiais de matrizes recentes deixaram de se espremer em ago/26, e as aberturas por mês ficaram parelhas. A base de registradas cresce perto de 7% ao ano, a permanência em 12 meses fica perto de 94% e a cobertura do estoque perto de 69%, acima da meta de 65%. O total de registros continua em 4.500.
+
+### Interatividade, período, exportação e outras funções
+
+Pedido do Caio em 05/11/2026 ("verifique a interatividade", "3, 6, 12, 24, poderia ser possível ajustar manualmente", "acrescente botões de exportar", "outras funcionalidades?").
+
+- **Período livre.** Ao lado dos quatro atalhos, o campo "outro" aceita qualquer número de meses, de 1 até o início do histórico (36 no cenário). Acima do limite, o período é cortado e o rodapé explica. Os gráficos mês a mês mostram 24 meses, ou o período inteiro quando ele passa de 24 (`mesesDaJanela` em `src/painel/analise.ts`). A comparação com o ano anterior fica "sem base" quando o período anterior cai antes do histórico, e o rodapé avisa. Foi escolhido o campo numérico, e não uma lista maior, uma barra ou botões de mais e menos, porque mostra o valor exato, cabe na linha do cabeçalho e, no Power BI, vira um parâmetro de "e se" ligado à mesma medida.
+- **Mais filtros.** Porte da empresa e situação do CNPJ na Receita, que o motor já aceitava (`sizes` e `rfbStatuses`), num balão ao lado da câmara, para o cabeçalho continuar numa linha.
+- **Filtro cruzado.** Clicar num item continua abrindo a lista de empresas (regra de 01/11/2026). Na gaveta, o botão "Filtrar a página por …" aplica o recorte daquele item (município, regional ou câmara) aos filtros do alto, como o filtro cruzado do Power BI. Os blocos passam `recorte` no detalhe que abrem.
+- **Recorte visível.** O rodapé mostra os filtros em uso como etiquetas com "x" e conta as empresas com atividade de engenharia (o universo do funil), em vez das 3.000 empresas do cenário.
+- **Endereço com filtros.** `#registro?gre=GRE5&cidade=3509502&camara=Civil&meses=24&data=2026-06-30&porte=Grande+empresa&situacao=Baixada`. Com município no endereço, a regional é a dele pela tabela oficial.
+- **Exportar.** Cada bloco tem um menu (ícone de download, ao lado do (i)) com "Dados (CSV)" e "Imagem (PNG)". O CSV usa ponto e vírgula, aspas duplas e a marca de ordem de bytes, para o Excel em português abrir direto; o PNG sai do SVG que o ECharts desenha, em dobro de resolução, com o fundo do tema. A gaveta ganhou "Baixar CSV" ao lado de "Copiar lista". Tudo em `src/painel/exportar.ts`. No Power BI, as duas saídas são nativas.
+- **Buscar empresa.** Botão no trilho (ou a tecla "/") abre a gaveta com todas as empresas do recorte e o campo de busca em foco; a ficha da empresa abre ao clicar.
+- **Imprimir.** Botão no trilho chama a impressão do navegador (ou salvar em PDF), em paisagem, sem trilho, rodapé e botões.
+- **Um só "!"** quando o bloco depende de dois acordos (DETRAN-SP e INMETRO); o título do marcador cita os dois.
+- Avaliadas e deixadas para o Power BI: comparar duas GREs lado a lado (quebra a regra de uma tela), comentários por bloco (o serviço do Power BI tem os seus), alerta de meta por e-mail. Favoritar não faz sentido numa página que já cabe numa tela.
 
 ### Abas "Responsáveis técnicos e ARTs" e "Sócios, instalações e empregados"
 

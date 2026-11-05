@@ -260,10 +260,10 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     const linhas = linhasGre(stateModel, stateHistory, stateScope, regionais, period, stateMalha, stateArts.atual);
     const cobradas = model.metrics.compliance.denominatorCompanyIds?.length ?? 0;
     const norte = { cobertura: cobertura(scope, model), contagens: contagens(scope, model), conversao: conversao(f, gre || null), receita: receitaAtribuivel(view, f, gre || null, period), tempo: tempoAteAgir(view, f, gre || null, period, tipoLabel) };
-    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), aberturas: aberturasRfb(view, gre || null, 24, cidade || null), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
+    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), aberturas: aberturasRfb(view, gre || null, mesesHist, cidade || null), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
     return { resumo, regionais, contratos, malha, arts, linhas, ponte: ponteBase(model, scope, f, period), rec: receita(history, f, gre || null, period),
       inadimplencia: cobradas ? devedoras(model).size / cobradas * 100 : null, cao: caoService(scope).median, norte, mercado };
-  }, [view, f, fEstado, gre, cidade, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
+  }, [view, f, fEstado, gre, cidade, period, mesesHist, camara, scope, model, history, stateScope, stateModel, stateHistory]);
   // Camadas da V20: profissionais, formação, entidades, controle interno e forças-tarefas, todas lidas em D.
   const extra = useMemo(() => {
     const greId = gre || null, recorte = { cityId: cidade || null, modalidade: modalidade || null, genero: genero || null };
