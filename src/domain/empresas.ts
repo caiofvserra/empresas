@@ -118,13 +118,18 @@ export function porCapital(scope: Scope, model: EnterpriseModel) {
 }
 
 /* ---------- ARTs de empresas mês a mês ---------- */
-/** ARTs de empresas por mês nos últimos 24 meses até a data de referência, com o mesmo mês do ano anterior para comparar. */
-export function artsMensais(scope: Scope) {
-  const months = scope.dataset.months.filter(month => month <= scope.dataset.snapshotDate.slice(0, 7));
+/**
+ * ARTs de empresas por mês nos últimos `meses` meses até a data de referência, com o mesmo mês do ano anterior para comparar.
+ * A contagem lê a base inteira (`scope.dataset.arts`, 36 meses no cenário) no recorte de empresas do scope, e não só `scope.arts`,
+ * que fica limitado ao período: assim a linha do ano anterior existe em todos os meses do gráfico (05/11/2026). Mês sem ART na
+ * base, por estar antes do primeiro mês carregado, fica nulo.
+ */
+export function artsMensais(scope: Scope, meses = 24) {
+  const corte = scope.dataset.snapshotDate, months = scope.dataset.months.filter(month => month <= corte.slice(0, 7)), carregados = new Set(scope.dataset.months);
   const porMes = new Map<string, { n: number; empresas: Set<string> }>();
-  for (const row of scope.arts) { if (row.date > scope.dataset.snapshotDate) continue; const month = row.date.slice(0, 7), item = porMes.get(month) ?? { n: 0, empresas: new Set() }; item.n++; item.empresas.add(row.companyId); porMes.set(month, item); }
-  return months.slice(-24).map(month => { const anterior = `${Number(month.slice(0, 4)) - 1}${month.slice(4)}`;
-    return { month, n: porMes.get(month)?.n ?? 0, anoAnterior: porMes.has(anterior) ? porMes.get(anterior)!.n : null, empresas: [...(porMes.get(month)?.empresas ?? [])] }; });
+  for (const row of scope.dataset.arts) { if (row.date > corte || !scope.companyIds.has(row.companyId)) continue; const month = row.date.slice(0, 7), item = porMes.get(month) ?? { n: 0, empresas: new Set() }; item.n++; item.empresas.add(row.companyId); porMes.set(month, item); }
+  return months.slice(-meses).map(month => { const anterior = `${Number(month.slice(0, 4)) - 1}${month.slice(4)}`;
+    return { month, n: porMes.get(month)?.n ?? 0, anoAnterior: carregados.has(anterior) ? porMes.get(anterior)?.n ?? 0 : null, empresas: [...(porMes.get(month)?.empresas ?? [])] }; });
 }
 
 /* ---------- Qualidade do cadastro das empresas registradas ---------- */
