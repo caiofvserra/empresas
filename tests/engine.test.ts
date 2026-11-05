@@ -303,14 +303,16 @@ test('anomalies use six preceding months, exceed the explained threshold and con
     assert.match(alert.explanation, /seis meses anteriores/);
     assert.match(alert.limitations, /sem modelo treinado/);
   }
-  const registry = alerts.find(alert => alert.metric === 'newRegistrations');
-  assert(registry);
+  // Desde 05/11/2026 os registros novos do cenário são parelhos mês a mês (tendência irreal é defeito), então a anomalia
+  // demonstrativa conferida aqui é a dos vínculos novos de responsável técnico.
+  const links = alerts.find(alert => alert.metric === 'newLinks');
+  assert(links);
   const series = makeSeries(all, 18);
-  const index = series.findIndex(point => point.date === registry.date);
-  const baseline = series.slice(index - 6, index).reduce((sum, point) => sum + point.newRegistrations, 0) / 6;
-  assert.equal(registry.baseline, baseline);
-  assert.equal(registry.observed, series[index].newRegistrations);
-  for (const companyId of registry.companyIds) assert(dataset.movements.some(row => row.companyId === companyId && row.type === 'Novo registro' && row.date.startsWith(registry.date.slice(0, 7))));
+  const index = series.findIndex(point => point.date === links.date);
+  const baseline = series.slice(index - 6, index).reduce((sum, point) => sum + point.newLinks, 0) / 6;
+  assert.equal(links.baseline, baseline);
+  assert.equal(links.observed, series[index].newLinks);
+  for (const companyId of links.companyIds) assert(dataset.technicalLinks.some(row => row.companyId === companyId && row.startDate.startsWith(links.date.slice(0, 7))));
   assert.deepEqual(alerts, detectAnomalies(all, 12));
 });
 

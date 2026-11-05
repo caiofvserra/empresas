@@ -141,8 +141,12 @@ export function generateDataset(seed = 20260930): Dataset {
     const sorteio = random(), forcado = !branch && !company.externalOnly && forcados < PISO_MUNICIPIO * municipios.length;
     const city = forcado ? municipios[forcados++ % municipios.length] : sorteiaMunicipio(sorteio);
     const parent = establishmentsPerCompany.get(company.id)?.[0];
+    // A filial abre entre 100 dias e dois anos depois da matriz. Quando a matriz é recente e esse prazo passa do último arquivo da
+    // Receita, a filial abre entre 1 e 8 meses depois da matriz; quando nem isso cabe, abre junto com ela. Antes, as filiais de matrizes
+    // recentes se espremiam nos últimos meses, e ago/26 virava o maior mês de aberturas (05/11/2026).
+    const filialEntre = (minimo: number, maximo: number) => addDays(parent!.openedAt, minimo) <= '2026-08-31' ? between(addDays(parent!.openedAt, minimo), earlier(addDays(parent!.openedAt, maximo), '2026-08-31')) : null;
     const openedAt = branch
-      ? (addDays(parent!.openedAt, 100) <= '2026-08-31' ? between(addDays(parent!.openedAt, 100), earlier(addDays(parent!.openedAt, 720), '2026-08-31')) : earlier(between(addDays(parent!.openedAt, 30), '2026-08-31'), '2026-08-31'))
+      ? (addDays(parent!.openedAt, 720) <= '2026-08-31' ? filialEntre(100, 720)! : filialEntre(30, 240) ?? parent!.openedAt)
       : index % 5 === 0 ? between('2023-10-01', '2026-08-31') : between('2012-01-01', '2023-09-01');
     const cnaeMain = sampleCnaeCodes[pesoCnae[(index * 7 + integer(0, 3)) % pesoCnae.length]];
     const secondary = [sampleCnaeCodes[(index + 5) % 12], sampleCnaeCodes[(index + 8) % 12]].filter(code => code !== cnaeMain);
@@ -161,7 +165,16 @@ export function generateDataset(seed = 20260930): Dataset {
   }
 
   const eligibleEstablishments = establishments.filter(establishment => !companies[Number(establishment.companyId.slice(4)) - 1].externalOnly);
-  const historicalCount = 4500 - eligibleEstablishments.length;
+  // Empresa nova (aberta depois de setembro de 2023) se registra entre 2 e 10 meses depois da abertura, e uma pequena parte não se
+  // registra; assim perto de 55% das abertas nos últimos 24 meses já estão registradas, abaixo da cobertura do estoque. Antes, todas
+  // se registravam em até 90 dias, e 81% das abertas em 24 meses já estavam registradas (05/11/2026). Decidido antes do sorteio dos
+  // registros históricos, para o total de registros continuar em 4.500.
+  const ABERTURA_NOVA = '2023-09-10', PEDIDO_LIMITE = '2026-09-20';
+  const registroDaNova = new Map<string, string | null>();
+  for (const establishment of eligibleEstablishments) if (establishment.openedAt > ABERTURA_NOVA) registroDaNova.set(establishment.id, random() < .08 ? null : addDays(establishment.openedAt, integer(60, 300)));
+  const aindaSemRegistro = (establishmentId: string) => { const start = registroDaNova.get(establishmentId); return start === null || (start !== undefined && start > PEDIDO_LIMITE); };
+  const semRegistro = eligibleEstablishments.filter(establishment => aindaSemRegistro(establishment.id)).length;
+  const historicalCount = 4500 - (eligibleEstablishments.length - semRegistro);
   const historicalIds = new Set(eligibleEstablishments.filter(row => row.openedAt < '2024-01-01')
     .sort((a, b) => a.openedAt.localeCompare(b.openedAt)).slice(0, historicalCount).map(row => row.id));
   if (historicalIds.size !== historicalCount) throw new Error('A amostra precisa de estabelecimentos antigos suficientes para registros históricos.');
@@ -196,6 +209,7 @@ export function generateDataset(seed = 20260930): Dataset {
     return historic ? registration.ceasedAt! : registration.startedAt;
   }
   eligibleEstablishments.forEach((establishment, index) => {
+    if (aindaSemRegistro(establishment.id)) return;
     let predecessorCeased: string | undefined;
     if (historicalIds.has(establishment.id)) {
       // Registro antigo, encerrado anos atrás: a empresa voltou depois (o cenário precisa de empresas que saíram e retornaram).
@@ -207,22 +221,27 @@ export function generateDataset(seed = 20260930): Dataset {
     // Estoque e fluxo (02/11/2026): quase três em cada quatro registros vêm de anos atrás, e o resto se espalha pelos últimos
     // três anos até perto da data de referência. Antes, todos começavam entre 2021 e 2026, e a base parecia triplicar em dois anos.
     const minimum = later(addDays(establishment.openedAt, 20), predecessorCeased ? addDays(predecessorCeased, 30) : '2014-01-01');
-    const recente = minimum > '2023-09-30' || random() >= .8;
-    // Empresa aberta há pouco se registra em até oito meses; as antigas que entram agora se espalham pelos três anos.
+    // Retornos (05/11/2026): a empresa que já teve registro e voltou raramente volta nos últimos três anos (2%); antes, 20% voltavam
+    // nesse período e os retornos eram 39% das entradas. As antigas sem registro anterior continuam entrando 20% nos três anos.
+    const nova = registroDaNova.has(establishment.id), recente = nova || random() >= (predecessorCeased ? .98 : .8);
+    // Empresa aberta há pouco se registra entre 2 e 10 meses depois da abertura; as antigas que entram agora se espalham pelos três anos.
     const start = !recente ? between(minimum, '2023-09-30')
-      : minimum > '2023-09-30' ? between(minimum, earlier(addDays(minimum, 90), '2026-09-20'))
-      : between('2023-10-01', '2026-09-20');
+      : nova ? later(minimum, registroDaNova.get(establishment.id)!)
+      : between('2023-10-01', PEDIDO_LIMITE);
     const available = Math.floor((timestamp(SNAPSHOT) - timestamp(start)) / DAY);
     const dayAt = (fraction: number) => addDays(start, Math.floor(available * fraction));
     const events: { type: MovementType; date: string }[] = [{ type: 'Novo registro', date: start }];
     // A saída se espalha no tempo (não se concentra perto da data de referência), e registro de poucos dias não tem evento.
     const saidaEm = () => between(later(addDays(start, 90), '2016-01-01'), addDays(SNAPSHOT, -10));
-    switch (available < 120 ? 19 : index % 20) {
+    // Baixa com reativação em uma de cada vinte (antes, duas), cedo na vida do registro e só nos registros antigos, para o retorno
+    // não cair sempre nos últimos 24 meses: os retornos ficam perto de 15% das entradas (05/11/2026).
+    const caso = available < 120 ? 19 : index % 20;
+    switch (recente && (caso === 2 || caso === 3) ? 19 : caso) {
       case 0: events.push({ type: 'Cancelamento', date: saidaEm() }); break;
       case 1: events.push({ type: 'Baixa', date: saidaEm() }); break;
-      case 2: case 12: events.push({ type: 'Baixa', date: dayAt(.4) }, { type: 'Reativação', date: dayAt(.68) }); break;
-      case 3: { const volta = dayAt(.35), fim = between(later(addDays(volta, 90), '2016-01-01'), addDays(SNAPSHOT, -10));
-        events.push({ type: 'Baixa', date: dayAt(.2) }, { type: 'Reativação', date: volta }, ...(fim <= addDays(SNAPSHOT, -10) ? [{ type: 'Cancelamento' as MovementType, date: fim }] : [])); break; }
+      case 2: events.push({ type: 'Baixa', date: dayAt(.3) }, { type: 'Reativação', date: dayAt(.5) }); break;
+      case 3: { const volta = dayAt(.3), fim = between(later(addDays(volta, 90), '2016-01-01'), addDays(SNAPSHOT, -10));
+        events.push({ type: 'Baixa', date: dayAt(.15) }, { type: 'Reativação', date: volta }, ...(fim <= addDays(SNAPSHOT, -10) ? [{ type: 'Cancelamento' as MovementType, date: fim }] : [])); break; }
       default: break;
     }
     createRegistration(establishment, start, events, false);
@@ -235,7 +254,8 @@ export function generateDataset(seed = 20260930): Dataset {
     id: id('PRO-', index), name: `${firstNames[index % 10]} ${lastNames[Math.floor(index / 10) % 10]} ${String(index + 1).padStart(3, '0')}`,
     registration: `DEMO-SP-${String(index + 1).padStart(6, '0')}`, modality: modalities[index % modalities.length],
   }));
-  const registeredCompanies = companies.filter(company => !company.externalOnly);
+  // Empresa com ao menos um registro: a nova que ainda não se registrou fica fora dos vínculos de RT, das certidões e dos contratos de registradas.
+  const registeredCompanies = companies.filter(company => registrationsPerCompany.has(company.id));
   // Responsáveis técnicos (02/11/2026): quase toda empresa registrada tem RT, como a lei exige. Os 300 primeiros vínculos formam
   // pares na mesma empresa (RTs simultâneos ou troca de RT); os demais são um vínculo por empresa, em empresas distintas.
   const PARES = 300;

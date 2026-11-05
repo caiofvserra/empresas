@@ -12,10 +12,10 @@ import { fontesInstalacao } from '../domain/frentes';
 import type { FonteInstalacao } from '../domain/frentes';
 import { desfechosJucesp, faixasVinculos } from '../domain/parcerias';
 import type { DesfechoJucesp } from '../domain/parcerias';
-import { artsMensais, artsPorProfissional, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico } from '../domain/empresas';
+import { artsMensais, artsPorProfissional, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico, ultimoMesReceita } from '../domain/empresas';
 import type { LinhaCnae, RamoMercado } from '../domain/empresas';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { artPorCamara, camaraPorte, entradasSaidas, pagamento } from '../cockpit/medidas';
+import { artPorCamara, camaraPorte, entradasSaidas, pagamento, portes, situacaoReceita } from '../cockpit/medidas';
 import type { LinhaGre } from '../cockpit/medidas';
 import { linhasEmpresas } from '../cockpit/ui';
 import type { Exportavel } from '../cockpit/ui';
@@ -29,18 +29,28 @@ import type { Exportavel } from '../cockpit/ui';
  * dificultavam comparar; e um quadrado colorido só aparece quando é legenda de verdade.
  */
 
-/** Um anel só: por dentro, a situação do registro; por fora, a anuidade das registradas. Substitui as duas roscas lado a lado. */
-export function Situacoes({ ctx, flow }: { ctx: CockpitCtx; flow: ReturnType<typeof complianceFlow> }) {
+/** Um anel só: por dentro, a situação do registro; por fora, a anuidade das registradas. Substitui as duas roscas lado a lado.
+ * Desde 05/11/2026 a coroa de dentro também tem rótulo (nome e parte do total), e a fatia "Sem cobrança no período" saiu:
+ * em dia e em atraso já somam todas as registradas, e ela era sempre zero. */
+const nomeCurtoSituacao: Record<string, string> = { 'Registro ativo': 'Ativo', 'Registro inativo': 'Inativo', 'Nunca registrada': 'Nunca\nregistrada' };
+function partesSituacoes(ctx: CockpitCtx, flow: ReturnType<typeof complianceFlow>) {
   const { tokens, model } = ctx, ids = (name: string) => flow.nodes.find(node => node.name === name)?.companyIds ?? [];
   const ativa = ids('Registro vigente'), pay = pagamento(model), emDia = new Set(pay.emDia), inad = new Set(pay.inadimplentes);
   const dentro = [{ name: 'Registro ativo', ids: ativa, color: tokens.blue }, { name: 'Registro inativo', ids: ids('Só histórico'), color: tokens.heat[1] }, { name: 'Nunca registrada', ids: ids('Nunca registrada'), color: tokens.bad }];
-  const fora = [{ name: 'Em dia', ids: ativa.filter(id => emDia.has(id)), color: tokens.good }, { name: 'Anuidade atrasada', ids: ativa.filter(id => inad.has(id)), color: tokens.warn }, { name: 'Sem cobrança no período', ids: ativa.filter(id => !emDia.has(id) && !inad.has(id)), color: tokens.line }];
-  const total = dentro.reduce((soma, part) => soma + part.ids.length, 0);
+  const fora = [{ name: 'Em dia', ids: ativa.filter(id => emDia.has(id)), color: tokens.good }, { name: 'Anuidade atrasada', ids: ativa.filter(id => inad.has(id)), color: tokens.warn }];
+  return { ativa, dentro, fora, total: dentro.reduce((soma, part) => soma + part.ids.length, 0) };
+}
+export const exportarSituacoes = (ctx: CockpitCtx, flow: ReturnType<typeof complianceFlow>): Exportavel => ({ cabecalho: ['Coroa', 'Situação', 'Empresas', 'Parte (%)'], linhas: () => { const p = partesSituacoes(ctx, flow);
+  return [...p.dentro.map(part => ['Registro', part.name, part.ids.length, Math.round(part.ids.length / Math.max(1, p.total) * 1000) / 10]), ...p.fora.map(part => ['Anuidade das registradas', part.name, part.ids.length, Math.round(part.ids.length / Math.max(1, p.ativa.length) * 1000) / 10])]; } });
+export function Situacoes({ ctx, flow }: { ctx: CockpitCtx; flow: ReturnType<typeof complianceFlow> }) {
+  const { tokens } = ctx, { ativa, dentro, fora, total } = partesSituacoes(ctx, flow);
   const option = useMemo(() => ({
     tooltip: { trigger: 'item', formatter: (item: any) => item.data.vazio ? '' : `<b>${item.name}</b><br/>${int(item.value)} empresas · ${pct(item.value / Math.max(1, item.seriesIndex ? ativa.length : total) * 100)} ${item.seriesIndex ? 'das registradas' : 'do total'}<br/><span style="opacity:.75">clique para ver</span>` },
-    title: { text: int(total), subtext: 'empresas', left: 'center', top: 'center', itemGap: 2, textStyle: { color: tokens.ink, fontSize: 17, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 10 } },
+    title: { text: int(total), subtext: 'empresas', left: 'center', top: 'center', itemGap: 2, textStyle: { color: tokens.ink, fontSize: 16, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 10 } },
     series: [
-      { type: 'pie', radius: ['38%', '60%'], padAngle: 1.5, itemStyle: { borderRadius: 3, borderColor: tokens.surface, borderWidth: 1 }, label: { show: false }, data: dentro.map(part => ({ name: part.name, value: part.ids.length, itemStyle: { color: part.color } })) },
+      { type: 'pie', radius: ['30%', '60%'], padAngle: 1.5, itemStyle: { borderRadius: 3, borderColor: tokens.surface, borderWidth: 1 }, labelLine: { show: false },
+        label: { show: true, position: 'inside', color: '#FFFFFF', fontSize: 9, lineHeight: 11, fontWeight: 700, textBorderColor: 'rgba(1,34,77,.85)', textBorderWidth: 2, formatter: (item: any) => item.value ? `${nomeCurtoSituacao[item.name] ?? item.name}\n${pct(item.value / Math.max(1, total) * 100)}` : '' },
+        data: dentro.map(part => ({ name: part.name, value: part.ids.length, itemStyle: { color: part.color } })) },
       { type: 'pie', radius: ['64%', '80%'], padAngle: 1.5, itemStyle: { borderRadius: 3, borderColor: tokens.surface, borderWidth: 1 }, label: { show: true, position: 'outside', fontSize: 9.5, color: tokens.muted, formatter: (item: any) => item.data.vazio || !item.value ? '' : `${item.name}\n${pct(item.value / Math.max(1, ativa.length) * 100)}` }, labelLine: { length: 4, length2: 4 },
         data: [...fora.map(part => ({ name: part.name, value: part.ids.length, itemStyle: { color: part.color } })), ...dentro.slice(1).map(part => ({ name: '', value: part.ids.length, vazio: true, itemStyle: { color: 'transparent' }, tooltip: { show: false }, emphasis: { disabled: true }, labelLine: { show: false } }))] },
     ],
@@ -49,6 +59,7 @@ export function Situacoes({ ctx, flow }: { ctx: CockpitCtx; flow: ReturnType<typ
     if (part?.ids.length) ctx.open({ kind: 'empresas', title: part.name, what: 'Empresas, contadas pela raiz do CNPJ, nesta situação na data escolhida.', ids: part.ids }); }} />;
 }
 
+export const exportarEntradasSaidas = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Mês', 'Entradas após fiscalização', 'Demais entradas', 'Saídas', 'Empresas registradas no fim do mês'], linhas: () => entradasSaidas(ctx.history, ctx.f).map(row => [mes(row.month), row.viaFiscalizacao.length, row.demais.length, row.saidas.length, row.base]) });
 export function EntradasSaidas({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, janela } = ctx, rows = useMemo(() => entradasSaidas(ctx.history, ctx.f), [ctx.history, ctx.f]);
   const option = useMemo(() => ({
@@ -72,52 +83,95 @@ export function EntradasSaidas({ ctx }: { ctx: CockpitCtx }) {
     if (ids.length) ctx.open({ kind: 'empresas', title: `${saidas ? 'Saídas' : 'Entradas'} em ${mes(row.month)}`, what: saidas ? 'Empresas cujo registro deixou de estar ativo no mês (baixa ou cancelamento).' : 'Empresas que passaram a ter registro ativo no mês.', ids }); }} />;
 }
 
+/** Funil do mercado à ART. Desde 05/11/2026 as etapas depois do registro mostram a parte das registradas (e não do universo), que é a leitura que interessa; a primeira etapa continua com a parte do universo. */
+const nomesFunil: Record<string, string> = { 'Universo empresarial': 'Universo de engenharia', 'Registro vigente': 'Registro ativo', 'Só histórico': 'Registro inativo', 'Nunca registrada': 'Nunca registrada', 'Com RT': 'Com RT', 'RT não identificado': 'Sem RT identificado', 'Com ART no período': 'Com ART no período', 'Sem ART no período': 'Sem ART no período' };
+const primeiraEtapa = ['Registro vigente', 'Só histórico', 'Nunca registrada'];
+const baseFunil = (flow: ReturnType<typeof complianceFlow>) => { const total = flow.nodes[0]?.value || 1, ativa = flow.nodes.find(node => node.name === 'Registro vigente')?.value || 1;
+  return (name: string) => name === 'Universo empresarial' ? null : primeiraEtapa.includes(name) ? { n: total, de: 'do universo' } : { n: ativa, de: 'das registradas' }; };
+export const exportarFunil = (flow: ReturnType<typeof complianceFlow>): Exportavel => ({ cabecalho: ['Etapa', 'Empresas', 'Base da porcentagem', 'Parte (%)'], linhas: () => { const base = baseFunil(flow);
+  return flow.nodes.map(node => { const b = base(node.name); return [nomesFunil[node.name] ?? node.name, node.value, b ? `${int(b.n)} ${b.de}` : null, b ? Math.round(node.value / b.n * 1000) / 10 : null]; }); } });
 export function Funil({ ctx, flow }: { ctx: CockpitCtx; flow: ReturnType<typeof complianceFlow> }) {
-  const { tokens } = ctx, total = flow.nodes[0]?.value || 1;
-  const nomes: Record<string, string> = { 'Universo empresarial': 'Universo de engenharia', 'Registro vigente': 'Registro ativo', 'Só histórico': 'Registro inativo', 'Nunca registrada': 'Nunca registrada', 'Com RT': 'Com RT', 'RT não identificado': 'Sem RT identificado', 'Com ART no período': 'Com ART no período', 'Sem ART no período': 'Sem ART no período' };
+  const { tokens } = ctx, nomes = nomesFunil, base = baseFunil(flow), valor = new Map(flow.nodes.map(node => [node.name, node.value]));
   const cores: Record<string, string> = { 'Universo empresarial': tokens.brand, 'Registro vigente': tokens.blue, 'Só histórico': tokens.heat[1], 'Nunca registrada': tokens.bad, 'Com RT': tokens.good, 'RT não identificado': tokens.warn, 'Com ART no período': tokens.cat[4], 'Sem ART no período': tokens.muted };
   const option = useMemo(() => ({
-    tooltip: { trigger: 'item', formatter: (item: any) => item.dataType === 'edge' ? `${nomes[item.data.source]} → ${nomes[item.data.target]}<br/><b>${int(item.data.value)}</b> empresas (${pct(item.data.value / total * 100)} do universo)` : `<b>${nomes[item.name]}</b><br/>${int(item.value)} empresas · ${pct(item.value / total * 100)}` },
-    series: [{ type: 'sankey', nodeAlign: 'left', left: 4, right: 128, top: 6, bottom: 6, nodeWidth: 12, nodeGap: 10, draggable: false, emphasis: { focus: 'adjacency' },
+    tooltip: { trigger: 'item', formatter: (item: any) => { if (item.dataType === 'edge') return `${nomes[item.data.source]} → ${nomes[item.data.target]}<br/><b>${int(item.data.value)}</b> empresas (${pct(item.data.value / (valor.get(item.data.source) || 1) * 100)} de ${nomes[item.data.source].toLowerCase()})`;
+      const b = base(item.name); return `<b>${nomes[item.name]}</b><br/>${int(item.value)} empresas${b ? ` · ${pct(item.value / b.n * 100)} ${b.de}` : ''}`; } },
+    series: [{ type: 'sankey', nodeAlign: 'left', left: 4, right: 150, top: 6, bottom: 6, nodeWidth: 12, nodeGap: 10, draggable: false, emphasis: { focus: 'adjacency' },
       data: flow.nodes.map(node => ({ name: node.name, value: node.value, itemStyle: { color: cores[node.name] ?? tokens.blue, borderWidth: 0 } })), links: flow.links.map(link => ({ ...link })),
       lineStyle: { color: 'gradient', opacity: 0.28, curveness: 0.5 },
-      label: { color: tokens.ink, fontSize: 10.5, formatter: (item: any) => `{n|${nomes[item.name] ?? item.name}}\n{v|${int(item.value)} · ${pct(item.value / total * 100)}}`, rich: { n: { fontWeight: 700, color: tokens.ink, fontSize: 10.5 }, v: { color: tokens.muted, fontSize: 10 } } } }],
+      label: { color: tokens.ink, fontSize: 10.5, formatter: (item: any) => { const b = base(item.name); return `{n|${nomes[item.name] ?? item.name}}\n{v|${int(item.value)}${b ? ` · ${pct(item.value / b.n * 100)} ${b.de}` : ' empresas'}}`; }, rich: { n: { fontWeight: 700, color: tokens.ink, fontSize: 10.5 }, v: { color: tokens.muted, fontSize: 9.5 } } } }],
   }), [flow, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <Chart option={option} tokens={tokens} label="Funil de conformidade das empresas" onPick={item => { const ids = item.dataType === 'edge' ? item.data.companyIds : flow.nodes.find(node => node.name === item.name)?.companyIds;
     if (ids?.length) ctx.open({ kind: 'empresas', title: item.dataType === 'edge' ? `${nomes[item.data.source]} → ${nomes[item.data.target]}` : nomes[item.name], what: 'Empresas (CNPJ raiz) nesta etapa do funil de conformidade.', ids }); }} />;
 }
 
+/** Barras de 100% por câmara, com o total à direita (05/11/2026: antes eram barras absolutas, e a civil esmagava as outras). */
+export const exportarCamaraPorte = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Câmara', ...portes.map(porte => porte), 'Total'], linhas: () => camaraPorte(ctx.dataset, ctx.model).map(row => [row.camara, ...row.portes.map(item => item.ids.length), sum(row.portes.map(item => item.ids.length))]) });
 export function CamaraPorte({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => camaraPorte(ctx.dataset, ctx.model), [ctx.dataset, ctx.model]), cores = [tokens.heat[1], tokens.blue, tokens.brand, tokens.accent];
+  const { tokens } = ctx, rows = useMemo(() => camaraPorte(ctx.dataset, ctx.model).map(row => ({ ...row, total: sum(row.portes.map(item => item.ids.length)) })), [ctx.dataset, ctx.model]), cores = [tokens.heat[1], tokens.blue, tokens.brand, tokens.accent];
   const option = useMemo(() => ({
-    grid: { top: 26, right: 30, bottom: 2, left: 2, containLabel: true },
+    grid: { top: 26, right: 36, bottom: 2, left: 2, containLabel: true },
     legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10.5 } },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    xAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.camara}</b>: ${int(row.total)} empresas registradas<br/>${items.map(item => `${item.marker}${item.seriesName}: ${int(row.portes[item.seriesIndex].ids.length)} (${pct(item.value)})`).join('<br/>')}<br/><span style="opacity:.75">clique para ver as empresas</span>`; } },
+    xAxis: { type: 'value', max: 100, show: false },
     yAxis: { type: 'category', inverse: true, data: rows.map(row => row.camara), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
-    series: (rows[0]?.portes ?? []).map((item, index) => ({ name: item.porte.replace(' empresa', ''), type: 'bar', stack: 'p', barWidth: 16, data: rows.map(row => row.portes[index].ids.length), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
-      label: index === 3 ? { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(rows[params.dataIndex].portes.reduce((sum, part) => sum + part.ids.length, 0)) } : undefined })),
+    series: (rows[0]?.portes ?? []).map((item, index) => ({ name: item.porte.replace(' empresa', ''), type: 'bar', stack: 'p', barWidth: 16, data: rows.map(row => row.total ? row.portes[index].ids.length / row.total * 100 : 0), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
+      label: index === 3 ? { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (params: any) => int(rows[params.dataIndex].total) }
+        : { show: true, position: 'inside', color: index === 0 ? tokens.ink : '#FFFFFF', fontSize: 9.5, fontWeight: 700, formatter: (params: any) => params.value >= 10 ? pct(params.value) : '' } })),
   }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <Chart option={option} tokens={tokens} label="Empresas registradas por câmara e porte" onPick={params => { const row = rows[params.dataIndex], part = row?.portes[params.seriesIndex];
-    if (part?.ids.length) ctx.open({ kind: 'empresas', title: `${row.camara}, ${part.porte.toLowerCase()}`, what: 'Empresas registradas desta câmara (atividade principal) e porte.', ids: part.ids }); }} />;
+  return <Chart option={option} tokens={tokens} label="Empresas registradas por câmara e porte, em barras de 100%" onPick={params => { const row = rows[params.dataIndex], part = row?.portes[params.seriesIndex];
+    if (part?.ids.length) ctx.open({ kind: 'empresas', title: `${row.camara}, ${part.porte.toLowerCase()}`, what: 'Empresas registradas desta câmara (atividade principal) e porte.', ids: part.ids, recorte: { camara: row.camara } }); }} />;
 }
 
 /** As duas classes da lista de atividades do Crea-SP, em palavras: a Receita diz "Sim" e "Passível de obrigação". */
 const nomeClasse: Record<string, string> = { Sim: 'Registro obrigatório', Passível: 'Registro a analisar' };
+/** Linhas da conciliação: todas as atividades (a mesma conta do cartão "Parte do mercado que está registrada") e as duas classes, cada uma com as três correspondências. */
+const linhasConciliacao = (c: CockpitCtx['norte']['cobertura']) => [
+  { nome: 'Todas as atividades', partes: correspondencias.map(nome => classesCnae.flatMap(classe => c.porClasse[classe][nome])), taxa: c.taxa },
+  ...classesCnae.map(classe => ({ nome: nomeClasse[classe], partes: correspondencias.map(nome => c.porClasse[classe][nome]), taxa: classe === 'Sim' ? c.taxaSim : c.taxaPassivel })),
+];
+const parte = (n: number, base: number) => Math.round(n / Math.max(1, base) * 1000) / 10;
+export const exportarConciliacao = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Parte', 'Linha', 'Categoria', 'Estabelecimentos ou empresas', 'Parte (%)'], linhas: () => {
+  const cima = linhasConciliacao(ctx.norte.cobertura).flatMap(row => { const total = sum(row.partes.map(ids => ids.length)); return row.partes.map((ids, k) => ['Receita comparada com o cadastro', row.nome, correspondencias[k], ids.length, parte(ids.length, total)]); });
+  const situacoes = situacaoReceita(ctx.dataset, ctx.model), ativas = sum(situacoes.map(row => row.ids.length));
+  return [...cima, ...situacoes.map(row => ['Registradas pela situação na Receita', 'Empresas registradas', row.situacao, row.ids.length, parte(row.ids.length, ativas)])]; } });
+/**
+ * Receita comparada com o cadastro, em duas partes (05/11/2026). Em cima, barras de 100%: os estabelecimentos ativos na Receita com
+ * atividade da lista, por correspondência com o cadastro, em todas as atividades e em cada classe, com o total à direita. Embaixo,
+ * as empresas registradas pela situação do CNPJ da matriz na Receita: registro ativo com CNPJ baixado ou inapto é cadastro inflado.
+ */
 export function Conciliacao({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, c = ctx.norte.cobertura, cores = [tokens.blue, tokens.heat[1], tokens.warn];
-  const option = useMemo(() => ({
-    grid: { top: 26, right: 40, bottom: 2, left: 2, containLabel: true },
-    legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10.5 } },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const classe = classesCnae[items[0].dataIndex], total = correspondencias.reduce((sum, nome) => sum + c.porClasse[classe][nome].length, 0);
-      return `<b>${nomeClasse[classe]}</b>: ${int(total)} CNPJs<br/>${items.map(item => `${item.marker}${item.seriesName}: ${int(item.value)} (${pct(item.value / Math.max(1, total) * 100)})`).join('<br/>')}`; } },
-    xAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
-    yAxis: { type: 'category', inverse: true, data: classesCnae.map(row => nomeClasse[row].replace(' ', '\n')), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5, lineHeight: 13 } },
-    series: correspondencias.map((nome, index) => ({ name: nome, type: 'bar', stack: 'c', barWidth: 22, data: classesCnae.map(classe => c.porClasse[classe][nome].length), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
-      label: index === correspondencias.length - 1 ? { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, formatter: (params: any) => { const classe = classesCnae[params.dataIndex]; const taxa = classe === 'Sim' ? c.taxaSim : c.taxaPassivel; return taxa === null ? '' : pct(taxa, 1); } } : undefined })),
-  }), [c, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <Chart option={option} tokens={tokens} label="Conciliação dos CNPJs com CNAE da lista com o cadastro do Crea-SP" onPick={params => { const classe = classesCnae[params.dataIndex], nome = correspondencias[params.seriesIndex]; const ids = classe && nome ? c.porClasse[classe][nome] : [];
-      if (ids.length) ctx.open({ kind: 'cnpjs', title: `${nomeClasse[classe]}, ${nome.toLowerCase()}`, what: 'CNPJs completos ativos na Receita com CNAE da lista do Crea-SP nesta classe e correspondência.', use: nome === 'Sem correspondência' ? 'Sem correspondência não quer dizer irregular. Confirmar atividade antes de orientar ou notificar.' : undefined, ids }); }} />;
+  const { tokens, dark } = ctx, c = ctx.norte.cobertura, cores = [tokens.blue, tokens.heat[1], tokens.warn];
+  const rows = useMemo(() => linhasConciliacao(c).map(row => ({ ...row, total: sum(row.partes.map(ids => ids.length)) })), [c]);
+  const situacoes = useMemo(() => situacaoReceita(ctx.dataset, ctx.model), [ctx.dataset, ctx.model]), ativas = sum(situacoes.map(row => row.ids.length));
+  const corSituacao: Record<string, string> = { Ativa: tokens.blue, Baixada: tokens.bad, Suspensa: tokens.warn, Inapta: tokens.cat[2] };
+  const cima = useMemo(() => ({
+    grid: { top: 20, right: 40, bottom: 0, left: 2, containLabel: true },
+    legend: { top: 0, left: 0, itemWidth: 9, itemHeight: 9, textStyle: { color: tokens.muted, fontSize: 10 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex];
+      return `<b>${row.nome}</b>: ${int(row.total)} CNPJs<br/>${items.map(item => `${item.marker}${item.seriesName}: ${int(row.partes[item.seriesIndex].length)} (${pct(item.value, 1)})`).join('<br/>')}`; } },
+    xAxis: { type: 'value', max: 100, show: false },
+    yAxis: { type: 'category', inverse: true, data: rows.map(row => row.nome.replace(/ (?=\S+$)/, '\n')), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10, lineHeight: 12 } },
+    series: correspondencias.map((nome, index) => ({ name: nome, type: 'bar', stack: 'c', barWidth: 16, data: rows.map(row => parte(row.partes[index].length, row.total)), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1, borderRadius: index === 0 ? [3, 0, 0, 3] : index === 2 ? [0, 3, 3, 0] : 0 },
+      label: index === 0 ? { show: true, position: 'insideLeft', color: '#FFFFFF', fontSize: 10, fontWeight: 800, formatter: (item: any) => item.value >= 12 ? pct(item.value, 1) : '' }
+        : index === correspondencias.length - 1 ? { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (item: any) => int(rows[item.dataIndex].total) }
+        : { show: true, position: 'inside', color: tokens.ink, fontSize: 9.5, formatter: (item: any) => item.value >= 12 ? pct(item.value) : '' } })),
+  }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
+  const baixo = useMemo(() => ({
+    grid: { top: 2, right: 78, bottom: 0, left: 2, containLabel: true },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = situacoes[items[0].dataIndex]; return `CNPJ <b>${row.situacao.toLowerCase()}</b> na Receita<br/>${int(row.ids.length)} empresas registradas · ${pct(parte(row.ids.length, ativas), 1)}<br/><span style="opacity:.75">clique para ver as empresas</span>`; } },
+    xAxis: { type: 'value', show: false },
+    yAxis: { type: 'category', inverse: true, data: situacoes.map(row => row.situacao), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10 } },
+    series: [{ type: 'bar', barWidth: 12, data: situacoes.map(row => ({ value: row.ids.length, itemStyle: { color: corSituacao[row.situacao], borderRadius: [0, 3, 3, 0] } })),
+      label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, fontWeight: 700, formatter: (item: any) => `${int(item.value)} · ${pct(parte(item.value, ativas), 1)}` } }],
+  }), [situacoes, ativas, tokens, dark]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <div className="duas-partes">
+    <Chart option={cima} tokens={tokens} label="Conciliação dos CNPJs com CNAE da lista com o cadastro do Crea-SP" onPick={params => { const row = rows[params.dataIndex], nome = correspondencias[params.seriesIndex]; const ids = row && nome ? row.partes[params.seriesIndex] : [];
+      if (ids.length) ctx.open({ kind: 'cnpjs', title: `${row.nome}, ${nome.toLowerCase()}`, what: 'CNPJs completos ativos na Receita com CNAE da lista do Crea-SP nesta classe e correspondência.', use: nome === 'Sem correspondência' ? 'Sem correspondência não quer dizer irregular. Confirmar atividade antes de orientar ou notificar.' : undefined, ids }); }} />
+    <p className="parte-titulo">Registradas pela situação do CNPJ na Receita</p>
+    <Chart option={baixo} tokens={tokens} label="Empresas registradas pela situação do CNPJ da matriz na Receita" onPick={params => { const row = situacoes[params.dataIndex]; if (!row?.ids.length) return;
+      ctx.open({ kind: 'empresas', title: `Registradas com CNPJ ${row.situacao.toLowerCase()} na Receita`, what: `Empresas com registro ou visto ativo na data escolhida cuja matriz está ${row.situacao.toLowerCase()} no cadastro de CNPJ da Receita Federal.`, use: row.situacao === 'Ativa' ? undefined : 'Registro ativo com CNPJ baixado, suspenso ou inapto é cadastro inflado e anuidade incobrável: conferir na Receita e tratar a baixa do registro antes de qualquer cobrança.', ids: row.ids }); }} />
+  </div>;
 }
 
 /** Grafia das câmaras do Conselho no rótulo exibido da modalidade ("Segurança do Trabalho", como no bloco por câmara); as chaves do domínio não mudam (05/11/2026). */
@@ -190,18 +244,23 @@ export function Instalacoes({ ctx }: { ctx: CockpitCtx }) {
   </div>;
 }
 
+/** Aberturas na Receita mês a mês, até o último mês com arquivo (05/11/2026: antes, o mês sem arquivo aparecia como barra zero), e a permanência das coortes ao lado. */
+export const exportarDinamica = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Parte', 'Linha', 'Abertos ou registradas na coorte', 'Já registrados ou continuam registradas'],
+  linhas: () => { const ultimo = ultimoMesReceita(ctx.dataset); return [...ctx.mercado.aberturas.meses.filter(row => row.month <= ultimo).map(row => ['Abertas na Receita', mes(row.month), row.aberturas, row.comRegistro]),
+    ...ctx.mercado.permanencia.map(row => ['Permanência', `Registradas há ${row.mesesAtras} meses`, row.coorte.length, row.permanecem.length])]; } });
 export function Dinamica({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, dark } = ctx, a = ctx.mercado.aberturas, coortes = ctx.mercado.permanencia;
+  const meses = useMemo(() => { const ultimo = ultimoMesReceita(ctx.dataset); return a.meses.filter(row => row.month <= ultimo); }, [a, ctx.dataset]);
   const option = useMemo(() => ({
     grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 10 } },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = a.meses[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.aberturas)} estabelecimentos abertos com CNAE da lista<br/>${int(row.comRegistro)} já com registro ou visto na data escolhida`; } },
-    xAxis: { type: 'category', data: a.meses.map(row => mes(row.month)), axisLabel: { color: tokens.muted, fontSize: 10, interval: 2 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = meses[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.aberturas)} estabelecimentos abertos com CNAE da lista<br/>${int(row.comRegistro)} já com registro ou visto na data escolhida`; } },
+    xAxis: { type: 'category', data: meses.map(row => mes(row.month)), axisLabel: { color: tokens.muted, fontSize: 10, interval: 2 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
     yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
     series: [
-      { type: 'bar', name: 'Já registrados', stack: 'a', barWidth: 10, data: a.meses.map(row => row.comRegistro), itemStyle: { color: tokens.good } },
-      { type: 'bar', name: 'Sem registro na data escolhida', stack: 'a', data: a.meses.map(row => row.aberturas - row.comRegistro), itemStyle: { color: dark ? '#3D5E95' : tokens.soft, borderColor: tokens.line, borderWidth: 1 } },
+      { type: 'bar', name: 'Já registrados', stack: 'a', barWidth: 10, data: meses.map(row => row.comRegistro), itemStyle: { color: tokens.good } },
+      { type: 'bar', name: 'Sem registro na data escolhida', stack: 'a', data: meses.map(row => row.aberturas - row.comRegistro), itemStyle: { color: dark ? '#3D5E95' : tokens.soft, borderColor: tokens.line, borderWidth: 1 } },
     ],
-  }), [a, tokens, dark]);
+  }), [meses, tokens, dark]);
   return <div className="split is-wide">
       <Chart option={option} tokens={tokens} label="Estabelecimentos abertos na Receita por mês e situação no cadastro" onPick={() => a.ids.length && ctx.open({ kind: 'cnpjs', title: 'Abertos na Receita em 24 meses', what: 'Estabelecimentos com CNAE da lista do Crea-SP abertos nos últimos 24 meses antes da data de referência (data de abertura da Receita).', use: 'Aberturas são mercado novo; a correspondência no cadastro é uma decomposição, não um filtro. Sem registro não quer dizer irregular.', ids: a.ids })} />
     <ul className="side-list" aria-label="Permanência das coortes">
@@ -265,9 +324,6 @@ export function Vinculos({ ctx }: { ctx: CockpitCtx }) {
 }
 
 /* ---------- Painel de Empresas · visuais novos ---------- */
-/** Cor de 0 a 100% registrado: do vermelho (pouco registrado) ao azul (muito registrado). Usada no mapa de árvore. */
-const rampaCobertura = (dark: boolean) => dark ? ['#FF7B7B', '#E5703B', '#C9A227', '#4A7FC1', '#7FB0E6'] : ['#C53030', '#E5703B', '#D69E2E', '#3182CE', '#082D74'];
-const corCobertura = (taxa: number | null, dark: boolean, minimo = 40, maximo = 90) => { if (taxa === null) return dark ? '#2D3748' : '#E2E8F0'; const cores = rampaCobertura(dark), t = Math.max(0, Math.min(0.999, (taxa - minimo) / (maximo - minimo))); return cores[Math.floor(t * cores.length)]; };
 
 /** Indicadores do mapa. `alerta` pinta do amarelo ao vermelho (quanto mais, pior); os demais vão do azul claro ao escuro. */
 export type MetricaMapa = 'cobertura' | 'semRegistro' | 'empresas' | 'crescimento' | 'rt' | 'inadimplencia' | 'arts' | 'emprego';
@@ -288,6 +344,10 @@ const rampaMapa = (alerta: boolean, dark: boolean) => alerta
 /** Município sem valor: cinza neutro, para não se confundir com a faixa mais clara do azul. */
 const semDados = (dark: boolean) => dark ? '#3A4250' : '#E3E6EA';
 
+/** CSV do mapa: município, GRE, valor do indicador e a base da porcentagem (05/11/2026). */
+export const exportarMapa = (ctx: CockpitCtx, metrica: MetricaMapa): Exportavel => { const config = metricasMapa[metrica];
+  return { cabecalho: ['Município', 'GRE', config.label, config.base ?? 'Empresas ou estabelecimentos na base'], linhas: () => { const gres = new Map(ctx.linhas.map(row => [row.id, row.curto]));
+    return [...valoresPorCidade(ctx, metrica, ctx.period).values()].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR')).map(row => [row.nome, gres.get(row.greId) ?? row.greId, row.valor === null ? null : Math.round(row.valor * 10) / 10, row.base]); } }; };
 /**
  * Mapa do estado com o limite de cada município (pedido do Caio em 02/11/2026: nada de bolhas). Desde 04/11/2026 cada município é
  * pintado pelo próprio valor no indicador escolhido, em cinco faixas; ao lado, as GREs em ordem, e passar o mouse numa GRE acende
@@ -328,13 +388,13 @@ export function MapaMercado({ ctx, metrica }: { ctx: CockpitCtx; metrica: Metric
         labelLayout: { hideOverlap: true } }],
     };
   }, [regioes, rotulos, centroids, classes, config, tokens, destaque, ctx.greId, cidade, porId, porNome]); // eslint-disable-line react-hooks/exhaustive-deps
-  const abrirGre = (greId: string | undefined) => { const row = greId ? porId.get(greId) : undefined; if (!row) return;
-    if (config.abre === 'faltam') { if (row.semRegistroIds.length) ctx.open({ kind: 'cnpjs', title: `${row.name}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP nesta GRE e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.semRegistroIds }); return; }
+  const abrirGre = (greId: string | undefined) => { const row = greId ? porId.get(greId) : undefined; if (!row) return; const recorte = { gre: row.id };
+    if (config.abre === 'faltam') { if (row.semRegistroIds.length) ctx.open({ kind: 'cnpjs', title: `${row.name}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP nesta GRE e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.semRegistroIds, recorte }); return; }
     const devedoras = config.abre === 'devedoras', ids = devedoras ? row.devedoras : row.ativas;
-    if (ids.length) ctx.open({ kind: 'empresas', title: `${row.name}: ${devedoras ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: devedoras ? 'Empresas registradas nesta GRE com anuidade vencida na data escolhida.' : 'Empresas com registro ativo nesta GRE na data escolhida.', ids }); };
-  const abrirCidade = (nome: string) => { const row = porNome.get(nome); if (!row?.ids.length) return;
-    if (config.abre === 'faltam') ctx.open({ kind: 'cnpjs', title: `${nome}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP neste município e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.ids });
-    else ctx.open({ kind: 'empresas', title: `${nome}: ${config.abre === 'devedoras' ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: config.abre === 'devedoras' ? 'Empresas registradas com matriz neste município e anuidade vencida na data escolhida.' : 'Empresas com registro ativo e matriz neste município na data escolhida.', ids: row.ids }); };
+    if (ids.length) ctx.open({ kind: 'empresas', title: `${row.name}: ${devedoras ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: devedoras ? 'Empresas registradas nesta GRE com anuidade vencida na data escolhida.' : 'Empresas com registro ativo nesta GRE na data escolhida.', ids, recorte }); };
+  const abrirCidade = (nome: string) => { const row = porNome.get(nome); if (!row?.ids.length) return; const recorte = { cidade: row.id };
+    if (config.abre === 'faltam') ctx.open({ kind: 'cnpjs', title: `${nome}: CNPJs da lista sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP neste município e sem registro localizado na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids: row.ids, recorte });
+    else ctx.open({ kind: 'empresas', title: `${nome}: ${config.abre === 'devedoras' ? 'registradas com anuidade atrasada' : 'empresas registradas'}`, what: config.abre === 'devedoras' ? 'Empresas registradas com matriz neste município e anuidade vencida na data escolhida.' : 'Empresas com registro ativo e matriz neste município na data escolhida.', ids: row.ids, recorte }); };
   return <div className="geo-layout is-compacto">
     <div className="geo-map">{option ? <Chart option={option} tokens={tokens} label={`Mapa por município: ${config.label}`} onPick={params => { if (params.componentType === 'geo') abrirCidade(params.name); }} /> : <div className="loading">Carregando o mapa…</div>}
       <ul className="geo-legend" aria-label="Faixas dos municípios">{classes.faixas.map((item, index) => <li key={index}><i style={{ background: item.cor }} />{item.min === item.max ? config.fmt(item.min!) : `${config.fmt(item.min!)} a ${config.fmt(item.max!)}`}</li>)}<li><i style={{ background: semDados(dark) }} />poucos dados</li></ul></div>
@@ -344,15 +404,23 @@ export function MapaMercado({ ctx, metrica }: { ctx: CockpitCtx; metrica: Metric
   </div>;
 }
 
-/** Mapa de árvore: cada retângulo grande é uma câmara, e os de dentro são as atividades (CNAE). Tamanho = estabelecimentos enquadrados pela atividade; cor = parte registrada.
+/** Mapa de árvore: cada retângulo grande é uma câmara, e os de dentro são as atividades (CNAE). Tamanho = estabelecimentos enquadrados pela atividade; cor = parte registrada, comparada com a meta.
  * As menores atividades de cada câmara, que juntas somam até 10% dela, viram "Outras atividades". Pequeno, o bloco mostra menos atividades por câmara (proporcional ao tamanho dela); ampliado, mostra todas acima da regra. Outras atividades fica sempre por último. */
 /** No bloco pequeno, cada câmara mostra com nome cerca de uma atividade a cada 7% do mercado que ela tem (no mínimo 2). */
 const atividadesNoBloco = (parte: number) => Math.max(2, Math.round(parte * 14));
+/** Três faixas ancoradas na meta de cobertura do painel (05/11/2026): abaixo da meta em laranja-vermelho, da meta até 15 pontos acima em azul, e mais que isso em azul-escuro. Antes a rampa ia do mínimo ao máximo do recorte, e o mesmo 70% mudava de cor conforme o filtro. */
+const faixasMeta = (meta: number, dark: boolean) => [
+  { nome: `abaixo de ${meta}%`, cor: dark ? '#E5703B' : '#C9512F', ate: meta },
+  { nome: `${meta}% a ${meta + 15}%`, cor: dark ? '#4A7FC1' : '#3182CE', ate: meta + 15 },
+  { nome: `acima de ${meta + 15}%`, cor: dark ? '#7FB0E6' : '#082D74', ate: Number.POSITIVE_INFINITY },
+];
+const corMeta = (taxa: number | null, faixas: ReturnType<typeof faixasMeta>, dark: boolean) => taxa === null ? (dark ? '#2D3748' : '#E2E8F0') : faixas.find(faixa => taxa < faixa.ate)!.cor;
+const ramosDe = (ctx: CockpitCtx, ampliado: boolean) => mercadoEmArvore(ctx.scope, ctx.model, camaraPorCnae, { camaras, resto: 0.1, maxPorCamara: ampliado ? Number.POSITIVE_INFINITY : atividadesNoBloco });
+export const exportarArvore = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Câmara', 'Atividade', 'CNAE', 'Estabelecimentos', 'Parte registrada (%)'],
+  linhas: () => ramosDe(ctx, true).flatMap(ramo => ramo.todas.map(row => [ramo.camara, row.label, row.code, row.total, row.cobertura === null ? null : Math.round(row.cobertura * 10) / 10])) });
 export function ArvoreMercado({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, dark } = ctx, ampliado = ctx.focus === 'tm';
-  const ramos = useMemo(() => mercadoEmArvore(ctx.scope, ctx.model, camaraPorCnae, { camaras, resto: 0.1, maxPorCamara: ampliado ? Number.POSITIVE_INFINITY : atividadesNoBloco }), [ctx.scope, ctx.model, ampliado]);
-  const taxas = ramos.flatMap(ramo => ramo.todas.map(row => row.cobertura)).filter((value): value is number => value !== null);
-  const piso = Math.floor(Math.min(...taxas, 100) / 5) * 5, teto = Math.max(piso + 10, Math.ceil(Math.max(...taxas, 0) / 5) * 5);
+  const { tokens, dark } = ctx, ampliado = ctx.focus === 'tm', faixas = faixasMeta(ctx.metas.cobertura, dark);
+  const ramos = useMemo(() => ramosDe(ctx, ampliado), [ctx.scope, ctx.model, ampliado]); // eslint-disable-line react-hooks/exhaustive-deps
   const geral = Math.max(1, sum(ramos.map(ramo => ramo.total)));
   const option = useMemo(() => ({
     tooltip: { formatter: (item: any) => { const d = item.data; if (!d?.linha) return d?.ramo ? `<b>${d.name}</b><br/>${d.ramo.total ? `${int(d.ramo.total)} estabelecimentos · ${pct(d.ramo.registrados / d.ramo.total * 100)} registrados<br/>${int(d.ramo.todas.length)} atividades da lista` : 'Nenhum estabelecimento da lista nesta câmara no recorte'}` : '';
@@ -365,18 +433,22 @@ export function ArvoreMercado({ ctx }: { ctx: CockpitCtx }) {
       label: { show: true, fontSize: 9.5, color: '#FFFFFF', overflow: 'truncate', lineHeight: 12, formatter: (item: any) => { const row = item.data?.linha as LinhaCnae | undefined; if (!row) return item.data?.ramo && !item.data.ramo.total ? 'sem estabelecimentos' : '';
         return `{p|${row.cobertura === null ? '' : pct(row.cobertura)}}\n${row.label}\n{c|${row.agrupadas ? `${int(row.total)} estab.` : `${row.code} · ${int(row.total)} estab.`}}`; }, rich: { p: { fontSize: 12, fontWeight: 800, color: '#FFFFFF' }, c: { fontSize: 8.5, color: 'rgba(255,255,255,.75)' } } },
       data: ramos.map(ramo => ({ name: ramo.camara, ramo, itemStyle: { color: dark ? '#1A2D52' : '#01224D' },
-        ...(ramo.total ? { value: ramo.total, children: ramo.atividades.map(linha => ({ name: linha.code, value: linha.total, linha, camara: ramo.camara, itemStyle: { color: linha.agrupadas ? (dark ? '#4A5568' : '#718096') : corCobertura(linha.cobertura, dark, piso, teto), ...(linha.agrupadas ? { decal: undefined } : {}) } })) }
+        ...(ramo.total ? { value: ramo.total, children: ramo.atividades.map(linha => ({ name: linha.code, value: linha.total, linha, camara: ramo.camara, itemStyle: { color: linha.agrupadas ? (dark ? '#4A5568' : '#718096') : corMeta(linha.cobertura, faixas, dark), ...(linha.agrupadas ? { decal: undefined } : {}) } })) }
           : { value: geral * 0.012 }) })) }],
-  }), [ramos, tokens, dark, piso, teto, geral]);
-  return <Chart option={option} tokens={tokens} label="Mercado por câmara e atividade, com a parte registrada" onPick={params => { const d = params.data; if (!d) return;
-    if (d.linha) { const row = d.linha as LinhaCnae, ids = row.semRegistro.length ? row.semRegistro : row.registrados, nome = row.agrupadas ? `${d.camara}, ${row.label.toLowerCase()}` : row.code;
-      if (ids.length) ctx.open({ kind: 'cnpjs', title: `${nome}: ${row.semRegistro.length ? 'sem registro' : 'registrados'}`, what: row.agrupadas ? `Estabelecimentos ativos na Receita das atividades menores de ${d.camara}: ${row.agrupadas.map(x => x.code).join(', ')}.` : `Estabelecimentos ativos na Receita cuja atividade da lista do Crea-SP é ${row.code} (${row.label}).`, use: row.semRegistro.length ? 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.' : undefined, ids }); }
-    else if (d.ramo) { const ids = (d.ramo as RamoMercado).todas.flatMap(row => row.semRegistro); if (ids.length) ctx.open({ kind: 'cnpjs', title: `${d.name}: sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista desta câmara e sem registro na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids }); } }} />;
+  }), [ramos, tokens, dark, faixas, geral]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <div className="arvore-layout">
+    <Chart option={option} tokens={tokens} label="Mercado por câmara e atividade, com a parte registrada comparada com a meta" onPick={params => { const d = params.data; if (!d) return;
+      if (d.linha) { const row = d.linha as LinhaCnae, ids = row.semRegistro.length ? row.semRegistro : row.registrados, nome = row.agrupadas ? `${d.camara}, ${row.label.toLowerCase()}` : row.code;
+        if (ids.length) ctx.open({ kind: 'cnpjs', title: `${nome}: ${row.semRegistro.length ? 'sem registro' : 'registrados'}`, what: row.agrupadas ? `Estabelecimentos ativos na Receita das atividades menores de ${d.camara}: ${row.agrupadas.map(x => x.code).join(', ')}.` : `Estabelecimentos ativos na Receita cuja atividade da lista do Crea-SP é ${row.code} (${row.label}).`, use: row.semRegistro.length ? 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.' : undefined, ids, recorte: { camara: d.camara } }); }
+      else if (d.ramo) { const ids = (d.ramo as RamoMercado).todas.flatMap(row => row.semRegistro); if (ids.length) ctx.open({ kind: 'cnpjs', title: `${d.name}: sem registro`, what: 'Estabelecimentos ativos na Receita com atividade da lista desta câmara e sem registro na data escolhida.', use: 'Não estar no cadastro não quer dizer irregular. Confirme a atividade antes de orientar ou notificar.', ids, recorte: { camara: d.name } }); } }} />
+    <ul className="geo-legend is-meta" aria-label="Parte registrada comparada com a meta">{faixas.map(faixa => <li key={faixa.nome}><i style={{ background: faixa.cor }} />{faixa.nome}</li>)}</ul>
+  </div>;
 }
 
 /** Matriz de calor: tempo de registro nas linhas, capital social nas colunas. Cada célula é o número de empresas registradas. */
 const curtoIdade = ['menos de 1 ano', '1 a 2 anos', '2 a 5 anos', '5 a 10 anos', '10 anos ou mais'];
 const curtoCapital = ['até 50 mil', '50 a 200 mil', '200 mil a 1 mi', '1 a 5 mi', 'mais de 5 mi'];
+export const exportarIdadeCapital = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Tempo de registro', 'Capital social (R$)', 'Empresas registradas'], linhas: () => idadeCapital(ctx.scope, ctx.model).celulas.map(cel => [curtoIdade[cel.idade], curtoCapital[cel.capital], cel.ids.length]) });
 export function IdadeCapital({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, dark } = ctx, m = useMemo(() => idadeCapital(ctx.scope, ctx.model), [ctx.scope, ctx.model]), maior = Math.max(1, ...m.celulas.map(row => row.ids.length));
   const option = useMemo(() => ({
@@ -391,15 +463,18 @@ export function IdadeCapital({ ctx }: { ctx: CockpitCtx }) {
   return <Chart option={option} tokens={tokens} label="Empresas registradas por tempo de registro e capital social" onPick={params => { const cel = m.celulas[params.dataIndex]; if (cel?.ids.length) ctx.open({ kind: 'empresas', title: `Registradas há ${curtoIdade[cel.idade]}, capital ${curtoCapital[cel.capital]}`, what: 'Empresas com registro ativo na data escolhida, pelo tempo desde o primeiro registro e pelo capital social declarado à Receita.', ids: cel.ids }); }} />;
 }
 
-/** Calor dos novos registros: uma linha por câmara, uma coluna por trimestre, com o número em cada célula. A cor compara cada câmara com ela mesma (o trimestre mais forte da linha fica mais escuro), para as câmaras pequenas também mostrarem o seu ritmo. */
-export function RegistrosCalor({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, dark } = ctx, r = useMemo(() => registrosPorCamara(ctx.historyScope, ctx.camaraDe, 24), [ctx.historyScope, ctx.camaraDe]);
-  const trimestres = useMemo(() => { const lista: { chave: string; rotulo: string; meses: string[] }[] = [];
-    for (const month of r.months) { const [ano, m] = month.split('-').map(Number), tri = Math.floor((m - 1) / 3) + 1, chave = `${ano}-${tri}`, atual = lista[lista.length - 1];
-      if (atual?.chave === chave) atual.meses.push(month); else lista.push({ chave, rotulo: `${tri}º tri/${String(ano).slice(2)}`, meses: [month] }); }
-    return lista; }, [r.months]);
+/** Calor dos novos registros: uma linha por câmara, uma coluna por trimestre, com o número em cada célula. A cor compara cada câmara com ela mesma (o trimestre mais forte da linha fica mais escuro), para as câmaras pequenas também mostrarem o seu ritmo. Cobre os meses da janela do alto da tela. */
+const trimestresDe = (months: string[]) => { const lista: { chave: string; rotulo: string; meses: string[] }[] = [];
+  for (const month of months) { const [ano, m] = month.split('-').map(Number), tri = Math.floor((m - 1) / 3) + 1, chave = `${ano}-${tri}`, atual = lista[lista.length - 1];
+    if (atual?.chave === chave) atual.meses.push(month); else lista.push({ chave, rotulo: `${tri}º tri/${String(ano).slice(2)}`, meses: [month] }); }
+  return lista; };
+const calorRegistros = (ctx: CockpitCtx) => { const r = registrosPorCamara(ctx.historyScope, ctx.camaraDe, ctx.janela.months.length), trimestres = trimestresDe(r.months);
   const celulas = r.linhas.flatMap((linha, y) => { const porTri = trimestres.map(tri => tri.meses.flatMap(month => linha.porMes.get(month) ?? [])), maiorDaLinha = Math.max(1, ...porTri.map(ids => ids.length));
     return porTri.map((ids, x) => ({ x, y, ids, forca: ids.length / maiorDaLinha })); });
+  return { r, trimestres, celulas }; };
+export const exportarRegistrosCalor = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Câmara', 'Trimestre', 'Empresas com primeiro registro'], linhas: () => { const { r, trimestres, celulas } = calorRegistros(ctx); return celulas.map(cel => [r.linhas[cel.y].camara, trimestres[cel.x].rotulo, cel.ids.length]); } });
+export function RegistrosCalor({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens, dark } = ctx, { r, trimestres, celulas } = useMemo(() => calorRegistros(ctx), [ctx.historyScope, ctx.camaraDe, ctx.janela.months.length]); // eslint-disable-line react-hooks/exhaustive-deps
   const option = useMemo(() => ({
     grid: { top: 4, right: 4, bottom: 2, left: 4, containLabel: true },
     tooltip: { formatter: (item: any) => { const cel = celulas[item.dataIndex]; return `<b>${r.linhas[cel.y].camara}</b>, ${trimestres[cel.x].rotulo}<br/>${int(cel.ids.length)} empresas fizeram o primeiro registro`; } },
@@ -409,7 +484,7 @@ export function RegistrosCalor({ ctx }: { ctx: CockpitCtx }) {
     series: [{ type: 'heatmap', data: celulas.map(cel => ({ value: [cel.x, cel.y, cel.forca], label: { color: dark ? (cel.forca > 0.7 ? '#1A202C' : tokens.ink) : cel.forca > 0.55 ? '#FFFFFF' : tokens.ink } })), itemStyle: { borderColor: tokens.surface, borderWidth: 1.5, borderRadius: 3 },
       label: { show: true, fontSize: 10, fontWeight: 700, formatter: (item: any) => { const cel = celulas[item.dataIndex]; return cel.ids.length ? int(cel.ids.length) : ''; } } }],
   }), [r, trimestres, celulas, tokens, dark]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <Chart option={option} tokens={tokens} label="Novos registros de empresas por câmara e trimestre" onPick={params => { const cel = celulas[params.dataIndex]; if (cel?.ids.length) ctx.open({ kind: 'empresas', title: `${r.linhas[cel.y].camara}: primeiro registro no ${trimestres[cel.x].rotulo}`, what: 'Empresas que fizeram o primeiro registro no Crea-SP neste trimestre, pela câmara da atividade principal.', ids: cel.ids }); }} />;
+  return <Chart option={option} tokens={tokens} label="Novos registros de empresas por câmara e trimestre" onPick={params => { const cel = celulas[params.dataIndex]; if (cel?.ids.length) ctx.open({ kind: 'empresas', title: `${r.linhas[cel.y].camara}: primeiro registro no ${trimestres[cel.x].rotulo}`, what: 'Empresas que fizeram o primeiro registro no Crea-SP neste trimestre, pela câmara da atividade principal.', ids: cel.ids, recorte: { camara: r.linhas[cel.y].camara } }); }} />;
 }
 
 const partesDenominacao = (ctx: CockpitCtx) => { const q = ctx.parcerias.denominacao, { tokens } = ctx; return [{ name: 'Diretoria com maioria de profissionais', ids: q.atendem, color: tokens.good }, { name: 'Diretoria sem maioria de profissionais', ids: q.naoAtendem, color: tokens.bad }, { name: 'Sem dirigente identificado', ids: q.semDirigente, color: tokens.muted }]; };
@@ -435,27 +510,32 @@ export function Denominacao({ ctx }: { ctx: CockpitCtx }) {
   </div>;
 }
 
-/** Economia, empresas abertas e registros: cinco séries com o primeiro mês igual a 100, para comparar o ritmo de cada uma. */
+/** Economia, empresas abertas e registros: quatro séries com o primeiro mês igual a 100, para comparar o ritmo de cada uma. O PIB saiu do gráfico em 05/11/2026: anual e com dois anos de atraso, virava uma linha reta que não dizia nada (continua na ficha). */
 const seriesRitmo = [
   { key: 'emprego', nome: 'Emprego formal em engenharia', curto: 'Emprego', fonte: 'Novo CAGED e RAIS', parceria: false },
-  { key: 'pib', nome: 'PIB dos municípios', curto: 'PIB', fonte: 'IBGE, anual', parceria: false },
   { key: 'credito', nome: 'Crédito a empresas de engenharia (!)', curto: 'Crédito (!)', fonte: 'Banco Central, depende de acordo', parceria: true },
   { key: 'aberturas12', nome: 'Empresas de engenharia abertas na Receita', curto: 'Abertas na Receita', fonte: 'soma de 12 meses', parceria: false },
   { key: 'registros12', nome: 'Empresas que se registraram no Crea-SP', curto: 'Registradas no Crea-SP', fonte: 'soma de 12 meses', parceria: false },
 ] as const;
-export const useRitmo = (ctx: CockpitCtx) => useMemo(() => ritmoEconomico(ctx.dataset, ctx.greId, ctx.camara ? ctx.scope.companyIds : null, 24, ctx.cidadeId), [ctx.dataset, ctx.greId, ctx.camara, ctx.scope, ctx.cidadeId]);
+/** O gráfico cobre os meses da janela do alto da tela (`janela.months`), e não mais a constante 24. */
+export const useRitmo = (ctx: CockpitCtx) => useMemo(() => ritmoEconomico(ctx.dataset, ctx.greId, ctx.camara ? ctx.scope.companyIds : null, ctx.janela.months.length, ctx.cidadeId), [ctx.dataset, ctx.greId, ctx.camara, ctx.scope, ctx.cidadeId, ctx.janela.months.length]);
+export const exportarRitmo = (ctx: CockpitCtx, r: ReturnType<typeof ritmoEconomico>): Exportavel => ({
+  cabecalho: ['Mês', 'Emprego formal em engenharia', 'Crédito a empresas de engenharia (R$)', 'Abertas na Receita em 12 meses', 'Registradas no Crea-SP em 12 meses', 'Índice do emprego', 'Índice do crédito', 'Índice das abertas', 'Índice das registradas'],
+  linhas: () => r.pontos.map((ponto, k) => [mes(ponto.month), ponto.emprego, ponto.credito, ponto.aberturas12, ponto.registros12, r.indice.emprego[k], r.indice.credito[k], r.indice.aberturas12[k], r.indice.registros12[k]]),
+});
 export function Ritmo({ ctx, r }: { ctx: CockpitCtx; r: ReturnType<typeof ritmoEconomico> }) {
-  const { tokens } = ctx;
-  const cores: Record<typeof seriesRitmo[number]['key'], string> = { emprego: tokens.muted, pib: tokens.heat[1], credito: tokens.warn, aberturas12: tokens.blue, registros12: tokens.accent };
+  const { tokens } = ctx, meses = ctx.janela.months.length;
+  // Crédito em roxo e emprego na cor do texto (05/11/2026): o laranja tracejado do crédito se confundia com o amarelo das registradas, e o cinza fino do emprego sumia.
+  const cores: Record<typeof seriesRitmo[number]['key'], string> = { emprego: tokens.ink, credito: tokens.cat[2], aberturas12: tokens.blue, registros12: tokens.accent };
   const option = useMemo(() => ({
     grid: { top: 8, right: 12, bottom: 2, left: 4, containLabel: true },
     tooltip: { trigger: 'axis', formatter: (items: any[]) => { const ponto = r.pontos[items[0].dataIndex];
-      const valor = (key: string) => key === 'pib' || key === 'credito' ? brl((ponto as any)[key]) : `${int((ponto as any)[key])}${key === 'emprego' ? ' empregados' : ''}`;
-      return `<b>${mes(ponto.month)}</b><br/>${items.map(item => { const s = seriesRitmo[item.seriesIndex]; return `${item.marker}${s.nome}: <b>${item.value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}</b> <span style="opacity:.75">(${valor(s.key)}, ${s.fonte})</span>`; }).join('<br/>')}`; } },
+      const valor = (key: string) => { const v = (ponto as any)[key]; return v === null ? 'sem arquivo da Receita' : key === 'credito' ? brl(v) : `${int(v)}${key === 'emprego' ? ' empregados' : ''}`; };
+      return `<b>${mes(ponto.month)}</b><br/>${items.map(item => { const s = seriesRitmo[item.seriesIndex]; return `${item.marker}${s.nome}: <b>${item.value === null || item.value === undefined ? '—' : item.value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}</b> <span style="opacity:.75">(${valor(s.key)}, ${s.fonte})</span>`; }).join('<br/>')}`; } },
     xAxis: { type: 'category', data: r.pontos.map(row => mes(row.month)), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10, interval: 2 } },
     yAxis: { type: 'value', scale: true, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 10 } },
-    series: seriesRitmo.map(s => ({ name: s.curto, type: 'line', data: r.indice[s.key], smooth: 0.25, symbol: 'none', step: s.key === 'pib' ? 'end' : undefined,
-      lineStyle: { color: cores[s.key], width: s.key === 'registros12' || s.key === 'aberturas12' ? 2.8 : 1.6, type: s.parceria ? 'dashed' : s.key === 'pib' ? 'dotted' : 'solid' }, itemStyle: { color: cores[s.key] },
+    series: seriesRitmo.map(s => ({ name: s.curto, type: 'line', data: r.indice[s.key], smooth: 0.25, symbol: 'none', connectNulls: false,
+      lineStyle: { color: cores[s.key], width: s.key === 'registros12' || s.key === 'aberturas12' ? 2.8 : 2, type: s.parceria ? 'dashed' : 'solid' }, itemStyle: { color: cores[s.key] },
       markLine: s.key === 'emprego' ? { silent: true, symbol: 'none', lineStyle: { color: tokens.line, type: 'solid' }, label: { show: false }, data: [{ yAxis: 100 }] } : undefined })),
   }), [r, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   const v = r.variacao, sinal = (value: number | null) => value === null ? '—' : `${value >= 0 ? '+' : ''}${pct(value)}`;
@@ -465,9 +545,9 @@ export function Ritmo({ ctx, r }: { ctx: CockpitCtx; r: ReturnType<typeof ritmoE
       for (const row of ctx.dataset.registrations) { const atual = primeira.get(row.companyId); if (!atual || row.startedAt < atual) primeira.set(row.companyId, row.startedAt); }
       const novas = [...primeira].filter(([id, data]) => data > inicio && data <= fim && ctx.scope.companyIds.has(id)).map(([id]) => id);
       if (novas.length) ctx.open({ kind: 'empresas', title: `Empresas que se registraram nos 12 meses até ${mes(ponto.month)}`, what: 'Empresas que fizeram o primeiro registro no Crea-SP nos 12 meses que terminam no mês escolhido.', ids: novas }); }} />
-    <ul className="side-list" aria-label="Variação em 24 meses">
-      <li className="side-head">Variação em 24 meses</li>
-      {seriesRitmo.map(s => <li key={s.key}><span className="side-serie"><i style={{ background: cores[s.key] }} /><span>{s.curto}<small>{s.fonte}</small></span><b>{sinal(v[s.key])}</b></span></li>)}
+    <ul className="side-list" aria-label={`Variação em ${meses} meses`}>
+      <li className="side-head">Variação em {meses} meses</li>
+      {seriesRitmo.map(s => <li key={s.key}><span className="side-serie"><i style={{ background: cores[s.key] }} /><span>{s.curto}<small>{s.key === 'aberturas12' ? `${s.fonte}, até ${mes(r.ultimoMesReceita)}` : s.fonte}</small></span><b>{sinal(v[s.key])}</b></span></li>)}
     </ul>
   </div>;
 }
