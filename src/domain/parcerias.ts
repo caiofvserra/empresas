@@ -291,7 +291,8 @@ export function buildSociosPf(dataset: Dataset, modelo: ModeloProfissionais = bu
   const rts = new Map<string, string[]>();
   for (const link of dataset.technicalLinks) { const id = rtDoVinculo(modelo, link); if (modelo.porId.has(id)) rts.set(link.companyId, [...(rts.get(link.companyId) ?? []), id]); }
   for (const company of dataset.companies) {
-    const quantos = chance(`pf:${company.id}`) < 0.3 ? 0 : between(`pf:${company.id}:n`, 1, 3), meusRts = rts.get(company.id) ?? [];
+    // No QSA da Receita toda sociedade limitada tem ao menos um administrador: só cerca de 5% das empresas ficam sem sócio carregado (05/11/2026; antes eram 30%).
+    const quantos = chance(`pf:${company.id}`) < 0.05 ? 0 : between(`pf:${company.id}:n`, 1, 3), meusRts = rts.get(company.id) ?? [];
     for (let n = 0; n < quantos; n++) {
       const key = `pf:${company.id}:${n}`, desde = dateBetween(`${key}:desde`, abertura.get(company.id) ?? '2012-01-01', anchor); if (desde > anchor) continue;
       // Parte dos sócios profissionais é o próprio RT (atual ou antigo) da empresa: sociedade e responsabilidade técnica coincidem com frequência.
@@ -471,7 +472,16 @@ export function buildJucesp(dataset: Dataset): Jucesp {
   }
   const value = { atos }; cacheJucesp.set(dataset, value); return value;
 }
-export interface TrimestreJucesp { trimestre: string; aberturas: number; alteracoes: number; registradasDepois: number }
+/** Desfecho de cada ato na data de referência: a empresa se registrou depois do ato, já era registrada antes dele ou segue sem registro. */
+export type DesfechoJucesp = 'registradasDepois' | 'jaRegistradas' | 'semRegistro';
+export const desfechosJucesp: DesfechoJucesp[] = ['registradasDepois', 'jaRegistradas', 'semRegistro'];
+export interface TrimestreJucesp {
+  trimestre: string; aberturas: number; alteracoes: number; registradasDepois: number;
+  /** Os outros dois desfechos, para a barra fechar no total de atos do trimestre (05/11/2026); `atos` traz os atos de cada desfecho, com o tipo. */
+  jaRegistradas: number; semRegistro: number; atos: Record<DesfechoJucesp, AlteracaoJucesp[]>;
+  /** O trimestre da data de referência ainda está em curso: tem menos atos e menos tempo para o registro vir depois (censura à direita). */
+  emCurso: boolean;
+}
 export interface QuadroJucesp { trimestres: TrimestreJucesp[]; atos: AlteracaoJucesp[]; registradasDepois: string[]; jaRegistradas: string[]; semRegistro: string[]; alteracoesSemRegistro: string[] }
 /** Atos dos últimos 24 meses até a data de referência: quantos foram seguidos de registro no Crea-SP, quantos já tinham registro e quantos seguem sem registro. */
 export function quadroJucesp(layer: Jucesp, dataset: Dataset, companyIds: Set<string> | null, greId: string | null): QuadroJucesp {
@@ -485,7 +495,8 @@ export function quadroJucesp(layer: Jucesp, dataset: Dataset, companyIds: Set<st
   const trimestre = (date: string) => `${date.slice(0, 4)}-T${Math.floor((Number(date.slice(5, 7)) - 1) / 3) + 1}`;
   const nomes = [...new Set(atos.map(row => trimestre(row.data)))].sort();
   return {
-    trimestres: nomes.map(nome => { const rows = atos.filter(row => trimestre(row.data) === nome); return { trimestre: nome, aberturas: rows.filter(row => row.tipo === 'Abertura').length, alteracoes: rows.filter(row => row.tipo !== 'Abertura').length, registradasDepois: rows.filter(depois).length }; }),
+    trimestres: nomes.map(nome => { const rows = atos.filter(row => trimestre(row.data) === nome), porDesfecho = { registradasDepois: rows.filter(depois), jaRegistradas: rows.filter(antes), semRegistro: rows.filter(row => !vigente.has(row.companyId)) };
+      return { trimestre: nome, aberturas: rows.filter(row => row.tipo === 'Abertura').length, alteracoes: rows.filter(row => row.tipo !== 'Abertura').length, registradasDepois: porDesfecho.registradasDepois.length, jaRegistradas: porDesfecho.jaRegistradas.length, semRegistro: porDesfecho.semRegistro.length, atos: porDesfecho, emCurso: nome === trimestre(anchor) }; }),
     atos, registradasDepois: atos.filter(depois).map(row => row.companyId), jaRegistradas: atos.filter(antes).map(row => row.companyId),
     semRegistro: atos.filter(row => !vigente.has(row.companyId)).map(row => row.companyId), alteracoesSemRegistro: atos.filter(row => row.tipo !== 'Abertura' && !vigente.has(row.companyId)).map(row => row.companyId),
   };

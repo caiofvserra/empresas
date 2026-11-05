@@ -5,6 +5,8 @@ import { median, stockBridge } from '../gestao-v14/metrics';
 import type { Acao, Alvo, Fiscalizacao, Origem, StatusMulta, Tipo } from './fiscalizacao';
 import { origens } from './fiscalizacao';
 import { buildEnterpriseEvidence, isValidEnterpriseCnpj } from '../enterprise-v10/data';
+import { rtDoVinculo, situacaoEm } from '../domain/profissionais';
+import type { ModeloProfissionais } from '../domain/profissionais';
 
 /** V17 · análise da atividade do CREA-SP sobre empresas: fiscalizar, autuar, multar, obrigar registro e o efeito na base e na receita. */
 const DAY = 86400000;
@@ -172,8 +174,12 @@ export function mercadoPorAtividade(scope: Scope, model: EnterpriseModel, f: Fis
   }
   return [...groups.values()].sort((a, b) => (b.comAcao.length + b.semAcao.length) / b.total - (a.comAcao.length + a.semAcao.length) / a.total);
 }
-export interface QuadroTecnico { comRt: string[]; rtBaixado: string[]; semVinculo: string[]; distribuicao: { empresas: number; profissionais: string[] }[]; limite: number }
-export function quadroTecnico(scope: Scope, model: EnterpriseModel, f: Fiscalizacao): QuadroTecnico {
+export interface QuadroTecnico {
+  comRt: string[]; rtBaixado: string[]; semVinculo: string[]; distribuicao: { empresas: number; profissionais: string[] }[]; limite: number;
+  /** Empresas com RT de vínculo vigente cujo registro profissional está cancelado ou interrompido na data (05/11/2026). Subconjunto de `comRt`; vazio sem o modelo de profissionais. */
+  rtInativo: string[];
+}
+export function quadroTecnico(scope: Scope, model: EnterpriseModel, f: Fiscalizacao, modelo?: ModeloProfissionais): QuadroTecnico {
   const anchor = scope.anchor, active = model.metadata.activeCompanyIds, activeSet = new Set(active);
   const withRt = new Set(model.metrics.rtCoverage.companyIds);
   const baixado = new Set(f.alvos.filter(row => row.tipo === 'rt' && !row.regularizedAt).map(row => row.companyId));
@@ -182,8 +188,11 @@ export function quadroTecnico(scope: Scope, model: EnterpriseModel, f: Fiscaliza
   for (const row of links) perProfessional.set(row.professionalId, (perProfessional.get(row.professionalId) ?? new Set()).add(row.companyId));
   const buckets = new Map<number, string[]>();
   for (const [professional, companies] of perProfessional) { const key = Math.min(5, companies.size); buckets.set(key, [...(buckets.get(key) ?? []), professional]); }
+  // RT com registro profissional cancelado ou interrompido: o vínculo segue vigente no cadastro da empresa, mas o profissional não pode responder por ela.
+  const inativo = new Set<string>();
+  if (modelo) for (const row of links) { const profissional = modelo.porId.get(rtDoVinculo(modelo, row)); if (profissional && situacaoEm(profissional, anchor) !== 'Ativo') inativo.add(row.companyId); }
   return { comRt: active.filter(id => withRt.has(id)), rtBaixado: active.filter(id => !withRt.has(id) && baixado.has(id)), semVinculo: active.filter(id => !withRt.has(id) && !baixado.has(id)),
-    distribuicao: [1, 2, 3, 4, 5].map(empresas => ({ empresas, profissionais: buckets.get(empresas) ?? [] })), limite: 3 };
+    distribuicao: [1, 2, 3, 4, 5].map(empresas => ({ empresas, profissionais: buckets.get(empresas) ?? [] })), limite: 3, rtInativo: active.filter(id => withRt.has(id) && inativo.has(id)) };
 }
 export interface Receita { mensal: { month: string; anuidades: number; multas: number; anuidadesAntes: number | null; multasAntes: number | null }[]; anuidades: number; multas: number; total: number; totalAntes: number | null }
 export function receita(history: EnterpriseModel, f: Fiscalizacao, greId: string | null, period: number): Receita {

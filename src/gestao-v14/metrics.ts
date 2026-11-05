@@ -19,7 +19,8 @@ export const quantile = (values: number[], q: number) => {
 };
 
 export interface Targets { coverage: number; rtCoverage: number; compliance: number; recovery: number }
-export const defaultTargets: Targets = { coverage: 65, rtCoverage: 40, compliance: 60, recovery: 30 };
+/** Meta de RT em 95% (05/11/2026): o RT é condição do registro da empresa, não uma meta de adesão. */
+export const defaultTargets: Targets = { coverage: 65, rtCoverage: 95, compliance: 60, recovery: 30 };
 
 const mainCache = new WeakMap<Dataset, Map<string, Establishment>>();
 /** Estabelecimento de referência da empresa: matriz, senão o primeiro estabelecimento. */
