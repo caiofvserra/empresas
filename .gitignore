@@ -11,3 +11,4 @@ dist-painel/
 dist-empresas/
 dist-profissionais/
 dist-fiscalizacao/
+.claude/worktrees/

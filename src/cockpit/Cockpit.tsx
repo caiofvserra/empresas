@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import type { ComponentType, ReactNode } from 'react';
-import { ArrowUpRight, BadgeCheck, BookOpenCheck, Briefcase, Building2, CalendarClock, ChevronDown, ClipboardCheck, Construction, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, Network, RotateCcw, ScanSearch, ScrollText, ShieldCheck, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
+import { ArrowUpRight, BadgeCheck, BookOpenCheck, Briefcase, Building2, CalendarClock, ChevronDown, ClipboardCheck, Construction, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, Network, Printer, RotateCcw, ScanSearch, ScrollText, Search, ShieldCheck, SlidersHorizontal, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
 import { dataset } from '../domain/dataset';
 import { datasReferencia as datasReferenciaDe, datasetAt, fiscalizacaoAt } from '../domain/tempo';
 import { defaultFilters } from '../domain/types';
-import type { Dataset, Filters } from '../domain/types';
+import type { CompanySize, Dataset, Establishment, Filters } from '../domain/types';
 import type { Scope } from '../domain/engine';
 import { buildProfissionais, buildEmpregoCbo, remuneracaoPorCbo, resumoProfissionais } from '../domain/profissionais';
 import type { Genero } from '../domain/profissionais';
@@ -26,11 +26,11 @@ import { caoService } from '../gestao-v14/metrics';
 import { buildFiscalizacao, tipoLabel } from '../painel/fiscalizacao';
 import { resultadosForcas } from '../painel/forcas';
 import { cobertura, contagens, conversao, receitaAtribuivel, tempoAteAgir } from '../observatorio/norte';
-import { camaraDaEmpresa, camaraPorCnae, camaras, contratosPublicos, devedoras, janela as janelaDe, ponteBase, porRegional, receita, resumoFiscal } from '../painel/analise';
+import { camaraDaEmpresa, camaraPorCnae, camaras, contratosPublicos, devedoras, janela as janelaDe, mesesDaJanela, ponteBase, porRegional, receita, resumoFiscal } from '../painel/analise';
 import { useTokens } from '../painel/chart';
 import type { Detail } from '../painel/contexto';
 import Drawer from '../painel/Drawer';
-import { data, int } from '../painel/ui';
+import { data, int, mes } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
 import { malhaFina } from './cruzamentos';
 import { estruturaDe } from './estrutura';
@@ -138,7 +138,21 @@ function modelo(key: string, scope: Scope) {
   if (!value) { value = buildEnterpriseModel(scope); modelos.set(key, value); if (modelos.size > 16) modelos.delete(modelos.keys().next().value!); }
   return value;
 }
-const filtros = (greIds: string[], period: number, cityId = ''): Filters => ({ ...defaultFilters, greIds, period, cityIds: cityId ? [cityId] : [] });
+const filtros = (greIds: string[], period: number, cityId = '', extra: { porte?: string; situacao?: string } = {}): Filters => ({ ...defaultFilters, greIds, period, cityIds: cityId ? [cityId] : [], sizes: extra.porte ? [extra.porte] : [], rfbStatuses: extra.situacao ? [extra.situacao] : [] });
+const portes: CompanySize[] = ['Microempresa', 'Pequena empresa', 'Média empresa', 'Grande empresa'];
+const situacoes: Establishment['rfbStatus'][] = ['Ativa', 'Baixada', 'Suspensa', 'Inapta'];
+/** Página e filtros no endereço: `#registro?gre=GRE5&cidade=3550308&camara=Civil&meses=24&data=2026-06-30`. */
+type Endereco = Record<'gre' | 'cidade' | 'camara' | 'modalidade' | 'genero' | 'meses' | 'data' | 'porte' | 'situacao', string>;
+function lerEndereco(): Endereco & { pagina: string } {
+  const [pagina, consulta = ''] = window.location.hash.slice(1).split('?'), params = new URLSearchParams(consulta);
+  const chave = (name: keyof Endereco) => params.get(name) ?? '';
+  return { pagina, gre: chave('gre'), cidade: chave('cidade'), camara: chave('camara'), modalidade: chave('modalidade'), genero: chave('genero'), meses: chave('meses'), data: chave('data'), porte: chave('porte'), situacao: chave('situacao') };
+}
+function gravarEndereco(pagina: string, valores: Endereco) {
+  const params = new URLSearchParams(); for (const [name, value] of Object.entries(valores)) if (value) params.set(name, value);
+  const consulta = params.toString(), hash = `#${pagina}${consulta ? `?${consulta}` : ''}`;
+  if (window.location.hash !== hash) window.history.replaceState(null, '', hash);
+}
 const camaraMap = camaraDaEmpresa(dataset);
 const hoje = dataset.snapshotDate;
 const datasReferencia = datasReferenciaDe(dataset);
@@ -162,15 +176,22 @@ function camadasDe(view: Dataset) {
 export default function Cockpit({ painel: painelId = 'geral' }: { painel?: PainelId }) {
   const painel = paineis[painelId], pages = painel.paginas;
   STORAGE = painel.storage;
-  const [page, setPage] = useState<PageId>(() => { const hash = window.location.hash.slice(1), saved = pages.some(item => item.id === hash) ? hash : ler<string>('pagina', pages[0].id); return pages.some(item => item.id === saved) ? saved as PageId : pages[0].id; });
-  const [gre, setGre] = useState('');
-  const [camara, setCamara] = useState('');
-  const [modalidade, setModalidade] = useState('');
-  const [genero, setGenero] = useState<'' | Genero>('');
-  const [cidade, setCidade] = useState('');
-  const [period, setPeriod] = useState(12);
+  // O endereço guarda a página e os filtros (`#registro?gre=GRE5&meses=24`), para um link levar a mesma tela (05/11/2026).
+  const inicial = useMemo(() => lerEndereco(), []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [page, setPage] = useState<PageId>(() => { const hash = inicial.pagina, saved = pages.some(item => item.id === hash) ? hash : ler<string>('pagina', pages[0].id); return pages.some(item => item.id === saved) ? saved as PageId : pages[0].id; });
+  // Com município no endereço, a regional é a dele pela tabela oficial, ainda que o endereço diga outra.
+  const [gre, setGre] = useState(() => municipiosSp(dataset).find(row => row.id === inicial.cidade)?.greId ?? (dataset.gres.some(row => row.id === inicial.gre) ? inicial.gre : ''));
+  const [camara, setCamara] = useState(() => (camaras as string[]).includes(inicial.camara) ? inicial.camara : '');
+  const [modalidade, setModalidade] = useState(() => (modalidades as string[]).includes(inicial.modalidade) ? inicial.modalidade : '');
+  const [genero, setGenero] = useState<'' | Genero>(() => inicial.genero === 'Feminino' || inicial.genero === 'Masculino' ? inicial.genero : '');
+  const [cidade, setCidade] = useState(() => municipiosSp(dataset).some(row => row.id === inicial.cidade) ? inicial.cidade : '');
+  const [period, setPeriod] = useState(() => { const value = Number(inicial.meses); return Number.isInteger(value) && value >= 1 && value <= dataset.months.length ? value : 12; });
   const leve = painel.id !== 'geral', deProfissionais = painel.id === 'profissionais', deFiscalizacao = painel.id === 'fiscalizacao';
-  const [anchorSel, setAnchorSel] = useState<string | null>(null);
+  const [anchorSel, setAnchorSel] = useState<string | null>(() => datasReferencia.includes(inicial.data) ? inicial.data : null);
+  const [avisoPeriodo, setAvisoPeriodo] = useState('');
+  // Mais filtros (05/11/2026): porte e situação do CNPJ na Receita, que o motor já aceitava e o cabeçalho não oferecia.
+  const [porte, setPorte] = useState(() => (portes as string[]).includes(inicial.porte) ? inicial.porte : '');
+  const [situacao, setSituacao] = useState(() => (situacoes as string[]).includes(inicial.situacao) ? inicial.situacao : '');
   const [detail, setDetail] = useState<Detail | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark' | null>(() => { const salvo = ler<'light' | 'dark' | null>('tema', null); if (salvo) document.documentElement.dataset.theme = salvo; return salvo; }); // o tema salvo entra antes da primeira leitura das cores dos gráficos
   const [metas, setMetas] = useState<Metas>(() => ({ ...metasPadrao, ...ler<Partial<Metas>>('metas', {}) }));
@@ -188,6 +209,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   useEffect(() => { const media = window.matchMedia('(prefers-color-scheme: dark)'), update = () => setSystemDark(media.matches); media.addEventListener('change', update); return () => media.removeEventListener('change', update); }, []);
   useEffect(() => { if (theme) document.documentElement.dataset.theme = theme; else delete document.documentElement.dataset.theme; gravar('tema', theme); }, [theme]);
   useEffect(() => { gravar('pagina', page); setFocus(null); }, [page]);
+  useEffect(() => { gravarEndereco(page, { gre, cidade, camara, modalidade, genero, meses: period === 12 ? '' : String(period), data: anchorSel ?? '', porte, situacao }); }, [page, gre, cidade, camara, modalidade, genero, period, anchorSel, porte, situacao]);
   useEffect(() => { gravar('metas', metas); }, [metas]);
   // Atendimento, estrutura e orçamento vêm do modelo institucional (cerca de 1 s na primeira vez): calculado depois da primeira pintura.
   useEffect(() => { if (leve) return; let alive = true; setEstrutura(null); const id = window.setTimeout(() => { const value = estruturaDe(view, gre || null, period); if (alive) setEstrutura(value); }, 30); return () => { alive = false; window.clearTimeout(id); }; }, [view, gre, period, leve]);
@@ -205,21 +227,26 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
       const target = event.target as HTMLElement;
       if (event.key === 'Escape') { if (detail) setDetail(null); else if (modal) setModal(null); else setFocus(null); return; }
       if (event.ctrlKey || event.metaKey || event.altKey || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName) || modal || detail) return;
+      if (event.key === '/' && leve && !deProfissionais) { event.preventDefault(); buscarRef.current(); return; }
       if (/^[0-9]$/.test(event.key)) { const index = event.key === '0' ? 9 : Number(event.key) - 1; if (pages[index]) setPage(pages[index].id); }
       else if ((event.key === 'm' || event.key === 'M') && pages.some(item => item.id === 'metodo')) setPage('metodo');
     };
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key);
-  }, [detail, modal, pages]);
+  }, [detail, modal, pages, leve, deProfissionais]);
+  const buscarRef = useRef<() => void>(() => {});
 
   const subset = useMemo(() => camara ? view.companies.filter(row => camaraMap.get(row.id) === camara).map(row => row.id) : undefined, [view, camara]);
-  const scope = useMemo(() => selectEnterpriseScope(view, filtros(gre ? [gre] : [], period, cidade), subset), [view, gre, period, subset, cidade]);
-  const historyScope = useMemo(() => selectEnterpriseScope(view, filtros(gre ? [gre] : [], 24, cidade), subset), [view, gre, subset, cidade]);
-  const stateScope = useMemo(() => gre ? selectEnterpriseScope(view, filtros([], period), subset) : scope, [view, gre, period, subset, scope]);
-  const stateHistoryScope = useMemo(() => gre ? selectEnterpriseScope(view, filtros([], 24), subset) : historyScope, [view, gre, subset, historyScope]);
-  const model = useMemo(() => modelo(`${anchor}|${gre}|${cidade}|${camara}|${period}`, scope), [scope]); // eslint-disable-line react-hooks/exhaustive-deps
-  const history = useMemo(() => modelo(`${anchor}|${gre}|${cidade}|${camara}|24`, historyScope), [historyScope]); // eslint-disable-line react-hooks/exhaustive-deps
-  const stateModel = useMemo(() => modelo(`${anchor}||${camara}|${period}`, stateScope), [stateScope]); // eslint-disable-line react-hooks/exhaustive-deps
-  const stateHistory = useMemo(() => modelo(`${anchor}||${camara}|24`, stateHistoryScope), [stateHistoryScope]); // eslint-disable-line react-hooks/exhaustive-deps
+  const mais = useMemo(() => ({ porte, situacao }), [porte, situacao]), chaveMais = `${porte}|${situacao}`;
+  const scope = useMemo(() => selectEnterpriseScope(view, filtros(gre ? [gre] : [], period, cidade, mais), subset), [view, gre, period, subset, cidade, mais]);
+  // O histórico mês a mês cobre 24 meses, ou o período inteiro quando ele passa de 24 (período livre, 05/11/2026).
+  const mesesHist = mesesDaJanela(period);
+  const historyScope = useMemo(() => selectEnterpriseScope(view, filtros(gre ? [gre] : [], mesesHist, cidade, mais), subset), [view, gre, subset, cidade, mesesHist, mais]);
+  const stateScope = useMemo(() => gre ? selectEnterpriseScope(view, filtros([], period, '', mais), subset) : scope, [view, gre, period, subset, scope, mais]);
+  const stateHistoryScope = useMemo(() => gre ? selectEnterpriseScope(view, filtros([], mesesHist, '', mais), subset) : historyScope, [view, gre, subset, historyScope, mesesHist, mais]);
+  const model = useMemo(() => modelo(`${anchor}|${gre}|${cidade}|${camara}|${period}|${chaveMais}`, scope), [scope]); // eslint-disable-line react-hooks/exhaustive-deps
+  const history = useMemo(() => modelo(`${anchor}|${gre}|${cidade}|${camara}|${mesesHist}|${chaveMais}`, historyScope), [historyScope]); // eslint-disable-line react-hooks/exhaustive-deps
+  const stateModel = useMemo(() => modelo(`${anchor}||${camara}|${period}|${chaveMais}`, stateScope), [stateScope]); // eslint-disable-line react-hooks/exhaustive-deps
+  const stateHistory = useMemo(() => modelo(`${anchor}||${camara}|${mesesHist}|${chaveMais}`, stateHistoryScope), [stateHistoryScope]); // eslint-disable-line react-hooks/exhaustive-deps
   const base = useMemo(() => camadasDe(view), [view]);
   // `fEstado` é a fiscalização do estado inteiro na câmara escolhida (mapa, forças-tarefas e comparação das regionais); `f` também segue o município no painel de Fiscalização.
   const fEstado = useMemo(() => { const all = base.f; return camara ? { ...all, acoes: all.acoes.filter(row => camaraMap.get(row.companyId) === camara), alvos: all.alvos.filter(row => camaraMap.get(row.companyId) === camara) } : all; }, [base, camara]);
@@ -233,10 +260,10 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     const linhas = linhasGre(stateModel, stateHistory, stateScope, regionais, period, stateMalha, stateArts.atual);
     const cobradas = model.metrics.compliance.denominatorCompanyIds?.length ?? 0;
     const norte = { cobertura: cobertura(scope, model), contagens: contagens(scope, model), conversao: conversao(f, gre || null), receita: receitaAtribuivel(view, f, gre || null, period), tempo: tempoAteAgir(view, f, gre || null, period, tipoLabel) };
-    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), aberturas: aberturasRfb(view, gre || null, 24, cidade || null), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
+    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), aberturas: aberturasRfb(view, gre || null, mesesHist, cidade || null), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
     return { resumo, regionais, contratos, malha, arts, linhas, ponte: ponteBase(model, scope, f, period), rec: receita(history, f, gre || null, period),
       inadimplencia: cobradas ? devedoras(model).size / cobradas * 100 : null, cao: caoService(scope).median, norte, mercado };
-  }, [view, f, fEstado, gre, cidade, period, camara, scope, model, history, stateScope, stateModel, stateHistory]);
+  }, [view, f, fEstado, gre, cidade, period, mesesHist, camara, scope, model, history, stateScope, stateModel, stateHistory]);
   // Camadas da V20: profissionais, formação, entidades, controle interno e forças-tarefas, todas lidas em D.
   const extra = useMemo(() => {
     const greId = gre || null, recorte = { cityId: cidade || null, modalidade: modalidade || null, genero: genero || null };
@@ -261,13 +288,30 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const irPara = (target: PageId) => { if (pages.some(item => item.id === target)) setPage(target); else window.location.href = enderecoPainel(painelDaPagina(target), target); };
   const change = (work: () => void) => transition(work);
   const ctx: CockpitCtx = { dataset: view, f, fEstado, scope, model, history, period, greId: gre || null, camara: camara || null, janela: janelaDe(f.anchor, period), resumo: derived.resumo, regionais: derived.regionais, tokens,
-    open: setDetail, filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara, dark, cidadeId: cidade || null, enxuto: leve, camaraDe: camaraMap, modalidade: modalidade || null, genero: genero || null,
+    open: setDetail, filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara,
+    filtrar: recorte => change(() => { if (recorte.cidade) { setCidade(recorte.cidade); setGre(municipiosDe('').find(row => row.id === recorte.cidade)?.greId ?? ''); } else if (recorte.gre) { setGre(recorte.gre); setCidade(''); } if (recorte.camara) setCamara(recorte.camara); }), dark, cidadeId: cidade || null, enxuto: leve, camaraDe: camaraMap, modalidade: modalidade || null, genero: genero || null,
     anchor, hoje, datasReferencia, setAnchor: value => change(() => setAnchorSel(value && value < hoje ? value : null)),
     historyScope, stateScope, stateModel, stateHistory, linhas: derived.linhas, ponte: derived.ponte, rec: derived.rec, contratos: derived.contratos, malha: derived.malha, estrutura, arts: derived.arts,
     metas, insights, focus, toggleFocus: id => setFocus(previous => previous === id ? null : id), norte: derived.norte, mercado: derived.mercado, ...extra,
     historico: { pontos: historico.chave === `${view.snapshotDate}|${gre}` ? historico.pontos : [], datas: datasHistorico(view), completo: historico.chave === `${view.snapshotDate}|${gre}` && historico.pontos.length === datasHistorico(view).length } };
   const current = pages.find(item => item.id === page)!;
   const emD = anchor !== hoje;
+  const maxMeses = view.months.length;
+  // Filtros em uso, mostrados no rodapé com um "x" cada (05/11/2026): o leitor vê o recorte sem olhar os seletores.
+  const recorte: { chave: string; rotulo: string; tirar: () => void }[] = [
+    ...(gre && !cidade ? [{ chave: 'gre', rotulo: dataset.gres.find(row => row.id === gre)?.name ?? gre, tirar: () => setGre('') }] : []),
+    ...(cidade ? [{ chave: 'cidade', rotulo: `${municipiosDe('').find(row => row.id === cidade)?.name ?? cidade} (${dataset.gres.find(row => row.id === gre)?.name ?? ''})`, tirar: () => setCidade('') }] : []),
+    ...(camara ? [{ chave: 'camara', rotulo: camara, tirar: () => setCamara('') }] : []),
+    ...(modalidade ? [{ chave: 'modalidade', rotulo: modalidade, tirar: () => setModalidade('') }] : []),
+    ...(genero ? [{ chave: 'genero', rotulo: genero === 'Feminino' ? 'Mulheres' : 'Homens', tirar: () => setGenero('') }] : []),
+    ...(porte ? [{ chave: 'porte', rotulo: porte, tirar: () => setPorte('') }] : []),
+    ...(situacao ? [{ chave: 'situacao', rotulo: `CNPJ ${situacao.toLowerCase()} na Receita`, tirar: () => setSituacao('') }] : []),
+    ...(period !== 12 ? [{ chave: 'meses', rotulo: `${period} meses (${data(ctx.janela.start)} a ${data(ctx.janela.end)})`, tirar: () => { setPeriod(12); setAvisoPeriodo(''); } }] : []),
+    ...(emD ? [{ chave: 'data', rotulo: `situação em ${data(anchor)}`, tirar: () => setAnchorSel(null) }] : []),
+  ];
+  // Busca de empresa (05/11/2026): abre a gaveta com todas as empresas do recorte e o campo de busca em foco; a tecla / faz o mesmo.
+  const buscar = () => { setDetail({ kind: 'empresas', title: 'Buscar empresa', what: 'Todas as empresas do recorte atual. Digite parte do nome, do CNPJ ou do município para achar uma e abrir a ficha dela.', ids: [...scope.companyIds] }); window.setTimeout(() => document.getElementById('busca-detalhe')?.focus(), 80); };
+  buscarRef.current = buscar;
 
   return <div className={`ck ${dark ? 'is-dark' : ''} ${emD ? 'is-passado' : ''}`} aria-busy={pending}>
     <nav className="ck-rail" aria-label="Assuntos do painel">
@@ -275,6 +319,8 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
       {pages.map((item, index) => <button key={item.id} className={page === item.id ? 'on' : ''} aria-current={page === item.id ? 'page' : undefined} onClick={() => setPage(item.id)} title={`${item.title} (tecla ${item.id === 'metodo' ? 'M' : (index + 1) % 10})`}><item.icon size={18} /><span>{item.label}</span></button>)}
       {painel.id === 'geral' && <div className="ck-rail-paineis">{atalhos.map(item => <a key={item.id} className="ck-rail-painel" href={enderecoPainel(item.id)} title={item.title}><item.icon size={17} /><span>{item.label}<ArrowUpRight size={10} /></span></a>)}</div>}
       <div className="ck-rail-bottom">
+        {leve && !deProfissionais && <button onClick={buscar} title="Buscar uma empresa pelo nome, CNPJ ou município (tecla /)"><Search size={17} /><span>Buscar</span></button>}
+        <button onClick={() => window.print()} title="Imprimir esta página ou salvar em PDF"><Printer size={17} /><span>Imprimir</span></button>
         <button onClick={() => setModal('metas')} title="Metas usadas nos cartões e no quadro das regionais"><Target size={17} /><span>Metas</span></button>
         <button onClick={() => setModal('fontes')} title="Fontes, métodos e limites"><Database size={17} /><span>Fontes</span></button>
         <button onClick={() => setTheme(dark ? 'light' : 'dark')} aria-label={dark ? 'Usar tema claro' : 'Usar tema escuro'} title={dark ? 'Tema claro' : 'Tema escuro'}>{dark ? <Sun size={17} /> : <Moon size={17} />}<span>{dark ? 'Claro' : 'Escuro'}</span></button>
@@ -289,9 +335,16 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
           {painel.filtro === 'modalidade'
             ? <><label className="ck-select"><select aria-label="Modalidade" value={modalidade} onChange={event => change(() => setModalidade(event.target.value))}><option value="">Todas as modalidades</option>{modalidades.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
               <label className="ck-select"><select aria-label="Gênero" value={genero} onChange={event => change(() => setGenero(event.target.value as '' | Genero))}><option value="">Mulheres e homens</option><option value="Feminino">Mulheres</option><option value="Masculino">Homens</option></select><ChevronDown size={14} /></label></>
-            : <label className="ck-select"><select aria-label="Câmara" value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas as câmaras</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>}
-          <div className="seg" role="radiogroup" aria-label="Período" title={`De ${data(ctx.janela.start)} a ${data(ctx.janela.end)}, comparado com ${data(ctx.janela.prevStart)} a ${data(ctx.janela.prevEnd)}`}>{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => setPeriod(value))}>{value} meses</button>)}</div>
-          {(gre || cidade || camara || modalidade || genero || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setModalidade(''); setGenero(''); setPeriod(12); setAnchorSel(null); })} title="Limpar filtros"><RotateCcw size={14} />Limpar</button>}
+            : <><label className="ck-select"><select aria-label="Câmara" value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas as câmaras</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+              <details className={`ck-mais ${porte || situacao ? 'on' : ''}`}><summary title="Mais filtros: porte da empresa e situação do CNPJ na Receita"><SlidersHorizontal size={14} /><span>Mais{porte || situacao ? ` · ${[porte, situacao].filter(Boolean).length}` : ''}</span></summary>
+                <div className="ck-mais-menu">
+                  <label className="ck-select"><span>Porte</span><select aria-label="Porte" value={porte} onChange={event => change(() => setPorte(event.target.value))}><option value="">Todos os portes</option>{portes.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+                  <label className="ck-select"><span>Situação na Receita</span><select aria-label="Situação na Receita" value={situacao} onChange={event => change(() => setSituacao(event.target.value))}><option value="">Todas as situações</option>{situacoes.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+                  <p>O porte é o da empresa na Receita; a situação é a do CNPJ da matriz. Os dois valem para todas as abas.</p>
+                </div></details></>}
+          <div className="seg" role="radiogroup" aria-label="Período" title={`De ${data(ctx.janela.start)} a ${data(ctx.janela.end)}, comparado com ${data(ctx.janela.prevStart)} a ${data(ctx.janela.prevEnd)}`}>{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => { setPeriod(value); setAvisoPeriodo(''); })}>{value} meses</button>)}
+            <label className={`seg-livre ${painel.periodos.includes(period) ? '' : 'on'}`} title={`Qualquer número de meses até ${maxMeses}: o histórico começa em ${mes(view.months[0])}`}><input type="number" inputMode="numeric" min={1} max={maxMeses} step={1} aria-label="Outro período, em meses" placeholder="outro" value={painel.periodos.includes(period) ? '' : period} onChange={event => { const pedido = Number(event.target.value); if (!Number.isInteger(pedido) || pedido < 1) return; const value = Math.min(maxMeses, pedido); setAvisoPeriodo(pedido > maxMeses ? `O histórico começa em ${mes(view.months[0])}, por isso o período foi limitado a ${maxMeses} meses.` : value > 24 && `${ctx.janela.prevStart}` < `${view.months[0]}-01` ? `Com ${value} meses não há período anterior completo para comparar; as variações ficam sem base.` : ''); change(() => setPeriod(value)); }} />{!painel.periodos.includes(period) && <span>meses</span>}</label></div>
+          {(gre || cidade || camara || modalidade || genero || porte || situacao || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setModalidade(''); setGenero(''); setPorte(''); setSituacao(''); setPeriod(12); setAnchorSel(null); setAvisoPeriodo(''); })} title="Limpar filtros" aria-label="Limpar filtros"><RotateCcw size={14} /><span className="ck-limpar-texto">Limpar</span></button>}
         </section>
         <div className="ck-meta">
           <span className="demo" title="Dados internos fictícios, gerados para demonstrar o modelo. Dados públicos reais trazem selo próprio.">Demonstrativo</span>
@@ -326,8 +379,9 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
         </section>
       </>}
       <main className={`ck-page ck-page-${page} ${focus ? 'has-focus' : ''}`} key={page}><current.Page ctx={ctx} /></main>
-      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{deProfissionais ? `${int(extra.profissionais.resumo.ativos.length)} profissionais ativos no recorte` : deFiscalizacao ? `${int(derived.resumo.acoes.length)} ações de fiscalização no recorte` : `${int(scope.companies.length)} empresas no recorte`}</strong>
-        <span className="ck-status-note">{pending ? 'Recalculando…' : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : leve ? `Clique num item para ver ${deProfissionais ? 'os profissionais' : deFiscalizacao ? 'as ações, as empresas ou os contratos' : 'as empresas'}. O (i) explica cada bloco.` : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
+      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{deProfissionais ? `${int(extra.profissionais.resumo.ativos.length)} profissionais ativos no recorte` : deFiscalizacao ? `${int(derived.resumo.acoes.length)} ações de fiscalização no recorte` : leve ? `${int(model.companyFacts.filter(row => row.active || row.eligibleEstablishments > 0).length)} empresas com atividade de engenharia no recorte` : `${int(scope.companies.length)} empresas no recorte`}</strong>
+        {leve && recorte.length > 0 && <ul className="ck-chips" aria-label="Filtros em uso">{recorte.map(chip => <li key={chip.chave}><span>{chip.rotulo}</span><button aria-label={`Tirar o filtro ${chip.rotulo}`} title="Tirar este filtro" onClick={() => change(chip.tirar)}><X size={11} /></button></li>)}</ul>}
+        <span className="ck-status-note">{pending ? 'Recalculando…' : avisoPeriodo ? avisoPeriodo : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : leve ? `Clique num item para ver ${deProfissionais ? 'os profissionais' : deFiscalizacao ? 'as ações, as empresas ou os contratos' : 'as empresas'}. O (i) explica cada bloco. A tecla / busca uma empresa.` : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
     </div>
     {detail && <Drawer ctx={ctx} detail={detail} onClose={() => setDetail(null)} />}
     {modal === 'metas' && <Janela title="Metas do painel" subtitle="As metas usadas nos cartões, no quadro das regionais e nos destaques. Elas ficam salvas neste navegador." onClose={() => setModal(null)}><MetasForm metas={metas} onChange={setMetas} /></Janela>}

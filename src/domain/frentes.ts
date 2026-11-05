@@ -160,6 +160,8 @@ export function buildInstalacoes(dataset: Dataset): Instalacoes {
 export interface QuadroInstalacoes {
   instalacoes: Instalacao[]; porFonte: { fonte: FonteInstalacao; n: number; valor: number; unidade: string; agentesNoUniverso: number; agentesRegistrados: number }[];
   porGre: { greId: string; n: number; porFonte: Record<FonteInstalacao, number> }[]; novas12: number; novasAntes: number;
+  /** Empresas registradas no Crea-SP na data entre os agentes identificados, para o bloco separar registradas de atividade sem registro em qualquer recorte (05/11/2026). */
+  registradas: string[];
 }
 export function quadroInstalacoes(layer: Instalacoes, dataset: Dataset, greId: string | null): QuadroInstalacoes {
   const anchor = dataset.snapshotDate, ano = new Date(Date.parse(`${anchor}T00:00:00Z`) - 365 * 86400000).toISOString().slice(0, 10), antes = new Date(Date.parse(`${ano}T00:00:00Z`) - 365 * 86400000).toISOString().slice(0, 10);
@@ -169,5 +171,6 @@ export function quadroInstalacoes(layer: Instalacoes, dataset: Dataset, greId: s
   return { instalacoes,
     porFonte: fontesInstalacao.map(fonte => { const rows = instalacoes.filter(row => row.fonte === fonte); return { fonte, n: rows.length, valor: sum(rows.map(row => row.valor)), unidade: unidadePorFonte[fonte], agentesNoUniverso: rows.filter(row => row.companyId).length, agentesRegistrados: rows.filter(row => row.companyId && registrada.has(row.companyId)).length }; }),
     porGre: gres.map(id => { const rows = instalacoes.filter(row => row.greId === id); return { greId: id, n: rows.length, porFonte: Object.fromEntries(fontesInstalacao.map(fonte => [fonte, rows.filter(row => row.fonte === fonte).length])) as Record<FonteInstalacao, number> }; }).sort((a, b) => b.n - a.n),
-    novas12: instalacoes.filter(row => row.desde > ano).length, novasAntes: instalacoes.filter(row => row.desde > antes && row.desde <= ano).length };
+    novas12: instalacoes.filter(row => row.desde > ano).length, novasAntes: instalacoes.filter(row => row.desde > antes && row.desde <= ano).length,
+    registradas: [...new Set(instalacoes.filter(row => row.companyId && registrada.has(row.companyId)).map(row => row.companyId!))] };
 }

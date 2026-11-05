@@ -24,7 +24,8 @@ export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageId
 export type PainelDaPagina = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao';
 export const painelDaPagina = (page: PageId): PainelDaPagina => (pageIdsEmpresas as PageId[]).includes(page) ? 'empresas' : (pageIdsProfissionais as PageId[]).includes(page) ? 'profissionais' : (pageIdsFiscalizacao as PageId[]).includes(page) ? 'fiscalizacao' : 'geral';
 export interface Metas { cobertura: number; rt: number; adimplencia: number; recuperacao: number; regularizacao: number; atendimento: number }
-export const metasPadrao: Metas = { cobertura: 65, rt: 40, adimplencia: 60, recuperacao: 30, regularizacao: 50, atendimento: 80 };
+/** Meta de RT em 95% (05/11/2026): o responsável técnico é condição do registro (Lei 5.194/66, art. 8º), então 40% fazia 78% parecer vitória. */
+export const metasPadrao: Metas = { cobertura: 65, rt: 95, adimplencia: 60, recuperacao: 30, regularizacao: 50, atendimento: 80 };
 export interface Insight { tone: 'good' | 'bad' | 'neutral'; strong: string; text: string; page: PageId }
 export interface LeituraInput {
   metas: Metas; ponte: Ponte; cobertura: number | null; rt: number | null; resumo: ResumoFiscal; rec: Receita; saldo: number; inadimplencia: number | null;

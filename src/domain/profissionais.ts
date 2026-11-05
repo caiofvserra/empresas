@@ -96,6 +96,17 @@ export function buildProfissionais(dataset: Dataset): ModeloProfissionais {
       ...(chance(`${key}:inad`) < 0.14 ? { inadimplenteDesde: dateBetween(`${key}:inad-em`, addDays(registroEm, 365), anchor) } : {}) });
   }
   const porId = new Map(profissionais.map(row => [row.id, row]));
+  // RT com registro cancelado ou interrompido e vínculo vigente é exceção no cadastro real (05/11/2026): o sorteio acima deixava
+  // um quarto dos vínculos nessa situação. Nove em cada dez desses vínculos passam a um profissional ativo da mesma modalidade,
+  // registrado antes do vínculo; o décimo fica, para o bloco "Responsáveis técnicos" ter o que apontar.
+  const ativosPorModalidade = new Map<Modalidade, Profissional[]>();
+  for (const row of profissionais) if (situacaoEm(row, anchor) === 'Ativo') ativosPorModalidade.set(row.modalidade, [...(ativosPorModalidade.get(row.modalidade) ?? []), row]);
+  for (const link of dataset.technicalLinks) {
+    if (link.endDate && link.endDate <= anchor) continue;
+    const rt = porId.get(rtId(link)); if (!rt || situacaoEm(rt, anchor) === 'Ativo' || chance(`${link.id}:rt-inativo`) < 0.1) continue;
+    const pool = (ativosPorModalidade.get(rt.modalidade) ?? []).filter(row => row.registroEm <= link.startDate);
+    if (pool.length) rtDe.set(link.id, pool[between(`${link.id}:rt-troca`, 0, pool.length - 1)].id);
+  }
   // Autoria das ARTs: RT vigente da empresa na mesma modalidade quando houver; senão, profissional ativo da modalidade na mesma regional.
   const links = new Map<string, Dataset['technicalLinks']>();
   for (const link of dataset.technicalLinks) links.set(link.companyId, [...(links.get(link.companyId) ?? []), link]);

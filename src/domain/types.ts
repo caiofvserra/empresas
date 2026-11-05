@@ -4,6 +4,12 @@ export interface Company { id: string; rootCnpj: string; name: string; tradeName
 export interface City { id: string; name: string; greId: string; ibgeCode: string; x: number; y: number }
 export interface Gre { id: string; name: string }
 export type QualityKind = 'CNPJ inválido' | 'CNPJ duplicado na origem' | 'Sem CNAE' | 'Município divergente' | 'GRE não identificada' | 'CREA ativo / CNPJ baixado' | 'CNAE alterado' | 'Dados desatualizados';
+/** Nome legível de cada pendência do cadastro, em frase, para os textos do painel (05/11/2026); o tipo bruto fica só na base. */
+export const nomePendencia: Record<QualityKind, string> = {
+  'CNPJ inválido': 'com CNPJ inválido na origem', 'CNPJ duplicado na origem': 'com CNPJ repetido na origem', 'Sem CNAE': 'sem atividade informada',
+  'Município divergente': 'com município diferente do da Receita', 'GRE não identificada': 'sem regional identificada',
+  'CREA ativo / CNPJ baixado': 'com registro ativo e CNPJ baixado na Receita', 'CNAE alterado': 'com atividade alterada na Receita', 'Dados desatualizados': 'com dados desatualizados na Receita',
+};
 export interface Establishment { id: string; companyId: string; cnpj: string; branch: 'Matriz' | 'Filial'; cityId: string; greId: string; cnaeMain: string; cnaeSecondary: string[]; openedAt: string; rfbStatus: 'Ativa' | 'Baixada' | 'Suspensa' | 'Inapta'; creaCityId: string; updatedAt: string }
 export type RegistrationStatus = 'Ativo' | 'Inativo' | 'Cancelado';
 export interface Registration { id: string; companyId: string; establishmentId: string; type: 'Registro' | 'Visto'; status: RegistrationStatus; requestedAt: string; startedAt: string; ceasedAt?: string }

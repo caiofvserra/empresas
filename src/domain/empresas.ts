@@ -19,8 +19,8 @@ export interface PontoRitmo {
   month: string;
   /** Empregados com carteira em ocupações de engenharia no fim do mês (Novo CAGED e RAIS, em totais). */
   emprego: number;
-  /** Estabelecimentos com atividade da lista abertos na Receita nos 12 meses até o mês. */
-  aberturas12: number;
+  /** Estabelecimentos com atividade da lista abertos na Receita nos 12 meses até o mês; nulo depois do último mês com arquivo da Receita. */
+  aberturas12: number | null;
   /** Empresas que fizeram o primeiro registro no Crea-SP nos 12 meses até o mês. */
   registros12: number;
   /** Saldo de crédito a empresas das atividades da lista (Banco Central, em totais; depende de acordo). */
@@ -28,15 +28,29 @@ export interface PontoRitmo {
   /** PIB dos municípios no ano do mês (IBGE, anual). */
   pib: number;
 }
-export interface Ritmo { pontos: PontoRitmo[]; indice: Record<'emprego' | 'aberturas12' | 'registros12' | 'credito' | 'pib', number[]>; variacao: Record<'emprego' | 'aberturas12' | 'registros12' | 'credito' | 'pib', number | null> }
+export type SerieRitmo = 'emprego' | 'aberturas12' | 'registros12' | 'credito' | 'pib';
+export interface Ritmo { pontos: PontoRitmo[]; indice: Record<SerieRitmo, (number | null)[]>; variacao: Record<SerieRitmo, number | null>; ultimoMesReceita: string }
 const somaMovel = (values: number[], index: number) => sum(values.slice(Math.max(0, index - 11), index + 1));
+/** Último mês coberto pelo arquivo da Receita: o mês de abertura mais recente entre os estabelecimentos. O arquivo chega com atraso, e o último mês antes da data escolhida pode faltar. */
+export function ultimoMesReceita(view: Dataset): string {
+  let ultimo = '';
+  for (const place of view.establishments) if (place.openedAt <= view.snapshotDate && place.openedAt > ultimo) ultimo = place.openedAt;
+  return ultimo.slice(0, 7);
+}
+/** Data do primeiro registro de cada empresa (raiz do CNPJ), para separar a entrada pela primeira vez do retorno de quem já teve registro. */
+export function primeirosRegistros(view: Dataset): Map<string, string> {
+  const primeira = new Map<string, string>();
+  for (const row of view.registrations) { const atual = primeira.get(row.companyId); if (!atual || row.startedAt < atual) primeira.set(row.companyId, row.startedAt); }
+  return primeira;
+}
 /**
  * Uma linha por mês nos últimos `meses` meses até a data de referência. Aberturas e registros são somas de 12 meses, para tirar o
  * efeito de mês a mês; emprego e crédito são o estoque do fim do mês; o PIB é o do ano. O índice divide cada série pelo primeiro mês
- * mostrado (= 100), para comparar o ritmo de séries com unidades diferentes.
+ * mostrado (= 100), para comparar o ritmo de séries com unidades diferentes. A série de aberturas termina no último mês com arquivo
+ * da Receita (05/11/2026): antes, o mês sem arquivo entrava como zero na soma móvel e a série caía no fim.
  */
 export function ritmoEconomico(view: Dataset, greId: string | null, companyIds: Set<string> | null, meses = 24, cityId: string | null = null): Ritmo {
-  const months = view.months.filter(month => month <= view.snapshotDate.slice(0, 7));
+  const months = view.months.filter(month => month <= view.snapshotDate.slice(0, 7)), ultimoReceita = ultimoMesReceita(view);
   const cidades = municipiosSp(view).filter(row => (!greId || row.greId === greId) && (!cityId || row.id === cityId));
   const cidadeDe = new Map(view.establishments.map(row => [row.id, row.cityId]));
   const dentro = (companyId: string, gre: string, city?: string) => (!greId || gre === greId) && (!cityId || city === cityId) && (!companyIds || companyIds.has(companyId));
@@ -56,13 +70,14 @@ export function ritmoEconomico(view: Dataset, greId: string | null, companyIds: 
   const inicio = Math.max(11, months.length - meses);
   const pontos = months.slice(inicio).map((month, k) => {
     const index = inicio + k, passo = index / Math.max(1, months.length - 1);
-    return { month, emprego: emprego.get(month) ?? 0, aberturas12: somaMovel(serieAbertas, index), registros12: somaMovel(serieRegistros, index),
+    return { month, emprego: emprego.get(month) ?? 0, aberturas12: month <= ultimoReceita ? somaMovel(serieAbertas, index) : null, registros12: somaMovel(serieRegistros, index),
       credito: Math.round(credito0 * (0.86 + 0.14 * passo) * (0.985 + chance(`credito:${cityId ?? greId ?? 'todas'}:${month}`) * 0.03)), pib: Math.round(pibAno(Number(month.slice(0, 4)))) };
   });
-  const chaves = ['emprego', 'aberturas12', 'registros12', 'credito', 'pib'] as const;
-  const indice = Object.fromEntries(chaves.map(key => { const base = pontos[0]?.[key] || 1; return [key, pontos.map(row => Math.round(row[key] / base * 1000) / 10)]; })) as Ritmo['indice'];
-  const variacao = Object.fromEntries(chaves.map(key => { const first = pontos[0]?.[key], last = pontos.at(-1)?.[key]; return [key, first && last !== undefined ? (last - first) / first * 100 : null]; })) as Ritmo['variacao'];
-  return { pontos, indice, variacao };
+  const chaves: SerieRitmo[] = ['emprego', 'aberturas12', 'registros12', 'credito', 'pib'];
+  const indice = Object.fromEntries(chaves.map(key => { const base = pontos[0]?.[key] || 1; return [key, pontos.map(row => row[key] === null ? null : Math.round(row[key]! / base * 1000) / 10)]; })) as Ritmo['indice'];
+  // A variação vai do primeiro mês ao último mês com valor (para as aberturas, o último mês com arquivo da Receita).
+  const variacao = Object.fromEntries(chaves.map(key => { const first = pontos[0]?.[key], last = [...pontos].reverse().find(row => row[key] !== null)?.[key]; return [key, first && last !== undefined && last !== null ? (last - first) / first * 100 : null]; })) as Ritmo['variacao'];
+  return { pontos, indice, variacao, ultimoMesReceita: ultimoReceita };
 }
 
 /* ---------- Atividades (CNAE) com mais estabelecimentos sem registro ---------- */
@@ -118,13 +133,18 @@ export function porCapital(scope: Scope, model: EnterpriseModel) {
 }
 
 /* ---------- ARTs de empresas mês a mês ---------- */
-/** ARTs de empresas por mês nos últimos 24 meses até a data de referência, com o mesmo mês do ano anterior para comparar. */
-export function artsMensais(scope: Scope) {
-  const months = scope.dataset.months.filter(month => month <= scope.dataset.snapshotDate.slice(0, 7));
+/**
+ * ARTs de empresas por mês nos últimos `meses` meses até a data de referência, com o mesmo mês do ano anterior para comparar.
+ * A contagem lê a base inteira (`scope.dataset.arts`, 36 meses no cenário) no recorte de empresas do scope, e não só `scope.arts`,
+ * que fica limitado ao período: assim a linha do ano anterior existe em todos os meses do gráfico (05/11/2026). Mês sem ART na
+ * base, por estar antes do primeiro mês carregado, fica nulo.
+ */
+export function artsMensais(scope: Scope, meses = 24) {
+  const corte = scope.dataset.snapshotDate, months = scope.dataset.months.filter(month => month <= corte.slice(0, 7)), carregados = new Set(scope.dataset.months);
   const porMes = new Map<string, { n: number; empresas: Set<string> }>();
-  for (const row of scope.arts) { if (row.date > scope.dataset.snapshotDate) continue; const month = row.date.slice(0, 7), item = porMes.get(month) ?? { n: 0, empresas: new Set() }; item.n++; item.empresas.add(row.companyId); porMes.set(month, item); }
-  return months.slice(-24).map(month => { const anterior = `${Number(month.slice(0, 4)) - 1}${month.slice(4)}`;
-    return { month, n: porMes.get(month)?.n ?? 0, anoAnterior: porMes.has(anterior) ? porMes.get(anterior)!.n : null, empresas: [...(porMes.get(month)?.empresas ?? [])] }; });
+  for (const row of scope.dataset.arts) { if (row.date > corte || !scope.companyIds.has(row.companyId)) continue; const month = row.date.slice(0, 7), item = porMes.get(month) ?? { n: 0, empresas: new Set() }; item.n++; item.empresas.add(row.companyId); porMes.set(month, item); }
+  return months.slice(-meses).map(month => { const anterior = `${Number(month.slice(0, 4)) - 1}${month.slice(4)}`;
+    return { month, n: porMes.get(month)?.n ?? 0, anoAnterior: carregados.has(anterior) ? porMes.get(anterior)?.n ?? 0 : null, empresas: [...(porMes.get(month)?.empresas ?? [])] }; });
 }
 
 /* ---------- Qualidade do cadastro das empresas registradas ---------- */
@@ -203,8 +223,7 @@ export function idadeCapital(scope: Scope, model: EnterpriseModel) {
 /* ---------- Novos registros por câmara e mês ---------- */
 /** Empresas que fizeram o primeiro registro no Crea-SP em cada mês dos últimos 24, pela câmara da atividade principal. */
 export function registrosPorCamara(scope: Scope, camaraDe: Map<string, string>, meses = 24) {
-  const view = scope.dataset, months = view.months.filter(month => month <= view.snapshotDate.slice(0, 7)).slice(-meses), primeira = new Map<string, string>();
-  for (const row of view.registrations) { const atual = primeira.get(row.companyId); if (!atual || row.startedAt < atual) primeira.set(row.companyId, row.startedAt); }
+  const view = scope.dataset, months = view.months.filter(month => month <= view.snapshotDate.slice(0, 7)).slice(-meses), primeira = primeirosRegistros(view);
   const camaras = new Map<string, Map<string, string[]>>();
   for (const [id, inicio] of primeira) {
     const month = inicio.slice(0, 7); if (!scope.companyIds.has(id) || !months.includes(month)) continue;

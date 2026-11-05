@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { municipioPorId } from '../domain/municipios';
-import { Copy, Filter, Search, X } from 'lucide-react';
+import { Copy, Download, Filter, Search, X } from 'lucide-react';
+import { baixarCsv, nomeArquivo, textoCsv } from './exportar';
 import type { Acao, Alvo, StatusMulta } from './fiscalizacao';
 import { tipoLabel } from './fiscalizacao';
 import { camaraDaEmpresa, segmentos } from './analise';
-import type { Ctx, Detail } from './contexto';
+import type { Ctx, Detail, Recorte } from './contexto';
 import { brl, data, int, money, pct, short } from './ui';
 
 /** Painel lateral: o que o número mede, como usar e a lista para agir (busca, ficha e cópia para planilha). */
 interface Row { key: string; companyId?: string; title: string; subtitle: string; value: string; note: string; sortValue: number; companies?: string[] }
-interface Content { eyebrow: string; title: string; what: string; use?: string; summary: [string, string][]; rows: Row[]; listTitle: string; greId?: string }
+interface Content { eyebrow: string; title: string; what: string; use?: string; summary: [string, string][]; rows: Row[]; listTitle: string; greId?: string; recorte?: Recorte }
 
 const DAY = 86400000;
 const days = (from: string, to: string) => Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / DAY);
@@ -20,20 +21,22 @@ export default function Drawer({ ctx, detail, onClose }: { ctx: Ctx; detail: Det
   const [query, setQuery] = useState(''), [open, setOpen] = useState<string | null>(null), [limit, setLimit] = useState(50), [copied, setCopied] = useState('');
   useEffect(() => { setQuery(''); setOpen(null); setLimit(50); setCopied(''); }, [detail]);
   const visible = content.rows.filter(row => !query || `${row.title} ${row.subtitle} ${row.note}`.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')));
+  const cabecalho = ['Nome', 'Identificação', 'Valor', 'Situação'], linhas = () => visible.map(row => [row.title, row.subtitle, row.value, row.note]);
   const copy = async () => {
-    const csv = ['Nome;Identificação;Valor;Situação', ...visible.map(row => [row.title, row.subtitle, row.value, row.note].map(value => `"${value.replace(/"/g, '""')}"`).join(';'))].join('\n');
-    try { await navigator.clipboard.writeText(csv); setCopied(`${int(visible.length)} linhas copiadas. Cole numa planilha.`); } catch { setCopied('Não foi possível copiar neste navegador.'); }
+    try { await navigator.clipboard.writeText(textoCsv(cabecalho, linhas())); setCopied(`${int(visible.length)} linhas copiadas. Cole numa planilha.`); } catch { setCopied('Não foi possível copiar neste navegador.'); }
   };
+  const baixar = () => { baixarCsv(nomeArquivo(['empresas', content.title, ctx.f.anchor], 'csv'), cabecalho, linhas()); setCopied(`${int(visible.length)} linhas salvas em CSV, prontas para o Excel.`); };
   return <div className="drawer-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
     <aside className="drawer" role="dialog" aria-modal="true" aria-label={content.title}>
       <header><div><span className="eyebrow">{content.eyebrow}</span><h2>{content.title}</h2></div>
-        <div className="drawer-actions">{content.greId && <button className="ghost" onClick={() => { ctx.filterGre(content.greId!); onClose(); }}><Filter size={14} />Filtrar a página</button>}<button className="icon-btn" onClick={onClose} aria-label="Fechar detalhe"><X size={18} /></button></div></header>
+        <div className="drawer-actions">{content.greId && <button className="ghost" onClick={() => { ctx.filterGre(content.greId!); onClose(); }}><Filter size={14} />Filtrar a página</button>}
+          {content.recorte && <button className="ghost" onClick={() => { ctx.filtrar(content.recorte!); onClose(); }} title="Aplica este recorte aos filtros do alto da tela, como o filtro cruzado do Power BI"><Filter size={14} />Filtrar a página por {rotuloRecorte(ctx, content.recorte)}</button>}<button className="icon-btn" onClick={onClose} aria-label="Fechar detalhe"><X size={18} /></button></div></header>
       <div className="drawer-body">
         <p className="what">{content.what}</p>
         {content.use && <p className="use"><b>Para agir:</b> {content.use}</p>}
         {content.summary.length > 0 && <dl className="summary">{content.summary.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>}
         <div className="list-head"><h3>{content.listTitle}<span>{int(content.rows.length)}</span></h3>
-          <div className="list-tools"><label className="search"><Search size={14} /><input id="busca-detalhe" placeholder="Buscar nome, CNPJ, município ou situação" value={query} onChange={event => setQuery(event.target.value)} /></label><button className="ghost" onClick={copy} disabled={!visible.length}><Copy size={14} />Copiar lista</button></div>
+          <div className="list-tools"><label className="search"><Search size={14} /><input id="busca-detalhe" placeholder="Buscar nome, CNPJ, município ou situação" value={query} onChange={event => setQuery(event.target.value)} /></label><button className="ghost" onClick={copy} disabled={!visible.length}><Copy size={14} />Copiar lista</button><button className="ghost" onClick={baixar} disabled={!visible.length}><Download size={14} />Baixar CSV</button></div>
           {copied && <p className="copied" role="status">{copied}</p>}
         </div>
         <ol className="list">{visible.slice(0, limit).map(row => <li key={row.key} className={open === row.key ? 'is-open' : ''}>
@@ -47,6 +50,7 @@ export default function Drawer({ ctx, detail, onClose }: { ctx: Ctx; detail: Det
   </div>;
 }
 
+const rotuloRecorte = (ctx: Ctx, recorte: Recorte) => [recorte.cidade && (municipioPorId(ctx.dataset).get(recorte.cidade)?.nome ?? recorte.cidade), recorte.gre && !recorte.cidade && (ctx.dataset.gres.find(row => row.id === recorte.gre)?.name ?? recorte.gre), recorte.camara].filter(Boolean).join(' · ');
 const companyName = (ctx: Ctx, id: string) => { const company = ctx.dataset.companies.find(row => row.id === id); return company ? company.tradeName || company.name : id; };
 
 function CompanyCard({ ctx, companyId }: { ctx: Ctx; companyId: string }) {
@@ -129,18 +133,18 @@ function build(ctx: Ctx, detail: Detail): Content {
     }
     case 'empresas': {
       const facts = new Map(ctx.model.companyFacts.map(row => [row.companyId, row]));
-      return { eyebrow: detail.eyebrow ?? scopeLabel, title: detail.title, what: detail.what, use: detail.use, summary: [],
+      return { eyebrow: detail.eyebrow ?? scopeLabel, title: detail.title, what: detail.what, use: detail.use, summary: [], recorte: detail.recorte,
         rows: sorted(detail.ids.map(id => { const fact = facts.get(id), main = dataset.establishments.find(row => row.companyId === id && row.branch === 'Matriz') ?? dataset.establishments.find(row => row.companyId === id);
           return { key: id, companyId: id, title: name(id), subtitle: `${companies.get(id)?.rootCnpj ?? ''} · ${cities.get(main?.cityId ?? '') ?? '—'}`, value: (fact?.overdue ?? 0) > 0 ? `deve ${money(fact!.overdue)}` : 'em dia', note: `${companies.get(id)?.size ?? ''} · ${camaraDaEmpresa(dataset).get(id) ?? ''}`, sortValue: fact?.overdue ?? 0 }; })), listTitle: 'Empresas, maior saldo vencido primeiro' };
     }
     case 'cnpjs': {
       const anchorOpened = (id: string) => places.get(id)?.openedAt ?? '';
       const alvoBy = new Map(f.alvos.filter(row => row.tipo === 'registro' && !row.regularizedAt).map(row => [row.establishmentId, row]));
-      return { eyebrow: detail.eyebrow ?? scopeLabel, title: detail.title, what: detail.what, use: detail.use, summary: [],
+      return { eyebrow: detail.eyebrow ?? scopeLabel, title: detail.title, what: detail.what, use: detail.use, summary: [], recorte: detail.recorte,
         rows: sorted(detail.ids.map(id => { const place = places.get(id), alvo = alvoBy.get(id), acao = alvo?.acaoId ? acoesById.get(alvo.acaoId) : undefined;
           return { key: id, companyId: place?.companyId, title: name(place?.companyId ?? ''), subtitle: where(id), value: `aberta ${data(anchorOpened(id))}`, note: `${place?.cnaeMain ?? ''} · ${acao ? `${statusAuto(acao)} em ${data(acao.date)}` : alvo ? 'sem ação' : 'registro ativo'}`, sortValue: Date.parse(anchorOpened(id)) }; })), listTitle: 'CNPJs, abertura mais recente primeiro' };
     }
-    case 'linhas': return { eyebrow: detail.eyebrow ?? scopeLabel, title: detail.title, what: detail.what, use: detail.use, summary: detail.summary ?? [], rows: [...detail.rows].sort((a, b) => b.sortValue - a.sortValue), listTitle: detail.listTitle };
+    case 'linhas': return { eyebrow: detail.eyebrow ?? scopeLabel, title: detail.title, what: detail.what, use: detail.use, summary: detail.summary ?? [], recorte: detail.recorte, rows: [...detail.rows].sort((a, b) => b.sortValue - a.sortValue), listTitle: detail.listTitle };
     case 'profissionais': {
       const anchor = f.anchor, active = new Set(ctx.model.metadata.activeCompanyIds);
       const links = dataset.technicalLinks.filter(row => active.has(row.companyId) && row.startDate <= anchor && (!row.endDate || row.endDate > anchor));

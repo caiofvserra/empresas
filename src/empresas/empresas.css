@@ -40,8 +40,9 @@
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
   "ar ar ar ar ar ar ar am am am am am"
   "qt qt qt qt qt qt qt sa sa sa sa sa"; }
+/* Em 05/11/2026 o bloco de sócios (três barras) cedeu uma coluna para o de instalações (quatro linhas com barra e complemento). */
 .ck-grid-vinculos { grid-template-rows: repeat(2, minmax(0, 1fr)); grid-template-areas:
-  "dn dn dn dn sp sp sp sp sp in in in"
+  "dn dn dn dn sp sp sp sp in in in in"
   "vn vn vn vn cr cr cr cr jc jc jc jc"; }
 @media (max-height: 699px) and (min-width: 1101px) {
   .ck-grid-mercado { grid-template-rows: auto repeat(3, 230px); }
@@ -50,16 +51,44 @@
 }
 .ck-grid-mercado, .ck-grid-evolucao, .ck-grid-rt, .ck-grid-vinculos { align-content: stretch; }
 
+/* Receita comparada com o cadastro (05/11/2026): barras de 100% da correspondência em cima e a situação do CNPJ das registradas embaixo. */
+.duas-partes { flex: 1; min-height: 0; display: grid; grid-template-rows: minmax(0, 11fr) auto minmax(0, 9fr); }
+.duas-partes .chart { min-height: 0; }
+.parte-titulo { margin: 0; padding: 1px 2px 0; font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+/* Mapa de árvore com a legenda das três faixas da meta no rodapé (05/11/2026). */
+.arvore-layout { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.arvore-layout .chart { min-height: 0; }
+.geo-legend.is-meta { margin-top: 3px; }
+
 /* Lista por fonte (instalações): número grande, barra fina e complemento */
 .fonte-list { flex: 1; min-height: 0; margin: 0; padding: 0; list-style: none; display: grid; grid-auto-rows: minmax(0, 1fr); gap: 4px; }
-.fonte-list button { width: 100%; height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 4px auto; column-gap: 8px; row-gap: 2px; align-content: center; padding: 3px 7px; border: 0; border-radius: 8px; background: transparent; text-align: left; color: var(--ink); }
+.fonte-list button { width: 100%; height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 6px auto; column-gap: 8px; row-gap: 2px; align-content: center; padding: 3px 7px; border: 0; border-radius: 8px; background: transparent; text-align: left; color: var(--ink); }
 .fonte-list button:hover:not(:disabled) { background: var(--soft); }
 .fonte-nome { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fonte-nome i { flex: none; width: 9px; height: 9px; border-radius: 2px; }
 .fonte-list b { font-size: 15px; font-weight: 800; }
-.fonte-barra { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--soft); overflow: hidden; }
+/* A barra tem três tons, lado a lado: registradas (cor cheia), com atividade de engenharia sem registro (cor clara) e CNPJ fora da lista (cinza). */
+.fonte-barra { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--soft); overflow: hidden; display: flex; }
 .fonte-barra em { display: block; height: 100%; border-radius: 2px; }
 .fonte-list small { grid-column: 1 / -1; font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fonte-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; }
+.fonte-legenda { display: flex; flex-wrap: wrap; gap: 2px 10px; padding: 0 7px; font-size: 10px; color: var(--muted); }
+.fonte-legenda span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.fonte-legenda i { width: 9px; height: 9px; border-radius: 2px; }
+
+/* Responsáveis técnicos (aba RT, 05/11/2026): barra segmentada e lista à esquerda, histograma de empresas por RT à direita. */
+.quadro-rt { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.quadro-rt-esq { min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 18px; gap: 8px; }
+.quadro-rt-esq .segments { height: 10px; }
+.quadro-rt-dir { min-height: 0; display: flex; flex-direction: column; }
+.quadro-rt .qt-list { gap: 2px; }
+.quadro-rt .qt-list button { padding: 4px 5px; }
+.quadro-rt .qt-list b { white-space: nowrap; }
+.quadro-rt .qt-list span > small { display: block; color: var(--muted); font-size: 10px; line-height: 1.2; font-weight: 400; }
+/* Linha de ação sem quadrado de legenda: é um subconjunto das com RT, e o traço vermelho diz que pede providência. */
+.quadro-rt .qt-list button.qt-acao { grid-template-columns: minmax(0, 1fr) auto; margin-top: 4px; border-left: 2px solid var(--bad); border-radius: 0 7px 7px 0; }
+.quadro-rt .qt-list button.qt-acao b { color: var(--bad); }
+@media (max-width: 1100px) { .quadro-rt { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(160px, 1fr); } }
 
 .ck-rail-painel { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 10px; padding: 7px 2px 6px; border-top: 1px solid rgba(255,255,255,.14); border-radius: 0 0 12px 12px; color: #FABD07; font-size: 10px; font-weight: 700; line-height: 1.15; text-align: center; text-decoration: none; }
 .ck-rail-painel:hover { color: #FFFFFF; background: rgba(255,255,255,.09); }

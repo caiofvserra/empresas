@@ -50,6 +50,10 @@ test('tempo de registro e capital social: as faixas dividem as empresas registra
   assert.equal(sum(porCapital(scope, model).map(row => row.ids.length)), ativas);
   const arts = artsMensais(scope);
   assert.equal(arts.length, 24);
+  // A linha do ano anterior existe em todos os meses: a base tem 36 meses e a contagem lê a base inteira, não só o período (05/11/2026).
+  assert.ok(arts.every(row => row.anoAnterior !== null), 'mesmo mês do ano anterior em todos os meses');
+  assert.ok(arts.slice(-12).every(row => row.n > 0), 'ARTs nos últimos 12 meses');
+  assert.equal(artsMensais(scope, 12).length, 12);
   assert.ok(cadastroIncompleto(scope, model).ids.every(id => model.metadata.activeCompanyIds.includes(id)));
 });
 
@@ -67,6 +71,10 @@ test('credenciamentos e Junta Comercial: dependem de parceria, ficam marcados co
   const sem = new Set(j.semRegistro);
   assert.ok(j.registradasDepois.every(id => !sem.has(id)) && j.jaRegistradas.every(id => !sem.has(id)));
   assert.equal(sum(j.trimestres.map(row => row.aberturas + row.alteracoes)), j.atos.length);
+  // Os três desfechos somam os atos de cada trimestre (05/11/2026): a barra empilhada fecha no total.
+  for (const row of j.trimestres) assert.equal(row.registradasDepois + row.jaRegistradas + row.semRegistro, row.aberturas + row.alteracoes, `desfechos de ${row.trimestre}`);
+  assert.equal(j.trimestres.filter(row => row.emCurso).length, 1);
+  assert.ok(j.registradasDepois.length + j.jaRegistradas.length + j.semRegistro.length === j.atos.length);
 });
 
 test('painel de Empresas: clicar detalha o item clicado, nunca abre o resumo genérico da regional, e não há "dono" nem "em D" no texto', () => {
