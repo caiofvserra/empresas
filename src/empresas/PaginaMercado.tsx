@@ -7,13 +7,14 @@ import { nomePendencia } from '../domain/types';
 import type { QualityKind } from '../domain/types';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { pagamento } from '../cockpit/medidas';
+import { useSeriesEmpresas } from './series';
 import { Bloco, Indicador } from '../cockpit/ui';
 import { ArvoreMercado, CamaraPorte, Conciliacao, Funil, IdadeCapital, MapaMercado, Situacoes, exportarArvore, exportarCamaraPorte, exportarConciliacao, exportarFunil, exportarIdadeCapital, exportarMapa, exportarSituacoes, metricasMapa } from './blocos';
 import type { MetricaMapa } from './blocos';
 
 /** Painel de Empresas, página 1: o tamanho do mercado de engenharia, quanto dele está registrado e em que atividades estão as que faltam. */
 export default function PaginaMercado({ ctx }: { ctx: CockpitCtx }) {
-  const { model, scope, metas } = ctx, c = ctx.norte.cobertura, n = ctx.norte.contagens;
+  const { model, scope, metas } = ctx, series = useSeriesEmpresas(ctx), c = ctx.norte.cobertura, n = ctx.norte.contagens;
   const flow = useMemo(() => complianceFlow(model, scope), [model, scope]);
   const pay = pagamento(model), ativas = model.metadata.activeCompanyIds, incompleto = useMemo(() => cadastroIncompleto(scope, model), [scope, model]);
   const semRegistro = c.porClasse.Sim['Sem correspondência'];
@@ -22,7 +23,7 @@ export default function PaginaMercado({ ctx }: { ctx: CockpitCtx }) {
   const pendencia = incompleto.porTipo[0];
   return <div className="ck-grid ck-grid-mercado">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores do mercado e do registro">
-      <Indicador ficha="k-empresas" ctx={ctx} label="Empresas registradas" value={int(n.raizes)} sub={`${int(n.estabelecimentos)} estabelecimentos · ${int(n.vistos)} vistos de empresas de fora de SP`}
+      <Indicador ficha="k-empresas" ctx={ctx} label="Empresas registradas" serie={series.base} value={int(n.raizes)} sub={`${int(n.estabelecimentos)} estabelecimentos · ${int(n.vistos)} vistos de empresas de fora de SP`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas registradas', what: 'Empresas, contadas pela raiz do CNPJ, com ao menos um registro ou visto ativo na data escolhida.', ids: ativas })} />
       <Indicador destaque ficha="k-cobertura" ctx={ctx} label="Parte do mercado que está registrada" value={c.taxa === null ? '—' : pct(c.taxa, 1)} meta={{ atual: c.taxa, alvo: metas.cobertura }} variacao={{ value: c.taxa === null ? null : c.taxa - metas.cobertura, kind: 'pp', label: `em relação à meta de ${metas.cobertura}%` }}
         sub={`nas atividades de registro obrigatório, ${c.taxaSim === null ? '—' : pct(c.taxaSim, 1)}`} />

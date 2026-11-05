@@ -3,12 +3,13 @@ import { int, pct } from '../painel/ui';
 import { primeirosRegistros } from '../domain/empresas';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { entradasSaidas, primeirasEntradas } from '../cockpit/medidas';
+import { useSeriesEmpresas } from './series';
 import { Bloco, Indicador } from '../cockpit/ui';
 import { Dinamica, EntradasSaidas, RegistrosCalor, Ritmo, exportarDinamica, exportarEntradasSaidas, exportarRegistrosCalor, exportarRitmo, useRitmo } from './blocos';
 
 /** Painel de Empresas, página 2: economia, aberturas na Receita e registros no Crea-SP lado a lado, e quem entra e sai da base. */
 export default function PaginaEvolucao({ ctx }: { ctx: CockpitCtx }) {
-  const r = useRitmo(ctx), a = ctx.mercado.aberturas, p12 = ctx.mercado.permanencia.find(row => row.mesesAtras === 12), nMeses = ctx.janela.months.length;
+  const series = useSeriesEmpresas(ctx), r = useRitmo(ctx), a = ctx.mercado.aberturas, p12 = ctx.mercado.permanencia.find(row => row.mesesAtras === 12), nMeses = ctx.janela.months.length;
   const meses = useMemo(() => entradasSaidas(ctx.history, ctx.f).filter(row => row.month >= ctx.janela.start.slice(0, 7) && row.month <= ctx.janela.end.slice(0, 7)), [ctx.history, ctx.f, ctx.janela]);
   const entradas = meses.flatMap(row => [...row.viaFiscalizacao, ...row.demais]), saidas = meses.flatMap(row => row.saidas), viaFiscal = meses.flatMap(row => row.viaFiscalizacao);
   // Entradas pela primeira vez e retornos (05/11/2026): o cartão conta as duas, e o calor de novos registros só o primeiro registro.
@@ -16,9 +17,9 @@ export default function PaginaEvolucao({ ctx }: { ctx: CockpitCtx }) {
   const sinal = (value: number | null) => value === null ? null : value;
   return <div className="ck-grid ck-grid-evolucao">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores da evolução das empresas">
-      <Indicador ficha="k-entradas" ctx={ctx} label="Empresas que entraram na base" value={int(entradas.length)} sub={`${int(origem.primeiras.length)} pela primeira vez, ${int(origem.retornos.length)} retornos; ${int(viaFiscal.length)} após fiscalização`}
+      <Indicador ficha="k-entradas" ctx={ctx} label="Empresas que entraram na base" serie={series.entradas} value={int(entradas.length)} sub={`${int(origem.primeiras.length)} pela primeira vez, ${int(origem.retornos.length)} retornos; ${int(viaFiscal.length)} após fiscalização`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas que entraram na base no período', what: 'Empresas que passaram a ter registro ativo no período escolhido no alto da tela, pela primeira vez ou de volta depois de uma baixa ou um cancelamento.', ids: entradas })} />
-      <Indicador ficha="k-saidas" ctx={ctx} label="Empresas que saíram da base" value={int(saidas.length)} sub={`saldo de ${entradas.length - saidas.length >= 0 ? '+' : ''}${int(entradas.length - saidas.length)} no período`}
+      <Indicador ficha="k-saidas" ctx={ctx} label="Empresas que saíram da base" serie={series.saidas} value={int(saidas.length)} sub={`saldo de ${entradas.length - saidas.length >= 0 ? '+' : ''}${int(entradas.length - saidas.length)} no período`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Empresas que saíram da base no período', what: 'Empresas cujo registro deixou de estar ativo no período (baixa ou cancelamento).', ids: saidas })} />
       <Indicador ficha="k-aberturas" ctx={ctx} label={`Empresas de engenharia abertas em ${nMeses} meses`} value={int(a.total)} sub={`${a.total ? pct(a.comRegistro / a.total * 100) : '—'} delas já se registraram`}
         onOpen={() => ctx.open({ kind: 'cnpjs', title: `Abertas na Receita nos últimos ${nMeses} meses`, what: `Estabelecimentos com atividade da lista do Crea-SP abertos nos ${nMeses} meses anteriores à data escolhida.`, ids: a.ids })} />
