@@ -24,6 +24,19 @@ export function entradasSaidas(history: EnterpriseModel, f: Fiscalizacao): MesBa
   return history.monthly.map(row => { const set = induzidas.get(row.month);
     return { month: row.month, base: row.base, viaFiscalizacao: row.enteredIds.filter(id => set?.has(id)), demais: row.enteredIds.filter(id => !set?.has(id)), saidas: row.exitedIds }; });
 }
+/** Entradas do período separadas entre a primeira vez (o primeiro registro da empresa é do próprio mês) e o retorno de quem já teve registro (05/11/2026). */
+export function primeirasEntradas(rows: MesBase[], primeira: Map<string, string>) {
+  const primeiras: string[] = [], retornos: string[] = [];
+  for (const row of rows) for (const id of [...row.viaFiscalizacao, ...row.demais]) (primeira.get(id)?.slice(0, 7) === row.month ? primeiras : retornos).push(id);
+  return { primeiras, retornos };
+}
+/** Situação do CNPJ da matriz na Receita, em ordem fixa; a registrada com CNPJ baixado ou inapto é cadastro inflado e anuidade incobrável. */
+export const situacoesReceita = ['Ativa', 'Baixada', 'Suspensa', 'Inapta'] as const;
+/** Empresas registradas (raiz do CNPJ com registro ou visto ativo) pela situação da matriz na Receita (05/11/2026). */
+export function situacaoReceita(dataset: Dataset, model: EnterpriseModel) {
+  const main = mainEstablishments(dataset);
+  return situacoesReceita.map(situacao => ({ situacao, ids: model.metadata.activeCompanyIds.filter(id => (main.get(id)?.rfbStatus ?? 'Ativa') === situacao) }));
+}
 export const portes = ['Microempresa', 'Pequena empresa', 'Média empresa', 'Grande empresa'];
 export function camaraPorte(dataset: Dataset, model: EnterpriseModel) {
   const camara = camaraDaEmpresa(dataset), size = new Map(dataset.companies.map(row => [row.id, row.size as string]));

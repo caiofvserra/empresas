@@ -50,6 +50,15 @@
 }
 .ck-grid-mercado, .ck-grid-evolucao, .ck-grid-rt, .ck-grid-vinculos { align-content: stretch; }
 
+/* Receita comparada com o cadastro (05/11/2026): barras de 100% da correspondência em cima e a situação do CNPJ das registradas embaixo. */
+.duas-partes { flex: 1; min-height: 0; display: grid; grid-template-rows: minmax(0, 11fr) auto minmax(0, 9fr); }
+.duas-partes .chart { min-height: 0; }
+.parte-titulo { margin: 0; padding: 1px 2px 0; font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+/* Mapa de árvore com a legenda das três faixas da meta no rodapé (05/11/2026). */
+.arvore-layout { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.arvore-layout .chart { min-height: 0; }
+.geo-legend.is-meta { margin-top: 3px; }
+
 /* Lista por fonte (instalações): número grande, barra fina e complemento */
 .fonte-list { flex: 1; min-height: 0; margin: 0; padding: 0; list-style: none; display: grid; grid-auto-rows: minmax(0, 1fr); gap: 4px; }
 .fonte-list button { width: 100%; height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 4px auto; column-gap: 8px; row-gap: 2px; align-content: center; padding: 3px 7px; border: 0; border-radius: 8px; background: transparent; text-align: left; color: var(--ink); }
