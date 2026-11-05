@@ -1,8 +1,10 @@
 import { municipioPorId } from '../domain/municipios';
 import { tituloPorCodigo } from '../domain/titulos';
-import { Fragment, useState } from 'react';
-import type { ReactNode, SyntheticEvent } from 'react';
-import { ArrowDownRight, ArrowUpRight, Info, Maximize2, Minimize2, Minus } from 'lucide-react';
+import { Fragment, useRef, useState } from 'react';
+import type { ReactNode, RefObject, SyntheticEvent } from 'react';
+import { ArrowDownRight, ArrowUpRight, Download, Info, Maximize2, Minimize2, Minus } from 'lucide-react';
+import { baixarCsv, baixarPng, nomeArquivo } from '../painel/exportar';
+import type { Celula } from '../painel/exportar';
 import { parceriaPorId } from '../domain/parcerias';
 import type { ParceriaId } from '../domain/parcerias';
 import { mainEstablishments } from '../gestao-v14/metrics';
@@ -28,17 +30,48 @@ export function Parceria({ id, compacto }: { id: ParceriaId; compacto?: boolean 
   const p = parceriaPorId[id];
   return <span className={`selo selo-parceria ${compacto ? 'is-compacto' : ''}`} role="img" aria-label={`Depende de parceria com ${p.parceiro}`} title={`Depende de parceria: ${p.parceiro}. ${p.entrega}.`}>!</span>;
 }
-export function Bloco({ ctx, id, area, title, question, help, badge, actions, children, className }: { ctx: CockpitCtx; id: string; area: string; title: string; question?: string; help?: string; badge?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
+/** Dados de um bloco para exportar em CSV: cabeçalho e linhas, calculados só quando o botão é apertado. */
+export interface Exportavel { cabecalho: string[]; linhas: () => Celula[][] }
+export function Bloco({ ctx, id, area, title, question, help, badge, actions, children, className, exportar }: { ctx: CockpitCtx; id: string; area: string; title: string; question?: string; help?: string; badge?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; exportar?: Exportavel }) {
   // No painel de Empresas o visual fica enxuto: a pergunta e a leitura do bloco vão para o (i), e o bloco mostra só o título.
   const focus = ctx.focus === id, ficha = fichaDe(ctx.page, id), leitura = ctx.enxuto ? [question, help].filter(Boolean).join(' ') || undefined : help;
-  return <section className={`tile ck-tile ${focus ? 'is-focus' : ''} ${ficha?.parceria ? 'is-parceria' : ''} ${className ?? ''}`} style={{ gridArea: area }} aria-label={title}>
-    <header><div><h3>{title}{parceriasDe(ficha).map(id => <Parceria key={id} id={id} />)}{badge}</h3>{question && !ctx.enxuto && <p>{question}</p>}</div>
+  const alvo = useRef<HTMLElement>(null);
+  return <section ref={alvo} className={`tile ck-tile ${focus ? 'is-focus' : ''} ${ficha?.parceria ? 'is-parceria' : ''} ${className ?? ''}`} style={{ gridArea: area }} aria-label={title}>
+    <header><div><h3>{title}<Parcerias ids={parceriasDe(ficha)} />{badge}</h3>{question && !ctx.enxuto && <p>{question}</p>}</div>
       <div className="tile-tools">{actions}
+        <ExportaPop ctx={ctx} titulo={title} exportar={exportar} alvo={alvo} />
         <FichaPop ficha={ficha} titulo={title} leitura={leitura} anchor={ctx.anchor} />
         <button className="icon-btn ghost-icon" aria-label={focus ? `Restaurar ${title}` : `Ampliar ${title}`} title={focus ? 'Restaurar (Esc)' : 'Ampliar'} onClick={() => ctx.toggleFocus(id)}>{focus ? <Minimize2 size={14} /> : <Maximize2 size={14} />}</button>
       </div></header>
     <div className="tile-body">{children}</div>
   </section>;
+}
+
+/** Um "!" só, mesmo quando o bloco depende de mais de um acordo; o título cita todos os parceiros (05/11/2026: dois "!" pareciam erro). */
+export function Parcerias({ ids, compacto }: { ids: ParceriaId[]; compacto?: boolean }) {
+  if (!ids.length) return null;
+  if (ids.length === 1) return <Parceria id={ids[0]} compacto={compacto} />;
+  const nomes = ids.map(id => parceriaPorId[id].parceiro);
+  return <span className={`selo selo-parceria ${compacto ? 'is-compacto' : ''}`} role="img" aria-label={`Depende de parceria com ${nomes.join(' e ')}`} title={`Depende de parceria: ${nomes.join(' e ')}. ${ids.map(id => parceriaPorId[id].entrega).join(' ')}`}>!</span>;
+}
+
+/** Menu de exportação do bloco: os dados em CSV (quando o bloco os informa) e a imagem do gráfico em PNG (quando há SVG no bloco). */
+export function ExportaPop({ ctx, titulo, exportar, alvo }: { ctx: CockpitCtx; titulo: string; exportar?: Exportavel; alvo: RefObject<HTMLElement | null> }) {
+  const [aviso, setAviso] = useState('');
+  const base = ['empresas', ctx.page, titulo, ctx.anchor];
+  const fechar = () => { const el = alvo.current?.querySelector<HTMLDetailsElement>('details.exporta-pop'); if (el) el.open = false; };
+  const csv = () => { if (!exportar) return; baixarCsv(nomeArquivo(base, 'csv'), exportar.cabecalho, exportar.linhas()); fechar(); };
+  const png = async () => {
+    const svg = alvo.current?.querySelector<SVGSVGElement>('.tile-body svg') ?? null, fundo = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#FFFFFF';
+    const ok = await baixarPng(nomeArquivo(base, 'png'), svg, fundo); setAviso(ok ? '' : 'Este bloco não tem gráfico para salvar.'); if (ok) fechar();
+  };
+  return <details className="exporta-pop"><summary aria-label={`Exportar ${titulo}`} title="Exportar: dados em CSV ou imagem em PNG"><Download size={14} /></summary>
+    <div className="exporta-menu" role="menu">
+      {exportar && <button role="menuitem" onClick={csv}>Dados (CSV)</button>}
+      <button role="menuitem" onClick={png}>Imagem (PNG)</button>
+      {aviso && <p role="status">{aviso}</p>}
+    </div>
+  </details>;
 }
 
 /** Ficha do bloco ou do cartão: abre num balão ao clicar no (i). Sem ficha registrada, mostra só a leitura (ajuda) quando houver. */
@@ -97,7 +130,7 @@ export function Indicador({ aspecto, label, value, variacao, spark, cor, meta, s
   const card = onOpen ? <button className={className} onClick={onOpen} title={`${label}: ver detalhe`}>{body}</button> : <div className={className}>{body}</div>;
   if (!ficha || !ctx) return card;
   const registro = fichaDe(ctx.page, ficha);
-  return <div className="ind-shell">{card}{registro?.parceria && <span className="ind-parceria">{parceriasDe(registro).map(id => <Parceria key={id} id={id} compacto />)}</span>}<FichaPop ficha={registro} titulo={label} anchor={ctx.anchor} /></div>;
+  return <div className="ind-shell">{card}{registro?.parceria && <span className="ind-parceria"><Parcerias ids={parceriasDe(registro)} compacto /></span>}<FichaPop ficha={registro} titulo={label} anchor={ctx.anchor} /></div>;
 }
 
 /** Linhas do painel lateral para uma lista de empresas, com valor e observação próprios de cada visual. */
