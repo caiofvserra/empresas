@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import type { ComponentType, ReactNode } from 'react';
-import { ArrowUpRight, BadgeCheck, BookOpenCheck, Briefcase, Building2, CalendarClock, ChevronDown, ClipboardCheck, Construction, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, Network, Printer, RotateCcw, ScanSearch, ScrollText, Search, ShieldCheck, SlidersHorizontal, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
+import { ArrowUpRight, BadgeCheck, BookOpenCheck, Briefcase, Building2, CalendarClock, ChevronDown, ClipboardCheck, Construction, Database, FileSignature, GraduationCap, Handshake, HardHat, Headset, Landmark, Moon, Network, RotateCcw, ScanSearch, ScrollText, Search, ShieldCheck, SlidersHorizontal, Sun, Target, TrendingUp, Wallet, X } from 'lucide-react';
 import { dataset } from '../domain/dataset';
 import { datasReferencia as datasReferenciaDe, datasetAt, fiscalizacaoAt } from '../domain/tempo';
 import { defaultFilters } from '../domain/types';
@@ -321,7 +321,6 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
       {painel.id === 'geral' && <div className="ck-rail-paineis">{atalhos.map(item => <a key={item.id} className="ck-rail-painel" href={enderecoPainel(item.id)} title={item.title}><item.icon size={17} /><span>{item.label}<ArrowUpRight size={10} /></span></a>)}</div>}
       <div className="ck-rail-bottom">
         {leve && !deProfissionais && <button onClick={buscar} title="Buscar uma empresa pelo nome, CNPJ ou município (tecla /)"><Search size={17} /><span>Buscar</span></button>}
-        <button onClick={() => window.print()} title="Imprimir esta página ou salvar em PDF"><Printer size={17} /><span>Imprimir</span></button>
         <button onClick={() => setModal('metas')} title="Metas usadas nos cartões e no quadro das regionais"><Target size={17} /><span>Metas</span></button>
         <button onClick={() => setModal('fontes')} title="Fontes, métodos e limites"><Database size={17} /><span>Fontes</span></button>
         <button onClick={() => setTheme(dark ? 'light' : 'dark')} aria-label={dark ? 'Usar tema claro' : 'Usar tema escuro'} title={dark ? 'Tema claro' : 'Tema escuro'}>{dark ? <Sun size={17} /> : <Moon size={17} />}<span>{dark ? 'Claro' : 'Escuro'}</span></button>

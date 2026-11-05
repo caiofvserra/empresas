@@ -58,6 +58,38 @@ test('evolução: o cartão anexa a série só ao detalhe que ele abre', () => {
   assert.equal(anexarEvolucao({ kind: 'acoes' }).evolucao, undefined);
 });
 
+test('evolução: as séries novas dos cartões de Empresas terminam no valor do cartão', async () => {
+  const { selectEnterpriseScope } = await import('../src/enterprise-v10/filters.ts');
+  const { buildEnterpriseModel } = await import('../src/enterprise-v10/model.ts');
+  const { defaultFilters } = await import('../src/domain/types.ts');
+  const { cobertura } = await import('../src/observatorio/norte.ts');
+  const { pagamento, artsPeriodo, artPorCamara } = await import('../src/cockpit/medidas.ts');
+  const { quadroTecnico } = await import('../src/painel/analise.ts');
+  const { permanenciaCoorte } = await import('../src/domain/mercado.ts');
+  const { seriesEmpresas } = await import('../src/domain/series-empresas.ts');
+  const period = 12, scope = selectEnterpriseScope(dataset, { ...defaultFilters, period }), model = buildEnterpriseModel(scope);
+  const history = buildEnterpriseModel(selectEnterpriseScope(dataset, { ...defaultFilters, period: 24 }));
+  const c = cobertura(scope, model), s = seriesEmpresas(scope, history, c, period);
+  assert.equal(s.meses.length, 24);
+  assert.equal(s.meses.at(-1), dataset.snapshotDate.slice(0, 7));
+  assert.equal(s.cobertura.at(-1), c.taxa);
+  assert.equal(s.semRegistro.at(-1), c.porClasse.Sim['Sem correspondência'].length);
+  const pay = pagamento(model), ativas = model.metadata.activeCompanyIds;
+  assert.equal(s.inadimplentes.at(-1), pay.inadimplentes.length);
+  assert.equal(s.adimplencia.at(-1), pay.emDia.length / ativas.length * 100);
+  assert.equal(s.comRt.at(-1), model.metrics.rtCoverage.value);
+  const qt = quadroTecnico(scope, model, f);
+  assert.equal(s.rtBaixado.at(-1), qt.rtBaixado.length);
+  const arts = artsPeriodo(scope, period);
+  assert.equal(sum(s.arts.slice(-period)), arts.atual.length);
+  assert.ok(Math.abs(sum(s.valorArt.slice(-period)) - arts.valor) < 1);
+  const semArt = artPorCamara(dataset, model);
+  assert.equal(s.semArt.at(-1), semArt.flatMap(row => row.semArt).length / semArt.reduce((n, row) => n + row.ativas.length, 0) * 100);
+  assert.equal(s.permanencia.at(-1), permanenciaCoorte(dataset, scope.companyIds, 12).taxa);
+  // Nenhuma série fica parada: a evolução tem de mostrar movimento no cenário.
+  for (const key of ['cobertura', 'adimplencia', 'comRt', 'semArt', 'permanencia'] as const) assert.ok(new Set(s[key]).size > 3, key);
+});
+
 test('evolução: 60 anos ou mais, RT de 4 empresas e recebidas batem com o cartão', () => {
   const r = resumoProfissionais(modelo, dataset, null, 12), s = seriesRegistro(modelo, dataset, null, {}, 24);
   const sessenta = r.porIdade.at(-1)!.ids.length / r.ativos.length * 100;

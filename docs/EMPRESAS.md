@@ -120,7 +120,7 @@ Pedido do Caio em 05/11/2026 ("verifique a interatividade", "3, 6, 12, 24, poder
 - **Endereço com filtros.** `#registro?gre=GRE5&cidade=3509502&camara=Civil&meses=24&data=2026-06-30&porte=Grande+empresa&situacao=Baixada`. Com município no endereço, a regional é a dele pela tabela oficial.
 - **Exportar.** Cada bloco tem um menu (ícone de download, ao lado do (i)) com "Dados (CSV)" e "Imagem (PNG)". O CSV usa ponto e vírgula, aspas duplas e a marca de ordem de bytes, para o Excel em português abrir direto; o PNG sai do SVG que o ECharts desenha, em dobro de resolução, com o fundo do tema. A gaveta ganhou "Baixar CSV" ao lado de "Copiar lista". Tudo em `src/painel/exportar.ts`. No Power BI, as duas saídas são nativas.
 - **Buscar empresa.** Botão no trilho (ou a tecla "/") abre a gaveta com todas as empresas do recorte e o campo de busca em foco; a ficha da empresa abre ao clicar.
-- **Imprimir.** Botão no trilho chama a impressão do navegador (ou salvar em PDF), em paisagem, sem trilho, rodapé e botões.
+- **Impressão.** O botão Imprimir saiu a pedido do Caio (05/11/2026); a impressão pelo navegador (Ctrl+P) continua saindo em paisagem, sem trilho, rodapé e botões.
 - **Um só "!"** quando o bloco depende de dois acordos (DETRAN-SP e INMETRO); o título do marcador cita os dois.
 - Avaliadas e deixadas para o Power BI: comparar duas GREs lado a lado (quebra a regra de uma tela), comentários por bloco (o serviço do Power BI tem os seus), alerta de meta por e-mail. Favoritar não faz sentido numa página que já cabe numa tela.
 
@@ -179,3 +179,13 @@ npm test               # inclui tests/empresas.test.ts
 npm run build          # site com os dois painéis
 npm run build:painel   # entrega/painel-gestao-creasp.html e entrega/painel-empresas-creasp.html
 ```
+
+### Evolução mensal em todos os cartões e cenário (05/11/2026, segunda rodada)
+
+Pedido do Caio: tirar o botão Imprimir, pensar em quais indicadores vale ver a evolução mensal e conferir o que não abria a gaveta.
+
+- **Botão Imprimir** saiu do trilho. O Ctrl+P do navegador continua saindo em paisagem, sem trilho, rodapé e botões.
+- **Evolução mês a mês em todos os cartões** das três abas com cartões, não só em registradas, entradas e saídas: parte do mercado registrada, atividade obrigatória sem registro, anuidade em dia, abertas na Receita, permanência após 12 meses, emprego formal, empresas com RT, RT que saiu sem substituto, ARTs, valor em ART e registradas sem ART. As séries ficam em `src/domain/series-empresas.ts` (lidas no último dia de cada mês, pelas mesmas regras dos cartões; o teste em `tests/evolucao.test.ts` confere que a série termina no valor do cartão) e em `src/empresas/series.ts`. A exceção é "cadastro incompleto": a pendência não tem data de resolução na base, então a série do passado seria só a das pendências ainda abertas hoje, e o cartão fica sem evolução.
+- **Abertas na Receita** passa a contar o período escolhido no alto da tela, como os demais cartões (antes contava a janela de 24 meses do bloco). A série termina no último mês com arquivo da Receita, e as comparações são feitas nele.
+- **Gaveta.** Todo cartão abre o painel lateral. Os que não têm lista (parte do mercado, emprego formal, valor em ART) abrem só com a evolução; "Continuam registradas depois de 12 meses" ganhou a lista das que saíram no primeiro ano. Nenhum bloco deixa de abrir a gaveta de propósito: todos os blocos das quatro abas têm clique.
+- **Cenário.** Duas tendências irreais apareceram com as séries e foram corrigidas na base de demonstração: o RT entrava em qualquer ponto do histórico (a parte com RT "subia" de 59% para 81% em dois anos) e agora entra até seis meses depois do registro, com reposição de 20 dias a um ano depois da saída (o estoque de "RT que saiu" oscila em vez de só subir); e os boletos venciam até agosto, o que fazia a anuidade em dia "saltar" em setembro, e agora vencem até a data de hoje. A parte com RT passou de 81% para 90%, e as ações de fiscalização por RT caíram, porque a maioria das saídas é reposta.
