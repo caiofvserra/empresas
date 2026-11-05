@@ -30,6 +30,7 @@ import { camaraDaEmpresa, camaraPorCnae, camaras, contratosPublicos, devedoras, 
 import { useTokens } from '../painel/chart';
 import type { Detail } from '../painel/contexto';
 import Drawer from '../painel/Drawer';
+import { anexarEvolucao } from '../painel/evolucao';
 import { data, int, mes } from '../painel/ui';
 import type { CockpitCtx } from './contexto';
 import { malhaFina } from './cruzamentos';
@@ -288,7 +289,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const irPara = (target: PageId) => { if (pages.some(item => item.id === target)) setPage(target); else window.location.href = enderecoPainel(painelDaPagina(target), target); };
   const change = (work: () => void) => transition(work);
   const ctx: CockpitCtx = { dataset: view, f, fEstado, scope, model, history, period, greId: gre || null, camara: camara || null, janela: janelaDe(f.anchor, period), resumo: derived.resumo, regionais: derived.regionais, tokens,
-    open: setDetail, filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara,
+    open: detail => setDetail(anexarEvolucao(detail)), filterGre: id => change(() => { setCidade(''); setGre(previous => previous === id ? '' : id); }), page, go: irPara,
     filtrar: recorte => change(() => { if (recorte.cidade) { setCidade(recorte.cidade); setGre(municipiosDe('').find(row => row.id === recorte.cidade)?.greId ?? ''); } else if (recorte.gre) { setGre(recorte.gre); setCidade(''); } if (recorte.camara) setCamara(recorte.camara); }), dark, cidadeId: cidade || null, enxuto: leve, camaraDe: camaraMap, modalidade: modalidade || null, genero: genero || null,
     anchor, hoje, datasReferencia, setAnchor: value => change(() => setAnchorSel(value && value < hoje ? value : null)),
     historyScope, stateScope, stateModel, stateHistory, linhas: derived.linhas, ponte: derived.ponte, rec: derived.rec, contratos: derived.contratos, malha: derived.malha, estrutura, arts: derived.arts,

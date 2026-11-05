@@ -6,6 +6,7 @@ import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco, Indicador } from '../cockpit/ui';
 import { ArvoreModalidade, IdadeModalidade, MapaProfissionais, Piramide, SituacaoAnuidade, abrirProfissionais, filtroDe, metricasMapa, porIds } from './blocos';
 import type { MetricaMapa } from './blocos';
+import { useSeriesProfissionais } from './series';
 
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 
@@ -13,19 +14,19 @@ const change = (now: number, before: number) => before > 0 ? (now - before) / be
 export default function PaginaProfissionais({ ctx }: { ctx: CockpitCtx }) {
   const { metas } = ctx, p = ctx.profissionais.resumo, antes = p.porNivel.reduce((sum, row) => sum + row.antes, 0);
   const sessenta = porIds(ctx, p.porIdade.at(-1)?.ids ?? []), mulheres = porIds(ctx, p.porGenero.find(row => row.nome === 'Feminino')?.ids ?? []);
-  const [metrica, setMetrica] = useState<MetricaMapa>('ativos');
+  const [metrica, setMetrica] = useState<MetricaMapa>('ativos'), series = useSeriesProfissionais(ctx);
   // A parte das mulheres ignora o filtro de gênero (com "Mulheres" escolhido, daria sempre 100%): conta todos os ativos do recorte.
   const semGenero = useMemo(() => ctx.genero ? ctx.profissionais.modelo.profissionais.filter(row => noRecorte(row, ctx.greId, { ...filtroDe(ctx), genero: null }) && row.registroEm <= ctx.anchor && situacaoEm(row, ctx.anchor) === 'Ativo') : null, [ctx.genero, ctx.greId, ctx.cidadeId, ctx.modalidade, ctx.anchor, ctx.profissionais.modelo]); // eslint-disable-line react-hooks/exhaustive-deps
   const parteMulheres = semGenero ? (semGenero.length ? semGenero.filter(row => row.genero === 'Feminino').length / semGenero.length * 100 : null) : p.mulheres;
   return <div className="ck-grid ck-grid-pf-registro">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores do registro profissional">
-      <Indicador destaque ficha="k-ativos" ctx={ctx} label="Profissionais com registro ativo" value={int(p.ativos.length)} variacao={{ value: change(p.ativos.length, antes), label: 'em relação a um ano antes' }} sub={`${int(p.registrados.length)} já se registraram alguma vez`}
+      <Indicador destaque ficha="k-ativos" ctx={ctx} label="Profissionais com registro ativo" serie={series.ativos} value={int(p.ativos.length)} variacao={{ value: change(p.ativos.length, antes), label: 'em relação a um ano antes' }} sub={`${int(p.registrados.length)} já se registraram alguma vez`}
         onOpen={() => abrirProfissionais(ctx, 'Profissionais com registro ativo', p.ativos, 'Profissionais com registro ativo na data escolhida.')} />
-      <Indicador ficha="k-fora" ctx={ctx} label="Registro interrompido ou cancelado" value={int(p.interrompidos.length + p.cancelados.length)} sub={`${int(p.interrompidos.length)} interrompidos e ${int(p.cancelados.length)} cancelados`}
+      <Indicador ficha="k-fora" ctx={ctx} label="Registro interrompido ou cancelado" serie={series.fora} value={int(p.interrompidos.length + p.cancelados.length)} sub={`${int(p.interrompidos.length)} interrompidos e ${int(p.cancelados.length)} cancelados`}
         onOpen={() => abrirProfissionais(ctx, 'Registro interrompido', p.interrompidos, 'Profissionais com o registro interrompido na data escolhida. Podem voltar a qualquer momento.')} />
-      <Indicador ficha="k-adimplencia" ctx={ctx} label="Anuidade em dia" value={p.taxaAdimplencia === null ? '—' : pct(p.taxaAdimplencia)} meta={{ atual: p.taxaAdimplencia, alvo: metas.adimplencia }} variacao={{ value: p.taxaAdimplencia === null ? null : p.taxaAdimplencia - metas.adimplencia, kind: 'pp', label: `em relação à meta de ${metas.adimplencia}%` }} sub={`${int(p.inadimplentes.length)} ativos com anuidade atrasada`}
+      <Indicador ficha="k-adimplencia" ctx={ctx} label="Anuidade em dia" serie={series.adimplencia} value={p.taxaAdimplencia === null ? '—' : pct(p.taxaAdimplencia)} meta={{ atual: p.taxaAdimplencia, alvo: metas.adimplencia }} variacao={{ value: p.taxaAdimplencia === null ? null : p.taxaAdimplencia - metas.adimplencia, kind: 'pp', label: `em relação à meta de ${metas.adimplencia}%` }} sub={`${int(p.inadimplentes.length)} ativos com anuidade atrasada`}
         onOpen={() => abrirProfissionais(ctx, 'Profissionais ativos com anuidade atrasada', p.inadimplentes, 'Profissionais ativos com anuidade vencida na data escolhida.', 'Cobrança por lote, começando pelos que registraram ART recentemente.')} />
-      <Indicador ficha="k-mulheres" ctx={ctx} label="Mulheres entre os ativos" value={parteMulheres === null ? '—' : pct(parteMulheres, 1)} sub={ctx.genero ? `${int(semGenero!.filter(row => row.genero === 'Feminino').length)} de ${int(semGenero!.length)} ativos, sem o filtro de gênero` : `${int(mulheres.length)} profissionais ativas`}
+      <Indicador ficha="k-mulheres" ctx={ctx} label="Mulheres entre os ativos" serie={series.mulheres} value={parteMulheres === null ? '—' : pct(parteMulheres, 1)} sub={ctx.genero ? `${int(semGenero!.filter(row => row.genero === 'Feminino').length)} de ${int(semGenero!.length)} ativos, sem o filtro de gênero` : `${int(mulheres.length)} profissionais ativas`}
         onOpen={() => abrirProfissionais(ctx, 'Mulheres com registro ativo', mulheres, 'Profissionais ativas na data escolhida.')} />
       <Indicador ficha="k-sessenta" ctx={ctx} label="Ativos com 60 anos ou mais" value={p.ativos.length ? pct(sessenta.length / p.ativos.length * 100) : '—'} sub={`${int(sessenta.length)} profissionais; a idade típica é ${p.idadeMediana === null ? '—' : int(p.idadeMediana)} anos`}
         onOpen={() => abrirProfissionais(ctx, 'Ativos com 60 anos ou mais', sessenta, 'Profissionais ativos com 60 anos ou mais na data escolhida.')} />

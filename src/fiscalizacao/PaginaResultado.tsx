@@ -1,18 +1,19 @@
 import { int, pct, brl } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco, Indicador } from '../cockpit/ui';
+import { useSeriesFiscalizacao } from './series';
 import { ConversaoTrimestre, DiasRegularizar, EsperaTipo, ForcasTarefas, ReceitaMes } from './blocos';
 
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 
 /** Painel de Fiscalização, página 2: quantas ações terminam em regularização, em quantos dias, quanto o indício espera e o resultado das forças-tarefas. */
 export default function PaginaResultado({ ctx }: { ctx: CockpitCtx }) {
-  const { resumo, tokens, metas, norte } = ctx, c = norte.conversao, r = norte.receita, t = norte.tempo;
+  const { resumo, tokens, metas, norte } = ctx, series = useSeriesFiscalizacao(ctx), c = norte.conversao, r = norte.receita, t = norte.tempo;
   const fechadas = ctx.forcas.filter(row => row.fechada && row.diferenca !== null), acima = fechadas.filter(row => row.diferenca! > 0);
   const completas = c.coortes.filter(row => row.completa);
   return <div className="ck-grid ck-grid-fs-resultado">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores do resultado da fiscalização">
-      <Indicador destaque ficha="k-regularizacoes" ctx={ctx} label="Regularizações depois de uma ação" value={int(resumo.regularizacoes.length)} variacao={{ value: change(resumo.regularizacoes.length, resumo.regularizacoesPrev) }} spark={resumo.mensal.map(row => row.regularizacoes)} cor={tokens.good} meta={{ atual: resumo.taxa, alvo: metas.regularizacao }}
+      <Indicador destaque ficha="k-regularizacoes" ctx={ctx} label="Regularizações depois de uma ação" serie={series.regularizacoes} value={int(resumo.regularizacoes.length)} variacao={{ value: change(resumo.regularizacoes.length, resumo.regularizacoesPrev) }} spark={resumo.mensal.map(row => row.regularizacoes)} cor={tokens.good} meta={{ atual: resumo.taxa, alvo: metas.regularizacao }}
         sub={`${resumo.taxa === null ? '—' : pct(resumo.taxa)} das ações do período; a meta é ${metas.regularizacao}%`} onOpen={() => ctx.open({ kind: 'regularizacoes' })} />
       <Indicador ficha="k-conversao" ctx={ctx} label="Regularizaram em até 180 dias" value={c.atual?.taxa == null ? '—' : pct(c.atual.taxa)} variacao={{ value: c.atual?.taxa != null && c.anterior?.taxa != null ? c.atual.taxa - c.anterior.taxa : null, kind: 'pp', label: 'em relação ao trimestre anterior' }}
         spark={completas.map(row => row.taxa ?? 0)} cor={tokens.good} sub={c.atual ? `ações do ${c.atual.trimestre.slice(-1)}º trimestre de ${c.atual.trimestre.slice(0, 4)}, o último que já fechou` : 'nenhum trimestre fechado ainda'} />

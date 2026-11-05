@@ -5,22 +5,23 @@ import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco, Indicador } from '../cockpit/ui';
 import { AcoesMes, AcoesOrigem, DestinoAcoes, DestinoMultas, MapaFiscalizacao, metricasMapa } from './blocos';
 import type { MetricaMapa } from './blocos';
+import { useSeriesFiscalizacao } from './series';
 
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 const cruzamento = new Set(['Cruzamento Receita (CNAE)', 'Contrato público (PNCP)', 'Cadastro CREA']);
 
 /** Painel de Fiscalização, página 1: quantas ações, onde, de que origem, quantas viram auto e o que acontece com as multas. */
 export default function PaginaAcoes({ ctx }: { ctx: CockpitCtx }) {
-  const { resumo, tokens, ponte, period } = ctx, [metrica, setMetrica] = useState<MetricaMapa>('acoes');
+  const { resumo, tokens, ponte, period } = ctx, [metrica, setMetrica] = useState<MetricaMapa>('acoes'), series = useSeriesFiscalizacao(ctx);
   const entradas = ponte.espontaneas.length + ponte.viaFiscalizacao.length + ponte.retornos.length;
   const viaCruzamento = resumo.acoes.filter(row => cruzamento.has(row.origem)).length;
   return <div className="ck-grid ck-grid-fs-acoes">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores das ações de fiscalização">
-      <Indicador destaque ficha="k-acoes" ctx={ctx} label="Ações de fiscalização" value={int(resumo.acoes.length)} variacao={{ value: change(resumo.acoes.length, resumo.acoesPrev) }} spark={resumo.mensal.map(row => row.acoes)} cor={tokens.accent}
+      <Indicador destaque ficha="k-acoes" ctx={ctx} label="Ações de fiscalização" serie={series.acoes} value={int(resumo.acoes.length)} variacao={{ value: change(resumo.acoes.length, resumo.acoesPrev) }} spark={resumo.mensal.map(row => row.acoes)} cor={tokens.accent}
         sub={`${int(resumo.acoes.length / period)} por mês; ${pct(viaCruzamento / Math.max(1, resumo.acoes.length) * 100)} vieram do cruzamento de dados`} onOpen={() => ctx.open({ kind: 'acoes' })} />
-      <Indicador ficha="k-autos" ctx={ctx} label="Autos de infração" value={int(resumo.autos.length)} variacao={{ value: change(resumo.autos.length, resumo.autosPrev), goodUp: false }} spark={resumo.mensal.map(row => row.autos.registro + row.autos.rt + row.autos.art)} cor={tokens.bad}
+      <Indicador ficha="k-autos" ctx={ctx} label="Autos de infração" serie={series.autos} value={int(resumo.autos.length)} variacao={{ value: change(resumo.autos.length, resumo.autosPrev), goodUp: false }} spark={resumo.mensal.map(row => row.autos.registro + row.autos.rt + row.autos.art)} cor={tokens.bad}
         sub={`${pct(resumo.acoes.filter(row => row.auto).length / Math.max(1, resumo.acoes.length) * 100)} das ações do período viraram auto`} onOpen={() => ctx.open({ kind: 'autos' })} />
-      <Indicador ficha="k-multas" ctx={ctx} label="Multas aplicadas" value={brl(resumo.aplicada)} variacao={{ value: change(resumo.aplicada, resumo.aplicadaPrev) }}
+      <Indicador ficha="k-multas" ctx={ctx} label="Multas aplicadas" serie={series.multas} value={brl(resumo.aplicada)} variacao={{ value: change(resumo.aplicada, resumo.aplicadaPrev) }}
         sub={`${brl(resumo.multas['Dívida ativa'].valor)} já em dívida ativa`} onOpen={() => ctx.open({ kind: 'multas' })} />
       <Indicador ficha="k-recebidas" ctx={ctx} label="Multas recebidas" value={brl(resumo.recebida)} sub={`${resumo.pagaCoorte === null ? '—' : pct(resumo.pagaCoorte)} do valor aplicado no período já foi pago`} onOpen={() => ctx.open({ kind: 'multas', status: 'Paga' })} />
       <Indicador ficha="k-registros" ctx={ctx} label="Registros que vieram da fiscalização" value={int(ponte.viaFiscalizacao.length)} sub={`${pct(ponte.viaFiscalizacao.length / Math.max(1, entradas) * 100)} das empresas que entraram na base`}
