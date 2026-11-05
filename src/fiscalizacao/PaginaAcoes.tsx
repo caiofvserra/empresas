@@ -23,7 +23,7 @@ export default function PaginaAcoes({ ctx }: { ctx: CockpitCtx }) {
         sub={`${pct(resumo.acoes.filter(row => row.auto).length / Math.max(1, resumo.acoes.length) * 100)} das ações do período viraram auto`} onOpen={() => ctx.open({ kind: 'autos' })} />
       <Indicador ficha="k-multas" ctx={ctx} label="Multas aplicadas" serie={series.multas} value={brl(resumo.aplicada)} variacao={{ value: change(resumo.aplicada, resumo.aplicadaPrev) }}
         sub={`${brl(resumo.multas['Dívida ativa'].valor)} já em dívida ativa`} onOpen={() => ctx.open({ kind: 'multas' })} />
-      <Indicador ficha="k-recebidas" ctx={ctx} label="Multas recebidas" value={brl(resumo.recebida)} sub={`${resumo.pagaCoorte === null ? '—' : pct(resumo.pagaCoorte)} do valor aplicado no período já foi pago`} onOpen={() => ctx.open({ kind: 'multas', status: 'Paga' })} />
+      <Indicador ficha="k-recebidas" ctx={ctx} label="Multas recebidas" serie={series.recebidas} value={brl(resumo.recebida)} sub={`${resumo.pagaCoorte === null ? '—' : pct(resumo.pagaCoorte)} do valor aplicado no período já foi pago`} onOpen={() => ctx.open({ kind: 'multas', status: 'Paga' })} />
       <Indicador ficha="k-registros" ctx={ctx} label="Registros que vieram da fiscalização" value={int(ponte.viaFiscalizacao.length)} sub={`${pct(ponte.viaFiscalizacao.length / Math.max(1, entradas) * 100)} das empresas que entraram na base`}
         onOpen={() => ctx.open({ kind: 'empresas', title: 'Registros que vieram da fiscalização', what: 'Empresas que passaram a ter registro ativo no período depois de uma ação de fiscalização por falta de registro.', use: 'Uma coisa veio depois da outra, mas a ação pode não ter sido a causa.', ids: ponte.viaFiscalizacao })} />
     </section>

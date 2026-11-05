@@ -57,3 +57,12 @@ test('evolução: o cartão anexa a série só ao detalhe que ele abre', () => {
   assert.equal(aberto!.evolucao, serie);
   assert.equal(anexarEvolucao({ kind: 'acoes' }).evolucao, undefined);
 });
+
+test('evolução: 60 anos ou mais, RT de 4 empresas e recebidas batem com o cartão', () => {
+  const r = resumoProfissionais(modelo, dataset, null, 12), s = seriesRegistro(modelo, dataset, null, {}, 24);
+  const sessenta = r.porIdade.at(-1)!.ids.length / r.ativos.length * 100;
+  assert.ok(Math.abs(s.sessenta.at(-1)! - sessenta) < 1e-9);
+  assert.equal(s.rt4.at(-1), r.cargaRt[3].ids.length);
+  const resumo = resumoFiscal(f, null, 12), fs = seriesFiscalizacao(f.acoes, f.anchor, null, 24);
+  assert.equal(Math.round(sum(fs.recebidas.slice(-12))), Math.round(resumo.recebida));
+});

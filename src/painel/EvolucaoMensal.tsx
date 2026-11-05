@@ -43,15 +43,17 @@ function opcao(serie: Evolucao, tokens: Tokens) {
   const xAxis = { type: 'category', data: meses.map(mes), boundaryGap: fluxo, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 } };
   const yAxis = { type: 'value', scale: !fluxo, splitNumber: 3, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 10, formatter: (value: number) => serie.fmt(value) } };
   const anterior = { name: 'Mesmo mês um ano antes', type: 'line', data: antes, symbol: 'circle', symbolSize: 5, z: 3, lineStyle: { color: tokens.accent, width: 2, ...(fluxo ? {} : { type: 'dashed' }) }, itemStyle: { color: tokens.accent } };
+  // Série com menos de 24 meses (a malha fina tem 13): sem a linha de um ano antes, para a legenda não prometer o que não há.
+  const comAnterior = antes.some(value => value !== null && value !== undefined) ? [anterior] : [];
   if (fluxo) return { grid: { top: 26, right: 6, bottom: 2, left: 4, containLabel: true }, legend, tooltip, xAxis, yAxis,
     series: [
       // Número dentro da barra quando ela é alta; em cima quando é baixa, para continuar legível.
       { name: `Últimos 12 meses${serie.unidade ? `, ${serie.unidade}` : ''}`, type: 'bar', barWidth: '58%', itemStyle: { color: tokens.blue, borderRadius: [3, 3, 0, 0] },
         data: agora.map(value => ({ value, label: { show: value !== null, position: (value ?? 0) / maximo > 0.22 ? 'insideTop' : 'top', color: (value ?? 0) / maximo > 0.22 ? '#FFFFFF' : tokens.ink, fontSize: 9.5, fontWeight: 700, formatter: () => value === null ? '' : curto(value) } })) },
-      anterior] };
+      ...comAnterior] };
   return { grid: { top: 26, right: 14, bottom: 2, left: 4, containLabel: true }, legend, tooltip, xAxis, yAxis,
     series: [
       { name: 'Últimos 12 meses', type: 'line', data: agora, symbol: 'circle', symbolSize: 6, z: 4, lineStyle: { color: tokens.blue, width: 2.5 }, itemStyle: { color: tokens.blue },
         label: { show: true, position: 'top', color: tokens.ink, fontSize: 9.5, fontWeight: 700, formatter: (params: any) => params.value === null ? '' : curto(params.value) } },
-      anterior] };
+      ...comAnterior] };
 }
