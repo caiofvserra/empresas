@@ -88,6 +88,7 @@ test('evolução: as séries novas dos cartões de Empresas terminam no valor do
   assert.equal(s.permanencia.at(-1), permanenciaCoorte(dataset, scope.companyIds, 12).taxa);
   // Nenhuma série fica parada: a evolução tem de mostrar movimento no cenário.
   for (const key of ['cobertura', 'adimplencia', 'comRt', 'semArt', 'permanencia'] as const) assert.ok(new Set(s[key]).size > 3, key);
+});
 
 test('evolução: 60 anos ou mais, RT de 4 empresas e recebidas batem com o cartão', () => {
   const r = resumoProfissionais(modelo, dataset, null, 12), s = seriesRegistro(modelo, dataset, null, {}, 24);

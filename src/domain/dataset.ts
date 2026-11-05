@@ -265,11 +265,13 @@ export function generateDataset(seed = 20260930): Dataset {
     // Um terço dos vínculos cai nos 400 primeiros profissionais, para haver quem responda por três empresas ou mais.
     const professional = professionals[(index * 13 + Math.floor(index / 2)) % (index % 3 === 0 ? 400 : professionals.length)];
     const firstRegistration = registrationsPerCompany.get(company.id)!.reduce((a, b) => a.startedAt < b.startedAt ? a : b);
-    const startDate = between(firstRegistration.startedAt, '2026-05-31');
+    // O RT entra até seis meses depois do registro (05/11/2026): antes a data caía em qualquer ponto do histórico, e a parte das
+    // empresas com RT parecia subir de 59% para 81% em dois anos, uma tendência que não existe.
+    const startDate = between(firstRegistration.startedAt, later(firstRegistration.startedAt, earlier(addDays(firstRegistration.startedAt, 180), '2026-05-31')));
     const ended = index < PARES ? index % 2 === 0 || index % 11 === 0 : index % 9 === 0;
     return { id: id('VRT-', index), companyId: company.id, professionalId: professional.id,
       startDate, modality: professional.modality,
-      ...(ended ? { endDate: earlier(between(addDays(startDate, 15), SNAPSHOT), SNAPSHOT) } : {}),
+      ...(ended ? { endDate: earlier(between(addDays(startDate, 15), earlier(addDays(startDate, 720), SNAPSHOT)), SNAPSHOT) } : {}),
     };
   });
   // Ajuste determinístico dos pares, depois de consumir o mesmo fluxo aleatório:
@@ -294,6 +296,19 @@ export function generateDataset(seed = 20260930): Dataset {
       } else delete successor.endDate;
     }
   }
+  // Reposição do RT que saiu (05/11/2026): na empresa de vínculo único que perdeu o RT, outro profissional entra de 20 dias a um ano
+  // depois; as saídas ainda sem reposição na data de hoje são o estoque de "RT que saiu sem substituto". Sem isso, as empresas sem
+  // RT só se acumulavam ao longo do histórico, e esse estoque subia mês a mês. Datas deterministas, sem PRNG.
+  const reposicoes: TechnicalLink[] = [];
+  for (let index = 0; index < technicalLinks.length; index++) {
+    const link = technicalLinks[index]; if (!link.endDate) continue;
+    // Nos pares, o sucessor já entra no dia seguinte; só o sucessor que também saiu recebe reposição.
+    if (technicalLinks.some(other => other !== link && other.companyId === link.companyId && other.startDate > link.endDate!)) continue;
+    const startDate = addDays(link.endDate, 20 + (index % 8) * 50); if (startDate > SNAPSHOT) continue;
+    const professional = professionals[(index * 17 + 5) % professionals.length];
+    reposicoes.push({ id: id('VRT-', technicalLinks.length + reposicoes.length), companyId: link.companyId, professionalId: professional.id, startDate, modality: professional.modality });
+  }
+  technicalLinks.push(...reposicoes);
   const descriptions = ['Projeto de infraestrutura urbana', 'Execução de obra civil', 'Instalação elétrica',
     'Manutenção de redes e sistemas', 'Laudo técnico e avaliação', 'Ensaios de materiais', 'Supervisão de obra', 'Projeto de saneamento'];
   // ARTs (02/11/2026): espalhadas pelos últimos 36 meses em proporção aos dias em que cada registro esteve ativo, para a série
@@ -342,7 +357,7 @@ export function generateDataset(seed = 20260930): Dataset {
     const interval = activeIntervals.get(registration.id)![0];
     const future = index % 19 === 0;
     const dueDate = future ? between('2026-10-01', '2026-12-20')
-      : between(later(interval.start, '2023-10-01'), later(later(interval.start, '2023-10-01'), earlier(interval.end, '2026-08-31')));
+      : between(later(interval.start, '2023-10-01'), later(later(interval.start, '2023-10-01'), earlier(interval.end, '2026-09-29')));
     const amount = integer(12, 95) * 25;
     const mode = index % 10;
     // Dois em cada dez boletos ficam sem pagamento e um é pago em parte: inadimplência perto de um quarto das registradas.

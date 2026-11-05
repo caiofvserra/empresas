@@ -84,13 +84,13 @@ export function seriesEmpresas(scope: Scope, history: EnterpriseModel, cobertura
   const conhecido = (cnpj: string, fim: string) => (porCnpj.get(digitos(cnpj)) ?? []).some(row => row.inicio <= fim);
   const empresaVigente = (id: string, cut: number) => vigenteEm(porEmpresa.get(id), cut);
   // Anuidade: boletos já exigíveis e com saldo vencido no fim do mês, por empresa.
-  const boletos = scope.invoices.filter(row => Number.isFinite(row.amount) && row.amount >= 0 && row.dueDate <= anchor);
+  const boletos = dataset.invoices.filter(row => scope.companyIds.has(row.companyId) && Number.isFinite(row.amount) && row.amount >= 0 && row.dueDate <= anchor);
   const porPagadora = new Map<string, Invoice[]>();
   for (const row of boletos) porPagadora.set(row.companyId, [...(porPagadora.get(row.companyId) ?? []), row]);
   const vencida = (id: string, fim: string) => (porPagadora.get(id) ?? []).some(row => row.dueDate < fim && saldo(row, fim, anchor) > 0);
   // Responsáveis técnicos: vínculo vigente no fim do mês; sem vínculo e com o último encerrado há mais de 30 dias é "RT que saiu".
   const vinculos = new Map<string, Scope['technicalLinks']>();
-  for (const row of scope.technicalLinks) vinculos.set(row.companyId, [...(vinculos.get(row.companyId) ?? []), row]);
+  for (const row of dataset.technicalLinks) if (scope.companyIds.has(row.companyId)) vinculos.set(row.companyId, [...(vinculos.get(row.companyId) ?? []), row]);
   const temRt = (id: string, fim: string) => (vinculos.get(id) ?? []).some(row => row.startDate <= fim && (!row.endDate || row.endDate > fim));
   // Como nos alvos da fiscalização, a saída conta a partir do início do histórico da base: um vínculo encerrado antes dele não gera alvo.
   const inicioHistorico = dia(`${dataset.months[0]}-01`);
@@ -105,8 +105,8 @@ export function seriesEmpresas(scope: Scope, history: EnterpriseModel, cobertura
   // ARTs por mês e, por empresa, os meses com ART (para a parte sem ART nos `period` meses até cada mês).
   const indice = new Map(meses.map((month, index) => [month, index]));
   const arts = meses.map(() => 0), valorArt = meses.map(() => 0), mesesComArt = new Map<string, string[]>();
-  for (const row of scope.arts) {
-    if (row.date > anchor) continue;
+  for (const row of dataset.arts) {
+    if (row.date > anchor || !scope.companyIds.has(row.companyId)) continue;
     const index = indice.get(row.date.slice(0, 7));
     if (index !== undefined) { arts[index]++; valorArt[index] += row.value; }
     mesesComArt.set(row.companyId, [...(mesesComArt.get(row.companyId) ?? []), row.date.slice(0, 7)]);
