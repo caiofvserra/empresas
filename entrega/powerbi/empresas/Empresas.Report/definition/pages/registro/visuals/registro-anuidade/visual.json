@@ -61,7 +61,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Registradas pela anuidade'"
+                  "Value": "'Registro e anuidade'"
                 }
               }
             }

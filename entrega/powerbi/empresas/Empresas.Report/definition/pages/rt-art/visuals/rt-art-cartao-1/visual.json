@@ -10,7 +10,7 @@
     "tabOrder": 8000
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "multiRowCard",
     "query": {
       "queryState": {
         "Values": {
@@ -28,6 +28,21 @@
               },
               "queryRef": "Medidas.Empresas com responsável técnico",
               "nativeQueryRef": "Empresas com responsável técnico"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Empresas com responsável técnico"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Empresas com responsável técnico",
+              "nativeQueryRef": "Variação em um ano: Empresas com responsável técnico",
+              "displayName": "pontos percentuais em relação a um ano antes"
             }
           ]
         }

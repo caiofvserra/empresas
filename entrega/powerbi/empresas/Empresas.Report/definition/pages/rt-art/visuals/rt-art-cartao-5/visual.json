@@ -10,7 +10,7 @@
     "tabOrder": 12000
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "multiRowCard",
     "query": {
       "queryState": {
         "Values": {
@@ -28,6 +28,21 @@
               },
               "queryRef": "Medidas.Registradas sem nenhuma ART",
               "nativeQueryRef": "Registradas sem nenhuma ART"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Registradas sem nenhuma ART"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Registradas sem nenhuma ART",
+              "nativeQueryRef": "Variação em um ano: Registradas sem nenhuma ART",
+              "displayName": "pontos percentuais em relação a um ano antes"
             }
           ]
         }

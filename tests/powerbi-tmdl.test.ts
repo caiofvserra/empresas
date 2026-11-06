@@ -16,10 +16,12 @@ const modelo: Modelo = {
     { nome: 'Foto das empresas', arquivo: 'foto-empresas.csv', oculta: true, colunas: [
       { nome: 'Data', tipo: 'dateTime', formato: 'dd/mm/yyyy' },
       { nome: 'Registrada', tipo: 'int64' },
+      { nome: 'Código IBGE', tipo: 'string', oculta: true },
     ], medidas: [
       { nome: 'Empresas registradas', dax: 'SUM(\'Foto das empresas\'[Registrada])', formato: '#,##0', pasta: 'Registro e mercado', descricao: 'Empresas com registro ou visto ativo.' },
       { nome: 'Parte registrada', dax: 'VAR a = 1\nRETURN DIVIDE(a, 2)', formato: '0.0%' },
     ] },
+    { nome: 'Período', calculada: 'GENERATESERIES(1, 36, 1)', colunas: [{ nome: 'Meses', tipo: 'int64', formato: '0', origem: '[Value]', parametro: true }] },
   ],
   relacoes: [{ de: ['Foto das empresas', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] }],
 };
@@ -30,7 +32,7 @@ const linhas = (texto: string | undefined) => (texto ?? '').split('\r\n');
 test('TMDL: o modelo traz database, model, parâmetro, relações e um arquivo por tabela, todos com CRLF e sem BOM', () => {
   assert.deepEqual([...arquivos.keys()].sort(), [
     'definition.pbism', 'definition/database.tmdl', 'definition/expressions.tmdl', 'definition/model.tmdl', 'definition/relationships.tmdl',
-    'definition/tables/Foto das empresas.tmdl', 'definition/tables/Municípios.tmdl',
+    'definition/tables/Foto das empresas.tmdl', 'definition/tables/Municípios.tmdl', 'definition/tables/Período.tmdl',
   ]);
   for (const [caminho, texto] of arquivos) {
     assert.ok(!texto.startsWith('\uFEFF'), `${caminho} começa com BOM`);
@@ -72,6 +74,17 @@ test('TMDL: tabela com coluna, medida de uma linha, medida multilinha e partiç�
   assert.match(m, /Delimiter = ";", Encoding = 65001/);
   assert.match(m, /Table\.PromoteHeaders/);
   assert.match(m, /\{"Data", type date\}, \{"Registrada", Int64\.Type\}/);
+});
+
+test('TMDL: parâmetro de intervalo numérico como tabela calculada, com a coluna marcada para o Desktop', () => {
+  const tabela = linhas(arquivos.get('definition/tables/Período.tmdl'));
+  const p = tabela.indexOf("\tpartition 'Período' = calculated");
+  assert.deepEqual(tabela.slice(p + 1, p + 3), ['\t\tmode: import', '\t\tsource = GENERATESERIES(1, 36, 1)']);
+  const k = tabela.indexOf('\tcolumn Meses');
+  assert.ok(tabela.slice(k, p).includes('\t\tsourceColumn: [Value]'));
+  const e = tabela.indexOf('\t\textendedProperty ParameterMetadata =');
+  assert.ok(e > k && e < p, 'ParameterMetadata na coluna');
+  assert.deepEqual(JSON.parse(tabela.slice(e + 1, p).join('').trim()), { version: 0 });
 });
 
 test('TMDL: lineageTag estável e único, para gerar de novo sem diferença', () => {

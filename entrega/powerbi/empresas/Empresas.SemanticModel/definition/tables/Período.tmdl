@@ -1,4 +1,4 @@
-/// Número de meses somados nos fluxos, contados para trás a partir da data de referência (parâmetro de intervalo numérico).
+/// Número de meses somados nos fluxos, contados para trás a partir da data de referência. É um parâmetro de intervalo numérico, de 1 a 36 meses.
 table 'Período'
 	lineageTag: 21e42d10-c4ae-5ef2-93bc-78a847e0bd99
 
@@ -6,15 +6,14 @@ table 'Período'
 		dataType: int64
 		formatString: 0
 		summarizeBy: none
-		sourceColumn: Meses
+		sourceColumn: [Value]
 		lineageTag: 4ab89e6a-3391-53e4-8914-22d289858b1f
 
-	partition 'Período' = m
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+	partition 'Período' = calculated
 		mode: import
-		source =
-				let
-				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "periodo.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
-				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Meses", Int64.Type}}, "pt-BR")
-				in
-				    Tipos
+		source = GENERATESERIES(1, 36, 1)

@@ -10,7 +10,7 @@
     "tabOrder": 11000
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "multiRowCard",
     "query": {
       "queryState": {
         "Values": {
@@ -28,6 +28,21 @@
               },
               "queryRef": "Medidas.Continuam registradas depois de 12 meses",
               "nativeQueryRef": "Continuam registradas depois de 12 meses"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Continuam registradas depois de 12 meses"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Continuam registradas depois de 12 meses",
+              "nativeQueryRef": "Variação em um ano: Continuam registradas depois de 12 meses",
+              "displayName": "pontos percentuais em relação a um ano antes"
             }
           ]
         }

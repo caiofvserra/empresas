@@ -4,9 +4,10 @@
  * os schemas oficiais. Os nomes dos papéis dos visuais (Category, Y, Values...) não têm tabela oficial: conferir uma vez no
  * Power BI Desktop (seção "Pendências" da pesquisa).
  */
-export type Campo = { medida: string } | { coluna: [string, string] };
+/** Campo de um visual; `rotulo` troca o nome que o visual mostra (o displayName da projeção). */
+export type Campo = ({ medida: string } | { coluna: [string, string] }) & { rotulo?: string };
 
-export type TipoVisual = 'card' | 'slicer' | 'textbox' | 'clusteredBarChart' | 'hundredPercentStackedBarChart' | 'clusteredColumnChart' | 'lineChart'
+export type TipoVisual = 'card' | 'multiRowCard' | 'slicer' | 'textbox' | 'clusteredBarChart' | 'hundredPercentStackedBarChart' | 'clusteredColumnChart' | 'lineChart'
   | 'lineClusteredColumnComboChart' | 'donutChart' | 'treemap' | 'pivotTable' | 'tableEx';
 
 export interface Visual {
@@ -18,8 +19,11 @@ export interface Visual {
   papeis?: Record<string, Campo[]>;
   /** Texto de uma caixa de texto; parágrafos separados por linha em branco. */
   texto?: string;
-  /** Segmentação: lista suspensa e uma só escolha, sincronizada entre as páginas pelo grupo. */
-  segmentacao?: { grupo: string; unica?: boolean };
+  /**
+   * Segmentação sincronizada entre as páginas pelo grupo: lista suspensa (com uma só escolha quando `unica`) ou, no modo
+   * `Single`, o controle deslizante de valor único de um parâmetro de intervalo numérico.
+   */
+  segmentacao?: { grupo: string; unica?: boolean; modo?: 'Dropdown' | 'Single' };
 }
 
 export interface Pagina { id: string; nome: string; visuais: Visual[] }
@@ -57,9 +61,10 @@ export function relatorioPbir(relatorio: Relatorio): Map<string, string> {
 }
 
 function campo(valor: Campo) {
-  if ('medida' in valor) return { field: { Measure: { Expression: { SourceRef: { Entity: 'Medidas' } }, Property: valor.medida } }, queryRef: `Medidas.${valor.medida}`, nativeQueryRef: valor.medida };
+  const rotulo = valor.rotulo ? { displayName: valor.rotulo } : {};
+  if ('medida' in valor) return { field: { Measure: { Expression: { SourceRef: { Entity: 'Medidas' } }, Property: valor.medida } }, queryRef: `Medidas.${valor.medida}`, nativeQueryRef: valor.medida, ...rotulo };
   const [tabela, coluna] = valor.coluna;
-  return { field: { Column: { Expression: { SourceRef: { Entity: tabela } }, Property: coluna } }, queryRef: `${tabela}.${coluna}`, nativeQueryRef: coluna, active: true };
+  return { field: { Column: { Expression: { SourceRef: { Entity: tabela } }, Property: coluna } }, queryRef: `${tabela}.${coluna}`, nativeQueryRef: coluna, active: true, ...rotulo };
 }
 
 function conteiner(visual: Visual, ordem: number) {
@@ -67,7 +72,7 @@ function conteiner(visual: Visual, ordem: number) {
   if (visual.papeis) corpo.query = { queryState: Object.fromEntries(Object.entries(visual.papeis).map(([papel, campos]) => [papel, { projections: campos.map(campo) }])) };
   if (visual.tipo === 'textbox' && visual.texto) corpo.objects = { general: [{ properties: { paragraphs: visual.texto.split('\n\n').map((paragrafo, i) => ({ textRuns: [{ value: paragrafo, ...(i === 0 && visual.titulo === undefined ? { textStyle: { fontWeight: 'bold' } } : {}) }] })) } }] };
   if (visual.segmentacao) {
-    corpo.objects = { data: [{ properties: { mode: literal('Dropdown') } }], ...(visual.segmentacao.unica ? { selection: [{ properties: { singleSelect: literal(true), strictSingleSelect: literal(true) } }] } : {}) };
+    corpo.objects = { data: [{ properties: { mode: literal(visual.segmentacao.modo ?? 'Dropdown') } }], ...(visual.segmentacao.unica ? { selection: [{ properties: { singleSelect: literal(true), strictSingleSelect: literal(true) } }] } : {}) };
     corpo.syncGroup = { groupName: visual.segmentacao.grupo, fieldChanges: true, filterChanges: true };
   }
   if (visual.titulo !== undefined) corpo.visualContainerObjects = { title: [{ properties: { show: literal(true), text: literal(visual.titulo) } }] };

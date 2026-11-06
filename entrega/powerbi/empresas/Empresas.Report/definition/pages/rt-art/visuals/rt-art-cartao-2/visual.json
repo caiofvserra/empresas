@@ -10,7 +10,7 @@
     "tabOrder": 9000
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "multiRowCard",
     "query": {
       "queryState": {
         "Values": {
@@ -28,6 +28,21 @@
               },
               "queryRef": "Medidas.RT que saiu sem substituto",
               "nativeQueryRef": "RT que saiu sem substituto"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: RT que saiu sem substituto"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: RT que saiu sem substituto",
+              "nativeQueryRef": "Variação em um ano: RT que saiu sem substituto",
+              "displayName": "em relação a um ano antes"
             }
           ]
         }

@@ -10,7 +10,7 @@
     "tabOrder": 9000
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "multiRowCard",
     "query": {
       "queryState": {
         "Values": {
@@ -28,6 +28,21 @@
               },
               "queryRef": "Medidas.Empresas que saíram da base",
               "nativeQueryRef": "Empresas que saíram da base"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Empresas que saíram da base"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Empresas que saíram da base",
+              "nativeQueryRef": "Variação em um ano: Empresas que saíram da base",
+              "displayName": "em relação a um ano antes"
             }
           ]
         }

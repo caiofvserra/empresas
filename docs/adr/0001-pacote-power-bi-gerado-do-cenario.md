@@ -1,6 +1,6 @@
 # O pacote Power BI é gerado por código, a partir do mesmo cenário do protótipo
 
-Os painéis são protótipos em HTML e serão implementados no Power BI, que não importa HTML. Decidimos (06/11/2026, pedido do Caio) gerar por código, para cada painel, um pacote Power BI: tabelas do cenário de demonstração em esquema estrela (CSV), medidas DAX e o modelo em TMDL dentro de um projeto PBIP, e o tema JSON. O pacote é gerado do mesmo cenário e das mesmas regras dos cartões, e um teste confere que as medidas reproduzem os números do protótipo, para o Power BI não divergir do que foi aprovado na tela.
+Os painéis são protótipos em HTML e serão implementados no Power BI, que não importa HTML. Decidimos (06/11/2026, pedido do Caio) gerar por código, para cada painel, um pacote Power BI: tabelas do cenário de demonstração em esquema estrela (CSV), medidas DAX e o modelo em TMDL dentro de um projeto PBIP, e o tema JSON. O pacote é gerado do mesmo cenário e das mesmas regras dos cartões, e um teste confere que as regras das medidas, reproduzidas sobre os CSV, dão os números dos cartões do protótipo (sem filtros, em cinco combinações de data e período), para o Power BI não divergir do que foi aprovado na tela.
 
 ## Considered Options
 

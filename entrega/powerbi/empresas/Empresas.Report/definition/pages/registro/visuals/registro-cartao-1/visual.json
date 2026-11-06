@@ -10,7 +10,7 @@
     "tabOrder": 8000
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "multiRowCard",
     "query": {
       "queryState": {
         "Values": {
@@ -28,6 +28,21 @@
               },
               "queryRef": "Medidas.Empresas registradas",
               "nativeQueryRef": "Empresas registradas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Empresas registradas"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Empresas registradas",
+              "nativeQueryRef": "Variação em um ano: Empresas registradas",
+              "displayName": "em relação a um ano antes"
             }
           ]
         }

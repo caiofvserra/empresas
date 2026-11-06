@@ -10,7 +10,7 @@
     "tabOrder": 10000
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "multiRowCard",
     "query": {
       "queryState": {
         "Values": {
@@ -28,6 +28,21 @@
               },
               "queryRef": "Medidas.Atividade obrigatória e nenhum registro",
               "nativeQueryRef": "Atividade obrigatória e nenhum registro"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Atividade obrigatória e nenhum registro"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Atividade obrigatória e nenhum registro",
+              "nativeQueryRef": "Variação em um ano: Atividade obrigatória e nenhum registro",
+              "displayName": "em relação a um ano antes"
             }
           ]
         }

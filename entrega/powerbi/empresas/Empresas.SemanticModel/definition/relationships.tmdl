@@ -1,4 +1,5 @@
 relationship caf37c4f-1902-5ee9-a7e9-3f877339c5ea
+	crossFilteringBehavior: bothDirections
 	fromColumn: 'Municípios'.GRE
 	toColumn: Regionais.GRE
 

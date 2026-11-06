@@ -95,6 +95,23 @@ test('referências: todo campo de visual aponta para uma coluna ou medida do mod
   assert.ok(campos >= 40, `só ${campos} campos em visuais`);
 });
 
+test('cartões: cada cartão mostra a variação em um ano, menos o cadastro incompleto, e a data um ano antes tem foto', () => {
+  for (const pagina of ['registro', 'evolucao', 'rt-art']) for (let i = 1; i <= 5; i++) {
+    const visual = JSON.parse(arquivo(`Empresas.Report/definition/pages/${pagina}/visuals/${pagina}-cartao-${i}/visual.json`)).visual;
+    const valores = visual.query.queryState.Values.projections as { field: { Measure: { Property: string } }; displayName?: string }[];
+    assert.equal(visual.visualType, 'multiRowCard');
+    if (valores[0].field.Measure.Property === 'Registradas com cadastro incompleto') { assert.equal(valores.length, 1); continue; }
+    assert.equal(valores[1].field.Measure.Property, `Variação em um ano: ${valores[0].field.Measure.Property}`);
+    assert.match(valores[1].displayName ?? '', /em relação a um ano antes$/);
+  }
+  // EOMONTH(data, -12) de cada data que se pode escolher precisa estar na tabela oculta de datas das fotos.
+  const fotos = new Set(lerCsv('dados/datas-das-fotos.csv').map(row => row.Data));
+  for (const { Data: d } of lerCsv('dados/datas-referencia.csv')) {
+    const alvo = new Date(Date.UTC(Number(d.slice(0, 4)) - 1, Number(d.slice(5, 7)), 0)).toISOString().slice(0, 10);
+    assert.ok(fotos.has(alvo), `${d}: falta a foto de ${alvo}`);
+  }
+});
+
 /* ---------- os cartões a partir dos CSV ---------- */
 function lerCsv(caminho: string): Record<string, string>[] {
   const [cabecalho, ...linhas] = arquivo(caminho).replace(/\r?\n$/, '').split(/\r?\n/).map(linha => [...linha.matchAll(/("(?:[^"]|"")*"|[^;]*)(?:;|$)/g)].map(match => match[1].startsWith('"') ? match[1].slice(1, -1).replaceAll('""', '"') : match[1]).slice(0, -1));
@@ -111,7 +128,7 @@ const noPeriodo = (data: string, d: string, meses: number) => data >= inicio(d, 
 /** EDATE(data, -12) do DAX: o mesmo dia um ano antes, ou o último dia do mês quando ele não existe. */
 const umAnoAntes = (data: string) => { const ano = Number(data.slice(0, 4)) - 1, mes = Number(data.slice(5, 7)), ultimo = new Date(Date.UTC(ano, mes, 0)).getUTCDate(); return `${ano}-${data.slice(5, 7)}-${String(Math.min(Number(data.slice(8, 10)), ultimo)).padStart(2, '0')}`; };
 
-/** Os cartões como o CSV e a regra da medida DAX os dão (espelho de src/powerbi/empresas/medidas.ts). */
+/** Os cartões como o CSV e a regra da medida DAX os dão (espelho das medidas de src/powerbi/empresas/modelo.ts). */
 function cartoesDoPacote(d: string, meses: number) {
   const foto = fotoEmpresas.filter(row => row.Data === d), registradas = foto.filter(row => row.Registrada === '1');
   const fe = fotoEstab.filter(row => row.Data === d), mercado = fe.filter(row => row['No mercado'] === '1');

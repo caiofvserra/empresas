@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "A montar no Power BI Desktop. Visual Mapa de formas (Shape Map) com o mapa personalizado mapas/sp-municipios.json (Formatar > Configurações do mapa > Mapa personalizado). Local: Municípios[Município]; saturação de cor: a medida do indicador escolhido, como Parte do mercado que está registrada."
+                    "value": "A montar no Power BI Desktop. Use o Mapa de formas com o mapa dos 645 municípios que vem no pacote, pintado pela parte do mercado que está registrada. O passo a passo está no LEIA-ME."
                   }
                 ]
               }

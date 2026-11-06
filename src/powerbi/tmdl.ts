@@ -37,7 +37,8 @@ function linhasTabela(tabela: Tabela, tag: (...partes: string[]) => string, past
   const linhas = [...descricao(tabela.descricao, ''), `table ${nome(tabela.nome)}`, ...(tabela.oculta ? ['\tisHidden'] : []), `\tlineageTag: ${tag('tabela', tabela.nome)}`, ''];
   for (const medida of tabela.medidas ?? []) linhas.push(...linhasMedida(medida, tag(tabela.nome, 'medida', medida.nome)), '');
   for (const coluna of tabela.colunas) linhas.push(...linhasColuna(coluna, tag(tabela.nome, 'coluna', coluna.nome)), '');
-  linhas.push(`\tpartition ${nome(tabela.nome)} = m`, '\t\tmode: import', '\t\tsource =', ...origem(tabela, pasta).map(row => `\t\t\t\t${row}`));
+  if (tabela.calculada) linhas.push(`\tpartition ${nome(tabela.nome)} = calculated`, '\t\tmode: import', `\t\tsource = ${tabela.calculada}`);
+  else linhas.push(`\tpartition ${nome(tabela.nome)} = m`, '\t\tmode: import', '\t\tsource =', ...origem(tabela, pasta).map(row => `\t\t\t\t${row}`));
   return linhas;
 }
 
@@ -51,28 +52,32 @@ function linhasMedida(medida: Medida, lineageTag: string): string[] {
 function linhasColuna(coluna: Coluna, lineageTag: string): string[] {
   return [...descricao(coluna.descricao, '\t'), `\tcolumn ${nome(coluna.nome)}`, `\t\tdataType: ${coluna.tipo}`,
     ...(coluna.formato ? [`\t\tformatString: ${coluna.formato}`] : []), ...(coluna.oculta ? ['\t\tisHidden'] : []),
-    `\t\tsummarizeBy: ${coluna.somar ? 'sum' : 'none'}`, `\t\tsourceColumn: ${coluna.nome}`,
-    ...(coluna.ordenarPor ? [`\t\tsortByColumn: ${nome(coluna.ordenarPor)}`] : []), `\t\tlineageTag: ${lineageTag}`];
+    `\t\tsummarizeBy: ${coluna.somar ? 'sum' : 'none'}`, `\t\tsourceColumn: ${coluna.origem ?? coluna.nome}`,
+    ...(coluna.ordenarPor ? [`\t\tsortByColumn: ${nome(coluna.ordenarPor)}`] : []), `\t\tlineageTag: ${lineageTag}`,
+    // Os arquivos salvos pelo Desktop marcam assim a coluna de um parâmetro de intervalo numérico; a documentação não descreve.
+    ...(coluna.parametro ? ['', '\t\textendedProperty ParameterMetadata =', '\t\t\t\t{', '\t\t\t\t  "version": 0', '\t\t\t\t}'] : [])];
 }
 
 const tipoM: Record<TipoColuna, string> = { string: 'type text', int64: 'Int64.Type', double: 'type number', dateTime: 'type date', boolean: 'type logical' };
 
 /** Expressão M da partição: o CSV da pasta do parâmetro, ou uma tabela vazia de uma coluna para a tabela que só guarda medidas. */
 function origem(tabela: Tabela, pasta?: string): string[] {
-  if (!tabela.arquivo || !pasta) return ['let', `    Fonte = #table(type table [${tabela.colunas.map(coluna => `#"${coluna.nome}" = ${tipoM[coluna.tipo]}`).join(', ')}], {})`, 'in', '    Fonte'];
-  const tipos = tabela.colunas.map(coluna => `{"${coluna.nome}", ${tipoM[coluna.tipo]}}`).join(', ');
+  if (!tabela.arquivo || !pasta) return ['let', `    Fonte = #table(type table [${tabela.colunas.map(coluna => `#"${m(coluna.nome)}" = ${tipoM[coluna.tipo]}`).join(', ')}], {})`, 'in', '    Fonte'];
+  const tipos = tabela.colunas.map(coluna => `{"${m(coluna.nome)}", ${tipoM[coluna.tipo]}}`).join(', ');
   return ['let',
-    `    Fonte = Csv.Document(File.Contents(#"${pasta}" & "${tabela.arquivo}"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),`,
+    `    Fonte = Csv.Document(File.Contents(#"${m(pasta)}" & "${m(tabela.arquivo)}"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),`,
     '    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),',
     `    Tipos = Table.TransformColumnTypes(Cabecalhos, {${tipos}}, "pt-BR")`,
     'in', '    Tipos'];
 }
 
+/** Texto dentro de aspas duplas em M: a aspa interna é dobrada. */
+const m = (valor: string) => valor.replaceAll('"', '""');
 const descricao = (texto: string | undefined, recuo: string) => texto ? texto.split('\n').map(row => `${recuo}/// ${row}`) : [];
 /** Nome de objeto TMDL: entre aspas simples quando foge de [A-Za-z0-9_] (acentos, espaço, ponto), com a aspa interna dobrada. */
 export const nome = (valor: string) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(valor) ? valor : `'${valor.replaceAll("'", "''")}'`;
 const texto = (linhas: string[]) => `${linhas.join('\r\n').replace(/(\r\n)+$/, '')}\r\n`;
-/** GUID determinístico (formato UUID, versão 5) a partir de um nome: quatro FNV-1a de 32 bits com sementes diferentes. Roda no Node e no navegador. */
+/** GUID determinístico a partir de um nome, no formato de um UUID: quatro FNV-1a de 32 bits com sementes diferentes (não é um UUID v5 de verdade, que usa SHA-1). Roda no Node e no navegador. */
 export function guid(...partes: string[]): string {
   const texto = partes.join('\u0000');
   const fnv = (semente: number) => { let h = semente >>> 0; for (let i = 0; i < texto.length; i++) { h ^= texto.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };

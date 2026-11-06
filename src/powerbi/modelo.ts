@@ -14,6 +14,10 @@ export interface Coluna {
   descricao?: string;
   /** Coluna da mesma tabela que define a ordem desta (por exemplo, o nome do mês ordenado pelo número). */
   ordenarPor?: string;
+  /** Coluna de origem quando difere do nome, como `[Value]` de GENERATESERIES numa tabela calculada. */
+  origem?: string;
+  /** Coluna de um parâmetro de intervalo numérico (o "teste de hipóteses" do Desktop): leva o ParameterMetadata. */
+  parametro?: boolean;
 }
 
 export interface Medida {
@@ -25,8 +29,10 @@ export interface Medida {
 
 export interface Tabela {
   nome: string; descricao?: string;
-  /** Nome do CSV, na pasta do parâmetro. Uma tabela sem arquivo só guarda medidas. */
+  /** Nome do CSV, na pasta do parâmetro. Uma tabela sem arquivo nem `calculada` só guarda medidas. */
   arquivo?: string;
+  /** Expressão DAX de uma tabela calculada, como `GENERATESERIES(1, 36, 1)`. */
+  calculada?: string;
   colunas: Coluna[]; medidas?: Medida[]; oculta?: boolean;
 }
 

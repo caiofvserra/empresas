@@ -91,7 +91,7 @@ export function dadosEmpresas(dataset: Dataset): Dados[] {
         return [row.id, row.companyId, row.cnpj, row.branch, row.cityId, row.cnaeMain, enquadra ? `${enquadra} ${cnaes.get(enquadra)?.label ?? ''}`.trim() : '', enquadra ? camaraPorCnae[enquadra] ?? 'Sem câmara definida' : '', classe(row), row.openedAt, row.rfbStatus]; }) },
     { arquivo: 'calendario.csv', cabecalho: ['Mês', 'Rótulo', 'Trimestre', 'Ano', 'Ordem'], linhas: dataset.months.map((mes, i) => [primeiroDia(mes), `${meses[Number(mes.slice(5, 7)) - 1]}/${mes.slice(2, 4)}`, `${mes.slice(0, 4)}-T${Math.floor((Number(mes.slice(5, 7)) - 1) / 3) + 1}`, Number(mes.slice(0, 4)), i + 1]) },
     { arquivo: 'datas-referencia.csv', cabecalho: ['Data', 'Rótulo'], linhas: escolhiveis.map(data => [data, `${data.slice(8, 10)}/${data.slice(5, 7)}/${data.slice(0, 4)}${data === hoje ? ' (hoje)' : ''}`]) },
-    { arquivo: 'periodo.csv', cabecalho: ['Meses'], linhas: Array.from({ length: dataset.months.length }, (_, i) => [i + 1]) },
+    { arquivo: 'datas-das-fotos.csv', cabecalho: ['Data'], linhas: fotos.map(data => [data]) },
     { arquivo: 'foto-empresas.csv', cabecalho: ['Data', 'Mês', 'Empresa', 'Registrada', 'Anuidade vencida', 'Com RT', 'RT saiu sem substituto', 'Sem vínculo de RT', 'RT cancelado ou interrompido', 'Cadastro incompleto', 'Registrada 12 meses antes', 'Continua registrada', 'Estabelecimentos registrados', 'Vistos'], linhas: fotoEmpresas },
     { arquivo: 'foto-estabelecimentos.csv', cabecalho: ['Data', 'Estabelecimento', 'No mercado', 'Situação no cadastro', 'Registro ativo'], linhas: fotoEstab },
     { arquivo: 'entradas-saidas.csv', cabecalho: ['Empresa', 'Mês', 'Movimento', 'Primeira vez', 'Após fiscalização'], linhas: movimentos },
@@ -102,6 +102,21 @@ export function dadosEmpresas(dataset: Dataset): Dados[] {
 }
 
 /**
+ * Os blocos da página Vínculos, na ordem da página: o nome (o mesmo do protótipo) e o acordo de que dependem; sem acordo, o
+ * bloco usa fontes abertas e não leva "!". `modelo.ts` e `paginas.ts` leem esta lista.
+ */
+export const BLOCOS_PARCERIA = [
+  { id: 'socios', bloco: 'Sócios que são profissionais', acordo: 'Receita Federal (CPF completo dos sócios)' },
+  { id: 'nome', bloco: 'Nome com engenharia e diretoria', acordo: 'Receita Federal (CPF completo dos sócios)' },
+  { id: 'instalacoes', bloco: 'Usinas, postos, minas e financiamentos', acordo: '' },
+  { id: 'empregados', bloco: 'Empregados técnicos por empresa', acordo: 'Ministério do Trabalho (RAIS identificada)' },
+  { id: 'credenciadas', bloco: 'Credenciadas no DETRAN-SP e no INMETRO', acordo: 'DETRAN-SP e INMETRO' },
+  { id: 'jucesp', bloco: 'Engenharia incluída no contrato social', acordo: 'Junta Comercial do Estado de São Paulo (JUCESP)' },
+] as const;
+/** Nome da medida de um bloco da página Vínculos: com "!" na frente quando depende de acordo. */
+export const medidaDoBloco = (bloco: typeof BLOCOS_PARCERIA[number]) => `${bloco.acordo ? '! ' : ''}${bloco.bloco}`;
+
+/**
  * Os blocos da página Vínculos ("!", dependem de acordo) na data de hoje, em formato longo: bloco, grupo (a linha do gráfico),
  * série (a cor) e valor. Vêm das mesmas tabelas que o painel exporta em CSV, então batem com a tela.
  */
@@ -110,18 +125,15 @@ function parcerias(dataset: Dataset): Celula[][] {
   const ctx = { dataset, cidadeId: null, tokens: { good: '', bad: '', muted: '' }, frentes: { instalacoes: quadroInstalacoes(buildInstalacoes(dataset), dataset, null) },
     parcerias: { sociosPf: quadroSociosPf(socios, dataset, profissionais, ids, null), denominacao: quadroDenominacao(socios, dataset, profissionais, ids, null), vinculos: quadroVinculos(buildVinculos(dataset), dataset, ids, null),
       credenciamentos: quadroCredenciamentos(buildCredenciamentos(dataset), dataset, ids, null), jucesp: quadroJucesp(buildJucesp(dataset), dataset, ids, null) } } as unknown as CockpitCtx;
-  const blocos: [string, ReturnType<typeof exportaSociosPf>, number[], number][] = [
-    ['Sócios que são profissionais', exportaSociosPf(ctx), [2, 3], 1],
-    ['Nome com engenharia e diretoria', exportaDenominacao(ctx), [1], 1],
-    ['Usinas, postos, minas e financiamentos', exportaInstalacoes(ctx), [2, 3, 4], 1],
-    ['Empregados técnicos por empresa', exportaVinculos(ctx), [1, 2], 1],
-    ['Credenciadas no DETRAN-SP e no INMETRO', exportaCredenciamentos(ctx), [2, 3, 4], 2],
-    ['Engenharia incluída no contrato social', exportaJucesp(ctx), [3, 4, 5], 1],
-  ];
+  const tabelas = { socios: exportaSociosPf(ctx), nome: exportaDenominacao(ctx), instalacoes: exportaInstalacoes(ctx), empregados: exportaVinculos(ctx), credenciadas: exportaCredenciamentos(ctx), jucesp: exportaJucesp(ctx) };
+  const colunas: Record<keyof typeof tabelas, [number[], number]> = { socios: [[2, 3], 1], nome: [[1], 1], instalacoes: [[2, 3, 4], 1], empregados: [[1, 2], 1], credenciadas: [[2, 3, 4], 2], jucesp: [[3, 4, 5], 1] };
   const linhas: Celula[][] = [];
-  for (const [bloco, tabela, colunas, chave] of blocos) tabela.linhas().forEach((linha, ordem) => {
-    const grupo = linha.slice(0, chave).join(' · ');
-    for (const coluna of colunas) linhas.push([bloco, grupo, tabela.cabecalho[coluna], Number(linha[coluna]), ordem + 1]);
-  });
+  for (const { id, bloco } of BLOCOS_PARCERIA) {
+    const tabela = tabelas[id], [valores, chave] = colunas[id];
+    tabela.linhas().forEach((linha, ordem) => {
+      const grupo = linha.slice(0, chave).join(', ');
+      for (const coluna of valores) linhas.push([bloco, grupo, tabela.cabecalho[coluna], Number(linha[coluna]), ordem + 1]);
+    });
+  }
   return linhas;
 }
