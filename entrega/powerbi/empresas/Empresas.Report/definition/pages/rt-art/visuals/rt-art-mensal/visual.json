@@ -46,7 +46,8 @@
                 }
               },
               "queryRef": "Medidas.ARTs no mês",
-              "nativeQueryRef": "ARTs no mês"
+              "nativeQueryRef": "ARTs no mês",
+              "displayName": "ARTs"
             },
             {
               "field": {
@@ -60,11 +61,47 @@
                 }
               },
               "queryRef": "Medidas.ARTs no mesmo mês do ano anterior",
-              "nativeQueryRef": "ARTs no mesmo mês do ano anterior"
+              "nativeQueryRef": "ARTs no mesmo mês do ano anterior",
+              "displayName": "Um ano antes"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Empresas que entraram na base"
+                  "Property": "Comparação: Empresas que entraram na base"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Empresas que entraram na base",
-              "nativeQueryRef": "Variação em um ano: Empresas que entraram na base",
-              "displayName": "em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Empresas que entraram na base",
+              "nativeQueryRef": "Comparação: Empresas que entraram na base"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Empresas que entraram na base"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Empresas que entraram na base",
+              "nativeQueryRef": "Detalhe: Empresas que entraram na base"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Empresas que entraram na base'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

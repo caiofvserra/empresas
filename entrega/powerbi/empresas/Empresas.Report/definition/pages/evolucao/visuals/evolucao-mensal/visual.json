@@ -5,7 +5,7 @@
     "x": 16,
     "y": 436,
     "z": 15000,
-    "width": 829,
+    "width": 620,
     "height": 268,
     "tabOrder": 15000
   },
@@ -46,7 +46,8 @@
                 }
               },
               "queryRef": "Medidas.Entradas no mês",
-              "nativeQueryRef": "Entradas no mês"
+              "nativeQueryRef": "Entradas no mês",
+              "displayName": "Entradas"
             },
             {
               "field": {
@@ -60,7 +61,8 @@
                 }
               },
               "queryRef": "Medidas.Saídas no mês",
-              "nativeQueryRef": "Saídas no mês"
+              "nativeQueryRef": "Saídas no mês",
+              "displayName": "Saídas"
             }
           ]
         },
@@ -78,11 +80,47 @@
                 }
               },
               "queryRef": "Medidas.Registradas no fim do mês",
-              "nativeQueryRef": "Registradas no fim do mês"
+              "nativeQueryRef": "Registradas no fim do mês",
+              "displayName": "Registradas no fim do mês"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

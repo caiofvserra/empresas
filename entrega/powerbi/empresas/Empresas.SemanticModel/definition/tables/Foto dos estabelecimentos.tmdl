@@ -1,4 +1,4 @@
-/// Estabelecimentos com atividade da lista abertos até o último dia de cada mês: se estão no mercado (ativos na Receita) e a situação no cadastro naquele dia.
+/// Guarda os estabelecimentos com atividade da lista abertos até o último dia de cada mês: se estão no mercado (ativos na Receita) e a situação no cadastro naquele dia.
 table 'Foto dos estabelecimentos'
 	isHidden
 	lineageTag: c743ee7d-1b00-5c7f-8736-6c25893064e8

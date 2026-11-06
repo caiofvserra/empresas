@@ -10,20 +10,125 @@
     "tabOrder": 13000
   },
   "visual": {
-    "visualType": "textbox",
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Calendário"
+                    }
+                  },
+                  "Property": "Rótulo"
+                }
+              },
+              "queryRef": "Calendário.Rótulo",
+              "nativeQueryRef": "Rótulo",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Índice: Emprego formal no mês"
+                }
+              },
+              "queryRef": "Medidas.Índice: Emprego formal no mês",
+              "nativeQueryRef": "Índice: Emprego formal no mês",
+              "displayName": "Emprego formal"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Índice: Crédito a empresas de engenharia no mês !"
+                }
+              },
+              "queryRef": "Medidas.Índice: Crédito a empresas de engenharia no mês !",
+              "nativeQueryRef": "Índice: Crédito a empresas de engenharia no mês !",
+              "displayName": "Crédito a empresas de engenharia !"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Índice: Abertas na Receita em 12 meses"
+                }
+              },
+              "queryRef": "Medidas.Índice: Abertas na Receita em 12 meses",
+              "nativeQueryRef": "Índice: Abertas na Receita em 12 meses",
+              "displayName": "Abertas na Receita em 12 meses"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Índice: Registradas no Crea-SP em 12 meses"
+                }
+              },
+              "queryRef": "Medidas.Índice: Registradas no Crea-SP em 12 meses",
+              "nativeQueryRef": "Índice: Registradas no Crea-SP em 12 meses",
+              "displayName": "Registros no Crea-SP em 12 meses"
+            }
+          ]
+        }
+      }
+    },
     "objects": {
-      "general": [
+      "labels": [
         {
           "properties": {
-            "paragraphs": [
-              {
-                "textRuns": [
-                  {
-                    "value": "A montar no Power BI Desktop. Quatro séries com o primeiro mês igual a 100: emprego formal, crédito para obras, abertas na Receita e registros. O crédito vem do Banco Central e depende de acordo; falta a tabela de demonstração dele."
-                  }
-                ]
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
               }
-            ]
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
           }
         }
       ]
@@ -49,6 +154,7 @@
           }
         }
       ]
-    }
+    },
+    "drillFilterOtherVisuals": true
   }
 }

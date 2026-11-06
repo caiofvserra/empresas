@@ -5,7 +5,7 @@
     "x": 16,
     "y": 436,
     "z": 16000,
-    "width": 411,
+    "width": 306,
     "height": 268,
     "tabOrder": 16000
   },
@@ -46,7 +46,8 @@
                 }
               },
               "queryRef": "Medidas.Estabelecimentos do mercado com registro",
-              "nativeQueryRef": "Estabelecimentos do mercado com registro"
+              "nativeQueryRef": "Estabelecimentos do mercado com registro",
+              "displayName": "Com registro"
             },
             {
               "field": {
@@ -60,7 +61,8 @@
                 }
               },
               "queryRef": "Medidas.Estabelecimentos do mercado só com histórico",
-              "nativeQueryRef": "Estabelecimentos do mercado só com histórico"
+              "nativeQueryRef": "Estabelecimentos do mercado só com histórico",
+              "displayName": "Só histórico"
             },
             {
               "field": {
@@ -74,11 +76,47 @@
                 }
               },
               "queryRef": "Medidas.Estabelecimentos do mercado sem registro",
-              "nativeQueryRef": "Estabelecimentos do mercado sem registro"
+              "nativeQueryRef": "Estabelecimentos do mercado sem registro",
+              "displayName": "Nunca apareceu"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

@@ -1,0 +1,26 @@
+/// Liga as ARTs aos profissionais ativos da mesma modalidade.
+table Modalidades
+	lineageTag: a66991e3-f315-5559-9eb1-194b5d34a192
+
+	column Modalidade
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Modalidade
+		lineageTag: fbaa671c-475b-5392-bf85-f054ca58d17b
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		lineageTag: 68896ef5-e1bd-5483-82aa-5bade8b5b366
+
+	partition Modalidades = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "modalidades.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Modalidade", type text}, {"Rótulo", type text}}, "pt-BR")
+				in
+				    Tipos

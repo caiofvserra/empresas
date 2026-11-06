@@ -34,6 +34,11 @@
         }
       }
     },
+    "syncGroup": {
+      "groupName": "filtro-1",
+      "fieldChanges": true,
+      "filterChanges": true
+    },
     "objects": {
       "data": [
         {
@@ -48,11 +53,6 @@
           }
         }
       ]
-    },
-    "syncGroup": {
-      "groupName": "filtro-1",
-      "fieldChanges": true,
-      "filterChanges": true
     },
     "visualContainerObjects": {
       "title": [

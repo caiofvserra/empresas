@@ -7,8 +7,10 @@
 /** Campo de um visual; `rotulo` troca o nome que o visual mostra (o displayName da projeção). */
 export type Campo = ({ medida: string } | { coluna: [string, string] }) & { rotulo?: string };
 
-export type TipoVisual = 'card' | 'multiRowCard' | 'slicer' | 'textbox' | 'clusteredBarChart' | 'hundredPercentStackedBarChart' | 'clusteredColumnChart' | 'lineChart'
+export type TipoVisual = 'card' | 'multiRowCard' | 'slicer' | 'textbox' | 'clusteredBarChart' | 'hundredPercentStackedBarChart' | 'clusteredColumnChart' | 'columnChart' | 'lineChart'
   | 'lineClusteredColumnComboChart' | 'donutChart' | 'treemap' | 'pivotTable' | 'tableEx';
+/** Gráficos: saem com rótulos de dados e legenda no alto, porque todo gráfico do painel se lê sem passar o mouse. */
+const GRAFICOS = new Set<TipoVisual>(['clusteredBarChart', 'hundredPercentStackedBarChart', 'clusteredColumnChart', 'columnChart', 'lineChart', 'lineClusteredColumnComboChart', 'donutChart', 'treemap']);
 
 export interface Visual {
   /** Nome da pasta do visual: só [A-Za-z0-9_-], até 50 caracteres. */
@@ -68,13 +70,18 @@ function campo(valor: Campo) {
 }
 
 function conteiner(visual: Visual, ordem: number) {
-  const corpo: Record<string, unknown> = { visualType: visual.tipo };
+  const corpo: Record<string, unknown> = { visualType: visual.tipo }, objetos: Record<string, unknown> = {};
+  const mostrar = (valor: boolean, extra: Record<string, unknown> = {}) => [{ properties: { show: literal(valor), ...extra } }];
   if (visual.papeis) corpo.query = { queryState: Object.fromEntries(Object.entries(visual.papeis).map(([papel, campos]) => [papel, { projections: campos.map(campo) }])) };
-  if (visual.tipo === 'textbox' && visual.texto) corpo.objects = { general: [{ properties: { paragraphs: visual.texto.split('\n\n').map((paragrafo, i) => ({ textRuns: [{ value: paragrafo, ...(i === 0 && visual.titulo === undefined ? { textStyle: { fontWeight: 'bold' } } : {}) }] })) } }] };
+  if (visual.tipo === 'textbox' && visual.texto) objetos.general = [{ properties: { paragraphs: visual.texto.split('\n\n').map((paragrafo, i) => ({ textRuns: [{ value: paragrafo, ...(i === 0 && visual.titulo === undefined ? { textStyle: { fontWeight: 'bold' } } : {}) }] })) } }];
+  if (GRAFICOS.has(visual.tipo)) Object.assign(objetos, { labels: mostrar(true), legend: mostrar(true, { position: literal('Top') }) });
+  // No cartão de várias linhas, o título do visual já diz o que é o número: some o nome de cada medida embaixo do valor.
+  if (visual.tipo === 'multiRowCard') objetos.categoryLabels = mostrar(false);
   if (visual.segmentacao) {
-    corpo.objects = { data: [{ properties: { mode: literal(visual.segmentacao.modo ?? 'Dropdown') } }], ...(visual.segmentacao.unica ? { selection: [{ properties: { singleSelect: literal(true), strictSingleSelect: literal(true) } }] } : {}) };
+    Object.assign(objetos, { data: [{ properties: { mode: literal(visual.segmentacao.modo ?? 'Dropdown') } }], ...(visual.segmentacao.unica ? { selection: [{ properties: { singleSelect: literal(true), strictSingleSelect: literal(true) } }] } : {}) });
     corpo.syncGroup = { groupName: visual.segmentacao.grupo, fieldChanges: true, filterChanges: true };
   }
+  if (Object.keys(objetos).length) corpo.objects = objetos;
   if (visual.titulo !== undefined) corpo.visualContainerObjects = { title: [{ properties: { show: literal(true), text: literal(visual.titulo) } }] };
   if (visual.tipo !== 'textbox') corpo.drillFilterOtherVisuals = true;
   return { $schema: `${SCHEMA}item/report/definition/visualContainer/2.13.0/schema.json`, name: visual.id, position: { x: visual.x, y: visual.y, z: ordem * 1000, width: visual.w, height: visual.h, tabOrder: ordem * 1000 }, visual: corpo };

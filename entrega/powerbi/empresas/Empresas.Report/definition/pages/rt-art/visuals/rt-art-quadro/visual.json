@@ -10,7 +10,7 @@
     "tabOrder": 13000
   },
   "visual": {
-    "visualType": "hundredPercentStackedBarChart",
+    "visualType": "clusteredBarChart",
     "query": {
       "queryState": {
         "Y": {
@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "Medidas.Registradas com RT",
-              "nativeQueryRef": "Registradas com RT"
+              "nativeQueryRef": "Registradas com RT",
+              "displayName": "Com RT"
             },
             {
               "field": {
@@ -41,7 +42,8 @@
                 }
               },
               "queryRef": "Medidas.RT que saiu sem substituto",
-              "nativeQueryRef": "RT que saiu sem substituto"
+              "nativeQueryRef": "RT que saiu sem substituto",
+              "displayName": "RT saiu sem substituto"
             },
             {
               "field": {
@@ -55,11 +57,62 @@
                 }
               },
               "queryRef": "Medidas.Sem vínculo de RT carregado",
-              "nativeQueryRef": "Sem vínculo de RT carregado"
+              "nativeQueryRef": "Sem vínculo de RT carregado",
+              "displayName": "Sem vínculo carregado"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "RT com registro profissional cancelado ou interrompido"
+                }
+              },
+              "queryRef": "Medidas.RT com registro profissional cancelado ou interrompido",
+              "nativeQueryRef": "RT com registro profissional cancelado ou interrompido",
+              "displayName": "Com RT de registro cancelado ou interrompido"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

@@ -2,31 +2,75 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "registro-capital",
   "position": {
-    "x": 1063,
+    "x": 958,
     "y": 436,
     "z": 19000,
-    "width": 201,
+    "width": 306,
     "height": 268,
     "tabOrder": 19000
   },
   "visual": {
-    "visualType": "textbox",
-    "objects": {
-      "general": [
-        {
-          "properties": {
-            "paragraphs": [
-              {
-                "textRuns": [
-                  {
-                    "value": "A montar no Power BI Desktop. Matriz com o tempo desde o primeiro registro nas linhas e a faixa do capital social nas colunas. Falta levar as duas faixas para a tabela Empresas."
-                  }
-                ]
-              }
-            ]
-          }
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Foto das empresas"
+                    }
+                  },
+                  "Property": "Tempo de registro"
+                }
+              },
+              "queryRef": "Foto das empresas.Tempo de registro",
+              "nativeQueryRef": "Tempo de registro",
+              "active": true
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Empresas"
+                    }
+                  },
+                  "Property": "Capital social"
+                }
+              },
+              "queryRef": "Empresas.Capital social",
+              "nativeQueryRef": "Capital social",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Registradas no tempo e no capital"
+                }
+              },
+              "queryRef": "Medidas.Registradas no tempo e no capital",
+              "nativeQueryRef": "Registradas no tempo e no capital",
+              "displayName": "Empresas"
+            }
+          ]
         }
-      ]
+      }
     },
     "visualContainerObjects": {
       "title": [
@@ -49,6 +93,7 @@
           }
         }
       ]
-    }
+    },
+    "drillFilterOtherVisuals": true
   }
 }

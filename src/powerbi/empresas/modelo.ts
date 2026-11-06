@@ -1,5 +1,5 @@
 import type { Coluna, Medida, Modelo, Tabela } from '../modelo';
-import { BLOCOS_PARCERIA, medidaDoBloco } from './dados';
+import { BLOCOS_PARCERIA, COLUNAS_FOTO_EMPRESAS, COORTES, comMarca, fichaDoAcordo, medidaDoBloco, situacoesNoFunil } from './dados';
 
 /*
  * Modelo do painel de Empresas no Power BI: as tabelas de `dados.ts`, as relações do esquema estrela e as medidas DAX
@@ -11,178 +11,298 @@ const texto = (nome: string, extra: Partial<Coluna> = {}): Coluna => ({ nome, ti
 const inteiro = (nome: string, extra: Partial<Coluna> = {}): Coluna => ({ nome, tipo: 'int64', formato: '0', ...extra });
 const data = (nome: string, extra: Partial<Coluna> = {}): Coluna => ({ nome, tipo: 'dateTime', formato: 'dd/mm/yyyy', ...extra });
 const sinal = (nome: string): Coluna => ({ nome, tipo: 'int64', formato: '0', oculta: true });
+const colunaDaFoto = ({ nome, tipo }: typeof COLUNAS_FOTO_EMPRESAS[number]): Coluna =>
+  tipo === 'sinal' ? sinal(nome) : tipo === 'inteiro' ? inteiro(nome, { oculta: true }) : texto(nome, nome === 'Tempo de registro' ? { ordenarPor: 'Ordem do tempo de registro' } : {});
 
 export const PASTA_PARAMETRO = 'Pasta dos dados';
 /** Meses do cenário de demonstração, o limite do período. */
 const MESES_NA_BASE = 36;
+const ACORDO_DO_CREDITO = fichaDoAcordo(['bcb']);
 
 const tabelas: Tabela[] = [
-  { nome: 'Regionais', arquivo: 'regionais.csv', descricao: 'As 16 gerências regionais do Crea-SP.', colunas: [texto('GRE', { ordenarPor: 'Ordem' }), inteiro('Ordem', { oculta: true })] },
-  { nome: 'Municípios', arquivo: 'municipios.csv', descricao: 'Os 645 municípios de SP e a GRE de cada um, pela tabela oficial.', colunas: [texto('Código IBGE'), texto('Município'), texto('GRE')] },
-  { nome: 'Empresas', arquivo: 'empresas.csv', descricao: 'Uma linha por empresa (raiz do CNPJ). Câmara pela atividade principal da matriz; município, porte e situação na Receita também da matriz.',
-    colunas: [texto('Empresa'), texto('Raiz do CNPJ'), texto('Razão social'), texto('Porte'), texto('Câmara'), texto('Situação na Receita'), texto('Código IBGE', { oculta: true }), sinal('Só visto (sede fora de SP)')] },
-  { nome: 'Estabelecimentos', arquivo: 'estabelecimentos.csv', descricao: 'Uma linha por CNPJ completo. A atividade da lista é a principal, ou a primeira secundária quando a principal não está na lista do Crea-SP.',
-    colunas: [texto('Estabelecimento'), texto('Empresa', { oculta: true }), texto('CNPJ'), texto('Matriz ou filial'), texto('Código IBGE', { oculta: true }), texto('Atividade principal'), texto('Atividade da lista'), texto('Câmara da atividade'), texto('Classe'), data('Aberto em'), texto('Situação na Receita')] },
-  { nome: 'Calendário', arquivo: 'calendario.csv', descricao: 'Um mês por linha, para os gráficos mês a mês.', colunas: [data('Mês', { formato: 'mmm/yy' }), texto('Rótulo', { ordenarPor: 'Mês' }), texto('Trimestre'), inteiro('Ano'), inteiro('Ordem', { oculta: true })] },
-  { nome: 'Datas de referência', arquivo: 'datas-referencia.csv', descricao: 'Os fins de mês em que a base pode ser lida, e hoje. Sem relação com as outras tabelas: a escolha vale para todas as medidas.', colunas: [data('Data'), texto('Rótulo', { ordenarPor: 'Data' })] },
-  { nome: 'Datas das fotos', arquivo: 'datas-das-fotos.csv', oculta: true, descricao: 'Todas as datas com foto, inclusive os 12 meses antes da primeira data de referência. As medidas de variação a usam para ler o mesmo indicador um ano antes.', colunas: [data('Data')] },
-  { nome: 'Período', calculada: `GENERATESERIES(1, ${MESES_NA_BASE}, 1)`, descricao: 'Número de meses somados nos fluxos, contados para trás a partir da data de referência. É um parâmetro de intervalo numérico, de 1 a 36 meses.', colunas: [inteiro('Meses', { origem: '[Value]', parametro: true })] },
-  { nome: 'Foto das empresas', arquivo: 'foto-empresas.csv', oculta: true, descricao: 'Situação de cada empresa no último dia de cada mês, calculada pelas regras do painel. Uma linha por empresa registrada naquele dia ou 12 meses antes.',
-    colunas: [data('Data'), data('Mês'), texto('Empresa'), ...['Registrada', 'Anuidade vencida', 'Com RT', 'RT saiu sem substituto', 'Sem vínculo de RT', 'RT cancelado ou interrompido', 'Cadastro incompleto', 'Registrada 12 meses antes', 'Continua registrada'].map(sinal), inteiro('Estabelecimentos registrados', { oculta: true }), inteiro('Vistos', { oculta: true })] },
-  { nome: 'Foto dos estabelecimentos', arquivo: 'foto-estabelecimentos.csv', oculta: true, descricao: 'Estabelecimentos com atividade da lista abertos até o último dia de cada mês: se estão no mercado (ativos na Receita) e a situação no cadastro naquele dia.',
+  { nome: 'Regionais', arquivo: 'regionais.csv', descricao: 'Tem uma linha para cada uma das 16 gerências regionais do Crea-SP.', colunas: [texto('GRE', { ordenarPor: 'Ordem' }), inteiro('Ordem', { oculta: true })] },
+  { nome: 'Municípios', arquivo: 'municipios.csv', descricao: 'Tem os 645 municípios de SP e a GRE de cada um, pela tabela oficial.', colunas: [texto('Código IBGE'), texto('Município'), texto('GRE')] },
+  { nome: 'Empresas', arquivo: 'empresas.csv', descricao: 'Tem uma linha por empresa (raiz do CNPJ). A câmara vem da atividade principal da matriz; o município, o porte e a situação na Receita também vêm da matriz.',
+    colunas: [texto('Empresa'), texto('Raiz do CNPJ'), texto('Razão social'), texto('Porte'), texto('Câmara'), texto('Situação na Receita'), texto('Código IBGE', { oculta: true }), sinal('Só visto (sede fora de SP)'),
+      data('Primeiro registro', { oculta: true }), texto('Capital social', { ordenarPor: 'Ordem do capital social' }), inteiro('Ordem do capital social', { oculta: true })] },
+  { nome: 'Estabelecimentos', arquivo: 'estabelecimentos.csv', descricao: 'Tem uma linha por CNPJ completo. A atividade da lista é a principal, ou a primeira secundária quando a principal não está na lista do Crea-SP.',
+    colunas: [texto('Estabelecimento'), texto('Empresa', { oculta: true }), texto('CNPJ'), texto('Matriz ou filial'), texto('Código IBGE', { oculta: true }), texto('Atividade principal'), texto('Atividade da lista'), texto('Câmara da atividade'), texto('Classe'), data('Aberto em'), data('Mês de abertura', { oculta: true }), texto('Situação na Receita')] },
+  { nome: 'Modalidades', arquivo: 'modalidades.csv', descricao: 'Liga as ARTs aos profissionais ativos da mesma modalidade.', colunas: [texto('Modalidade', { oculta: true }), texto('Rótulo')] },
+  { nome: 'Calendário', arquivo: 'calendario.csv', descricao: 'Tem um mês por linha, para os gráficos mês a mês.', colunas: [data('Mês', { formato: 'mmm/yy' }), texto('Rótulo', { ordenarPor: 'Mês' }), texto('Trimestre'), inteiro('Ano'), inteiro('Ordem', { oculta: true })] },
+  { nome: 'Datas de referência', arquivo: 'datas-referencia.csv', descricao: 'Tem os fins de mês em que a base pode ser lida, e hoje. Não se liga às outras tabelas: a escolha vale para todas as medidas.', colunas: [data('Data'), texto('Rótulo', { ordenarPor: 'Data' })] },
+  { nome: 'Datas das fotos', arquivo: 'datas-das-fotos.csv', oculta: true, descricao: 'Tem todas as datas com foto, inclusive os 12 meses antes da primeira data de referência. As medidas de variação a usam para ler o mesmo indicador um ano antes.', colunas: [data('Data')] },
+  { nome: 'Período', calculada: `GENERATESERIES(1, ${MESES_NA_BASE}, 1)`, descricao: 'Guarda o número de meses somados nos fluxos, contados para trás a partir da data de referência. No Power BI Desktop, é um parâmetro do tipo "Intervalo numérico", de 1 a 36 meses.', colunas: [inteiro('Meses', { origem: '[Value]', parametro: true })] },
+  { nome: 'Foto das empresas', arquivo: 'foto-empresas.csv', oculta: true, descricao: 'Guarda a situação de cada empresa no último dia de cada mês, calculada pelas regras do painel. Tem uma linha por empresa registrada naquele dia, registrada nos meses das coortes ou com estabelecimento no mercado.',
+    colunas: [data('Data'), data('Mês'), texto('Empresa'), ...COLUNAS_FOTO_EMPRESAS.map(colunaDaFoto)] },
+  { nome: 'Foto dos estabelecimentos', arquivo: 'foto-estabelecimentos.csv', oculta: true, descricao: 'Guarda os estabelecimentos com atividade da lista abertos até o último dia de cada mês: se estão no mercado (ativos na Receita) e a situação no cadastro naquele dia.',
     colunas: [data('Data'), texto('Estabelecimento'), sinal('No mercado'), texto('Situação no cadastro'), sinal('Registro ativo')] },
-  { nome: 'Entradas e saídas', arquivo: 'entradas-saidas.csv', oculta: true, descricao: 'Empresas que passaram a ter registro ativo (entrada) ou deixaram de ter (saída), por mês.', colunas: [texto('Empresa'), data('Mês'), texto('Movimento'), sinal('Primeira vez'), sinal('Após fiscalização')] },
-  { nome: 'ARTs', arquivo: 'arts.csv', oculta: true, descricao: 'ARTs registradas por empresas.', colunas: [texto('ART'), texto('Empresa'), data('Data'), data('Mês'), { nome: 'Valor', tipo: 'double', formato: 'R$ #,##0', oculta: true }, texto('Modalidade')] },
-  { nome: 'Emprego formal', arquivo: 'emprego.csv', oculta: true, descricao: 'Empregados com carteira em ocupações de engenharia no fim de cada mês, por regional, pela RAIS (Relação Anual de Informações Sociais) e pelo Novo CAGED (Cadastro Geral de Empregados e Desempregados).', colunas: [data('Mês'), texto('GRE'), inteiro('Empregados', { oculta: true })] },
-  { nome: 'Parcerias', arquivo: 'parcerias.csv', descricao: 'Demonstração dos blocos que dependem de acordo ("!"), na data de hoje do cenário. Não muda com a data de referência nem com os filtros.',
+  { nome: 'Pendências do cadastro', arquivo: 'pendencias.csv', oculta: true, descricao: 'Guarda as pendências abertas no cadastro de cada empresa registrada, no último dia de cada mês.', colunas: [data('Data'), texto('Empresa'), texto('Pendência')] },
+  { nome: 'Profissionais ativos', arquivo: 'profissionais-ativos.csv', oculta: true, descricao: 'Conta os profissionais com registro ativo em cada data de referência, por município e modalidade, como o painel de Profissionais.', colunas: [data('Data'), texto('Código IBGE'), texto('Modalidade'), inteiro('Ativos', { oculta: true })] },
+  { nome: 'Entradas e saídas', arquivo: 'entradas-saidas.csv', oculta: true, descricao: 'Guarda as empresas que passaram a ter registro ativo (entrada) ou deixaram de ter (saída), por mês.', colunas: [texto('Empresa'), data('Mês'), texto('Tipo'), sinal('Primeira vez'), sinal('Após fiscalização')] },
+  { nome: 'ARTs', arquivo: 'arts.csv', oculta: true, descricao: 'Guarda as ARTs registradas por empresas.', colunas: [texto('ART'), texto('Empresa'), data('Data'), data('Mês'), { nome: 'Valor', tipo: 'double', formato: 'R$ #,##0', oculta: true }, texto('Modalidade')] },
+  { nome: 'Emprego formal', arquivo: 'emprego.csv', oculta: true, descricao: 'Conta os empregados com carteira em ocupações de engenharia no fim de cada mês, por regional, pela RAIS (Relação Anual de Informações Sociais) e pelo Novo CAGED (Cadastro Geral de Empregados e Desempregados).', colunas: [data('Mês'), texto('GRE'), inteiro('Empregados', { oculta: true })] },
+  { nome: 'Crédito', arquivo: 'credito.csv', oculta: true, descricao: `Guarda o saldo de crédito a empresas de engenharia no fim de cada mês, por regional. ${ACORDO_DO_CREDITO}`, colunas: [data('Mês'), texto('GRE'), { nome: 'Saldo', tipo: 'double', formato: 'R$ #,##0', oculta: true }] },
+  { nome: 'Parcerias', arquivo: 'parcerias.csv', descricao: 'Guarda a demonstração dos blocos que dependem de acordo ("!"), na data de hoje do cenário. Os números não mudam com a data de referência nem com os filtros.',
     colunas: [texto('Bloco'), texto('Grupo'), texto('Série'), { nome: 'Valor', tipo: 'double', formato: '#,##0', oculta: true }, inteiro('Ordem', { oculta: true })] },
 ];
 
-/* ---------- Medidas ---------- */
-const D = "VAR d = [Data escolhida]";
-const foto = (filtro: string) => `${D}\nRETURN CALCULATE(SUM('Foto das empresas'[${filtro}]), 'Foto das empresas'[Data] = d)`;
-const registradasCom = (sinalNome: string) => `${D}\nRETURN CALCULATE(COUNTROWS('Foto das empresas'), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1, 'Foto das empresas'[${sinalNome}] = 1)`;
-const estab = (...filtros: string[]) => `${D}\nRETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d${filtros.map(row => `, ${row}`).join('')})`;
+/* ---------- Pedaços de DAX ---------- */
+const COM_DATA = 'VAR d = [Data escolhida]';
+const filtrosExtras = (filtros: string[]) => filtros.map(filtro => `, ${filtro}`).join('');
+/** Soma uma coluna da foto das empresas na data escolhida. */
+const somaDaFoto = (coluna: string) => `${COM_DATA}\nRETURN CALCULATE(SUM('Foto das empresas'[${coluna}]), 'Foto das empresas'[Data] = d)`;
+/** Conta as empresas da foto na data escolhida com os filtros dados. */
+const contaNaFoto = (...filtros: string[]) => `${COM_DATA}\nRETURN CALCULATE(COUNTROWS('Foto das empresas'), 'Foto das empresas'[Data] = d${filtrosExtras(filtros)})`;
+const naFoto = (coluna: string) => `'Foto das empresas'[${coluna}] = 1`;
+const registradasCom = (coluna: string) => contaNaFoto(naFoto('Registrada'), naFoto(coluna));
+const contaEstabelecimentos = (...filtros: string[]) => `${COM_DATA}\nRETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d${filtrosExtras(filtros)})`;
 const NO_MERCADO = "'Foto dos estabelecimentos'[No mercado] = 1", VIGENTE = "'Foto dos estabelecimentos'[Situação no cadastro] = \"Com registro ou visto\"", OBRIGATORIO = "'Estabelecimentos'[Classe] = \"Registro obrigatório\"";
-const periodo = `${D}\nVAR inicio = [Início do período]`;
+const COM_PERIODO = `${COM_DATA}\nVAR inicio = [Início do período]`;
 /** O mesmo período um ano antes: início e fim recuados 12 meses (EDATE leva o dia 31 ao último dia do mês, como o painel). */
 const UM_ANO_ANTES = 'VAR inicio = EDATE([Início do período], -12)\nVAR fim = EDATE([Data escolhida], -12)';
 /** Entradas ou saídas contadas no contexto, com filtros a mais. */
-const contaMovimento = (tipo: 'Entrada' | 'Saída', ...filtros: string[]) => `CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Movimento] = "${tipo}"${filtros.map(row => `, ${row}`).join('')}) + 0`;
-const movimento = (tipo: 'Entrada' | 'Saída', ...filtros: string[]) => `${periodo}\nRETURN ${contaMovimento(tipo, "'Entradas e saídas'[Mês] >= inicio", "'Entradas e saídas'[Mês] <= d", ...filtros)}`;
+const contaMovimento = (tipo: 'Entrada' | 'Saída', ...filtros: string[]) => `CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Tipo] = "${tipo}"${filtrosExtras(filtros)}) + 0`;
+const movimentoNoPeriodo = (tipo: 'Entrada' | 'Saída', ...filtros: string[]) => `${COM_PERIODO}\nRETURN ${contaMovimento(tipo, "'Entradas e saídas'[Mês] >= inicio", "'Entradas e saídas'[Mês] <= d", ...filtros)}`;
+/** ARTs ou valor em ART entre `inicio` e `fim`. */
+const nasArts = (expressao: string, fim: string) => `CALCULATE(${expressao}, 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= ${fim}) + 0`;
 /** Primeiro dia do mês que começa um período de `n` meses terminado na data `d`. */
 const inicioDe = (n: string) => `DATE(YEAR(d), MONTH(d) - ${n} + 1, 1)`;
+/** Meses do gráfico: 24, ou o período quando passa de 24 (`mesesDaJanela` do painel). */
+const MESES_DO_GRAFICO = 'MAX(24, [Meses do período])';
+const DENTRO_DO_GRAFICO = "KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)";
 /**
- * Medida mês a mês para o eixo do calendário: só os meses do gráfico (24 meses, ou o período quando passa de 24). O filtro
- * entra mês a mês, então o trimestre da tabela de calor soma só os meses do gráfico e os outros ficam em branco.
+ * Medida mês a mês para o eixo do calendário: só os meses do gráfico. O filtro entra mês a mês, então o trimestre da tabela de
+ * calor soma só os meses do gráfico e os outros ficam em branco.
  */
-const noMes = (expressao: string) => {
-  const dentro = "KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)";
-  return `${D}\nVAR mes = MAX('Calendário'[Mês])\nVAR inicio = ${inicioDe('MAX(24, [Meses do período])')}\nVAR meses = CALCULATE(COUNTROWS('Calendário'), ${dentro})\nRETURN IF(meses > 0, CALCULATE(${expressao}, ${dentro}))`;
+const noMes = (expressao: string) =>
+  `${COM_DATA}\nVAR mes = MAX('Calendário'[Mês])\nVAR inicio = ${inicioDe(MESES_DO_GRAFICO)}\nVAR meses = CALCULATE(COUNTROWS('Calendário'), ${DENTRO_DO_GRAFICO})\nRETURN IF(meses > 0, CALCULATE(${expressao}, ${DENTRO_DO_GRAFICO}))`;
+/**
+ * Primeiro mês do gráfico de economia (`ritmoEconomico`): os meses do gráfico, mas nunca antes do 12º mês da base, porque as
+ * séries de 12 meses precisam dos 11 anteriores.
+ */
+const INICIO_DA_ECONOMIA = `VAR inicio = MAX(${inicioDe(MESES_DO_GRAFICO)}, CALCULATE(MIN('Calendário'[Mês]), REMOVEFILTERS('Calendário'), 'Calendário'[Ordem] = 12))`;
+/** Último mês com arquivo da Receita na data escolhida: a abertura mais recente até ela (`ultimoMesReceita`). */
+const ULTIMO_MES_DA_RECEITA = "VAR receita = CALCULATE(MAX('Estabelecimentos'[Mês de abertura]), REMOVEFILTERS(), 'Estabelecimentos'[Aberto em] <= d)";
+
+const medida = (pasta: string, nome: string, dax: string, formato: string, descricao: string): Medida => ({ nome, dax, formato, pasta, descricao });
+const PASTA = { apoio: 'Apoio', registro: 'Registro e mercado', evolucao: 'Evolução', rtArt: 'RT e ART', vinculos: 'Vínculos' } as const;
+const FORMATO = { inteiro: '#,##0', parte: '0.0%', reais: 'R$ #,##0', variacao: '+0.0%;-0.0%;0.0%', pontos: '+0.0;-0.0;0.0', indice: '0.0', texto: '' } as const;
+
+/* ---------- Cartões ---------- */
+/** Como o cartão se compara: estoque e fluxo variam em %, taxa em pontos percentuais (`variacaoAnual` do painel). */
+type Serie = 'estoque' | 'fluxo' | 'taxa';
+const VARIACAO: Record<Serie, { formato: string; unidade: string; calculo: string; descricao: string }> = {
+  estoque: { formato: FORMATO.variacao, unidade: '', calculo: 'IF(antes > 0, DIVIDE(agora - antes, antes))', descricao: 'Compara o cartão com o fim do mesmo mês um ano antes.' },
+  fluxo: { formato: FORMATO.variacao, unidade: '', calculo: 'IF(antes > 0, DIVIDE(agora - antes, antes))', descricao: 'Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.' },
+  taxa: { formato: FORMATO.pontos, unidade: ' p.p.', calculo: 'IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)', descricao: 'Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.' },
 };
-
-const m = (pasta: string, nome: string, dax: string, formato: string, descricao: string): Medida => ({ nome, dax, formato, pasta, descricao });
-const R = 'Registro e mercado', E = 'Evolução', T = 'RT e ART', V = 'Vínculos', A = 'Apoio';
-const INT = '#,##0', PCT = '0.0%', REAIS = 'R$ #,##0', VAR_PCT = '+0.0%;-0.0%;0.0%', PP = '+0.0;-0.0;0.0';
-
 /**
- * Os cinco cartões de cada página, com o tipo do indicador: estoque e fluxo variam em %, taxa em pontos percentuais
- * (`variacaoAnual` do painel). Sem tipo, o cartão não mostra variação, como no painel. `paginas.ts` monta os cartões daqui.
+ * A comparação embaixo do número, como no painel: contra um ano antes (a regra geral), contra a meta (parte registrada e RT) ou
+ * nos meses do gráfico (emprego). `medida` aponta para a medida numérica; `frase` completa o número formatado.
  */
-type Cartao = { nome: string; tipo?: 'estoque' | 'fluxo' | 'taxa'; variacaoPropria?: boolean; pasta: string };
-const cartao = (pasta: string) => (nome: string, tipo?: Cartao['tipo'], variacaoPropria = false): Cartao => ({ nome, tipo, variacaoPropria, pasta });
-const [cr, ce, ct] = [cartao(R), cartao(E), cartao(T)];
-export const CARTOES = {
-  registro: [cr('Empresas registradas', 'estoque'), cr('Parte do mercado que está registrada', 'taxa'), cr('Atividade obrigatória e nenhum registro', 'estoque'), cr('Registradas em dia com a anuidade', 'taxa'), cr('Registradas com cadastro incompleto')],
-  evolucao: [ce('Empresas que entraram na base', 'fluxo'), ce('Empresas que saíram da base', 'fluxo'), ce('Empresas de engenharia abertas no período', 'fluxo'), ce('Continuam registradas depois de 12 meses', 'taxa'), ce('Emprego formal em engenharia', 'estoque')],
-  'rt-art': [ct('Empresas com responsável técnico', 'taxa'), ct('RT que saiu sem substituto', 'estoque'), ct('ARTs de empresas', 'fluxo', true), ct('Valor declarado em ART', 'fluxo', true), ct('Registradas sem nenhuma ART', 'taxa')],
-} satisfies Record<string, Cartao[]>;
-/** Nome da medida de variação de um cartão. */
+type Comparacao = { serie: Serie; medida?: string; frase?: string };
+interface Cartao { nome: string; pasta: string; comparacao?: Comparacao; detalhe?: string }
+/** Nome da medida de variação de um cartão contra um ano antes. */
 export const variacaoDe = (nome: string) => `Variação em um ano: ${nome}`;
-/** Rótulo da variação embaixo do número do cartão. */
-export const rotuloDaVariacao = (tipo: Cartao['tipo']) => tipo === 'taxa' ? 'pontos percentuais em relação a um ano antes' : 'em relação a um ano antes';
+/** Nomes das medidas de texto que o cartão mostra embaixo do número. */
+export const comparacaoDe = (nome: string) => `Comparação: ${nome}`;
+export const detalheDe = (nome: string) => `Detalhe: ${nome}`;
+const n = (expressao: string) => `FORMAT(${expressao}, "#,##0")`;
+const parte = (expressao: string) => `FORMAT(${expressao}, "0.0%")`;
+
+const cartao = (pasta: string) => (nome: string, comparacao?: Comparacao, detalhe?: string): Cartao => ({ nome, pasta, comparacao, detalhe });
+const [noRegistro, naEvolucao, noRtArt] = [cartao(PASTA.registro), cartao(PASTA.evolucao), cartao(PASTA.rtArt)];
+const META = (medidaDaMeta: string) => `" p.p. em relação à meta de " & FORMAT(${medidaDaMeta}, "0%")`;
+/** Os cinco cartões de cada página, com a comparação e a linha de apoio do painel. `paginas.ts` monta os cartões daqui. */
+export const CARTOES = {
+  registro: [
+    noRegistro('Empresas registradas', { serie: 'estoque' }, `${n('[Estabelecimentos registrados]')} & " estabelecimentos, " & ${n('[Vistos de empresas de fora de SP]')} & " vistos de empresas de fora de SP"`),
+    noRegistro('Parte do mercado que está registrada', { serie: 'taxa', medida: 'Distância da meta da parte registrada', frase: META('[Meta da parte do mercado registrada]') },
+      `"nas atividades de registro obrigatório, " & ${parte('[Parte registrada nas atividades de registro obrigatório]')}`),
+    noRegistro('Atividade obrigatória e nenhum registro', { serie: 'estoque' }, '"estabelecimentos que nunca apareceram no cadastro"'),
+    noRegistro('Registradas em dia com a anuidade', { serie: 'taxa' }, `${n('[Registradas com anuidade vencida]')} & " empresas registradas com anuidade vencida"`),
+    noRegistro('Registradas com cadastro incompleto', undefined, '[Pendência mais comum]'),
+  ],
+  evolucao: [
+    naEvolucao('Empresas que entraram na base', { serie: 'fluxo' }, `${n('[Entraram pela primeira vez]')} & " pela primeira vez, " & ${n('[Retornos]')} & " retornos; " & ${n('[Entradas após fiscalização]')} & " após fiscalização"`),
+    naEvolucao('Empresas que saíram da base', { serie: 'fluxo' }, `"saldo de " & FORMAT([Entradas menos saídas no período], "+#,##0;-#,##0;0") & " no período"`),
+    naEvolucao('Empresas de engenharia abertas no período', { serie: 'fluxo' }, `${parte('[Parte das abertas que já se registrou]')} & " delas já se registraram"`),
+    naEvolucao('Continuam registradas depois de 12 meses', { serie: 'taxa' }, `${n('[Registradas 12 meses antes que continuam]')} & " de " & ${n('[Registradas 12 meses antes]')} & " empresas"`),
+    naEvolucao('Emprego formal em engenharia', { serie: 'estoque', medida: 'Variação do emprego nos meses do gráfico', frase: '" em " & [Meses no gráfico da economia] & " meses"' }, '"empregados com carteira no último mês"'),
+  ],
+  'rt-art': [
+    noRtArt('Empresas com responsável técnico', { serie: 'taxa', medida: 'Distância da meta de RT', frase: META('[Meta de RT]') },
+      `${n('[Registradas sem RT vigente]')} & " sem RT vigente, de " & ${n('[Empresas registradas]')} & " registradas"`),
+    noRtArt('RT que saiu sem substituto', { serie: 'estoque' }, '"empresas sem novo responsável técnico 30 dias depois da saída"'),
+    noRtArt('ARTs de empresas', { serie: 'fluxo', medida: variacaoDe('ARTs de empresas') }, `${n('[Registradas com ART no período]')} & " empresas registradas com ART no período"`),
+    noRtArt('Valor declarado em ART', { serie: 'fluxo', medida: variacaoDe('Valor declarado em ART') }, '"soma do valor de contrato das ARTs"'),
+    noRtArt('Registradas sem nenhuma ART', { serie: 'taxa' }, `${n('[Registradas sem ART no período]')} & " empresas registradas sem ART no período"`),
+  ],
+} satisfies Record<string, Cartao[]>;
+
 /**
  * A mesma medida lida com a data trocada pelo fim do mesmo mês um ano antes (a tabela oculta Datas das fotos tem essas datas).
  * No fluxo, o período continua com o mesmo número de meses. A data entra numa variável antes do CALCULATE, que muda o contexto.
  */
-const variacaoGenerica = (nome: string, tipo: NonNullable<Cartao['tipo']>) => [
-  'VAR alvo = EOMONTH([Data escolhida], -12)', `VAR agora = [${nome}]`, `VAR antes = CALCULATE([${nome}], 'Datas das fotos'[Data] = alvo)`,
-  tipo === 'taxa' ? 'RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)' : 'RETURN IF(antes > 0, DIVIDE(agora - antes, antes))',
-].join('\n');
+const variacaoEmUmAno = (nome: string, serie: Serie) =>
+  ['VAR alvo = EOMONTH([Data escolhida], -12)', `VAR agora = [${nome}]`, `VAR antes = CALCULATE([${nome}], 'Datas das fotos'[Data] = alvo)`, `RETURN ${VARIACAO[serie].calculo}`].join('\n');
+/** A frase da comparação: o número com sinal e o que ele compara ("em relação a um ano antes", à meta ou nos meses do gráfico). */
+function fraseDaComparacao({ nome }: Cartao, { serie, medida: outra, frase }: Comparacao) {
+  const { formato, unidade } = VARIACAO[serie];
+  return `VAR v = [${outra ?? variacaoDe(nome)}]\nRETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "${formato}") & ${frase ?? `"${unidade} em relação a um ano antes"`})`;
+}
+function medidasDosCartoes(): Medida[] {
+  return Object.values(CARTOES).flat().flatMap((c: Cartao) => [
+    ...(c.comparacao && !c.comparacao.medida ? [medida(c.pasta, variacaoDe(c.nome), variacaoEmUmAno(c.nome, c.comparacao.serie), VARIACAO[c.comparacao.serie].formato, VARIACAO[c.comparacao.serie].descricao)] : []),
+    ...(c.comparacao ? [medida(c.pasta, comparacaoDe(c.nome), fraseDaComparacao(c, c.comparacao), FORMATO.texto, 'Escreve a comparação que o cartão mostra embaixo do número.')] : []),
+    ...(c.detalhe ? [medida(c.pasta, detalheDe(c.nome), c.detalhe, FORMATO.texto, 'Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.')] : []),
+  ]);
+}
 
+/* ---------- Economia, abertas e registros (índice 100) ---------- */
+/** Cada série do gráfico de economia no mês do eixo: o valor do mês e o índice com o primeiro mês do gráfico igual a 100. */
+const SERIES_DA_ECONOMIA = [
+  { nome: 'Emprego formal no mês', valor: "SUM('Emprego formal'[Empregados])", descricao: 'Soma os empregados com carteira em engenharia no fim de cada mês.', receita: false },
+  { nome: comMarca.medida('Crédito a empresas de engenharia no mês'), valor: "SUM('Crédito'[Saldo])", descricao: `Soma o saldo de crédito a empresas de engenharia no fim de cada mês. ${ACORDO_DO_CREDITO}`, receita: false },
+  { nome: 'Abertas na Receita em 12 meses', valor: "CALCULATE(COUNTROWS('Estabelecimentos'), REMOVEFILTERS('Calendário'), 'Estabelecimentos'[Classe] <> \"\", 'Estabelecimentos'[Mês de abertura] >= EDATE(m, -11), 'Estabelecimentos'[Mês de abertura] <= m) + 0",
+    descricao: 'Conta os estabelecimentos com atividade da lista abertos na Receita nos 12 meses até cada mês. A série termina no último mês com arquivo da Receita.', receita: true },
+  { nome: 'Registradas no Crea-SP em 12 meses', valor: "CALCULATE(COUNTROWS('Empresas'), 'Empresas'[Primeiro registro] >= EDATE(m, -11), 'Empresas'[Primeiro registro] <= EOMONTH(m, 0)) + 0",
+    descricao: 'Conta as empresas que fizeram o primeiro registro no Crea-SP nos 12 meses até cada mês.', receita: false },
+] as const;
+/** Nome da medida de índice de uma série; o "!" do acordo vai para o fim. */
+export const indiceDe = (nome: string) => `Índice: ${nome.replace(/^! /, '')}${nome.startsWith('!') ? ' !' : ''}`;
+function medidasDaEconomia(): Medida[] {
+  const noGrafico = (valor: string, receita: boolean) => [COM_DATA, INICIO_DA_ECONOMIA, ULTIMO_MES_DA_RECEITA, "VAR m = MAX('Calendário'[Mês])",
+    `RETURN IF(m >= inicio && m <= d${receita ? ' && m <= receita' : ''}, ${valor})`].join('\n');
+  return SERIES_DA_ECONOMIA.flatMap(({ nome, valor, descricao, receita }) => [
+    medida(PASTA.evolucao, nome, noGrafico(valor, receita), FORMATO.inteiro, descricao),
+    medida(PASTA.evolucao, indiceDe(nome), [COM_DATA, INICIO_DA_ECONOMIA, `VAR agora = [${nome}]`, `VAR base = CALCULATE([${nome}], REMOVEFILTERS('Calendário'), 'Calendário'[Mês] = inicio)`,
+      'RETURN IF(NOT ISBLANK(agora) && base > 0, ROUND(agora / base * 100, 1))'].join('\n'), FORMATO.indice, `Mostra a série com o primeiro mês do gráfico igual a 100, para comparar o ritmo de séries com unidades diferentes.`),
+  ]);
+}
+
+/* ---------- Medidas ---------- */
 const medidas: Medida[] = [
   // Apoio: data, período e metas.
-  m(A, 'Data escolhida', "IF(ISFILTERED('Datas das fotos'[Data]), MAX('Datas das fotos'[Data]), MAX('Datas de referência'[Data]))", 'dd/mm/yyyy', 'A data de referência escolhida; sem escolha, a mais recente. As medidas de variação trocam a data pela de um ano antes.'),
-  m(A, 'Meses do período', "SELECTEDVALUE('Período'[Meses], 12)", '0', 'O período escolhido, em meses; 12 quando nada está escolhido.'),
-  m(A, 'Início do período', `${D}\nRETURN ${inicioDe('[Meses do período]')}`, 'dd/mm/yyyy', 'Primeiro dia do primeiro mês do período: o período termina na data escolhida e começa no primeiro dia do mês, como no painel.'),
-  m(A, 'Meta da parte do mercado registrada', '0.65', PCT, 'A meta padrão da parte do mercado registrada é 65%, a mesma do painel.'),
-  m(A, 'Meta de RT', '0.95', PCT, 'A meta padrão de empresas registradas com responsável técnico é 95%, porque o RT é condição do registro (Lei 5.194/66, art. 8º, parágrafo único).'),
+  medida(PASTA.apoio, 'Data escolhida', "IF(ISFILTERED('Datas das fotos'[Data]), MAX('Datas das fotos'[Data]), MAX('Datas de referência'[Data]))", 'dd/mm/yyyy', 'Devolve a data de referência escolhida; sem escolha, a mais recente. As medidas de variação trocam a data pela de um ano antes.'),
+  medida(PASTA.apoio, 'Meses do período', "SELECTEDVALUE('Período'[Meses], 12)", '0', 'Devolve o período escolhido, em meses; sem escolha, 12.'),
+  medida(PASTA.apoio, 'Início do período', `${COM_DATA}\nRETURN ${inicioDe('[Meses do período]')}`, 'dd/mm/yyyy', 'Devolve o primeiro dia do primeiro mês do período: o período termina na data escolhida e começa no primeiro dia do mês, como no painel.'),
+  medida(PASTA.apoio, 'Meta da parte do mercado registrada', '0.65', FORMATO.parte, 'A meta padrão da parte do mercado registrada é 65%, a mesma do painel.'),
+  medida(PASTA.apoio, 'Meta de RT', '0.95', FORMATO.parte, 'A meta padrão de empresas registradas com responsável técnico é 95%, porque o RT é condição do registro (Lei 5.194/66, art. 8º, parágrafo único).'),
 
   // Registro e mercado.
-  m(R, 'Empresas registradas', foto('Registrada'), INT, 'Empresas, contadas pela raiz do CNPJ, com ao menos um registro ou visto ativo na data escolhida.'),
-  m(R, 'Estabelecimentos registrados', foto('Estabelecimentos registrados'), INT, 'CNPJs completos com registro ou visto vigente na data escolhida.'),
-  m(R, 'Vistos de empresas de fora de SP', foto('Vistos'), INT, 'Vistos vigentes de empresas registradas em outro Crea.'),
-  m(R, 'Estabelecimentos no mercado', estab(NO_MERCADO), INT, 'Estabelecimentos ativos na Receita com atividade da lista do Crea-SP, abertos até a data escolhida.'),
-  m(R, 'Estabelecimentos do mercado com registro', estab(NO_MERCADO, VIGENTE), INT, 'Estabelecimentos do mercado com registro ou visto vigente na data escolhida.'),
-  m(R, 'Estabelecimentos do mercado só com histórico', estab(NO_MERCADO, "'Foto dos estabelecimentos'[Situação no cadastro] = \"Só teve registro no passado\""), INT, 'Estabelecimentos do mercado que já tiveram registro, mas não o têm na data escolhida.'),
-  m(R, 'Estabelecimentos do mercado sem registro', estab(NO_MERCADO, "'Foto dos estabelecimentos'[Situação no cadastro] = \"Nunca apareceu no cadastro\""), INT, 'Estabelecimentos do mercado que nunca apareceram no cadastro até a data escolhida.'),
-  m(R, 'Parte do mercado que está registrada', 'DIVIDE([Estabelecimentos do mercado com registro], [Estabelecimentos no mercado])', PCT, 'Parte dos estabelecimentos do mercado com registro ou visto vigente na data escolhida. Atividade da lista não prova obrigação de registro.'),
-  m(R, 'Distância da meta da parte registrada', '([Parte do mercado que está registrada] - [Meta da parte do mercado registrada]) * 100', PP, 'Mostra, em pontos percentuais, quanto a parte do mercado registrada está acima ou abaixo da meta.'),
-  m(R, 'Parte registrada nas atividades de registro obrigatório', `DIVIDE(CALCULATE([Estabelecimentos do mercado com registro], ${OBRIGATORIO}), CALCULATE([Estabelecimentos no mercado], ${OBRIGATORIO}))`, PCT, 'Mostra a mesma parte, só nas atividades de registro obrigatório.'),
-  m(R, 'Atividade obrigatória e nenhum registro', `CALCULATE([Estabelecimentos do mercado sem registro], ${OBRIGATORIO})`, INT, 'Estabelecimentos ativos na Receita com atividade de registro obrigatório que nunca tiveram registro ou visto no Crea-SP. Não estar no cadastro não quer dizer irregular.'),
-  m(R, 'Registradas com anuidade vencida', registradasCom('Anuidade vencida'), INT, 'Empresas registradas com anuidade vencida e não paga na data escolhida.'),
-  m(R, 'Registradas sem anuidade vencida', '[Empresas registradas] - [Registradas com anuidade vencida]', INT, 'Empresas registradas sem anuidade vencida na data escolhida.'),
-  m(R, 'Registradas em dia com a anuidade', 'DIVIDE([Empresas registradas] - [Registradas com anuidade vencida], [Empresas registradas])', PCT, 'Parte das empresas registradas sem anuidade vencida na data escolhida.'),
-  m(R, 'Registradas com cadastro incompleto', registradasCom('Cadastro incompleto'), INT, 'Empresas registradas com pendência aberta no cadastro (atividade não informada, regional não identificada, município diferente do da Receita, CNPJ baixado).'),
+  medida(PASTA.registro, 'Empresas registradas', somaDaFoto('Registrada'), FORMATO.inteiro, 'Conta as empresas, pela raiz do CNPJ, com ao menos um registro ou visto ativo na data escolhida.'),
+  medida(PASTA.registro, 'Estabelecimentos registrados', somaDaFoto('Estabelecimentos registrados'), FORMATO.inteiro, 'Conta os CNPJs completos com registro ou visto vigente na data escolhida.'),
+  medida(PASTA.registro, 'Vistos de empresas de fora de SP', somaDaFoto('Vistos'), FORMATO.inteiro, 'Conta os vistos vigentes de empresas registradas em outro Crea.'),
+  medida(PASTA.registro, 'Estabelecimentos no mercado', contaEstabelecimentos(NO_MERCADO), FORMATO.inteiro, 'Conta os estabelecimentos ativos na Receita com atividade da lista do Crea-SP, abertos até a data escolhida.'),
+  medida(PASTA.registro, 'Estabelecimentos do mercado com registro', contaEstabelecimentos(NO_MERCADO, VIGENTE), FORMATO.inteiro, 'Conta os estabelecimentos do mercado com registro ou visto vigente na data escolhida.'),
+  medida(PASTA.registro, 'Estabelecimentos do mercado só com histórico', contaEstabelecimentos(NO_MERCADO, "'Foto dos estabelecimentos'[Situação no cadastro] = \"Só teve registro no passado\""), FORMATO.inteiro, 'Conta os estabelecimentos do mercado que já tiveram registro, mas não o têm na data escolhida.'),
+  medida(PASTA.registro, 'Estabelecimentos do mercado sem registro', contaEstabelecimentos(NO_MERCADO, "'Foto dos estabelecimentos'[Situação no cadastro] = \"Nunca apareceu no cadastro\""), FORMATO.inteiro, 'Conta os estabelecimentos do mercado que nunca apareceram no cadastro até a data escolhida.'),
+  medida(PASTA.registro, 'Parte do mercado que está registrada', 'DIVIDE([Estabelecimentos do mercado com registro], [Estabelecimentos no mercado])', FORMATO.parte, 'Mostra a parte dos estabelecimentos do mercado com registro ou visto vigente na data escolhida. Atividade da lista não prova obrigação de registro.'),
+  medida(PASTA.registro, 'Distância da meta da parte registrada', '([Parte do mercado que está registrada] - [Meta da parte do mercado registrada]) * 100', FORMATO.pontos, 'Mostra, em pontos percentuais, quanto a parte do mercado registrada está acima ou abaixo da meta.'),
+  medida(PASTA.registro, 'Parte registrada nas atividades de registro obrigatório', `DIVIDE(CALCULATE([Estabelecimentos do mercado com registro], ${OBRIGATORIO}), CALCULATE([Estabelecimentos no mercado], ${OBRIGATORIO}))`, FORMATO.parte, 'Mostra a mesma parte, só nas atividades de registro obrigatório.'),
+  medida(PASTA.registro, 'Atividade obrigatória e nenhum registro', `CALCULATE([Estabelecimentos do mercado sem registro], ${OBRIGATORIO})`, FORMATO.inteiro, 'Conta os estabelecimentos ativos na Receita com atividade de registro obrigatório que nunca tiveram registro ou visto no Crea-SP. Não estar no cadastro não quer dizer irregular.'),
+  medida(PASTA.registro, 'Registradas com anuidade vencida', registradasCom('Anuidade vencida'), FORMATO.inteiro, 'Conta as empresas registradas com anuidade vencida e não paga na data escolhida.'),
+  medida(PASTA.registro, 'Registradas sem anuidade vencida', '[Empresas registradas] - [Registradas com anuidade vencida]', FORMATO.inteiro, 'Conta as empresas registradas sem anuidade vencida na data escolhida.'),
+  medida(PASTA.registro, 'Registradas em dia com a anuidade', 'DIVIDE([Registradas sem anuidade vencida], [Empresas registradas])', FORMATO.parte, 'Mostra a parte das empresas registradas sem anuidade vencida na data escolhida.'),
+  medida(PASTA.registro, 'Registradas com cadastro incompleto', registradasCom('Cadastro incompleto'), FORMATO.inteiro, 'Conta as empresas registradas com pendência aberta no cadastro, como atividade não informada, regional não identificada, município diferente do da Receita ou CNPJ baixado.'),
+  medida(PASTA.registro, 'Pendência mais comum', `${COM_DATA}\nVAR porTipo = CALCULATETABLE(ADDCOLUMNS(VALUES('Pendências do cadastro'[Pendência]), "Empresas com a pendência", CALCULATE(DISTINCTCOUNT('Pendências do cadastro'[Empresa]))), 'Pendências do cadastro'[Data] = d)\nVAR topo = TOPN(1, porTipo, [Empresas com a pendência], DESC, 'Pendências do cadastro'[Pendência], ASC)\nRETURN IF(COUNTROWS(topo) = 0, "nenhuma pendência aberta", FORMAT(MAXX(topo, [Empresas com a pendência]), "#,##0") & " " & MAXX(topo, 'Pendências do cadastro'[Pendência]))`,
+    FORMATO.texto, 'Escreve a pendência aberta mais comum entre as registradas e quantas empresas a têm, como a linha de apoio do cartão.'),
+  // Funil "Do mercado à ART" (complianceFlow do painel).
+  medida(PASTA.registro, 'Empresas do mercado', contaNaFoto(naFoto('No mercado do funil')), FORMATO.inteiro, 'Conta as empresas registradas ou com estabelecimento de atividade da lista na Receita na data escolhida: o começo do funil.'),
+  ...Object.values(situacoesNoFunil).map(situacao => medida(PASTA.registro, `Mercado: ${situacao.toLowerCase()}`, contaNaFoto(naFoto('No mercado do funil'), `'Foto das empresas'[Situação no funil] = "${situacao}"`), FORMATO.inteiro,
+    `Conta as empresas do mercado com a situação "${situacao.toLowerCase()}" na data escolhida.`)),
+  medida(PASTA.registro, 'Registradas sem RT identificado', '[Empresas registradas] - [Registradas com RT]', FORMATO.inteiro, 'Conta as empresas registradas sem responsável técnico de vínculo vigente, como a etapa do funil.'),
+  medida(PASTA.registro, 'Registradas no tempo e no capital', contaNaFoto(naFoto('Registrada')), FORMATO.inteiro, 'Conta as empresas registradas em cada faixa de tempo desde o primeiro registro e de capital social; fica em branco quando a faixa não tem nenhuma.'),
 
   // Evolução.
-  m(E, 'Empresas que entraram na base', movimento('Entrada'), INT, 'Empresas que passaram a ter registro ativo no período, pela primeira vez ou de volta depois de uma baixa ou um cancelamento.'),
-  m(E, 'Entraram pela primeira vez', movimento('Entrada', "'Entradas e saídas'[Primeira vez] = 1"), INT, 'Entradas do período em que o primeiro registro da empresa é do próprio mês.'),
-  m(E, 'Retornos', '[Empresas que entraram na base] - [Entraram pela primeira vez]', INT, 'Conta as entradas de empresas que já tinham tido registro.'),
-  m(E, 'Entradas após fiscalização', movimento('Entrada', "'Entradas e saídas'[Após fiscalização] = 1"), INT, 'Entradas no mesmo mês em que uma ação de fiscalização de registro da empresa foi regularizada.'),
-  m(E, 'Empresas que saíram da base', movimento('Saída'), INT, 'Empresas cujo registro deixou de estar ativo no período (baixa ou cancelamento).'),
-  m(E, 'Saldo de empresas no período', '[Empresas que entraram na base] - [Empresas que saíram da base]', '+#,##0;-#,##0;0', 'Mostra quantas empresas entraram a mais do que saíram no período.'),
-  m(E, 'Empresas de engenharia abertas no período', `${periodo}\nRETURN CALCULATE(COUNTROWS('Estabelecimentos'), 'Estabelecimentos'[Classe] <> "", 'Estabelecimentos'[Aberto em] >= inicio, 'Estabelecimentos'[Aberto em] <= d) + 0`, INT, 'Estabelecimentos com atividade da lista do Crea-SP abertos na Receita no período. O arquivo da Receita chega com atraso: o último mês pode faltar.'),
-  m(E, 'Abertas no período que já se registraram', `${periodo}\nRETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d, 'Foto dos estabelecimentos'[Registro ativo] = 1, 'Estabelecimentos'[Aberto em] >= inicio, 'Estabelecimentos'[Aberto em] <= d) + 0`, INT, 'Conta as abertas no período que têm registro ativo na data escolhida.'),
-  m(E, 'Parte das abertas que já se registrou', 'DIVIDE([Abertas no período que já se registraram], [Empresas de engenharia abertas no período])', PCT, 'Mostra a parte das abertas no período que já se registrou.'),
-  m(E, 'Registradas 12 meses antes', foto('Registrada 12 meses antes'), INT, 'Conta as empresas que estavam registradas 12 meses antes da data escolhida; é a base da permanência.'),
-  m(E, 'Continuam registradas depois de 12 meses', 'DIVIDE([Registradas 12 meses antes que continuam], [Registradas 12 meses antes])', PCT, 'Das empresas registradas 12 meses antes da data escolhida, a parte que continua registrada. Quem entrou depois não conta.'),
-  m(E, 'Registradas 12 meses antes que continuam', foto('Continua registrada'), INT, 'Conta as registradas 12 meses antes que continuam registradas na data escolhida.'),
-  m(E, 'Emprego formal em engenharia', `${D}\nRETURN CALCULATE(SUM('Emprego formal'[Empregados]), 'Emprego formal'[Mês] = DATE(YEAR(d), MONTH(d), 1))`, INT, 'Conta os empregados com carteira em ocupações de engenharia no mês da data escolhida. A fonte, a RAIS (Relação Anual de Informações Sociais) com o Novo CAGED (Cadastro Geral de Empregados e Desempregados), sai em totais por regional.'),
-  m(E, 'Entradas no mês', noMes(contaMovimento('Entrada')), INT, 'Conta as entradas de cada mês, nos meses do gráfico.'),
-  m(E, 'Entradas no mês após fiscalização', noMes(contaMovimento('Entrada', "'Entradas e saídas'[Após fiscalização] = 1")), INT, 'Conta as entradas de cada mês que vieram depois de uma ação de fiscalização.'),
-  m(E, 'Primeiros registros no mês', noMes(contaMovimento('Entrada', "'Entradas e saídas'[Primeira vez] = 1")), INT, 'Conta as empresas que fizeram o primeiro registro no Crea-SP em cada mês (ou trimestre), nos meses do gráfico.'),
-  m(E, 'Saídas no mês', noMes(contaMovimento('Saída')), INT, 'Conta as saídas de cada mês, nos meses do gráfico.'),
-  m(E, 'Registradas no fim do mês', noMes("SUM('Foto das empresas'[Registrada])"), INT, 'Conta as empresas registradas no último dia de cada mês, só nos meses com foto.'),
+  medida(PASTA.evolucao, 'Empresas que entraram na base', movimentoNoPeriodo('Entrada'), FORMATO.inteiro, 'Conta as empresas que passaram a ter registro ativo no período, pela primeira vez ou de volta depois de uma baixa ou um cancelamento.'),
+  medida(PASTA.evolucao, 'Entraram pela primeira vez', movimentoNoPeriodo('Entrada', "'Entradas e saídas'[Primeira vez] = 1"), FORMATO.inteiro, 'Conta as entradas do período em que o primeiro registro da empresa é do próprio mês.'),
+  medida(PASTA.evolucao, 'Retornos', '[Empresas que entraram na base] - [Entraram pela primeira vez]', FORMATO.inteiro, 'Conta as entradas de empresas que já tinham tido registro.'),
+  medida(PASTA.evolucao, 'Entradas após fiscalização', movimentoNoPeriodo('Entrada', "'Entradas e saídas'[Após fiscalização] = 1"), FORMATO.inteiro, 'Conta as entradas no mesmo mês em que uma ação de fiscalização de registro da empresa foi regularizada.'),
+  medida(PASTA.evolucao, 'Empresas que saíram da base', movimentoNoPeriodo('Saída'), FORMATO.inteiro, 'Conta as empresas cujo registro deixou de estar ativo no período, por baixa ou cancelamento.'),
+  medida(PASTA.evolucao, 'Entradas menos saídas no período', '[Empresas que entraram na base] - [Empresas que saíram da base]', '+#,##0;-#,##0;0', 'Mostra quantas empresas entraram a mais do que saíram no período.'),
+  medida(PASTA.evolucao, 'Empresas de engenharia abertas no período', `${COM_PERIODO}\nRETURN CALCULATE(COUNTROWS('Estabelecimentos'), 'Estabelecimentos'[Classe] <> "", 'Estabelecimentos'[Aberto em] >= inicio, 'Estabelecimentos'[Aberto em] <= d) + 0`, FORMATO.inteiro, 'Conta os estabelecimentos com atividade da lista do Crea-SP abertos na Receita no período. O arquivo da Receita chega com atraso: o último mês pode faltar.'),
+  medida(PASTA.evolucao, 'Abertas no período que já se registraram', `${COM_PERIODO}\nRETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d, 'Foto dos estabelecimentos'[Registro ativo] = 1, 'Estabelecimentos'[Classe] <> "", 'Estabelecimentos'[Aberto em] >= inicio, 'Estabelecimentos'[Aberto em] <= d) + 0`, FORMATO.inteiro, 'Conta as abertas no período que têm registro ativo na data escolhida.'),
+  medida(PASTA.evolucao, 'Parte das abertas que já se registrou', 'DIVIDE([Abertas no período que já se registraram], [Empresas de engenharia abertas no período])', FORMATO.parte, 'Mostra a parte das abertas no período que já se registrou.'),
+  ...COORTES.flatMap(meses => [
+    medida(PASTA.evolucao, `Registradas ${meses} meses antes`, somaDaFoto(`Registrada ${meses} meses antes`), FORMATO.inteiro, `Conta as empresas que estavam registradas ${meses} meses antes da data escolhida; é a base da permanência.`),
+    medida(PASTA.evolucao, `Registradas ${meses} meses antes que continuam`, somaDaFoto(`Continua registrada desde ${meses} meses`), FORMATO.inteiro, `Conta as registradas ${meses} meses antes que continuam registradas na data escolhida.`),
+    medida(PASTA.evolucao, `Continuam registradas depois de ${meses} meses`, `DIVIDE([Registradas ${meses} meses antes que continuam], [Registradas ${meses} meses antes])`, FORMATO.parte, `Mostra, das empresas registradas ${meses} meses antes da data escolhida, a parte que continua registrada. Quem entrou depois não conta.`),
+  ]),
+  medida(PASTA.evolucao, 'Emprego formal em engenharia', `${COM_DATA}\nRETURN CALCULATE(SUM('Emprego formal'[Empregados]), 'Emprego formal'[Mês] = DATE(YEAR(d), MONTH(d), 1))`, FORMATO.inteiro, 'Conta os empregados com carteira em ocupações de engenharia no mês da data escolhida. A fonte, a RAIS (Relação Anual de Informações Sociais) com o Novo CAGED (Cadastro Geral de Empregados e Desempregados), sai em totais por regional.'),
+  ...medidasDaEconomia(),
+  medida(PASTA.evolucao, 'Meses no gráfico da economia', `${COM_DATA}\n${INICIO_DA_ECONOMIA}\nRETURN DATEDIFF(inicio, DATE(YEAR(d), MONTH(d), 1), MONTH) + 1`, '0', 'Conta os meses do gráfico de economia, do primeiro ao mês da data escolhida.'),
+  medida(PASTA.evolucao, 'Variação do emprego nos meses do gráfico', `${COM_DATA}\n${INICIO_DA_ECONOMIA}\nVAR primeiro = CALCULATE(SUM('Emprego formal'[Empregados]), 'Emprego formal'[Mês] = inicio)\nVAR ultimo = [Emprego formal em engenharia]\nRETURN IF(primeiro > 0, DIVIDE(ultimo - primeiro, primeiro))`,
+    FORMATO.variacao, 'Compara o emprego formal do mês da data escolhida com o do primeiro mês do gráfico de economia, como o cartão do painel.'),
+  medida(PASTA.evolucao, 'Abertas no mês já registradas', noMesDaReceita("CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d, 'Foto dos estabelecimentos'[Registro ativo] = 1, 'Estabelecimentos'[Classe] <> \"\") + 0"), FORMATO.inteiro,
+    'Conta os estabelecimentos com atividade da lista abertos em cada mês que já têm registro ou visto na data escolhida.'),
+  medida(PASTA.evolucao, 'Abertas no mês sem registro', noMesDaReceita("CALCULATE(COUNTROWS('Estabelecimentos'), 'Estabelecimentos'[Classe] <> \"\") - CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d, 'Foto dos estabelecimentos'[Registro ativo] = 1, 'Estabelecimentos'[Classe] <> \"\") + 0"), FORMATO.inteiro,
+    'Conta os estabelecimentos com atividade da lista abertos em cada mês que não têm registro na data escolhida.'),
+  medida(PASTA.evolucao, 'Entradas no mês', noMes(contaMovimento('Entrada')), FORMATO.inteiro, 'Conta as entradas de cada mês, nos meses do gráfico.'),
+  medida(PASTA.evolucao, 'Primeiros registros no mês', noMes(contaMovimento('Entrada', "'Entradas e saídas'[Primeira vez] = 1")), FORMATO.inteiro, 'Conta as empresas que fizeram o primeiro registro no Crea-SP em cada mês (ou trimestre), nos meses do gráfico.'),
+  medida(PASTA.evolucao, 'Saídas no mês', noMes(contaMovimento('Saída')), FORMATO.inteiro, 'Conta as saídas de cada mês, nos meses do gráfico.'),
+  medida(PASTA.evolucao, 'Registradas no fim do mês', noMes("SUM('Foto das empresas'[Registrada])"), FORMATO.inteiro, 'Conta as empresas registradas no último dia de cada mês, só nos meses com foto.'),
 
   // RT e ART.
-  m(T, 'Empresas com responsável técnico', 'DIVIDE([Registradas com RT], [Empresas registradas])', PCT, 'Parte das empresas registradas com responsável técnico de vínculo vigente na data escolhida.'),
-  m(T, 'Distância da meta de RT', '([Empresas com responsável técnico] - [Meta de RT]) * 100', PP, 'Mostra, em pontos percentuais, quanto a parte com RT está acima ou abaixo da meta.'),
-  m(T, 'Registradas sem RT vigente', '[Empresas registradas] - [Registradas com RT]', INT, 'Empresas registradas sem responsável técnico de vínculo vigente: o RT saiu sem substituto ou nenhum vínculo foi carregado.'),
-  m(T, 'Registradas com RT', registradasCom('Com RT'), INT, 'Empresas registradas com responsável técnico de vínculo vigente.'),
-  m(T, 'RT que saiu sem substituto', registradasCom('RT saiu sem substituto'), INT, 'Empresas registradas cujo último responsável técnico saiu há mais de 30 dias, sem outro no lugar.'),
-  m(T, 'Sem vínculo de RT carregado', registradasCom('Sem vínculo de RT'), INT, 'Conta as empresas registradas que não têm RT nem vínculo carregado no cadastro.'),
-  m(T, 'RT com registro cancelado ou interrompido', registradasCom('RT cancelado ou interrompido'), INT, 'Empresas com RT cujo profissional está com registro cancelado ou interrompido na data escolhida.'),
-  m(T, 'ARTs de empresas', `${periodo}\nRETURN CALCULATE(COUNTROWS('ARTs'), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= d) + 0`, INT, 'Conta as ARTs registradas por empresas no período.'),
-  m(T, 'ARTs um ano antes', `${UM_ANO_ANTES}\nRETURN CALCULATE(COUNTROWS('ARTs'), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= fim) + 0`, INT, 'Conta as ARTs do mesmo período um ano antes, com início e fim recuados 12 meses.'),
-  m(T, variacaoDe('ARTs de empresas'), 'DIVIDE([ARTs de empresas] - [ARTs um ano antes], [ARTs um ano antes])', VAR_PCT, 'Compara as ARTs do período com as do mesmo período um ano antes, como o cartão do painel.'),
-  m(T, 'Valor declarado em ART', `${periodo}\nRETURN CALCULATE(SUM('ARTs'[Valor]), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= d) + 0`, REAIS, 'Soma o valor de contrato declarado nas ARTs do período.'),
-  m(T, 'Valor em ART um ano antes', `${UM_ANO_ANTES}\nRETURN CALCULATE(SUM('ARTs'[Valor]), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= fim) + 0`, REAIS, 'Soma o valor declarado nas ARTs do mesmo período um ano antes.'),
-  m(T, variacaoDe('Valor declarado em ART'), 'DIVIDE([Valor declarado em ART] - [Valor em ART um ano antes], [Valor em ART um ano antes])', VAR_PCT, 'Compara o valor declarado no período com o do mesmo período um ano antes, como o cartão do painel.'),
-  m(T, 'Registradas com ART no período', `${periodo}\nVAR registradas = CALCULATETABLE(VALUES('Foto das empresas'[Empresa]), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1)\nVAR comArt = CALCULATETABLE(VALUES('ARTs'[Empresa]), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= d)\nRETURN COUNTROWS(INTERSECT(registradas, comArt)) + 0`, INT, 'Empresas registradas na data escolhida com ao menos uma ART no período.'),
-  m(T, 'Registradas sem ART no período', '[Empresas registradas] - [Registradas com ART no período]', INT, 'Conta as empresas registradas que não registraram nenhuma ART no período.'),
-  m(T, 'Registradas sem nenhuma ART', 'DIVIDE([Registradas sem ART no período], [Empresas registradas])', PCT, 'Parte das empresas registradas sem nenhuma ART no período.'),
-  m(T, 'ARTs no mês', noMes("CALCULATE(COUNTROWS('ARTs')) + 0"), INT, 'Conta as ARTs registradas em cada mês, nos meses do gráfico.'),
-  m(T, 'ARTs no mesmo mês do ano anterior', noMes("CALCULATE(COUNTROWS('ARTs'), REMOVEFILTERS('Calendário'), 'ARTs'[Mês] = EDATE(mes, -12)) + 0"), INT, 'Conta as ARTs do mesmo mês um ano antes, para comparar.'),
+  medida(PASTA.rtArt, 'Empresas com responsável técnico', 'DIVIDE([Registradas com RT], [Empresas registradas])', FORMATO.parte, 'Mostra a parte das empresas registradas com responsável técnico de vínculo vigente na data escolhida.'),
+  medida(PASTA.rtArt, 'Distância da meta de RT', '([Empresas com responsável técnico] - [Meta de RT]) * 100', FORMATO.pontos, 'Mostra, em pontos percentuais, quanto a parte com RT está acima ou abaixo da meta.'),
+  medida(PASTA.rtArt, 'Registradas sem RT vigente', '[Empresas registradas] - [Registradas com RT]', FORMATO.inteiro, 'Conta as empresas registradas sem responsável técnico de vínculo vigente: o RT saiu sem substituto ou nenhum vínculo foi carregado.'),
+  medida(PASTA.rtArt, 'Registradas com RT', registradasCom('Com RT'), FORMATO.inteiro, 'Conta as empresas registradas com responsável técnico de vínculo vigente.'),
+  medida(PASTA.rtArt, 'RT que saiu sem substituto', registradasCom('RT saiu sem substituto'), FORMATO.inteiro, 'Conta as empresas registradas cujo último responsável técnico saiu há mais de 30 dias, sem outro no lugar.'),
+  medida(PASTA.rtArt, 'Sem vínculo de RT carregado', registradasCom('Sem vínculo de RT'), FORMATO.inteiro, 'Conta as empresas registradas que não têm RT nem vínculo carregado no cadastro.'),
+  medida(PASTA.rtArt, 'RT com registro profissional cancelado ou interrompido', registradasCom('RT cancelado ou interrompido'), FORMATO.inteiro, 'Conta, entre as registradas com RT, aquelas cujo profissional do vínculo vigente está com o registro cancelado ou interrompido na data escolhida.'),
+  medida(PASTA.rtArt, 'ARTs de empresas', `${COM_PERIODO}\nRETURN ${nasArts("COUNTROWS('ARTs')", 'd')}`, FORMATO.inteiro, 'Conta as ARTs registradas por empresas no período.'),
+  medida(PASTA.rtArt, 'ARTs um ano antes', `${UM_ANO_ANTES}\nRETURN ${nasArts("COUNTROWS('ARTs')", 'fim')}`, FORMATO.inteiro, 'Conta as ARTs do mesmo período um ano antes, com início e fim recuados 12 meses.'),
+  medida(PASTA.rtArt, variacaoDe('ARTs de empresas'), 'DIVIDE([ARTs de empresas] - [ARTs um ano antes], [ARTs um ano antes])', FORMATO.variacao, 'Compara as ARTs do período com as do mesmo período um ano antes, como o cartão do painel.'),
+  medida(PASTA.rtArt, 'Valor declarado em ART', `${COM_PERIODO}\nRETURN ${nasArts("SUM('ARTs'[Valor])", 'd')}`, FORMATO.reais, 'Soma o valor de contrato declarado nas ARTs do período.'),
+  medida(PASTA.rtArt, 'Valor em ART um ano antes', `${UM_ANO_ANTES}\nRETURN ${nasArts("SUM('ARTs'[Valor])", 'fim')}`, FORMATO.reais, 'Soma o valor declarado nas ARTs do mesmo período um ano antes.'),
+  medida(PASTA.rtArt, variacaoDe('Valor declarado em ART'), 'DIVIDE([Valor declarado em ART] - [Valor em ART um ano antes], [Valor em ART um ano antes])', FORMATO.variacao, 'Compara o valor declarado no período com o do mesmo período um ano antes, como o cartão do painel.'),
+  medida(PASTA.rtArt, 'Registradas com ART no período', `${COM_PERIODO}\nVAR registradas = CALCULATETABLE(VALUES('Foto das empresas'[Empresa]), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1)\nVAR comArt = CALCULATETABLE(VALUES('ARTs'[Empresa]), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= d)\nRETURN COUNTROWS(INTERSECT(registradas, comArt)) + 0`, FORMATO.inteiro, 'Conta as empresas registradas na data escolhida com ao menos uma ART no período.'),
+  medida(PASTA.rtArt, 'Registradas sem ART no período', '[Empresas registradas] - [Registradas com ART no período]', FORMATO.inteiro, 'Conta as empresas registradas que não registraram nenhuma ART no período.'),
+  medida(PASTA.rtArt, 'Registradas sem nenhuma ART', 'DIVIDE([Registradas sem ART no período], [Empresas registradas])', FORMATO.parte, 'Mostra a parte das empresas registradas sem nenhuma ART no período.'),
+  medida(PASTA.rtArt, 'ARTs a cada 100 profissionais ativos', `${COM_DATA}\nVAR arts = [ARTs de empresas]\nVAR ativos = CALCULATE(SUM('Profissionais ativos'[Ativos]), 'Profissionais ativos'[Data] = d)\nRETURN IF(arts > 0 && ativos > 0, arts / ativos * 100)`, '0.0',
+    'Divide as ARTs de empresas do período pelos profissionais ativos da mesma modalidade na data escolhida, vezes 100. Os profissionais seguem a regional e o município escolhidos; a modalidade sem ART fica de fora.'),
+  medida(PASTA.rtArt, 'ARTs no mês', noMes("CALCULATE(COUNTROWS('ARTs')) + 0"), FORMATO.inteiro, 'Conta as ARTs registradas em cada mês, nos meses do gráfico.'),
+  medida(PASTA.rtArt, 'ARTs no mesmo mês do ano anterior', noMes("CALCULATE(COUNTROWS('ARTs'), REMOVEFILTERS('Calendário'), 'ARTs'[Mês] = EDATE(mes, -12)) + 0"), FORMATO.inteiro, 'Conta as ARTs do mesmo mês um ano antes, para comparar.'),
 
   // Vínculos ("!": dependem de acordo).
-  ...BLOCOS_PARCERIA.map(bloco => m(V, medidaDoBloco(bloco), `CALCULATE(SUM('Parcerias'[Valor]), 'Parcerias'[Bloco] = "${bloco.bloco}")`, INT,
-    bloco.acordo ? `Demonstração: o bloco depende de acordo com ${bloco.acordo}. Os números são do cenário na data de hoje e não mudam com a data de referência nem com os filtros.`
-      : 'Liga pelo CNPJ as fontes abertas da ANEEL (Agência Nacional de Energia Elétrica), da ANP (Agência Nacional do Petróleo), da ANM (Agência Nacional de Mineração) e do BNDES. Os números são do cenário na data de hoje.')),
+  ...BLOCOS_PARCERIA.map(bloco => medida(PASTA.vinculos, medidaDoBloco(bloco), `CALCULATE(SUM('Parcerias'[Valor]), 'Parcerias'[Bloco] = "${bloco.bloco}")`, FORMATO.inteiro,
+    bloco.acordos.length ? fichaDoAcordo(bloco.acordos)
+      : 'Liga pelo CNPJ as fontes abertas da ANEEL (Agência Nacional de Energia Elétrica), da ANP (Agência Nacional do Petróleo), da ANM (Agência Nacional de Mineração) e do BNDES (Banco Nacional de Desenvolvimento Econômico e Social). Os números são do cenário na data de hoje.')),
 
-  // A variação de cada cartão contra um ano antes, como o painel mostra embaixo do número.
-  ...Object.values(CARTOES).flat().filter(cartao => cartao.tipo && !cartao.variacaoPropria).map(({ nome, tipo, pasta }) => m(pasta, variacaoDe(nome), variacaoGenerica(nome, tipo!), tipo === 'taxa' ? PP : VAR_PCT,
-    tipo === 'taxa' ? `Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.`
-      : tipo === 'fluxo' ? 'Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.' : 'Compara o cartão com o fim do mesmo mês um ano antes.')),
+  ...medidasDosCartoes(),
 ];
+
+/** Medida mês a mês das abertas na Receita: os meses do gráfico, até o último mês com arquivo da Receita. */
+function noMesDaReceita(expressao: string) {
+  return `${COM_DATA}\n${ULTIMO_MES_DA_RECEITA}\nVAR inicio = ${inicioDe(MESES_DO_GRAFICO)}\nVAR m = MAX('Calendário'[Mês])\nRETURN IF(m >= inicio && m <= d && m <= receita, ${expressao})`;
+}
 
 export const modeloEmpresas: Modelo = {
   nome: 'Empresas',
   parametros: [{ nome: PASTA_PARAMETRO, valor: 'C:\\CREA-SP\\powerbi\\empresas\\dados\\', descricao: 'Pasta onde estão os CSV do pacote (termina com \\). Troque em Transformar dados > Editar parâmetros e clique em Atualizar.' }],
-  tabelas: [...tabelas, { nome: 'Medidas', descricao: 'Medidas do painel de Empresas, em pastas por página.', colunas: [{ nome: 'Medidas', tipo: 'string', oculta: true }], medidas }],
+  tabelas: [...tabelas, { nome: 'Medidas', descricao: 'Guarda as medidas do painel de Empresas, em pastas por página.', colunas: [{ nome: 'Medidas', tipo: 'string', oculta: true }], medidas }],
   relacoes: [
-    // Nos dois sentidos: escolher um município leva o emprego formal à regional dele, como no painel.
+    // Nos dois sentidos: escolher um município leva o emprego formal e o crédito à regional dele, como no painel.
     { de: ['Municípios', 'GRE'], para: ['Regionais', 'GRE'], ambasDirecoes: true },
     { de: ['Empresas', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] },
     { de: ['Estabelecimentos', 'Empresa'], para: ['Empresas', 'Empresa'] },
+    { de: ['Estabelecimentos', 'Mês de abertura'], para: ['Calendário', 'Mês'] },
     { de: ['Foto das empresas', 'Empresa'], para: ['Empresas', 'Empresa'] },
+    { de: ['Foto das empresas', 'Mês'], para: ['Calendário', 'Mês'] },
     { de: ['Foto dos estabelecimentos', 'Estabelecimento'], para: ['Estabelecimentos', 'Estabelecimento'] },
+    { de: ['Pendências do cadastro', 'Empresa'], para: ['Empresas', 'Empresa'] },
+    { de: ['Profissionais ativos', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] },
+    { de: ['Profissionais ativos', 'Modalidade'], para: ['Modalidades', 'Modalidade'] },
     { de: ['Entradas e saídas', 'Empresa'], para: ['Empresas', 'Empresa'] },
     { de: ['Entradas e saídas', 'Mês'], para: ['Calendário', 'Mês'] },
     { de: ['ARTs', 'Empresa'], para: ['Empresas', 'Empresa'] },
     { de: ['ARTs', 'Mês'], para: ['Calendário', 'Mês'] },
-    { de: ['Foto das empresas', 'Mês'], para: ['Calendário', 'Mês'] },
+    { de: ['ARTs', 'Modalidade'], para: ['Modalidades', 'Modalidade'] },
     { de: ['Emprego formal', 'GRE'], para: ['Regionais', 'GRE'] },
     { de: ['Emprego formal', 'Mês'], para: ['Calendário', 'Mês'] },
+    { de: ['Crédito', 'GRE'], para: ['Regionais', 'GRE'] },
+    { de: ['Crédito', 'Mês'], para: ['Calendário', 'Mês'] },
   ],
 };

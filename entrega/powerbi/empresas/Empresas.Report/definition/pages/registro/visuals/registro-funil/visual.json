@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "registro-funil",
   "position": {
-    "x": 435,
+    "x": 330,
     "y": 436,
     "z": 17000,
     "width": 306,
@@ -23,11 +23,57 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Empresas registradas"
+                  "Property": "Empresas do mercado"
                 }
               },
-              "queryRef": "Medidas.Empresas registradas",
-              "nativeQueryRef": "Empresas registradas"
+              "queryRef": "Medidas.Empresas do mercado",
+              "nativeQueryRef": "Empresas do mercado",
+              "displayName": "Universo de engenharia"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Mercado: registro ativo"
+                }
+              },
+              "queryRef": "Medidas.Mercado: registro ativo",
+              "nativeQueryRef": "Mercado: registro ativo",
+              "displayName": "Registro ativo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Mercado: registro inativo"
+                }
+              },
+              "queryRef": "Medidas.Mercado: registro inativo",
+              "nativeQueryRef": "Mercado: registro inativo",
+              "displayName": "Registro inativo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Mercado: nunca registrada"
+                }
+              },
+              "queryRef": "Medidas.Mercado: nunca registrada",
+              "nativeQueryRef": "Mercado: nunca registrada",
+              "displayName": "Nunca registrada"
             },
             {
               "field": {
@@ -41,7 +87,23 @@
                 }
               },
               "queryRef": "Medidas.Registradas com RT",
-              "nativeQueryRef": "Registradas com RT"
+              "nativeQueryRef": "Registradas com RT",
+              "displayName": "Com RT"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Registradas sem RT identificado"
+                }
+              },
+              "queryRef": "Medidas.Registradas sem RT identificado",
+              "nativeQueryRef": "Registradas sem RT identificado",
+              "displayName": "Sem RT identificado"
             },
             {
               "field": {
@@ -55,11 +117,62 @@
                 }
               },
               "queryRef": "Medidas.Registradas com ART no período",
-              "nativeQueryRef": "Registradas com ART no período"
+              "nativeQueryRef": "Registradas com ART no período",
+              "displayName": "Com ART no período"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Registradas sem ART no período"
+                }
+              },
+              "queryRef": "Medidas.Registradas sem ART no período",
+              "nativeQueryRef": "Registradas sem ART no período",
+              "displayName": "Sem ART no período"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -75,7 +188,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Do registro à ART'"
+                  "Value": "'Do mercado à ART'"
                 }
               }
             }

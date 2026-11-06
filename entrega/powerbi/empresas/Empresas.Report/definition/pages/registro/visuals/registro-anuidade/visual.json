@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "Medidas.Registradas sem anuidade vencida",
-              "nativeQueryRef": "Registradas sem anuidade vencida"
+              "nativeQueryRef": "Registradas sem anuidade vencida",
+              "displayName": "Em dia"
             },
             {
               "field": {
@@ -41,11 +42,47 @@
                 }
               },
               "queryRef": "Medidas.Registradas com anuidade vencida",
-              "nativeQueryRef": "Registradas com anuidade vencida"
+              "nativeQueryRef": "Registradas com anuidade vencida",
+              "displayName": "Com anuidade vencida"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

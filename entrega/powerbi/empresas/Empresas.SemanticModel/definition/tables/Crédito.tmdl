@@ -1,0 +1,35 @@
+/// Guarda o saldo de crédito a empresas de engenharia no fim de cada mês, por regional. ! Demonstração: o bloco depende de acordo com Banco Central (crédito em totais). Os números são do cenário e não valem para o Crea-SP. Plano B: Usar a estatística bancária por município (ESTBAN) e o painel de crédito por atividade e estado (SCR.data), ambos públicos e mensais. Perde-se o cruzamento de município com atividade ao mesmo tempo.
+table 'Crédito'
+	isHidden
+	lineageTag: dac33944-cf69-5986-b6eb-52dce94e41c9
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 58732aa9-4705-579b-a4fe-30817c2999d8
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 5d665c6d-79ca-57df-b6f7-bbe5f125b1f4
+
+	column Saldo
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Saldo
+		lineageTag: 21cbee1c-8f9c-52a6-a33e-2414e674c7e1
+
+	partition 'Crédito' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "credito.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"GRE", type text}, {"Saldo", type number}}, "pt-BR")
+				in
+				    Tipos

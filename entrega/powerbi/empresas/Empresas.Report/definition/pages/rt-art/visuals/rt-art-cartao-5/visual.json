@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Registradas sem nenhuma ART"
+                  "Property": "Comparação: Registradas sem nenhuma ART"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Registradas sem nenhuma ART",
-              "nativeQueryRef": "Variação em um ano: Registradas sem nenhuma ART",
-              "displayName": "pontos percentuais em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Registradas sem nenhuma ART",
+              "nativeQueryRef": "Comparação: Registradas sem nenhuma ART"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Registradas sem nenhuma ART"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Registradas sem nenhuma ART",
+              "nativeQueryRef": "Detalhe: Registradas sem nenhuma ART"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Registradas sem nenhuma ART'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

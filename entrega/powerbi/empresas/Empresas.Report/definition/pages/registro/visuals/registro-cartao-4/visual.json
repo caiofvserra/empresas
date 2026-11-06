@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Registradas em dia com a anuidade"
+                  "Property": "Comparação: Registradas em dia com a anuidade"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Registradas em dia com a anuidade",
-              "nativeQueryRef": "Variação em um ano: Registradas em dia com a anuidade",
-              "displayName": "pontos percentuais em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Registradas em dia com a anuidade",
+              "nativeQueryRef": "Comparação: Registradas em dia com a anuidade"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Registradas em dia com a anuidade"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Registradas em dia com a anuidade",
+              "nativeQueryRef": "Detalhe: Registradas em dia com a anuidade"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Registradas em dia com a anuidade'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

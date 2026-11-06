@@ -1,4 +1,4 @@
-/// Os 645 municípios de SP e a GRE de cada um, pela tabela oficial.
+/// Tem os 645 municípios de SP e a GRE de cada um, pela tabela oficial.
 table 'Municípios'
 	lineageTag: fad87020-4ffa-5682-922f-5358b3fde2b7
 

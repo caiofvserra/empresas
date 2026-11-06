@@ -1,4 +1,4 @@
-/// Todas as datas com foto, inclusive os 12 meses antes da primeira data de referência. As medidas de variação a usam para ler o mesmo indicador um ano antes.
+/// Tem todas as datas com foto, inclusive os 12 meses antes da primeira data de referência. As medidas de variação a usam para ler o mesmo indicador um ano antes.
 table 'Datas das fotos'
 	isHidden
 	lineageTag: 5f05b9e8-a028-578e-8e40-e170e10e8b41

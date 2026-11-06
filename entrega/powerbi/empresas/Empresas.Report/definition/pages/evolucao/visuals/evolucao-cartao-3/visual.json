@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Empresas de engenharia abertas no período"
+                  "Property": "Comparação: Empresas de engenharia abertas no período"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Empresas de engenharia abertas no período",
-              "nativeQueryRef": "Variação em um ano: Empresas de engenharia abertas no período",
-              "displayName": "em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Empresas de engenharia abertas no período",
+              "nativeQueryRef": "Comparação: Empresas de engenharia abertas no período"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Empresas de engenharia abertas no período"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Empresas de engenharia abertas no período",
+              "nativeQueryRef": "Detalhe: Empresas de engenharia abertas no período"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Empresas de engenharia abertas no período'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

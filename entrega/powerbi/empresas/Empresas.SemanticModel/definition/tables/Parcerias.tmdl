@@ -1,4 +1,4 @@
-/// Demonstração dos blocos que dependem de acordo ("!"), na data de hoje do cenário. Não muda com a data de referência nem com os filtros.
+/// Guarda a demonstração dos blocos que dependem de acordo ("!"), na data de hoje do cenário. Os números não mudam com a data de referência nem com os filtros.
 table Parcerias
 	lineageTag: d0da1674-e84e-5dba-8304-432c37076d05
 

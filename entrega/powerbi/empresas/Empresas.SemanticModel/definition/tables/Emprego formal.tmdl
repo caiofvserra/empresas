@@ -1,4 +1,4 @@
-/// Empregados com carteira em ocupações de engenharia no fim de cada mês, por regional, pela RAIS (Relação Anual de Informações Sociais) e pelo Novo CAGED (Cadastro Geral de Empregados e Desempregados).
+/// Conta os empregados com carteira em ocupações de engenharia no fim de cada mês, por regional, pela RAIS (Relação Anual de Informações Sociais) e pelo Novo CAGED (Cadastro Geral de Empregados e Desempregados).
 table 'Emprego formal'
 	isHidden
 	lineageTag: 78ac616a-f948-513c-a463-52b26a5ddd7d
