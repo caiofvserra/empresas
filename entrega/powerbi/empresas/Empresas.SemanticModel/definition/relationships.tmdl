@@ -1,0 +1,48 @@
+relationship caf37c4f-1902-5ee9-a7e9-3f877339c5ea
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Municípios'.GRE
+	toColumn: Regionais.GRE
+
+relationship 49897384-4e58-5a7a-9c72-b2fc13155033
+	fromColumn: Empresas.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship 60a9bea1-823e-5e87-8fba-0569836ebbbe
+	fromColumn: Estabelecimentos.Empresa
+	toColumn: Empresas.Empresa
+
+relationship cc2f6cea-7a4d-51a0-b889-c26259048a9f
+	fromColumn: 'Foto das empresas'.Empresa
+	toColumn: Empresas.Empresa
+
+relationship e25fb288-3072-514a-b69b-37f055997fcd
+	fromColumn: 'Foto dos estabelecimentos'.Estabelecimento
+	toColumn: Estabelecimentos.Estabelecimento
+
+relationship e90e3ae4-9e39-5252-b3f3-45ac019cd271
+	fromColumn: 'Entradas e saídas'.Empresa
+	toColumn: Empresas.Empresa
+
+relationship 3117a744-0cd4-5e1e-9b8b-5b7c06c05e61
+	fromColumn: 'Entradas e saídas'.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship b96619c6-6fc0-5924-b5dc-a1de751817e9
+	fromColumn: ARTs.Empresa
+	toColumn: Empresas.Empresa
+
+relationship ca8be102-845c-5984-9bbe-048a3c91f369
+	fromColumn: ARTs.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship ad9652e6-3a8c-5dc0-9e42-af8eb1755ca3
+	fromColumn: 'Foto das empresas'.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship ce7a0d05-5c21-59f7-b40f-04ad6edcc254
+	fromColumn: 'Emprego formal'.GRE
+	toColumn: Regionais.GRE
+
+relationship 0b5b00b4-0f91-5516-b191-b40c243b651b
+	fromColumn: 'Emprego formal'.'Mês'
+	toColumn: 'Calendário'.'Mês'

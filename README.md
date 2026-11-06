@@ -1,6 +1,6 @@
 # Inteligência Estratégica Crea-SP
 
-Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, conduzido pela EDAD, unidade de dados da SUPTEC (o programa chamou-se Prumo e, antes, Observatório Crea-SP). Desde 01/11/2026 o painel único está sendo dividido por público e regra de acesso. O primeiro painel separado é o de **Empresas**, descrito em [docs/EMPRESAS.md](docs/EMPRESAS.md), junto com a recomendação de divisão dos demais. O segundo, de 03/11/2026, é o de **Profissionais**, descrito em [docs/PROFISSIONAIS.md](docs/PROFISSIONAIS.md). O terceiro, também de 03/11/2026, é o de **Fiscalização e malha fina**, descrito em [docs/FISCALIZACAO.md](docs/FISCALIZACAO.md). O painel geral continua com as outras seis abas; o que mudou nele está em [docs/V22.md](docs/V22.md) e [docs/V21.md](docs/V21.md). Blocos e regras marcados com "!" dependem de parceria: mostram o que um acordo permitiria medir e ficam demonstrativos até ele existir. Os dados internos são demonstrativos; os dados públicos são reais e mostram fonte e data. Não há `.pbix` nem conexão institucional validada.
+Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, conduzido pela EDAD, unidade de dados da SUPTEC (o programa chamou-se Prumo e, antes, Observatório Crea-SP). Desde 01/11/2026 o painel único está sendo dividido por público e regra de acesso. O primeiro painel separado é o de **Empresas**, descrito em [docs/EMPRESAS.md](docs/EMPRESAS.md), junto com a recomendação de divisão dos demais. O segundo, de 03/11/2026, é o de **Profissionais**, descrito em [docs/PROFISSIONAIS.md](docs/PROFISSIONAIS.md). O terceiro, também de 03/11/2026, é o de **Fiscalização e malha fina**, descrito em [docs/FISCALIZACAO.md](docs/FISCALIZACAO.md). O painel geral continua com as outras seis abas; o que mudou nele está em [docs/V22.md](docs/V22.md) e [docs/V21.md](docs/V21.md). Blocos e regras marcados com "!" dependem de parceria: mostram o que um acordo permitiria medir e ficam demonstrativos até ele existir. Os dados internos são demonstrativos; os dados públicos são reais e mostram fonte e data. Não há conexão institucional validada. O painel de Empresas já tem um pacote Power BI (projeto PBIP com modelo, medidas, páginas, tema e os dados de demonstração), descrito em [docs/POWERBI.md](docs/POWERBI.md).
 
 ## O que está aqui
 
@@ -18,6 +18,7 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 | `observatorio/` | Plano em etapas (revisão 2), atlas de 98 fontes públicas e catálogo unificado em CSV e XLSX, publicados com os nomes anteriores (Observatório, Prumo) |
 | `planejamento-fontes-2026-10/` | Levantamento de 29/10/2026: 104 entradas de fontes, 34 casos de uso com fórmula, arquitetura, revisão independente e revisão crítica do V18. Retrato datado |
 | `scripts/refresh-sources.ts`, `scripts/integrations/`, `src/integrations/catalog.ts` | Coletor PNCP com histórico, cobertura e testes; ponto de partida dos conectores |
+| `src/powerbi/`, `entrega/powerbi/empresas/` | Gerador do pacote Power BI e o pacote do painel de Empresas, que abre no Power BI Desktop pelo `Empresas.pbip` (`npm run build:powerbi`, ver [docs/POWERBI.md](docs/POWERBI.md)) |
 | `integrations/power-query/`, `integrations/powerbi-theme-creasp-v13.json` | Consultas de exemplo para SQL Server e Db2 via gateway e o tema Power BI |
 | `public/data/engineer-statistics/`, `archives/data-publica-v6/` | Somente os arquivos públicos que o painel lê |
 
@@ -31,6 +32,7 @@ npm run dev            # painel geral em http://localhost:5173/ de Empresas em h
 npm test               # testes de domínio, painéis, fiscalização, V20, V21, V22, Empresas, Profissionais, Fiscalização e coletor
 npm run build          # TypeScript e build do site
 npm run build:painel   # gera os três painéis em entrega/
+npm run build:powerbi  # gera o pacote Power BI de Empresas em entrega/powerbi/empresas/
 npm run sources:refresh -- --config integrations/refresh-sources.example.json
 ```
 

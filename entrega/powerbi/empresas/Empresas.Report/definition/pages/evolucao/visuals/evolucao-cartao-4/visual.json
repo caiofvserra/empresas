@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "evolucao-cartao-4",
+  "position": {
+    "x": 770,
+    "y": 68,
+    "z": 11000,
+    "width": 243,
+    "height": 84,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Continuam registradas depois de 12 meses"
+                }
+              },
+              "queryRef": "Medidas.Continuam registradas depois de 12 meses",
+              "nativeQueryRef": "Continuam registradas depois de 12 meses"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Continuam registradas depois de 12 meses"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Continuam registradas depois de 12 meses",
+              "nativeQueryRef": "Variação em um ano: Continuam registradas depois de 12 meses",
+              "displayName": "pontos percentuais em relação a um ano antes"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

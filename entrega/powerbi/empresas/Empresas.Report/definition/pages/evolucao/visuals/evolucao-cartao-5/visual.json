@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "evolucao-cartao-5",
+  "position": {
+    "x": 1021,
+    "y": 68,
+    "z": 12000,
+    "width": 243,
+    "height": 84,
+    "tabOrder": 12000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Emprego formal em engenharia"
+                }
+              },
+              "queryRef": "Medidas.Emprego formal em engenharia",
+              "nativeQueryRef": "Emprego formal em engenharia"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Emprego formal em engenharia"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Emprego formal em engenharia",
+              "nativeQueryRef": "Variação em um ano: Emprego formal em engenharia",
+              "displayName": "em relação a um ano antes"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

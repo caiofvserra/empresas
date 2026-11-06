@@ -1,0 +1,47 @@
+/// Demonstração dos blocos que dependem de acordo ("!"), na data de hoje do cenário. Não muda com a data de referência nem com os filtros.
+table Parcerias
+	lineageTag: d0da1674-e84e-5dba-8304-432c37076d05
+
+	column Bloco
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Bloco
+		lineageTag: 6ea93a70-a3f5-519e-8c3a-3ed83efaa4a9
+
+	column Grupo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Grupo
+		lineageTag: e9b6b928-445a-5452-8c6f-5570680cf419
+
+	column 'Série'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Série
+		lineageTag: 6a145079-7f1b-5667-a9ff-7e5140042154
+
+	column Valor
+		dataType: double
+		formatString: #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: 4b8f32af-32da-5019-a960-4ca7ec403b92
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: d62cc9e8-4b3b-574e-a8bf-88206fb6d179
+
+	partition Parcerias = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "parcerias.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Bloco", type text}, {"Grupo", type text}, {"Série", type text}, {"Valor", type number}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "vinculos-empregados",
+  "position": {
+    "x": 16,
+    "y": 390,
+    "z": 11000,
+    "width": 411,
+    "height": 314,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Parcerias"
+                    }
+                  },
+                  "Property": "Grupo"
+                }
+              },
+              "queryRef": "Parcerias.Grupo",
+              "nativeQueryRef": "Grupo",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Parcerias"
+                    }
+                  },
+                  "Property": "Série"
+                }
+              },
+              "queryRef": "Parcerias.Série",
+              "nativeQueryRef": "Série",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "! Empregados técnicos por empresa"
+                }
+              },
+              "queryRef": "Medidas.! Empregados técnicos por empresa",
+              "nativeQueryRef": "! Empregados técnicos por empresa"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Empregados técnicos por empresa !'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

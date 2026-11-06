@@ -1,0 +1,48 @@
+/// Um mês por linha, para os gráficos mês a mês.
+table 'Calendário'
+	lineageTag: 43f095d8-4d72-5f42-a3f6-11b016480273
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: mmm/yy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: a04108fb-f54d-56e5-b5f7-0073f1bb9dcc
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		sortByColumn: 'Mês'
+		lineageTag: 104ff268-7548-5afa-91ea-ced06bcf32cd
+
+	column Trimestre
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Trimestre
+		lineageTag: 506f835e-cba2-52e4-9b89-dcf642e997b5
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 7218a11f-25dc-5009-a816-4c57eb9507e8
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: bd14c25a-a3a7-515c-8608-8ab22c0b3fe5
+
+	partition 'Calendário' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "calendario.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Rótulo", type text}, {"Trimestre", type text}, {"Ano", Int64.Type}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

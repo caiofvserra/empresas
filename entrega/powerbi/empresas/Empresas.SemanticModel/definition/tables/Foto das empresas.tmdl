@@ -1,0 +1,122 @@
+/// Situação de cada empresa no último dia de cada mês, calculada pelas regras do painel. Uma linha por empresa registrada naquele dia ou 12 meses antes.
+table 'Foto das empresas'
+	isHidden
+	lineageTag: 6fdfa5d8-3fcb-56ea-9b91-05b07e031185
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 925ec077-0514-5ea5-a982-663fc2006398
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: e8586175-371c-5dbf-a0f7-6c6d8bfec54c
+
+	column Empresa
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Empresa
+		lineageTag: db81d1ce-f4cc-5ca8-8b0e-63f6eea2bc6f
+
+	column Registrada
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Registrada
+		lineageTag: 00f69177-ea4a-5625-9806-782feb000fd0
+
+	column 'Anuidade vencida'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Anuidade vencida
+		lineageTag: e5cc23d4-7e97-5272-848e-159c984d0c47
+
+	column 'Com RT'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Com RT
+		lineageTag: 3c5e9a5a-aaac-52a4-8f69-d242999c98d1
+
+	column 'RT saiu sem substituto'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: RT saiu sem substituto
+		lineageTag: 2dc7e694-7ad6-51fe-aa11-343c78c02a07
+
+	column 'Sem vínculo de RT'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Sem vínculo de RT
+		lineageTag: 88c26a5d-dac7-5267-8bad-56a5ec127d50
+
+	column 'RT cancelado ou interrompido'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: RT cancelado ou interrompido
+		lineageTag: 9998a387-cb6a-5d19-8573-872fe6c908dc
+
+	column 'Cadastro incompleto'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Cadastro incompleto
+		lineageTag: 15f0676a-b714-5354-ab25-e632a005819b
+
+	column 'Registrada 12 meses antes'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Registrada 12 meses antes
+		lineageTag: 7efad1e8-2257-5276-b2e5-0e304f8101f9
+
+	column 'Continua registrada'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Continua registrada
+		lineageTag: 9735298e-75ba-5e38-8703-05768db8f36f
+
+	column 'Estabelecimentos registrados'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Estabelecimentos registrados
+		lineageTag: cd96b8af-abce-5f7d-af33-4a47133feef4
+
+	column Vistos
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Vistos
+		lineageTag: 175c236b-0055-5431-98e5-c8b343971d08
+
+	partition 'Foto das empresas' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "foto-empresas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Mês", type date}, {"Empresa", type text}, {"Registrada", Int64.Type}, {"Anuidade vencida", Int64.Type}, {"Com RT", Int64.Type}, {"RT saiu sem substituto", Int64.Type}, {"Sem vínculo de RT", Int64.Type}, {"RT cancelado ou interrompido", Int64.Type}, {"Cadastro incompleto", Int64.Type}, {"Registrada 12 meses antes", Int64.Type}, {"Continua registrada", Int64.Type}, {"Estabelecimentos registrados", Int64.Type}, {"Vistos", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

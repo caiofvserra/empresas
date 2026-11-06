@@ -1,0 +1,661 @@
+/// Medidas do painel de Empresas, em pastas por página.
+table Medidas
+	lineageTag: c28744e1-729b-50a3-af33-7d69edbd8f28
+
+	/// A data de referência escolhida; sem escolha, a mais recente. As medidas de variação trocam a data pela de um ano antes.
+	measure 'Data escolhida' = IF(ISFILTERED('Datas das fotos'[Data]), MAX('Datas das fotos'[Data]), MAX('Datas de referência'[Data]))
+		formatString: dd/mm/yyyy
+		displayFolder: Apoio
+		lineageTag: e2cd791e-60e4-5c14-972c-a10692845e69
+
+	/// O período escolhido, em meses; 12 quando nada está escolhido.
+	measure 'Meses do período' = SELECTEDVALUE('Período'[Meses], 12)
+		formatString: 0
+		displayFolder: Apoio
+		lineageTag: 8574d36e-a41f-5798-ad5a-478677226995
+
+	/// Primeiro dia do primeiro mês do período: o período termina na data escolhida e começa no primeiro dia do mês, como no painel.
+	measure 'Início do período' = ```
+			VAR d = [Data escolhida]
+			RETURN DATE(YEAR(d), MONTH(d) - [Meses do período] + 1, 1)
+			```
+		formatString: dd/mm/yyyy
+		displayFolder: Apoio
+		lineageTag: a15af246-ec6a-5030-8836-124ebac3c687
+
+	/// A meta padrão da parte do mercado registrada é 65%, a mesma do painel.
+	measure 'Meta da parte do mercado registrada' = 0.65
+		formatString: 0.0%
+		displayFolder: Apoio
+		lineageTag: 7089cce4-e6d5-5466-8492-35ac077c0371
+
+	/// A meta padrão de empresas registradas com responsável técnico é 95%, porque o RT é condição do registro (Lei 5.194/66, art. 8º, parágrafo único).
+	measure 'Meta de RT' = 0.95
+		formatString: 0.0%
+		displayFolder: Apoio
+		lineageTag: 4f33e4e6-dd0e-56c4-ba8a-9d9e91fb404d
+
+	/// Empresas, contadas pela raiz do CNPJ, com ao menos um registro ou visto ativo na data escolhida.
+	measure 'Empresas registradas' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto das empresas'[Registrada]), 'Foto das empresas'[Data] = d)
+			```
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: 5eac6779-5d27-5573-ab72-4de12266e4e2
+
+	/// CNPJs completos com registro ou visto vigente na data escolhida.
+	measure 'Estabelecimentos registrados' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto das empresas'[Estabelecimentos registrados]), 'Foto das empresas'[Data] = d)
+			```
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: fea26860-c2d5-5d92-bbab-6ef830ec1d8f
+
+	/// Vistos vigentes de empresas registradas em outro Crea.
+	measure 'Vistos de empresas de fora de SP' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto das empresas'[Vistos]), 'Foto das empresas'[Data] = d)
+			```
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: eb63fe60-a5a2-5206-8495-69c818a9f46f
+
+	/// Estabelecimentos ativos na Receita com atividade da lista do Crea-SP, abertos até a data escolhida.
+	measure 'Estabelecimentos no mercado' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d, 'Foto dos estabelecimentos'[No mercado] = 1)
+			```
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: 3dba5ed3-a8d3-53c5-b717-661b31690f06
+
+	/// Estabelecimentos do mercado com registro ou visto vigente na data escolhida.
+	measure 'Estabelecimentos do mercado com registro' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d, 'Foto dos estabelecimentos'[No mercado] = 1, 'Foto dos estabelecimentos'[Situação no cadastro] = "Com registro ou visto")
+			```
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: a19c4129-f543-50ef-a341-0071579ed636
+
+	/// Estabelecimentos do mercado que já tiveram registro, mas não o têm na data escolhida.
+	measure 'Estabelecimentos do mercado só com histórico' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d, 'Foto dos estabelecimentos'[No mercado] = 1, 'Foto dos estabelecimentos'[Situação no cadastro] = "Só teve registro no passado")
+			```
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: 14f4d736-aa40-5214-a721-fd7e15090e8d
+
+	/// Estabelecimentos do mercado que nunca apareceram no cadastro até a data escolhida.
+	measure 'Estabelecimentos do mercado sem registro' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d, 'Foto dos estabelecimentos'[No mercado] = 1, 'Foto dos estabelecimentos'[Situação no cadastro] = "Nunca apareceu no cadastro")
+			```
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: c9324417-d296-57f1-85ed-396f3262d0a4
+
+	/// Parte dos estabelecimentos do mercado com registro ou visto vigente na data escolhida. Atividade da lista não prova obrigação de registro.
+	measure 'Parte do mercado que está registrada' = DIVIDE([Estabelecimentos do mercado com registro], [Estabelecimentos no mercado])
+		formatString: 0.0%
+		displayFolder: Registro e mercado
+		lineageTag: de7154b4-096b-5706-b72d-579cae02e63b
+
+	/// Mostra, em pontos percentuais, quanto a parte do mercado registrada está acima ou abaixo da meta.
+	measure 'Distância da meta da parte registrada' = ([Parte do mercado que está registrada] - [Meta da parte do mercado registrada]) * 100
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Registro e mercado
+		lineageTag: 956d2d2e-01c9-55e8-be78-db167d2392f3
+
+	/// Mostra a mesma parte, só nas atividades de registro obrigatório.
+	measure 'Parte registrada nas atividades de registro obrigatório' = DIVIDE(CALCULATE([Estabelecimentos do mercado com registro], 'Estabelecimentos'[Classe] = "Registro obrigatório"), CALCULATE([Estabelecimentos no mercado], 'Estabelecimentos'[Classe] = "Registro obrigatório"))
+		formatString: 0.0%
+		displayFolder: Registro e mercado
+		lineageTag: 8fbcfe65-8d4a-5a8f-9e34-ef5dbea13584
+
+	/// Estabelecimentos ativos na Receita com atividade de registro obrigatório que nunca tiveram registro ou visto no Crea-SP. Não estar no cadastro não quer dizer irregular.
+	measure 'Atividade obrigatória e nenhum registro' = CALCULATE([Estabelecimentos do mercado sem registro], 'Estabelecimentos'[Classe] = "Registro obrigatório")
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: 5f3cad9b-a89d-5531-837a-164398a6c68a
+
+	/// Empresas registradas com anuidade vencida e não paga na data escolhida.
+	measure 'Registradas com anuidade vencida' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto das empresas'), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1, 'Foto das empresas'[Anuidade vencida] = 1)
+			```
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: f9372e8b-40cf-53f1-aa8f-b7e3cbf80af8
+
+	/// Empresas registradas sem anuidade vencida na data escolhida.
+	measure 'Registradas sem anuidade vencida' = [Empresas registradas] - [Registradas com anuidade vencida]
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: 12a280cd-da8b-5bbf-89ce-3135be87f2b2
+
+	/// Parte das empresas registradas sem anuidade vencida na data escolhida.
+	measure 'Registradas em dia com a anuidade' = DIVIDE([Empresas registradas] - [Registradas com anuidade vencida], [Empresas registradas])
+		formatString: 0.0%
+		displayFolder: Registro e mercado
+		lineageTag: 2d6db8ce-3f6a-5fac-9df1-b89643bd5cd7
+
+	/// Empresas registradas com pendência aberta no cadastro (atividade não informada, regional não identificada, município diferente do da Receita, CNPJ baixado).
+	measure 'Registradas com cadastro incompleto' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto das empresas'), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1, 'Foto das empresas'[Cadastro incompleto] = 1)
+			```
+		formatString: #,##0
+		displayFolder: Registro e mercado
+		lineageTag: a8a577cf-13d0-54f9-baf9-608776bd9b8e
+
+	/// Empresas que passaram a ter registro ativo no período, pela primeira vez ou de volta depois de uma baixa ou um cancelamento.
+	measure 'Empresas que entraram na base' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Movimento] = "Entrada", 'Entradas e saídas'[Mês] >= inicio, 'Entradas e saídas'[Mês] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 933dcfad-2eec-503f-a5e2-22e528b40050
+
+	/// Entradas do período em que o primeiro registro da empresa é do próprio mês.
+	measure 'Entraram pela primeira vez' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Movimento] = "Entrada", 'Entradas e saídas'[Mês] >= inicio, 'Entradas e saídas'[Mês] <= d, 'Entradas e saídas'[Primeira vez] = 1) + 0
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 5b0a5dc6-e2ee-55c4-bb8e-23fe53514abd
+
+	/// Conta as entradas de empresas que já tinham tido registro.
+	measure Retornos = [Empresas que entraram na base] - [Entraram pela primeira vez]
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 17463cd6-3de0-53f8-a5a3-c16e27f2a2b9
+
+	/// Entradas no mesmo mês em que uma ação de fiscalização de registro da empresa foi regularizada.
+	measure 'Entradas após fiscalização' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Movimento] = "Entrada", 'Entradas e saídas'[Mês] >= inicio, 'Entradas e saídas'[Mês] <= d, 'Entradas e saídas'[Após fiscalização] = 1) + 0
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: b430555e-af4e-5f58-9f3b-d5465a963c45
+
+	/// Empresas cujo registro deixou de estar ativo no período (baixa ou cancelamento).
+	measure 'Empresas que saíram da base' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Movimento] = "Saída", 'Entradas e saídas'[Mês] >= inicio, 'Entradas e saídas'[Mês] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: fd46219e-3a59-5158-807d-5986d0217273
+
+	/// Mostra quantas empresas entraram a mais do que saíram no período.
+	measure 'Saldo de empresas no período' = [Empresas que entraram na base] - [Empresas que saíram da base]
+		formatString: +#,##0;-#,##0;0
+		displayFolder: Evolução
+		lineageTag: 0fc091f9-b511-5da3-81c3-bda1cec2c422
+
+	/// Estabelecimentos com atividade da lista do Crea-SP abertos na Receita no período. O arquivo da Receita chega com atraso: o último mês pode faltar.
+	measure 'Empresas de engenharia abertas no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Estabelecimentos'), 'Estabelecimentos'[Classe] <> "", 'Estabelecimentos'[Aberto em] >= inicio, 'Estabelecimentos'[Aberto em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 45532dba-cc7f-563c-8b9d-4472ff72ece3
+
+	/// Conta as abertas no período que têm registro ativo na data escolhida.
+	measure 'Abertas no período que já se registraram' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d, 'Foto dos estabelecimentos'[Registro ativo] = 1, 'Estabelecimentos'[Aberto em] >= inicio, 'Estabelecimentos'[Aberto em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 0ca0dd1a-8bb4-57b8-8657-b642148bec31
+
+	/// Mostra a parte das abertas no período que já se registrou.
+	measure 'Parte das abertas que já se registrou' = DIVIDE([Abertas no período que já se registraram], [Empresas de engenharia abertas no período])
+		formatString: 0.0%
+		displayFolder: Evolução
+		lineageTag: 342366ea-dfbe-5090-8a5d-e972f588bd9f
+
+	/// Conta as empresas que estavam registradas 12 meses antes da data escolhida; é a base da permanência.
+	measure 'Registradas 12 meses antes' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto das empresas'[Registrada 12 meses antes]), 'Foto das empresas'[Data] = d)
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 3341fb56-a5cc-5278-924b-62ce7c04a85d
+
+	/// Das empresas registradas 12 meses antes da data escolhida, a parte que continua registrada. Quem entrou depois não conta.
+	measure 'Continuam registradas depois de 12 meses' = DIVIDE([Registradas 12 meses antes que continuam], [Registradas 12 meses antes])
+		formatString: 0.0%
+		displayFolder: Evolução
+		lineageTag: b1e0eb0c-f148-5096-a711-dc8483dd1563
+
+	/// Conta as registradas 12 meses antes que continuam registradas na data escolhida.
+	measure 'Registradas 12 meses antes que continuam' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto das empresas'[Continua registrada]), 'Foto das empresas'[Data] = d)
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 432b2d8b-66c5-5825-984d-ac5355fa73a0
+
+	/// Conta os empregados com carteira em ocupações de engenharia no mês da data escolhida. A fonte, a RAIS (Relação Anual de Informações Sociais) com o Novo CAGED (Cadastro Geral de Empregados e Desempregados), sai em totais por regional.
+	measure 'Emprego formal em engenharia' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Emprego formal'[Empregados]), 'Emprego formal'[Mês] = DATE(YEAR(d), MONTH(d), 1))
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: e24682e6-feb0-5970-82a8-6ece8292c371
+
+	/// Conta as entradas de cada mês, nos meses do gráfico.
+	measure 'Entradas no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Movimento] = "Entrada") + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 8e1e0873-a6e1-5e55-bffe-1c5be228b2a2
+
+	/// Conta as entradas de cada mês que vieram depois de uma ação de fiscalização.
+	measure 'Entradas no mês após fiscalização' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Movimento] = "Entrada", 'Entradas e saídas'[Após fiscalização] = 1) + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 2fa5339d-931e-505b-b895-61d56633d2f8
+
+	/// Conta as empresas que fizeram o primeiro registro no Crea-SP em cada mês (ou trimestre), nos meses do gráfico.
+	measure 'Primeiros registros no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Movimento] = "Entrada", 'Entradas e saídas'[Primeira vez] = 1) + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 8abe0743-4ced-5095-9afa-7d8bd166b0f4
+
+	/// Conta as saídas de cada mês, nos meses do gráfico.
+	measure 'Saídas no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('Entradas e saídas'), 'Entradas e saídas'[Movimento] = "Saída") + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: 890a1280-4a3e-59a6-8047-b5685d56d7b5
+
+	/// Conta as empresas registradas no último dia de cada mês, só nos meses com foto.
+	measure 'Registradas no fim do mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(SUM('Foto das empresas'[Registrada]), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: Evolução
+		lineageTag: aa4ef1d9-6d11-5233-8781-0a7134b0a2e4
+
+	/// Parte das empresas registradas com responsável técnico de vínculo vigente na data escolhida.
+	measure 'Empresas com responsável técnico' = DIVIDE([Registradas com RT], [Empresas registradas])
+		formatString: 0.0%
+		displayFolder: RT e ART
+		lineageTag: abb57384-9862-57d2-82ff-8f2cb5c47353
+
+	/// Mostra, em pontos percentuais, quanto a parte com RT está acima ou abaixo da meta.
+	measure 'Distância da meta de RT' = ([Empresas com responsável técnico] - [Meta de RT]) * 100
+		formatString: +0.0;-0.0;0.0
+		displayFolder: RT e ART
+		lineageTag: 615de418-aa9a-534a-be73-dcf06a0a2aa9
+
+	/// Empresas registradas sem responsável técnico de vínculo vigente: o RT saiu sem substituto ou nenhum vínculo foi carregado.
+	measure 'Registradas sem RT vigente' = [Empresas registradas] - [Registradas com RT]
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: e6bb45ee-ee24-5a90-8037-69b6e5d53fb9
+
+	/// Empresas registradas com responsável técnico de vínculo vigente.
+	measure 'Registradas com RT' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto das empresas'), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1, 'Foto das empresas'[Com RT] = 1)
+			```
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: 7f95406a-f93e-5524-bc8d-e2024998ef9d
+
+	/// Empresas registradas cujo último responsável técnico saiu há mais de 30 dias, sem outro no lugar.
+	measure 'RT que saiu sem substituto' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto das empresas'), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1, 'Foto das empresas'[RT saiu sem substituto] = 1)
+			```
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: a94fbbb2-3870-5520-9036-a3fae7573cc5
+
+	/// Conta as empresas registradas que não têm RT nem vínculo carregado no cadastro.
+	measure 'Sem vínculo de RT carregado' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto das empresas'), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1, 'Foto das empresas'[Sem vínculo de RT] = 1)
+			```
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: 3c99bb16-f2c3-5ef8-ba42-890e1cee06eb
+
+	/// Empresas com RT cujo profissional está com registro cancelado ou interrompido na data escolhida.
+	measure 'RT com registro cancelado ou interrompido' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto das empresas'), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1, 'Foto das empresas'[RT cancelado ou interrompido] = 1)
+			```
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: 50c7363a-93b0-5df0-82f0-1a729f54dc67
+
+	/// Conta as ARTs registradas por empresas no período.
+	measure 'ARTs de empresas' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('ARTs'), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: 227b370f-fea8-5c45-b9fd-9427552f54c0
+
+	/// Conta as ARTs do mesmo período um ano antes, com início e fim recuados 12 meses.
+	measure 'ARTs um ano antes' = ```
+			VAR inicio = EDATE([Início do período], -12)
+			VAR fim = EDATE([Data escolhida], -12)
+			RETURN CALCULATE(COUNTROWS('ARTs'), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= fim) + 0
+			```
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: 58ef9a1d-cded-504b-99ab-c615978c4814
+
+	/// Compara as ARTs do período com as do mesmo período um ano antes, como o cartão do painel.
+	measure 'Variação em um ano: ARTs de empresas' = DIVIDE([ARTs de empresas] - [ARTs um ano antes], [ARTs um ano antes])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: RT e ART
+		lineageTag: dcc5870b-572c-5401-87be-9f93329801e8
+
+	/// Soma o valor de contrato declarado nas ARTs do período.
+	measure 'Valor declarado em ART' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(SUM('ARTs'[Valor]), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: RT e ART
+		lineageTag: b223e958-3f5b-51f6-8337-aa30d68370a3
+
+	/// Soma o valor declarado nas ARTs do mesmo período um ano antes.
+	measure 'Valor em ART um ano antes' = ```
+			VAR inicio = EDATE([Início do período], -12)
+			VAR fim = EDATE([Data escolhida], -12)
+			RETURN CALCULATE(SUM('ARTs'[Valor]), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= fim) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: RT e ART
+		lineageTag: 17835260-9c70-514e-98ac-d6a84243050d
+
+	/// Compara o valor declarado no período com o do mesmo período um ano antes, como o cartão do painel.
+	measure 'Variação em um ano: Valor declarado em ART' = DIVIDE([Valor declarado em ART] - [Valor em ART um ano antes], [Valor em ART um ano antes])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: RT e ART
+		lineageTag: 31a3efcc-6562-5dea-8172-d4b42366ab0b
+
+	/// Empresas registradas na data escolhida com ao menos uma ART no período.
+	measure 'Registradas com ART no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR registradas = CALCULATETABLE(VALUES('Foto das empresas'[Empresa]), 'Foto das empresas'[Data] = d, 'Foto das empresas'[Registrada] = 1)
+			VAR comArt = CALCULATETABLE(VALUES('ARTs'[Empresa]), 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= d)
+			RETURN COUNTROWS(INTERSECT(registradas, comArt)) + 0
+			```
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: 879c2616-33e3-5c3c-a9db-343e409c98cd
+
+	/// Conta as empresas registradas que não registraram nenhuma ART no período.
+	measure 'Registradas sem ART no período' = [Empresas registradas] - [Registradas com ART no período]
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: 63333c70-fa51-5202-9d1b-3f28e4bc4abf
+
+	/// Parte das empresas registradas sem nenhuma ART no período.
+	measure 'Registradas sem nenhuma ART' = DIVIDE([Registradas sem ART no período], [Empresas registradas])
+		formatString: 0.0%
+		displayFolder: RT e ART
+		lineageTag: a54a499f-261e-56a9-a7bc-0b970120324e
+
+	/// Conta as ARTs registradas em cada mês, nos meses do gráfico.
+	measure 'ARTs no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('ARTs')) + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: 98f79971-4bcd-55c7-bb22-c7a9ebecc518
+
+	/// Conta as ARTs do mesmo mês um ano antes, para comparar.
+	measure 'ARTs no mesmo mês do ano anterior' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('ARTs'), REMOVEFILTERS('Calendário'), 'ARTs'[Mês] = EDATE(mes, -12)) + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: RT e ART
+		lineageTag: f80cca3d-e6d7-5817-81ad-1805ae447efc
+
+	/// Demonstração: o bloco depende de acordo com Receita Federal (CPF completo dos sócios). Os números são do cenário na data de hoje e não mudam com a data de referência nem com os filtros.
+	measure '! Sócios que são profissionais' = CALCULATE(SUM('Parcerias'[Valor]), 'Parcerias'[Bloco] = "Sócios que são profissionais")
+		formatString: #,##0
+		displayFolder: Vínculos
+		lineageTag: 623cde0e-480c-5b98-a8c5-e8866dad85dd
+
+	/// Demonstração: o bloco depende de acordo com Receita Federal (CPF completo dos sócios). Os números são do cenário na data de hoje e não mudam com a data de referência nem com os filtros.
+	measure '! Nome com engenharia e diretoria' = CALCULATE(SUM('Parcerias'[Valor]), 'Parcerias'[Bloco] = "Nome com engenharia e diretoria")
+		formatString: #,##0
+		displayFolder: Vínculos
+		lineageTag: dc82775d-6f08-5c1f-8179-cbf55bc8bb18
+
+	/// Liga pelo CNPJ as fontes abertas da ANEEL (Agência Nacional de Energia Elétrica), da ANP (Agência Nacional do Petróleo), da ANM (Agência Nacional de Mineração) e do BNDES. Os números são do cenário na data de hoje.
+	measure 'Usinas, postos, minas e financiamentos' = CALCULATE(SUM('Parcerias'[Valor]), 'Parcerias'[Bloco] = "Usinas, postos, minas e financiamentos")
+		formatString: #,##0
+		displayFolder: Vínculos
+		lineageTag: dde4957d-c85e-5497-a0b8-a7453d3b4f6a
+
+	/// Demonstração: o bloco depende de acordo com Ministério do Trabalho (RAIS identificada). Os números são do cenário na data de hoje e não mudam com a data de referência nem com os filtros.
+	measure '! Empregados técnicos por empresa' = CALCULATE(SUM('Parcerias'[Valor]), 'Parcerias'[Bloco] = "Empregados técnicos por empresa")
+		formatString: #,##0
+		displayFolder: Vínculos
+		lineageTag: 0bd33e4c-3303-5bee-bd70-63447bab0295
+
+	/// Demonstração: o bloco depende de acordo com DETRAN-SP e INMETRO. Os números são do cenário na data de hoje e não mudam com a data de referência nem com os filtros.
+	measure '! Credenciadas no DETRAN-SP e no INMETRO' = CALCULATE(SUM('Parcerias'[Valor]), 'Parcerias'[Bloco] = "Credenciadas no DETRAN-SP e no INMETRO")
+		formatString: #,##0
+		displayFolder: Vínculos
+		lineageTag: ef5e606a-9daf-5b18-86a0-2c92da8fc235
+
+	/// Demonstração: o bloco depende de acordo com Junta Comercial do Estado de São Paulo (JUCESP). Os números são do cenário na data de hoje e não mudam com a data de referência nem com os filtros.
+	measure '! Engenharia incluída no contrato social' = CALCULATE(SUM('Parcerias'[Valor]), 'Parcerias'[Bloco] = "Engenharia incluída no contrato social")
+		formatString: #,##0
+		displayFolder: Vínculos
+		lineageTag: 9bd2871a-a116-516c-acf4-e4823d4fe6f9
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Empresas registradas' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Empresas registradas]
+			VAR antes = CALCULATE([Empresas registradas], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Registro e mercado
+		lineageTag: af2158fd-80c0-5087-b701-a6755de0233a
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Parte do mercado que está registrada' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Parte do mercado que está registrada]
+			VAR antes = CALCULATE([Parte do mercado que está registrada], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Registro e mercado
+		lineageTag: 256e1e30-100d-59c2-b3da-c7687ba756b3
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Atividade obrigatória e nenhum registro' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Atividade obrigatória e nenhum registro]
+			VAR antes = CALCULATE([Atividade obrigatória e nenhum registro], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Registro e mercado
+		lineageTag: e2dc8c0f-3040-5125-b346-d8a7c0a09a02
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Registradas em dia com a anuidade' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Registradas em dia com a anuidade]
+			VAR antes = CALCULATE([Registradas em dia com a anuidade], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Registro e mercado
+		lineageTag: 9f12a9b2-2b46-5230-9284-f3eaea08afcf
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Empresas que entraram na base' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Empresas que entraram na base]
+			VAR antes = CALCULATE([Empresas que entraram na base], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Evolução
+		lineageTag: d71c0909-0014-50fb-9f9e-ff3176379eb8
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Empresas que saíram da base' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Empresas que saíram da base]
+			VAR antes = CALCULATE([Empresas que saíram da base], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Evolução
+		lineageTag: 85b6c27a-7d24-5e94-9f54-6072caa3a1eb
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Empresas de engenharia abertas no período' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Empresas de engenharia abertas no período]
+			VAR antes = CALCULATE([Empresas de engenharia abertas no período], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Evolução
+		lineageTag: a734a376-5bc0-5368-a5ee-253ec72bdbcb
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Continuam registradas depois de 12 meses' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Continuam registradas depois de 12 meses]
+			VAR antes = CALCULATE([Continuam registradas depois de 12 meses], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Evolução
+		lineageTag: 29f405b8-93d6-5e12-acdd-c6a0965442cb
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Emprego formal em engenharia' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Emprego formal em engenharia]
+			VAR antes = CALCULATE([Emprego formal em engenharia], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Evolução
+		lineageTag: 63bcae92-80d3-59cc-a869-8b0a3e42f669
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Empresas com responsável técnico' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Empresas com responsável técnico]
+			VAR antes = CALCULATE([Empresas com responsável técnico], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: RT e ART
+		lineageTag: 88f24610-dfb0-519e-b30a-1ba8d389cf2b
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: RT que saiu sem substituto' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [RT que saiu sem substituto]
+			VAR antes = CALCULATE([RT que saiu sem substituto], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: RT e ART
+		lineageTag: 3709b6fe-1e53-5cdc-b73b-6cb67d326cdd
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Registradas sem nenhuma ART' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Registradas sem nenhuma ART]
+			VAR antes = CALCULATE([Registradas sem nenhuma ART], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: RT e ART
+		lineageTag: b1632f13-d083-537d-9d5a-2dbb3730a8f6
+
+	column Medidas
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Medidas
+		lineageTag: 4f5ea9cd-d000-5bc3-92c9-4895a718d2d4
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = #table(type table [#"Medidas" = type text], {})
+				in
+				    Fonte

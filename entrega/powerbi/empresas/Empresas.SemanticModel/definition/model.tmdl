@@ -1,0 +1,25 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table Regionais
+ref table 'Municípios'
+ref table Empresas
+ref table Estabelecimentos
+ref table 'Calendário'
+ref table 'Datas de referência'
+ref table 'Datas das fotos'
+ref table 'Período'
+ref table 'Foto das empresas'
+ref table 'Foto dos estabelecimentos'
+ref table 'Entradas e saídas'
+ref table ARTs
+ref table 'Emprego formal'
+ref table Parcerias
+ref table Medidas

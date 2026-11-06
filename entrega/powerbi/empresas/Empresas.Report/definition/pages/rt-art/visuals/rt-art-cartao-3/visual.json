@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "rt-art-cartao-3",
+  "position": {
+    "x": 518,
+    "y": 68,
+    "z": 10000,
+    "width": 243,
+    "height": 84,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "ARTs de empresas"
+                }
+              },
+              "queryRef": "Medidas.ARTs de empresas",
+              "nativeQueryRef": "ARTs de empresas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: ARTs de empresas"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: ARTs de empresas",
+              "nativeQueryRef": "Variação em um ano: ARTs de empresas",
+              "displayName": "em relação a um ano antes"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

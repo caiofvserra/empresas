@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "registro-cartao-2",
+  "position": {
+    "x": 267,
+    "y": 68,
+    "z": 9000,
+    "width": 243,
+    "height": 84,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Parte do mercado que está registrada"
+                }
+              },
+              "queryRef": "Medidas.Parte do mercado que está registrada",
+              "nativeQueryRef": "Parte do mercado que está registrada"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Parte do mercado que está registrada"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Parte do mercado que está registrada",
+              "nativeQueryRef": "Variação em um ano: Parte do mercado que está registrada",
+              "displayName": "pontos percentuais em relação a um ano antes"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

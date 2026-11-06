@@ -1,0 +1,73 @@
+Bloco;Grupo;Série;Valor;Ordem
+Sócios que são profissionais;Sócio-administrador;Profissionais do sistema Confea/Crea;1623;1
+Sócios que são profissionais;Sócio-administrador;Outros sócios pessoa física;2168;1
+Sócios que são profissionais;Sócio;Profissionais do sistema Confea/Crea;699;2
+Sócios que são profissionais;Sócio;Outros sócios pessoa física;974;2
+Sócios que são profissionais;Administrador;Profissionais do sistema Confea/Crea;122;3
+Sócios que são profissionais;Administrador;Outros sócios pessoa física;156;3
+Nome com engenharia e diretoria;Diretoria com maioria de profissionais;Empresas;130;1
+Nome com engenharia e diretoria;Diretoria sem maioria de profissionais;Empresas;105;2
+Nome com engenharia e diretoria;Sem dirigente identificado;Empresas;15;3
+Nome com engenharia e diretoria;Diretoria sem maioria de profissionais, registradas;Empresas;72;4
+Usinas, postos, minas e financiamentos;Usinas e agentes de energia (ANEEL);Registradas no Crea-SP;35;1
+Usinas, postos, minas e financiamentos;Usinas e agentes de energia (ANEEL);Com atividade de engenharia sem registro;12;1
+Usinas, postos, minas e financiamentos;Usinas e agentes de energia (ANEEL);CNPJ fora da lista;93;1
+Usinas, postos, minas e financiamentos;Postos e instalações de combustível (ANP);Registradas no Crea-SP;67;2
+Usinas, postos, minas e financiamentos;Postos e instalações de combustível (ANP);Com atividade de engenharia sem registro;22;2
+Usinas, postos, minas e financiamentos;Postos e instalações de combustível (ANP);CNPJ fora da lista;131;2
+Usinas, postos, minas e financiamentos;Processos de mineração (ANM);Registradas no Crea-SP;24;3
+Usinas, postos, minas e financiamentos;Processos de mineração (ANM);Com atividade de engenharia sem registro;4;3
+Usinas, postos, minas e financiamentos;Processos de mineração (ANM);CNPJ fora da lista;62;3
+Usinas, postos, minas e financiamentos;Financiamentos do BNDES;Registradas no Crea-SP;27;4
+Usinas, postos, minas e financiamentos;Financiamentos do BNDES;Com atividade de engenharia sem registro;18;4
+Usinas, postos, minas e financiamentos;Financiamentos do BNDES;CNPJ fora da lista;65;4
+Empregados técnicos por empresa;nenhum;Registradas;284;1
+Empregados técnicos por empresa;nenhum;Sem registro (atividade da lista);111;1
+Empregados técnicos por empresa;1 a 2;Registradas;473;2
+Empregados técnicos por empresa;1 a 2;Sem registro (atividade da lista);198;2
+Empregados técnicos por empresa;3 a 9;Registradas;321;3
+Empregados técnicos por empresa;3 a 9;Sem registro (atividade da lista);112;3
+Empregados técnicos por empresa;10 ou mais;Registradas;219;4
+Empregados técnicos por empresa;10 ou mais;Sem registro (atividade da lista);88;4
+Credenciadas no DETRAN-SP e no INMETRO;DETRAN-SP, Vistoria de identificação veicular;Registradas com RT;17;1
+Credenciadas no DETRAN-SP e no INMETRO;DETRAN-SP, Vistoria de identificação veicular;Registradas sem RT;3;1
+Credenciadas no DETRAN-SP e no INMETRO;DETRAN-SP, Vistoria de identificação veicular;Sem registro;11;1
+Credenciadas no DETRAN-SP e no INMETRO;DETRAN-SP, Inspeção veicular;Registradas com RT;21;2
+Credenciadas no DETRAN-SP e no INMETRO;DETRAN-SP, Inspeção veicular;Registradas sem RT;1;2
+Credenciadas no DETRAN-SP e no INMETRO;DETRAN-SP, Inspeção veicular;Sem registro;7;2
+Credenciadas no DETRAN-SP e no INMETRO;DETRAN-SP, Desmontagem e reciclagem;Registradas com RT;13;3
+Credenciadas no DETRAN-SP e no INMETRO;DETRAN-SP, Desmontagem e reciclagem;Registradas sem RT;3;3
+Credenciadas no DETRAN-SP e no INMETRO;DETRAN-SP, Desmontagem e reciclagem;Sem registro;7;3
+Credenciadas no DETRAN-SP e no INMETRO;INMETRO, Laboratório de ensaio;Registradas com RT;12;4
+Credenciadas no DETRAN-SP e no INMETRO;INMETRO, Laboratório de ensaio;Registradas sem RT;1;4
+Credenciadas no DETRAN-SP e no INMETRO;INMETRO, Laboratório de ensaio;Sem registro;2;4
+Credenciadas no DETRAN-SP e no INMETRO;INMETRO, Laboratório de calibração;Registradas com RT;10;5
+Credenciadas no DETRAN-SP e no INMETRO;INMETRO, Laboratório de calibração;Registradas sem RT;1;5
+Credenciadas no DETRAN-SP e no INMETRO;INMETRO, Laboratório de calibração;Sem registro;6;5
+Credenciadas no DETRAN-SP e no INMETRO;INMETRO, Organismo de inspeção;Registradas com RT;12;6
+Credenciadas no DETRAN-SP e no INMETRO;INMETRO, Organismo de inspeção;Registradas sem RT;0;6
+Credenciadas no DETRAN-SP e no INMETRO;INMETRO, Organismo de inspeção;Sem registro;5;6
+Engenharia incluída no contrato social;2024-T4;Registradas depois do ato;34;1
+Engenharia incluída no contrato social;2024-T4;Já registradas antes do ato;16;1
+Engenharia incluída no contrato social;2024-T4;Sem registro no Crea-SP;13;1
+Engenharia incluída no contrato social;2025-T1;Registradas depois do ato;44;2
+Engenharia incluída no contrato social;2025-T1;Já registradas antes do ato;9;2
+Engenharia incluída no contrato social;2025-T1;Sem registro no Crea-SP;18;2
+Engenharia incluída no contrato social;2025-T2;Registradas depois do ato;42;3
+Engenharia incluída no contrato social;2025-T2;Já registradas antes do ato;7;3
+Engenharia incluída no contrato social;2025-T2;Sem registro no Crea-SP;13;3
+Engenharia incluída no contrato social;2025-T3;Registradas depois do ato;29;4
+Engenharia incluída no contrato social;2025-T3;Já registradas antes do ato;13;4
+Engenharia incluída no contrato social;2025-T3;Sem registro no Crea-SP;16;4
+Engenharia incluída no contrato social;2025-T4;Registradas depois do ato;41;5
+Engenharia incluída no contrato social;2025-T4;Já registradas antes do ato;7;5
+Engenharia incluída no contrato social;2025-T4;Sem registro no Crea-SP;18;5
+Engenharia incluída no contrato social;2026-T1;Registradas depois do ato;23;6
+Engenharia incluída no contrato social;2026-T1;Já registradas antes do ato;8;6
+Engenharia incluída no contrato social;2026-T1;Sem registro no Crea-SP;23;6
+Engenharia incluída no contrato social;2026-T2;Registradas depois do ato;19;7
+Engenharia incluída no contrato social;2026-T2;Já registradas antes do ato;14;7
+Engenharia incluída no contrato social;2026-T2;Sem registro no Crea-SP;41;7
+Engenharia incluída no contrato social;2026-T3;Registradas depois do ato;1;8
+Engenharia incluída no contrato social;2026-T3;Já registradas antes do ato;17;8
+Engenharia incluída no contrato social;2026-T3;Sem registro no Crea-SP;43;8

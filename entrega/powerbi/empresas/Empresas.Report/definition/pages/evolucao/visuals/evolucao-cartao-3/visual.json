@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "evolucao-cartao-3",
+  "position": {
+    "x": 518,
+    "y": 68,
+    "z": 10000,
+    "width": 243,
+    "height": 84,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Empresas de engenharia abertas no período"
+                }
+              },
+              "queryRef": "Medidas.Empresas de engenharia abertas no período",
+              "nativeQueryRef": "Empresas de engenharia abertas no período"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação em um ano: Empresas de engenharia abertas no período"
+                }
+              },
+              "queryRef": "Medidas.Variação em um ano: Empresas de engenharia abertas no período",
+              "nativeQueryRef": "Variação em um ano: Empresas de engenharia abertas no período",
+              "displayName": "em relação a um ano antes"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

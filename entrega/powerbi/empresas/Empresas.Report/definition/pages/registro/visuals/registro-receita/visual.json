@@ -1,0 +1,107 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "registro-receita",
+  "position": {
+    "x": 16,
+    "y": 436,
+    "z": 16000,
+    "width": 411,
+    "height": 268,
+    "tabOrder": 16000
+  },
+  "visual": {
+    "visualType": "hundredPercentStackedBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Estabelecimentos"
+                    }
+                  },
+                  "Property": "Classe"
+                }
+              },
+              "queryRef": "Estabelecimentos.Classe",
+              "nativeQueryRef": "Classe",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Estabelecimentos do mercado com registro"
+                }
+              },
+              "queryRef": "Medidas.Estabelecimentos do mercado com registro",
+              "nativeQueryRef": "Estabelecimentos do mercado com registro"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Estabelecimentos do mercado só com histórico"
+                }
+              },
+              "queryRef": "Medidas.Estabelecimentos do mercado só com histórico",
+              "nativeQueryRef": "Estabelecimentos do mercado só com histórico"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Estabelecimentos do mercado sem registro"
+                }
+              },
+              "queryRef": "Medidas.Estabelecimentos do mercado sem registro",
+              "nativeQueryRef": "Estabelecimentos do mercado sem registro"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Receita comparada com o cadastro'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

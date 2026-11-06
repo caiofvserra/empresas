@@ -1,0 +1,49 @@
+/// Estabelecimentos com atividade da lista abertos até o último dia de cada mês: se estão no mercado (ativos na Receita) e a situação no cadastro naquele dia.
+table 'Foto dos estabelecimentos'
+	isHidden
+	lineageTag: c743ee7d-1b00-5c7f-8736-6c25893064e8
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: d88a60ee-668c-5b0c-93ae-51a6182963e9
+
+	column Estabelecimento
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Estabelecimento
+		lineageTag: 8ace13a0-73c6-5b06-aed3-281841443af1
+
+	column 'No mercado'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: No mercado
+		lineageTag: 981d2dcc-89f5-55a6-bf9c-f2c4bc39d33f
+
+	column 'Situação no cadastro'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Situação no cadastro
+		lineageTag: 5dcf3575-8f3c-5e1b-87ce-5dbd913af7ea
+
+	column 'Registro ativo'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Registro ativo
+		lineageTag: 475edeac-101d-5a26-adc0-b94432af79e3
+
+	partition 'Foto dos estabelecimentos' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "foto-estabelecimentos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Estabelecimento", type text}, {"No mercado", Int64.Type}, {"Situação no cadastro", type text}, {"Registro ativo", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

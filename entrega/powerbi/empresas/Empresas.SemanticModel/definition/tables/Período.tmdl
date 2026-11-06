@@ -1,0 +1,19 @@
+/// Número de meses somados nos fluxos, contados para trás a partir da data de referência. É um parâmetro de intervalo numérico, de 1 a 36 meses.
+table 'Período'
+	lineageTag: 21e42d10-c4ae-5ef2-93bc-78a847e0bd99
+
+	column Meses
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Value]
+		lineageTag: 4ab89e6a-3391-53e4-8914-22d289858b1f
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+	partition 'Período' = calculated
+		mode: import
+		source = GENERATESERIES(1, 36, 1)

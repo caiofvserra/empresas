@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "registro-capital",
+  "position": {
+    "x": 1063,
+    "y": 436,
+    "z": 19000,
+    "width": 201,
+    "height": 268,
+    "tabOrder": 19000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "A montar no Power BI Desktop. Matriz com o tempo desde o primeiro registro nas linhas e a faixa do capital social nas colunas. Falta levar as duas faixas para a tabela Empresas."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tempo de registro e capital social'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

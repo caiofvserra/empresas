@@ -1,0 +1,31 @@
+/// Os 645 municípios de SP e a GRE de cada um, pela tabela oficial.
+table 'Municípios'
+	lineageTag: fad87020-4ffa-5682-922f-5358b3fde2b7
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: bd339fe9-cdcc-5e7b-a3aa-53319ed03fc2
+
+	column 'Município'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Município
+		lineageTag: 8e520f42-a44e-5748-80ad-6e1ac693ac49
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 87cb2623-0451-5f3d-aa31-b39b314e7f08
+
+	partition 'Municípios' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "municipios.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Código IBGE", type text}, {"Município", type text}, {"GRE", type text}}, "pt-BR")
+				in
+				    Tipos

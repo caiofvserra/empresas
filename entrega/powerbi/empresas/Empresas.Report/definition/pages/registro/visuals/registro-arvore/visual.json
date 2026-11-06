@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "registro-arvore",
+  "position": {
+    "x": 435,
+    "y": 160,
+    "z": 14000,
+    "width": 515,
+    "height": 268,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "treemap",
+    "query": {
+      "queryState": {
+        "Group": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Estabelecimentos"
+                    }
+                  },
+                  "Property": "Câmara da atividade"
+                }
+              },
+              "queryRef": "Estabelecimentos.Câmara da atividade",
+              "nativeQueryRef": "Câmara da atividade",
+              "active": true
+            }
+          ]
+        },
+        "Details": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Estabelecimentos"
+                    }
+                  },
+                  "Property": "Atividade da lista"
+                }
+              },
+              "queryRef": "Estabelecimentos.Atividade da lista",
+              "nativeQueryRef": "Atividade da lista",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Estabelecimentos no mercado"
+                }
+              },
+              "queryRef": "Medidas.Estabelecimentos no mercado",
+              "nativeQueryRef": "Estabelecimentos no mercado"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Mercado por câmara e atividade'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

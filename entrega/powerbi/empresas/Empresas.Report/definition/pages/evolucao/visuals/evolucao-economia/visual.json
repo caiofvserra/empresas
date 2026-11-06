@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "evolucao-economia",
+  "position": {
+    "x": 16,
+    "y": 160,
+    "z": 13000,
+    "width": 620,
+    "height": 268,
+    "tabOrder": 13000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "A montar no Power BI Desktop. Quatro séries com o primeiro mês igual a 100: emprego formal, crédito para obras, abertas na Receita e registros. O crédito vem do Banco Central e depende de acordo; falta a tabela de demonstração dele."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Economia, empresas abertas e registros !'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

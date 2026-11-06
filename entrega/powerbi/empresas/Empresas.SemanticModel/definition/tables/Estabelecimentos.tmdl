@@ -1,0 +1,82 @@
+/// Uma linha por CNPJ completo. A atividade da lista é a principal, ou a primeira secundária quando a principal não está na lista do Crea-SP.
+table Estabelecimentos
+	lineageTag: 50e8a11d-d95f-5f9f-8fa4-104562c53016
+
+	column Estabelecimento
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Estabelecimento
+		lineageTag: 8be11372-628d-50c8-b23b-b7ea280951f1
+
+	column Empresa
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Empresa
+		lineageTag: 4047e697-c9be-54c9-9047-cf8f52a25cec
+
+	column CNPJ
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CNPJ
+		lineageTag: a89e5247-f993-5169-a1e5-f25f9bd6056e
+
+	column 'Matriz ou filial'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Matriz ou filial
+		lineageTag: e077fe38-99fe-51ae-99bd-c2f0cf9652ad
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 54e9d0d2-7489-5df4-87a6-422a4e3ae3b5
+
+	column 'Atividade principal'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Atividade principal
+		lineageTag: 926afe3f-a6b6-5179-9da2-ac67dd688ef8
+
+	column 'Atividade da lista'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Atividade da lista
+		lineageTag: 0e90d56f-80a3-5d5d-9b5b-6d871df1b3ba
+
+	column 'Câmara da atividade'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Câmara da atividade
+		lineageTag: 1dc98000-b92a-58c2-a7d8-a278a57caa0b
+
+	column Classe
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Classe
+		lineageTag: 99734acf-043b-5ac9-a8fc-d897d7b62cb2
+
+	column 'Aberto em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Aberto em
+		lineageTag: 76ec05ad-a7ed-5fb3-8814-d1151c911bee
+
+	column 'Situação na Receita'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Situação na Receita
+		lineageTag: 03836af5-ce70-50bb-9821-bbdda2f4ac0e
+
+	partition Estabelecimentos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "estabelecimentos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Estabelecimento", type text}, {"Empresa", type text}, {"CNPJ", type text}, {"Matriz ou filial", type text}, {"Código IBGE", type text}, {"Atividade principal", type text}, {"Atividade da lista", type text}, {"Câmara da atividade", type text}, {"Classe", type text}, {"Aberto em", type date}, {"Situação na Receita", type text}}, "pt-BR")
+				in
+				    Tipos
