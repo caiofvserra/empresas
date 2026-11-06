@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Emprego formal em engenharia"
+                  "Property": "Comparação: Emprego formal em engenharia"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Emprego formal em engenharia",
-              "nativeQueryRef": "Variação em um ano: Emprego formal em engenharia",
-              "displayName": "em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Emprego formal em engenharia",
+              "nativeQueryRef": "Comparação: Emprego formal em engenharia"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Emprego formal em engenharia"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Emprego formal em engenharia",
+              "nativeQueryRef": "Detalhe: Emprego formal em engenharia"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Emprego formal em engenharia'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

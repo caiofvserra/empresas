@@ -1,4 +1,4 @@
-/// Situação de cada empresa no último dia de cada mês, calculada pelas regras do painel. Uma linha por empresa registrada naquele dia ou 12 meses antes.
+/// Guarda a situação de cada empresa no último dia de cada mês, calculada pelas regras do painel. Tem uma linha por empresa registrada naquele dia, registrada nos meses das coortes ou com estabelecimento no mercado.
 table 'Foto das empresas'
 	isHidden
 	lineageTag: 6fdfa5d8-3fcb-56ea-9b91-05b07e031185
@@ -79,6 +79,38 @@ table 'Foto das empresas'
 		sourceColumn: Cadastro incompleto
 		lineageTag: 15f0676a-b714-5354-ab25-e632a005819b
 
+	column 'Registrada 3 meses antes'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Registrada 3 meses antes
+		lineageTag: 4cb6e7e0-14f4-5ec2-9e54-5d78f02da607
+
+	column 'Continua registrada desde 3 meses'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Continua registrada desde 3 meses
+		lineageTag: c4b6ad1b-f525-5b1d-ac44-ecf347fb156a
+
+	column 'Registrada 6 meses antes'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Registrada 6 meses antes
+		lineageTag: 7d909427-8ee1-5f91-b32c-a6dffcfd9e40
+
+	column 'Continua registrada desde 6 meses'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Continua registrada desde 6 meses
+		lineageTag: a288587c-9bb5-5a46-bdfa-45d4fbf4c0b9
+
 	column 'Registrada 12 meses antes'
 		dataType: int64
 		formatString: 0
@@ -87,13 +119,42 @@ table 'Foto das empresas'
 		sourceColumn: Registrada 12 meses antes
 		lineageTag: 7efad1e8-2257-5276-b2e5-0e304f8101f9
 
-	column 'Continua registrada'
+	column 'Continua registrada desde 12 meses'
 		dataType: int64
 		formatString: 0
 		isHidden
 		summarizeBy: none
-		sourceColumn: Continua registrada
-		lineageTag: 9735298e-75ba-5e38-8703-05768db8f36f
+		sourceColumn: Continua registrada desde 12 meses
+		lineageTag: 7e8c6577-fc90-572d-8458-9ebfa0d5efa4
+
+	column 'No mercado do funil'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: No mercado do funil
+		lineageTag: 44283e12-cb8f-53ac-8c30-bc0a5aa9573f
+
+	column 'Situação no funil'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Situação no funil
+		lineageTag: b8c60681-0221-5a7b-b0f9-956919faf870
+
+	column 'Tempo de registro'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tempo de registro
+		sortByColumn: 'Ordem do tempo de registro'
+		lineageTag: c403ed06-b165-52d8-824c-071e76f125c7
+
+	column 'Ordem do tempo de registro'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do tempo de registro
+		lineageTag: 96795d2e-270e-5198-ba7f-4be6b5f18229
 
 	column 'Estabelecimentos registrados'
 		dataType: int64
@@ -117,6 +178,6 @@ table 'Foto das empresas'
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "foto-empresas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Mês", type date}, {"Empresa", type text}, {"Registrada", Int64.Type}, {"Anuidade vencida", Int64.Type}, {"Com RT", Int64.Type}, {"RT saiu sem substituto", Int64.Type}, {"Sem vínculo de RT", Int64.Type}, {"RT cancelado ou interrompido", Int64.Type}, {"Cadastro incompleto", Int64.Type}, {"Registrada 12 meses antes", Int64.Type}, {"Continua registrada", Int64.Type}, {"Estabelecimentos registrados", Int64.Type}, {"Vistos", Int64.Type}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Mês", type date}, {"Empresa", type text}, {"Registrada", Int64.Type}, {"Anuidade vencida", Int64.Type}, {"Com RT", Int64.Type}, {"RT saiu sem substituto", Int64.Type}, {"Sem vínculo de RT", Int64.Type}, {"RT cancelado ou interrompido", Int64.Type}, {"Cadastro incompleto", Int64.Type}, {"Registrada 3 meses antes", Int64.Type}, {"Continua registrada desde 3 meses", Int64.Type}, {"Registrada 6 meses antes", Int64.Type}, {"Continua registrada desde 6 meses", Int64.Type}, {"Registrada 12 meses antes", Int64.Type}, {"Continua registrada desde 12 meses", Int64.Type}, {"No mercado do funil", Int64.Type}, {"Situação no funil", type text}, {"Tempo de registro", type text}, {"Ordem do tempo de registro", Int64.Type}, {"Estabelecimentos registrados", Int64.Type}, {"Vistos", Int64.Type}}, "pt-BR")
 				in
 				    Tipos

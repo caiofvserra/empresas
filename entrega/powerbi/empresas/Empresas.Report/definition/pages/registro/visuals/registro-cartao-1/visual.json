@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Empresas registradas"
+                  "Property": "Comparação: Empresas registradas"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Empresas registradas",
-              "nativeQueryRef": "Variação em um ano: Empresas registradas",
-              "displayName": "em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Empresas registradas",
+              "nativeQueryRef": "Comparação: Empresas registradas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Empresas registradas"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Empresas registradas",
+              "nativeQueryRef": "Detalhe: Empresas registradas"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Empresas registradas'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

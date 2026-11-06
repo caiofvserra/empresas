@@ -1,4 +1,4 @@
-/// Número de meses somados nos fluxos, contados para trás a partir da data de referência. É um parâmetro de intervalo numérico, de 1 a 36 meses.
+/// Guarda o número de meses somados nos fluxos, contados para trás a partir da data de referência. No Power BI Desktop, é um parâmetro do tipo "Intervalo numérico", de 1 a 36 meses.
 table 'Período'
 	lineageTag: 21e42d10-c4ae-5ef2-93bc-78a847e0bd99
 

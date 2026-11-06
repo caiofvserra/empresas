@@ -17,7 +17,7 @@ Unidade visual de uma página, com título, gráfico e ficha (i).
 _Avoid_: widget, visual, card
 
 **Cartão**:
-Bloco que mostra um único número com a variação contra o mesmo mês do ano anterior.
+Bloco que mostra um único número, uma comparação embaixo dele e uma linha de apoio. A comparação é contra o mesmo mês do ano anterior; a parte do mercado registrada e o RT comparam com a meta, e o emprego formal com o primeiro mês do gráfico.
 _Avoid_: KPI, indicador (quando se fala do bloco)
 
 **Ficha (i)**:
@@ -49,6 +49,14 @@ _Avoid_: saldo, total
 **Fluxo**:
 Indicador que soma o que aconteceu num intervalo (entradas, saídas, ARTs, valor em ART). Só ele tem acumulado do ano.
 _Avoid_: movimento, volume
+
+**Foto**:
+A situação de cada empresa (ou estabelecimento) no último dia de um mês, gravada uma vez e nunca reescrita. Estoques e taxas do pacote Power BI são contados nela.
+_Avoid_: snapshot, retrato
+
+**Índice (primeiro mês = 100)**:
+Uma série dividida pelo seu primeiro mês no gráfico, vezes 100, para comparar o ritmo de séries com unidades diferentes (emprego, crédito, aberturas, registros).
+_Avoid_: taxa, número-índice
 
 **Taxa**:
 Parte de um estoque sobre outro, lida no mesmo dia (parte do mercado registrada, anuidade em dia, com RT).

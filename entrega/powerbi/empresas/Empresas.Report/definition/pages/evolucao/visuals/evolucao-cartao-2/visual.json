@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Empresas que saíram da base"
+                  "Property": "Comparação: Empresas que saíram da base"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Empresas que saíram da base",
-              "nativeQueryRef": "Variação em um ano: Empresas que saíram da base",
-              "displayName": "em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Empresas que saíram da base",
+              "nativeQueryRef": "Comparação: Empresas que saíram da base"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Empresas que saíram da base"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Empresas que saíram da base",
+              "nativeQueryRef": "Detalhe: Empresas que saíram da base"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Empresas que saíram da base'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

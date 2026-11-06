@@ -1,0 +1,41 @@
+/// Conta os profissionais com registro ativo em cada data de referência, por município e modalidade, como o painel de Profissionais.
+table 'Profissionais ativos'
+	isHidden
+	lineageTag: 6cd77355-6755-54f3-bd7f-420d5dde4286
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 5078af6c-7532-599e-b0c0-841440437e51
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: ed2664fe-377e-547c-97b3-06e6078fd57d
+
+	column Modalidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Modalidade
+		lineageTag: 43025c80-553a-5786-833d-07e8b735d8ad
+
+	column Ativos
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ativos
+		lineageTag: 38153054-b9db-5cea-a2d8-059ce2832efd
+
+	partition 'Profissionais ativos' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "profissionais-ativos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Código IBGE", type text}, {"Modalidade", type text}, {"Ativos", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

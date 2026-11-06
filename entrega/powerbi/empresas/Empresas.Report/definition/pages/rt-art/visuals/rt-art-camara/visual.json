@@ -46,7 +46,8 @@
                 }
               },
               "queryRef": "Medidas.Registradas sem ART no período",
-              "nativeQueryRef": "Registradas sem ART no período"
+              "nativeQueryRef": "Registradas sem ART no período",
+              "displayName": "Sem ART"
             },
             {
               "field": {
@@ -60,11 +61,47 @@
                 }
               },
               "queryRef": "Medidas.Registradas com ART no período",
-              "nativeQueryRef": "Registradas com ART no período"
+              "nativeQueryRef": "Registradas com ART no período",
+              "displayName": "Com ART"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: RT que saiu sem substituto"
+                  "Property": "Comparação: RT que saiu sem substituto"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: RT que saiu sem substituto",
-              "nativeQueryRef": "Variação em um ano: RT que saiu sem substituto",
-              "displayName": "em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: RT que saiu sem substituto",
+              "nativeQueryRef": "Comparação: RT que saiu sem substituto"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: RT que saiu sem substituto"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: RT que saiu sem substituto",
+              "nativeQueryRef": "Detalhe: RT que saiu sem substituto"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'RT que saiu sem substituto'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

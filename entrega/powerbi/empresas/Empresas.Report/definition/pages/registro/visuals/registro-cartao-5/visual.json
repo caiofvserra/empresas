@@ -28,10 +28,61 @@
               },
               "queryRef": "Medidas.Registradas com cadastro incompleto",
               "nativeQueryRef": "Registradas com cadastro incompleto"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Registradas com cadastro incompleto"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Registradas com cadastro incompleto",
+              "nativeQueryRef": "Detalhe: Registradas com cadastro incompleto"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Registradas com cadastro incompleto'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

@@ -65,7 +65,8 @@
                 }
               },
               "queryRef": "Medidas.Primeiros registros no mês",
-              "nativeQueryRef": "Primeiros registros no mês"
+              "nativeQueryRef": "Primeiros registros no mês",
+              "displayName": "Primeiros registros"
             }
           ]
         }

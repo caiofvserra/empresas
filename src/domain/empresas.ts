@@ -102,16 +102,20 @@ export function cnaesDoMercado(scope: Scope, model: EnterpriseModel, limite = 12
 
 /* ---------- Há quanto tempo as empresas estão registradas ---------- */
 export const faixasAntiguidade = ['menos de 1 ano', '1 a 2 anos', '2 a 5 anos', '5 a 10 anos', '10 anos ou mais'];
+/** Índice da faixa de `faixasAntiguidade` para uma idade em anos. */
+export const faixaDaAntiguidade = (anos: number) => anos < 1 ? 0 : anos < 2 ? 1 : anos < 5 ? 2 : anos < 10 ? 3 : 4;
+/** Idade, em anos, do primeiro registro (`inicio`, AAAA-MM-DD) na data `data`. */
+export const anosDesde = (inicio: string, data: string) => (Date.parse(`${data}T00:00:00Z`) - Date.parse(`${inicio}T00:00:00Z`)) / (365.25 * 86400000);
 /** Empresas com registro ativo pela data do primeiro registro no Crea-SP, contada até a data de referência. */
 export function antiguidadeRegistro(scope: Scope, model: EnterpriseModel) {
-  const anchor = Date.parse(`${scope.dataset.snapshotDate}T00:00:00Z`), primeira = new Map<string, string>();
+  const primeira = new Map<string, string>();
   for (const row of scope.dataset.registrations) { const atual = primeira.get(row.companyId); if (!atual || row.startedAt < atual) primeira.set(row.companyId, row.startedAt); }
   const faixas = faixasAntiguidade.map(nome => ({ nome, ids: [] as string[] }));
   const anos: number[] = [];
   for (const id of model.metadata.activeCompanyIds) {
     const inicio = primeira.get(id); if (!inicio) continue;
-    const idade = (anchor - Date.parse(`${inicio}T00:00:00Z`)) / (365.25 * 86400000); anos.push(idade);
-    faixas[idade < 1 ? 0 : idade < 2 ? 1 : idade < 5 ? 2 : idade < 10 ? 3 : 4].ids.push(id);
+    const idade = anosDesde(inicio, scope.dataset.snapshotDate); anos.push(idade);
+    faixas[faixaDaAntiguidade(idade)].ids.push(id);
   }
   anos.sort((a, b) => a - b);
   return { faixas, mediana: anos.length ? anos[Math.floor(anos.length / 2)] : null };
@@ -119,6 +123,8 @@ export function antiguidadeRegistro(scope: Scope, model: EnterpriseModel) {
 
 /* ---------- Capital social declarado à Receita ---------- */
 export const faixasCapital = ['até R$ 50 mil', 'R$ 50 mil a 200 mil', 'R$ 200 mil a 1 milhão', 'R$ 1 a 5 milhões', 'acima de R$ 5 milhões'];
+/** Índice da faixa de `faixasCapital` para um capital social em reais. */
+export const faixaDoCapital = (valor: number) => valor <= 50_000 ? 0 : valor <= 200_000 ? 1 : valor <= 1_000_000 ? 2 : valor <= 5_000_000 ? 3 : 4;
 const limitesPorte: Record<string, [number, number]> = { Microempresa: [5_000, 180_000], 'Pequena empresa': [60_000, 1_500_000], 'Média empresa': [400_000, 8_000_000], 'Grande empresa': [3_000_000, 90_000_000] };
 /** Capital social da empresa no cadastro aberto do CNPJ. No cenário, sorteado de forma estável dentro do porte declarado. */
 export const capitalSocial = (companyId: string, porte: string) => { const [min, max] = limitesPorte[porte] ?? limitesPorte.Microempresa; return Math.round(min * (max / min) ** chance(`capital:${companyId}`) / 1000) * 1000; };
@@ -127,7 +133,7 @@ export function porCapital(scope: Scope, model: EnterpriseModel) {
   const faixas = faixasCapital.map(nome => ({ nome, ids: [] as string[] }));
   for (const id of model.metadata.activeCompanyIds) {
     const valor = capitalSocial(id, portes.get(id) ?? 'Microempresa');
-    faixas[valor <= 50_000 ? 0 : valor <= 200_000 ? 1 : valor <= 1_000_000 ? 2 : valor <= 5_000_000 ? 3 : 4].ids.push(id);
+    faixas[faixaDoCapital(valor)].ids.push(id);
   }
   return faixas;
 }
@@ -153,7 +159,7 @@ export function cadastroIncompleto(scope: Scope, model: EnterpriseModel) {
   const ativas = new Set(model.metadata.activeCompanyIds), porTipo = new Map<string, Set<string>>();
   for (const row of scope.qualityEvents) if (!row.resolved && row.date <= scope.dataset.snapshotDate && ativas.has(row.companyId)) porTipo.set(row.type, (porTipo.get(row.type) ?? new Set()).add(row.companyId));
   const ids = [...new Set([...porTipo.values()].flatMap(set => [...set]))];
-  return { ids, porTipo: [...porTipo].map(([tipo, set]) => ({ tipo, n: set.size })).sort((a, b) => b.n - a.n) };
+  return { ids, porTipo: [...porTipo].map(([tipo, set]) => ({ tipo, n: set.size, ids: [...set] })).sort((a, b) => b.n - a.n) };
 }
 
 /* ---------- Território: regionais ou municípios, pela parte do mercado que está registrada ---------- */

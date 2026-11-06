@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Atividade obrigatória e nenhum registro"
+                  "Property": "Comparação: Atividade obrigatória e nenhum registro"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Atividade obrigatória e nenhum registro",
-              "nativeQueryRef": "Variação em um ano: Atividade obrigatória e nenhum registro",
-              "displayName": "em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Atividade obrigatória e nenhum registro",
+              "nativeQueryRef": "Comparação: Atividade obrigatória e nenhum registro"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Atividade obrigatória e nenhum registro"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Atividade obrigatória e nenhum registro",
+              "nativeQueryRef": "Detalhe: Atividade obrigatória e nenhum registro"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Atividade obrigatória e nenhum registro'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Valor declarado em ART"
+                  "Property": "Comparação: Valor declarado em ART"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Valor declarado em ART",
-              "nativeQueryRef": "Variação em um ano: Valor declarado em ART",
-              "displayName": "em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Valor declarado em ART",
+              "nativeQueryRef": "Comparação: Valor declarado em ART"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Valor declarado em ART"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Valor declarado em ART",
+              "nativeQueryRef": "Detalhe: Valor declarado em ART"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Valor declarado em ART'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

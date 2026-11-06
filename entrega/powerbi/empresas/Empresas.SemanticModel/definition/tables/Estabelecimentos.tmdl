@@ -1,4 +1,4 @@
-/// Uma linha por CNPJ completo. A atividade da lista é a principal, ou a primeira secundária quando a principal não está na lista do Crea-SP.
+/// Tem uma linha por CNPJ completo. A atividade da lista é a principal, ou a primeira secundária quando a principal não está na lista do Crea-SP.
 table Estabelecimentos
 	lineageTag: 50e8a11d-d95f-5f9f-8fa4-104562c53016
 
@@ -65,6 +65,14 @@ table Estabelecimentos
 		sourceColumn: Aberto em
 		lineageTag: 76ec05ad-a7ed-5fb3-8814-d1151c911bee
 
+	column 'Mês de abertura'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês de abertura
+		lineageTag: c8e32b5b-d8fa-53a1-a361-42e30dca1334
+
 	column 'Situação na Receita'
 		dataType: string
 		summarizeBy: none
@@ -77,6 +85,6 @@ table Estabelecimentos
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "estabelecimentos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Estabelecimento", type text}, {"Empresa", type text}, {"CNPJ", type text}, {"Matriz ou filial", type text}, {"Código IBGE", type text}, {"Atividade principal", type text}, {"Atividade da lista", type text}, {"Câmara da atividade", type text}, {"Classe", type text}, {"Aberto em", type date}, {"Situação na Receita", type text}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Estabelecimento", type text}, {"Empresa", type text}, {"CNPJ", type text}, {"Matriz ou filial", type text}, {"Código IBGE", type text}, {"Atividade principal", type text}, {"Atividade da lista", type text}, {"Câmara da atividade", type text}, {"Classe", type text}, {"Aberto em", type date}, {"Mês de abertura", type date}, {"Situação na Receita", type text}}, "pt-BR")
 				in
 				    Tipos

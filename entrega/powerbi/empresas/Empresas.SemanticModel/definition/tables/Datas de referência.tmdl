@@ -1,4 +1,4 @@
-/// Os fins de mês em que a base pode ser lida, e hoje. Sem relação com as outras tabelas: a escolha vale para todas as medidas.
+/// Tem os fins de mês em que a base pode ser lida, e hoje. Não se liga às outras tabelas: a escolha vale para todas as medidas.
 table 'Datas de referência'
 	lineageTag: e87952ab-4a5e-5255-bf2e-8083fcc0a31e
 

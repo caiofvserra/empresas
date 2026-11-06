@@ -2,28 +2,99 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "evolucao-permanencia",
   "position": {
-    "x": 853,
+    "x": 958,
     "y": 436,
-    "z": 16000,
-    "width": 411,
+    "z": 17000,
+    "width": 306,
     "height": 268,
-    "tabOrder": 16000
+    "tabOrder": 17000
   },
   "visual": {
-    "visualType": "textbox",
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Continuam registradas depois de 3 meses"
+                }
+              },
+              "queryRef": "Medidas.Continuam registradas depois de 3 meses",
+              "nativeQueryRef": "Continuam registradas depois de 3 meses",
+              "displayName": "3 meses"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Continuam registradas depois de 6 meses"
+                }
+              },
+              "queryRef": "Medidas.Continuam registradas depois de 6 meses",
+              "nativeQueryRef": "Continuam registradas depois de 6 meses",
+              "displayName": "6 meses"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Continuam registradas depois de 12 meses"
+                }
+              },
+              "queryRef": "Medidas.Continuam registradas depois de 12 meses",
+              "nativeQueryRef": "Continuam registradas depois de 12 meses",
+              "displayName": "12 meses"
+            }
+          ]
+        }
+      }
+    },
     "objects": {
-      "general": [
+      "labels": [
         {
           "properties": {
-            "paragraphs": [
-              {
-                "textRuns": [
-                  {
-                    "value": "A montar no Power BI Desktop. Aberturas por mês com a parte que já se registrou, e a permanência de quem estava registrado há 3, 6 e 12 meses. Os cartões já trazem o total do período e a permanência de 12 meses."
-                  }
-                ]
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
               }
-            ]
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
           }
         }
       ]
@@ -42,13 +113,14 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Abertas na Receita e permanência'"
+                  "Value": "'Continuam registradas depois de'"
                 }
               }
             }
           }
         }
       ]
-    }
+    },
+    "drillFilterOtherVisuals": true
   }
 }

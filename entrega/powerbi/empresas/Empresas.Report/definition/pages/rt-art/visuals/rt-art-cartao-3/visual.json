@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: ARTs de empresas"
+                  "Property": "Comparação: ARTs de empresas"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: ARTs de empresas",
-              "nativeQueryRef": "Variação em um ano: ARTs de empresas",
-              "displayName": "em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: ARTs de empresas",
+              "nativeQueryRef": "Comparação: ARTs de empresas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: ARTs de empresas"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: ARTs de empresas",
+              "nativeQueryRef": "Detalhe: ARTs de empresas"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'ARTs de empresas'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

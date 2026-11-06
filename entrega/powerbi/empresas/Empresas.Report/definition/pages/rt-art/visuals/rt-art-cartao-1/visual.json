@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Empresas com responsável técnico"
+                  "Property": "Comparação: Empresas com responsável técnico"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Empresas com responsável técnico",
-              "nativeQueryRef": "Variação em um ano: Empresas com responsável técnico",
-              "displayName": "pontos percentuais em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Empresas com responsável técnico",
+              "nativeQueryRef": "Comparação: Empresas com responsável técnico"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Empresas com responsável técnico"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Empresas com responsável técnico",
+              "nativeQueryRef": "Detalhe: Empresas com responsável técnico"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Empresas com responsável técnico'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

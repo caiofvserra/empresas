@@ -1,4 +1,4 @@
-/// As 16 gerências regionais do Crea-SP.
+/// Tem uma linha para cada uma das 16 gerências regionais do Crea-SP.
 table Regionais
 	lineageTag: 7925ddbd-7b6b-5ebf-8bdb-c185a9e58178
 

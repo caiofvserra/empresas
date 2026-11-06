@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Parte do mercado que está registrada"
+                  "Property": "Comparação: Parte do mercado que está registrada"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Parte do mercado que está registrada",
-              "nativeQueryRef": "Variação em um ano: Parte do mercado que está registrada",
-              "displayName": "pontos percentuais em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Parte do mercado que está registrada",
+              "nativeQueryRef": "Comparação: Parte do mercado que está registrada"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Parte do mercado que está registrada"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Parte do mercado que está registrada",
+              "nativeQueryRef": "Detalhe: Parte do mercado que está registrada"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Parte do mercado que está registrada'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

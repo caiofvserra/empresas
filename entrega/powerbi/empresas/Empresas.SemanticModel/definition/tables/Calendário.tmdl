@@ -1,4 +1,4 @@
-/// Um mês por linha, para os gráficos mês a mês.
+/// Tem um mês por linha, para os gráficos mês a mês.
 table 'Calendário'
 	lineageTag: 43f095d8-4d72-5f42-a3f6-11b016480273
 

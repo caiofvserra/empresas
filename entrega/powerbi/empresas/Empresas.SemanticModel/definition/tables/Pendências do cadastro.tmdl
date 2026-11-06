@@ -1,0 +1,33 @@
+/// Guarda as pendências abertas no cadastro de cada empresa registrada, no último dia de cada mês.
+table 'Pendências do cadastro'
+	isHidden
+	lineageTag: 8a51ac93-deb2-5255-ae13-9bcb3f23ad7c
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 66d2154a-c768-5e10-a8bb-631242975c73
+
+	column Empresa
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Empresa
+		lineageTag: 9248668d-43d1-51e7-8689-d9b58ae97f0a
+
+	column 'Pendência'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Pendência
+		lineageTag: b17821aa-6001-5464-ab66-eaa2f06c9b71
+
+	partition 'Pendências do cadastro' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "pendencias.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Empresa", type text}, {"Pendência", type text}}, "pt-BR")
+				in
+				    Tipos

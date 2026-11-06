@@ -37,16 +37,66 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Variação em um ano: Continuam registradas depois de 12 meses"
+                  "Property": "Comparação: Continuam registradas depois de 12 meses"
                 }
               },
-              "queryRef": "Medidas.Variação em um ano: Continuam registradas depois de 12 meses",
-              "nativeQueryRef": "Variação em um ano: Continuam registradas depois de 12 meses",
-              "displayName": "pontos percentuais em relação a um ano antes"
+              "queryRef": "Medidas.Comparação: Continuam registradas depois de 12 meses",
+              "nativeQueryRef": "Comparação: Continuam registradas depois de 12 meses"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Continuam registradas depois de 12 meses"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Continuam registradas depois de 12 meses",
+              "nativeQueryRef": "Detalhe: Continuam registradas depois de 12 meses"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Continuam registradas depois de 12 meses'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

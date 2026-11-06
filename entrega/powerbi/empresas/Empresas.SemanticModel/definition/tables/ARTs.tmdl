@@ -1,4 +1,4 @@
-/// ARTs registradas por empresas.
+/// Guarda as ARTs registradas por empresas.
 table ARTs
 	isHidden
 	lineageTag: d1cebf74-ac73-500e-a0a7-762c982e6d97

@@ -1,4 +1,4 @@
-/// Empresas que passaram a ter registro ativo (entrada) ou deixaram de ter (saída), por mês.
+/// Guarda as empresas que passaram a ter registro ativo (entrada) ou deixaram de ter (saída), por mês.
 table 'Entradas e saídas'
 	isHidden
 	lineageTag: 71588dba-da77-51ec-8f24-8082df213127
@@ -16,11 +16,11 @@ table 'Entradas e saídas'
 		sourceColumn: Mês
 		lineageTag: eec10477-9102-5711-b32f-0b5f3901a44e
 
-	column Movimento
+	column Tipo
 		dataType: string
 		summarizeBy: none
-		sourceColumn: Movimento
-		lineageTag: 7c8f6409-7bb2-5333-bbf1-0f510bf8f034
+		sourceColumn: Tipo
+		lineageTag: 0badd507-0a36-5751-917f-619f12f7bee0
 
 	column 'Primeira vez'
 		dataType: int64
@@ -44,6 +44,6 @@ table 'Entradas e saídas'
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "entradas-saidas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Empresa", type text}, {"Mês", type date}, {"Movimento", type text}, {"Primeira vez", Int64.Type}, {"Após fiscalização", Int64.Type}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Empresa", type text}, {"Mês", type date}, {"Tipo", type text}, {"Primeira vez", Int64.Type}, {"Após fiscalização", Int64.Type}}, "pt-BR")
 				in
 				    Tipos

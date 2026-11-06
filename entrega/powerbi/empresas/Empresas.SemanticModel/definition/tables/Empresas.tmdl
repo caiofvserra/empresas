@@ -1,4 +1,4 @@
-/// Uma linha por empresa (raiz do CNPJ). Câmara pela atividade principal da matriz; município, porte e situação na Receita também da matriz.
+/// Tem uma linha por empresa (raiz do CNPJ). A câmara vem da atividade principal da matriz; o município, o porte e a situação na Receita também vêm da matriz.
 table Empresas
 	lineageTag: 59338242-9949-5f10-bad6-9dcac94330bd
 
@@ -53,12 +53,35 @@ table Empresas
 		sourceColumn: Só visto (sede fora de SP)
 		lineageTag: 378fe052-14a9-5c3c-bb09-bafaf29600f3
 
+	column 'Primeiro registro'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Primeiro registro
+		lineageTag: beb6bc6f-d451-5b5d-8ee0-b257fb1ea494
+
+	column 'Capital social'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Capital social
+		sortByColumn: 'Ordem do capital social'
+		lineageTag: 87c31484-166c-5b76-b499-3d0c476070c1
+
+	column 'Ordem do capital social'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do capital social
+		lineageTag: 58d449f4-1012-5c16-9056-53dc5e440517
+
 	partition Empresas = m
 		mode: import
 		source =
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "empresas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Empresa", type text}, {"Raiz do CNPJ", type text}, {"Razão social", type text}, {"Porte", type text}, {"Câmara", type text}, {"Situação na Receita", type text}, {"Código IBGE", type text}, {"Só visto (sede fora de SP)", Int64.Type}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Empresa", type text}, {"Raiz do CNPJ", type text}, {"Razão social", type text}, {"Porte", type text}, {"Câmara", type text}, {"Situação na Receita", type text}, {"Código IBGE", type text}, {"Só visto (sede fora de SP)", Int64.Type}, {"Primeiro registro", type date}, {"Capital social", type text}, {"Ordem do capital social", Int64.Type}}, "pt-BR")
 				in
 				    Tipos
