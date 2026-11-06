@@ -22,7 +22,7 @@ const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 test('painel de Empresas: quatro páginas próprias, separadas do painel geral', () => {
   assert.deepEqual(pageIdsEmpresas, ['mercado', 'evolucao', 'rt', 'vinculos']);
   assert.ok(pageIdsEmpresas.every(page => painelDaPagina(page) === 'empresas'));
-  assert.equal(painelDaPagina('receita'), 'geral');
+  assert.equal(painelDaPagina('receita'), 'conselho');
 });
 
 test('economia, aberturas e registros: 24 meses, todas as séries começam em 100 e o filtro de regional reduz as contagens', () => {
@@ -87,11 +87,11 @@ test('painel de Empresas: clicar detalha o item clicado, nunca abre o resumo gen
   }
 });
 
-test('painel geral: as abas que ficaram continuam no menu, e Empresas, Profissionais e Fiscalização viraram painéis à parte', () => {
+test('painel geral: Presidência e Método continuam no menu, e Empresas, Profissionais, Fiscalização e Gestão do Conselho viraram painéis à parte', () => {
   const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8');
   const geral = src.slice(src.indexOf('const paginasGeral'), src.indexOf('const paginasEmpresas'));
-  for (const id of ['presidencia', 'receita', 'entidades', 'controle', 'atendimento', 'metodo']) assert.ok(geral.includes(`id: '${id}'`), `aba ${id} no painel geral`);
-  for (const id of ['cadastro', 'profissionais', 'formacao', 'fiscalizacao', 'malha']) assert.ok(!geral.includes(`id: '${id}'`), `aba ${id} saiu do painel geral`);
+  for (const id of ['presidencia', 'metodo']) assert.ok(geral.includes(`id: '${id}'`), `aba ${id} no painel geral`);
+  for (const id of ['cadastro', 'profissionais', 'formacao', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento']) assert.ok(!geral.includes(`id: '${id}'`), `aba ${id} saiu do painel geral`);
 });
 
 test('as nove câmaras do Crea-SP aparecem no painel, com empresas em todas e a civil na frente (03/11/2026)', () => {

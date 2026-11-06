@@ -1,5 +1,6 @@
 import type { Dataset } from './types';
 import { between, chance, pick, share, sum } from './hash';
+import { municipiosSp } from './municipios';
 
 /**
  * V20 · Controle interno: despesa do Conselho por natureza e função (atividade-fim × atividade-meio), diárias e deslocamentos,
@@ -31,6 +32,9 @@ export interface Conselho { despesas: Despesa[]; diarias: Diaria[]; receitas: Re
 const pesoNatureza: Record<Natureza, number> = { 'Pessoal e encargos': 52, 'Diárias e passagens': 4, 'Serviços de terceiros': 22, 'Material de consumo': 3, Investimentos: 6, 'Transferências e convênios': 7, 'Outras despesas': 6 };
 const pesoFuncao: Record<Funcao, number> = { Fiscalização: 34, Atendimento: 16, Institucional: 12, 'Direção superior': 10, Administração: 28 };
 const objetosFornecedor = ['Tecnologia da informação', 'Limpeza e conservação', 'Vigilância', 'Locação de veículos', 'Correios e logística', 'Consultoria', 'Eventos e comunicação', 'Manutenção predial', 'Telefonia e dados', 'Material de escritório'];
+/** Nomes fictícios dos fornecedores (06/11/2026): prefixo pela ordem e ramo pelo objeto, então os 60 nunca se repetem. */
+const prefixosFornecedor = ['Vértice', 'Alvorada', 'Horizonte', 'Prisma', 'Centauro', 'Meridiano'];
+const ramoFornecedor: Record<string, string> = { 'Tecnologia da informação': 'Sistemas', 'Limpeza e conservação': 'Serviços Gerais', Vigilância: 'Segurança Patrimonial', 'Locação de veículos': 'Locadora de Veículos', 'Correios e logística': 'Logística', Consultoria: 'Consultoria', 'Eventos e comunicação': 'Comunicação e Eventos', 'Manutenção predial': 'Manutenção Predial', 'Telefonia e dados': 'Telecom', 'Material de escritório': 'Papelaria' };
 const MESES_TOTAIS = 69; // 2021-01 a 2026-09
 
 const cache = new WeakMap<Dataset, Conselho>();
@@ -41,14 +45,20 @@ export function buildConselho(dataset: Dataset): Conselho {
   const total = (month: string) => 18_000_000 * (1 + (Number(month.slice(0, 4)) - 2021) * 0.085) * (1 + (Number(month.slice(5, 7)) === 12 ? 0.18 : Number(month.slice(5, 7)) === 1 ? -0.08 : 0));
   const despesas: Despesa[] = [], diarias: Diaria[] = [], receitas: ReceitaMes[] = [];
   const gres = [null, ...dataset.gres.map(row => row.id)];
+  const pesoGre = new Map<string, number>(); for (const row of municipiosSp(dataset)) pesoGre.set(row.greId, (pesoGre.get(row.greId) ?? 0) + Math.pow(Math.max(5000, row.populacao), 0.85));
   for (const month of months) {
     for (const natureza of naturezas) for (const funcao of funcoes) {
       const base = total(month) * pesoNatureza[natureza] / 100 * pesoFuncao[funcao] / 100;
       const orcado = Math.round(base * (0.95 + chance(`orc:${month}:${natureza}:${funcao}`) * 0.2));
       const realizado = Math.round(orcado * (natureza === 'Investimentos' ? 0.45 + chance(`real:${month}:${natureza}:${funcao}`) * 0.5 : 0.82 + chance(`real:${month}:${natureza}:${funcao}`) * 0.26));
-      // Território: fiscalização e atendimento têm parte nas regionais; o resto fica na sede.
-      const greId = funcaoFim[funcao] && funcao !== 'Institucional' && chance(`gre:${month}:${natureza}:${funcao}`) < 0.72 ? pick(`greid:${month}:${natureza}:${funcao}`, gres.slice(1)) : null;
-      despesas.push({ month, natureza, funcao, greId, orcado, realizado });
+      // Território: fiscalização e atendimento têm cerca de 72% nas regionais, divididos entre as GREs pelo tamanho de cada uma
+      // (população, com uma variação de mês a mês); o resto fica na sede. Desde 06/11/2026: antes, a linha inteira ia para uma GRE
+      // sorteada, e uma regional chegava a gastar 40 vezes mais que outra do mesmo porte.
+      if (funcaoFim[funcao] && funcao !== 'Institucional') {
+        const pesos = gres.slice(1).map(id => (pesoGre.get(id!) ?? 0) * (0.85 + chance(`gre:${month}:${natureza}:${funcao}:${id}`) * 0.3)), soma = sum(pesos);
+        despesas.push({ month, natureza, funcao, greId: null, orcado: Math.round(orcado * 0.28), realizado: Math.round(realizado * 0.28) });
+        gres.slice(1).forEach((id, index) => despesas.push({ month, natureza, funcao, greId: id, orcado: Math.round(orcado * 0.72 * pesos[index] / soma), realizado: Math.round(realizado * 0.72 * pesos[index] / soma) }));
+      } else despesas.push({ month, natureza, funcao, greId: null, orcado, realizado });
     }
     for (const categoria of categorias) {
       const peso = categoria === 'Conselheiros' ? 1.6 : categoria === 'Empregados' ? 1 : categoria === 'Diretoria e presidência' ? 0.5 : 1.3;
@@ -62,7 +72,7 @@ export function buildConselho(dataset: Dataset): Conselho {
     for (const fonte of fontesReceita) { const prevista = Math.round(receitaTotal * pesos[fonte] / 100), realizada = Math.round(prevista * (0.84 + chance(`rec:${month}:${fonte}`) * 0.3)); receitas.push({ month, fonte, prevista, realizada }); }
   }
   const fornecedores: Fornecedor[] = Array.from({ length: 60 }, (_, index) => { const objeto = objetosFornecedor[index % objetosFornecedor.length];
-    return { id: `FORN-${String(index + 1).padStart(3, '0')}`, nome: `Fornecedor demonstrativo ${String(index + 1).padStart(2, '0')} · ${objeto}`, objeto, natureza: objeto === 'Material de escritório' ? 'Material de consumo' : index % 9 === 0 ? 'Investimentos' : 'Serviços de terceiros' }; });
+    return { id: `FORN-${String(index + 1).padStart(3, '0')}`, nome: `${prefixosFornecedor[Math.floor(index / objetosFornecedor.length)]} ${ramoFornecedor[objeto]} ${index % 4 === 3 ? 'S.A.' : 'Ltda.'}`, objeto, natureza: objeto === 'Material de escritório' ? 'Material de consumo' : index % 9 === 0 ? 'Investimentos' : 'Serviços de terceiros' }; });
   const contratos: ContratoConselho[] = Array.from({ length: 90 }, (_, index) => {
     const key = `ctr:${index}`, fornecedor = fornecedores[Math.floor(Math.pow(chance(key), 1.8) * fornecedores.length)];
     const inicio = `${2021 + between(`${key}:ano`, 0, 5)}-${String(between(`${key}:mes`, 1, 12)).padStart(2, '0')}-01`, duracao = between(`${key}:dur`, 12, 60);
