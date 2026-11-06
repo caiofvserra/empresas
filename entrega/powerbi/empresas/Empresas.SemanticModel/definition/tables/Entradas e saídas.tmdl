@@ -1,0 +1,49 @@
+/// Empresas que passaram a ter registro ativo (entrada) ou deixaram de ter (saída), por mês.
+table 'Entradas e saídas'
+	isHidden
+	lineageTag: 71588dba-da77-51ec-8f24-8082df213127
+
+	column Empresa
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Empresa
+		lineageTag: 47dfcad0-30f4-5c3a-97e5-d148d1d9a461
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: eec10477-9102-5711-b32f-0b5f3901a44e
+
+	column Movimento
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Movimento
+		lineageTag: 7c8f6409-7bb2-5333-bbf1-0f510bf8f034
+
+	column 'Primeira vez'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Primeira vez
+		lineageTag: 92faea23-9183-5f41-8159-311be6d093ec
+
+	column 'Após fiscalização'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Após fiscalização
+		lineageTag: 06d91d59-75dd-550f-a33d-0e51e8357100
+
+	partition 'Entradas e saídas' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "entradas-saidas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Empresa", type text}, {"Mês", type date}, {"Movimento", type text}, {"Primeira vez", Int64.Type}, {"Após fiscalização", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "registro-cartao-2",
+  "position": {
+    "x": 267,
+    "y": 68,
+    "z": 9000,
+    "width": 243,
+    "height": 84,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Parte do mercado que está registrada"
+                }
+              },
+              "queryRef": "Medidas.Parte do mercado que está registrada",
+              "nativeQueryRef": "Parte do mercado que está registrada"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

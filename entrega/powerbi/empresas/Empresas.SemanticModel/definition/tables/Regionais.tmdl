@@ -1,0 +1,28 @@
+/// As 16 gerências regionais do Crea-SP.
+table Regionais
+	lineageTag: 7925ddbd-7b6b-5ebf-8bdb-c185a9e58178
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		sortByColumn: Ordem
+		lineageTag: 4a7e17f2-636e-5a4c-a478-0c7a8b81b987
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: e499a1ff-8e83-54a1-941b-ce4753582642
+
+	partition Regionais = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "regionais.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"GRE", type text}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

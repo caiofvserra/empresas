@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "evolucao-permanencia",
+  "position": {
+    "x": 853,
+    "y": 436,
+    "z": 16000,
+    "width": 411,
+    "height": 268,
+    "tabOrder": 16000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "A montar no Power BI Desktop. Aberturas por mês com a parte que já se registrou, e a permanência de quem estava registrado há 3, 6 e 12 meses. Os cartões já trazem o total do período e a permanência de 12 meses."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Abertas na Receita e permanência'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

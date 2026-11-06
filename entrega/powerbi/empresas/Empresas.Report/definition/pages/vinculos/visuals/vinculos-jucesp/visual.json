@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "vinculos-jucesp",
+  "position": {
+    "x": 853,
+    "y": 390,
+    "z": 13000,
+    "width": 411,
+    "height": 314,
+    "tabOrder": 13000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Parcerias"
+                    }
+                  },
+                  "Property": "Grupo"
+                }
+              },
+              "queryRef": "Parcerias.Grupo",
+              "nativeQueryRef": "Grupo",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Parcerias"
+                    }
+                  },
+                  "Property": "Série"
+                }
+              },
+              "queryRef": "Parcerias.Série",
+              "nativeQueryRef": "Série",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "! Engenharia incluída no contrato social"
+                }
+              },
+              "queryRef": "Medidas.! Engenharia incluída no contrato social",
+              "nativeQueryRef": "! Engenharia incluída no contrato social"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Engenharia incluída no contrato social !'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

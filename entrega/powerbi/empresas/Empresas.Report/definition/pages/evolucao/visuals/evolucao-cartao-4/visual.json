@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "evolucao-cartao-4",
+  "position": {
+    "x": 770,
+    "y": 68,
+    "z": 11000,
+    "width": 243,
+    "height": 84,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Continuam registradas depois de 12 meses"
+                }
+              },
+              "queryRef": "Medidas.Continuam registradas depois de 12 meses",
+              "nativeQueryRef": "Continuam registradas depois de 12 meses"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

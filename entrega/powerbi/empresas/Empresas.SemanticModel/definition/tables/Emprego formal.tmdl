@@ -1,0 +1,35 @@
+/// Empregados com carteira em ocupações de engenharia no fim de cada mês, por regional (RAIS e Novo CAGED em totais).
+table 'Emprego formal'
+	isHidden
+	lineageTag: 78ac616a-f948-513c-a463-52b26a5ddd7d
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 313a56ad-f8a8-5ac7-91e2-82b5ed7f12fe
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: ae7c6439-1365-5983-9ea6-812192565a2a
+
+	column Empregados
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Empregados
+		lineageTag: 2d06ca64-6ff8-56da-a2e0-15bcfcf25efd
+
+	partition 'Emprego formal' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "emprego.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"GRE", type text}, {"Empregados", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

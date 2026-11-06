@@ -1,0 +1,64 @@
+/// Uma linha por empresa (raiz do CNPJ). Câmara pela atividade principal da matriz; município, porte e situação na Receita também da matriz.
+table Empresas
+	lineageTag: 59338242-9949-5f10-bad6-9dcac94330bd
+
+	column Empresa
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Empresa
+		lineageTag: 5385e0fa-ceb7-54f0-ab50-c752837825b9
+
+	column 'Raiz do CNPJ'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Raiz do CNPJ
+		lineageTag: c8b533b9-c624-57e3-81fd-9cc1d2f32794
+
+	column 'Razão social'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Razão social
+		lineageTag: 96006ec9-22c7-5267-bc66-0311888ef034
+
+	column Porte
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Porte
+		lineageTag: f961a7f3-8913-5da1-b018-ff2b829c859c
+
+	column 'Câmara'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Câmara
+		lineageTag: 58f69aed-f9b3-514b-9815-5dd58ee88ea4
+
+	column 'Situação na Receita'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Situação na Receita
+		lineageTag: 740039e0-0e61-50ea-82f8-a4281fcfbf6b
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: a21bc483-26c6-54d9-b6e3-c19b43a094a4
+
+	column 'Só visto (sede fora de SP)'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Só visto (sede fora de SP)
+		lineageTag: 378fe052-14a9-5c3c-bb09-bafaf29600f3
+
+	partition Empresas = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "empresas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Empresa", type text}, {"Raiz do CNPJ", type text}, {"Razão social", type text}, {"Porte", type text}, {"Câmara", type text}, {"Situação na Receita", type text}, {"Código IBGE", type text}, {"Só visto (sede fora de SP)", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

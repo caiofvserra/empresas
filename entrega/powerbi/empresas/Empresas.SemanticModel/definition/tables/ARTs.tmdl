@@ -1,0 +1,54 @@
+/// ARTs registradas por empresas.
+table ARTs
+	isHidden
+	lineageTag: d1cebf74-ac73-500e-a0a7-762c982e6d97
+
+	column ART
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ART
+		lineageTag: 9d563952-07e6-5898-a0f0-bf0a12efa2a1
+
+	column Empresa
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Empresa
+		lineageTag: 741c5ec0-fa33-55e2-8e9d-6ea8c4fc9aab
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 44e73cbd-28a1-57cb-aa64-b4a5a687f8e4
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 7434c227-308d-59e9-a700-efbfd15ae8e8
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: b8b8ce89-64e7-58cf-8d24-8001ac75f152
+
+	column Modalidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Modalidade
+		lineageTag: 151cd571-c6e3-5583-9101-2579a310afd8
+
+	partition ARTs = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "arts.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"ART", type text}, {"Empresa", type text}, {"Data", type date}, {"Mês", type date}, {"Valor", type number}, {"Modalidade", type text}}, "pt-BR")
+				in
+				    Tipos

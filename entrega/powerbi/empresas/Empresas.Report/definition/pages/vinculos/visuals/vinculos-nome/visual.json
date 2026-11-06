@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "vinculos-nome",
+  "position": {
+    "x": 435,
+    "y": 68,
+    "z": 9000,
+    "width": 411,
+    "height": 314,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Parcerias"
+                    }
+                  },
+                  "Property": "Grupo"
+                }
+              },
+              "queryRef": "Parcerias.Grupo",
+              "nativeQueryRef": "Grupo",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Parcerias"
+                    }
+                  },
+                  "Property": "Série"
+                }
+              },
+              "queryRef": "Parcerias.Série",
+              "nativeQueryRef": "Série",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "! Nome com engenharia e diretoria"
+                }
+              },
+              "queryRef": "Medidas.! Nome com engenharia e diretoria",
+              "nativeQueryRef": "! Nome com engenharia e diretoria"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Nome com engenharia e diretoria !'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

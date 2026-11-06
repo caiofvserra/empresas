@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "vinculos-credenciadas",
+  "position": {
+    "x": 435,
+    "y": 390,
+    "z": 12000,
+    "width": 411,
+    "height": 314,
+    "tabOrder": 12000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Parcerias"
+                    }
+                  },
+                  "Property": "Grupo"
+                }
+              },
+              "queryRef": "Parcerias.Grupo",
+              "nativeQueryRef": "Grupo",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Parcerias"
+                    }
+                  },
+                  "Property": "Série"
+                }
+              },
+              "queryRef": "Parcerias.Série",
+              "nativeQueryRef": "Série",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "! Credenciadas no DETRAN-SP e no INMETRO"
+                }
+              },
+              "queryRef": "Medidas.! Credenciadas no DETRAN-SP e no INMETRO",
+              "nativeQueryRef": "! Credenciadas no DETRAN-SP e no INMETRO"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Credenciadas no DETRAN-SP e no INMETRO !'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
