@@ -1,0 +1,582 @@
+/// Guarda as medidas do painel, em pastas por página.
+table Medidas
+	lineageTag: 01b60e7b-4bd3-57b1-bcb0-29c3ed3e59c2
+
+	/// Devolve a data de referência escolhida; sem escolha, a mais recente. As medidas de variação trocam a data pela de um ano antes.
+	measure 'Data escolhida' = IF(ISFILTERED('Datas das fotos'[Data]), MAX('Datas das fotos'[Data]), MAX('Datas de referência'[Data]))
+		formatString: dd/mm/yyyy
+		displayFolder: Apoio
+		lineageTag: 9c7750ac-8465-50ae-b02e-dd347ff45acf
+
+	/// Devolve o período escolhido, em meses; sem escolha, 12.
+	measure 'Meses do período' = SELECTEDVALUE('Período'[Meses], 12)
+		formatString: 0
+		displayFolder: Apoio
+		lineageTag: d7edea80-b5cb-5cbe-b5d7-8738099dadb7
+
+	/// Devolve o primeiro dia do primeiro mês do período: o período termina na data escolhida e começa no primeiro dia do mês, como no painel.
+	measure 'Início do período' = ```
+			VAR d = [Data escolhida]
+			RETURN DATE(YEAR(d), MONTH(d) - [Meses do período] + 1, 1)
+			```
+		formatString: dd/mm/yyyy
+		displayFolder: Apoio
+		lineageTag: 2157b5e8-a8ab-5176-8c44-bf503012b371
+
+	/// Calcula cinco vezes a anuidade de pessoa física do ano da data escolhida (Lei 12.514/2011, art. 8º, com a redação da Lei 14.195/2021). Abaixo dele, o Conselho não pode executar a dívida na Justiça. A anuidade do cenário é demonstrativa.
+	measure 'Piso de execução' = ```
+			VAR d = [Data escolhida]
+			RETURN 5 * ROUND(520 * POWER(1.055, MAX(0, YEAR(d) - 2020)), 0)
+			```
+		formatString: R$ #,##0
+		displayFolder: Apoio
+		lineageTag: b6121e65-acd7-55a3-990f-cf6ddafbfe7a
+
+	/// Soma a receita realizada no período, de anuidades, ARTs, multas e outras origens.
+	measure 'Receita do Conselho' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(SUM('Receitas'[Realizada]), REMOVEFILTERS('Calendário'), 'Receitas'[Mês] >= inicio, 'Receitas'[Mês] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 72202fe7-2c37-5dc9-87a6-06cf5103c10a
+
+	/// Soma a receita realizada em cada mês, nos meses do gráfico.
+	measure 'Receita no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(SUM('Receitas'[Realizada]), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: a8e8e49c-5446-591a-8837-66f4d7db66eb
+
+	/// Soma a receita prevista de janeiro até cada mês do ano da data escolhida, até o mês dela.
+	measure 'Receita prevista acumulada no ano' = ```
+			VAR d = [Data escolhida]
+			VAR m = MAX('Calendário'[Mês do ano])
+			VAR ano = YEAR(d)
+			RETURN IF(m <= MONTH(d), CALCULATE(SUM('Receitas'[Prevista]), REMOVEFILTERS('Calendário'), 'Receitas'[Mês] >= DATE(ano, 1, 1), 'Receitas'[Mês] <= DATE(ano, m, 1)) + 0)
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 45dda12f-263e-5fe9-bfa1-27870fe0baa2
+
+	/// Soma a receita realizada de janeiro até cada mês do ano da data escolhida, até o mês dela.
+	measure 'Receita realizada acumulada no ano' = ```
+			VAR d = [Data escolhida]
+			VAR m = MAX('Calendário'[Mês do ano])
+			VAR ano = YEAR(d)
+			RETURN IF(m <= MONTH(d), CALCULATE(SUM('Receitas'[Realizada]), REMOVEFILTERS('Calendário'), 'Receitas'[Mês] >= DATE(ano, 1, 1), 'Receitas'[Mês] <= DATE(ano, m, 1)) + 0)
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 46e67bbc-b338-5126-837d-4f241755b44b
+
+	/// Soma a receita realizada de janeiro até cada mês do ano anterior ao da data escolhida.
+	measure 'Receita realizada acumulada no ano anterior' = ```
+			VAR d = [Data escolhida]
+			VAR m = MAX('Calendário'[Mês do ano])
+			VAR ano = YEAR(d) - 1
+			RETURN IF(TRUE(), CALCULATE(SUM('Receitas'[Realizada]), REMOVEFILTERS('Calendário'), 'Receitas'[Mês] >= DATE(ano, 1, 1), 'Receitas'[Mês] <= DATE(ano, m, 1)) + 0)
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 395f401c-fdbc-5b7a-b0fc-fc04d3b2e561
+
+	/// Soma as anuidades de profissionais e os boletos de empresas vencidos e não pagos na data escolhida, até cinco anos depois do vencimento (depois disso, prescrevem).
+	measure 'Anuidades vencidas' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto da dívida'[Valor]), REMOVEFILTERS('Calendário'), 'Foto da dívida'[Data] = d)
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 06e1d317-e632-550d-b1bf-dc1f881e862c
+
+	/// Conta os profissionais e as empresas com anuidade vencida e não paga na data escolhida.
+	measure 'Devedores de anuidade' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(DISTINCTCOUNT('Foto da dívida'[Devedor]), REMOVEFILTERS('Calendário'), 'Foto da dívida'[Data] = d)
+			```
+		formatString: #,##0
+		displayFolder: Receita
+		lineageTag: c96141c5-4d30-5963-913f-698d13d97ae4
+
+	/// Soma as anuidades vencidas de profissionais na data escolhida.
+	measure 'Anuidades vencidas de profissionais' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto da dívida'[Valor]), REMOVEFILTERS('Calendário'), 'Foto da dívida'[Data] = d, KEEPFILTERS('Foto da dívida'[Tipo de devedor] = "Profissional"))
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: fb06d62f-ca9c-50e1-bda7-9ce7142daf62
+
+	/// Soma os boletos vencidos de empresas na data escolhida. Com a situação do CNPJ na Receita Federal, mostra quanto é de empresa baixada ou inapta, com pouca chance de ser recebido.
+	measure 'Anuidades vencidas de empresas' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto da dívida'[Valor]), REMOVEFILTERS('Calendário'), 'Foto da dívida'[Data] = d, KEEPFILTERS('Foto da dívida'[Tipo de devedor] = "Empresa"))
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 4320284e-ed80-5978-8c80-13a681be4c99
+
+	/// Soma a dívida dos devedores que, somando todas as anuidades vencidas, ficam abaixo do piso de execução.
+	measure 'Vencidas abaixo do piso' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto da dívida'[Valor]), REMOVEFILTERS('Calendário'), 'Foto da dívida'[Data] = d, KEEPFILTERS('Foto da dívida'[Acima do piso] = 0))
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 93082499-ad7b-51c7-9313-85718225ed9c
+
+	/// Soma a dívida dos devedores que somam o piso de execução ou mais.
+	measure 'Vencidas acima do piso' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto da dívida'[Valor]), REMOVEFILTERS('Calendário'), 'Foto da dívida'[Data] = d, KEEPFILTERS('Foto da dívida'[Acima do piso] = 1))
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: f908cf72-d2c9-5d78-bcf4-490a38904ed1
+
+	/// Mostra a parte da dívida que é de devedores abaixo do piso de execução: só pode ser cobrada fora da Justiça.
+	measure 'Abaixo do piso de execução' = DIVIDE([Vencidas abaixo do piso], [Anuidades vencidas])
+		formatString: 0.0%
+		displayFolder: Receita
+		lineageTag: 5f77a3ae-feb2-5378-bfbf-4bb672d97f61
+
+	/// Soma as anuidades vencidas há mais de quatro anos na data escolhida: prescrevem em menos de um ano (Código Tributário Nacional, art. 174).
+	measure 'Perto de prescrever' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Foto da dívida'[Perto de prescrever]), REMOVEFILTERS('Calendário'), 'Foto da dívida'[Data] = d)
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 93c7a9ba-375d-55ac-87c0-21e26b1aae27
+
+	/// Conta os devedores com ao menos uma anuidade vencida há mais de quatro anos.
+	measure 'Devedores perto de prescrever' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(DISTINCTCOUNT('Foto da dívida'[Devedor]), REMOVEFILTERS('Calendário'), 'Foto da dívida'[Data] = d, KEEPFILTERS('Foto da dívida'[Perto de prescrever] > 0))
+			```
+		formatString: #,##0
+		displayFolder: Receita
+		lineageTag: b6c20fe9-dcc2-5a23-a25e-d1a14f117a34
+
+	/// Soma a dívida vencida e não paga no dia anterior ao início do período.
+	measure 'Dívida no início do período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR x = inicio - 1
+			RETURN CALCULATE(SUM('Títulos'[Valor]), 'Títulos'[Vencimento] < x, 'Títulos'[Vencimento] >= x - 1826, ISBLANK('Títulos'[Pago em]) || 'Títulos'[Pago em] > x) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: acb98f64-0f9a-5386-90b3-eecc55d8c1b1
+
+	/// Soma as anuidades e os boletos que venceram no período sem ser pagos no vencimento.
+	measure 'Novos vencimentos no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(SUM('Títulos'[Valor]), 'Títulos'[Vencimento] >= inicio - 1, 'Títulos'[Vencimento] < d, FILTER('Títulos', ISBLANK('Títulos'[Pago em]) || 'Títulos'[Pago em] > 'Títulos'[Vencimento])) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 0d4fe105-195d-5363-b7fd-907dabe76296
+
+	/// Soma o que foi pago no período depois do vencimento, antes da prescrição.
+	measure 'Recebido da dívida no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(SUM('Títulos'[Valor]), 'Títulos'[Pago em] >= inicio, 'Títulos'[Pago em] <= d, 'Títulos'[Dias até o pagamento] > 0, 'Títulos'[Dias até o pagamento] <= 1826) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 0e910cfc-8354-56b6-8284-5a247ae5abe9
+
+	/// Soma a dívida que completou cinco anos do vencimento no período sem ser paga: prescreveu.
+	measure 'Prescrito no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(SUM('Títulos'[Valor]), 'Títulos'[Vencimento] >= inicio - 1 - 1826, 'Títulos'[Vencimento] < d - 1826, ISBLANK('Títulos'[Pago em]) || 'Títulos'[Pago em] > d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Receita
+		lineageTag: 62eac94a-9e10-5230-9f3f-f76258419d89
+
+	/// Mostra quanto do que estava vencido no início do período, mais o que venceu nele, foi recebido no período.
+	measure 'Recebido da dívida' = DIVIDE([Recebido da dívida no período], [Dívida no início do período] + [Novos vencimentos no período])
+		formatString: 0.0%
+		displayFolder: Receita
+		lineageTag: e618f287-639b-55d1-8196-c90fcf26df2c
+
+	/// Soma a despesa realizada nos 12 meses até o mês da data escolhida. Com uma regional escolhida, só a despesa lançada nela, sem a sede.
+	measure 'Despesa em 12 meses' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 611a933f-bbff-5955-864a-6c778950f382
+
+	/// Soma a despesa orçada nos 12 meses até o mês da data escolhida.
+	measure 'Orçado em 12 meses' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Despesas'[Orçado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: b51c46a8-faa9-5daa-9e49-24d0e62bfb3b
+
+	/// Soma a despesa de fiscalização, atendimento e ações institucionais nos 12 meses.
+	measure 'Despesa em atividades-fim em 12 meses' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d, KEEPFILTERS('Despesas'[Atividade] = "Atividade-fim")) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 64b5900a-8d3d-58f4-9bc3-fa8201f30db7
+
+	/// Mostra a parte da despesa dos 12 meses que foi para as atividades-fim: fiscalização, atendimento e ações institucionais.
+	measure 'Em atividades-fim' = DIVIDE([Despesa em atividades-fim em 12 meses], [Despesa em 12 meses])
+		formatString: 0.0%
+		displayFolder: Orçamento e despesa
+		lineageTag: 6f5c4747-5164-5cd5-8e98-4d3f3825c4b6
+
+	/// Soma a despesa de fiscalização lançada em cada GRE nos 12 meses (sem a sede).
+	measure 'Despesa de fiscalização em 12 meses' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d, KEEPFILTERS('Despesas'[Função] = "Fiscalização"), KEEPFILTERS('Despesas'[GRE] <> "")) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 9de20a91-a851-5e53-a1d5-e8b93b1ae9f4
+
+	/// Soma a despesa realizada até a data escolhida, no mês ou ano do gráfico.
+	measure 'Despesa realizada' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Despesas'[Realizado]), 'Despesas'[Mês] <= d)
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: f543d3dc-d616-564e-92a6-e54458de8a09
+
+	/// Soma a despesa realizada de janeiro até o mês da data escolhida.
+	measure 'Despesa realizada no ano' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= DATE(YEAR(d), 1, 1), 'Despesas'[Mês] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 9bf6c7f7-92be-50bd-ac75-962f9762c4e8
+
+	/// Soma a despesa orçada de janeiro até o mês da data escolhida.
+	measure 'Despesa orçada no ano' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Despesas'[Orçado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= DATE(YEAR(d), 1, 1), 'Despesas'[Mês] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 439993f8-2c9e-5d46-b643-4000717947b5
+
+	/// Mostra quanto da despesa orçada de janeiro até o mês da data escolhida foi realizada.
+	measure 'Execução do orçamento no ano' = DIVIDE([Despesa realizada no ano], [Despesa orçada no ano])
+		formatString: 0.0%
+		displayFolder: Orçamento e despesa
+		lineageTag: 36659d33-3b7c-5499-8f64-c94b10440cdc
+
+	/// Soma a despesa orçada de janeiro até cada mês do ano da data escolhida, até o mês dela.
+	measure 'Despesa orçada acumulada no ano' = ```
+			VAR d = [Data escolhida]
+			VAR m = MAX('Calendário'[Mês do ano])
+			VAR ano = YEAR(d)
+			RETURN IF(m <= MONTH(d), CALCULATE(SUM('Despesas'[Orçado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= DATE(ano, 1, 1), 'Despesas'[Mês] <= DATE(ano, m, 1)) + 0)
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 9cc4ec77-848c-5721-adb1-4a1ffe75e746
+
+	/// Soma a despesa realizada de janeiro até cada mês do ano da data escolhida, até o mês dela.
+	measure 'Despesa realizada acumulada no ano' = ```
+			VAR d = [Data escolhida]
+			VAR m = MAX('Calendário'[Mês do ano])
+			VAR ano = YEAR(d)
+			RETURN IF(m <= MONTH(d), CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= DATE(ano, 1, 1), 'Despesas'[Mês] <= DATE(ano, m, 1)) + 0)
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: e40ce00c-3943-5cce-9258-b584489147a7
+
+	/// Soma a despesa realizada de janeiro até cada mês do ano anterior ao da data escolhida.
+	measure 'Despesa realizada acumulada no ano anterior' = ```
+			VAR d = [Data escolhida]
+			VAR m = MAX('Calendário'[Mês do ano])
+			VAR ano = YEAR(d) - 1
+			RETURN IF(TRUE(), CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= DATE(ano, 1, 1), 'Despesas'[Mês] <= DATE(ano, m, 1)) + 0)
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 4b1f6b2c-6627-5042-8790-5ee41661c2a5
+
+	/// Soma o valor das diárias pagas nos 12 meses até o mês da data escolhida. Com uma regional escolhida, só as lançadas nela.
+	measure 'Diárias e passagens' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Diárias'[Valor]), REMOVEFILTERS('Calendário'), 'Diárias'[Mês] >= inicio, 'Diárias'[Mês] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 71bfd349-c17e-57af-9f32-fd51257b0c6c
+
+	/// Conta as diárias pagas nos 12 meses.
+	measure 'Diárias pagas em 12 meses' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Diárias'[Diárias]), REMOVEFILTERS('Calendário'), 'Diárias'[Mês] >= inicio, 'Diárias'[Mês] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 785c3d53-bc85-5fe9-a415-a66b750fb906
+
+	/// Soma os quilômetros rodados nas viagens com diária nos 12 meses.
+	measure 'Quilômetros em 12 meses' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Diárias'[Quilômetros]), REMOVEFILTERS('Calendário'), 'Diárias'[Mês] >= inicio, 'Diárias'[Mês] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 407c2563-4efa-54dd-9e1e-823bbfd15126
+
+	/// Conta os meses dos 12 em que a pessoa recebeu diária.
+	measure 'Meses com diária' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(DISTINCTCOUNT('Diárias'[Mês]), REMOVEFILTERS('Calendário'), 'Diárias'[Mês] >= inicio, 'Diárias'[Mês] <= d)
+			```
+		formatString: 0
+		displayFolder: Orçamento e despesa
+		lineageTag: 072a961e-b2c2-56a0-a032-5316671c34b1
+
+	/// Conta os contratos em vigor na data escolhida.
+	measure 'Contratos vigentes' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Contratos'), 'Contratos'[Início] <= d, 'Contratos'[Fim] >= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: fdfefbea-f508-5b10-a4ed-44a280877fd1
+
+	/// Soma o valor dos contratos em vigor na data escolhida.
+	measure 'Valor dos contratos vigentes' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Contratos'[Valor]), 'Contratos'[Início] <= d, 'Contratos'[Fim] >= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 194263a2-7ecc-59a4-bf5d-37ead00ef4a9
+
+	/// Conta os contratos vigentes que terminam nos 90 dias seguintes à data escolhida.
+	measure 'Contratos que terminam em 90 dias' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Contratos'), 'Contratos'[Início] <= d, 'Contratos'[Fim] >= d, 'Contratos'[Fim] <= d + 90) + 0
+			```
+		formatString: #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: ec5e6b71-c79e-5917-9b93-b5892b32eeb0
+
+	/// Conta os contratos vigentes na data escolhida que terminam em cada um dos 12 meses seguintes, a começar pelo mês dela.
+	measure 'Contratos que terminam no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR primeiro = DATE(YEAR(d), MONTH(d), 1)
+			RETURN IF(mes >= primeiro && mes <= EDATE(primeiro, 11), CALCULATE(COUNTROWS('Contratos'), 'Contratos'[Início] <= d, 'Contratos'[Fim] >= d, 'Contratos'[Fim] >= mes, 'Contratos'[Fim] <= EOMONTH(mes, 0)) + 0)
+			```
+		formatString: #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 806ee474-bbec-5d1e-94f3-6a3c96a76afd
+
+	/// Soma o valor empenhado nos 12 meses até o mês da data escolhida.
+	measure 'Empenhado em 12 meses' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Empenhos'[Valor]), REMOVEFILTERS('Calendário'), 'Empenhos'[Mês] >= inicio, 'Empenhos'[Mês] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 28c31fd3-5e0e-5c21-813c-78ebb1410082
+
+	/// Soma o valor pago dos empenhos dos 12 meses.
+	measure 'Pago em 12 meses' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Empenhos'[Pago]), REMOVEFILTERS('Calendário'), 'Empenhos'[Mês] >= inicio, 'Empenhos'[Mês] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 2841b4e9-5eaf-538b-8706-d5619a911fe6
+
+	/// Conta os servidores efetivos. Com uma regional escolhida, só os lotados nela.
+	measure 'Servidores efetivos' = IF(ISCROSSFILTERED('Regionais'), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", KEEPFILTERS('Pessoas'[Vínculo] = "Efetivo"), TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", KEEPFILTERS('Pessoas'[Vínculo] = "Efetivo")))
+		formatString: #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 4f431865-f30a-5ca7-9f4d-db9dc340de10
+
+	/// Conta os servidores comissionados. Com uma regional escolhida, só os lotados nela.
+	measure 'Servidores comissionados' = IF(ISCROSSFILTERED('Regionais'), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", KEEPFILTERS('Pessoas'[Vínculo] = "Comissionado"), TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", KEEPFILTERS('Pessoas'[Vínculo] = "Comissionado")))
+		formatString: #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 7807d0cd-08a3-5943-b131-2e25d1167cae
+
+	/// Soma o custo mensal dos servidores (salário e encargos). Com uma regional escolhida, só os lotados nela.
+	measure 'Custo mensal do pessoal' = IF(ISCROSSFILTERED('Regionais'), CALCULATE(SUM('Pessoas'[Custo mensal]), 'Pessoas'[Tipo] = "Servidor", TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(SUM('Pessoas'[Custo mensal]), 'Pessoas'[Tipo] = "Servidor"))
+		formatString: R$ #,##0
+		displayFolder: Orçamento e despesa
+		lineageTag: 559726c0-d9a9-5dfe-b99c-24e837626895
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Receita do Conselho' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Receita do Conselho]
+			VAR antes = CALCULATE([Receita do Conselho], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Receita
+		lineageTag: 17d5cd1b-c04e-598d-80e0-6eb3a045bf6a
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Receita do Conselho' = ```
+			VAR v = [Variação em um ano: Receita do Conselho]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Receita
+		lineageTag: 35529c7f-9203-566d-bfe3-f827d2096d02
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Receita do Conselho' = "em " & [Meses do período] & " meses, de anuidades, ARTs, multas e outras origens"
+		displayFolder: Receita
+		lineageTag: 47b15648-8235-514a-88c1-1eb0e5f56ccf
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Anuidades vencidas' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Anuidades vencidas]
+			VAR antes = CALCULATE([Anuidades vencidas], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Receita
+		lineageTag: 46185b4b-a0a1-5811-ab16-ce8320dec7cc
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Anuidades vencidas' = ```
+			VAR v = [Variação em um ano: Anuidades vencidas]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Receita
+		lineageTag: 4c29a50f-3016-5db1-95ca-39d7620e73a4
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Anuidades vencidas' = FORMAT([Devedores de anuidade], "#,##0") & " devedores: " & FORMAT([Anuidades vencidas de profissionais], "R$ #,##0") & " de profissionais e " & FORMAT([Anuidades vencidas de empresas], "R$ #,##0") & " de empresas"
+		displayFolder: Receita
+		lineageTag: 10951706-90e6-5eec-acaa-5fae0aea9e1f
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Abaixo do piso de execução' = FORMAT([Vencidas abaixo do piso], "R$ #,##0") & " de devedores que somam menos de " & FORMAT([Piso de execução], "R$ #,##0") & ", cobrados só fora da Justiça"
+		displayFolder: Receita
+		lineageTag: 64d0ba7f-413b-54a1-b750-3f471e404db6
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Perto de prescrever' = "anuidades vencidas há mais de quatro anos, de " & FORMAT([Devedores perto de prescrever], "#,##0") & " devedores"
+		displayFolder: Receita
+		lineageTag: 01bdca25-d084-5867-870d-8e8d660f87e2
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Recebido da dívida' = FORMAT([Recebido da dívida no período], "R$ #,##0") & " recebidos no período, de " & FORMAT([Dívida no início do período] + [Novos vencimentos no período], "R$ #,##0") & " vencidos"
+		displayFolder: Receita
+		lineageTag: 56102e6a-59bf-5c6c-9004-a532dac18b0f
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Despesa em 12 meses' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Despesa em 12 meses]
+			VAR antes = CALCULATE([Despesa em 12 meses], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Orçamento e despesa
+		lineageTag: c1f2a533-7def-58c9-8c96-afdb28425722
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Despesa em 12 meses' = ```
+			VAR v = [Variação em um ano: Despesa em 12 meses]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação aos 12 meses anteriores")
+			```
+		displayFolder: Orçamento e despesa
+		lineageTag: 1299e567-4214-53e9-92d8-8dff962659ea
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Despesa em 12 meses' = IF(ISCROSSFILTERED('Regionais'), "só a despesa lançada na regional escolhida", "sede e regionais")
+		displayFolder: Orçamento e despesa
+		lineageTag: 955b6e7c-edc9-5442-a9ea-8ef4e499d277
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Execução do orçamento no ano' = FORMAT([Despesa realizada no ano], "R$ #,##0") & " realizados de " & FORMAT([Despesa orçada no ano], "R$ #,##0") & " orçados até o mês da data"
+		displayFolder: Orçamento e despesa
+		lineageTag: 18b39d96-468b-5b1c-963c-37ae91429b4b
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Em atividades-fim' = FORMAT([Despesa em atividades-fim em 12 meses], "R$ #,##0") & " em fiscalização, atendimento e ações institucionais"
+		displayFolder: Orçamento e despesa
+		lineageTag: fdfd1cd8-019e-5ff6-8847-46901f03c33f
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Diárias e passagens' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Diárias e passagens]
+			VAR antes = CALCULATE([Diárias e passagens], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Orçamento e despesa
+		lineageTag: edabdd45-8c72-511b-9c7d-d35d7bfd4c0c
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Diárias e passagens' = ```
+			VAR v = [Variação em um ano: Diárias e passagens]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação aos 12 meses anteriores")
+			```
+		displayFolder: Orçamento e despesa
+		lineageTag: 56270d61-e1ab-513b-95ca-0589c2c6dcc4
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Diárias e passagens' = FORMAT([Diárias pagas em 12 meses], "#,##0") & " diárias em 12 meses"
+		displayFolder: Orçamento e despesa
+		lineageTag: c827fe3e-b69d-51ac-a014-9926bd826351
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Contratos vigentes' = FORMAT([Valor dos contratos vigentes], "R$ #,##0") & "; " & FORMAT([Contratos que terminam em 90 dias], "#,##0") & " terminam em 90 dias"
+		displayFolder: Orçamento e despesa
+		lineageTag: 7abb71b3-4b87-5891-99ab-18cbbe1806a2
+
+	column Medidas
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Medidas
+		lineageTag: a7b0a23b-58e0-587d-936a-5ce34a5e116a
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = #table(type table [#"Medidas" = type text], {})
+				in
+				    Fonte

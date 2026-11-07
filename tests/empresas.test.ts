@@ -22,7 +22,7 @@ const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 test('painel de Empresas: quatro páginas próprias, separadas do painel geral', () => {
   assert.deepEqual(pageIdsEmpresas, ['mercado', 'evolucao', 'rt', 'vinculos']);
   assert.ok(pageIdsEmpresas.every(page => painelDaPagina(page) === 'empresas'));
-  assert.equal(painelDaPagina('receita'), 'conselho');
+  assert.equal(painelDaPagina('receita'), 'financeiro');
 });
 
 test('economia, aberturas e registros: 24 meses, todas as séries começam em 100 e o filtro de regional reduz as contagens', () => {

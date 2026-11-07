@@ -1,0 +1,67 @@
+/// Guarda cada anuidade de profissional e cada boleto de empresa vencidos até hoje, com a data e os dias até o pagamento.
+table 'Títulos'
+	isHidden
+	lineageTag: af08ad1a-a9ac-552c-8667-fc12d61d829f
+
+	column 'Título'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Título
+		lineageTag: 31c1d868-6743-58aa-bd52-9140c3154ccb
+
+	column Devedor
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Devedor
+		lineageTag: 99f65118-962c-5c4e-bf51-20606f29d3d9
+
+	column 'Tipo de devedor'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo de devedor
+		lineageTag: ea43f1dd-f50a-5d8f-af98-4a45d4d45448
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 64689b75-cbb4-5e1f-867d-b25d0817a644
+
+	column Vencimento
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Vencimento
+		lineageTag: f802a6e3-cf37-5dc5-889d-fe9b123dd7b0
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: 0cc3caf5-ac05-5553-a4a0-a8cd443884ac
+
+	column 'Pago em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Pago em
+		lineageTag: b5d4552a-1955-5ff4-9e6b-4ac255f3f0bf
+
+	column 'Dias até o pagamento'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Dias até o pagamento
+		lineageTag: b2259fd3-8b1b-5a3d-8f70-397b2b545338
+
+	partition 'Títulos' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "titulos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Título", type text}, {"Devedor", type text}, {"Tipo de devedor", type text}, {"Código IBGE", type text}, {"Vencimento", type date}, {"Valor", type number}, {"Pago em", type date}, {"Dias até o pagamento", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

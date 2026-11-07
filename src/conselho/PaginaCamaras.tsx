@@ -3,7 +3,7 @@ import { brl, int } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco, Indicador } from '../cockpit/ui';
 import type { Evolucao } from '../painel/evolucao';
-import { abrirProcessos, change, g } from './comum';
+import { abrirProcessos, change, g } from '../gestao/comum';
 import { Decisoes, EstoqueFase, IdadeCalor, Plenario, Prescricao, Ritmo, exportarDecisoes, exportarEstoque, exportarIdade, exportarPlenario, exportarPrescricao, exportarRitmo } from './blocos-camaras';
 
 /** Painel de Gestão do Conselho, página 3: o trabalho das câmaras especializadas e a composição do plenário. */

@@ -5,7 +5,7 @@ Painéis de dados estratégicos do Crea-SP, prototipados aqui e implementados de
 ## Painéis e telas
 
 **Painel**:
-Conjunto de páginas para um público e uma regra de acesso (Empresas, Profissionais e formação, Fiscalização e malha fina, Gestão do Conselho, Presidência). No Power BI, cada painel é um relatório com o seu próprio modelo.
+Conjunto de páginas para um público e uma regra de acesso (Empresas, Profissionais e formação, Fiscalização e malha fina, Financeiro, Atendimento, Gestão do Conselho, Presidência). O de Gestão do Conselho é só do colegiado: conselheiros, câmaras, Plenário e processos. No Power BI, cada painel é um relatório com o seu próprio modelo.
 _Avoid_: dashboard, aba, relatório (quando se fala do protótipo)
 
 **Página**:

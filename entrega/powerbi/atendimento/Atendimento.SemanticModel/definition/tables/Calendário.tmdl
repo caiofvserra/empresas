@@ -1,0 +1,57 @@
+/// Tem um mês por linha, de 2020 até 12 meses depois de hoje (para os contratos que terminam), para os gráficos mês a mês e ano a ano.
+table 'Calendário'
+	lineageTag: 752ff1b4-8ec2-53ba-a2ef-89bc5ba1ef01
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: mmm/yy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 1c627237-990c-525d-9070-981f1757a832
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		sortByColumn: 'Mês'
+		lineageTag: 80e06f34-3f34-51e2-a61a-682cf1177523
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 3a8ac0e3-e9a3-59a1-9346-050b13a9e84e
+
+	column 'Mês do ano'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês do ano
+		lineageTag: ddc67b9c-14d2-549a-8901-3dc4a648e89f
+
+	column 'Nome do mês'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome do mês
+		sortByColumn: 'Mês do ano'
+		lineageTag: 0f834d19-90f6-5fab-b3a8-d0c10bf793d4
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: 81ce366e-b8aa-5d54-978d-9ed661ef9053
+
+	partition 'Calendário' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "calendario.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Rótulo", type text}, {"Ano", Int64.Type}, {"Mês do ano", Int64.Type}, {"Nome do mês", type text}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

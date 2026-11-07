@@ -1,0 +1,284 @@
+/// Guarda as medidas do painel, em pastas por página.
+table Medidas
+	lineageTag: 7c6e9ebd-159d-574b-a7c0-c675f946a80e
+
+	/// Devolve a data de referência escolhida; sem escolha, a mais recente. As medidas de variação trocam a data pela de um ano antes.
+	measure 'Data escolhida' = IF(ISFILTERED('Datas das fotos'[Data]), MAX('Datas das fotos'[Data]), MAX('Datas de referência'[Data]))
+		formatString: dd/mm/yyyy
+		displayFolder: Apoio
+		lineageTag: 1f580bda-a34b-583c-882d-317204628c9b
+
+	/// Devolve o período escolhido, em meses; sem escolha, 12.
+	measure 'Meses do período' = SELECTEDVALUE('Período'[Meses], 12)
+		formatString: 0
+		displayFolder: Apoio
+		lineageTag: 0b9807aa-4114-5a90-8d3a-dff2bb0dfed3
+
+	/// Devolve o primeiro dia do primeiro mês do período: o período termina na data escolhida e começa no primeiro dia do mês, como no painel.
+	measure 'Início do período' = ```
+			VAR d = [Data escolhida]
+			RETURN DATE(YEAR(d), MONTH(d) - [Meses do período] + 1, 1)
+			```
+		formatString: dd/mm/yyyy
+		displayFolder: Apoio
+		lineageTag: fd2da6aa-cdac-56d8-9b56-304272795945
+
+	/// Guarda a meta padrão de solicitações resolvidas no prazo, 80%, a mesma do painel.
+	measure 'Meta de resolução no prazo' = 0.8
+		formatString: 0.0%
+		displayFolder: Apoio
+		lineageTag: fe1fd7c8-2908-5f1a-a0bc-3cc0e5330d89
+
+	/// Conta as solicitações abertas no período.
+	measure 'Solicitações de atendimento' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Solicitações'), REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: 4fd613bb-2022-5915-bb96-cf73755dfec0
+
+	/// Conta as solicitações do período feitas por empresas.
+	measure 'Solicitações de empresas' = CALCULATE([Solicitações de atendimento], KEEPFILTERS('Solicitações'[Solicitante] = "Empresa"))
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: a872ea3b-a761-5ab9-a5b0-d423f9df3cee
+
+	/// Conta as solicitações do período resolvidas até a data escolhida, dentro do prazo.
+	measure 'Resolvidas no prazo' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN COUNTROWS(FILTER(CALCULATETABLE('Solicitações', REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d), NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d && 'Solicitações'[Resolvida em] <= 'Solicitações'[Prazo])) + 0
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: 506e2d51-1a9a-5deb-abe2-1f69df4e66c6
+
+	/// Conta as solicitações do período resolvidas depois do prazo.
+	measure 'Resolvidas com atraso' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN COUNTROWS(FILTER(CALCULATETABLE('Solicitações', REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d), NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d && 'Solicitações'[Resolvida em] > 'Solicitações'[Prazo])) + 0
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: 68415409-1e74-5e13-9c68-a75147dd656e
+
+	/// Conta as solicitações do período ainda abertas na data escolhida, com o prazo já vencido.
+	measure 'Abertas com prazo vencido' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN COUNTROWS(FILTER(CALCULATETABLE('Solicitações', REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d), NOT (NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d) && 'Solicitações'[Prazo] < d)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: 00914ecb-f5b6-566d-a10b-d2e370407b14
+
+	/// Conta as solicitações do período ainda abertas, dentro do prazo.
+	measure 'Abertas no prazo' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN COUNTROWS(FILTER(CALCULATETABLE('Solicitações', REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d), NOT (NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d) && 'Solicitações'[Prazo] >= d)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: 2a25c169-ceb9-5127-82d3-97814f8567ec
+
+	/// Mostra a parte das solicitações do período resolvidas no prazo, entre as resolvidas e as que já passaram do prazo. As abertas ainda no prazo ficam de fora.
+	measure 'Solicitações resolvidas no prazo' = DIVIDE([Resolvidas no prazo], [Resolvidas no prazo] + [Resolvidas com atraso] + [Abertas com prazo vencido])
+		formatString: 0.0%
+		displayFolder: Atendimento
+		lineageTag: 02e9d823-ebff-553d-909e-cb6bb4ee028e
+
+	/// Mostra o tempo típico (a mediana), em dias, da abertura à resolução das solicitações do período resolvidas até a data escolhida.
+	measure 'Tempo de resolução' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(MEDIAN('Solicitações'[Dias até resolver]), REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d, KEEPFILTERS(NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d))
+			```
+		formatString: #,##0" dias"
+		displayFolder: Atendimento
+		lineageTag: ce80cea5-0679-5627-a3bd-930d3224faec
+
+	/// Conta as solicitações abertas em cada mês, nos meses do gráfico.
+	measure 'Solicitações no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(COUNTROWS('Solicitações') + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: 547a0d05-818f-5543-8b1d-84ad1077ebfe
+
+	/// Conta os profissionais com registro ativo na data escolhida, pelo município onde moram.
+	measure 'Profissionais ativos' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Profissionais ativos'[Ativos]), REMOVEFILTERS('Calendário'), 'Profissionais ativos'[Data] = d)
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: 8508b8b7-8901-5999-ad34-aa2f08e66272
+
+	/// Conta os profissionais ativos que moram a mais de 50 km, em linha reta, da unidade de atendimento mais próxima.
+	measure 'Ativos a mais de 50 km' = CALCULATE([Profissionais ativos], 'Municípios'[Distância até a unidade (km)] > 50)
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: 2b90453d-99d4-5b1f-bbdb-1a9524700d1c
+
+	/// Mostra a parte dos profissionais ativos que moram a mais de 50 km, em linha reta, da unidade mais próxima. Pela estrada, a distância costuma ser de 20% a 40% maior.
+	measure 'Moram a mais de 50 km de uma unidade' = DIVIDE([Ativos a mais de 50 km], [Profissionais ativos])
+		formatString: 0.0%
+		displayFolder: Atendimento
+		lineageTag: f350eeb3-ce0a-5fed-aa32-06eb989e9bc2
+
+	/// Soma as horas de mesa disponíveis nos coworkings no período.
+	measure 'Horas disponíveis no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(SUM('Meses dos coworkings'[Horas disponíveis]), REMOVEFILTERS('Calendário'), 'Meses dos coworkings'[Mês] >= inicio, 'Meses dos coworkings'[Mês] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: b373b065-b974-55df-8eb7-1add57f608a0
+
+	/// Soma as horas de mesa usadas nos coworkings no período.
+	measure 'Horas usadas no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(SUM('Meses dos coworkings'[Horas usadas]), REMOVEFILTERS('Calendário'), 'Meses dos coworkings'[Mês] >= inicio, 'Meses dos coworkings'[Mês] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: 202f135b-a5fc-5b9d-89ec-35732f8452dc
+
+	/// Soma o custo dos coworkings no período.
+	measure 'Custo dos coworkings no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(SUM('Meses dos coworkings'[Custo]), REMOVEFILTERS('Calendário'), 'Meses dos coworkings'[Mês] >= inicio, 'Meses dos coworkings'[Mês] <= d) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Atendimento
+		lineageTag: 358b63fd-cf25-55fb-87fc-e78535b1128a
+
+	/// Mostra a parte das horas de mesa disponíveis no período que foi usada.
+	measure 'Ocupação dos coworkings' = DIVIDE([Horas usadas no período], [Horas disponíveis no período])
+		formatString: 0.0%
+		displayFolder: Atendimento
+		lineageTag: 607fc937-c4b7-5449-a6f8-d5ff28457cf0
+
+	/// Conta os profissionais que usaram os coworkings no período.
+	measure 'Usuários dos coworkings' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Usuários dos coworkings'[Profissional]), REMOVEFILTERS('Calendário'), 'Usuários dos coworkings'[Mês] >= inicio, 'Usuários dos coworkings'[Mês] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: f11b24df-3405-55bd-98fc-a8c7c0992088
+
+	/// Conta as unidades de coworking no recorte.
+	measure 'Unidades de coworking' = COUNTROWS('Coworkings') + 0
+		formatString: #,##0
+		displayFolder: Atendimento
+		lineageTag: fb3ca617-1162-5c91-8049-008febce22a0
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Solicitações resolvidas no prazo' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Solicitações resolvidas no prazo]
+			VAR antes = CALCULATE([Solicitações resolvidas no prazo], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Atendimento
+		lineageTag: 2e6365f7-7bd3-5aa9-be1a-db2f0679f3c6
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Solicitações resolvidas no prazo' = ```
+			VAR v = [Variação em um ano: Solicitações resolvidas no prazo]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
+			```
+		displayFolder: Atendimento
+		lineageTag: d24a526f-9d7a-5aa5-8450-d03726e28296
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Solicitações resolvidas no prazo' = "em até 14 dias; a meta é " & FORMAT([Meta de resolução no prazo], "0%")
+		displayFolder: Atendimento
+		lineageTag: 73e2f16e-d7a7-57c8-9fa7-995628f23e51
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Solicitações de atendimento' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Solicitações de atendimento]
+			VAR antes = CALCULATE([Solicitações de atendimento], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Atendimento
+		lineageTag: 55b4ee8f-87b9-57b1-9b7d-9b7793a7f288
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Solicitações de atendimento' = ```
+			VAR v = [Variação em um ano: Solicitações de atendimento]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Atendimento
+		lineageTag: 52c99937-ea5b-52ad-ad44-714f6b516158
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Solicitações de atendimento' = FORMAT(DIVIDE([Solicitações de empresas], [Solicitações de atendimento]), "0.0%") & " vindas de empresas"
+		displayFolder: Atendimento
+		lineageTag: 6df7eea0-903c-5502-8acc-0398df1457c9
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Tempo de resolução' = "tempo típico (mediana); " & FORMAT([Abertas com prazo vencido], "#,##0") & " pedidos abertos já passaram do prazo"
+		displayFolder: Atendimento
+		lineageTag: c4f6884c-962e-583e-989f-8a94df0f42ab
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Moram a mais de 50 km de uma unidade' = FORMAT([Ativos a mais de 50 km], "#,##0") & " dos " & FORMAT([Profissionais ativos], "#,##0") & " profissionais ativos do recorte, em linha reta"
+		displayFolder: Atendimento
+		lineageTag: 454417a2-4394-516c-b559-8a7a5ef5f2e9
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Ocupação dos coworkings' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Ocupação dos coworkings]
+			VAR antes = CALCULATE([Ocupação dos coworkings], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Atendimento
+		lineageTag: 2593220b-fed5-5ee5-bc5b-2b83791794c8
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Ocupação dos coworkings' = ```
+			VAR v = [Variação em um ano: Ocupação dos coworkings]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
+			```
+		displayFolder: Atendimento
+		lineageTag: a5b04e43-823f-5111-ba76-13cb3e4b0558
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Ocupação dos coworkings' = FORMAT([Unidades de coworking], "#,##0") & " unidades com " & FORMAT([Usuários dos coworkings], "#,##0") & " usuários, a " & FORMAT(DIVIDE([Custo dos coworkings no período], [Horas usadas no período]), "R$ #,##0.00") & " por hora usada"
+		displayFolder: Atendimento
+		lineageTag: fa778e50-80c4-5a42-a6be-8098671f460d
+
+	column Medidas
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Medidas
+		lineageTag: 52a426e1-13a1-5a2b-a567-2af9831394de
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = #table(type table [#"Medidas" = type text], {})
+				in
+				    Fonte

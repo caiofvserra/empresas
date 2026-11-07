@@ -1,0 +1,62 @@
+/// Guarda a despesa orçada e a realizada de cada mês, por natureza e função. A despesa da sede fica sem GRE; a das regionais leva a GRE em que foi lançada.
+table Despesas
+	lineageTag: f25b5270-3979-55da-8bc0-9f6876f05647
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 3f53b2cb-a6d0-5c15-80ea-e963915491cc
+
+	column Natureza
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Natureza
+		lineageTag: a7d4b47f-dfd6-5ed9-9970-b2c7fa91bc0e
+
+	column 'Função'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Função
+		lineageTag: 4fdf7229-a40e-5c2b-9162-e41104320124
+
+	column Atividade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Atividade
+		lineageTag: 48674b62-4a76-53b8-9836-7cfa866bf501
+
+	column GRE
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 94e3404f-31b7-5d81-837f-d4a70ccd2ee0
+
+	column 'Orçado'
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Orçado
+		lineageTag: 2301ba3d-2ed5-5eab-9e91-0885c3d9ef2c
+
+	column Realizado
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Realizado
+		lineageTag: 4d89c96c-f1db-529a-8826-2ba4b12d3f4f
+
+	partition Despesas = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "despesas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Natureza", type text}, {"Função", type text}, {"Atividade", type text}, {"GRE", type text}, {"Orçado", type number}, {"Realizado", type number}}, "pt-BR")
+				in
+				    Tipos

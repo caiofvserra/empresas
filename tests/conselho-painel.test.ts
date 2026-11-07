@@ -12,7 +12,7 @@ import { buildInstitutionalModel } from '../src/domain/institutional.ts';
 import { janela } from '../src/painel/analise.ts';
 import { abertoEm, buildCarteira, buildProcessos, camarasConselho, canalPorDistancia, distanciaUnidade, dividaPorSituacao, faixasIdadeProcesso, fases, mesesAteData, municipioDoSolicitante, pisoExecucao, plenario, quadroCamaras, quadroDivida, receitaAcumulada, vencimentoContratos } from '../src/domain/gestao.ts';
 import { fichas, parceriasDe } from '../src/cockpit/fichas.ts';
-import { pageIdsConselho, pageIdsGeral, painelDaPagina } from '../src/cockpit/leitura.ts';
+import { pageIdsAtendimento, pageIdsConselho, pageIdsFinanceiro, pageIdsGeral, painelDaPagina } from '../src/cockpit/leitura.ts';
 
 /**
  * Painel de Gestão do Conselho (06/11/2026). Seams testados: as leituras do domínio que os blocos usam (quadroCamaras, quadroDivida,
@@ -22,13 +22,24 @@ const hoje = dataset.snapshotDate, w = janela(hoje, 12), meses = mesesAteData(ho
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 const processos = buildProcessos(dataset), modelo = buildProfissionais(dataset);
 
-test('painel de Gestão do Conselho: cinco páginas próprias, e Receita, Controle, Entidades e Atendimento saíram do painel geral', () => {
-  assert.deepEqual(pageIdsConselho, ['receita', 'orcamento', 'camaras', 'entidades', 'atendimento']);
-  assert.ok(pageIdsConselho.every(page => painelDaPagina(page) === 'conselho'));
+test('Financeiro, Atendimento e Conselho: o antigo painel de Gestão do Conselho virou três, cada um no seu HTML (07/11/2026)', () => {
+  assert.deepEqual(pageIdsFinanceiro, ['receita', 'orcamento']);
+  assert.deepEqual(pageIdsAtendimento, ['atendimento']);
+  assert.deepEqual(pageIdsConselho, ['camaras', 'entidades']);
+  for (const [paginas, painel] of [[pageIdsFinanceiro, 'financeiro'], [pageIdsAtendimento, 'atendimento'], [pageIdsConselho, 'conselho']] as const) assert.ok(paginas.every(page => painelDaPagina(page) === painel), painel);
   assert.deepEqual(pageIdsGeral, ['presidencia', 'metodo']);
-  const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8');
-  assert.ok(src.includes("conselho: { site: 'conselho.html', entrega: 'painel-conselho-creasp.html' }"), 'endereço do painel no site e na entrega');
-  for (const page of pageIdsConselho) assert.ok(Object.keys(fichas).some(key => key.startsWith(`${page}.`)), `fichas da página ${page}`);
+  const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8'), vite = readFileSync(join(import.meta.dirname, '..', 'vite.config.ts'), 'utf8');
+  const build = readFileSync(join(import.meta.dirname, '..', 'scripts', 'build-painel.mjs'), 'utf8');
+  for (const painel of ['financeiro', 'atendimento', 'conselho']) {
+    assert.ok(src.includes(`${painel}: { site: '${painel}.html', entrega: 'painel-${painel}-creasp.html' }`), `${painel}: endereço no site e na entrega`);
+    assert.ok(vite.includes(`${painel}: '${painel}.html'`), `${painel}: entrada do site`);
+    assert.ok(build.includes(`'entrega/painel-${painel}-creasp.html'`), `${painel}: HTML da entrega`);
+    assert.match(readFileSync(join(import.meta.dirname, '..', `${painel}.html`), 'utf8'), new RegExp(`src/${painel}/main.tsx`));
+  }
+  // O filtro de câmara só vale no Conselho.
+  assert.match(src, /financeiro: \{[^}]*filtro: 'nenhum' \}/);
+  assert.match(src, /atendimento: \{[^}]*filtro: 'nenhum' \}/);
+  for (const page of [...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho]) assert.ok(Object.keys(fichas).some(key => key.startsWith(`${page}.`)), `fichas da página ${page}`);
   assert.ok(!Object.keys(fichas).some(key => key.startsWith('controle.')), 'a aba Controle virou Orçamento');
 });
 
@@ -123,10 +134,10 @@ test('receita e contratos: o acumulado do ano só cresce e para no mês da data,
   assert.ok(receitaAcumulada(buildConselho(passado), '2025-06-30').slice(6).every(row => row.realizado === null));
 });
 
-test('fichas do painel de Gestão do Conselho: nenhum bloco leva "!" sem plano B, e nenhuma página abre o resumo da regional nem usa a palavra dono', () => {
-  for (const [key, ficha] of Object.entries(fichas).filter(([key]) => pageIdsConselho.some(page => key.startsWith(`${page}.`)))) for (const id of parceriasDe(ficha)) assert.ok(id, key);
-  const dir = join(import.meta.dirname, '..', 'src', 'conselho');
-  for (const name of readdirSync(dir).filter(file => file.endsWith('.tsx'))) {
+test('fichas do Financeiro, do Atendimento e do Conselho: nenhum bloco leva "!" sem plano B, e nenhuma página abre o resumo da regional nem usa a palavra dono', () => {
+  const paginas = [...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho];
+  for (const [key, ficha] of Object.entries(fichas).filter(([key]) => paginas.some(page => key.startsWith(`${page}.`)))) for (const id of parceriasDe(ficha)) assert.ok(id, key);
+  for (const dir of ['financeiro', 'atendimento', 'conselho', 'gestao'].map(pasta => join(import.meta.dirname, '..', 'src', pasta))) for (const name of readdirSync(dir).filter(file => file.endsWith('.tsx'))) {
     const src = readFileSync(join(dir, name), 'utf8');
     assert.ok(!src.includes("kind: 'gre'"), `${name} abre o resumo da regional`);
     assert.ok(!/\bdon[oa]s?\b/i.test(src), `${name} usa a palavra dono`);

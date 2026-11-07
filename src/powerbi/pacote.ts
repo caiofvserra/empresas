@@ -10,19 +10,39 @@ import { TAMANHO_DA_PAGINA } from './layout';
 import { modeloEmpresas } from './empresas/modelo';
 import { paginasEmpresas } from './empresas/paginas';
 import { LEIA_ME_EMPRESAS } from './empresas/leia-me';
-import { dadosConselho } from './conselho/dados';
-import { modeloConselho } from './conselho/modelo';
-import { paginasConselho } from './conselho/paginas';
-import { LEIA_ME_CONSELHO } from './conselho/leia-me';
+import { dadosGestao } from './gestao/dados';
+import type { Dados } from './gestao/dados';
+import { modeloGestao } from './gestao/modelo';
+import { paginasGestao } from './gestao/paginas';
+import { LEIA_ME_ATENDIMENTO, LEIA_ME_CONSELHO, LEIA_ME_FINANCEIRO } from './gestao/leia-me';
+import { recortarModelo } from './recorte';
+import type { Modelo } from './modelo';
+import type { Pagina } from './pbir';
 
+/** `titulo` entra no LEIA-ME depois de "Pacote Power BI do", como em "painel de Empresas". */
+interface PainelComPacote { titulo: string; modelo: Modelo; paginas: Pagina[]; dados: (dataset: Dataset) => Dados[]; leiaMe: string }
+/**
+ * Um painel que sai do modelo comum de `src/powerbi/gestao/` (Financeiro, Atendimento e Conselho, separados em 07/11/2026): as suas
+ * páginas, o recorte do modelo que elas usam e só os CSV das tabelas desse recorte.
+ */
+function daGestao(titulo: string, nome: string, pasta: string, ids: string[], leiaMe: string): PainelComPacote {
+  const paginas = paginasGestao.filter(pagina => ids.includes(pagina.id)), modelo = recortarModelo(modeloGestao, nome, pasta, paginas);
+  const arquivos = new Set(modelo.tabelas.map(tabela => tabela.arquivo));
+  return { titulo, modelo, paginas, dados: dataset => dadosGestao(dataset).filter(tabela => arquivos.has(tabela.arquivo)), leiaMe };
+}
 /** Os painéis com pacote: o modelo, as páginas e as tabelas de dados de cada um, em `src/powerbi/<painel>/`. */
 const PAINEIS = {
-  empresas: { titulo: 'Empresas', modelo: modeloEmpresas, paginas: paginasEmpresas, dados: dadosEmpresas, leiaMe: LEIA_ME_EMPRESAS },
-  conselho: { titulo: 'Gestão do Conselho', modelo: modeloConselho, paginas: paginasConselho, dados: dadosConselho, leiaMe: LEIA_ME_CONSELHO },
-} as const;
+  empresas: { titulo: 'painel de Empresas', modelo: modeloEmpresas, paginas: paginasEmpresas, dados: dadosEmpresas, leiaMe: LEIA_ME_EMPRESAS },
+  financeiro: daGestao('painel Financeiro', 'Financeiro', 'financeiro', ['receita', 'orcamento'], LEIA_ME_FINANCEIRO),
+  atendimento: daGestao('painel de Atendimento', 'Atendimento', 'atendimento', ['atendimento'], LEIA_ME_ATENDIMENTO),
+  conselho: daGestao('painel de Gestão do Conselho', 'Conselho', 'conselho', ['camaras', 'entidades'], LEIA_ME_CONSELHO),
+} satisfies Record<string, PainelComPacote>;
 export type PainelPowerBi = keyof typeof PAINEIS;
 /** Os painéis com pacote, na ordem em que o build os grava. */
 export const PAINEIS_POWER_BI = Object.keys(PAINEIS) as PainelPowerBi[];
+
+/** O modelo do pacote de um painel (no Financeiro, no Atendimento e no Conselho, já recortado do modelo comum). */
+export const modeloPowerBi = (painel: PainelPowerBi): Modelo => PAINEIS[painel].modelo;
 
 /**
  * O pacote Power BI de um painel: todos os arquivos, com o caminho relativo à pasta do pacote. A pasta abre no Power BI
@@ -43,7 +63,7 @@ export function pacotePowerBi(painel: PainelPowerBi, dataset: Dataset): Map<stri
 }
 
 function leiaMe(titulo: string, nome: string, pasta: string, dataset: Dataset, secoes: string): string {
-  return `# Pacote Power BI do painel de ${titulo}
+  return `# Pacote Power BI do ${titulo}
 
 Gerado a partir do protótipo em HTML (repositório caiofvserra/empresas, \`npm run build:powerbi\`), com o cenário de demonstração até ${dataset.snapshotDate.split('-').reverse().join('/')}. Os números são fictícios e servem para conferir o modelo e as telas, não o Crea-SP.
 

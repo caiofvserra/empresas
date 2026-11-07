@@ -11,5 +11,7 @@ dist-painel/
 dist-empresas/
 dist-profissionais/
 dist-fiscalizacao/
+dist-financeiro/
+dist-atendimento/
 dist-conselho/
 .claude/worktrees/

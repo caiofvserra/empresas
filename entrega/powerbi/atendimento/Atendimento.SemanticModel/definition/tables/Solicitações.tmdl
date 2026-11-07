@@ -1,0 +1,111 @@
+/// Guarda cada solicitação de atendimento: a unidade que atendeu (pelo município), o município de quem pediu, o prazo, a resolução, o assunto, o canal e a distância de quem pediu até a unidade mais próxima. Os filtros chegam pela GRE da unidade, como no painel.
+table 'Solicitações'
+	lineageTag: 62e07cb4-4726-56ee-bbd2-c9fc386d35cd
+
+	column 'Solicitação'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Solicitação
+		lineageTag: 3000b40e-1b5d-5710-9ea6-7bc604dbd56f
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 55891fa5-150c-57f7-b9d0-6b3da6a7abcc
+
+	column GRE
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 182ffdf7-7b5f-5c81-842c-adbf666876fa
+
+	column 'Município do solicitante'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Município do solicitante
+		lineageTag: 61c25f88-9fc4-516e-801e-fa009548488f
+
+	column 'Aberta em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Aberta em
+		lineageTag: 52c80ffc-502b-5b96-ad09-53d4ee368b01
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: f54b9333-f078-5b15-90c9-37fbe1e1140e
+
+	column Prazo
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Prazo
+		lineageTag: ef0f8739-6117-55af-9242-6b21d242bcd4
+
+	column 'Resolvida em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Resolvida em
+		lineageTag: 2d3f493a-bbed-5d80-8646-da52797698e5
+
+	column 'Dias até resolver'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Dias até resolver
+		lineageTag: d7fcf074-f237-5e36-aad3-9fdc35668cbd
+
+	column Assunto
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Assunto
+		lineageTag: 8ddca464-4eac-5f16-8fe4-26ec88ebace5
+
+	column Solicitante
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Solicitante
+		lineageTag: 97300f4c-6fd0-55ee-857e-59649d5a06b5
+
+	column Canal
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Canal
+		lineageTag: 227d62cc-0c45-565e-81ea-ea14bb02bf69
+
+	column 'Distância do solicitante'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Distância do solicitante
+		sortByColumn: 'Ordem da distância'
+		lineageTag: 7f74ab16-74b2-5a70-abe8-cd5e30a587f5
+
+	column 'Ordem da distância'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem da distância
+		lineageTag: 63575156-e563-589c-ac95-42bee3376bf9
+
+	partition 'Solicitações' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "solicitacoes.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Solicitação", type text}, {"Código IBGE", type text}, {"GRE", type text}, {"Município do solicitante", type text}, {"Aberta em", type date}, {"Mês", type date}, {"Prazo", type date}, {"Resolvida em", type date}, {"Dias até resolver", Int64.Type}, {"Assunto", type text}, {"Solicitante", type text}, {"Canal", type text}, {"Distância do solicitante", type text}, {"Ordem da distância", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

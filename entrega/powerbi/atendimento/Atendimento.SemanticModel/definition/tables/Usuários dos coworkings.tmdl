@@ -1,0 +1,33 @@
+/// Guarda os profissionais que usaram cada unidade em cada mês.
+table 'Usuários dos coworkings'
+	isHidden
+	lineageTag: 479a6ab5-5261-5483-87e2-39ed508ebe7a
+
+	column Unidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Unidade
+		lineageTag: ab7e6ac8-2e77-5aba-8002-60e05ca62c7f
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 4ac9cb2e-e44c-550c-af3b-2226736a5ec5
+
+	column Profissional
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Profissional
+		lineageTag: bce9115d-6924-52d3-828f-49457a8d8334
+
+	partition 'Usuários dos coworkings' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "coworkings-usuarios.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Unidade", type text}, {"Mês", type date}, {"Profissional", type text}}, "pt-BR")
+				in
+				    Tipos

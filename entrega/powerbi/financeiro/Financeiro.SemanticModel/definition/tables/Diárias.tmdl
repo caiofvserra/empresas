@@ -1,0 +1,65 @@
+/// Guarda as diárias pagas a cada pessoa em cada mês, com a categoria e a GRE do lançamento. As diárias de cada pessoa somam o total de cada categoria.
+table 'Diárias'
+	lineageTag: de21af6b-330b-58f5-a8a2-bcf3883e0286
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 52718f88-36b6-575a-9848-1c106afc5011
+
+	column Pessoa
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Pessoa
+		lineageTag: d1c590c9-ff3d-5aa3-8a6a-8bb17bba9c9a
+
+	column Categoria
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Categoria
+		lineageTag: cb3cf5bf-83a0-5ed9-b7f5-c2c7aa3f7bca
+
+	column GRE
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 685c2624-d13a-585e-9fee-bfccdb68c2b5
+
+	column 'Diárias'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Diárias
+		lineageTag: 60f3902b-585e-5d7d-9dc1-f2b305a6c7be
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: e3089af2-89f4-59e0-9d97-39da9ae85997
+
+	column 'Quilômetros'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Quilômetros
+		lineageTag: faf4450b-eeb5-5091-8f5f-7113060a5216
+
+	partition 'Diárias' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "diarias.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Pessoa", type text}, {"Categoria", type text}, {"GRE", type text}, {"Diárias", Int64.Type}, {"Valor", type number}, {"Quilômetros", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

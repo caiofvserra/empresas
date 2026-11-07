@@ -9,22 +9,32 @@ import type { QuadroConselho } from '../domain/conselho';
 import type { ResultadoFt } from '../painel/forcas';
 
 /** V20 · leitura do período: frases curtas com o destaque de cada assunto, recalculadas a cada filtro e data de referência. */
-/** Abas do painel geral e páginas dos painéis separados: Empresas (01/11/2026), Profissionais (03/11/2026), Fiscalização (03/11/2026) e Gestão do Conselho (06/11/2026). */
+/**
+ * Abas do painel geral e páginas dos painéis separados: Empresas (01/11/2026), Profissionais (03/11/2026), Fiscalização (03/11/2026)
+ * e Gestão do Conselho (06/11/2026). Em 07/11/2026 o Conselho ficou só com o colegiado: Receita e Orçamento foram para o painel
+ * Financeiro, e Atendimento ganhou painel próprio.
+ */
 export type PaginaGeral = 'presidencia' | 'metodo';
 export type PaginaEmpresas = 'mercado' | 'evolucao' | 'rt' | 'vinculos';
 export type PaginaProfissionais = 'profissionais' | 'fluxo' | 'atuacao' | 'formacao' | 'trabalho';
 export type PaginaFiscalizacao = 'fiscalizacao' | 'resultado' | 'malha' | 'contratos' | 'obras';
-export type PaginaConselho = 'receita' | 'orcamento' | 'camaras' | 'entidades' | 'atendimento';
-export type PageId = PaginaGeral | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaConselho;
+export type PaginaFinanceiro = 'receita' | 'orcamento';
+export type PaginaAtendimento = 'atendimento';
+export type PaginaConselho = 'camaras' | 'entidades';
+export type PageId = PaginaGeral | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaFinanceiro | PaginaAtendimento | PaginaConselho;
 export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'metodo'];
 export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos'];
 export const pageIdsProfissionais: PaginaProfissionais[] = ['profissionais', 'fluxo', 'atuacao', 'formacao', 'trabalho'];
 export const pageIdsFiscalizacao: PaginaFiscalizacao[] = ['fiscalizacao', 'resultado', 'malha', 'contratos', 'obras'];
-export const pageIdsConselho: PaginaConselho[] = ['receita', 'orcamento', 'camaras', 'entidades', 'atendimento'];
-export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao, ...pageIdsConselho];
+export const pageIdsFinanceiro: PaginaFinanceiro[] = ['receita', 'orcamento'];
+export const pageIdsAtendimento: PaginaAtendimento[] = ['atendimento'];
+export const pageIdsConselho: PaginaConselho[] = ['camaras', 'entidades'];
+export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao, ...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho];
 /** Painel em que cada página está: um destaque de outro painel abre aquele painel. */
-export type PainelDaPagina = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'conselho';
-export const painelDaPagina = (page: PageId): PainelDaPagina => (pageIdsEmpresas as PageId[]).includes(page) ? 'empresas' : (pageIdsProfissionais as PageId[]).includes(page) ? 'profissionais' : (pageIdsFiscalizacao as PageId[]).includes(page) ? 'fiscalizacao' : (pageIdsConselho as PageId[]).includes(page) ? 'conselho' : 'geral';
+export type PainelDaPagina = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho';
+const paginasDosPaineis: [Exclude<PainelDaPagina, 'geral'>, PageId[]][] = [['empresas', pageIdsEmpresas], ['profissionais', pageIdsProfissionais], ['fiscalizacao', pageIdsFiscalizacao],
+  ['financeiro', pageIdsFinanceiro], ['atendimento', pageIdsAtendimento], ['conselho', pageIdsConselho]];
+export const painelDaPagina = (page: PageId): PainelDaPagina => paginasDosPaineis.find(([, paginas]) => paginas.includes(page))?.[0] ?? 'geral';
 export interface Metas { cobertura: number; rt: number; adimplencia: number; recuperacao: number; regularizacao: number; atendimento: number }
 /** Meta de RT em 95% (05/11/2026): o responsável técnico é condição do registro (Lei 5.194/66, art. 8º), então 40% fazia 78% parecer vitória. */
 export const metasPadrao: Metas = { cobertura: 65, rt: 95, adimplencia: 60, recuperacao: 30, regularizacao: 50, atendimento: 80 };
