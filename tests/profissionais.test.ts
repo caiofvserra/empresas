@@ -9,7 +9,7 @@ import { buildPericias, quadroPericias } from '../src/domain/parcerias.ts';
 import { artPorIdade, empregoMensal, empregoRegionalOcupacao, fluxoMensal, inicioPeriodo, modalidadeNivel, permanenciaPorAno, regionaisProfissionais, transicoes } from '../src/domain/painel-profissionais.ts';
 import { fichas, parceriasDe } from '../src/cockpit/fichas.ts';
 import { tituloPorCodigo } from '../src/domain/titulos.ts';
-import { pageIdsGeral, pageIdsProfissionais, painelDaPagina } from '../src/cockpit/leitura.ts';
+import { pageIdsPresidencia, pageIdsProfissionais, painelDaPagina } from '../src/cockpit/leitura.ts';
 
 const modelo = buildProfissionais(dataset), hoje = dataset.snapshotDate;
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
@@ -17,8 +17,8 @@ const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 test('painel de Profissionais: cinco páginas próprias, fora do painel geral', () => {
   assert.deepEqual(pageIdsProfissionais, ['profissionais', 'fluxo', 'atuacao', 'formacao', 'trabalho']);
   assert.ok(pageIdsProfissionais.every(page => painelDaPagina(page) === 'profissionais'));
-  assert.ok(!(pageIdsGeral as string[]).includes('profissionais') && !(pageIdsGeral as string[]).includes('formacao'));
-  assert.equal(painelDaPagina('presidencia'), 'geral');
+  assert.ok(!(pageIdsPresidencia as string[]).includes('profissionais') && !(pageIdsPresidencia as string[]).includes('formacao'));
+  assert.equal(painelDaPagina('resumo'), 'presidencia');
   assert.equal(painelDaPagina('mercado'), 'empresas');
 });
 

@@ -210,3 +210,12 @@ export function recortar(foto: FotoPresidencia, dataset: Dataset, recorte: Recor
 }
 /** Os valores de cada regional, para o mapa e o quadro das regionais. */
 export const porRegionalDaFoto = (foto: FotoPresidencia, dataset: Dataset, camara: string | null = null) => new Map(dataset.gres.map(gre => [gre.id, recortar(foto, dataset, { greId: gre.id, cityId: null, camara })]));
+/** As partes de um indicador por lugar (município, regional ou "SP"), somadas as câmaras, ou só a câmara escolhida quando o indicador separa por câmara. */
+export function porLugar(foto: FotoPresidencia, id: IndicadorId, camara: string | null = null) {
+  const ind = indicador(id), out = new Map<string, Parcela>();
+  for (const [key, p] of foto.partes[id]) {
+    if (ind.camara && camara && camaraDaChave(key) !== camara) continue;
+    const lugar = lugarDaChave(key), q = out.get(lugar) ?? zero(); q.n += p.n; q.d += p.d; out.set(lugar, q);
+  }
+  return out;
+}

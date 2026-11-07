@@ -12,7 +12,7 @@ import { resultadosForcas } from '../src/painel/forcas.ts';
 import { malhaFina } from '../src/cockpit/cruzamentos.ts';
 import { acoesPorOrigem, destinoAcoes, destinos, quartis, regionaisFiscalizacao } from '../src/domain/painel-fiscalizacao.ts';
 import { fichas, parceriasDe } from '../src/cockpit/fichas.ts';
-import { pageIdsFiscalizacao, pageIdsGeral, painelDaPagina } from '../src/cockpit/leitura.ts';
+import { pageIdsFiscalizacao, pageIdsPresidencia, painelDaPagina } from '../src/cockpit/leitura.ts';
 
 const f = buildFiscalizacao(dataset), hoje = dataset.snapshotDate;
 const scope = selectEnterpriseScope(dataset, { ...defaultFilters, period: 12 }), model = buildEnterpriseModel(scope);
@@ -21,7 +21,7 @@ const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 test('painel de Fiscalização: cinco páginas próprias, e Fiscalização e Malha fina saíram do painel geral', () => {
   assert.deepEqual(pageIdsFiscalizacao, ['fiscalizacao', 'resultado', 'malha', 'contratos', 'obras']);
   assert.ok(pageIdsFiscalizacao.every(page => painelDaPagina(page) === 'fiscalizacao'));
-  assert.ok(!(pageIdsGeral as string[]).includes('fiscalizacao') && !(pageIdsGeral as string[]).includes('malha'));
+  assert.ok(!(pageIdsPresidencia as string[]).includes('fiscalizacao') && !(pageIdsPresidencia as string[]).includes('malha'));
   const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8');
   assert.ok(src.includes("fiscalizacao: { site: 'fiscalizacao.html', entrega: 'painel-fiscalizacao-creasp.html' }"), 'endereço do painel no site e na entrega');
 });

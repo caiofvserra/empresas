@@ -20,6 +20,7 @@ import type { Historico } from '../observatorio/historico';
 import type { Aberturas, Concentracao, Permanencia, QuadroDemanda } from '../domain/mercado';
 import type { Acumulado, Carteira, QuadroDivida, ReceitaMensal } from '../domain/gestao';
 import type { QuadroColegiado } from '../domain/colegiado';
+import type { Presidencia } from '../presidencia/fotos';
 import type { Profissional } from '../domain/profissionais';
 import type { InstitutionalServiceRequest } from '../domain/institutional';
 import type { QuadroCno, QuadroCoorteNominal, QuadroCredenciamentos, QuadroDenominacao, QuadroJucesp, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
@@ -59,6 +60,8 @@ export interface CockpitCtx extends Ctx {
   parcerias: Parcerias;
   /** Painel de Gestão do Conselho (06/11/2026): câmaras, plenário, dívida, receita e despesa mês a mês e distância até a unidade. Nulo nos outros painéis. */
   gestao: Gestao | null;
+  /** Painel da Presidência (07/11/2026): as fotos dos indicadores de todos os painéis nos 13 fins de mês até a data. Nulo nos outros painéis. */
+  presidencia: Presidencia | null;
 }
 export interface Gestao {
   /** Lançamentos de receita, despesa, diárias, contratos e pessoal do Conselho, lidos na data de referência. */

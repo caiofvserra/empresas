@@ -49,7 +49,6 @@
 
 .ck-grid-fiscalizacao { grid-template-rows: auto 480px 400px 340px auto 400px 420px 440px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map map map ca ca ca ca ca" "me me me me cu cu cu cu it it it it" "cv cv cv cv cv cv ta ta ta ta ta ta" "ft ft ft ft ft ft ft ft ft ft ft ft" "ht ht ht ht ht ht ht ht ht ht ht ht" "ob ob ob ob ob ob mp mp mp mp mp mp" "cn cn cn cn li li li li tc tc tc tc"; height: auto; }
 .ck-grid-malha { grid-template-rows: 640px repeat(4, 400px); grid-template-areas: "mf1 mf1 mf1 mf1 mf1 mf1 mf8 mf8 mf8 mf8 mf8 mf8" "mf2 mf2 mf2 mf2 mf7 mf7 mf7 mf7 mf3 mf3 mf3 mf3" "mf4 mf4 mf4 mf4 mf5 mf5 mf5 mf5 mf6 mf6 mf6 mf6" "mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9" "mh mh mh mh mh mh mh mh mh mh mh mh"; height: auto; }
-.ck-grid-metodo { grid-template-rows: 560px 640px 640px 640px 600px 560px; grid-template-areas: "fr fr fr fr fr fr fr lc lc lc lc lc" "rl rl rl rl rl rl rl rl rl rl rl rl" "uc uc uc uc uc uc mr mr mr mr mr mr" "ft ft ft ft ft ft ia ia ia ia ia ia" "rn rn rn rn rn rn rn gt gt gt gt gt" "pc pc pc pc pc pc pc pc pc pc pc pc"; height: auto; }
 .ck-page.has-focus .ck-grid { grid-template-areas: none; grid-template-rows: minmax(0, 1fr); height: 100%; }
 .ck-page.has-focus .ck-grid > :not(.is-focus) { display: none; }
 .ck-page.has-focus .ck-grid > .is-focus { grid-area: 1 / 1 / -1 / -1 !important; }
@@ -230,7 +229,6 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 
   .ck-grid-malha { grid-template-rows: 600px repeat(4, 380px); }
   .ck-grid-fiscalizacao { grid-template-rows: auto 440px 380px 340px auto 380px 400px 420px; }
-  .ck-grid-metodo { grid-template-rows: 560px 600px 600px 600px 600px 560px; }
   .ind-row strong { font-size: 21px; } .ind { padding: 8px 10px; }
   .ck-title h1 { font-size: 18px; } .ck-header { grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; }
   .geo-layout { grid-template-columns: minmax(0, 1fr) 176px; }
@@ -297,14 +295,12 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 .chip { display: inline-flex; align-items: center; gap: 5px; padding: 1px 7px; border: 1px solid var(--line); border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
 .seg.is-wrap { flex-wrap: wrap; } .seg.is-wrap button { display: inline-flex; align-items: center; gap: 5px; }
-.fontes-heat { height: 230px; display: flex; flex: none; }
 .table-wrap.is-short { max-height: 190px; }
 .tres { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(3, minmax(0, 1fr)) auto; gap: 6px; }
 .tres-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: baseline; column-gap: 10px; padding: 7px 10px; border-radius: 9px; background: var(--soft); border: 1px solid var(--line); }
 .tres-item span { font-size: 11.5px; font-weight: 700; color: var(--muted); }
 .tres-item strong { grid-row: span 2; font: 800 24px/1 var(--display); color: var(--ink); }
 .tres-item small { font-size: 11px; color: var(--muted); }
-.pendentes { margin: 0; font-size: 11px; line-height: 1.35; color: var(--muted); }
 
 /* ---------- V20 · ficha (i), forma de coleta, tabelas densas, variantes de leiaute ---------- */
 .ficha-pop { position: relative; display: grid; }
@@ -338,14 +334,6 @@ th[aria-sort="ascending"] .th-sort, th[aria-sort="descending"] .th-sort { color:
 @media (max-width: 640px) { .tres.is-two { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; } .duo.is-sede { grid-template-columns: minmax(0, 1fr); } .ficha-card { position: fixed; top: auto; right: 12px; left: 12px; bottom: 12px; width: auto; } }
 
 /* ---------- V21: gate de promoção de fontes ---------- */
-.gate { margin: 0 0 6px; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
-.gate li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 5px; align-items: start; padding: 6px 7px; border: 1px solid var(--line); border-radius: 8px; background: var(--neutral-bg); }
-.gate li b { width: 18px; height: 18px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 11px; color: var(--surface); background: var(--blue); }
-.gate li small { font-size: 11px; line-height: 1.3; color: var(--muted); }
-.gate-bar { display: inline-flex; align-items: center; gap: 2px; }
-.gate-bar i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
-.gate-bar b { margin-left: 5px; font-size: 11px; }
-@media (max-width: 1500px) { .gate { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* Exportação do bloco (05/11/2026): menu com os dados em CSV e a imagem em PNG, ao lado do (i). */
 .exporta-pop { position: relative; display: grid; }

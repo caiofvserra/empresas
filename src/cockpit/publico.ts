@@ -6,6 +6,7 @@ import generoUf from '../../public/data/engineer-statistics/confea-genero.json';
 import populacaoUf from '../../public/data/engineer-statistics/populacao-uf.json';
 import pisos from '../../public/data/engineer-statistics/pisos.json';
 import registrosAno from '../../public/data/engineer-statistics/confea-registros-ano.json';
+import orgaoMaquina from '../../public/data/engineer-statistics/orgao-maquina.json';
 import formacaoCsv from '../../archives/data-publica-v6/educacao_sp_cine_ano.csv?raw';
 
 /** Dados públicos REAIS versionados no repositório (sem consulta de rede), com fonte e data de captura. O Portal Salário (coleta pontual, fonte secundária) saiu na V20. */
@@ -65,3 +66,21 @@ export const formacaoSp = { fonte: { nome: 'INEP · Censo da Educação Superior
 /** Mediana das admissões de engenheiro civil (Novo CAGED), referência para o piso. */
 const admissao = (pisos.data.admissao as { id: string; rotulo: string; valor: number | null; ano: string }[]).find(row => row.id === 'mediana-eng-civil');
 export const medianaAdmissaoCivil = admissao?.valor ? { valor: admissao.valor, periodo: admissao.ano } : null;
+
+/**
+ * Receita e despesa publicadas pelo Crea-SP no Portal da Transparência, de 2013 a 2026 (07/11/2026, painel da Presidência), copiadas
+ * do anexo de dados do repositório engineer-statistics. A receita é a realizada no exercício; a despesa é a paga, com a dotação do
+ * orçamento ao lado. O exercício de 2026 não estava encerrado na última coleta.
+ */
+type ItemOrgao = { id: string; rotulo: string; valor: number; pct: number | null; ano: string; medidas?: { id: string; valor: number }[] };
+const blocoOrgao = (id: string) => (orgaoMaquina.data.blocos.find(row => row.id === id)?.itens ?? []) as ItemOrgao[];
+const receitasAno = new Map(blocoOrgao('receita-por-exercicio').map(row => [row.ano, row.valor]));
+export const contasPublicadas = {
+  fonte: { nome: 'Portal da Transparência do Crea-SP · receita e execução do orçamento', url: 'https://transparencia.creasp.org.br', data: orgaoMaquina.meta.atualizadoEm } as Fonte,
+  /** O último exercício da série, ainda aberto na data da coleta. */
+  aberto: '2026', coletaAte: '2026-09-08',
+  exercicios: blocoOrgao('execucao-orcamentaria').map(row => { const medida = (id: string) => row.medidas?.find(m => m.id === id)?.valor ?? null;
+    return { ano: row.ano, receita: receitasAno.get(row.ano) ?? null, paga: row.valor, dotacao: medida('dotacao'), empenhada: medida('empenhada') }; }),
+  /** Parte da receita de 2013 a 2026 que veio de cada uma das maiores contas (a de ART primeiro). */
+  contas: blocoOrgao('contas-de-receita').map(row => ({ nome: row.rotulo.replace(/^[\d.]+\s+/, ''), valor: row.valor, parte: row.pct })),
+};

@@ -12,7 +12,7 @@ import { buildInstitutionalModel } from '../src/domain/institutional.ts';
 import { janela } from '../src/painel/analise.ts';
 import { buildCarteira, buildProcessos, camarasConselho, canalPorDistancia, distanciaUnidade, dividaPorSituacao, mesesAteData, municipioDoSolicitante, pisoExecucao, plenario, quadroDivida, receitaAcumulada, vencimentoContratos } from '../src/domain/gestao.ts';
 import { fichas, parceriasDe } from '../src/cockpit/fichas.ts';
-import { pageIdsAtendimento, pageIdsConselho, pageIdsFinanceiro, pageIdsGeral, painelDaPagina } from '../src/cockpit/leitura.ts';
+import { pageIdsAtendimento, pageIdsConselho, pageIdsFinanceiro, pageIdsPresidencia, painelDaPagina } from '../src/cockpit/leitura.ts';
 
 /**
  * Painel de Gestão do Conselho (06/11/2026). Seams testados: as leituras do domínio que os blocos usam (buildProcessos, quadroDivida,
@@ -27,7 +27,7 @@ test('Financeiro, Atendimento e Conselho: o antigo painel de Gestão do Conselho
   assert.deepEqual(pageIdsAtendimento, ['atendimento']);
   assert.deepEqual(pageIdsConselho, ['colegiado', 'processos', 'conselheiros', 'decisoes', 'representacao']);
   for (const [paginas, painel] of [[pageIdsFinanceiro, 'financeiro'], [pageIdsAtendimento, 'atendimento'], [pageIdsConselho, 'conselho']] as const) assert.ok(paginas.every(page => painelDaPagina(page) === painel), painel);
-  assert.deepEqual(pageIdsGeral, ['presidencia', 'metodo']);
+  assert.deepEqual(pageIdsPresidencia, ['resumo', 'regionais', 'riscos', 'pais']);
   const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8'), vite = readFileSync(join(import.meta.dirname, '..', 'vite.config.ts'), 'utf8');
   const build = readFileSync(join(import.meta.dirname, '..', 'scripts', 'build-painel.mjs'), 'utf8');
   for (const painel of ['financeiro', 'atendimento', 'conselho']) {
