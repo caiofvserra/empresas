@@ -3,7 +3,8 @@ import { municipioPorId } from '../domain/municipios';
 import { Copy, Download, Filter, Search, X } from 'lucide-react';
 import { baixarCsv, nomeArquivo, textoCsv } from './exportar';
 import type { Acao, Alvo, StatusMulta } from './fiscalizacao';
-import { tipoLabel } from './fiscalizacao';
+import { nomeOrigem, nomeTipo } from './fiscalizacao';
+import { cnpjComMascara } from '../cockpit/formatos';
 import { camaraDaEmpresa, segmentos } from './analise';
 import type { Ctx, Detail, Recorte } from './contexto';
 import { brl, data, int, money, pct, short } from './ui';
@@ -94,7 +95,7 @@ function CompanyCard({ ctx, companyId }: { ctx: Ctx; companyId: string }) {
     ['Contratos públicos', contracts.length ? `${contracts.length} · ${brl(contracts.reduce((sum, row) => sum + row.value, 0))}` : 'Nenhum'],
   ];
   return <div className="company"><dl className="facts">{facts.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-    {acoes.length > 0 && <><h4>Fiscalização</h4><ul className="timeline">{acoes.map(row => <li key={row.id}><b>{data(row.date)}</b> {tipoLabel[row.tipo]} · {row.origem}{row.auto ? ` · auto ${data(row.auto.date)} (${money(row.auto.valor)}, ${row.auto.status.toLowerCase()})` : ''}{row.regularizedAt ? ` · regularizada em ${data(row.regularizedAt)} (${row.resolucao?.toLowerCase()})` : ' · pendente'}</li>)}</ul></>}
+    {acoes.length > 0 && <><h4>Fiscalização</h4><ul className="timeline">{acoes.map(row => <li key={row.id}><b>{data(row.date)}</b> {nomeTipo[row.tipo]}, por {nomeOrigem[row.origem].toLowerCase()}{row.auto ? `, auto ${data(row.auto.date)} (${money(row.auto.valor)}, ${row.auto.status.toLowerCase()})` : ''}{row.regularizedAt ? `, regularizada em ${data(row.regularizedAt)} (${row.resolucao?.toLowerCase()})` : ', pendente'}</li>)}</ul></>}
   </div>;
 }
 
@@ -104,17 +105,17 @@ function build(ctx: Ctx, detail: Detail): Content {
   const cities = new Map([...municipioPorId(dataset).values()].map(row => [row.id, row.nome]));
   const acoesById = new Map(f.acoes.map(row => [row.id, row]));
   const name = (companyId: string) => companies.get(companyId)?.tradeName || companies.get(companyId)?.name || companyId;
-  const where = (establishmentId: string) => { const place = places.get(establishmentId); return `${place?.cnpj ?? ''} · ${cities.get(place?.cityId ?? '') ?? '—'}`; };
+  const where = (establishmentId: string) => { const place = places.get(establishmentId), cidade = cities.get(place?.cityId ?? '') ?? 'município não informado'; return place?.cnpj ? `CNPJ ${cnpjComMascara(place.cnpj)}, ${cidade}` : cidade; };
   const scopeLabel = `${greId ? short(dataset.gres.find(row => row.id === greId)?.name ?? '') : 'Todas as regionais'}${ctx.camara ? ` · ${ctx.camara}` : ''} · ${data(janela.start)} a ${data(janela.end)}`;
   const alvoRow = (alvo: Alvo): Row => { const acao = alvo.acaoId ? acoesById.get(alvo.acaoId) : undefined, age = days(alvo.since, f.anchor);
-    return { key: alvo.id, companyId: alvo.companyId, title: name(alvo.companyId), subtitle: where(alvo.establishmentId), value: alvo.regularizedAt ? `regularizado ${data(alvo.regularizedAt)}` : `irregular desde ${alvo.since.slice(5, 7)}/${alvo.since.slice(0, 4)}`, note: `${tipoLabel[alvo.tipo]} · ${acao ? `${acao.origem.toLowerCase()} em ${data(acao.date)}, ${statusAuto(acao)}` : 'sem ação'}`, sortValue: alvo.regularizedAt ? -1 : age }; };
-  const acaoRow = (acao: Acao, value: string, sortValue: number): Row => ({ key: acao.id, companyId: acao.companyId, title: name(acao.companyId), subtitle: where(acao.establishmentId), value, note: `${tipoLabel[acao.tipo]} · ${acao.origem} · ${statusAuto(acao)}`, sortValue });
+    return { key: alvo.id, companyId: alvo.companyId, title: name(alvo.companyId), subtitle: where(alvo.establishmentId), value: alvo.regularizedAt ? `regularizado ${data(alvo.regularizedAt)}` : `irregular desde ${alvo.since.slice(5, 7)}/${alvo.since.slice(0, 4)}`, note: `${nomeTipo[alvo.tipo]}, ${acao ? `${nomeOrigem[acao.origem].toLowerCase()} em ${data(acao.date)}, ${statusAuto(acao)}` : 'sem ação'}`, sortValue: alvo.regularizedAt ? -1 : age }; };
+  const acaoRow = (acao: Acao, value: string, sortValue: number): Row => ({ key: acao.id, companyId: acao.companyId, title: name(acao.companyId), subtitle: where(acao.establishmentId), value, note: `${nomeTipo[acao.tipo]}, por ${nomeOrigem[acao.origem].toLowerCase()}; ${statusAuto(acao)}`, sortValue });
   const sorted = (rows: Row[]) => rows.sort((a, b) => b.sortValue - a.sortValue);
 
   switch (detail.kind) {
     case 'alvos': {
       const rows = (detail.tipo ? resumo.abertos[detail.tipo] : [...resumo.abertos.registro, ...resumo.abertos.rt, ...resumo.abertos.art]);
-      return { eyebrow: scopeLabel, title: detail.tipo ? `Indícios em aberto · ${tipoLabel[detail.tipo]}` : 'Indícios em aberto', what: 'Indícios para análise ainda sem regularização no corte: CNPJ com CNAE da lista ativo na Receita sem registro localizado; empresa registrada cujo RT deu baixa sem substituto em 30 dias; contrato público técnico (PNCP) sem ART identificada. Indício não é infração.',
+      return { eyebrow: scopeLabel, title: detail.tipo ? `Indícios em aberto, ${nomeTipo[detail.tipo]}` : 'Indícios em aberto', what: 'Indícios para análise ainda sem regularização no corte: CNPJ com CNAE da lista ativo na Receita sem registro localizado; empresa registrada cujo RT deu baixa sem substituto em 30 dias; contrato público técnico (PNCP) sem ART identificada. Indício não é infração.',
         use: 'Priorize os que estão há mais tempo sem nenhuma ação e os de contrato público, que têm prova documental.',
         summary: [['Registro não localizado', int(resumo.abertos.registro.length)], ['RT baixado', int(resumo.abertos.rt.length)], ['Contrato sem ART identificada', int(resumo.abertos.art.length)], ['Já com ação fiscal', pct(rows.filter(row => row.acaoId).length / Math.max(1, rows.length) * 100)]],
         rows: rows.map(alvoRow).sort((a, b) => Number(b.note.endsWith('sem ação')) - Number(a.note.endsWith('sem ação')) || b.sortValue - a.sortValue), listTitle: 'Empresas, sem ação fiscal e mais antigas primeiro' };
@@ -134,10 +135,10 @@ function build(ctx: Ctx, detail: Detail): Content {
         summary: statuses.map(status => [status, brl(resumo.multas[status].valor)] as [string, string]), rows: sorted(rows.map(acao => acaoRow(acao, money(acao.auto!.valor), acao.auto!.valor))), listTitle: 'Autos, maior multa primeiro' };
     }
     case 'regularizacoes': return { eyebrow: scopeLabel, title: 'Regularizações após ação', what: 'Empresas que se regularizaram depois de uma ação do CREA-SP no período (associação no tempo, não prova de causa): obtiveram registro, indicaram RT, recolheram ART ou deram baixa do registro.', summary: [['Regularizações', int(resumo.regularizacoes.length)], ['Mediana', resumo.medianaDias === null ? '—' : `${int(resumo.medianaDias)} dias`], ['Com auto antes', pct(resumo.regularizacoes.filter(row => row.auto).length / Math.max(1, resumo.regularizacoes.length) * 100)]],
-      rows: sorted(resumo.regularizacoes.map(acao => ({ ...acaoRow(acao, `${int(days(acao.date, acao.regularizedAt!))} dias`, days(acao.date, acao.regularizedAt!)), note: `${acao.resolucao ?? ''} · ${tipoLabel[acao.tipo]} · ${acao.auto ? 'após auto' : 'na notificação'}` }))), listTitle: 'Regularizações, mais demoradas primeiro' };
+      rows: sorted(resumo.regularizacoes.map(acao => ({ ...acaoRow(acao, `${int(days(acao.date, acao.regularizedAt!))} dias`, days(acao.date, acao.regularizedAt!)), note: `${acao.resolucao ?? ''}, ${nomeTipo[acao.tipo]}, ${acao.auto ? 'após auto' : 'na notificação'}` }))), listTitle: 'Regularizações, mais demoradas primeiro' };
     case 'situacao': {
       const item = resumo.situacao.find(row => row.tipo === detail.tipo)!;
-      return { eyebrow: scopeLabel, title: `${tipoLabel[detail.tipo]} · ${detail.segmento.toLowerCase()}`, what: 'Irregularidades em aberto no corte e as regularizadas no período após ação fiscal, conforme o ponto do processo em que estão.', summary: segmentos.map(segment => [segment, int(item.partes[segment].length)] as [string, string]),
+      return { eyebrow: scopeLabel, title: `${nomeTipo[detail.tipo]}, ${detail.segmento.toLowerCase()}`, what: 'Irregularidades em aberto no corte e as regularizadas no período após ação fiscal, conforme o ponto do processo em que estão.', summary: segmentos.map(segment => [segment, int(item.partes[segment].length)] as [string, string]),
         rows: sorted(item.partes[detail.segmento].map(alvoRow)), listTitle: 'Empresas, mais antigas primeiro' };
     }
     case 'origem': {

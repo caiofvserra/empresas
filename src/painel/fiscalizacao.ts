@@ -21,6 +21,9 @@ export interface Alvo { id: string; tipo: Tipo; establishmentId: string; company
 export interface Fiscalizacao { acoes: Acao[]; alvos: Alvo[]; start: string; anchor: string }
 
 export const tipoLabel: Record<Tipo, string> = { registro: 'Registro não localizado', rt: 'RT baixado sem substituto', art: 'Contrato sem ART identificada' };
+/** Tipo de caso e origem da ação nas palavras de quem lê o painel, iguais no gráfico e na gaveta (07/11/2026). */
+export const nomeTipo: Record<Tipo, string> = { registro: 'Falta de registro', rt: 'Responsável técnico que saiu', art: 'Contrato sem ART' };
+export const nomeOrigem: Record<Origem, string> = { 'Cruzamento Receita (CNAE)': 'Cruzamento com a Receita', 'Contrato público (PNCP)': 'Contrato público', Denúncia: 'Denúncia', 'Rotina de campo': 'Rotina de campo', 'Cadastro CREA': 'Cadastro do Crea-SP' };
 export const origens: Origem[] = ['Cruzamento Receita (CNAE)', 'Contrato público (PNCP)', 'Denúncia', 'Rotina de campo', 'Cadastro CREA'];
 const technicalCategories = new Set(['Obras', 'Serviços técnicos', 'Manutenção', 'Consultoria']);
 const baseFine: Record<Tipo, number> = { registro: 4200, rt: 3100, art: 1600 };
