@@ -120,6 +120,31 @@ As outras fontes são:
 
 A API de transparência ainda não publica conselheiros nem atas. Até lá, o jeton pago serve de aproximação da presença.
 
+### Cópia diária do relatório do GovAdm (07/11/2026)
+
+O Relatório de Processos do GovAdm mostra só a fase de hoje. Para saber há quantos dias cada processo está na fase, é preciso guardar uma foto por dia e ver quando a fase mudou. Isso é feito em dois passos, todos os dias, na máquina que já roda o extracao-govadm:
+
+```bat
+.venv\Scripts\python main.py diario
+node --import tsx C:\caminho\empresas\scripts\govadm-diario.ts --pasta C:\caminho\extracao-govadm\saida
+```
+
+O primeiro passo baixa o relatório das nove câmaras e grava `saida\relatorio_processos_AAAAMMDD_HHMM_limpo.csv`. O segundo lê as fotos que ainda não entraram no histórico e grava em `var/govadm`, fora do Git:
+
+- `historico.json`: as passagens de cada processo por fase e lotação, com o início e o fim de cada uma;
+- `dias-na-fase.csv`: cada processo na fase atual, com os dias, o responsável e o cargo, para a base interna e o Power BI;
+- `fases-AAAA-MM-DD.csv`: o quadro do dia por câmara e fase, com o número de processos, a mediana de dias, quantos passam de 90 dias e quantos têm início desconhecido. Só números.
+
+Regras (`scripts/integrations/govadm.ts`, com teste):
+
+- A passagem começa no dia da foto em que a fase ou a lotação mudou. Trocar só o responsável não reinicia a contagem.
+- Na primeira foto, ninguém sabe desde quando o processo está na fase: os dias contam a partir dela e a passagem fica marcada como "início desconhecido", o que quer dizer "pelo menos esses dias". A marca some à medida que os processos mudam de fase.
+- Processo que sai do relatório (arquivado ou fora das câmaras) fecha a passagem no dia da foto. Os arquivados ficam de fora, como no extracao-govadm.
+- Foto repetida do mesmo dia é ignorada; foto mais antiga que a última é recusada. Sem foto num dia (feriado, falha), a mudança entra no dia seguinte, com um dia de imprecisão.
+- As 17 fases do GovAdm ficam como vêm. Juntar em quatro fatias (Manifestação, Pauta, Em Posse, P/ Análise) é decisão da SUPCOL, pendente no `config.toml` do extracao-govadm.
+
+No painel, os dias na fase entram no lugar do cenário quando a base interna receber `dias-na-fase.csv`. O status do Votenet continua sendo a fila de voto; a fase do GovAdm cobre também o que acontece antes do Votenet e depois do voto.
+
 ## O que foi conferido no cenário
 
 | Ponto | O que havia | O que foi feito |
