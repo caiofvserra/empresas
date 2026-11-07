@@ -1,46 +1,46 @@
 /// Guarda cada auto de infração votado na câmara: o desfecho, a infração (alínea do art. 73 da Lei 5.194/66), a multa da câmara e a que vale depois do Plenário, e as datas do recurso ao Plenário e ao Confea, do trânsito em julgado e do pagamento.
 table Autos
-	lineageTag: 0e47ddd1-01c2-595f-bf02-b389e138c1bc
+	lineageTag: f1bb5d28-9edb-55be-9393-79901f751441
 
 	column Processo
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Processo
-		lineageTag: 243271be-4a1f-53e8-892d-79c60ea8de75
+		lineageTag: 46db5949-bd07-5ab3-873f-49c1d0468ece
 
 	column 'Câmara'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Câmara
-		lineageTag: 5f947d3a-e3c0-5c40-9aa1-fa72155b2865
+		lineageTag: 4556ba99-bb58-5b17-a98d-88a1d670dc2a
 
 	column 'Código IBGE'
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Código IBGE
-		lineageTag: 8074d6e2-3f5a-57e8-b4fa-e2ea3ff2440b
+		lineageTag: ebb59f97-22bc-56dd-95f1-104f1ee9be72
 
 	column 'Julgado em'
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Julgado em
-		lineageTag: dc6a3158-f6e4-52e6-a5c9-952027ddc97f
+		lineageTag: 44695bc3-db8f-5769-b736-a1db3f324d88
 
 	column 'Ano da decisão'
 		dataType: int64
 		formatString: 0
 		summarizeBy: none
 		sourceColumn: Ano da decisão
-		lineageTag: 1b0ace39-7a13-5e5b-a4ee-b1414683f322
+		lineageTag: 5e7a949e-4ffd-5878-9d1a-ed56bcc62da9
 
 	column Desfecho
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Desfecho
 		sortByColumn: 'Ordem do desfecho'
-		lineageTag: bec40523-8d26-5c45-976a-fbcb14c4c21c
+		lineageTag: 45f6f800-e24d-5d6a-a180-ffd89ea3e613
 
 	column 'Ordem do desfecho'
 		dataType: int64
@@ -48,13 +48,13 @@ table Autos
 		isHidden
 		summarizeBy: none
 		sourceColumn: Ordem do desfecho
-		lineageTag: 1fcda119-767c-5bbb-8a5f-f5a10262056c
+		lineageTag: 82210bf8-9eb2-5982-8c66-66d085b629c9
 
 	column 'Infração'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Infração
-		lineageTag: 465c267d-b0e3-5627-b52e-f2d50a98cad6
+		lineageTag: 28f89ed2-d0f0-5104-8a53-6e7a55104eed
 
 	column Reincidente
 		dataType: int64
@@ -62,7 +62,7 @@ table Autos
 		isHidden
 		summarizeBy: none
 		sourceColumn: Reincidente
-		lineageTag: 01d48d9a-e9bd-5518-b0ee-48b211b627a3
+		lineageTag: 377d0adf-0813-537d-94ae-e3e71c88128a
 
 	column 'Multa da câmara'
 		dataType: double
@@ -70,7 +70,7 @@ table Autos
 		isHidden
 		summarizeBy: none
 		sourceColumn: Multa da câmara
-		lineageTag: 62e63e62-618d-5ce4-8340-bf2a8accb66f
+		lineageTag: e50781d3-b344-53d5-aaea-b78b89ff4732
 
 	column 'Multa final'
 		dataType: double
@@ -78,7 +78,7 @@ table Autos
 		isHidden
 		summarizeBy: none
 		sourceColumn: Multa final
-		lineageTag: c31f9045-c38a-5e3b-b6b4-4c0dbe3d14fc
+		lineageTag: 8921b798-402c-58d6-a749-55504cb606f5
 
 	column 'Recurso ao Plenário em'
 		dataType: dateTime
@@ -86,7 +86,7 @@ table Autos
 		isHidden
 		summarizeBy: none
 		sourceColumn: Recurso ao Plenário em
-		lineageTag: 2544e107-c00d-5b8d-a6b9-e89f0adaacec
+		lineageTag: a7b76fb8-27e2-571e-b4ab-cda0afe8d757
 
 	column 'Plenário em'
 		dataType: dateTime
@@ -94,7 +94,7 @@ table Autos
 		isHidden
 		summarizeBy: none
 		sourceColumn: Plenário em
-		lineageTag: d621e8d2-9ad2-5c3c-b7f7-4afa50fa01eb
+		lineageTag: d4c0bbdf-2b4e-5289-aa5a-3057a530eb82
 
 	column 'Recurso ao Confea em'
 		dataType: dateTime
@@ -102,7 +102,7 @@ table Autos
 		isHidden
 		summarizeBy: none
 		sourceColumn: Recurso ao Confea em
-		lineageTag: 5e7ed7df-575a-5951-ab77-6c571a751e64
+		lineageTag: 546b8870-5fea-5e32-b2c7-7538abd6d96f
 
 	column 'Trânsito em julgado'
 		dataType: dateTime
@@ -110,7 +110,7 @@ table Autos
 		isHidden
 		summarizeBy: none
 		sourceColumn: Trânsito em julgado
-		lineageTag: d93391dd-6a4f-51bb-b319-9e05ca429cc4
+		lineageTag: 5cf9c830-cc5c-5cf6-ba05-6008ca49cb6d
 
 	column 'Pago em'
 		dataType: dateTime
@@ -118,7 +118,7 @@ table Autos
 		isHidden
 		summarizeBy: none
 		sourceColumn: Pago em
-		lineageTag: 3d7c10cd-5b1e-52cb-8a48-9f0539ddff28
+		lineageTag: ccdf5f5c-8f14-5e42-b146-0ee4c2f0a3dd
 
 	partition Autos = m
 		mode: import

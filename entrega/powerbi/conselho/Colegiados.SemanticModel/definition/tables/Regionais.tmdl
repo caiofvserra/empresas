@@ -1,13 +1,13 @@
 /// Tem uma linha para cada uma das 16 gerências regionais do Crea-SP.
 table Regionais
-	lineageTag: 8397d4d2-2a80-543c-90e6-489a57b94543
+	lineageTag: 8d8c5137-4978-53d9-a418-68af4cbcec62
 
 	column GRE
 		dataType: string
 		summarizeBy: none
 		sourceColumn: GRE
 		sortByColumn: Ordem
-		lineageTag: 95fd0579-77e2-5973-b07e-51c12ff618c8
+		lineageTag: 0cea5e04-4501-5df6-8f26-aa1cc9120c29
 
 	column Ordem
 		dataType: int64
@@ -15,7 +15,7 @@ table Regionais
 		isHidden
 		summarizeBy: none
 		sourceColumn: Ordem
-		lineageTag: 8756e764-6d8a-52ae-beeb-5d0c2639200d
+		lineageTag: b1d6f7b9-df62-50b3-814b-963198fe5cd4
 
 	partition Regionais = m
 		mode: import

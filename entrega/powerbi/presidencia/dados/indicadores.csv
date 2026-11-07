@@ -18,7 +18,7 @@ execucao;Orçamento de despesa executado no ano;Financeiro;4;taxa;fluxo;Estado;0
 atendimento;Protocolos fechados no prazo;Atendimento;5;taxa;fluxo;Município;0;1;0,8;1;17
 solicitacoes;Protocolos abertos;Atendimento;5;contagem;fluxo;Município;0;1;;0;18
 atrasadas;Protocolos na fila e fora do prazo;Atendimento;5;contagem;estoque;Município;0;0;;0;19
-pendentes;Processos esperando voto;Gestão do Conselho;6;contagem;estoque;Município;1;0;;1;20
-vermelho;Processos em alerta vermelho;Gestão do Conselho;6;contagem;estoque;Município;1;0;;0;21
-prescricao;Autos perto da prescrição;Gestão do Conselho;6;contagem;estoque;Município;1;0;;0;22
-votados;Processos votados;Gestão do Conselho;6;contagem;fluxo;Município;1;1;;0;23
+pendentes;Processos esperando voto;Colegiados;6;contagem;estoque;Município;1;0;;1;20
+vermelho;Processos em alerta vermelho;Colegiados;6;contagem;estoque;Município;1;0;;0;21
+prescricao;Autos perto da prescrição;Colegiados;6;contagem;estoque;Município;1;0;;0;22
+votados;Processos votados;Colegiados;6;contagem;fluxo;Município;1;1;;0;23

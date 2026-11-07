@@ -2,7 +2,7 @@
 
 Visão executiva, de 07/11/2026. Substituiu o painel geral. Abre em `/presidencia.html` no site (o endereço `/` é o menu que lista todos os painéis), e em `entrega/painel-presidencia-creasp.html` sem servidor. O pacote Power BI está em `entrega/powerbi/presidencia/`.
 
-O painel resume os seis painéis temáticos: Empresas, Profissionais, Fiscalização, Financeiro, Atendimento e Gestão do Conselho. Cada número é o mesmo que o painel de origem mostra no mesmo recorte. O teste `tests/presidencia.test.ts` confere essa igualdade no estado, numa regional, num município e com uma câmara. Clicar num número abre o painel de origem na página certa, com os mesmos filtros.
+O painel resume os seis painéis temáticos: Empresas, Profissionais, Fiscalização, Financeiro, Atendimento e Colegiados. Cada número é o mesmo que o painel de origem mostra no mesmo recorte. O teste `tests/presidencia.test.ts` confere essa igualdade no estado, numa regional, num município e com uma câmara. Clicar num número abre o painel de origem na página certa, com os mesmos filtros.
 
 Decisões do Caio em 07/11/2026:
 
@@ -43,7 +43,7 @@ Os filtros do alto são a regional, o município, a câmara, o período e a data
   | Fiscalização | ações que terminaram em regularização (meta 50%) | ações de fiscalização; autos de infração; multas aplicadas |
   | Financeiro | receita do Conselho | anuidades vencidas; dívida perto de prescrever; orçamento de despesa executado no ano |
   | Atendimento | protocolos fechados no prazo (meta 80%) | protocolos abertos; protocolos na fila e fora do prazo |
-  | Gestão do Conselho | processos esperando voto | processos em alerta vermelho; autos perto da prescrição; processos votados |
+  | Colegiados | processos esperando voto | processos em alerta vermelho; autos perto da prescrição; processos votados |
 
   Embaixo, três blocos:
   - as regionais contra a meta, em cada taxa com meta;

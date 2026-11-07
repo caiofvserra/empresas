@@ -1,0 +1,118 @@
+/*
+ * Identidade de cada painel (07/11/2026). O menu lateral e o cabeçalho têm o mesmo formato nos sete painéis; muda só a cor,
+ * sempre da paleta do Crea-SP (docs/DESIGN_SYSTEM_V13.md), com degradê entre cores dela. A diferença entre os painéis vem
+ * da cor e de poucos detalhes nos blocos: a faixa zebrada e o título em etiqueta da Fiscalização, a senha do Atendimento e
+ * a barra amarela de cada painel no Resumo da Presidência.
+ *
+ * Lógica das cores: a Presidência fica no azul mais escuro, com o cabeçalho azul e o filete amarelo; os dois cadastros vão
+ * nos azuis (Empresas no azul primário, Profissionais no terciário); a Fiscalização no grafite com amarelo de obra; os
+ * Colegiados no amarelo; o Financeiro no verde da paleta descendo para o azul; o Atendimento, que é o balcão, no único menu
+ * claro, do azul-claro ao creme.
+ */
+
+/* ---------- Valores comuns: o painel de hoje ---------- */
+.ck {
+  --rail-bg: linear-gradient(180deg, #01224D, #082D74 70%, #163E8C); --rail-ink: rgba(255,255,255,.76); --rail-hover-ink: #FFFFFF; --rail-hover-bg: rgba(255,255,255,.09);
+  --rail-on-bg: #FABD07; --rail-on-ink: #01224D; --rail-line: rgba(255,255,255,.14); --rail-borda: rgba(250,189,7,.35); --rail-foco: #FABD07; --logo-engrenagem: #FABD07;
+  --head-bg: var(--surface); --head-linha: var(--line); --head-filete: none; --head-filete-h: 0px;
+}
+.ck-rail { background: var(--rail-bg); border-right-color: var(--rail-borda); }
+.ck-rail button { color: var(--rail-ink); }
+.ck-rail button:hover { color: var(--rail-hover-ink); background: var(--rail-hover-bg); }
+.ck-rail button.on { color: var(--rail-on-ink); background: var(--rail-on-bg); }
+.ck-rail-bottom, .ck-rail-paineis, .ck-rail-painel { border-top-color: var(--rail-line); }
+.ck-rail :focus-visible { outline-color: var(--rail-foco); }
+.ck-logo .r9-engineering-gear { fill: var(--logo-engrenagem); }
+.ck-logo path[stroke="#FABD07"] { fill: none; stroke: var(--logo-engrenagem); }
+.ck-header { position: relative; background: var(--head-bg); border-bottom-color: var(--head-linha); }
+.ck-header::before { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: var(--head-filete-h); background: var(--head-filete); pointer-events: none; }
+
+/* Cabeçalho escuro (Fiscalização e Presidência): os controles leem as cores do próprio cabeçalho. */
+.ck[data-painel="fiscalizacao"] .ck-header, .ck[data-painel="presidencia"] .ck-header {
+  --ink: #F8F8F8; --muted: #CBD5E0; --line: rgba(255,255,255,.24); --soft: rgba(255,255,255,.08); --blue: #FFD148; color: var(--ink); color-scheme: dark;
+}
+.ck[data-painel="fiscalizacao"] .ck-header { --surface: #1A202C; --brand: #FABD07; }
+.ck[data-painel="presidencia"] .ck-header { --surface: #01224D; --brand: #FABD07; }
+.ck[data-painel="fiscalizacao"] .ck-header select option, .ck[data-painel="presidencia"] .ck-header select option { background: #1A202C; color: #F8F8F8; }
+
+/* ---------- Empresas: azul primário ---------- */
+.ck[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #082D74, #163E8C); --head-filete: linear-gradient(90deg, #082D74, #3182CE); --head-filete-h: 3px; }
+.ck[data-painel="empresas"] .ck-eyebrow { color: #082D74; }
+.ck.is-dark[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #01224D, #082D74); --head-filete: linear-gradient(90deg, #163E8C, #639CE0); }
+.ck.is-dark[data-painel="empresas"] .ck-eyebrow { color: #9CC3EE; }
+
+/* ---------- Profissionais: azul terciário ---------- */
+.ck[data-painel="profissionais"] {
+  --rail-bg: linear-gradient(180deg, #3182CE, #246FB5 55%, #163E8C); --rail-ink: rgba(255,255,255,.9); --rail-hover-bg: rgba(255,255,255,.14);
+  --rail-on-bg: #FFFFFF; --rail-on-ink: #082D74; --rail-line: rgba(255,255,255,.24); --rail-borda: #639CE0; --rail-foco: #FFFFFF;
+  --head-bg: linear-gradient(90deg, #D4EDFF, #FFFFFF 70%); --head-linha: #A9C9EE;
+}
+.ck[data-painel="profissionais"] .ck-header { --soft: #FFFFFF; --line: #A9C9EE; }
+.ck[data-painel="profissionais"] .ck-eyebrow { color: #246FB5; }
+.ck.is-dark[data-painel="profissionais"] { --rail-bg: linear-gradient(180deg, #246FB5, #163E8C 60%, #082D74); --rail-on-bg: #D4EDFF; --rail-on-ink: #01224D; --head-bg: linear-gradient(90deg, #163E8C, #0E1D3A 70%); --head-linha: #246FB5; }
+.ck.is-dark[data-painel="profissionais"] .ck-header { --soft: #0E1D3A; --line: #246FB5; }
+.ck.is-dark[data-painel="profissionais"] .ck-eyebrow { color: #A9C9EE; }
+
+/* ---------- Fiscalização: grafite e amarelo de obra ---------- */
+.ck[data-painel="fiscalizacao"] {
+  --rail-bg: linear-gradient(180deg, #1A202C, #2D3748); --rail-ink: #CBD5E0; --rail-hover-bg: rgba(255,255,255,.08); --rail-line: rgba(255,255,255,.12); --rail-borda: #FABD07;
+  --head-bg: #1A202C; --head-linha: #1A202C;
+}
+.ck[data-painel="fiscalizacao"] .ck-eyebrow { color: #FABD07; }
+.ck[data-painel="fiscalizacao"] .ck-header::after { content: ''; position: absolute; z-index: 3; left: 0; right: 0; bottom: -8px; height: 7px; background: repeating-linear-gradient(-45deg, #FABD07 0 10px, #1A202C 10px 20px); pointer-events: none; }
+.ck[data-painel="fiscalizacao"] .ck-page { padding-top: 18px; }
+.ck[data-painel="fiscalizacao"] .tile > header h3 { display: inline-block; max-width: calc(100% + 14px); margin-left: -14px; padding: 4px 10px 3px 14px; background: #FABD07; color: #1A202C; line-height: 1.15; vertical-align: top; }
+.ck[data-painel="fiscalizacao"] .tile > header h3 .selo-parceria { background: #1A202C; color: #FABD07; }
+.ck.is-dark[data-painel="fiscalizacao"] { --rail-bg: linear-gradient(180deg, #1A202C, #11151C); }
+
+/* ---------- Colegiados: amarelo ---------- */
+.ck[data-painel="conselho"] {
+  --rail-bg: linear-gradient(180deg, #FABD07, #E0AB0C); --rail-ink: #01224D; --rail-hover-ink: #01224D; --rail-hover-bg: rgba(1,34,77,.1);
+  --rail-on-bg: #01224D; --rail-on-ink: #FFD148; --rail-line: rgba(1,34,77,.2); --rail-borda: #E0AB0C; --rail-foco: #01224D; --logo-engrenagem: #01224D;
+  --head-bg: #FFFEDB; --head-linha: #F2DC8C; --head-filete: #E0AB0C; --head-filete-h: 3px;
+}
+.ck[data-painel="conselho"] .ck-header { --soft: #FFFFFF; --line: #F2DC8C; }
+.ck[data-painel="conselho"] .ck-eyebrow { color: #082D74; }
+.ck.is-dark[data-painel="conselho"] { --rail-bg: linear-gradient(180deg, #E0AB0C, #FABD07); --head-bg: #01224D; --head-linha: #01224D; --head-filete: #FABD07; }
+.ck.is-dark[data-painel="conselho"] .ck-header { --soft: #082D74; --line: #163E8C; }
+.ck.is-dark[data-painel="conselho"] .ck-eyebrow { color: #FFD148; }
+
+/* ---------- Financeiro: verde da paleta descendo para o azul ---------- */
+.ck[data-painel="financeiro"] { --rail-bg: linear-gradient(180deg, #007061, #01224D); --rail-ink: rgba(255,255,255,.82); --rail-line: rgba(255,255,255,.16); --rail-borda: #007061; --head-filete: linear-gradient(90deg, #007061, #082D74); --head-filete-h: 3px; }
+.ck[data-painel="financeiro"] .ck-eyebrow { color: #007061; }
+.ck.is-dark[data-painel="financeiro"] { --rail-bg: linear-gradient(180deg, #007061, #01224D 75%); --head-filete: linear-gradient(90deg, #3DD6A9, #639CE0); }
+.ck.is-dark[data-painel="financeiro"] .ck-eyebrow { color: #3DD6A9; }
+
+/* ---------- Atendimento: o único menu claro, do azul-claro ao creme ---------- */
+.ck[data-painel="atendimento"] {
+  --rail-bg: linear-gradient(180deg, #D4EDFF, #FFFEDB); --rail-ink: #01224D; --rail-hover-ink: #01224D; --rail-hover-bg: rgba(1,34,77,.08);
+  --rail-on-bg: #246FB5; --rail-on-ink: #FFFFFF; --rail-line: rgba(1,34,77,.14); --rail-borda: #A9C9EE; --rail-foco: #082D74;
+  --head-filete: linear-gradient(90deg, #639CE0, #FFD148); --head-filete-h: 3px;
+}
+.ck[data-painel="atendimento"] .ck-eyebrow { color: #246FB5; }
+.ck.is-dark[data-painel="atendimento"] { --rail-bg: linear-gradient(180deg, #163E8C, #082D74); --rail-ink: #D4EDFF; --rail-hover-ink: #FFFFFF; --rail-hover-bg: rgba(255,255,255,.1); --rail-on-bg: #639CE0; --rail-on-ink: #01224D; --rail-line: rgba(255,255,255,.16); --rail-borda: #246FB5; --rail-foco: #FFD148; }
+.ck.is-dark[data-painel="atendimento"] .ck-eyebrow { color: #9CC3EE; }
+
+/* Senha do balcão: os cartões de indicador têm o recorte de senha nas laterais e o picote à esquerda. */
+.ck[data-painel="atendimento"] .ind {
+  padding-left: 24px; padding-right: 18px;
+  -webkit-mask: radial-gradient(circle 8px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 8px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle 8px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 8px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+  background-image: repeating-linear-gradient(180deg, var(--line) 0 5px, transparent 5px 10px); background-size: 2px 100%; background-position: 12px 0; background-repeat: no-repeat;
+}
+.ck[data-painel="atendimento"] .ind.is-destaque { background-image: repeating-linear-gradient(180deg, rgba(255,255,255,.35) 0 5px, transparent 5px 10px), linear-gradient(135deg, #01224D, #082D74); background-size: 2px 100%, 100% 100%; background-position: 12px 0, 0 0; }
+.ck[data-painel="atendimento"] button.ind:hover { transform: none; }
+.ck[data-painel="atendimento"] .ind-shell > .ficha-pop { right: 14px; }
+
+/* ---------- Presidência: azul escuro, cabeçalho azul com filete amarelo ---------- */
+.ck[data-painel="presidencia"] { --rail-bg: linear-gradient(180deg, #01224D, #082D74); --head-bg: linear-gradient(90deg, #082D74, #01224D); --head-linha: #01224D; --head-filete: #FABD07; --head-filete-h: 3px; }
+.ck[data-painel="presidencia"] .ck-eyebrow { color: #FFD148; }
+.ck.is-dark[data-painel="presidencia"] { --head-bg: linear-gradient(90deg, #01224D, #082D74); }
+/* Cada painel do Resumo leva a barra amarela à esquerda. */
+.ck[data-painel="presidencia"] .ck-grid-pr-resumo > .tile:has(.pr-painel) { position: relative; padding-left: 22px; }
+.ck[data-painel="presidencia"] .ck-grid-pr-resumo > .tile:has(.pr-painel)::before { content: ''; position: absolute; left: 8px; top: 11px; bottom: 10px; width: 6px; border-radius: 3px; background: #FABD07; }
+
+/* O botão Voltar do site (voltar.css) segue a cor do menu de cada painel. */
+.ck-rail .ck-voltar { color: var(--rail-ink); }
+.ck-rail .ck-voltar:hover { color: var(--rail-hover-ink); background: var(--rail-hover-bg); }
+.ck-rail .ck-voltar:focus-visible { outline-color: var(--rail-foco); }

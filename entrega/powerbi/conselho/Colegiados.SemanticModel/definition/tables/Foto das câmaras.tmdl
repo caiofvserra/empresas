@@ -1,6 +1,6 @@
 /// Guarda, no último dia de cada mês, as cadeiras de cada câmara no Plenário e os profissionais ativos (e as profissionais ativas) da modalidade que ela julga.
 table 'Foto das câmaras'
-	lineageTag: 5928065e-e4ce-5ff8-8ac2-ea66bf151805
+	lineageTag: 185772a1-a7b0-5b23-b928-73d9a2e7d70e
 
 	column Data
 		dataType: dateTime
@@ -8,13 +8,13 @@ table 'Foto das câmaras'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Data
-		lineageTag: 4f30ba85-7950-51bb-8135-903d2ebfdf04
+		lineageTag: 66d1ffe0-5c9e-5c56-a83f-0ae81a824435
 
 	column 'Câmara'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Câmara
-		lineageTag: 0e61da73-643b-5ff5-a518-7c7bbfa18746
+		lineageTag: b1a6204a-8810-5c34-8d97-71e2038a6623
 
 	column Cadeiras
 		dataType: int64
@@ -22,7 +22,7 @@ table 'Foto das câmaras'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Cadeiras
-		lineageTag: 4838c595-abac-50a7-bea0-98fd1e91ec90
+		lineageTag: 1dfecb5c-b1a8-5166-bbab-2114482b6a65
 
 	column 'Profissionais ativos'
 		dataType: int64
@@ -30,7 +30,7 @@ table 'Foto das câmaras'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Profissionais ativos
-		lineageTag: 6af3f00a-be5d-549c-9e3e-4b02b4b3a29b
+		lineageTag: 660ecbdf-e4e3-57f1-beb2-af27139b029a
 
 	column 'Profissionais ativas'
 		dataType: int64
@@ -38,7 +38,7 @@ table 'Foto das câmaras'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Profissionais ativas
-		lineageTag: 52d13800-c643-594e-a642-d4c8a490f729
+		lineageTag: 662863c5-d4dd-5e93-bea3-a49dfb784a90
 
 	partition 'Foto das câmaras' = m
 		mode: import

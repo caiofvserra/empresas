@@ -11,7 +11,7 @@ import type { Indicador, IndicadorId, PainelResumo, Valores } from '../domain/pr
  * Peças comuns das páginas do painel da Presidência (07/11/2026). Todo número sai da foto dos indicadores (src/domain/presidencia.ts),
  * a mesma conta dos cartões de cada painel, no recorte escolhido no alto da tela: o estado, uma regional ou um município.
  */
-export const nomePainel: Record<PainelResumo, string> = { empresas: 'Empresas', profissionais: 'Profissionais', fiscalizacao: 'Fiscalização', financeiro: 'Financeiro', atendimento: 'Atendimento', conselho: 'Gestão do Conselho' };
+export const nomePainel: Record<PainelResumo, string> = { empresas: 'Empresas', profissionais: 'Profissionais', fiscalizacao: 'Fiscalização', financeiro: 'Financeiro', atendimento: 'Atendimento', conselho: 'Colegiados' };
 /** A página do painel do assunto que mostra o indicador: clicar no número abre essa página, com os mesmos filtros. */
 export const destino: Record<IndicadorId, PageId> = {
   mercado: 'mercado', empresas: 'mercado', rt: 'rt', artsEmpresas: 'rt',

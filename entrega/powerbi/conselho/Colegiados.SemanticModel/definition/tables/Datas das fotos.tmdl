@@ -1,14 +1,14 @@
 /// Tem todas as datas com foto, inclusive os meses antes da primeira data de referência. As medidas de variação a usam para ler o mesmo indicador um ano antes.
 table 'Datas das fotos'
 	isHidden
-	lineageTag: accce357-7cc0-59ad-b761-78bf0bd1884a
+	lineageTag: 56d13e46-d11a-530c-9a32-531e366846c7
 
 	column Data
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Data
-		lineageTag: 24447002-3ced-5124-88c1-ba7abd60b1a5
+		lineageTag: a452caa1-12a6-5eab-b174-e5c959a67032
 
 	partition 'Datas das fotos' = m
 		mode: import

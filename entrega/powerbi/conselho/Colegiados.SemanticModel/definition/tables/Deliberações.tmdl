@@ -1,39 +1,39 @@
 /// Guarda cada deliberação de repasse aprovada pelo Plenário, pela ata: a organização, o valor, o objeto, quem propôs e se quem propôs foi indicado pela própria organização.
 table 'Deliberações'
-	lineageTag: 14b3e54f-e647-5609-94cb-fee7403117a8
+	lineageTag: 5453b75c-4a5b-5166-910a-f5047ecf499f
 
 	column 'Deliberação'
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Deliberação
-		lineageTag: cf0c834f-5882-51e5-bbee-6af7cd0e0410
+		lineageTag: 77bc9bfc-6db5-561a-bcc9-247483465abf
 
 	column Data
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Data
-		lineageTag: a70292a4-3cc0-53f2-818f-2f6cb7d0af89
+		lineageTag: 39959a1d-18a9-562b-acb7-bb3540bb1d74
 
 	column Canal
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Canal
-		lineageTag: bd69a1d3-c55a-5c65-8df2-eecb7bae2e9c
+		lineageTag: a7d2be08-6086-555a-927c-7670c10faa63
 
 	column 'Organização'
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Organização
-		lineageTag: c5210824-14d7-5dde-aa23-3a8c2694cb2b
+		lineageTag: 08caf83f-de4f-5649-925e-67773b7bbd34
 
 	column 'Nome da organização'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Nome da organização
-		lineageTag: b11b8988-7ea3-5532-b033-fc404f5c4503
+		lineageTag: 09ecffaf-fd53-5889-a551-6237cda02518
 
 	column Valor
 		dataType: double
@@ -41,19 +41,19 @@ table 'Deliberações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Valor
-		lineageTag: 7ebd4a12-f282-5f38-83b4-e64a7aba3fd5
+		lineageTag: 70625269-e429-57af-afa1-ab91d26d0be2
 
 	column Objeto
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Objeto
-		lineageTag: 7e6ab705-3d7e-5ad3-b983-e23d5a8c2dc0
+		lineageTag: 3badac24-0f03-5e62-b1c0-1f4c318423d5
 
 	column 'Proposta por'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Proposta por
-		lineageTag: 28703ec5-4b21-56b3-bb84-ed1d84d3acbc
+		lineageTag: 8f660910-a207-50d6-a71d-1858b5d4e795
 
 	column 'Proposta pela própria organização'
 		dataType: int64
@@ -61,13 +61,13 @@ table 'Deliberações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Proposta pela própria organização
-		lineageTag: 24813a27-fa28-5745-acf6-736fb5975618
+		lineageTag: 6f7a5644-81e0-5262-a309-275c850f8c17
 
 	column 'Quem propôs é da organização'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Quem propôs é da organização
-		lineageTag: 44078bc2-77db-5dac-98aa-624a68e5f5e3
+		lineageTag: 5605d84f-835d-5599-ac1f-3c67d52ff792
 
 	partition 'Deliberações' = m
 		mode: import

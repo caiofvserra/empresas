@@ -93,6 +93,7 @@ import '../gestao/gestao.css';
 import '../painel/painel.css';
 import './cockpit.css';
 import './voltar.css';
+import './identidade.css';
 
 /**
  * V21 · Inteligência Estratégica Crea-SP (nome escolhido em 01/11/2026; antes Prumo, antes Observatório). Protótipo completo, revisado: 11 assuntos, data de referência (o painel como
@@ -178,7 +179,7 @@ const paineis: Record<PainelId, Painel> = {
   fiscalizacao: { id: 'fiscalizacao', nome: 'Inteligência Estratégica · Fiscalização', paginas: paginasFiscalizacao, periodos: [3, 6, 12, 24], storage: 'crea-fiscalizacao-v1', filtro: 'camara' },
   financeiro: { id: 'financeiro', nome: 'Inteligência Estratégica · Financeiro', paginas: paginasFinanceiro, periodos: [3, 6, 12, 24], storage: 'crea-financeiro-v1', filtro: 'nenhum' },
   atendimento: { id: 'atendimento', nome: 'Inteligência Estratégica · Atendimento', paginas: paginasAtendimento, periodos: [3, 6, 12, 24], storage: 'crea-atendimento-v2', filtro: 'atendimento' },
-  conselho: { id: 'conselho', nome: 'Inteligência Estratégica · Gestão do Conselho', paginas: paginasConselho, periodos: [3, 6, 12, 24], storage: 'crea-conselho-v3', filtro: 'colegiado' },
+  conselho: { id: 'conselho', nome: 'Inteligência Estratégica · Colegiados', paginas: paginasConselho, periodos: [3, 6, 12, 24], storage: 'crea-conselho-v3', filtro: 'colegiado' },
 };
 /** Atalhos do menu lateral, só no painel da Presidência. Nenhum painel tem atalho para a Presidência (pedido do Caio, 03/11/2026); no site, todos têm o botão Voltar para o menu inicial (07/11/2026). */
 const atalhos: { id: PainelId; label: string; title: string; icon: ComponentType<{ size?: number }> }[] = [
@@ -187,7 +188,7 @@ const atalhos: { id: PainelId; label: string; title: string; icon: ComponentType
   { id: 'fiscalizacao', label: 'Fiscalização', title: 'Abrir o painel de Fiscalização e malha fina', icon: ShieldCheck },
   { id: 'financeiro', label: 'Financeiro', title: 'Abrir o painel Financeiro', icon: Wallet },
   { id: 'atendimento', label: 'Atendimento', title: 'Abrir o painel de Atendimento', icon: Headset },
-  { id: 'conselho', label: 'Conselho', title: 'Abrir o painel de Gestão do Conselho', icon: Scale },
+  { id: 'conselho', label: 'Colegiados', title: 'Abrir o painel de Colegiados', icon: Scale },
 ];
 /** Endereço de outro painel: no site, o HTML de cada painel (presidencia.html, empresas.html...), e index.html é o menu que lista todos; na entrega em arquivo único, os HTML lado a lado na pasta entrega. */
 const naEntrega = /painel-[a-z-]+\.html$/.test(window.location.pathname);
@@ -432,7 +433,7 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
   const buscar = () => { setDetail({ kind: 'empresas', title: 'Buscar empresa', what: 'Todas as empresas do recorte atual. Digite parte do nome, do CNPJ ou do município para achar uma e abrir a ficha dela.', ids: [...scope.companyIds] }); window.setTimeout(() => document.getElementById('busca-detalhe')?.focus(), 80); };
   buscarRef.current = buscar;
 
-  return <div className={`ck ${dark ? 'is-dark' : ''} ${emD ? 'is-passado' : ''}`} aria-busy={pending}>
+  return <div className={`ck ${dark ? 'is-dark' : ''} ${emD ? 'is-passado' : ''}`} data-painel={painel.id} aria-busy={pending}>
     <nav className="ck-rail" aria-label="Assuntos do painel">
       <div className="ck-logo" title="CREA-SP"><EngineeringEmblem /></div>
       {noSite && <a className="ck-voltar" href="index.html" title="Voltar ao menu dos painéis"><ArrowLeft size={17} /><span>Voltar</span></a>}

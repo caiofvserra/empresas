@@ -3,7 +3,7 @@ import { FOTOS, VISUAIS } from '../gestao/leia-me';
 /* As seções do LEIA-ME do pacote do painel da Presidência: o que vem pronto e o que falta montar no Power BI Desktop. */
 export const LEIA_ME_PRESIDENCIA = `## O que vem pronto
 
-- O modelo: regionais, municípios, câmaras, indicadores, datas de referência e meses da série; a foto de cada fim de mês com os indicadores dos seis painéis (Empresas, Profissionais, Fiscalização, Financeiro, Atendimento e Gestão do Conselho), em partes, pelo lugar e pela câmara; e os dados públicos reais da página No país (Confea, IBGE e Portal da Transparência).
+- O modelo: regionais, municípios, câmaras, indicadores, datas de referência e meses da série; a foto de cada fim de mês com os indicadores dos seis painéis (Empresas, Profissionais, Fiscalização, Financeiro, Atendimento e Colegiados), em partes, pelo lugar e pela câmara; e os dados públicos reais da página No país (Confea, IBGE e Portal da Transparência).
 - Uma medida por indicador, com o formato da unidade, e a série de 13 meses de cada um. As medidas [Numerador] e [Denominador] leem a foto com a mesma regra do painel em HTML.
 - As quatro páginas (Resumo, Regionais, Riscos e No país). Os filtros no alto (regional, município, câmara e data de referência) ficam sincronizados entre as páginas, com o tema do Crea-SP. Os gráficos saem com rótulos de dados e legenda, para ler sem passar o mouse.
 - Em cada cartão, como no painel: o número, a comparação com um ano antes e a linha de apoio (a meta, quando o indicador tem).

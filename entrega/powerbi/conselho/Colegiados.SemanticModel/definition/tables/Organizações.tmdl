@@ -1,31 +1,31 @@
 /// Tem as entidades de classe e as instituições de ensino registradas no Crea-SP.
 table 'Organizações'
-	lineageTag: f0ad315e-d264-5f94-8f93-0976e135f34d
+	lineageTag: f25ac489-9dc3-56b7-8354-c931a8a40b8e
 
 	column 'Organização'
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Organização
-		lineageTag: 54d6190f-2f93-51ed-9b38-b317fc7dc590
+		lineageTag: dc92c0fc-dabf-5672-a915-5074756980ff
 
 	column Sigla
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Sigla
-		lineageTag: 84ed1ce9-c427-53e7-b6e4-2b81f6c02b36
+		lineageTag: b3dc960a-440a-5c58-9a06-00d2b72ad2f9
 
 	column Nome
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Nome
-		lineageTag: 897c5b88-6fb6-59e2-a32c-7080c7597ea1
+		lineageTag: abdb7fad-351d-5207-8b04-0535d84ebcd8
 
 	column Natureza
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Natureza
-		lineageTag: ee21de6b-03f5-5d71-959f-d2f3409f3c66
+		lineageTag: 423ef832-f18b-5c10-b8e5-9c8a215ec93b
 
 	partition 'Organizações' = m
 		mode: import

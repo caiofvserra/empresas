@@ -1,24 +1,24 @@
 /// Tem os 645 municípios de SP e a GRE de cada um pela tabela oficial. A regional e o município recortam só os processos (e os autos, que são processos), pelo lugar do processo.
 table 'Municípios'
-	lineageTag: 8c7ac691-40b4-500b-a920-83c9c5cb29e6
+	lineageTag: 6b99638a-f1ed-5a0c-9895-1cf242a7e961
 
 	column 'Código IBGE'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Código IBGE
-		lineageTag: 1d208e24-e1be-5a66-a394-72cccb54994f
+		lineageTag: 4dc7b9b3-dcf7-5365-ba00-aacb265ade94
 
 	column 'Município'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Município
-		lineageTag: 670b7157-46dc-52ad-9c04-19cf96d941cc
+		lineageTag: 6dcedb30-b283-5bbe-b2f0-81386f9c5d27
 
 	column GRE
 		dataType: string
 		summarizeBy: none
 		sourceColumn: GRE
-		lineageTag: 6bbdf242-f287-5794-b1bf-5dfae0a15489
+		lineageTag: e4423325-4c77-5137-9550-51cd57fcf832
 
 	partition 'Municípios' = m
 		mode: import

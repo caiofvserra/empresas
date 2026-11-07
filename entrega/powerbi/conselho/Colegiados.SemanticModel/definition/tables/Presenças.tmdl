@@ -1,32 +1,32 @@
 /// Guarda, em cada sessão ordinária, cada conselheiro do colegiado e se esteve presente (pela ata).
 table 'Presenças'
 	isHidden
-	lineageTag: d999f16b-eb34-5b5d-b3e3-afe33fb5114a
+	lineageTag: 45ede69e-071f-51f0-a460-45468eec15fb
 
 	column 'Sessão'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Sessão
-		lineageTag: edc5dd5a-fbc3-5724-a1fc-4d324136a035
+		lineageTag: f1d2c929-670f-5ff3-b63b-2cd1bdb5506a
 
 	column Data
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Data
-		lineageTag: fe8a161a-da03-5988-a478-26628e53bb4d
+		lineageTag: ae0c8181-1fee-5dd7-a1a0-0bf921a8b06a
 
 	column Colegiado
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Colegiado
-		lineageTag: bbfe2d3b-86f0-56b5-976f-3833f556e5fe
+		lineageTag: aa598e5a-67d2-58dc-b368-ce22a45b7c4b
 
 	column Pessoa
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Pessoa
-		lineageTag: dccdf473-0aca-504d-b2cc-be8b92fca5a0
+		lineageTag: 883475c4-df11-5f7e-8ffa-576cb8193503
 
 	column Presente
 		dataType: int64
@@ -34,7 +34,7 @@ table 'Presenças'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Presente
-		lineageTag: 85adcf20-b0a9-5faa-92a0-86f857740703
+		lineageTag: 3a13cc7f-9c66-54f9-8cba-a0e72b654590
 
 	partition 'Presenças' = m
 		mode: import

@@ -1,43 +1,43 @@
-relationship ea355114-d0bd-5776-9c2b-960c1f869d55
+relationship 41887451-ecdf-5863-a8ab-c079ebdcd184
 	fromColumn: 'Municípios'.GRE
 	toColumn: Regionais.GRE
 
-relationship cd4942fd-a6b6-5733-a6c8-2475e9669c9c
+relationship af7453a0-5de3-51e6-a237-0508b600d98d
 	fromColumn: 'Tramitações'.Colegiado
 	toColumn: Colegiados.Colegiado
 
-relationship 87af8133-20cb-5b4d-af86-e82b3d53f9ce
+relationship aedb1eda-7c44-502c-90d1-aa82bc4eb843
 	fromColumn: 'Tramitações'.'Código IBGE'
 	toColumn: 'Municípios'.'Código IBGE'
 
-relationship eff80b62-36b3-5fb4-962e-24dadaa4e13b
+relationship dbcebeb7-eeb7-5f61-a1b7-5a5f8f80adf2
 	fromColumn: 'Foto da fila'.'Tramitação'
 	toColumn: 'Tramitações'.'Tramitação'
 
-relationship 009f6718-95e8-500e-9712-8580d07102c1
+relationship 1379e6fd-2f0d-525b-9bc8-15f55bed7848
 	fromColumn: 'Foto da fila'.Pessoa
 	toColumn: Pessoas.Pessoa
 
-relationship 53d80bdb-bfeb-5a51-b511-9483f31fa77c
+relationship 72e4c698-7fbb-53c6-8224-bdd0b183014b
 	fromColumn: Eventos.'Tramitação'
 	toColumn: 'Tramitações'.'Tramitação'
 
-relationship 2d6f667b-c062-5f79-9ba1-88e3184308c2
+relationship 0e66c2d6-3236-50e4-a189-2a4e10eb4c6b
 	fromColumn: 'Presenças'.Colegiado
 	toColumn: Colegiados.Colegiado
 
-relationship facb45f5-3780-57fb-873c-aebd950eb5ae
+relationship cf27405a-6fc5-5a20-98ee-e0d2495c6fa5
 	fromColumn: 'Presenças'.Pessoa
 	toColumn: Pessoas.Pessoa
 
-relationship 7507f4cc-7722-5a36-bf58-bde48bc1023b
+relationship e48e452f-6591-5661-9e72-cdb7dfe7db3c
 	fromColumn: 'Diárias'.Pessoa
 	toColumn: Pessoas.Pessoa
 
-relationship 82a29ef3-1f2e-5af1-846d-2c3b5727f656
+relationship c023481a-ce87-5638-acec-5f1219adc583
 	fromColumn: Autos.'Código IBGE'
 	toColumn: 'Municípios'.'Código IBGE'
 
-relationship 57f9f51b-e03d-5e3d-95c3-8673fc32d85a
+relationship 0a4c2f4e-c076-5768-a9f7-b996767c014b
 	fromColumn: 'Pagamentos dos repasses'.'Organização'
 	toColumn: 'Organizações'.'Organização'
