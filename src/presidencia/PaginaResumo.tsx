@@ -73,10 +73,13 @@ const comMeta = INDICADORES.filter(row => row.meta);
 const exportarMeta = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Regional', ...comMeta.map(ind => ind.nome)], linhas: () => {
   const foto = ctx.presidencia?.atual; if (!foto) return []; const linhas = porRegionalDaFoto(foto, ctx.dataset, ctx.camara);
   return [...linhas].map(([greId, v]) => [nomeGre(ctx, greId), ...comMeta.map(ind => { const value = valorDe(ind, v[ind.id]); return value === null ? '' : Math.round(value * 10) / 10; })]); } });
+const telaBaixa = () => typeof window !== 'undefined' && window.innerHeight < 900;
 function Metas({ ctx, l }: { ctx: CockpitCtx; l: Leitura }) {
   const { tokens, metas } = ctx, foto = ctx.presidencia?.atual;
   const linhas = useMemo(() => foto ? porRegionalDaFoto(foto, ctx.dataset, ctx.camara) : new Map(), [foto, ctx.dataset, ctx.camara]);
   const pontos = useMemo(() => comMeta.flatMap((ind, row) => [...linhas].map(([greId, v]) => ({ greId, row, ind, value: valorDe(ind, v[ind.id]) }))).filter(p => p.value !== null), [linhas]);
+  // Em telas baixas (notebook de 768 px) as linhas ficam juntas demais para o nome: ele fica só ao passar o mouse.
+  const piores = useMemo(() => { const out = new Map<number, (typeof pontos)[number]>(); for (const p of pontos) { const atual = out.get(p.row); if (!atual || p.value! < atual.value!) out.set(p.row, p); } return out; }, [pontos]);
   const option = useMemo(() => ({
     grid: { top: 26, right: 18, bottom: 22, left: 2, containLabel: true },
     legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 10, itemGap: 12, textStyle: { color: tokens.muted, fontSize: 11 }, data: ['Regionais', ctx.greId || ctx.cidadeId ? 'O recorte' : 'O estado', 'A meta'] },
@@ -86,13 +89,15 @@ function Metas({ ctx, l }: { ctx: CockpitCtx; l: Leitura }) {
       axisLabel: { interval: 0, color: tokens.ink, fontSize: 11, width: 300, overflow: 'truncate', rich: { v: { color: tokens.brand, fontSize: 11, fontWeight: 800 }, m: { color: tokens.bad, fontSize: 11, fontWeight: 700 } } } },
     series: [
       { name: 'Regionais', type: 'scatter', symbolSize: 9, data: pontos.map(p => ({ value: [p.value, p.row], greId: p.greId, itemStyle: { color: ctx.greId === p.greId ? tokens.accent : tokens.heat[2], opacity: ctx.greId && ctx.greId !== p.greId ? 0.45 : 0.85, borderColor: tokens.surface, borderWidth: 1 },
-        texto: `<b>${nomeGre(ctx, p.greId)}</b><br/>${p.ind.nome}: ${pct(p.value!, 1)}<br/>meta de ${metas[p.ind.meta!]}%<br/><span style="opacity:.7">clique para ver a regional</span>` })) },
+        texto: `<b>${nomeGre(ctx, p.greId)}</b><br/>${p.ind.nome}: ${pct(p.value!, 1)}<br/>meta de ${metas[p.ind.meta!]}%<br/><span style="opacity:.7">clique para ver a regional</span>` })),
+        // A regional mais baixa de cada taxa e a regional escolhida levam o nome, para se ler sem passar o mouse.
+        label: { show: !telaBaixa(), position: 'bottom', distance: 2, fontSize: 11, color: tokens.muted, formatter: (p: any) => pontos[p.dataIndex] === piores.get(pontos[p.dataIndex].row) || p.data.greId === ctx.greId ? nomeGre(ctx, p.data.greId) : '' }, labelLayout: { hideOverlap: true } },
       { name: ctx.greId || ctx.cidadeId ? 'O recorte' : 'O estado', type: 'scatter', symbol: 'diamond', symbolSize: 16, z: 5, itemStyle: { color: tokens.brand, borderColor: tokens.surface, borderWidth: 1.5 },
         data: comMeta.map((ind, row) => { const value = l.valor(ind.id); return value === null ? null : { value: [value, row], texto: `<b>${ind.nome}</b> ${ondeTexto(ctx)}: ${pct(value, 1)}` }; }).filter(Boolean) },
       { name: 'A meta', type: 'scatter', symbol: 'rect', symbolSize: [3, 16], z: 4, itemStyle: { color: tokens.bad },
         data: comMeta.map((ind, row) => ({ value: [metas[ind.meta!], row], texto: `Meta de ${ind.nome.toLowerCase()}: ${metas[ind.meta!]}%. Ajuste em “Metas”, no menu.` })) },
     ],
-  }), [pontos, l, tokens, metas, ctx.greId, ctx.cidadeId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [pontos, piores, l, tokens, metas, ctx.greId, ctx.cidadeId]); // eslint-disable-line react-hooks/exhaustive-deps
   return <Chart option={option} tokens={tokens} label="Cada regional nas quatro taxas com meta, com o estado e a meta" onPick={p => { if (p.seriesIndex === 0 && p.data?.greId) ctx.filterGre(p.data.greId); }} />;
 }
 

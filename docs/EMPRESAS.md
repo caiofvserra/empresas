@@ -1,6 +1,6 @@
 # Painel de Empresas
 
-Primeiro painel separado do painel geral, de 01/11/2026. Abre em `/empresas.html` no site e em `entrega/painel-empresas-creasp.html` sem servidor. O painel geral continua em `/` e em `entrega/painel-gestao-creasp.html`, agora sem a aba Empresas. O painel geral tem um botão no menu lateral que leva ao de Empresas; o de Empresas não tem o caminho de volta, porque é entregue sozinho (pedido de 03/11/2026).
+Primeiro painel separado do painel geral, de 01/11/2026. Abre em `/empresas.html` no site e em `entrega/painel-empresas-creasp.html` sem servidor. Desde 07/11/2026, o painel geral deu lugar ao painel da Presidência ([PRESIDENCIA.md](PRESIDENCIA.md)), que abre em `/` e tem os atalhos para os outros painéis no menu lateral. O de Empresas não tem o caminho de volta, porque é entregue sozinho (pedido de 03/11/2026).
 
 ## Por que separar e como dividir
 
@@ -83,7 +83,7 @@ Quanto ao objetivo, o painel responde às perguntas que a administração faz so
 ## Ajustes de 03/11/2026
 
 - O painel passou a ter as nove câmaras especializadas do Crea-SP, com os nomes do sistema do Conselho: Civil, Elétrica, Mecânica e Metalúrgica, Segurança do Trabalho, Agronomia, Química, Ambiental e Sanitária, Agrimensura e Geologia e Minas. Antes eram quatro. A câmara de cada empresa continua estimada pela atividade principal (`camaraPorCnae` em `src/painel/analise.ts`); o cenário ganhou dez atividades novas e um sorteio com peso, para a civil ficar com pouco mais da metade das empresas e as câmaras menores com poucos por cento cada. As ARTs e os profissionais do cenário ganharam as modalidades química, geologia e minas e agrimensura.
-- O atalho "Geral" saiu da barra lateral do painel de Empresas, porque ele é entregue sozinho. O painel geral continua com o atalho para Empresas.
+- O atalho "Geral" saiu da barra lateral do painel de Empresas, porque ele é entregue sozinho. O painel da Presidência tem o atalho para Empresas.
 - Revisão de leitura (pedido do Caio: "verifique se a leitura e entendimento humano realmente está eficaz"). O mapa de calor de novos registros passou de 24 meses para oito trimestres, com o número em cada célula e a cor comparando cada câmara com ela mesma; antes, fora a civil, as linhas ficavam todas na mesma cor e nada se lia sem passar o mouse. "Receita comparada com o cadastro" trocou “Sim” e “Passível” por "Registro obrigatório" e "Registro a analisar". No mapa de árvore, a parte registrada vem antes do nome da câmara, para não sumir nos retângulos pequenos. O histograma de responsáveis técnicos ganhou título que explica o eixo e o vermelho. No tema escuro, as aberturas sem registro ganharam cor visível, e o tema salvo passa a entrar antes da primeira leitura das cores dos gráficos.
 - Mapa de árvore com regra de divisão (pedido do Caio em 04/11/2026). Cada estabelecimento conta uma vez, na atividade que o enquadra: a principal, ou a primeira secundária da lista quando a principal não está nela. Assim as partes somam o mercado da câmara. O tamanho é o número desses estabelecimentos, e a porcentagem, a parte com registro. Quem tem a atividade só como secundária aparece na dica ("outros N têm esta atividade como secundária"), sem contar duas vezes. Em cada câmara, as atividades menores que juntas somam até 10% dela ficam em "Outras atividades", em cinza e sempre por último. As nove câmaras aparecem sempre, mesmo sem estabelecimento. No bloco pequeno, cada câmara mostra com nome cerca de uma atividade a cada 7% do mercado (no mínimo duas), e o resto vai para "Outras"; ampliado, aparecem todas as que passam da regra dos 10%. No cenário de demonstração só 22 atividades têm estabelecimentos, então "Outras" quase não aparece; com a lista real de cerca de 700 CNAEs, a regra passa a agir.
 - O mapa das regionais virou "Mapa por município" (pedido do Caio em 04/11/2026: "regional é GRE"). A cor é do município, no próprio valor dele, em cinco faixas; a lista ao lado traz as GREs, e passar o mouse numa GRE acende os municípios dela. Município com menos de duas empresas ou estabelecimentos na base de uma porcentagem fica cinza ("poucos dados"). As faixas são por quantil e aguentam empates: o zero vira faixa própria quando há zeros.
@@ -177,7 +177,7 @@ Pedido do Caio em 05/11/2026 ("verifique a interatividade", "3, 6, 12, 24, poder
 ```bash
 npm test               # inclui tests/empresas.test.ts
 npm run build          # site com os dois painéis
-npm run build:painel   # entrega/painel-gestao-creasp.html e entrega/painel-empresas-creasp.html
+npm run build:painel   # entrega/painel-presidencia-creasp.html, entrega/painel-empresas-creasp.html e os outros painéis
 ```
 
 ### Evolução mensal em todos os cartões e cenário (05/11/2026, segunda rodada)

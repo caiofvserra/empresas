@@ -1,7 +1,7 @@
 import type { Dataset } from '../../domain/types';
 import { municipiosSp } from '../../domain/municipios';
 import { mesesAteData } from '../../domain/gestao';
-import { INDICADORES, camaraDaChave, fotoPresidencia, insumosPresidencia, lugarDaChave, paineisResumo } from '../../domain/presidencia';
+import { ESTADO, INDICADORES, camaraDaChave, fotoPresidencia, insumosPresidencia, lugarDaChave, paineisResumo } from '../../domain/presidencia';
 import type { FotoPresidencia, Indicador } from '../../domain/presidencia';
 import { brasil, contasPublicadas, registrosNovos, ufs } from '../../domain/publico-pais';
 import { camaras } from '../../painel/analise';
@@ -25,7 +25,7 @@ export const NOME_DO_PAINEL: Record<string, string> = { empresas: 'Empresas', pr
  * sem filtro e pela regional com filtro, porque as empresas não se somam entre lugares; ou só pelo estado.
  */
 export const leituraDe = (ind: Indicador) => ind.lugar === 'municipio' ? 'Município' : ind.lugar === 'estado' ? 'Estado' : ind.soma ? 'Regional' : 'Estado e regional';
-export const nivelDaChave = (lugar: string, ind: Indicador) => lugar === 'SP' ? 'Estado' : ind.lugar === 'municipio' ? 'Município' : 'Regional';
+export const nivelDaChave = (lugar: string, ind: Indicador) => lugar === ESTADO ? 'Estado' : ind.lugar === 'municipio' ? 'Município' : 'Regional';
 
 /** As datas de referência (os 12 fins de mês antes de hoje e hoje) e as datas das fotos (mais 12 meses para trás). */
 export function datasDaPresidencia(dataset: Dataset) {

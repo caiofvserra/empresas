@@ -81,6 +81,21 @@ test('presidência: com uma câmara, cada número segue a câmara do jeito do pa
   }
 });
 
+test('presidência: a regularização de uma regional e de uma câmara é a do quadro das regionais da Fiscalização com o mesmo filtro', () => {
+  const model = buildEnterpriseModel(selectEnterpriseScope(view, { ...defaultFilters, period: periodo }));
+  const taxaDe = (fiscal: typeof f, gre: string | null) => {
+    const linhas = porRegional(view, fiscal, model, periodo).filter(row => !gre || row.id === gre);
+    const acoes = linhas.reduce((n, row) => n + row.acoes, 0);
+    return acoes ? linhas.reduce((n, row) => n + (row.taxa ?? 0) * row.acoes / 100, 0) / acoes * 100 : null;
+  };
+  // A câmara entra como no painel de Fiscalização: as ações das empresas da câmara.
+  const daCamara = (camara: string) => ({ ...f, acoes: f.acoes.filter(row => camaraDe.get(row.companyId) === camara), alvos: f.alvos.filter(row => camaraDe.get(row.companyId) === camara) });
+  for (const [gre, camara] of [['GRE2', null], ['GRE5', null], [null, 'Civil'], ['GRE2', 'Civil']] as const) {
+    const recorte = recortar(foto, dataset, { greId: gre, cityId: null, camara });
+    perto(v(recorte, 'regularizacao'), taxaDe(camara ? daCamara(camara) : f, gre), `${gre ?? 'SP'} ${camara ?? ''}: regularizacao`);
+  }
+});
+
 test('presidência: as regionais somam o estado nas contagens e nos valores que se somam, e as taxas saem da soma das partes', () => {
   const estado = recortar(foto, dataset, { greId: null, cityId: null, camara: null }), linhas = porRegionalDaFoto(foto, dataset);
   assert.equal(linhas.size, dataset.gres.length);

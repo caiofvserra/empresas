@@ -73,7 +73,7 @@ function abrirContratos(ctx: CockpitCtx, title: string, rows: ReturnType<typeof 
 }
 
 /* ---------- Calendário: o que vence em cada mês ---------- */
-const linhasCalendario = ['Anuidades que prescrevem', 'Autos que prescrevem', 'Processos que passam de 120 dias no status', 'Contratos do Conselho que terminam'] as const;
+const linhasCalendario = ['Anuidades que prescrevem (R$)', 'Autos que prescrevem', 'Processos que passam de 120 dias no status', 'Contratos que terminam'] as const;
 const valorDoMes = (row: Mes, linha: number) => [row.valor, row.autos.length, row.alerta.length, row.contratos.n][linha];
 const exportarCalendario = (cal: Mes[]): Exportavel => ({ cabecalho: ['Mês', 'Anuidades que prescrevem (R$)', 'Devedores', 'Autos que prescrevem', 'Processos que passam de 120 dias no status', 'Contratos que terminam', 'Valor dos contratos (R$)'],
   linhas: () => cal.map(row => [mes(row.month), Math.round(row.valor), row.anuidades.length, row.autos.length, row.alerta.length, row.contratos.n, Math.round(row.contratos.valor)]) });
@@ -90,10 +90,10 @@ function Calendario({ ctx, cal }: { ctx: CockpitCtx; cal: Mes[] }) {
         const texto = [`${brl(row.valor)} de ${int(row.anuidades.length)} devedores`, `${int(row.autos.length)} autos de infração`, `${int(row.alerta.length)} processos, se nada andar`, `${int(row.contratos.n)} contratos, ${brl(row.contratos.valor)}`][y];
         return `<b>${linhasCalendario[y]}</b><br/>${mes(row.month)}: ${texto}<br/><span style="opacity:.7">clique para ver a lista</span>`; } },
       xAxis: { type: 'category', data: cal.map(row => mes(row.month)), position: 'top', axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, fontWeight: 700 } },
-      yAxis: { type: 'category', inverse: true, data: [...linhasCalendario], axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 180, overflow: 'break', lineHeight: 13 } },
+      yAxis: { type: 'category', inverse: true, data: [...linhasCalendario], axisTick: { show: false }, axisLine: { show: false }, axisLabel: { interval: 0, color: tokens.ink, fontSize: 11, width: 180, overflow: 'break', lineHeight: 13 } },
       // O ECharts exige um visualMap no mapa de calor; ele só fixa a opacidade, e a cor de cada célula vem do item (o texto precisa saber a cor).
       visualMap: { show: false, dimension: 2, min: -1e15, max: 1e15, inRange: { opacity: 1 } },
-      series: [{ type: 'heatmap', data: dados, label: { show: true, fontSize: 11, fontWeight: 700, formatter: (p: any) => p.value[2] ? (p.value[1] === 0 ? `R$ ${compacto(p.value[2])}` : int(p.value[2])) : '0' } }],
+      series: [{ type: 'heatmap', data: dados, label: { show: true, fontSize: 11, fontWeight: 700, formatter: (p: any) => p.value[2] ? (p.value[1] === 0 ? compacto(p.value[2]) : int(p.value[2])) : '0' } }],
     };
   }, [cal, tokens, dark]);
   return <Chart option={option} tokens={tokens} label={`O que vence ou prescreve em cada um dos próximos 12 meses, ${ondeTexto(ctx)}`} onPick={p => {
@@ -151,7 +151,7 @@ function Fila({ ctx }: { ctx: CockpitCtx }) {
     return {
       grid: { top: 24, right: 30, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: [...faixasNoStatus] },
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${nomeColegiado(row.col)}</b>: ${int(row.total)} esperando voto<br/>${faixasNoStatus.map((f, i) => `${f} no status: ${int(row.faixas[i].length)}`).join('<br/>')}`; } },
-      xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.col === 'Plenário' ? 'Plenário' : row.col), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
+      xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.col), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
       series: faixasNoStatus.map((faixa, i) => ({ name: faixa, type: 'bar', stack: 'f', barMaxWidth: 14, data: rows.map(row => row.faixas[i].length), itemStyle: { color: cores[i], borderColor: tokens.surface, borderWidth: 1 },
         label: { show: true, position: 'inside', fontSize: 11, fontWeight: 700, color: corDoTexto(cores[i]), formatter: (p: any) => p.value >= Math.max(4, maior * 0.08) ? p.value : '' } }))
         .concat([{ name: 'total', type: 'bar', stack: 'f', barMaxWidth: 14, data: rows.map(() => 0), itemStyle: { color: 'transparent', borderColor: 'transparent', borderWidth: 0 }, label: { show: true, position: 'right', fontSize: 11, fontWeight: 800, color: tokens.ink, formatter: (p: any) => int(rows[p.dataIndex].total) } } as any]),
@@ -171,11 +171,11 @@ function Orcamento({ ctx }: { ctx: CockpitCtx }) {
     const linha = (name: string, valores: (number | null)[], cor: string, tracejada: boolean) => ({ name, type: 'line', data: valores, symbol: 'circle', symbolSize: 4, connectNulls: false, lineStyle: { color: cor, width: tracejada ? 1.5 : 2.4, type: tracejada ? 'dashed' : 'solid' }, itemStyle: { color: cor },
       endLabel: { show: !tracejada, fontSize: 11, fontWeight: 700, color: cor, formatter: (p: any) => `R$ ${compacto(p.value)}` } });
     return {
-      grid: { top: 26, right: 62, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens),
+      grid: { top: 30, right: 62, bottom: 2, left: 4, containLabel: true }, legend: { ...legenda(tokens), itemGap: 8 },
       tooltip: { trigger: 'axis', valueFormatter: (value: number) => value === null || value === undefined ? '—' : brl(value) },
       xAxis: eixoCategoria(tokens, meses, { boundaryGap: false }), yAxis: eixoValor(tokens),
-      series: [linha('Receita prevista', gestao.receitaAcumulada.map(row => row.previsto), tokens.good, true), linha('Receita realizada', gestao.receitaAcumulada.map((row, i) => i <= ultimo ? row.realizado : null), tokens.good, false),
-        linha('Despesa orçada', gestao.despesaAcumulada.map(row => row.previsto), tokens.bad, true), linha('Despesa realizada', gestao.despesaAcumulada.map((row, i) => i <= ultimo ? row.realizado : null), tokens.bad, false)],
+      series: [linha('Receita prevista', gestao.receitaAcumulada.map(row => row.previsto), tokens.good, true), linha('Receita', gestao.receitaAcumulada.map((row, i) => i <= ultimo ? row.realizado : null), tokens.good, false),
+        linha('Despesa orçada', gestao.despesaAcumulada.map(row => row.previsto), tokens.bad, true), linha('Despesa', gestao.despesaAcumulada.map((row, i) => i <= ultimo ? row.realizado : null), tokens.bad, false)],
     };
   }, [gestao, tokens, ano]);
   return <Chart option={option} tokens={tokens} label={`Receita e despesa acumuladas em ${ano} contra o previsto no orçamento`} onPick={() => ctx.go('orcamento')} />;

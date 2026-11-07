@@ -40,7 +40,7 @@ export default function PaginaRegionais({ ctx }: { ctx: CockpitCtx }) {
     <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="As regionais que pedem atenção">
       <Indicador destaque ctx={ctx} ficha="k-meta" aspecto="Empresas" label="Regionais na meta de mercado" value={r.atual ? `${int(naMeta)} de ${int(gres.length)}` : '…'} sub={`com ${metas.cobertura}% ou mais do mercado registrado`} onOpen={() => ctx.go('mercado')} />
       <Indicador ctx={ctx} ficha="k-fila" aspecto="Gestão do Conselho" label="Mais processos esperando voto" value={fila ? nomeGre(ctx, fila.greId) : '…'} sub={fila ? `${int(fila.value)} processos, ${pct(fila.value / Math.max(1, total('pendentes')) * 100)} do total` : ''} onOpen={abrir(fila?.greId)} />
-      <Indicador ctx={ctx} ficha="k-divida" aspecto="Financeiro" label="Mais anuidades vencidas" value={divida ? nomeGre(ctx, divida.greId) : '…'} sub={divida ? `${formato(indicador('divida'), divida.value)} vencidos com profissionais e empresas` : ''} onOpen={abrir(divida?.greId)} />
+      <Indicador ctx={ctx} ficha="k-divida" aspecto="Financeiro" label="Mais anuidades vencidas" value={divida ? nomeGre(ctx, divida.greId) : '…'} sub={divida ? `${formato(indicador('divida'), divida.value)} vencidos, ${pct(divida.value / Math.max(1, total('divida')) * 100)} do total` : ''} onOpen={abrir(divida?.greId)} />
       <Indicador ctx={ctx} ficha="k-atendimento" aspecto="Atendimento" label="Menos solicitações resolvidas no prazo" value={atendimento ? nomeGre(ctx, atendimento.greId) : '…'} sub={atendimento ? `${pct(atendimento.value, 1)} no prazo, contra a meta de ${metas.atendimento}%` : ''} onOpen={abrir(atendimento?.greId)} />
       <Indicador ctx={ctx} ficha="k-regularizacao" aspecto="Fiscalização" label="Menos ações terminadas em regularização" value={regularizacao ? nomeGre(ctx, regularizacao.greId) : '…'} sub={regularizacao ? `${pct(regularizacao.value, 1)} das ações, contra a meta de ${metas.regularizacao}%` : ''} onOpen={abrir(regularizacao?.greId)} />
       <Indicador ctx={ctx} ficha="k-profissionais" aspecto="Profissionais" label="Maior alta de profissionais em um ano" value={alta ? nomeGre(ctx, alta.greId) : '…'} sub={alta ? `${alta.value > 0 ? '+' : ''}${pct(alta.value, 1)} de profissionais com registro ativo` : ''} onOpen={abrir(alta?.greId)} />
@@ -89,7 +89,8 @@ function Quadro({ ctx, linhas }: { ctx: CockpitCtx; linhas: Linhas | null }) {
   const celula = (ind: Ind, value: number | null) => {
     if (value === null) return { className: 'is-vazio', style: undefined };
     if (ind.meta) return { className: value >= metas[ind.meta] ? 'is-na-meta' : 'is-fora-da-meta', style: undefined };
-    const t = value / maximos.get(ind.id)!; return { className: ind.sobeBom ? 'is-escala' : 'is-escala-alerta', style: { ['--t' as string]: (0.08 + t * 0.5).toFixed(2) } };
+    const fundo = misturar(ctx.tokens.surface, ind.sobeBom ? ctx.tokens.heat[2] : ctx.tokens.bad, 0.08 + value / maximos.get(ind.id)! * 0.5);
+    return { className: 'is-escala', style: { background: fundo, color: corDoTexto(fundo) } };
   };
   const ordenar = (id: IndicadorId | 'gre') => setOrdem(previous => ({ id, desc: previous.id === id ? !previous.desc : id !== 'gre' }));
   const seta = (id: IndicadorId | 'gre') => ordem.id === id ? (ordem.desc ? <ArrowDown size={11} /> : <ArrowUp size={11} />) : null;
@@ -119,9 +120,10 @@ function Calor({ ctx, atual, antes }: { ctx: CockpitCtx; atual: Linhas; antes: L
       return gres.map((gre, x) => { const value = valores[x], s = sentido(ind, value), cor = value === null || s === 'flat' ? neutro : misturar(neutro, s === 'good' ? tokens.good : tokens.bad, 0.2 + Math.abs(value) / max * 0.8);
         return { value: [x, y, value ?? 0], greId: gre.id, id, texto: curta(ind, value), itemStyle: { color: cor, borderColor: tokens.surface, borderWidth: 2, borderRadius: 3 }, label: { color: corDoTexto(cor) } }; }); });
     return {
-      grid: { top: 2, right: 4, bottom: 20, left: 2, containLabel: true },
+      grid: { top: 2, right: 4, bottom: 2, left: 2, containLabel: true },
       tooltip: { formatter: (p: any) => { const ind = indicador(p.data.id), gre = p.data.greId; return `<b>${nomeGre(ctx, gre)}</b><br/>${ind.nome}<br/>agora: ${formato(ind, valorDe(ind, atual.get(gre)![ind.id]))}<br/>um ano antes: ${formato(ind, valorDe(ind, antes.get(gre)![ind.id]))}<br/>variação: ${variacaoTexto(ind, variacao(ind, atual.get(gre)![ind.id], antes.get(gre)![ind.id]))}<br/><span style="opacity:.7">clique para ver a regional</span>`; } },
-      xAxis: { type: 'category', data: gres.map(gre => gre.name), position: 'bottom', axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, fontWeight: 700 }, splitArea: { show: false } },
+      xAxis: { type: 'category', data: gres.map(gre => gre.name), position: 'bottom', axisTick: { show: false }, axisLine: { show: false }, // Em telas estreitas, o nome da regional quebra em duas linhas para caberem as 16.
+        axisLabel: { interval: 0, color: tokens.ink, fontSize: 11, fontWeight: 700, lineHeight: 12, formatter: (nome: string) => window.innerWidth < 1600 ? nome.replace(' ', '\n') : nome }, splitArea: { show: false } },
       yAxis: { type: 'category', inverse: true, data: doCalor.map(id => `${(cabecas[id])} (${indicador(id).unidade === 'taxa' ? 'p.p.' : '%'})`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
       // O ECharts exige um visualMap no mapa de calor; ele só fixa a opacidade, e a cor de cada célula vem do item (o texto precisa saber a cor).
       visualMap: { show: false, dimension: 2, min: -1e15, max: 1e15, inRange: { opacity: 1 } },

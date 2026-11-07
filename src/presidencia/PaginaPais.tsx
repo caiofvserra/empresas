@@ -6,6 +6,7 @@ import { Bloco, Indicador, Selo } from '../cockpit/ui';
 import type { Exportavel } from '../cockpit/ui';
 import { brasil, contasPublicadas, fonteConfea, registrosNovos, ufs } from '../cockpit/publico';
 import { compacto, eixoCategoria, eixoValor, legenda } from '../gestao/comum';
+import { corDoTexto } from '../cockpit/formatos';
 
 /**
  * Painel da Presidência, página No país (07/11/2026): só dados públicos reais, com o selo "Real". O Crea-SP ao lado dos outros Creas
@@ -22,13 +23,13 @@ export default function PaginaPais({ ctx }: { ctx: CockpitCtx }) {
   const posicao = [...ufs].sort((a, b) => b.por100mil - a.por100mil).findIndex(row => row.uf === 'SP') + 1;
   return <div className="ck-grid ck-grid-pr-pais">
     <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="O Crea-SP no país, com dados públicos reais">
-      <Indicador destaque ctx={ctx} ficha="k-ativos" aspecto="Confea" label="Profissionais ativos no Crea-SP" value={int(sp.ativos)} sub={`${pct(sp.ativos / brasil.ativos * 100, 1)} dos ${int(brasil.ativos)} do país`} />
-      <Indicador ctx={ctx} ficha="k-densidade" aspecto="Confea e IBGE" label="Profissionais por 100 mil habitantes" value={int(sp.por100mil)} sub={`${posicao}º entre as 27 unidades da federação; no país, ${int(porMil)}`} />
-      <Indicador ctx={ctx} ficha="k-mulheres" aspecto="Confea" label="Mulheres entre os profissionais" value={sp.pctMulheres === null ? '—' : pct(sp.pctMulheres, 1)} sub={brasil.pctMulheres === null ? '' : `no país, ${pct(brasil.pctMulheres, 1)}`} />
-      <Indicador ctx={ctx} ficha="k-receita" aspecto="Portal da Transparência" label={`Receita do Crea-SP em ${ultimo.ano}`} value={brl(ultimo.receita ?? 0)}
+      <Indicador destaque ctx={ctx} ficha="k-ativos" aspecto="Real · Confea" label="Profissionais ativos no Crea-SP" value={int(sp.ativos)} sub={`${pct(sp.ativos / brasil.ativos * 100, 1)} dos ${int(brasil.ativos)} do país`} />
+      <Indicador ctx={ctx} ficha="k-densidade" aspecto="Real · Confea e IBGE" label="Profissionais por 100 mil habitantes" value={int(sp.por100mil)} sub={`${posicao}º entre as 27 unidades da federação; no país, ${int(porMil)}`} />
+      <Indicador ctx={ctx} ficha="k-mulheres" aspecto="Real · Confea" label="Mulheres entre os profissionais" value={sp.pctMulheres === null ? '—' : pct(sp.pctMulheres, 1)} sub={brasil.pctMulheres === null ? '' : `no país, ${pct(brasil.pctMulheres, 1)}`} />
+      <Indicador ctx={ctx} ficha="k-receita" aspecto="Real · Portal da Transparência" label={`Receita do Crea-SP em ${ultimo.ano}`} value={brl(ultimo.receita ?? 0)}
         variacao={{ value: ultimo.receita && penultimo.receita ? (ultimo.receita - penultimo.receita) / penultimo.receita * 100 : null, label: `em relação a ${penultimo.ano}` }} sub={`despesa paga de ${brl(ultimo.paga)}`} />
-      <Indicador ctx={ctx} ficha="k-art" aspecto="Portal da Transparência" label="Receita que vem da ART" value={art.parte === null ? '—' : pct(art.parte, 1)} sub={`${brl(art.valor)} de 2013 a ${contasPublicadas.aberto}, a maior conta de receita`} />
-      <Indicador ctx={ctx} ficha="k-execucao" aspecto="Portal da Transparência" label={`Despesa paga sobre a dotação em ${ultimo.ano}`} value={ultimo.dotacao ? pct(ultimo.paga / ultimo.dotacao * 100) : '—'}
+      <Indicador ctx={ctx} ficha="k-art" aspecto="Real · Portal da Transparência" label="Receita que vem da ART" value={art.parte === null ? '—' : pct(art.parte, 1)} sub={`${brl(art.valor)} de 2013 a ${contasPublicadas.aberto}, a maior conta de receita`} />
+      <Indicador ctx={ctx} ficha="k-execucao" aspecto="Real · Portal da Transparência" label={`Despesa paga sobre a dotação em ${ultimo.ano}`} value={ultimo.dotacao ? pct(ultimo.paga / ultimo.dotacao * 100) : '—'}
         sub={ultimo.dotacao && penultimo.dotacao ? `em ${penultimo.ano}, ${pct(penultimo.paga / penultimo.dotacao * 100)}; dotação de ${brl(ultimo.dotacao)}` : ''} />
     </section>
     <Bloco ctx={ctx} id="uf" area="uf" title="Profissionais por 100 mil habitantes" badge={<Selo data={fonteConfea.data} />} exportar={exportarUfs}><Ufs ctx={ctx} /></Bloco>
@@ -92,7 +93,8 @@ function Contas({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { trigger: 'axis', formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.ano}</b>${row.ano === contasPublicadas.aberto ? ' (até 08/09)' : ''}<br/>receita: ${brl(row.receita ?? 0)}<br/>despesa paga: ${brl(row.paga)}${row.dotacao ? `<br/>dotação: ${brl(row.dotacao)}` : ''}`; } },
     xAxis: eixoCategoria(tokens, rows.map(row => row.ano === contasPublicadas.aberto ? `${row.ano}*` : row.ano)), yAxis: eixoValor(tokens),
     series: [
-      { name: 'Receita realizada', type: 'bar', barMaxWidth: 16, itemStyle: { color: tokens.good }, data: rows.map(row => ({ value: row.receita, itemStyle: { color: tokens.good, opacity: row.ano === contasPublicadas.aberto ? 0.45 : 1, borderRadius: [2, 2, 0, 0] } })) },
+      { name: 'Receita realizada', type: 'bar', barMaxWidth: 16, itemStyle: { color: tokens.good }, data: rows.map(row => ({ value: row.receita, itemStyle: { color: tokens.good, opacity: row.ano === contasPublicadas.aberto ? 0.45 : 1, borderRadius: [2, 2, 0, 0] } })),
+        label: { show: true, position: 'top', fontSize: 11, color: tokens.ink, formatter: (p: any) => p.value && (rows.length - 2 - p.dataIndex) % 3 === 0 ? compacto(p.value) : '' }, labelLayout: { hideOverlap: true } },
       { name: 'Despesa paga', type: 'bar', barMaxWidth: 16, itemStyle: { color: tokens.bad }, data: rows.map(row => ({ value: row.paga, itemStyle: { color: tokens.bad, opacity: row.ano === contasPublicadas.aberto ? 0.45 : 1, borderRadius: [2, 2, 0, 0] } })) },
       { name: 'Dotação do orçamento', type: 'line', data: rows.map(row => row.dotacao), symbol: 'circle', symbolSize: 4, lineStyle: { color: tokens.muted, type: 'dashed', width: 1.5 }, itemStyle: { color: tokens.muted },
         endLabel: { show: true, fontSize: 11, color: tokens.muted, formatter: (p: any) => `R$ ${compacto(p.value)}` } },
@@ -113,7 +115,8 @@ function Registros({ ctx }: { ctx: CockpitCtx }) {
     xAxis: eixoCategoria(tokens, rows.map(row => row.ano)),
     yAxis: [eixoValor(tokens), { type: 'value', show: false, max: 100 }],
     series: [
-      { name: 'No país', type: 'bar', barMaxWidth: 16, data: rows.map(row => row.brasil), itemStyle: { color: tokens.heat[1], borderRadius: [2, 2, 0, 0] } },
+      { name: 'No país', type: 'bar', barMaxWidth: 16, data: rows.map(row => row.brasil), itemStyle: { color: tokens.heat[1], borderRadius: [2, 2, 0, 0] },
+        label: { show: true, position: 'insideTop', fontSize: 11, color: corDoTexto(tokens.heat[1]), formatter: (p: any) => (rows.length - 1 - p.dataIndex) % 3 === 0 ? compacto(p.value) : '' }, labelLayout: { hideOverlap: true } },
       { name: 'No Crea-SP', type: 'bar', barMaxWidth: 16, data: rows.map(row => row.sp), itemStyle: { color: tokens.accent, borderRadius: [2, 2, 0, 0] } },
       { name: 'Parte do Crea-SP', type: 'line', yAxisIndex: 1, data: rows.map(row => row.sp === null ? null : Math.round(row.sp / row.brasil * 1000) / 10), symbol: 'circle', symbolSize: 4, lineStyle: { color: tokens.ink, width: 1.5 }, itemStyle: { color: tokens.ink },
         label: { show: true, position: 'top', fontSize: 11, color: tokens.ink, formatter: (p: any) => p.value === null || !(p.dataIndex === primeiroSp || rows[p.dataIndex].ano === ultimoSp || (rows.length - 1 - p.dataIndex) % 3 === 0) ? '' : `${String(p.value).replace('.', ',')}%` }, labelLayout: { hideOverlap: true } },
