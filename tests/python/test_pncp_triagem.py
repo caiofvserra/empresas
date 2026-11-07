@@ -89,6 +89,8 @@ class Saida(unittest.TestCase):
         self.assertEqual(len(linha), len(COLUNAS_STAGING))
         d = dict(zip(COLUNAS_STAGING, linha))
         self.assertEqual((d['prob_engenharia'], d['suspeito'], d['desfecho_rito'], d['documentos_lidos'], d['orgao_cnpj']), ('0.8123', 'Sim', 'Sem sinal de rito', '2', '11111111000100'))
+        [pf] = ler_pagina({'data': [contrato(tipoPessoa='PF', niFornecedor='12345678909')]})
+        self.assertEqual(dict(zip(COLUNAS_STAGING, linha_staging('2026-11-07', pf, prob=0.9, suspeito=True, rito=None)))['fornecedor_ni'], '', 'CPF não vai para o staging')
         nao = dict(zip(COLUNAS_STAGING, linha_staging('2026-11-07', c, prob=0.1, suspeito=False, rito=None)))
         self.assertEqual((nao['suspeito'], nao['desfecho_rito'], nao['marcadores']), ('Não', 'Não analisado', ''))
 

@@ -26,7 +26,13 @@ Como funciona, em `scripts/pncp-triagem.py` e no pacote `scripts/pncp_triagem/`:
 4. Grava `var/pncp/triagem-sp.csv` (fora do Git, com número de controle, CNPJ e objeto) para a carga de `stg.pncp_triagem`, e `src/domain/pncp-triagem-sp.json`, só com números por município e mês, que o cartão lê.
 5. Na base interna, `integrations/sql/pncp-triagem-x-art.sql` cruza os suspeitos sem rito completo com as ARTs da empresa contratada (30 dias antes a 60 depois da publicação, a ART com o órgão como contratante primeiro) e com o registro no Crea-SP na data da publicação. A view de ART que ele supõe (`bi.vw_art`) ainda precisa ser homologada com a TI.
 
-Para rodar no Colab, onde o pacote já está no Drive e a GPU faz os embeddings em minutos:
+A rotina é automática, no GitHub Actions (`.github/workflows/pncp-triagem.yml`): todo dia 5, às 6h de Brasília, ela roda o script sobre o mês anterior, guarda o staging na release `pncp-triagem-dados` deste repositório (fora do Git, para a carga de `stg.pncp_triagem`), faz o commit do `pncp-triagem-sp.json` e refaz o HTML de entrega. A primeira rodada, sem staging guardado, cobre os 12 meses anteriores. Roda também à mão, em Actions > Triagem do PNCP > Run workflow, com datas opcionais. A máquina do GitHub não tem GPU: os embeddings de um mês levam alguns minutos e a leitura dos documentos, uma a duas horas.
+
+Uma vez só, antes da primeira rodada, o pacote do modelo precisa estar no repositório: em Releases > Draft a new release, crie a tag `modelo-pncp`, anexe o `pacote_reuso.joblib` do Drive (560 MB, o limite é 2 GB) e publique. Se o carregamento do pacote avisar de versão diferente do scikit-learn, crie a variável `SKLEARN_VERSAO` em Settings > Secrets and variables > Actions com a versão do treino.
+
+O CPF de fornecedor pessoa física não é gravado no staging: o cruzamento é só com empresas.
+
+Para rodar à mão no Colab, onde o pacote já está no Drive e a GPU faz os embeddings em minutos:
 
 ```
 from google.colab import drive; drive.mount('/content/drive')
