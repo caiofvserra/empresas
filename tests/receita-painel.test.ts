@@ -35,3 +35,20 @@ test('quadro da Receita no recorte: a GRE e o município escolhidos limitam toda
   assert.deepEqual({ sim: cidade.sim, aberturas: cidade.aberturas, baixas: cidade.baixas }, { sim: 10, aberturas: 5, baixas: 1 });
   assert.deepEqual(cidade.atividades, [{ cnae: '7112-0/00', n: 6 }, { cnae: '4120-4/00', n: 5 }]);
 });
+
+test('aberturas da Receita no ritmo da Evolução: soma de 12 meses só com os 12 meses no arquivo, e o índice e a variação refeitos com o dado real', async () => {
+  const { comAberturasReais } = await import('../src/domain/empresas.ts');
+  const meses = mesesDoArquivo({ desde: '2025-01', competencia: '2026-02' }).map((mes, k) => ({ mes, aberturas: 10 + k }));
+  const pontos = ['2025-11', '2025-12', '2026-01', '2026-02', '2026-03'].map(month => ({ month, emprego: 100, aberturas12: 999, registros12: 50, credito: 1, pib: 1 }));
+  const fic = { pontos, indice: { emprego: [100, 100, 100, 100, 100], aberturas12: [100, 100, 100, 100, 100], registros12: [100, 100, 100, 100, 100], credito: [100, 100, 100, 100, 100], pib: [100, 100, 100, 100, 100] },
+    variacao: { emprego: 0, aberturas12: 0, registros12: 0, credito: 0, pib: 0 }, ultimoMesReceita: '2026-03' };
+  const r = comAberturasReais(fic, meses);
+  // jan/2025 a dez/2025 = 10+...+21 = 186; fev/2025 a jan/2026 = 198; mar/2025 a fev/2026 = 210.
+  assert.deepEqual(r.pontos.map(p => p.aberturas12), [null, 186, 198, 210, null], 'sem os 12 meses no arquivo, o mês fica vazio, e depois do último mês do arquivo também');
+  assert.deepEqual(r.indice.aberturas12, [null, null, null, null, null], 'o índice parte do primeiro mês da janela, que aqui não tem a soma completa');
+  assert.equal(r.ultimoMesReceita, '2026-02');
+  assert.deepEqual(r.pontos.map(p => p.registros12), [50, 50, 50, 50, 50], 'as outras séries não mudam');
+  const r2 = comAberturasReais({ ...fic, pontos: fic.pontos.slice(1, 4) }, meses);
+  assert.deepEqual(r2.indice.aberturas12, [100, 106.5, 112.9]);
+  assert.equal(Math.round(r2.variacao.aberturas12! * 10) / 10, 12.9);
+});

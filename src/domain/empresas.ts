@@ -80,6 +80,20 @@ export function ritmoEconomico(view: Dataset, greId: string | null, companyIds: 
   return { pontos, indice, variacao, ultimoMesReceita: ultimoReceita };
 }
 
+/**
+ * A série das abertas na Receita trocada pelo dado real dos dados abertos do CNPJ (07/11/2026): soma de 12 meses, só quando os 12
+ * meses estão no arquivo, e vazia depois do último mês dele. O índice e a variação dessa série são refeitos; as outras não mudam.
+ */
+export function comAberturasReais(r: Ritmo, meses: { mes: string; aberturas: number }[]): Ritmo {
+  const posicao = new Map(meses.map((row, i) => [row.mes, i])), ultimo = meses.at(-1)?.mes ?? r.ultimoMesReceita;
+  const soma12 = (month: string) => { const i = posicao.get(month); return i === undefined || i < 11 ? null : sum(meses.slice(i - 11, i + 1).map(row => row.aberturas)); };
+  const pontos = r.pontos.map(row => ({ ...row, aberturas12: soma12(row.month) }));
+  const base = pontos[0]?.aberturas12 ?? null, ultimoComValor = [...pontos].reverse().find(row => row.aberturas12 !== null)?.aberturas12 ?? null;
+  const indice = { ...r.indice, aberturas12: pontos.map(row => base && row.aberturas12 !== null ? Math.round(row.aberturas12 / base * 1000) / 10 : null) };
+  const variacao = { ...r.variacao, aberturas12: base && ultimoComValor !== null ? (ultimoComValor - base) / base * 100 : null };
+  return { pontos, indice, variacao, ultimoMesReceita: ultimo };
+}
+
 /* ---------- Atividades (CNAE) com mais estabelecimentos sem registro ---------- */
 /** Uma atividade (CNAE) do mercado. `secundaria` conta os estabelecimentos que também têm esta atividade como secundária, mas já foram contados na atividade que os enquadra; `agrupadas` só existe na linha "Outras atividades". */
 export interface LinhaCnae { code: string; label: string; classe: 'Sim' | 'Passível'; registrados: string[]; semRegistro: string[]; total: number; cobertura: number | null; secundaria: number; agrupadas?: LinhaCnae[] }

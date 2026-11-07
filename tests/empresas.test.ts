@@ -20,7 +20,7 @@ const scope = selectEnterpriseScope(dataset, { ...defaultFilters, period: 12 }),
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 
 test('painel de Empresas: quatro páginas próprias, separadas do painel geral', () => {
-  assert.deepEqual(pageIdsEmpresas, ['mercado', 'evolucao', 'rt', 'vinculos', 'cnpj']);
+  assert.deepEqual(pageIdsEmpresas, ['mercado', 'evolucao', 'rt', 'vinculos']);
   assert.ok(pageIdsEmpresas.every(page => painelDaPagina(page) === 'empresas'));
   assert.equal(painelDaPagina('receita'), 'financeiro');
 });
@@ -167,7 +167,7 @@ test('painel de Empresas enxuto: sem barra de aviso rolante, sem notas de rodap�
   const ui = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'ui.tsx'), 'utf8');
   assert.ok(ui.includes('!ctx.enxuto'), 'a pergunta do bloco precisa ir para o (i) no painel de Empresas');
   const css = readFileSync(join(import.meta.dirname, '..', 'src', 'empresas', 'empresas.css'), 'utf8');
-  for (const grade of ['mercado', 'evolucao', 'rt', 'vinculos', 'cnpj']) assert.match(css, new RegExp(`\\.ck-grid-${grade} \\{ grid-template-rows: [^;]*minmax\\(0, 1fr\\)`), `a grade ${grade} precisa dividir a altura da tela`);
+  for (const grade of ['mercado', 'evolucao', 'rt', 'vinculos']) assert.match(css, new RegExp(`\\.ck-grid-${grade} \\{ grid-template-rows: [^;]*minmax\\(0, 1fr\\)`), `a grade ${grade} precisa dividir a altura da tela`);
 });
 
 test('ARTs por modalidade em proporção aos profissionais ativos da mesma modalidade, com a média geral', () => {
