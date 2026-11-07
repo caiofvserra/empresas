@@ -1,0 +1,99 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "camaras-idade",
+  "position": {
+    "x": 16,
+    "y": 436,
+    "z": 14000,
+    "width": 411,
+    "height": 268,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Câmaras"
+                    }
+                  },
+                  "Property": "Câmara"
+                }
+              },
+              "queryRef": "Câmaras.Câmara",
+              "nativeQueryRef": "Câmara",
+              "active": true
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Foto dos processos"
+                    }
+                  },
+                  "Property": "Tempo em julgamento"
+                }
+              },
+              "queryRef": "Foto dos processos.Tempo em julgamento",
+              "nativeQueryRef": "Tempo em julgamento",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Processos em julgamento"
+                }
+              },
+              "queryRef": "Medidas.Processos em julgamento",
+              "nativeQueryRef": "Processos em julgamento",
+              "displayName": "Processos"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Há quanto tempo esperam julgamento'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

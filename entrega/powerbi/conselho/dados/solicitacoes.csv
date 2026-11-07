@@ -1,0 +1,1081 @@
+Solicitação;Código IBGE;GRE;Município do solicitante;Aberta em;Mês;Prazo;Resolvida em;Dias até resolver;Assunto;Solicitante;Canal;Distância do solicitante;Ordem da distância
+REQ-DEMO-2024-10-1;3550308;GRE 5;3550308;2024-10-18;2024-10-01;2024-11-01;2024-10-26;8;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-10-2;3530706;GRE 12;3500303;2024-10-19;2024-10-01;2024-11-02;2024-10-23;4;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2024-10-3;3541000;GRE 7;3520301;2024-10-18;2024-10-01;2024-11-01;;;Esclarecimento de registro;Empresa;Presencial;mais de 75 km;5
+REQ-DEMO-2024-10-4;3529005;GRE 16;3517000;2024-10-19;2024-10-01;2024-11-02;2024-11-09;21;Informação sobre atribuições;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-10-5;3549904;GRE 6;3513405;2024-10-19;2024-10-01;2024-11-02;2024-11-01;13;Orientação sobre ART;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2024-10-6;3518800;GRE 13;3518800;2024-10-20;2024-10-01;2024-11-03;2024-10-29;9;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-10-7;3526902;GRE 4;3525854;2024-10-20;2024-10-01;2024-11-03;2024-10-21;1;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-10-8;3502804;GRE 1;3502101;2024-10-20;2024-10-01;2024-11-03;2024-11-14;25;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-10-9;3548500;GRE 7;3537602;2024-10-20;2024-10-01;2024-11-03;2024-11-06;17;Informação sobre atribuições;Empresa;Telefone;50 a 75 km;4
+REQ-DEMO-2024-10-10;3529005;GRE 16;3542008;2024-10-04;2024-10-01;2024-10-18;2024-10-15;11;Informação sobre atribuições;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-10-11;3526902;GRE 4;3538709;2024-10-04;2024-10-01;2024-10-18;2024-10-23;19;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-10-12;3518800;GRE 13;3518800;2024-10-05;2024-10-01;2024-10-19;2024-11-01;27;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2024-10-13;3548500;GRE 7;3513504;2024-10-05;2024-10-01;2024-10-19;;;Orientação sobre ART;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2024-10-14;3502804;GRE 1;3548401;2024-10-05;2024-10-01;2024-10-19;2024-10-20;15;Informação sobre atribuições;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2024-10-15;3541406;GRE 15;3541208;2024-10-05;2024-10-01;2024-10-19;2024-10-28;23;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2024-10-16;3547809;GRE 14;3544103;2024-10-06;2024-10-01;2024-10-20;2024-10-09;3;Orientação sobre ART;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2024-10-17;3506003;GRE 8;3533809;2024-10-06;2024-10-01;2024-10-20;2024-10-18;12;Informação sobre atribuições;Profissional;Telefone;mais de 75 km;5
+REQ-DEMO-2024-10-18;3509502;GRE 2;3520509;2024-10-06;2024-10-01;2024-10-20;2024-10-26;20;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2024-10-19;3548906;GRE 10;3543709;2024-10-07;2024-10-01;2024-10-21;2024-11-04;28;Atualização cadastral;Empresa;E-mail;25 a 50 km;3
+REQ-DEMO-2024-10-20;3549805;GRE 9;3551306;2024-10-17;2024-10-01;2024-10-31;2024-10-30;13;Esclarecimento de registro;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2024-10-21;3534401;GRE 5;3550308;2024-10-17;2024-10-01;2024-10-31;2024-10-22;5;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-10-22;3516200;GRE 3;3505500;2024-10-18;2024-10-01;2024-11-01;2024-10-19;1;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-10-23;3543402;GRE 3;3543402;2024-10-18;2024-10-01;2024-11-01;2024-11-08;21;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-10-24;3503208;GRE 10;3543709;2024-10-19;2024-10-01;2024-11-02;2024-11-05;17;Atualização cadastral;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-10-25;3525904;GRE 2;3523909;2024-10-18;2024-10-01;2024-11-01;2024-10-27;9;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-10-26;3505708;GRE 5;3550308;2024-10-19;2024-10-01;2024-11-02;2024-10-25;6;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-10-27;3538709;GRE 4;3543907;2024-10-19;2024-10-01;2024-11-02;2024-11-13;25;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-10-28;3548500;GRE 7;3522109;2024-10-15;2024-10-01;2024-10-29;2024-10-19;4;Informação sobre atribuições;Empresa;E-mail;25 a 50 km;3
+REQ-DEMO-2024-10-29;3518800;GRE 13;3539806;2024-10-15;2024-10-01;2024-10-29;2024-11-08;24;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2024-10-30;3541000;GRE 7;3506359;2024-10-04;2024-10-01;2024-10-18;2024-10-16;12;Esclarecimento de registro;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2024-10-31;3530706;GRE 12;3549102;2024-10-05;2024-10-01;2024-10-19;2024-10-25;20;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-10-32;3550308;GRE 5;3505708;2024-10-04;2024-10-01;2024-10-18;;;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-10-33;3507506;GRE 8;3520905;2024-10-04;2024-10-01;2024-10-18;2024-10-08;4;Orientação sobre ART;Profissional;Presencial;mais de 75 km;5
+REQ-DEMO-2024-10-34;3554102;GRE 6;3549904;2024-10-03;2024-10-01;2024-10-17;2024-10-10;7;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-10-35;3552205;GRE 11;3522307;2024-10-03;2024-10-01;2024-10-17;2024-10-19;16;Esclarecimento de registro;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2024-10-36;3538709;GRE 4;3538709;2024-10-03;2024-10-01;2024-10-17;2024-10-22;19;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-10-37;3505708;GRE 5;3550308;2024-10-03;2024-10-01;2024-10-17;2024-10-30;27;Orientação sobre ART;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-10-38;3541406;GRE 15;3541406;2024-10-07;2024-10-01;2024-10-21;2024-10-28;21;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-10-39;3547809;GRE 14;3529401;2024-10-07;2024-10-01;2024-10-21;2024-10-08;1;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2024-10-40;3509502;GRE 2;3545209;2024-10-18;2024-10-01;2024-11-01;2024-11-01;14;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-10-41;3506003;GRE 8;3506003;2024-10-17;2024-10-01;2024-10-31;2024-10-23;6;Esclarecimento de registro;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-10-42;3547809;GRE 14;3529401;2024-10-17;2024-10-01;2024-10-31;2024-11-12;26;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2024-10-43;3541406;GRE 15;3500808;2024-10-17;2024-10-01;2024-10-31;2024-11-04;18;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2024-10-44;3502804;GRE 1;3511003;2024-10-17;2024-10-01;2024-10-31;2024-10-27;10;Atualização cadastral;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2024-10-45;3548500;GRE 7;3548500;2024-10-16;2024-10-01;2024-10-30;2024-10-17;1;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-11-1;3505708;GRE 5;3534401;2024-11-23;2024-11-01;2024-12-07;2024-12-07;14;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2024-11-2;3554102;GRE 6;3524907;2024-11-23;2024-11-01;2024-12-07;2024-12-15;22;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-11-3;3552205;GRE 11;3552205;2024-11-24;2024-11-01;2024-12-08;;;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-11-4;3543402;GRE 3;3543600;2024-11-22;2024-11-01;2024-12-06;2024-11-24;2;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2024-11-5;3516200;GRE 3;3542701;2024-11-22;2024-11-01;2024-12-06;2024-12-02;10;Orientação sobre ART;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2024-11-6;3525904;GRE 2;3520509;2024-11-22;2024-11-01;2024-12-06;2024-12-10;18;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-11-7;3503208;GRE 10;3554755;2024-11-23;2024-11-01;2024-12-07;2024-12-19;26;Atualização cadastral;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2024-11-8;3509502;GRE 2;3509502;2024-11-20;2024-11-01;2024-12-04;2024-12-15;25;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-11-9;3548906;GRE 10;3554755;2024-11-21;2024-11-01;2024-12-05;2024-11-27;6;Atualização cadastral;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2024-11-10;3516200;GRE 3;3551702;2024-11-13;2024-11-01;2024-11-27;2024-11-15;2;Esclarecimento de registro;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2024-11-11;3543402;GRE 3;3516200;2024-11-13;2024-11-01;2024-11-27;2024-12-05;22;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-11-12;3549805;GRE 9;3532843;2024-11-13;2024-11-01;2024-11-27;;;Atualização cadastral;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2024-11-13;3534401;GRE 5;3550308;2024-11-12;2024-11-01;2024-11-26;2024-11-18;6;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-11-14;3548906;GRE 10;3543709;2024-11-12;2024-11-01;2024-11-26;2024-12-08;26;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2024-11-15;3509502;GRE 2;3525904;2024-11-12;2024-11-01;2024-11-26;2024-11-30;18;Orientação sobre ART;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-11-16;3506003;GRE 8;3507506;2024-11-12;2024-11-01;2024-11-26;2024-11-22;10;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2024-11-17;3547809;GRE 14;3543303;2024-11-11;2024-11-01;2024-11-25;2024-11-13;2;Esclarecimento de registro;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2024-11-18;3507506;GRE 8;3539400;2024-11-16;2024-11-01;2024-11-30;2024-11-27;11;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2024-11-19;3550308;GRE 5;3522505;2024-11-15;2024-11-01;2024-11-29;;;Esclarecimento de registro;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2024-11-20;3549904;GRE 6;3549904;2024-11-13;2024-11-01;2024-11-27;;;Esclarecimento de registro;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-11-21;3529005;GRE 16;3527108;2024-11-14;2024-11-01;2024-11-28;2024-11-25;11;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2024-11-22;3541000;GRE 7;3518701;2024-11-13;2024-11-01;2024-11-27;2024-11-28;15;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2024-11-23;3530706;GRE 12;3523800;2024-11-13;2024-11-01;2024-11-27;2024-12-06;23;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2024-11-24;3548500;GRE 7;3518701;2024-11-15;2024-11-01;2024-11-29;2024-11-22;7;Atualização cadastral;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2024-11-25;3502804;GRE 1;3555208;2024-11-15;2024-11-01;2024-11-29;2024-11-30;15;Orientação sobre ART;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2024-11-26;3526902;GRE 4;3538709;2024-11-14;2024-11-01;2024-11-28;2024-12-03;19;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-11-27;3518800;GRE 13;3528502;2024-11-14;2024-11-01;2024-11-28;2024-12-11;27;Esclarecimento de registro;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2024-11-28;3538709;GRE 4;3554706;2024-11-11;2024-11-01;2024-11-25;2024-12-03;22;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-11-29;3505708;GRE 5;3516309;2024-11-11;2024-11-01;2024-11-25;2024-11-13;2;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2024-11-30;3502804;GRE 1;3506201;2024-11-13;2024-11-01;2024-11-27;2024-12-11;28;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-11-31;3548500;GRE 7;3541000;2024-11-12;2024-11-01;2024-11-26;2024-12-02;20;Esclarecimento de registro;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-11-32;3547809;GRE 14;3529401;2024-11-13;2024-11-01;2024-11-27;2024-11-29;16;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2024-11-33;3541406;GRE 15;3515301;2024-11-13;2024-11-01;2024-11-27;2024-11-21;8;Orientação sobre ART;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2024-11-34;3529005;GRE 16;3529005;2024-11-11;2024-11-01;2024-11-25;;;Esclarecimento de registro;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-11-35;3549904;GRE 6;3555406;2024-11-11;2024-11-01;2024-11-25;2024-11-26;15;Informação sobre atribuições;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2024-11-36;3518800;GRE 13;3518800;2024-11-12;2024-11-01;2024-11-26;2024-11-24;12;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-11-37;3526902;GRE 4;3543907;2024-11-12;2024-11-01;2024-11-26;2024-11-16;4;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-11-38;3507506;GRE 8;3506003;2024-11-10;2024-11-01;2024-11-24;2024-11-29;19;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-11-39;3550308;GRE 5;3552809;2024-11-10;2024-11-01;2024-11-24;2024-11-21;11;Orientação sobre ART;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2024-11-40;3507506;GRE 8;3506003;2024-11-23;2024-11-01;2024-12-07;2024-12-03;10;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-11-41;3516200;GRE 3;3524204;2024-11-09;2024-11-01;2024-11-23;2024-11-24;15;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-11-42;3525904;GRE 2;3509502;2024-11-10;2024-11-01;2024-11-24;2024-12-03;23;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-11-43;3503208;GRE 10;3529302;2024-11-10;2024-11-01;2024-11-24;;;Informação sobre atribuições;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2024-11-44;3538709;GRE 4;3554508;2024-11-10;2024-11-01;2024-11-24;2024-11-21;11;Esclarecimento de registro;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2024-11-45;3505708;GRE 5;3550308;2024-11-11;2024-11-01;2024-11-25;2024-11-30;19;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-12-1;3509502;GRE 2;3525201;2024-12-17;2024-12-01;2024-12-31;2024-12-30;13;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2024-12-2;3506003;GRE 8;3506003;2024-12-16;2024-12-01;2024-12-30;2024-12-20;4;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-3;3547809;GRE 14;3547809;2024-12-16;2024-12-01;2024-12-30;2025-01-09;24;Orientação sobre ART;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-12-4;3541406;GRE 15;3545506;2024-12-16;2024-12-01;2024-12-30;2025-01-01;16;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2024-12-5;3502804;GRE 1;3511904;2024-12-15;2024-12-01;2024-12-29;2024-12-23;8;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-12-6;3548500;GRE 7;3537602;2024-12-15;2024-12-01;2024-12-29;;;Informação sobre atribuições;Empresa;Presencial;50 a 75 km;4
+REQ-DEMO-2024-12-7;3518800;GRE 13;3507605;2024-12-15;2024-12-01;2024-12-29;2025-01-04;20;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-12-8;3505708;GRE 5;3550308;2024-12-19;2024-12-01;2025-01-02;2024-12-20;1;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-9;3538709;GRE 4;3511508;2024-12-19;2024-12-01;2025-01-02;2025-01-09;21;Orientação sobre ART;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2024-12-10;3541406;GRE 15;3528908;2024-12-11;2024-12-01;2024-12-25;2024-12-12;1;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2024-12-11;3547809;GRE 14;3548807;2024-12-12;2024-12-01;2024-12-26;2024-12-21;9;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2024-12-12;3548500;GRE 7;3522109;2024-12-11;2024-12-01;2024-12-25;2024-12-24;13;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-12-13;3502804;GRE 1;3502804;2024-12-11;2024-12-01;2024-12-25;2025-01-01;21;Informação sobre atribuições;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-12-14;3548906;GRE 10;3524303;2024-12-13;2024-12-01;2024-12-27;2024-12-18;5;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-12-15;3534401;GRE 5;3550308;2024-12-13;2024-12-01;2024-12-27;2024-12-26;13;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-16;3506003;GRE 8;3506003;2024-12-12;2024-12-01;2024-12-26;;;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-17;3509502;GRE 2;3509502;2024-12-12;2024-12-01;2024-12-26;2025-01-06;25;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-18;3516200;GRE 3;3543402;2024-12-14;2024-12-01;2024-12-28;2024-12-24;10;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-12-19;3525904;GRE 2;3523909;2024-12-14;2024-12-01;2024-12-28;2025-01-01;18;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-12-20;3530706;GRE 12;3530706;2024-12-08;2024-12-01;2024-12-22;2024-12-15;7;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-12-21;3541000;GRE 7;3518701;2024-12-07;2024-12-01;2024-12-21;2025-01-03;27;Esclarecimento de registro;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2024-12-22;3507506;GRE 8;3507506;2024-12-07;2024-12-01;2024-12-21;2024-12-26;19;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-12-23;3550308;GRE 5;3552809;2024-12-07;2024-12-01;2024-12-21;;;Orientação sobre ART;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2024-12-24;3552205;GRE 11;3557006;2024-12-07;2024-12-01;2024-12-21;2024-12-10;3;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2024-12-25;3554102;GRE 6;3546009;2024-12-06;2024-12-01;2024-12-20;2024-12-28;22;Informação sobre atribuições;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2024-12-26;3505708;GRE 5;3550308;2024-12-06;2024-12-01;2024-12-20;2024-12-20;14;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-27;3538709;GRE 4;3526902;2024-12-06;2024-12-01;2024-12-20;2024-12-12;6;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2024-12-28;3503208;GRE 10;3548906;2024-12-05;2024-12-01;2024-12-19;2024-12-31;26;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-12-29;3530706;GRE 12;3524709;2024-12-19;2024-12-01;2025-01-02;2025-01-10;22;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2024-12-30;3543402;GRE 3;3506102;2024-12-08;2024-12-01;2024-12-22;2024-12-14;6;Atualização cadastral;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2024-12-31;3516200;GRE 3;3516200;2024-12-08;2024-12-01;2024-12-22;2024-12-23;15;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-32;3525904;GRE 2;3509502;2024-12-08;2024-12-01;2024-12-22;2024-12-31;23;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-33;3503208;GRE 10;3548906;2024-12-08;2024-12-01;2024-12-22;2024-12-11;3;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-12-34;3505708;GRE 5;3513009;2024-12-20;2024-12-01;2025-01-03;2024-12-26;6;Esclarecimento de registro;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2024-12-35;3554102;GRE 6;3527207;2024-12-21;2024-12-01;2025-01-04;2025-01-04;14;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2024-12-36;3534401;GRE 5;3550308;2024-12-07;2024-12-01;2024-12-21;2024-12-25;18;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-37;3549805;GRE 9;3512902;2024-12-07;2024-12-01;2024-12-21;2025-01-02;26;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2024-12-38;3516200;GRE 3;3516200;2024-12-19;2024-12-01;2025-01-02;2024-12-21;2;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2024-12-39;3525904;GRE 2;3509502;2024-12-19;2024-12-01;2025-01-02;2024-12-29;10;Esclarecimento de registro;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2024-12-40;3534401;GRE 5;3550308;2024-12-21;2024-12-01;2025-01-04;2024-12-31;10;Esclarecimento de registro;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2024-12-41;3548906;GRE 10;3516853;2024-12-21;2024-12-01;2025-01-04;2024-12-23;2;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2024-12-42;3543402;GRE 3;3516200;2024-12-22;2024-12-01;2025-01-05;2025-01-17;26;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2024-12-43;3549805;GRE 9;3557105;2024-12-22;2024-12-01;2025-01-05;2025-01-09;18;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2024-12-44;3541406;GRE 15;3540853;2024-12-09;2024-12-01;2024-12-23;2024-12-19;10;Atualização cadastral;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2024-12-45;3516200;GRE 3;3516200;2024-12-22;2024-12-01;2025-01-05;2024-12-28;6;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-1;3530706;GRE 12;3556404;2025-01-10;2025-01-01;2025-01-24;2025-01-31;21;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-01-2;3549904;GRE 6;3538006;2025-01-10;2025-01-01;2025-01-24;2025-01-11;1;Esclarecimento de registro;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-01-3;3529005;GRE 16;3534708;2025-01-11;2025-01-01;2025-01-25;2025-01-20;9;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-01-4;3526902;GRE 4;3501608;2025-01-11;2025-01-01;2025-01-25;2025-01-29;18;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-01-5;3518800;GRE 13;3518800;2025-01-11;2025-01-01;2025-01-25;;;Informação sobre atribuições;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-01-6;3548500;GRE 7;3542602;2025-01-12;2025-01-01;2025-01-26;2025-01-18;6;Atualização cadastral;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-01-7;3502804;GRE 1;3520442;2025-01-12;2025-01-01;2025-01-26;2025-01-26;14;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-01-8;3541406;GRE 15;3528700;2025-01-12;2025-01-01;2025-01-26;2025-02-03;22;Informação sobre atribuições;Empresa;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-01-9;3547809;GRE 14;3548708;2025-01-12;2025-01-01;2025-01-26;2025-01-14;2;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-01-10;3552205;GRE 11;3521705;2025-01-22;2025-01-01;2025-02-05;2025-02-16;25;Informação sobre atribuições;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-01-11;3554102;GRE 6;3508603;2025-01-22;2025-01-01;2025-02-05;2025-02-08;17;Orientação sobre ART;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-01-12;3505708;GRE 5;3550308;2025-01-22;2025-01-01;2025-02-05;;;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-13;3538709;GRE 4;3543907;2025-01-21;2025-01-01;2025-02-04;2025-02-18;28;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-14;3530706;GRE 12;3537107;2025-01-23;2025-01-01;2025-02-06;2025-01-24;1;Esclarecimento de registro;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2025-01-15;3541000;GRE 7;3513504;2025-01-23;2025-01-01;2025-02-06;2025-02-13;21;Informação sobre atribuições;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-01-16;3507506;GRE 8;3539400;2025-01-23;2025-01-01;2025-02-06;2025-02-05;13;Atualização cadastral;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-01-17;3550308;GRE 5;3515004;2025-01-22;2025-01-01;2025-02-05;2025-01-27;5;Esclarecimento de registro;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-01-18;3518800;GRE 13;3507605;2025-01-25;2025-01-01;2025-02-08;2025-01-30;5;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-01-19;3526902;GRE 4;3543907;2025-01-24;2025-01-01;2025-02-07;;;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-20;3541406;GRE 15;3502408;2025-01-22;2025-01-01;2025-02-05;;;Esclarecimento de registro;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2025-01-21;3547809;GRE 14;3548708;2025-01-23;2025-01-01;2025-02-06;2025-01-28;5;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-01-22;3548500;GRE 7;3541000;2025-01-22;2025-01-01;2025-02-05;2025-01-31;9;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-23;3502804;GRE 1;3506201;2025-01-22;2025-01-01;2025-02-05;2025-02-08;17;Orientação sobre ART;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-01-24;3526902;GRE 4;3501608;2025-01-21;2025-01-01;2025-02-04;2025-02-11;21;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-01-25;3518800;GRE 13;3518800;2025-01-21;2025-01-01;2025-02-04;2025-01-22;1;Esclarecimento de registro;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-01-26;3549904;GRE 6;3549904;2025-01-21;2025-01-01;2025-02-04;2025-01-26;5;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-27;3529005;GRE 16;3513306;2025-01-21;2025-01-01;2025-02-04;2025-02-03;13;Orientação sobre ART;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-01-28;3516200;GRE 3;3505500;2025-01-25;2025-01-01;2025-02-08;2025-01-31;6;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-29;3525904;GRE 2;3520509;2025-01-25;2025-01-01;2025-02-08;;;Orientação sobre ART;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2025-01-30;3534401;GRE 5;3510609;2025-01-21;2025-01-01;2025-02-04;2025-02-12;22;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-01-31;3548906;GRE 10;3548906;2025-01-21;2025-01-01;2025-02-04;2025-02-04;14;Informação sobre atribuições;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-01-32;3543402;GRE 3;3543402;2025-01-22;2025-01-01;2025-02-05;2025-02-01;10;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-33;3549805;GRE 9;3549805;2025-01-22;2025-01-01;2025-02-05;2025-01-24;2;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-01-34;3525904;GRE 2;3509502;2025-01-23;2025-01-01;2025-02-06;2025-02-19;27;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-01-35;3516200;GRE 3;3543600;2025-01-22;2025-01-01;2025-02-05;2025-02-10;19;Esclarecimento de registro;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-01-36;3538709;GRE 4;3537503;2025-01-23;2025-01-01;2025-02-06;2025-02-07;15;Informação sobre atribuições;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-01-37;3503208;GRE 10;3548906;2025-01-23;2025-01-01;2025-02-06;;;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-38;3518800;GRE 13;3530607;2025-01-19;2025-01-01;2025-02-02;2025-02-01;13;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-01-39;3526902;GRE 4;3526902;2025-01-19;2025-01-01;2025-02-02;2025-01-24;5;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-01-40;3507506;GRE 8;3541059;2025-01-22;2025-01-01;2025-02-05;2025-02-14;23;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-01-41;3541000;GRE 7;3551009;2025-01-22;2025-01-01;2025-02-05;2025-01-25;3;Orientação sobre ART;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-01-42;3530706;GRE 12;3549102;2025-01-22;2025-01-01;2025-02-05;2025-02-02;11;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-01-43;3549904;GRE 6;3518404;2025-01-22;2025-01-01;2025-02-05;2025-02-10;19;Esclarecimento de registro;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-01-44;3505708;GRE 5;3550308;2025-01-20;2025-01-01;2025-02-03;2025-02-07;18;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-01-45;3554102;GRE 6;3538006;2025-01-21;2025-01-01;2025-02-04;2025-02-16;26;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-02-1;3554102;GRE 6;3549904;2025-02-25;2025-02-01;2025-03-11;2025-03-23;26;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-02-2;3505708;GRE 5;3550308;2025-02-25;2025-02-01;2025-03-11;2025-03-15;18;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-02-3;3538709;GRE 4;3526902;2025-02-24;2025-02-01;2025-03-10;2025-03-06;10;Esclarecimento de registro;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-02-4;3530706;GRE 12;3547502;2025-02-01;2025-02-01;2025-02-15;2025-02-11;10;Esclarecimento de registro;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-02-5;3541000;GRE 7;3513504;2025-02-01;2025-02-01;2025-02-15;2025-02-03;2;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-02-6;3507506;GRE 8;3520905;2025-02-01;2025-02-01;2025-02-15;;;Orientação sobre ART;Empresa;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-02-7;3550308;GRE 5;3550308;2025-02-01;2025-02-01;2025-02-15;2025-02-15;14;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-02-8;3549805;GRE 9;3504800;2025-02-23;2025-02-01;2025-03-09;2025-03-20;25;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-02-9;3534401;GRE 5;3516309;2025-02-23;2025-02-01;2025-03-09;2025-03-12;17;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-02-10;3518800;GRE 13;3518800;2025-02-06;2025-02-01;2025-02-20;;;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-02-11;3548500;GRE 7;3548500;2025-02-06;2025-02-01;2025-02-20;2025-02-24;18;Esclarecimento de registro;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-02-12;3529005;GRE 16;3527801;2025-02-06;2025-02-01;2025-02-20;2025-02-27;21;Atualização cadastral;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-02-13;3526902;GRE 4;3500600;2025-02-06;2025-02-01;2025-02-20;2025-02-07;1;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-02-14;3530706;GRE 12;3530706;2025-02-05;2025-02-01;2025-02-19;2025-02-10;5;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-02-15;3549904;GRE 6;3549607;2025-02-05;2025-02-01;2025-02-19;2025-02-18;13;Esclarecimento de registro;Empresa;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-02-16;3507506;GRE 8;3506003;2025-02-04;2025-02-01;2025-02-18;2025-02-21;17;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-02-17;3541000;GRE 7;3524600;2025-02-05;2025-02-01;2025-02-19;2025-03-02;25;Atualização cadastral;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-02-18;3552205;GRE 11;3552205;2025-02-04;2025-02-01;2025-02-18;2025-02-05;1;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-02-19;3550308;GRE 5;3550308;2025-02-04;2025-02-01;2025-02-18;2025-02-13;9;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-02-20;3538709;GRE 4;3545803;2025-02-06;2025-02-01;2025-02-20;2025-02-15;9;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-02-21;3503208;GRE 10;3554755;2025-02-06;2025-02-01;2025-02-20;2025-02-07;1;Atualização cadastral;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-02-22;3525904;GRE 2;3523404;2025-02-05;2025-02-01;2025-02-19;;;Esclarecimento de registro;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2025-02-23;3516200;GRE 3;3509403;2025-02-05;2025-02-01;2025-02-19;2025-02-18;13;Informação sobre atribuições;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2025-02-24;3550308;GRE 5;3550308;2025-02-07;2025-02-01;2025-02-21;2025-02-20;13;Informação sobre atribuições;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-02-25;3552205;GRE 11;3543501;2025-02-07;2025-02-01;2025-02-21;2025-02-12;5;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-02-26;3554102;GRE 6;3538006;2025-02-07;2025-02-01;2025-02-21;2025-03-04;25;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-02-27;3505708;GRE 5;3550308;2025-02-06;2025-02-01;2025-02-20;2025-02-23;17;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-02-28;3509502;GRE 2;3536505;2025-02-04;2025-02-01;2025-02-18;2025-03-04;28;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-02-29;3506003;GRE 8;3521804;2025-02-03;2025-02-01;2025-02-17;2025-02-23;20;Esclarecimento de registro;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2025-02-30;3549805;GRE 9;3540408;2025-02-07;2025-02-01;2025-02-21;2025-02-19;12;Orientação sobre ART;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-02-31;3543402;GRE 3;3551702;2025-02-07;2025-02-01;2025-02-21;2025-02-27;20;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-02-32;3516200;GRE 3;3505609;2025-02-07;2025-02-01;2025-02-21;;;Esclarecimento de registro;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-02-33;3525904;GRE 2;3519071;2025-02-08;2025-02-01;2025-02-22;2025-02-16;8;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-02-34;3503208;GRE 10;3546900;2025-02-08;2025-02-01;2025-02-22;2025-02-24;16;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-02-35;3538709;GRE 4;3538709;2025-02-08;2025-02-01;2025-02-22;2025-03-04;24;Esclarecimento de registro;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-02-36;3505708;GRE 5;3510609;2025-02-09;2025-02-01;2025-02-23;2025-02-14;5;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-02-37;3554102;GRE 6;3546009;2025-02-09;2025-02-01;2025-02-23;2025-02-22;13;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-02-38;3548500;GRE 7;3548500;2025-02-05;2025-02-01;2025-02-19;2025-02-08;3;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-02-39;3502804;GRE 1;3544400;2025-02-05;2025-02-01;2025-02-19;;;Orientação sobre ART;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-02-40;3548500;GRE 7;3541000;2025-02-10;2025-02-01;2025-02-24;2025-02-15;5;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-02-41;3518800;GRE 13;3518800;2025-02-10;2025-02-01;2025-02-24;2025-03-07;25;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-02-42;3541406;GRE 15;3555000;2025-02-11;2025-02-01;2025-02-25;2025-03-05;22;Orientação sobre ART;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2025-02-43;3502804;GRE 1;3556305;2025-02-11;2025-02-01;2025-02-25;2025-02-25;14;Atualização cadastral;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2025-02-44;3549904;GRE 6;3518404;2025-02-09;2025-02-01;2025-02-23;2025-02-10;1;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-02-45;3530706;GRE 12;3530706;2025-02-09;2025-02-01;2025-02-23;;;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-1;3541406;GRE 15;3541406;2025-03-23;2025-03-01;2025-04-06;2025-04-08;16;Esclarecimento de registro;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-03-2;3518800;GRE 13;3523107;2025-03-23;2025-03-01;2025-04-06;;;Atualização cadastral;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2025-03-3;3548500;GRE 7;3548500;2025-03-23;2025-03-01;2025-04-06;2025-04-20;28;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-4;3529005;GRE 16;3504008;2025-03-22;2025-03-01;2025-04-05;2025-03-25;3;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-5;3526902;GRE 4;3538709;2025-03-22;2025-03-01;2025-04-05;2025-04-02;11;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-6;3530706;GRE 12;3510807;2025-03-21;2025-03-01;2025-04-04;2025-04-05;15;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-03-7;3549904;GRE 6;3549904;2025-03-22;2025-03-01;2025-04-05;2025-04-14;23;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-03-8;3507506;GRE 8;3550100;2025-03-21;2025-03-01;2025-04-04;2025-04-17;27;Orientação sobre ART;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-03-9;3541000;GRE 7;3548500;2025-03-21;2025-03-01;2025-04-04;2025-03-28;7;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-03-10;3509502;GRE 2;3509502;2025-03-15;2025-03-01;2025-03-29;2025-03-16;1;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-11;3506003;GRE 8;3503604;2025-03-15;2025-03-01;2025-03-29;2025-04-05;21;Informação sobre atribuições;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-03-12;3534401;GRE 5;3550308;2025-03-16;2025-03-01;2025-03-30;2025-04-02;17;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-13;3548906;GRE 10;3519303;2025-03-16;2025-03-01;2025-03-30;;;Atualização cadastral;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-03-14;3502804;GRE 1;3555208;2025-03-14;2025-03-01;2025-03-28;2025-04-08;25;Informação sobre atribuições;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-03-15;3548500;GRE 7;3551009;2025-03-14;2025-03-01;2025-03-28;2025-03-31;17;Orientação sobre ART;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-03-16;3547809;GRE 14;3548807;2025-03-15;2025-03-01;2025-03-29;2025-03-28;13;Orientação sobre ART;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2025-03-17;3541406;GRE 15;3520608;2025-03-14;2025-03-01;2025-03-28;2025-03-19;5;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-03-18;3529005;GRE 16;3517208;2025-03-13;2025-03-01;2025-03-27;;;Orientação sobre ART;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-03-19;3549904;GRE 6;3504909;2025-03-13;2025-03-01;2025-03-27;2025-03-25;12;Atualização cadastral;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-03-20;3529005;GRE 16;3533700;2025-03-15;2025-03-01;2025-03-29;2025-04-12;28;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-03-21;3526902;GRE 4;3526902;2025-03-15;2025-03-01;2025-03-29;2025-03-23;8;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-03-22;3518800;GRE 13;3518800;2025-03-16;2025-03-01;2025-03-30;2025-04-01;16;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-03-23;3548500;GRE 7;3518701;2025-03-16;2025-03-01;2025-03-30;2025-04-09;24;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-03-24;3507506;GRE 8;3539400;2025-03-14;2025-03-01;2025-03-28;2025-04-06;23;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-03-25;3541000;GRE 7;3551009;2025-03-14;2025-03-01;2025-03-28;2025-03-17;3;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-03-26;3530706;GRE 12;3530805;2025-03-14;2025-03-01;2025-03-28;2025-03-26;12;Esclarecimento de registro;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-03-27;3549904;GRE 6;3510500;2025-03-15;2025-03-01;2025-03-29;2025-04-04;20;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-03-28;3509502;GRE 2;3509502;2025-03-17;2025-03-01;2025-03-31;2025-03-26;9;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-03-29;3548906;GRE 10;3529302;2025-03-18;2025-03-01;2025-04-01;2025-04-04;17;Atualização cadastral;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-03-30;3549805;GRE 9;3515905;2025-03-15;2025-03-01;2025-03-29;2025-04-12;28;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-03-31;3534401;GRE 5;3510609;2025-03-15;2025-03-01;2025-03-29;2025-04-04;20;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-03-32;3548906;GRE 10;3524303;2025-03-14;2025-03-01;2025-03-28;2025-03-26;12;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-03-33;3509502;GRE 2;3556503;2025-03-14;2025-03-01;2025-03-28;;;Informação sobre atribuições;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2025-03-34;3506003;GRE 8;3506003;2025-03-14;2025-03-01;2025-03-28;2025-04-07;24;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-35;3547809;GRE 14;3529401;2025-03-14;2025-03-01;2025-03-28;2025-03-30;16;Atualização cadastral;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-03-36;3541406;GRE 15;3549300;2025-03-13;2025-03-01;2025-03-27;2025-03-21;8;Esclarecimento de registro;Empresa;Telefone;50 a 75 km;4
+REQ-DEMO-2025-03-37;3502804;GRE 1;3530102;2025-03-13;2025-03-01;2025-03-27;2025-04-10;28;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-03-38;3552205;GRE 11;3508009;2025-03-17;2025-03-01;2025-03-31;2025-03-26;9;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-03-39;3554102;GRE 6;3524402;2025-03-17;2025-03-01;2025-03-31;2025-03-18;1;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-03-40;3506003;GRE 8;3506003;2025-03-11;2025-03-01;2025-03-25;2025-03-16;5;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-41;3509502;GRE 2;3509502;2025-03-11;2025-03-01;2025-03-25;2025-03-24;13;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-42;3541406;GRE 15;3516002;2025-03-11;2025-03-01;2025-03-25;2025-03-28;17;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-03-43;3547809;GRE 14;3547809;2025-03-11;2025-03-01;2025-03-25;2025-04-05;25;Orientação sobre ART;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-03-44;3548500;GRE 7;3548500;2025-03-10;2025-03-01;2025-03-24;2025-03-11;1;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-03-45;3502804;GRE 1;3502804;2025-03-10;2025-03-01;2025-03-24;;;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-04-1;3526902;GRE 4;3538709;2025-04-09;2025-04-01;2025-04-23;2025-05-06;27;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-04-2;3502804;GRE 1;3506201;2025-04-10;2025-04-01;2025-04-24;2025-05-03;23;Esclarecimento de registro;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-04-3;3548500;GRE 7;3541000;2025-04-10;2025-04-01;2025-04-24;2025-04-25;15;Orientação sobre ART;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-04-4;3547809;GRE 14;3548708;2025-04-11;2025-04-01;2025-04-25;2025-04-22;11;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-04-5;3541406;GRE 15;3552908;2025-04-11;2025-04-01;2025-04-25;2025-04-14;3;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-04-6;3509502;GRE 2;3523909;2025-04-11;2025-04-01;2025-04-25;2025-05-09;28;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-04-7;3506003;GRE 8;3520905;2025-04-11;2025-04-01;2025-04-25;2025-04-30;19;Informação sobre atribuições;Profissional;Presencial;mais de 75 km;5
+REQ-DEMO-2025-04-8;3552205;GRE 11;3510203;2025-04-07;2025-04-01;2025-04-21;2025-05-03;26;Esclarecimento de registro;Empresa;Presencial;50 a 75 km;4
+REQ-DEMO-2025-04-9;3554102;GRE 6;3509700;2025-04-07;2025-04-01;2025-04-21;2025-04-25;18;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-04-10;3549904;GRE 6;3524402;2025-04-05;2025-04-01;2025-04-19;2025-04-06;1;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-04-11;3529005;GRE 16;3504008;2025-04-05;2025-04-01;2025-04-19;2025-04-14;9;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-04-12;3526902;GRE 4;3502002;2025-04-05;2025-04-01;2025-04-19;;;Esclarecimento de registro;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-04-13;3518800;GRE 13;3538600;2025-04-06;2025-04-01;2025-04-20;2025-05-02;26;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-04-14;3548500;GRE 7;3518701;2025-04-06;2025-04-01;2025-04-20;2025-04-12;6;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-04-15;3502804;GRE 1;3527256;2025-04-06;2025-04-01;2025-04-20;2025-04-20;14;Esclarecimento de registro;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-04-16;3541406;GRE 15;3555000;2025-04-07;2025-04-01;2025-04-21;2025-04-29;22;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-04-17;3547809;GRE 14;3513801;2025-04-07;2025-04-01;2025-04-21;2025-04-09;2;Orientação sobre ART;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-04-18;3538709;GRE 4;3502002;2025-04-03;2025-04-01;2025-04-17;2025-04-23;20;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-04-19;3505708;GRE 5;3550308;2025-04-03;2025-04-01;2025-04-17;;;Orientação sobre ART;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-04-20;3548500;GRE 7;3551009;2025-04-09;2025-04-01;2025-04-23;2025-05-03;24;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-04-21;3518800;GRE 13;3507605;2025-04-09;2025-04-01;2025-04-23;2025-04-25;16;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-04-22;3541406;GRE 15;3500105;2025-04-09;2025-04-01;2025-04-23;;;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-04-23;3502804;GRE 1;3511904;2025-04-09;2025-04-01;2025-04-23;2025-04-13;4;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-04-24;3506003;GRE 8;3525300;2025-04-10;2025-04-01;2025-04-24;2025-04-11;1;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-04-25;3547809;GRE 14;3513801;2025-04-10;2025-04-01;2025-04-24;2025-04-30;20;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-04-26;3548906;GRE 10;3553203;2025-04-11;2025-04-01;2025-04-25;2025-04-28;17;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-04-27;3509502;GRE 2;3525904;2025-04-10;2025-04-01;2025-04-24;2025-04-19;9;Esclarecimento de registro;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-04-28;3549805;GRE 9;3501202;2025-04-11;2025-04-01;2025-04-25;2025-04-16;5;Informação sobre atribuições;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-04-29;3534401;GRE 5;3550308;2025-04-11;2025-04-01;2025-04-25;2025-05-06;25;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-04-30;3549904;GRE 6;3549904;2025-04-18;2025-04-01;2025-05-02;2025-04-21;3;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-04-31;3529005;GRE 16;3540101;2025-04-18;2025-04-01;2025-05-02;2025-04-29;11;Esclarecimento de registro;Empresa;Telefone;50 a 75 km;4
+REQ-DEMO-2025-04-32;3541000;GRE 7;3548500;2025-04-18;2025-04-01;2025-05-02;2025-05-03;15;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-04-33;3530706;GRE 12;3526704;2025-04-18;2025-04-01;2025-05-02;2025-05-11;23;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-04-34;3550308;GRE 5;3550308;2025-04-17;2025-04-01;2025-05-01;2025-05-13;26;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-04-35;3507506;GRE 8;3553807;2025-04-17;2025-04-01;2025-05-01;2025-04-24;7;Esclarecimento de registro;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-04-36;3554102;GRE 6;3503158;2025-04-16;2025-04-01;2025-04-30;2025-04-26;10;Esclarecimento de registro;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-04-37;3552205;GRE 11;3552205;2025-04-17;2025-04-01;2025-05-01;;;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-04-38;3538709;GRE 4;3526902;2025-04-16;2025-04-01;2025-04-30;2025-05-08;22;Orientação sobre ART;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-04-39;3505708;GRE 5;3550308;2025-04-16;2025-04-01;2025-04-30;2025-04-18;2;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-04-40;3552205;GRE 11;3541653;2025-04-08;2025-04-01;2025-04-22;;;Informação sobre atribuições;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-04-41;3554102;GRE 6;3502507;2025-04-08;2025-04-01;2025-04-22;2025-04-22;14;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-04-42;3505708;GRE 5;3550308;2025-04-07;2025-04-01;2025-04-21;2025-04-13;6;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-04-43;3538709;GRE 4;3538709;2025-04-07;2025-04-01;2025-04-21;2025-05-02;25;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-04-44;3503208;GRE 10;3524303;2025-04-07;2025-04-01;2025-04-21;2025-04-24;17;Orientação sobre ART;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-04-45;3525904;GRE 2;3509502;2025-04-07;2025-04-01;2025-04-21;2025-04-16;9;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-05-1;3548500;GRE 7;3541000;2025-05-20;2025-05-01;2025-06-03;2025-05-26;6;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-05-2;3502804;GRE 1;3506508;2025-05-20;2025-05-01;2025-06-03;2025-06-03;14;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-05-3;3541406;GRE 15;3500808;2025-05-20;2025-05-01;2025-06-03;2025-06-11;22;Esclarecimento de registro;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2025-05-4;3530706;GRE 12;3522604;2025-05-18;2025-05-01;2025-06-01;2025-06-08;21;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-05-5;3549904;GRE 6;3554102;2025-05-19;2025-05-01;2025-06-02;;;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-05-6;3529005;GRE 16;3501509;2025-05-19;2025-05-01;2025-06-02;2025-05-28;9;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-05-7;3526902;GRE 4;3501608;2025-05-19;2025-05-01;2025-06-02;2025-06-06;18;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-05-8;3534401;GRE 5;3550308;2025-05-22;2025-05-01;2025-06-05;2025-05-28;6;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-05-9;3549805;GRE 9;3549805;2025-05-22;2025-05-01;2025-06-05;2025-06-06;15;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-05-10;3525904;GRE 2;3525904;2025-05-06;2025-05-01;2025-05-20;2025-06-01;26;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-05-11;3516200;GRE 3;3543402;2025-05-06;2025-05-01;2025-05-20;2025-05-24;18;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-05-12;3543402;GRE 3;3543402;2025-05-06;2025-05-01;2025-05-20;;;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-05-13;3549805;GRE 9;3521903;2025-05-05;2025-05-01;2025-05-19;2025-05-07;2;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-05-14;3534401;GRE 5;3550308;2025-05-05;2025-05-01;2025-05-19;2025-05-27;22;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-05-15;3548906;GRE 10;3503208;2025-05-05;2025-05-01;2025-05-19;2025-05-19;14;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-05-16;3509502;GRE 2;3556701;2025-05-04;2025-05-01;2025-05-18;2025-05-10;6;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-05-17;3506003;GRE 8;3550100;2025-05-04;2025-05-01;2025-05-18;2025-05-30;26;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-05-18;3547809;GRE 14;3547809;2025-05-04;2025-05-01;2025-05-18;2025-05-22;18;Orientação sobre ART;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-05-19;3541406;GRE 15;3514403;2025-05-04;2025-05-01;2025-05-18;2025-05-14;10;Atualização cadastral;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2025-05-20;3554102;GRE 6;3549904;2025-05-22;2025-05-01;2025-06-05;2025-06-11;20;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-05-21;3552205;GRE 11;3552205;2025-05-22;2025-05-01;2025-06-05;2025-06-19;28;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-05-22;3538709;GRE 4;3554508;2025-05-21;2025-05-01;2025-06-04;2025-05-25;4;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-05-23;3505708;GRE 5;3516408;2025-05-22;2025-05-01;2025-06-05;2025-06-03;12;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-05-24;3541000;GRE 7;3513504;2025-05-23;2025-05-01;2025-06-06;2025-06-16;24;Informação sobre atribuições;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-05-25;3530706;GRE 12;3515152;2025-05-23;2025-05-01;2025-06-06;;;Esclarecimento de registro;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2025-05-26;3550308;GRE 5;3550308;2025-05-22;2025-05-01;2025-06-05;2025-05-30;8;Esclarecimento de registro;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-05-27;3507506;GRE 8;3554607;2025-05-23;2025-05-01;2025-06-06;2025-06-08;16;Atualização cadastral;Profissional;Telefone;mais de 75 km;5
+REQ-DEMO-2025-05-28;3526902;GRE 4;3533403;2025-05-24;2025-05-01;2025-06-07;2025-05-25;1;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-05-29;3518800;GRE 13;3523107;2025-05-25;2025-05-01;2025-06-08;2025-06-03;9;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-05-30;3502804;GRE 1;3506201;2025-05-22;2025-05-01;2025-06-05;2025-06-11;20;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-05-31;3548500;GRE 7;3548500;2025-05-22;2025-05-01;2025-06-05;2025-06-03;12;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-05-32;3547809;GRE 14;3513801;2025-05-23;2025-05-01;2025-06-06;2025-06-01;9;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-05-33;3541406;GRE 15;3541406;2025-05-22;2025-05-01;2025-06-05;2025-06-19;28;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-05-34;3529005;GRE 16;3509809;2025-05-21;2025-05-01;2025-06-04;2025-06-06;16;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-05-35;3549904;GRE 6;3554102;2025-05-21;2025-05-01;2025-06-04;2025-05-29;8;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-05-36;3518800;GRE 13;3539806;2025-05-21;2025-05-01;2025-06-04;;;Esclarecimento de registro;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-05-37;3526902;GRE 4;3537503;2025-05-21;2025-05-01;2025-06-04;2025-06-14;24;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-05-38;3543402;GRE 3;3516200;2025-05-24;2025-05-01;2025-06-07;2025-05-25;1;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-05-39;3549805;GRE 9;3549805;2025-05-24;2025-05-01;2025-06-07;;;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-05-40;3543402;GRE 3;3543402;2025-05-19;2025-05-01;2025-06-02;2025-06-15;27;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-05-41;3516200;GRE 3;3531902;2025-05-19;2025-05-01;2025-06-02;2025-05-26;7;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-05-42;3525904;GRE 2;3523909;2025-05-19;2025-05-01;2025-06-02;2025-06-03;15;Informação sobre atribuições;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-05-43;3503208;GRE 10;3552700;2025-05-19;2025-05-01;2025-06-02;2025-06-11;23;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-05-44;3538709;GRE 4;3538709;2025-05-20;2025-05-01;2025-06-03;2025-05-23;3;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-05-45;3505708;GRE 5;3550308;2025-05-20;2025-05-01;2025-06-03;;;Orientação sobre ART;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-06-1;3547809;GRE 14;3547809;2025-06-15;2025-06-01;2025-06-29;2025-07-09;24;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-06-2;3541406;GRE 15;3527405;2025-06-15;2025-06-01;2025-06-29;2025-07-01;16;Orientação sobre ART;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-06-3;3502804;GRE 1;3502804;2025-06-15;2025-06-01;2025-06-29;2025-06-23;8;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-06-4;3548500;GRE 7;3551009;2025-06-14;2025-06-01;2025-06-28;2025-07-12;28;Esclarecimento de registro;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-06-5;3518800;GRE 13;3507605;2025-06-14;2025-06-01;2025-06-28;2025-07-04;20;Orientação sobre ART;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-06-6;3526902;GRE 4;3526902;2025-06-14;2025-06-01;2025-06-28;2025-06-25;11;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-06-7;3529005;GRE 16;3540002;2025-06-13;2025-06-01;2025-06-27;2025-06-16;3;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-06-8;3549904;GRE 6;3526308;2025-06-13;2025-06-01;2025-06-27;;;Informação sobre atribuições;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2025-06-9;3530706;GRE 12;3549102;2025-06-13;2025-06-01;2025-06-27;2025-06-28;15;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-06-10;3503208;GRE 10;3542909;2025-06-18;2025-06-01;2025-07-02;;;Informação sobre atribuições;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-06-11;3538709;GRE 4;3526902;2025-06-19;2025-06-01;2025-07-03;2025-06-20;1;Atualização cadastral;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-06-12;3516200;GRE 3;3501004;2025-06-18;2025-06-01;2025-07-02;2025-06-23;5;Atualização cadastral;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-06-13;3525904;GRE 2;3525904;2025-06-18;2025-06-01;2025-07-02;2025-07-01;13;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-06-14;3552205;GRE 11;3557006;2025-06-19;2025-06-01;2025-07-03;2025-07-14;25;Esclarecimento de registro;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-06-15;3550308;GRE 5;3552809;2025-06-20;2025-06-01;2025-07-04;2025-06-25;5;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-06-16;3505708;GRE 5;3522505;2025-06-19;2025-06-01;2025-07-03;2025-06-28;9;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-06-17;3554102;GRE 6;3504909;2025-06-19;2025-06-01;2025-07-03;2025-07-06;17;Informação sobre atribuições;Empresa;E-mail;mais de 75 km;5
+REQ-DEMO-2025-06-18;3506003;GRE 8;3525300;2025-06-16;2025-06-01;2025-06-30;2025-06-28;12;Orientação sobre ART;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2025-06-19;3509502;GRE 2;3509502;2025-06-16;2025-06-01;2025-06-30;2025-07-06;20;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-06-20;3502804;GRE 1;3555208;2025-06-18;2025-06-01;2025-07-02;2025-07-08;20;Informação sobre atribuições;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-06-21;3548500;GRE 7;3541000;2025-06-18;2025-06-01;2025-07-02;2025-06-30;12;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-06-22;3518800;GRE 13;3523107;2025-06-17;2025-06-01;2025-07-01;;;Esclarecimento de registro;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-06-23;3526902;GRE 4;3501608;2025-06-17;2025-06-01;2025-07-01;2025-07-11;24;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-06-24;3529005;GRE 16;3555901;2025-06-17;2025-06-01;2025-07-01;2025-07-03;16;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-06-25;3549904;GRE 6;3549904;2025-06-17;2025-06-01;2025-07-01;2025-06-25;8;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-06-26;3530706;GRE 12;3549102;2025-06-16;2025-06-01;2025-06-30;2025-07-14;28;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-06-27;3541000;GRE 7;3513504;2025-06-16;2025-06-01;2025-06-30;2025-07-06;20;Informação sobre atribuições;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-06-28;3543402;GRE 3;3523701;2025-06-20;2025-06-01;2025-07-04;2025-06-21;1;Esclarecimento de registro;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-06-29;3549805;GRE 9;3512902;2025-06-20;2025-06-01;2025-07-04;;;Informação sobre atribuições;Empresa;E-mail;25 a 50 km;3
+REQ-DEMO-2025-06-30;3554102;GRE 6;3531704;2025-06-18;2025-06-01;2025-07-02;2025-07-08;20;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-06-31;3552205;GRE 11;3541653;2025-06-18;2025-06-01;2025-07-02;2025-07-16;28;Informação sobre atribuições;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-06-32;3550308;GRE 5;3550308;2025-06-19;2025-06-01;2025-07-03;2025-06-27;8;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-06-33;3507506;GRE 8;3557204;2025-06-19;2025-06-01;2025-07-03;2025-07-05;16;Orientação sobre ART;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-06-34;3525904;GRE 2;3545209;2025-06-17;2025-06-01;2025-07-01;;;Orientação sobre ART;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2025-06-35;3503208;GRE 10;3522703;2025-06-17;2025-06-01;2025-07-01;2025-07-11;24;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-06-36;3538709;GRE 4;3545803;2025-06-17;2025-06-01;2025-07-01;2025-06-21;4;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-06-37;3505708;GRE 5;3550308;2025-06-18;2025-06-01;2025-07-02;2025-06-30;12;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-06-38;3526902;GRE 4;3543907;2025-06-20;2025-06-01;2025-07-04;2025-06-21;1;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-06-39;3518800;GRE 13;3523107;2025-06-21;2025-06-01;2025-07-05;2025-06-30;9;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-06-40;3502804;GRE 1;3511904;2025-06-05;2025-06-01;2025-06-19;2025-06-24;19;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-06-41;3548500;GRE 7;3551009;2025-06-05;2025-06-01;2025-06-19;2025-06-16;11;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-06-42;3547809;GRE 14;3529401;2025-06-05;2025-06-01;2025-06-19;2025-06-12;7;Esclarecimento de registro;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-06-43;3541406;GRE 15;3500105;2025-06-05;2025-06-01;2025-06-19;2025-07-02;27;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-06-44;3509502;GRE 2;3556503;2025-06-06;2025-06-01;2025-06-20;2025-06-29;23;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-06-45;3506003;GRE 8;3528601;2025-06-06;2025-06-01;2025-06-20;2025-06-21;15;Atualização cadastral;Profissional;Telefone;mais de 75 km;5
+REQ-DEMO-2025-07-1;3549904;GRE 6;3524402;2025-07-02;2025-07-01;2025-07-16;2025-07-07;5;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-07-2;3507506;GRE 8;3536109;2025-07-01;2025-07-01;2025-07-15;2025-07-10;9;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-07-3;3541000;GRE 7;3518701;2025-07-02;2025-07-01;2025-07-16;2025-07-19;17;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-07-4;3518800;GRE 13;3552502;2025-07-03;2025-07-01;2025-07-17;2025-07-04;1;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-07-5;3548500;GRE 7;3518701;2025-07-03;2025-07-01;2025-07-17;2025-07-12;9;Esclarecimento de registro;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-07-6;3529005;GRE 16;3529005;2025-07-02;2025-07-01;2025-07-16;2025-07-15;13;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-07-7;3526902;GRE 4;3503307;2025-07-03;2025-07-01;2025-07-17;2025-07-24;21;Atualização cadastral;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-07-8;3547809;GRE 14;3547809;2025-07-04;2025-07-01;2025-07-18;2025-07-10;6;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-07-9;3506003;GRE 8;3502309;2025-07-05;2025-07-01;2025-07-19;;;Atualização cadastral;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2025-07-10;3502804;GRE 1;3518909;2025-07-08;2025-07-01;2025-07-22;2025-07-13;5;Orientação sobre ART;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2025-07-11;3548500;GRE 7;3513504;2025-07-08;2025-07-01;2025-07-22;2025-08-02;25;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-07-12;3547809;GRE 14;3548708;2025-07-09;2025-07-01;2025-07-23;2025-07-30;21;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-07-13;3541406;GRE 15;3541406;2025-07-08;2025-07-01;2025-07-22;2025-07-21;13;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-07-14;3509502;GRE 2;3520509;2025-07-09;2025-07-01;2025-07-23;;;Informação sobre atribuições;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-07-15;3506003;GRE 8;3506003;2025-07-09;2025-07-01;2025-07-23;2025-07-10;1;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-07-16;3534401;GRE 5;3550308;2025-07-10;2025-07-01;2025-07-24;2025-08-05;26;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-07-17;3548906;GRE 10;3507407;2025-07-09;2025-07-01;2025-07-23;2025-07-26;17;Esclarecimento de registro;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-07-18;3507506;GRE 8;3506003;2025-07-06;2025-07-01;2025-07-20;2025-07-30;24;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-07-19;3550308;GRE 5;3550308;2025-07-05;2025-07-01;2025-07-19;2025-07-21;16;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-07-20;3518800;GRE 13;3518800;2025-07-09;2025-07-01;2025-07-23;2025-07-16;7;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-07-21;3548500;GRE 7;3541000;2025-07-09;2025-07-01;2025-07-23;2025-07-24;15;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-07-22;3502804;GRE 1;3555208;2025-07-09;2025-07-01;2025-07-23;2025-08-01;23;Informação sobre atribuições;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-07-23;3541406;GRE 15;3540853;2025-07-09;2025-07-01;2025-07-23;2025-07-12;3;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-07-24;3547809;GRE 14;3548708;2025-07-10;2025-07-01;2025-07-24;;;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-07-25;3506003;GRE 8;3506003;2025-07-10;2025-07-01;2025-07-24;2025-07-29;19;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-07-26;3509502;GRE 2;3520509;2025-07-10;2025-07-01;2025-07-24;2025-08-06;27;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-07-27;3548906;GRE 10;3546900;2025-07-11;2025-07-01;2025-07-25;2025-07-19;8;Atualização cadastral;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2025-07-28;3534401;GRE 5;3513009;2025-07-11;2025-07-01;2025-07-25;2025-07-27;16;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-07-29;3549805;GRE 9;3515509;2025-07-11;2025-07-01;2025-07-25;2025-08-04;24;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-07-30;3506003;GRE 8;3504503;2025-07-08;2025-07-01;2025-07-22;;;Atualização cadastral;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-07-31;3547809;GRE 14;3548708;2025-07-07;2025-07-01;2025-07-21;2025-07-31;24;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-07-32;3541406;GRE 15;3549300;2025-07-07;2025-07-01;2025-07-21;2025-07-23;16;Informação sobre atribuições;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2025-07-33;3502804;GRE 1;3556305;2025-07-07;2025-07-01;2025-07-21;2025-07-15;8;Orientação sobre ART;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2025-07-34;3549805;GRE 9;3532603;2025-07-09;2025-07-01;2025-07-23;2025-07-17;8;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-07-35;3534401;GRE 5;3552809;2025-07-09;2025-07-01;2025-07-23;2025-08-06;28;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-07-36;3548906;GRE 10;3553203;2025-07-08;2025-07-01;2025-07-22;2025-07-28;20;Informação sobre atribuições;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2025-07-37;3509502;GRE 2;3536505;2025-07-08;2025-07-01;2025-07-22;2025-07-20;12;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-07-38;3503208;GRE 10;3546504;2025-07-10;2025-07-01;2025-07-24;2025-07-23;13;Informação sobre atribuições;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-07-39;3525904;GRE 2;3509502;2025-07-10;2025-07-01;2025-07-24;2025-07-15;5;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-07-40;3509502;GRE 2;3556206;2025-07-12;2025-07-01;2025-07-26;2025-08-09;28;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-07-41;3548906;GRE 10;3524303;2025-07-12;2025-07-01;2025-07-26;2025-07-20;8;Informação sobre atribuições;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2025-07-42;3547809;GRE 14;3513801;2025-07-11;2025-07-01;2025-07-25;2025-07-23;12;Esclarecimento de registro;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-07-43;3506003;GRE 8;3504503;2025-07-12;2025-07-01;2025-07-26;2025-08-01;20;Atualização cadastral;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-07-44;3543402;GRE 3;3525409;2025-07-13;2025-07-01;2025-07-27;;;Informação sobre atribuições;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2025-07-45;3516200;GRE 3;3534302;2025-07-13;2025-07-01;2025-07-27;2025-07-25;12;Esclarecimento de registro;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-08-1;3503208;GRE 10;3548906;2025-08-08;2025-08-01;2025-08-22;2025-08-23;15;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-08-2;3554102;GRE 6;3549904;2025-08-09;2025-08-01;2025-08-23;2025-08-21;12;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-08-3;3505708;GRE 5;3509007;2025-08-09;2025-08-01;2025-08-23;2025-08-13;4;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-08-4;3543402;GRE 3;3525409;2025-08-07;2025-08-01;2025-08-21;2025-08-26;19;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-08-5;3549805;GRE 9;3555356;2025-08-07;2025-08-01;2025-08-21;2025-08-18;11;Orientação sobre ART;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-08-6;3525904;GRE 2;3556503;2025-08-08;2025-08-01;2025-08-22;2025-08-15;7;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-08-7;3516200;GRE 3;3529708;2025-08-07;2025-08-01;2025-08-21;2025-09-03;27;Esclarecimento de registro;Empresa;E-mail;50 a 75 km;4
+REQ-DEMO-2025-08-8;3509502;GRE 2;3556503;2025-08-06;2025-08-01;2025-08-20;2025-08-21;15;Orientação sobre ART;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-08-9;3506003;GRE 8;3520905;2025-08-06;2025-08-01;2025-08-20;2025-08-13;7;Atualização cadastral;Empresa;E-mail;mais de 75 km;5
+REQ-DEMO-2025-08-10;3507506;GRE 8;3506003;2025-08-18;2025-08-01;2025-09-01;2025-09-15;28;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-11;3541000;GRE 7;3537206;2025-08-19;2025-08-01;2025-09-02;2025-08-27;8;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-08-12;3530706;GRE 12;3552106;2025-08-19;2025-08-01;2025-09-02;;;Informação sobre atribuições;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2025-08-13;3549904;GRE 6;3549904;2025-08-19;2025-08-01;2025-09-02;2025-09-12;24;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-14;3505708;GRE 5;3550308;2025-08-17;2025-08-01;2025-08-31;2025-09-10;24;Esclarecimento de registro;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-08-15;3554102;GRE 6;3540754;2025-08-18;2025-08-01;2025-09-01;2025-08-22;4;Atualização cadastral;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-08-16;3552205;GRE 11;3552205;2025-08-18;2025-08-01;2025-09-01;2025-08-30;12;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-08-17;3550308;GRE 5;3550308;2025-08-18;2025-08-01;2025-09-01;2025-09-07;20;Informação sobre atribuições;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-08-18;3502804;GRE 1;3502101;2025-08-21;2025-08-01;2025-09-04;2025-08-30;9;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-19;3541406;GRE 15;3541406;2025-08-21;2025-08-01;2025-09-04;2025-09-07;17;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-20;3530706;GRE 12;3530706;2025-08-18;2025-08-01;2025-09-01;2025-09-13;26;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-21;3541000;GRE 7;3551009;2025-08-18;2025-08-01;2025-09-01;2025-09-05;18;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-08-22;3529005;GRE 16;3510005;2025-08-18;2025-08-01;2025-09-01;;;Esclarecimento de registro;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-08-23;3549904;GRE 6;3549904;2025-08-18;2025-08-01;2025-09-01;2025-08-24;6;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-24;3552205;GRE 11;3545308;2025-08-17;2025-08-01;2025-08-31;2025-09-08;22;Atualização cadastral;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2025-08-25;3554102;GRE 6;3549904;2025-08-16;2025-08-01;2025-08-30;2025-08-30;14;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-26;3507506;GRE 8;3506003;2025-08-17;2025-08-01;2025-08-31;2025-08-27;10;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-27;3550308;GRE 5;3550308;2025-08-17;2025-08-01;2025-08-31;2025-08-19;2;Orientação sobre ART;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-08-28;3503208;GRE 10;3554755;2025-08-15;2025-08-01;2025-08-29;2025-09-01;17;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-08-29;3525904;GRE 2;3509502;2025-08-15;2025-08-01;2025-08-29;2025-08-24;9;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-08-30;3543402;GRE 3;3533908;2025-08-18;2025-08-01;2025-09-01;;;Atualização cadastral;Empresa;E-mail;25 a 50 km;3
+REQ-DEMO-2025-08-31;3516200;GRE 3;3510906;2025-08-18;2025-08-01;2025-09-01;2025-08-24;6;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-08-32;3534401;GRE 5;3552809;2025-08-17;2025-08-01;2025-08-31;2025-08-26;9;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-08-33;3549805;GRE 9;3554904;2025-08-17;2025-08-01;2025-08-31;2025-09-03;17;Esclarecimento de registro;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-08-34;3538709;GRE 4;3543907;2025-08-19;2025-08-01;2025-09-02;2025-08-21;2;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-35;3505708;GRE 5;3550308;2025-08-19;2025-08-01;2025-09-02;2025-08-29;10;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-36;3525904;GRE 2;3509502;2025-08-18;2025-08-01;2025-09-01;2025-09-01;14;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-08-37;3503208;GRE 10;3554755;2025-08-19;2025-08-01;2025-09-02;2025-09-10;22;Atualização cadastral;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-08-38;3516200;GRE 3;3542701;2025-08-04;2025-08-01;2025-08-18;2025-08-25;21;Esclarecimento de registro;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-08-39;3525904;GRE 2;3523909;2025-08-05;2025-08-01;2025-08-19;2025-08-06;1;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-08-40;3505708;GRE 5;3550308;2025-08-15;2025-08-01;2025-08-29;2025-08-20;5;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-08-41;3538709;GRE 4;3545803;2025-08-14;2025-08-01;2025-08-28;2025-09-08;25;Informação sobre atribuições;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-08-42;3503208;GRE 10;3552700;2025-08-14;2025-08-01;2025-08-28;2025-08-31;17;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-08-43;3525904;GRE 2;3545209;2025-08-14;2025-08-01;2025-08-28;2025-08-23;9;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-08-44;3507506;GRE 8;3506003;2025-08-16;2025-08-01;2025-08-30;2025-08-25;9;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-08-45;3550308;GRE 5;3550308;2025-08-15;2025-08-01;2025-08-29;2025-08-16;1;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-09-1;3543402;GRE 3;3543402;2025-09-01;2025-09-01;2025-09-15;2025-09-10;9;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-09-2;3516200;GRE 3;3543402;2025-09-01;2025-09-01;2025-09-15;;;Informação sobre atribuições;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-09-3;3525904;GRE 2;3556206;2025-09-02;2025-09-01;2025-09-16;2025-09-28;26;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-09-4;3503208;GRE 10;3529302;2025-09-02;2025-09-01;2025-09-16;2025-09-08;6;Orientação sobre ART;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-09-5;3538709;GRE 4;3501608;2025-09-02;2025-09-01;2025-09-16;2025-09-16;14;Informação sobre atribuições;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-09-6;3505708;GRE 5;3505708;2025-09-02;2025-09-01;2025-09-16;2025-09-24;22;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-09-7;3554102;GRE 6;3513405;2025-09-03;2025-09-01;2025-09-17;2025-09-05;2;Atualização cadastral;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-09-8;3548500;GRE 7;3542602;2025-09-23;2025-09-01;2025-10-07;2025-10-13;20;Esclarecimento de registro;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-09-9;3502804;GRE 1;3548401;2025-09-24;2025-09-01;2025-10-08;;;Atualização cadastral;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-09-10;3548906;GRE 10;3548906;2025-09-15;2025-09-01;2025-09-29;2025-10-08;23;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-11;3509502;GRE 2;3556503;2025-09-15;2025-09-01;2025-09-29;2025-09-30;15;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-09-12;3506003;GRE 8;3536570;2025-09-15;2025-09-01;2025-09-29;2025-09-22;7;Atualização cadastral;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-09-13;3547809;GRE 14;3548708;2025-09-14;2025-09-01;2025-09-28;2025-10-11;27;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-14;3516200;GRE 3;3505500;2025-09-16;2025-09-01;2025-09-30;2025-10-13;27;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-15;3543402;GRE 3;3523701;2025-09-16;2025-09-01;2025-09-30;;;Informação sobre atribuições;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-09-16;3549805;GRE 9;3502606;2025-09-16;2025-09-01;2025-09-30;2025-09-27;11;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-09-17;3534401;GRE 5;3550308;2025-09-16;2025-09-01;2025-09-30;2025-09-19;3;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-18;3526902;GRE 4;3525854;2025-09-13;2025-09-01;2025-09-27;2025-09-27;14;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-09-19;3529005;GRE 16;3527108;2025-09-13;2025-09-01;2025-09-27;2025-09-19;6;Atualização cadastral;Empresa;Telefone;50 a 75 km;4
+REQ-DEMO-2025-09-20;3550308;GRE 5;3550308;2025-09-15;2025-09-01;2025-09-29;2025-10-09;24;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-21;3507506;GRE 8;3541059;2025-09-16;2025-09-01;2025-09-30;2025-09-20;4;Atualização cadastral;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-09-22;3554102;GRE 6;3524402;2025-09-15;2025-09-01;2025-09-29;2025-09-22;7;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-09-23;3552205;GRE 11;3552205;2025-09-15;2025-09-01;2025-09-29;2025-09-30;15;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-24;3538709;GRE 4;3512407;2025-09-14;2025-09-01;2025-09-28;;;Informação sobre atribuições;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2025-09-25;3505708;GRE 5;3550308;2025-09-15;2025-09-01;2025-09-29;2025-10-12;27;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-26;3525904;GRE 2;3552403;2025-09-14;2025-09-01;2025-09-28;2025-09-17;3;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-09-27;3503208;GRE 10;3553203;2025-09-14;2025-09-01;2025-09-28;2025-09-25;11;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-09-28;3543402;GRE 3;3525102;2025-09-13;2025-09-01;2025-09-27;2025-09-28;15;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-09-29;3516200;GRE 3;3544905;2025-09-13;2025-09-01;2025-09-27;2025-10-06;23;Esclarecimento de registro;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-09-30;3518800;GRE 13;3504107;2025-09-19;2025-09-01;2025-10-03;2025-10-07;18;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-09-31;3526902;GRE 4;3501608;2025-09-19;2025-09-01;2025-10-03;2025-09-28;9;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-32;3502804;GRE 1;3556305;2025-09-20;2025-09-01;2025-10-04;2025-09-26;6;Atualização cadastral;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-09-33;3548500;GRE 7;3548500;2025-09-19;2025-09-01;2025-10-03;;;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-34;3547809;GRE 14;3543303;2025-09-20;2025-09-01;2025-10-04;2025-10-12;22;Informação sobre atribuições;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2025-09-35;3541406;GRE 15;3555000;2025-09-20;2025-09-01;2025-10-04;2025-10-04;14;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-09-36;3509502;GRE 2;3509502;2025-09-21;2025-09-01;2025-10-05;2025-10-01;10;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-09-37;3506003;GRE 8;3507506;2025-09-21;2025-09-01;2025-10-05;2025-09-23;2;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-09-38;3534401;GRE 5;3550308;2025-09-21;2025-09-01;2025-10-05;2025-10-17;26;Esclarecimento de registro;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-09-39;3548906;GRE 10;3524303;2025-09-21;2025-09-01;2025-10-05;2025-10-09;18;Informação sobre atribuições;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-09-40;3516200;GRE 3;3524204;2025-09-19;2025-09-01;2025-10-03;2025-10-07;18;Informação sobre atribuições;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2025-09-41;3525904;GRE 2;3527306;2025-09-19;2025-09-01;2025-10-03;2025-10-15;26;Esclarecimento de registro;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-09-42;3503208;GRE 10;3543709;2025-09-20;2025-09-01;2025-10-04;2025-09-26;6;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-09-43;3538709;GRE 4;3526902;2025-09-20;2025-09-01;2025-10-04;;;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-09-44;3548906;GRE 10;3516853;2025-09-18;2025-09-01;2025-10-02;2025-10-02;14;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-09-45;3534401;GRE 5;3550308;2025-09-18;2025-09-01;2025-10-02;2025-10-10;22;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-10-1;3507506;GRE 8;3522802;2025-10-24;2025-10-01;2025-11-07;2025-11-09;16;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-10-2;3554102;GRE 6;3549904;2025-10-23;2025-10-01;2025-11-06;2025-11-11;19;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-10-3;3552205;GRE 11;3552205;2025-10-23;2025-10-01;2025-11-06;2025-11-20;28;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-10-4;3549904;GRE 6;3550001;2025-10-24;2025-10-01;2025-11-07;2025-11-05;12;Esclarecimento de registro;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-10-5;3529005;GRE 16;3529005;2025-10-25;2025-10-01;2025-11-08;2025-11-14;20;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-10-6;3541000;GRE 7;3522109;2025-10-24;2025-10-01;2025-11-07;2025-11-17;24;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-10-7;3530706;GRE 12;3530706;2025-10-24;2025-10-01;2025-11-07;;;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-10-8;3543402;GRE 3;3543600;2025-10-21;2025-10-01;2025-11-04;2025-11-17;27;Orientação sobre ART;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2025-10-9;3516200;GRE 3;3516200;2025-10-21;2025-10-01;2025-11-04;2025-10-28;7;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-10-10;3509502;GRE 2;3509502;2025-10-20;2025-10-01;2025-11-03;2025-10-24;4;Informação sobre atribuições;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-10-11;3506003;GRE 8;3525300;2025-10-20;2025-10-01;2025-11-03;2025-11-13;24;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-10-12;3534401;GRE 5;3550308;2025-10-21;2025-10-01;2025-11-04;2025-11-10;20;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-10-13;3548906;GRE 10;3553203;2025-10-20;2025-10-01;2025-11-03;2025-11-01;12;Esclarecimento de registro;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-10-14;3543402;GRE 3;3543402;2025-10-21;2025-10-01;2025-11-04;2025-10-29;8;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-10-15;3549805;GRE 9;3514205;2025-10-21;2025-10-01;2025-11-04;2025-11-18;28;Orientação sobre ART;Empresa;Presencial;50 a 75 km;4
+REQ-DEMO-2025-10-16;3525904;GRE 2;3523404;2025-10-22;2025-10-01;2025-11-05;;;Orientação sobre ART;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-10-17;3516200;GRE 3;3509304;2025-10-22;2025-10-01;2025-11-05;2025-11-07;16;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-10-18;3538709;GRE 4;3526902;2025-10-22;2025-10-01;2025-11-05;2025-11-03;12;Esclarecimento de registro;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-10-19;3503208;GRE 10;3513702;2025-10-22;2025-10-01;2025-11-05;2025-10-26;4;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-10-20;3516200;GRE 3;3516200;2025-10-05;2025-10-01;2025-10-19;2025-10-18;13;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-10-21;3525904;GRE 2;3519071;2025-10-05;2025-10-01;2025-10-19;;;Esclarecimento de registro;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-10-22;3503208;GRE 10;3506706;2025-10-06;2025-10-01;2025-10-20;2025-10-07;1;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-10-23;3538709;GRE 4;3511508;2025-10-06;2025-10-01;2025-10-20;2025-10-15;9;Informação sobre atribuições;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-10-24;3505708;GRE 5;3550308;2025-10-06;2025-10-01;2025-10-20;2025-10-23;17;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-10-25;3554102;GRE 6;3554805;2025-10-07;2025-10-01;2025-10-21;2025-11-01;25;Atualização cadastral;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-10-26;3552205;GRE 11;3552205;2025-10-07;2025-10-01;2025-10-21;2025-10-12;5;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-10-27;3550308;GRE 5;3510609;2025-10-07;2025-10-01;2025-10-21;2025-10-20;13;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-10-28;3541406;GRE 15;3539202;2025-10-03;2025-10-01;2025-10-17;;;Orientação sobre ART;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-10-29;3547809;GRE 14;3513801;2025-10-03;2025-10-01;2025-10-17;2025-10-15;12;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-10-30;3549904;GRE 6;3524402;2025-10-05;2025-10-01;2025-10-19;2025-10-18;13;Esclarecimento de registro;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-10-31;3530706;GRE 12;3526704;2025-10-05;2025-10-01;2025-10-19;2025-10-10;5;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-10-32;3541000;GRE 7;3537206;2025-10-05;2025-10-01;2025-10-19;2025-10-30;25;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-10-33;3507506;GRE 8;3507308;2025-10-04;2025-10-01;2025-10-18;2025-10-21;17;Esclarecimento de registro;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2025-10-34;3548500;GRE 7;3551009;2025-10-06;2025-10-01;2025-10-20;2025-10-24;18;Esclarecimento de registro;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-10-35;3518800;GRE 13;3518800;2025-10-06;2025-10-01;2025-10-20;;;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-10-36;3526902;GRE 4;3545803;2025-10-06;2025-10-01;2025-10-20;2025-10-07;1;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-10-37;3529005;GRE 16;3529005;2025-10-06;2025-10-01;2025-10-20;2025-10-27;21;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-10-38;3538709;GRE 4;3545803;2025-10-03;2025-10-01;2025-10-17;2025-10-07;4;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-10-39;3503208;GRE 10;3503208;2025-10-03;2025-10-01;2025-10-17;2025-10-27;24;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-10-40;3538709;GRE 4;3537503;2025-10-20;2025-10-01;2025-11-03;2025-10-25;5;Esclarecimento de registro;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2025-10-41;3505708;GRE 5;3534401;2025-10-21;2025-10-01;2025-11-04;2025-11-03;13;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-10-42;3525904;GRE 2;3520509;2025-10-20;2025-10-01;2025-11-03;2025-11-06;17;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-10-43;3503208;GRE 10;3513702;2025-10-20;2025-10-01;2025-11-03;2025-11-14;25;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-10-44;3550308;GRE 5;3550308;2025-10-22;2025-10-01;2025-11-05;2025-11-01;10;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-10-45;3507506;GRE 8;3506003;2025-10-22;2025-10-01;2025-11-05;2025-11-09;18;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-1;3529005;GRE 16;3504008;2025-11-11;2025-11-01;2025-11-25;2025-12-03;22;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-11-2;3549904;GRE 6;3527207;2025-11-11;2025-11-01;2025-11-25;2025-11-25;14;Atualização cadastral;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2025-11-3;3530706;GRE 12;3549102;2025-11-10;2025-11-01;2025-11-24;2025-11-16;6;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-4;3541000;GRE 7;3513504;2025-11-10;2025-11-01;2025-11-24;2025-12-06;26;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-11-5;3507506;GRE 8;3520004;2025-11-10;2025-11-01;2025-11-24;2025-11-28;18;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-11-6;3550308;GRE 5;3550308;2025-11-10;2025-11-01;2025-11-24;;;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-11-7;3552205;GRE 11;3522406;2025-11-09;2025-11-01;2025-11-23;2025-11-10;1;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-11-8;3548906;GRE 10;3548906;2025-11-14;2025-11-01;2025-11-28;2025-11-25;11;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-9;3509502;GRE 2;3527306;2025-11-13;2025-11-01;2025-11-27;2025-11-16;3;Esclarecimento de registro;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-11-10;3505708;GRE 5;3550308;2025-11-01;2025-11-01;2025-11-15;2025-11-20;19;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-11;3554102;GRE 6;3549904;2025-11-01;2025-11-01;2025-11-15;2025-11-28;27;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-12;3503208;GRE 10;3503208;2025-11-25;2025-11-01;2025-12-09;2025-11-28;3;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-13;3538709;GRE 4;3526902;2025-11-01;2025-11-01;2025-11-15;2025-11-12;11;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-11-14;3507506;GRE 8;3529807;2025-11-02;2025-11-01;2025-11-16;2025-11-26;24;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-11-15;3541000;GRE 7;3522109;2025-11-02;2025-11-01;2025-11-16;2025-11-06;4;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-11-16;3552205;GRE 11;3552205;2025-11-01;2025-11-01;2025-11-15;2025-11-09;8;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-17;3550308;GRE 5;3550308;2025-11-02;2025-11-01;2025-11-16;2025-11-18;16;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-18;3529005;GRE 16;3529005;2025-11-03;2025-11-01;2025-11-17;2025-12-01;28;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-11-19;3526902;GRE 4;3543907;2025-11-04;2025-11-01;2025-11-18;2025-11-12;8;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-20;3502804;GRE 1;3507704;2025-11-21;2025-11-01;2025-12-05;2025-12-13;22;Informação sobre atribuições;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-11-21;3548500;GRE 7;3518701;2025-11-21;2025-11-01;2025-12-05;2025-12-05;14;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-11-22;3518800;GRE 13;3530607;2025-11-21;2025-11-01;2025-12-05;2025-11-27;6;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-11-23;3526902;GRE 4;3512407;2025-11-20;2025-11-01;2025-12-04;2025-12-16;26;Esclarecimento de registro;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-11-24;3529005;GRE 16;3501509;2025-11-20;2025-11-01;2025-12-04;2025-12-08;18;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-11-25;3549904;GRE 6;3538006;2025-11-20;2025-11-01;2025-12-04;;;Atualização cadastral;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-11-26;3530706;GRE 12;3527009;2025-11-19;2025-11-01;2025-12-03;2025-11-20;1;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-11-27;3547809;GRE 14;3548807;2025-11-08;2025-11-01;2025-11-22;2025-12-03;25;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-11-28;3541406;GRE 15;3533106;2025-11-08;2025-11-01;2025-11-22;2025-11-25;17;Orientação sobre ART;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-11-29;3502804;GRE 1;3504206;2025-11-08;2025-11-01;2025-11-22;2025-11-17;9;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-11-30;3549904;GRE 6;3549904;2025-11-22;2025-11-01;2025-12-06;2025-12-17;25;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-31;3529005;GRE 16;3527108;2025-11-22;2025-11-01;2025-12-06;2025-11-27;5;Esclarecimento de registro;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2025-11-32;3526902;GRE 4;3538709;2025-11-23;2025-11-01;2025-12-07;2025-12-06;13;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-11-33;3518800;GRE 13;3518800;2025-11-23;2025-11-01;2025-12-07;2025-12-14;21;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-11-34;3550308;GRE 5;3550308;2025-11-21;2025-11-01;2025-12-05;2025-12-12;21;Orientação sobre ART;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-11-35;3507506;GRE 8;3505302;2025-11-21;2025-11-01;2025-12-05;2025-11-22;1;Informação sobre atribuições;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-11-36;3541000;GRE 7;3541000;2025-11-21;2025-11-01;2025-12-05;2025-11-30;9;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-11-37;3530706;GRE 12;3530706;2025-11-22;2025-11-01;2025-12-06;;;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-38;3538709;GRE 4;3538709;2025-11-20;2025-11-01;2025-12-04;2025-12-06;16;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-11-39;3505708;GRE 5;3505708;2025-11-20;2025-11-01;2025-12-04;2025-12-14;24;Orientação sobre ART;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-11-40;3516200;GRE 3;3518859;2025-11-22;2025-11-01;2025-12-06;2025-12-16;24;Orientação sobre ART;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2025-11-41;3543402;GRE 3;3536307;2025-11-22;2025-11-01;2025-12-06;2025-12-08;16;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-11-42;3503208;GRE 10;3548906;2025-11-23;2025-11-01;2025-12-07;2025-12-06;13;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-11-43;3525904;GRE 2;3552403;2025-11-22;2025-11-01;2025-12-06;2025-11-27;5;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2025-11-44;3505708;GRE 5;3550308;2025-11-23;2025-11-01;2025-12-07;2025-11-24;1;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-11-45;3538709;GRE 4;3523602;2025-11-23;2025-11-01;2025-12-07;2025-12-14;21;Orientação sobre ART;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-12-1;3543402;GRE 3;3543600;2025-12-06;2025-12-01;2025-12-20;;;Atualização cadastral;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-12-2;3516200;GRE 3;3505500;2025-12-06;2025-12-01;2025-12-20;2025-12-11;5;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-12-3;3525904;GRE 2;3509502;2025-12-06;2025-12-01;2025-12-20;2025-12-19;13;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-12-4;3506003;GRE 8;3529807;2025-12-04;2025-12-01;2025-12-18;2025-12-16;12;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-12-5;3509502;GRE 2;3523909;2025-12-04;2025-12-01;2025-12-18;2025-12-24;20;Esclarecimento de registro;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-12-6;3548906;GRE 10;3532900;2025-12-05;2025-12-01;2025-12-19;2026-01-02;28;Atualização cadastral;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-12-7;3534401;GRE 5;3550308;2025-12-05;2025-12-01;2025-12-19;2025-12-13;8;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-12-8;3548500;GRE 7;3522109;2025-12-03;2025-12-01;2025-12-17;;;Orientação sobre ART;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2025-12-9;3502804;GRE 1;3502804;2025-12-03;2025-12-01;2025-12-17;2025-12-19;16;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-12-10;3518800;GRE 13;3530607;2025-12-20;2025-12-01;2026-01-03;2026-01-14;25;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-12-11;3526902;GRE 4;3538709;2025-12-20;2025-12-01;2026-01-03;2026-01-06;17;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-12-12;3529005;GRE 16;3529005;2025-12-19;2025-12-01;2026-01-02;2025-12-28;9;Informação sobre atribuições;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-12-13;3549904;GRE 6;3538006;2025-12-19;2025-12-01;2026-01-02;2026-01-16;28;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-12-14;3530706;GRE 12;3523800;2025-12-19;2025-12-01;2026-01-02;2026-01-08;20;Atualização cadastral;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-12-15;3541000;GRE 7;3548500;2025-12-18;2025-12-01;2026-01-01;;;Esclarecimento de registro;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-12-16;3507506;GRE 8;3520905;2025-12-18;2025-12-01;2026-01-01;2025-12-22;4;Informação sobre atribuições;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-12-17;3550308;GRE 5;3534401;2025-12-18;2025-12-01;2026-01-01;2026-01-11;24;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-12-18;3534401;GRE 5;3550308;2025-12-22;2025-12-01;2026-01-05;2025-12-28;6;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-12-19;3548906;GRE 10;3503208;2025-12-22;2025-12-01;2026-01-05;2026-01-16;25;Orientação sobre ART;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-12-20;3516200;GRE 3;3524204;2025-12-20;2025-12-01;2026-01-03;2026-01-14;25;Orientação sobre ART;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-12-21;3525904;GRE 2;3519071;2025-12-20;2025-12-01;2026-01-03;2025-12-25;5;Esclarecimento de registro;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2025-12-22;3549805;GRE 9;3540804;2025-12-19;2025-12-01;2026-01-02;2025-12-28;9;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-12-23;3543402;GRE 3;3537008;2025-12-20;2025-12-01;2026-01-03;2026-01-06;17;Atualização cadastral;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-12-24;3505708;GRE 5;3550308;2025-12-21;2025-12-01;2026-01-04;2025-12-23;2;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2025-12-25;3554102;GRE 6;3554102;2025-12-21;2025-12-01;2026-01-04;2025-12-31;10;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-12-26;3503208;GRE 10;3513702;2025-12-21;2025-12-01;2026-01-04;2026-01-03;13;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2025-12-27;3538709;GRE 4;3501608;2025-12-21;2025-12-01;2026-01-04;2026-01-12;22;Orientação sobre ART;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-12-28;3541406;GRE 15;3532207;2025-12-18;2025-12-01;2026-01-01;2026-01-03;16;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2025-12-29;3547809;GRE 14;3548708;2025-12-18;2025-12-01;2026-01-01;2026-01-12;25;Orientação sobre ART;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2025-12-30;3549904;GRE 6;3549904;2025-12-20;2025-12-01;2026-01-03;2026-01-15;26;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2025-12-31;3530706;GRE 12;3501905;2025-12-20;2025-12-01;2026-01-03;;;Orientação sobre ART;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-12-32;3526902;GRE 4;3500600;2025-12-21;2025-12-01;2026-01-04;2026-01-04;14;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-12-33;3529005;GRE 16;3507209;2025-12-20;2025-12-01;2026-01-03;2025-12-26;6;Esclarecimento de registro;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-12-34;3550308;GRE 5;3515004;2025-12-19;2025-12-01;2026-01-02;2026-01-09;21;Orientação sobre ART;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2025-12-35;3552205;GRE 11;3537800;2025-12-19;2025-12-01;2026-01-02;2026-01-01;13;Atualização cadastral;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2025-12-36;3541000;GRE 7;3541000;2025-12-20;2025-12-01;2026-01-03;2025-12-30;10;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-12-37;3507506;GRE 8;3506003;2025-12-19;2025-12-01;2026-01-02;2025-12-20;1;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-12-38;3538709;GRE 4;3503307;2025-12-18;2025-12-01;2026-01-01;2026-01-04;17;Atualização cadastral;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2025-12-39;3503208;GRE 10;3542909;2025-12-17;2025-12-01;2025-12-31;2025-12-26;9;Esclarecimento de registro;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2025-12-40;3506003;GRE 8;3526803;2025-12-17;2025-12-01;2025-12-31;2025-12-21;4;Atualização cadastral;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2025-12-41;3509502;GRE 2;3523404;2025-12-17;2025-12-01;2025-12-31;2025-12-29;12;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2025-12-42;3548906;GRE 10;3548906;2025-12-17;2025-12-01;2025-12-31;2026-01-06;20;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2025-12-43;3534401;GRE 5;3522208;2025-12-18;2025-12-01;2026-01-01;2026-01-15;28;Atualização cadastral;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2025-12-44;3549805;GRE 9;3545704;2025-12-18;2025-12-01;2026-01-01;2025-12-27;9;Orientação sobre ART;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2025-12-45;3543402;GRE 3;3543402;2025-12-18;2025-12-01;2026-01-01;2026-01-04;17;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-1;3502804;GRE 1;3505104;2026-01-19;2026-01-01;2026-02-02;2026-02-03;15;Esclarecimento de registro;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-01-2;3506003;GRE 8;3525300;2026-01-20;2026-01-01;2026-02-03;2026-01-31;11;Informação sobre atribuições;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2026-01-3;3547809;GRE 14;3548708;2026-01-20;2026-01-01;2026-02-03;2026-01-23;3;Orientação sobre ART;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-01-4;3548906;GRE 10;3503208;2026-01-21;2026-01-01;2026-02-04;2026-02-18;28;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-5;3509502;GRE 2;3509502;2026-01-20;2026-01-01;2026-02-03;2026-02-09;20;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-01-6;3549805;GRE 9;3539608;2026-01-21;2026-01-01;2026-02-04;2026-02-06;16;Esclarecimento de registro;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-01-7;3534401;GRE 5;3550308;2026-01-21;2026-01-01;2026-02-04;2026-01-29;8;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-01-8;3516200;GRE 3;3520103;2026-01-22;2026-01-01;2026-02-05;2026-01-26;4;Orientação sobre ART;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-01-9;3543402;GRE 3;3517406;2026-01-22;2026-01-01;2026-02-05;;;Atualização cadastral;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-01-10;3509502;GRE 2;3519071;2026-01-10;2026-01-01;2026-01-24;2026-02-07;28;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-01-11;3548906;GRE 10;3503208;2026-01-10;2026-01-01;2026-01-24;2026-01-18;8;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-12;3534401;GRE 5;3534401;2026-01-10;2026-01-01;2026-01-24;2026-01-26;16;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-01-13;3549805;GRE 9;3528205;2026-01-10;2026-01-01;2026-01-24;2026-02-03;24;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-01-14;3543402;GRE 3;3543402;2026-01-11;2026-01-01;2026-01-25;;;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-01-15;3516200;GRE 3;3549508;2026-01-11;2026-01-01;2026-01-25;2026-01-24;13;Orientação sobre ART;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2026-01-16;3525904;GRE 2;3520509;2026-01-11;2026-01-01;2026-01-25;2026-02-01;21;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-01-17;3503208;GRE 10;3548906;2026-01-12;2026-01-01;2026-01-26;2026-01-13;1;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-18;3538709;GRE 4;3525854;2026-01-12;2026-01-01;2026-01-26;2026-01-21;9;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-01-19;3505708;GRE 5;3550308;2026-01-12;2026-01-01;2026-01-26;2026-01-29;17;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-20;3534401;GRE 5;3550308;2026-01-09;2026-01-01;2026-01-23;2026-02-04;26;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-21;3548906;GRE 10;3529302;2026-01-09;2026-01-01;2026-01-23;2026-01-27;18;Atualização cadastral;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-01-22;3543402;GRE 3;3531902;2026-01-10;2026-01-01;2026-01-24;2026-01-24;14;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-01-23;3549805;GRE 9;3539608;2026-01-09;2026-01-01;2026-01-23;2026-01-15;6;Informação sobre atribuições;Empresa;Telefone;50 a 75 km;4
+REQ-DEMO-2026-01-24;3525904;GRE 2;3509502;2026-01-10;2026-01-01;2026-01-24;;;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-25;3516200;GRE 3;3516200;2026-01-10;2026-01-01;2026-01-24;2026-02-01;22;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-26;3538709;GRE 4;3544004;2026-01-11;2026-01-01;2026-01-25;2026-01-30;19;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-01-27;3503208;GRE 10;3548906;2026-01-10;2026-01-01;2026-01-24;2026-01-21;11;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-28;3518800;GRE 13;3518800;2026-01-07;2026-01-01;2026-01-21;2026-01-24;17;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-01-29;3526902;GRE 4;3543907;2026-01-06;2026-01-01;2026-01-20;2026-01-15;9;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-01-30;3549904;GRE 6;3510500;2026-01-09;2026-01-01;2026-01-23;2026-02-04;26;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-01-31;3529005;GRE 16;3517208;2026-01-09;2026-01-01;2026-01-23;2026-01-15;6;Informação sobre atribuições;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-01-32;3541000;GRE 7;3541000;2026-01-08;2026-01-01;2026-01-22;2026-01-17;9;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-01-33;3530706;GRE 12;3500402;2026-01-08;2026-01-01;2026-01-22;2026-01-26;18;Esclarecimento de registro;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-01-34;3550308;GRE 5;3513009;2026-01-08;2026-01-01;2026-01-22;2026-01-29;21;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-01-35;3507506;GRE 8;3554201;2026-01-08;2026-01-01;2026-01-22;2026-01-09;1;Orientação sobre ART;Profissional;E-mail;mais de 75 km;5
+REQ-DEMO-2026-01-36;3554102;GRE 6;3549904;2026-01-07;2026-01-01;2026-01-21;2026-01-12;5;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-01-37;3552205;GRE 11;3552205;2026-01-07;2026-01-01;2026-01-21;2026-01-20;13;Esclarecimento de registro;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-01-38;3506003;GRE 8;3506003;2026-01-11;2026-01-01;2026-01-25;2026-01-17;6;Informação sobre atribuições;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-01-39;3509502;GRE 2;3509502;2026-01-11;2026-01-01;2026-01-25;2026-01-26;15;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-01-40;3534401;GRE 5;3550308;2026-01-22;2026-01-01;2026-02-05;2026-02-19;28;Informação sobre atribuições;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-01-41;3548906;GRE 10;3539004;2026-01-22;2026-01-01;2026-02-05;2026-02-11;20;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-01-42;3509502;GRE 2;3525904;2026-01-22;2026-01-01;2026-02-05;2026-02-03;12;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-01-43;3506003;GRE 8;3523503;2026-01-21;2026-01-01;2026-02-04;;;Esclarecimento de registro;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-01-44;3547809;GRE 14;3548708;2026-01-21;2026-01-01;2026-02-04;2026-02-13;23;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-01-45;3541406;GRE 15;3509106;2026-01-21;2026-01-01;2026-02-04;2026-02-05;15;Atualização cadastral;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2026-02-1;3507506;GRE 8;3550100;2026-02-24;2026-02-01;2026-03-10;2026-02-26;2;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-02-2;3554102;GRE 6;3548609;2026-02-23;2026-02-01;2026-03-09;2026-03-01;6;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-02-3;3552205;GRE 11;3553856;2026-02-23;2026-02-01;2026-03-09;2026-03-09;14;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-02-4;3549904;GRE 6;3508504;2026-02-24;2026-02-01;2026-03-10;2026-03-22;26;Esclarecimento de registro;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-02-5;3529005;GRE 16;3543204;2026-02-25;2026-02-01;2026-03-11;2026-03-03;6;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-02-6;3541000;GRE 7;3518701;2026-02-24;2026-02-01;2026-03-10;2026-03-06;10;Orientação sobre ART;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2026-02-7;3530706;GRE 12;3500303;2026-02-24;2026-02-01;2026-03-10;2026-03-14;18;Informação sobre atribuições;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-02-8;3543402;GRE 3;3516200;2026-02-21;2026-02-01;2026-03-07;2026-03-06;13;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-02-9;3516200;GRE 3;3543402;2026-02-21;2026-02-01;2026-03-07;2026-03-14;21;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-02-10;3503208;GRE 10;3503208;2026-02-17;2026-02-01;2026-03-03;2026-02-21;4;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-02-11;3525904;GRE 2;3520509;2026-02-17;2026-02-01;2026-03-03;2026-03-13;24;Orientação sobre ART;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2026-02-12;3505708;GRE 5;3522505;2026-02-18;2026-02-01;2026-03-04;;;Atualização cadastral;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2026-02-13;3538709;GRE 4;3503307;2026-02-17;2026-02-01;2026-03-03;2026-03-01;12;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-02-14;3552205;GRE 11;3522307;2026-02-18;2026-02-01;2026-03-04;2026-02-27;9;Informação sobre atribuições;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-02-15;3554102;GRE 6;3544301;2026-02-18;2026-02-01;2026-03-04;2026-03-18;28;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-02-16;3507506;GRE 8;3557204;2026-02-19;2026-02-01;2026-03-05;2026-03-16;25;Orientação sobre ART;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2026-02-17;3550308;GRE 5;3550308;2026-02-19;2026-02-01;2026-03-05;2026-03-08;17;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-02-18;3530706;GRE 12;3556404;2026-02-19;2026-02-01;2026-03-05;2026-03-04;13;Esclarecimento de registro;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-02-19;3541000;GRE 7;3548500;2026-02-19;2026-02-01;2026-03-05;2026-02-24;5;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-02-20;3550308;GRE 5;3516309;2026-02-02;2026-02-01;2026-02-16;2026-02-15;13;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-02-21;3507506;GRE 8;3528601;2026-02-02;2026-02-01;2026-02-16;2026-02-23;21;Esclarecimento de registro;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2026-02-22;3541000;GRE 7;3514809;2026-02-03;2026-02-01;2026-02-17;2026-02-04;1;Atualização cadastral;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2026-02-23;3530706;GRE 12;3531209;2026-02-03;2026-02-01;2026-02-17;2026-02-12;9;Informação sobre atribuições;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2026-02-24;3549904;GRE 6;3518404;2026-02-03;2026-02-01;2026-02-17;2026-02-21;18;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-02-25;3529005;GRE 16;3514700;2026-02-04;2026-02-01;2026-02-18;2026-03-02;26;Atualização cadastral;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-02-26;3526902;GRE 4;3545803;2026-02-04;2026-02-01;2026-02-18;;;Orientação sobre ART;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-02-27;3518800;GRE 13;3530607;2026-02-04;2026-02-01;2026-02-18;2026-02-18;14;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-02-28;3543402;GRE 3;3505609;2026-02-25;2026-02-01;2026-03-11;2026-03-01;4;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-02-29;3516200;GRE 3;3525409;2026-02-25;2026-02-01;2026-03-11;2026-03-09;12;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-02-30;3547809;GRE 14;3548708;2026-02-02;2026-02-01;2026-02-16;2026-02-16;14;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-02-31;3541406;GRE 15;3500808;2026-02-02;2026-02-01;2026-02-16;;;Orientação sobre ART;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2026-02-32;3502804;GRE 1;3507704;2026-02-02;2026-02-01;2026-02-16;2026-02-27;25;Atualização cadastral;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2026-02-33;3548500;GRE 7;3551009;2026-02-01;2026-02-01;2026-02-15;2026-02-18;17;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-02-34;3534401;GRE 5;3550308;2026-02-03;2026-02-01;2026-02-17;2026-02-21;18;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-02-35;3548906;GRE 10;3532058;2026-02-03;2026-02-01;2026-02-17;2026-02-13;10;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-02-36;3509502;GRE 2;3509502;2026-02-03;2026-02-01;2026-02-17;2026-02-05;2;Orientação sobre ART;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-02-37;3506003;GRE 8;3515194;2026-02-03;2026-02-01;2026-02-17;2026-02-25;22;Atualização cadastral;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-02-38;3530706;GRE 12;3515186;2026-02-25;2026-02-01;2026-03-11;2026-03-02;5;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-02-39;3541000;GRE 7;3551009;2026-02-25;2026-02-01;2026-03-11;2026-03-22;25;Atualização cadastral;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-02-40;3530706;GRE 12;3523800;2026-02-17;2026-02-01;2026-03-03;2026-02-23;6;Esclarecimento de registro;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2026-02-41;3549904;GRE 6;3508504;2026-02-18;2026-02-01;2026-03-04;2026-03-04;14;Orientação sobre ART;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2026-02-42;3507506;GRE 8;3507456;2026-02-17;2026-02-01;2026-03-03;2026-03-06;17;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-02-43;3541000;GRE 7;3518701;2026-02-17;2026-02-01;2026-03-03;;;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-02-44;3518800;GRE 13;3518800;2026-02-19;2026-02-01;2026-03-05;2026-03-01;10;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-02-45;3548500;GRE 7;3548500;2026-02-19;2026-02-01;2026-03-05;2026-03-09;18;Orientação sobre ART;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-03-1;3529005;GRE 16;3540101;2026-03-11;2026-03-01;2026-03-25;2026-03-19;8;Informação sobre atribuições;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-03-2;3549904;GRE 6;3554102;2026-03-11;2026-03-01;2026-03-25;2026-04-08;28;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-03-3;3530706;GRE 12;3530706;2026-03-10;2026-03-01;2026-03-24;;;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-03-4;3541000;GRE 7;3506359;2026-03-10;2026-03-01;2026-03-24;2026-03-22;12;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-03-5;3507506;GRE 8;3526803;2026-03-10;2026-03-01;2026-03-24;2026-03-14;4;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-03-6;3550308;GRE 5;3550308;2026-03-10;2026-03-01;2026-03-24;2026-04-03;24;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-03-7;3552205;GRE 11;3552205;2026-03-09;2026-03-01;2026-03-23;2026-03-25;16;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-03-8;3548906;GRE 10;3503208;2026-03-14;2026-03-01;2026-03-28;2026-04-08;25;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-03-9;3509502;GRE 2;3523909;2026-03-13;2026-03-01;2026-03-27;2026-03-30;17;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-03-10;3503208;GRE 10;3524303;2026-03-09;2026-03-01;2026-03-23;2026-03-25;16;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-03-11;3538709;GRE 4;3530904;2026-03-09;2026-03-01;2026-03-23;2026-04-02;24;Informação sobre atribuições;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-03-12;3516200;GRE 3;3505906;2026-03-08;2026-03-01;2026-03-22;;;Esclarecimento de registro;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-03-13;3525904;GRE 2;3545209;2026-03-09;2026-03-01;2026-03-23;2026-03-17;8;Atualização cadastral;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2026-03-14;3552205;GRE 11;3522406;2026-03-10;2026-03-01;2026-03-24;2026-03-30;20;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-03-15;3550308;GRE 5;3539103;2026-03-10;2026-03-01;2026-03-24;2026-04-07;28;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-03-16;3505708;GRE 5;3550308;2026-03-09;2026-03-01;2026-03-23;2026-03-13;4;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-03-17;3554102;GRE 6;3524402;2026-03-10;2026-03-01;2026-03-24;2026-03-22;12;Atualização cadastral;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2026-03-18;3530706;GRE 12;3530706;2026-03-11;2026-03-01;2026-03-25;2026-04-05;25;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-03-19;3549904;GRE 6;3549904;2026-03-12;2026-03-01;2026-03-26;2026-03-17;5;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-03-20;3549805;GRE 9;3529104;2026-03-18;2026-03-01;2026-04-01;;;Informação sobre atribuições;Empresa;Telefone;50 a 75 km;4
+REQ-DEMO-2026-03-21;3534401;GRE 5;3547304;2026-03-18;2026-03-01;2026-04-01;2026-04-01;14;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-03-22;3548906;GRE 10;3548906;2026-03-18;2026-03-01;2026-04-01;2026-03-24;6;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-03-23;3509502;GRE 2;3525201;2026-03-17;2026-03-01;2026-03-31;2026-04-12;26;Esclarecimento de registro;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-03-24;3506003;GRE 8;3502309;2026-03-17;2026-03-01;2026-03-31;2026-04-04;18;Informação sobre atribuições;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2026-03-25;3547809;GRE 14;3548708;2026-03-17;2026-03-01;2026-03-31;2026-03-27;10;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-03-26;3541406;GRE 15;3541406;2026-03-16;2026-03-01;2026-03-30;2026-03-18;2;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-03-27;3502804;GRE 1;3502804;2026-03-16;2026-03-01;2026-03-30;2026-04-07;22;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-03-28;3548500;GRE 7;3513504;2026-03-16;2026-03-01;2026-03-30;2026-03-30;14;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-03-29;3518800;GRE 13;3518800;2026-03-16;2026-03-01;2026-03-30;;;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-03-30;3547809;GRE 14;3529401;2026-03-19;2026-03-01;2026-04-02;2026-04-13;25;Informação sobre atribuições;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2026-03-31;3506003;GRE 8;3506003;2026-03-19;2026-03-01;2026-04-02;2026-03-24;5;Esclarecimento de registro;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-03-32;3509502;GRE 2;3525904;2026-03-20;2026-03-01;2026-04-03;2026-04-03;14;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-03-33;3548906;GRE 10;3548906;2026-03-20;2026-03-01;2026-04-03;2026-04-11;22;Orientação sobre ART;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-03-34;3518800;GRE 13;3507605;2026-03-18;2026-03-01;2026-04-01;2026-04-08;21;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-03-35;3548500;GRE 7;3548500;2026-03-18;2026-03-01;2026-04-01;2026-03-19;1;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-03-36;3502804;GRE 1;3537305;2026-03-18;2026-03-01;2026-04-01;2026-03-27;9;Esclarecimento de registro;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-03-37;3541406;GRE 15;3514403;2026-03-19;2026-03-01;2026-04-02;2026-04-05;17;Orientação sobre ART;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-03-38;3530706;GRE 12;3530706;2026-03-17;2026-03-01;2026-03-31;2026-04-03;17;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-03-39;3549904;GRE 6;3554102;2026-03-17;2026-03-01;2026-03-31;2026-04-11;25;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-03-40;3550308;GRE 5;3550308;2026-03-19;2026-03-01;2026-04-02;2026-04-13;25;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-03-41;3552205;GRE 11;3552205;2026-03-19;2026-03-01;2026-04-02;2026-04-05;17;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-03-42;3541000;GRE 7;3541000;2026-03-20;2026-03-01;2026-04-03;;;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-03-43;3507506;GRE 8;3522802;2026-03-19;2026-03-01;2026-04-02;2026-03-24;5;Informação sobre atribuições;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-03-44;3549904;GRE 6;3527207;2026-03-20;2026-03-01;2026-04-03;2026-03-21;1;Informação sobre atribuições;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-03-45;3530706;GRE 12;3531209;2026-03-20;2026-03-01;2026-04-03;2026-04-10;21;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-04-1;3549904;GRE 6;3554102;2026-04-15;2026-04-01;2026-04-29;2026-04-28;13;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-2;3529005;GRE 16;3540101;2026-04-16;2026-04-01;2026-04-30;2026-05-07;21;Atualização cadastral;Empresa;Telefone;50 a 75 km;4
+REQ-DEMO-2026-04-3;3526902;GRE 4;3545803;2026-04-16;2026-04-01;2026-04-30;2026-04-17;1;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-04-4;3518800;GRE 13;3518800;2026-04-16;2026-04-01;2026-04-30;2026-04-25;9;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-04-5;3548500;GRE 7;3548500;2026-04-17;2026-04-01;2026-05-01;;;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-04-6;3502804;GRE 1;3556305;2026-04-17;2026-04-01;2026-05-01;2026-05-12;25;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-04-7;3541406;GRE 15;3500105;2026-04-17;2026-04-01;2026-05-01;2026-04-22;5;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-04-8;3503208;GRE 10;3548906;2026-04-13;2026-04-01;2026-04-27;2026-05-07;24;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-04-9;3538709;GRE 4;3501608;2026-04-13;2026-04-01;2026-04-27;2026-04-17;4;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-10;3518800;GRE 13;3518800;2026-04-06;2026-04-01;2026-04-20;2026-04-23;17;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-11;3526902;GRE 4;3501608;2026-04-05;2026-04-01;2026-04-19;2026-04-14;9;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-04-12;3529005;GRE 16;3534104;2026-04-05;2026-04-01;2026-04-19;2026-04-06;1;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-04-13;3549904;GRE 6;3527207;2026-04-05;2026-04-01;2026-04-19;;;Orientação sobre ART;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-04-14;3547809;GRE 14;3547809;2026-04-07;2026-04-01;2026-04-21;2026-04-29;22;Orientação sobre ART;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-04-15;3541406;GRE 15;3541208;2026-04-07;2026-04-01;2026-04-21;2026-04-20;13;Atualização cadastral;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-04-16;3502804;GRE 1;3506508;2026-04-06;2026-04-01;2026-04-20;2026-04-11;5;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-04-17;3548500;GRE 7;3548500;2026-04-06;2026-04-01;2026-04-20;2026-05-01;25;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-18;3552205;GRE 11;3510203;2026-04-03;2026-04-01;2026-04-17;2026-04-11;8;Esclarecimento de registro;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-04-19;3554102;GRE 6;3526605;2026-04-03;2026-04-01;2026-04-17;2026-05-01;28;Informação sobre atribuições;Empresa;Portal e chat;mais de 75 km;5
+REQ-DEMO-2026-04-20;3506003;GRE 8;3515194;2026-04-05;2026-04-01;2026-04-19;2026-04-19;14;Orientação sobre ART;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-04-21;3509502;GRE 2;3556206;2026-04-05;2026-04-01;2026-04-19;2026-04-27;22;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-04-22;3541406;GRE 15;3545506;2026-04-04;2026-04-01;2026-04-18;2026-04-30;26;Esclarecimento de registro;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-04-23;3547809;GRE 14;3548807;2026-04-05;2026-04-01;2026-04-19;2026-04-11;6;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-04-24;3548500;GRE 7;3548500;2026-04-04;2026-04-01;2026-04-18;2026-04-14;10;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-04-25;3502804;GRE 1;3502101;2026-04-04;2026-04-01;2026-04-18;2026-04-22;18;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-26;3526902;GRE 4;3526902;2026-04-03;2026-04-01;2026-04-17;2026-04-25;22;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-04-27;3518800;GRE 13;3552502;2026-04-03;2026-04-01;2026-04-17;2026-04-05;2;Esclarecimento de registro;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-04-28;3549904;GRE 6;3549904;2026-04-03;2026-04-01;2026-04-17;2026-04-08;5;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-29;3529005;GRE 16;3529005;2026-04-03;2026-04-01;2026-04-17;;;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-30;3549805;GRE 9;3529609;2026-04-21;2026-04-01;2026-05-05;;;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-04-31;3534401;GRE 5;3550308;2026-04-20;2026-04-01;2026-05-04;2026-05-17;27;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-04-32;3516200;GRE 3;3551702;2026-04-21;2026-04-01;2026-05-05;2026-05-15;24;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-04-33;3543402;GRE 3;3525409;2026-04-21;2026-04-01;2026-05-05;2026-05-07;16;Orientação sobre ART;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2026-04-34;3503208;GRE 10;3548906;2026-04-22;2026-04-01;2026-05-06;2026-05-04;12;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-04-35;3525904;GRE 2;3509502;2026-04-21;2026-04-01;2026-05-05;2026-04-25;4;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-36;3505708;GRE 5;3550308;2026-04-22;2026-04-01;2026-05-06;2026-05-20;28;Esclarecimento de registro;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-04-37;3538709;GRE 4;3526902;2026-04-22;2026-04-01;2026-05-06;2026-05-12;20;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-04-38;3552205;GRE 11;3551108;2026-04-23;2026-04-01;2026-05-07;2026-05-09;16;Orientação sobre ART;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2026-04-39;3554102;GRE 6;3549904;2026-04-23;2026-04-01;2026-05-07;2026-05-01;8;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-40;3541000;GRE 7;3518701;2026-04-21;2026-04-01;2026-05-05;2026-04-29;8;Atualização cadastral;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-04-41;3530706;GRE 12;3530706;2026-04-21;2026-04-01;2026-05-05;2026-05-07;16;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-04-42;3549904;GRE 6;3538006;2026-04-21;2026-04-01;2026-05-05;;;Esclarecimento de registro;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2026-04-43;3529005;GRE 16;3545407;2026-04-22;2026-04-01;2026-05-06;2026-04-26;4;Atualização cadastral;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2026-04-44;3554102;GRE 6;3549904;2026-04-20;2026-04-01;2026-05-04;2026-04-24;4;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-04-45;3552205;GRE 11;3552205;2026-04-20;2026-04-01;2026-05-04;2026-05-02;12;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-05-1;3518800;GRE 13;3504107;2026-05-23;2026-05-01;2026-06-06;2026-06-11;19;Atualização cadastral;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-05-2;3541406;GRE 15;3500105;2026-05-23;2026-05-01;2026-06-06;2026-06-07;15;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-3;3502804;GRE 1;3502804;2026-05-23;2026-05-01;2026-06-06;2026-05-30;7;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-4;3549904;GRE 6;3524402;2026-05-22;2026-05-01;2026-06-05;2026-06-13;22;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-05-5;3530706;GRE 12;3530706;2026-05-21;2026-05-01;2026-06-04;2026-06-04;14;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-6;3526902;GRE 4;3500600;2026-05-22;2026-05-01;2026-06-05;2026-06-02;11;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-05-7;3529005;GRE 16;3519501;2026-05-22;2026-05-01;2026-06-05;;;Orientação sobre ART;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-05-8;3550308;GRE 5;3534401;2026-05-20;2026-05-01;2026-06-03;2026-06-07;18;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-9;3552205;GRE 11;3543501;2026-05-20;2026-05-01;2026-06-03;2026-05-30;10;Informação sobre atribuições;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-05-10;3509502;GRE 2;3509502;2026-05-08;2026-05-01;2026-05-22;2026-05-27;19;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-11;3548906;GRE 10;3507407;2026-05-08;2026-05-01;2026-05-22;2026-06-04;27;Informação sobre atribuições;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-05-12;3534401;GRE 5;3550308;2026-05-09;2026-05-01;2026-05-23;2026-05-16;7;Atualização cadastral;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-05-13;3549805;GRE 9;3525706;2026-05-09;2026-05-01;2026-05-23;2026-05-24;15;Orientação sobre ART;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2026-05-14;3502804;GRE 1;3527256;2026-05-07;2026-05-01;2026-05-21;2026-05-21;14;Orientação sobre ART;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-05-15;3541406;GRE 15;3545100;2026-05-07;2026-05-01;2026-05-21;2026-05-29;22;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-05-16;3547809;GRE 14;3547809;2026-05-07;2026-05-01;2026-05-21;2026-05-09;2;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-05-17;3506003;GRE 8;3525300;2026-05-08;2026-05-01;2026-05-22;;;Atualização cadastral;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-05-18;3538709;GRE 4;3538709;2026-05-10;2026-05-01;2026-05-24;;;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-05-19;3505708;GRE 5;3550308;2026-05-11;2026-05-01;2026-05-25;2026-05-18;7;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-20;3538709;GRE 4;3543907;2026-05-08;2026-05-01;2026-05-22;2026-05-28;20;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-05-21;3503208;GRE 10;3539004;2026-05-08;2026-05-01;2026-05-22;2026-05-20;12;Informação sobre atribuições;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-05-22;3554102;GRE 6;3518404;2026-05-09;2026-05-01;2026-05-23;2026-05-17;8;Orientação sobre ART;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-05-23;3505708;GRE 5;3550308;2026-05-09;2026-05-01;2026-05-23;2026-06-06;28;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-24;3543402;GRE 3;3505906;2026-05-07;2026-05-01;2026-05-21;;;Informação sobre atribuições;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2026-05-25;3549805;GRE 9;3501806;2026-05-07;2026-05-01;2026-05-21;2026-05-15;8;Orientação sobre ART;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-05-26;3525904;GRE 2;3536505;2026-05-08;2026-05-01;2026-05-22;2026-05-12;4;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-05-27;3516200;GRE 3;3516200;2026-05-07;2026-05-01;2026-05-21;2026-05-31;24;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-05-28;3509502;GRE 2;3509502;2026-05-06;2026-05-01;2026-05-20;2026-05-17;11;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-05-29;3506003;GRE 8;3528601;2026-05-06;2026-05-01;2026-05-20;2026-05-09;3;Atualização cadastral;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2026-05-30;3541406;GRE 15;3542206;2026-05-08;2026-05-01;2026-05-22;2026-05-28;20;Informação sobre atribuições;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-05-31;3547809;GRE 14;3548708;2026-05-09;2026-05-01;2026-05-23;2026-06-06;28;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-32;3548500;GRE 7;3541000;2026-05-08;2026-05-01;2026-05-22;2026-05-11;3;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-05-33;3502804;GRE 1;3502804;2026-05-08;2026-05-01;2026-05-22;2026-05-19;11;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-05-34;3548906;GRE 10;3554755;2026-05-09;2026-05-01;2026-05-23;2026-06-02;24;Esclarecimento de registro;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2026-05-35;3534401;GRE 5;3550308;2026-05-10;2026-05-01;2026-05-24;2026-05-14;4;Atualização cadastral;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-05-36;3506003;GRE 8;3550100;2026-05-09;2026-05-01;2026-05-23;2026-05-17;8;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-05-37;3509502;GRE 2;3552403;2026-05-09;2026-05-01;2026-05-23;;;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-05-38;3541000;GRE 7;3518701;2026-05-06;2026-05-01;2026-05-20;2026-05-17;11;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-05-39;3530706;GRE 12;3537107;2026-05-06;2026-05-01;2026-05-20;2026-05-25;19;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-05-40;3516200;GRE 3;3531902;2026-05-18;2026-05-01;2026-06-01;2026-06-15;28;Informação sobre atribuições;Empresa;Telefone;50 a 75 km;4
+REQ-DEMO-2026-05-41;3543402;GRE 3;3503000;2026-05-18;2026-05-01;2026-06-01;2026-06-07;20;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-05-42;3549805;GRE 9;3511102;2026-05-17;2026-05-01;2026-05-31;2026-05-28;11;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-43;3534401;GRE 5;3510609;2026-05-17;2026-05-01;2026-05-31;2026-05-20;3;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-05-44;3505708;GRE 5;3550308;2026-05-19;2026-05-01;2026-06-02;2026-05-23;4;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-05-45;3538709;GRE 4;3512407;2026-05-19;2026-05-01;2026-06-02;;;Orientação sobre ART;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-06-1;3506003;GRE 8;3506003;2026-06-25;2026-06-01;2026-07-09;;;Orientação sobre ART;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-06-2;3502804;GRE 1;3506508;2026-06-24;2026-06-01;2026-07-08;2026-07-11;17;Orientação sobre ART;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2026-06-3;3541406;GRE 15;3519907;2026-06-24;2026-06-01;2026-07-08;2026-07-19;25;Informação sobre atribuições;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-06-4;3518800;GRE 13;3518800;2026-06-23;2026-06-01;2026-07-07;2026-06-24;1;Esclarecimento de registro;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-06-5;3548500;GRE 7;3523305;2026-06-24;2026-06-01;2026-07-08;2026-07-03;9;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-06-6;3529005;GRE 16;3556602;2026-06-23;2026-06-01;2026-07-07;2026-07-06;13;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-06-7;3526902;GRE 4;3501608;2026-06-23;2026-06-01;2026-07-07;2026-07-14;21;Informação sobre atribuições;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-06-8;3525904;GRE 2;3509502;2026-06-02;2026-06-01;2026-06-16;2026-06-16;14;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-06-9;3503208;GRE 10;3503208;2026-06-02;2026-06-01;2026-06-16;2026-06-24;22;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-06-10;3554102;GRE 6;3508504;2026-06-03;2026-06-01;2026-06-17;2026-06-08;5;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-06-11;3505708;GRE 5;3515004;2026-06-03;2026-06-01;2026-06-17;2026-06-28;25;Informação sobre atribuições;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2026-06-12;3550308;GRE 5;3550308;2026-06-04;2026-06-01;2026-06-18;;;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-06-13;3552205;GRE 11;3521002;2026-06-04;2026-06-01;2026-06-18;2026-06-18;14;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-06-14;3525904;GRE 2;3509502;2026-06-02;2026-06-01;2026-06-16;2026-06-03;1;Esclarecimento de registro;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-06-15;3516200;GRE 3;3549508;2026-06-02;2026-06-01;2026-06-16;2026-06-23;21;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-06-16;3538709;GRE 4;3526902;2026-06-03;2026-06-01;2026-06-17;2026-06-20;17;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-06-17;3503208;GRE 10;3548906;2026-06-03;2026-06-01;2026-06-17;2026-06-12;9;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-06-18;3526902;GRE 4;3526902;2026-06-06;2026-06-01;2026-06-20;2026-06-20;14;Orientação sobre ART;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-06-19;3529005;GRE 16;3545407;2026-06-06;2026-06-01;2026-06-20;2026-06-12;6;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-06-20;3530706;GRE 12;3548104;2026-06-14;2026-06-01;2026-06-28;2026-06-28;14;Atualização cadastral;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-06-21;3549904;GRE 6;3510500;2026-06-14;2026-06-01;2026-06-28;2026-07-07;23;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-06-22;3529005;GRE 16;3542503;2026-06-14;2026-06-01;2026-06-28;2026-06-17;3;Informação sobre atribuições;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2026-06-23;3526902;GRE 4;3545803;2026-06-14;2026-06-01;2026-06-28;2026-06-25;11;Esclarecimento de registro;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2026-06-24;3552205;GRE 11;3552205;2026-06-12;2026-06-01;2026-06-26;2026-06-22;10;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-06-25;3550308;GRE 5;3550308;2026-06-13;2026-06-01;2026-06-27;;;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-06-26;3507506;GRE 8;3500550;2026-06-13;2026-06-01;2026-06-27;2026-07-09;26;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-06-27;3541000;GRE 7;3506359;2026-06-13;2026-06-01;2026-06-27;2026-06-19;6;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-06-28;3503208;GRE 10;3514007;2026-06-11;2026-06-01;2026-06-25;2026-06-17;6;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-06-29;3538709;GRE 4;3538709;2026-06-11;2026-06-01;2026-06-25;2026-06-25;14;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-06-30;3548906;GRE 10;3505203;2026-06-14;2026-06-01;2026-06-28;2026-06-29;15;Atualização cadastral;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-06-31;3509502;GRE 2;3523404;2026-06-13;2026-06-01;2026-06-27;;;Esclarecimento de registro;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2026-06-32;3506003;GRE 8;3550100;2026-06-13;2026-06-01;2026-06-27;2026-07-10;27;Informação sobre atribuições;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2026-06-33;3547809;GRE 14;3513801;2026-06-13;2026-06-01;2026-06-27;2026-07-02;19;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-06-34;3541406;GRE 15;3514403;2026-06-13;2026-06-01;2026-06-27;2026-06-24;11;Atualização cadastral;Empresa;E-mail;50 a 75 km;4
+REQ-DEMO-2026-06-35;3502804;GRE 1;3506508;2026-06-12;2026-06-01;2026-06-26;2026-06-14;2;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-06-36;3548500;GRE 7;3551009;2026-06-12;2026-06-01;2026-06-26;2026-07-04;22;Orientação sobre ART;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2026-06-37;3518800;GRE 13;3523107;2026-06-12;2026-06-01;2026-06-26;2026-06-26;14;Atualização cadastral;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2026-06-38;3526902;GRE 4;3500600;2026-06-11;2026-06-01;2026-06-25;2026-06-17;6;Esclarecimento de registro;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-06-39;3529005;GRE 16;3527108;2026-06-11;2026-06-01;2026-06-25;2026-07-07;26;Informação sobre atribuições;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-06-40;3530706;GRE 12;3549102;2026-06-25;2026-06-01;2026-07-09;2026-07-08;13;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-06-41;3549904;GRE 6;3549904;2026-06-01;2026-06-01;2026-06-15;2026-06-22;21;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-06-42;3507506;GRE 8;3504503;2026-06-25;2026-06-01;2026-07-09;2026-07-20;25;Atualização cadastral;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2026-06-43;3541000;GRE 7;3548500;2026-06-25;2026-06-01;2026-07-09;2026-06-30;5;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-06-44;3552205;GRE 11;3553856;2026-06-24;2026-06-01;2026-07-08;2026-07-02;8;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-06-45;3550308;GRE 5;3550308;2026-06-24;2026-06-01;2026-07-08;2026-07-11;17;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-07-1;3550308;GRE 5;3550308;2026-07-01;2026-07-01;2026-07-15;2026-07-25;24;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-07-2;3552205;GRE 11;3510302;2026-07-01;2026-07-01;2026-07-15;2026-07-17;16;Informação sobre atribuições;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2026-07-3;3554102;GRE 6;3549904;2026-07-01;2026-07-01;2026-07-15;2026-07-09;8;Orientação sobre ART;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-07-4;3529005;GRE 16;3534708;2026-07-03;2026-07-01;2026-07-17;2026-07-11;8;Orientação sobre ART;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2026-07-5;3549904;GRE 6;3554102;2026-07-03;2026-07-01;2026-07-17;2026-07-31;28;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-07-6;3530706;GRE 12;3551603;2026-07-02;2026-07-01;2026-07-16;2026-07-22;20;Informação sobre atribuições;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-07-7;3541000;GRE 7;3551009;2026-07-02;2026-07-01;2026-07-16;2026-07-14;12;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-07-8;3502804;GRE 1;3511904;2026-07-04;2026-07-01;2026-07-18;2026-07-17;13;Informação sobre atribuições;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2026-07-9;3548500;GRE 7;3548500;2026-07-04;2026-07-01;2026-07-18;2026-07-09;5;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-07-10;3554102;GRE 6;3549904;2026-07-20;2026-07-01;2026-08-03;2026-08-06;17;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-07-11;3552205;GRE 11;3554003;2026-07-21;2026-07-01;2026-08-04;2026-08-15;25;Atualização cadastral;Empresa;Telefone;50 a 75 km;4
+REQ-DEMO-2026-07-12;3538709;GRE 4;3543907;2026-07-20;2026-07-01;2026-08-03;;;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-07-13;3505708;GRE 5;3550308;2026-07-20;2026-07-01;2026-08-03;2026-07-29;9;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-07-14;3525904;GRE 2;3509502;2026-07-19;2026-07-01;2026-08-02;2026-08-01;13;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-07-15;3503208;GRE 10;3553104;2026-07-19;2026-07-01;2026-08-02;2026-08-09;21;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-07-16;3543402;GRE 3;3543402;2026-07-19;2026-07-01;2026-08-02;2026-08-13;25;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-07-17;3516200;GRE 3;3533908;2026-07-19;2026-07-01;2026-08-02;2026-07-24;5;Orientação sobre ART;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2026-07-18;3526902;GRE 4;3545803;2026-07-23;2026-07-01;2026-08-06;2026-08-18;26;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-07-19;3518800;GRE 13;3525508;2026-07-23;2026-07-01;2026-08-06;2026-07-29;6;Orientação sobre ART;Profissional;E-mail;25 a 50 km;3
+REQ-DEMO-2026-07-20;3506003;GRE 8;3506003;2026-07-20;2026-07-01;2026-08-03;2026-08-06;17;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-07-21;3547809;GRE 14;3548708;2026-07-20;2026-07-01;2026-08-03;2026-07-29;9;Orientação sobre ART;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-07-22;3541406;GRE 15;3555109;2026-07-20;2026-07-01;2026-08-03;2026-08-17;28;Atualização cadastral;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-07-23;3502804;GRE 1;3508108;2026-07-19;2026-07-01;2026-08-02;2026-08-08;20;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-07-24;3549805;GRE 9;3504800;2026-07-21;2026-07-01;2026-08-04;2026-08-11;21;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-07-25;3534401;GRE 5;3550308;2026-07-21;2026-07-01;2026-08-04;2026-08-03;13;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-07-26;3548906;GRE 10;3513702;2026-07-21;2026-07-01;2026-08-04;2026-07-26;5;Atualização cadastral;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-07-27;3509502;GRE 2;3523909;2026-07-20;2026-07-01;2026-08-03;2026-08-14;25;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-07-28;3503208;GRE 10;3543709;2026-07-23;2026-07-01;2026-08-06;2026-08-17;25;Atualização cadastral;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2026-07-29;3525904;GRE 2;3509502;2026-07-22;2026-07-01;2026-08-05;2026-08-08;17;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-07-30;3541406;GRE 15;3515350;2026-07-09;2026-07-01;2026-07-23;2026-07-29;20;Informação sobre atribuições;Profissional;Portal e chat;mais de 75 km;5
+REQ-DEMO-2026-07-31;3541000;GRE 7;3548500;2026-07-20;2026-07-01;2026-08-03;2026-08-13;24;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-07-32;3530706;GRE 12;3548104;2026-07-21;2026-07-01;2026-08-04;2026-07-25;4;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-07-33;3549904;GRE 6;3555406;2026-07-21;2026-07-01;2026-08-04;;;Orientação sobre ART;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-07-34;3529005;GRE 16;3517000;2026-07-21;2026-07-01;2026-08-04;2026-08-11;21;Informação sobre atribuições;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2026-07-35;3526902;GRE 4;3546702;2026-07-21;2026-07-01;2026-08-04;2026-07-22;1;Esclarecimento de registro;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-07-36;3518800;GRE 13;3530607;2026-07-22;2026-07-01;2026-08-05;2026-07-31;9;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-07-37;3548500;GRE 7;3548500;2026-07-22;2026-07-01;2026-08-05;2026-08-08;17;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-07-38;3502804;GRE 1;3527256;2026-07-22;2026-07-01;2026-08-05;2026-08-16;25;Esclarecimento de registro;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-07-39;3541406;GRE 15;3508900;2026-07-23;2026-07-01;2026-08-06;2026-07-28;5;Atualização cadastral;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-07-40;3516200;GRE 3;3549409;2026-07-23;2026-07-01;2026-08-06;2026-08-02;10;Esclarecimento de registro;Profissional;E-mail;50 a 75 km;4
+REQ-DEMO-2026-07-41;3543402;GRE 3;3505500;2026-07-23;2026-07-01;2026-08-06;2026-07-25;2;Informação sobre atribuições;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-07-42;3503208;GRE 10;3548906;2026-07-24;2026-07-01;2026-08-07;2026-08-19;26;Informação sobre atribuições;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-07-43;3525904;GRE 2;3519071;2026-07-24;2026-07-01;2026-08-07;2026-08-11;18;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-07-44;3548906;GRE 10;3543709;2026-07-22;2026-07-01;2026-08-05;;;Esclarecimento de registro;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2026-07-45;3509502;GRE 2;3525904;2026-07-22;2026-07-01;2026-08-05;2026-08-16;25;Informação sobre atribuições;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-08-1;3530706;GRE 12;3530508;2026-08-02;2026-08-01;2026-08-16;2026-08-18;16;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-08-2;3549904;GRE 6;3524907;2026-08-03;2026-08-01;2026-08-17;2026-08-27;24;Atualização cadastral;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2026-08-3;3529005;GRE 16;3527108;2026-08-03;2026-08-01;2026-08-17;2026-08-08;5;Orientação sobre ART;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-08-4;3554102;GRE 6;3527207;2026-08-01;2026-08-01;2026-08-15;2026-08-05;4;Orientação sobre ART;Empresa;Presencial;50 a 75 km;4
+REQ-DEMO-2026-08-5;3552205;GRE 11;3508009;2026-08-01;2026-08-01;2026-08-15;2026-08-13;12;Informação sobre atribuições;Profissional;Presencial;25 a 50 km;3
+REQ-DEMO-2026-08-6;3550308;GRE 5;3550308;2026-08-01;2026-08-01;2026-08-15;2026-08-21;20;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-08-7;3507506;GRE 8;3507506;2026-08-02;2026-08-01;2026-08-16;;;Atualização cadastral;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-08-8;3541406;GRE 15;3500105;2026-08-04;2026-08-01;2026-08-18;;;Esclarecimento de registro;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-08-9;3547809;GRE 14;3529401;2026-08-05;2026-08-01;2026-08-19;2026-08-30;25;Atualização cadastral;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-08-10;3541406;GRE 15;3548302;2026-08-05;2026-08-01;2026-08-19;2026-08-28;23;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-08-11;3502804;GRE 1;3502804;2026-08-04;2026-08-01;2026-08-18;2026-08-19;15;Esclarecimento de registro;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-08-12;3548500;GRE 7;3522109;2026-08-04;2026-08-01;2026-08-18;2026-08-11;7;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-08-13;3518800;GRE 13;3518800;2026-08-04;2026-08-01;2026-08-18;;;Orientação sobre ART;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-08-14;3526902;GRE 4;3543907;2026-08-04;2026-08-01;2026-08-18;2026-08-22;18;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-08-15;3529005;GRE 16;3556602;2026-08-03;2026-08-01;2026-08-17;2026-08-13;10;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-08-16;3549904;GRE 6;3549904;2026-08-03;2026-08-01;2026-08-17;2026-08-05;2;Orientação sobre ART;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-08-17;3530706;GRE 12;3531209;2026-08-03;2026-08-01;2026-08-17;2026-08-25;22;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-08-18;3541000;GRE 7;3548500;2026-08-02;2026-08-01;2026-08-16;2026-08-16;14;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-08-19;3507506;GRE 8;3506003;2026-08-02;2026-08-01;2026-08-16;2026-08-08;6;Informação sobre atribuições;Empresa;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-08-20;3548500;GRE 7;3548500;2026-08-19;2026-08-01;2026-09-02;2026-09-01;13;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-08-21;3502804;GRE 1;3506508;2026-08-20;2026-08-01;2026-09-03;2026-09-10;21;Atualização cadastral;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-08-22;3526902;GRE 4;3545803;2026-08-19;2026-08-01;2026-09-02;;;Orientação sobre ART;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-08-23;3518800;GRE 13;3518800;2026-08-19;2026-08-01;2026-09-02;2026-08-24;5;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-08-24;3506003;GRE 8;3525300;2026-08-21;2026-08-01;2026-09-04;2026-09-07;17;Atualização cadastral;Empresa;Presencial;50 a 75 km;4
+REQ-DEMO-2026-08-25;3509502;GRE 2;3509502;2026-08-21;2026-08-01;2026-09-04;2026-09-15;25;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-08-26;3541406;GRE 15;3548302;2026-08-20;2026-08-01;2026-09-03;2026-08-21;1;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-08-27;3547809;GRE 14;3513801;2026-08-20;2026-08-01;2026-09-03;2026-08-29;9;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-08-28;3549805;GRE 9;3555356;2026-08-22;2026-08-01;2026-09-05;2026-09-13;22;Atualização cadastral;Profissional;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-08-29;3543402;GRE 3;3516200;2026-08-22;2026-08-01;2026-09-05;2026-08-24;2;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-08-30;3525904;GRE 2;3509502;2026-08-19;2026-08-01;2026-09-02;;;Esclarecimento de registro;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-08-31;3516200;GRE 3;3537008;2026-08-19;2026-08-01;2026-09-02;2026-08-24;5;Informação sobre atribuições;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-08-32;3538709;GRE 4;3501608;2026-08-20;2026-08-01;2026-09-03;2026-08-22;2;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-08-33;3503208;GRE 10;3548906;2026-08-20;2026-08-01;2026-09-03;2026-09-10;21;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-08-34;3534401;GRE 5;3550308;2026-08-18;2026-08-01;2026-09-01;2026-08-27;9;Esclarecimento de registro;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-08-35;3548906;GRE 10;3503208;2026-08-18;2026-08-01;2026-09-01;2026-08-19;1;Informação sobre atribuições;Profissional;E-mail;na cidade da unidade;1
+REQ-DEMO-2026-08-36;3543402;GRE 3;3533908;2026-08-19;2026-08-01;2026-09-02;2026-09-13;25;Orientação sobre ART;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-08-37;3549805;GRE 9;3549805;2026-08-19;2026-08-01;2026-09-02;2026-09-05;17;Atualização cadastral;Empresa;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-08-38;3541000;GRE 7;3551009;2026-08-22;2026-08-01;2026-09-05;2026-09-13;22;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-08-39;3507506;GRE 8;3519253;2026-08-22;2026-08-01;2026-09-05;2026-09-05;14;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-08-40;3541000;GRE 7;3551009;2026-08-16;2026-08-01;2026-08-30;2026-09-05;20;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-08-41;3530706;GRE 12;3551603;2026-08-16;2026-08-01;2026-08-30;2026-09-13;28;Esclarecimento de registro;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2026-08-42;3549904;GRE 6;3554102;2026-08-17;2026-08-01;2026-08-31;2026-08-25;8;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-08-43;3529005;GRE 16;3510005;2026-08-17;2026-08-01;2026-08-31;2026-09-02;16;Orientação sobre ART;Profissional;E-mail;até 25 km;2
+REQ-DEMO-2026-08-44;3526902;GRE 4;3526902;2026-08-17;2026-08-01;2026-08-31;2026-09-10;24;Informação sobre atribuições;Empresa;Portal e chat;até 25 km;2
+REQ-DEMO-2026-08-45;3518800;GRE 13;3518800;2026-08-17;2026-08-01;2026-08-31;2026-08-21;4;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-09-1;3552205;GRE 11;3510203;2026-09-25;2026-09-01;2026-10-09;;;Orientação sobre ART;Profissional;Telefone;50 a 75 km;4
+REQ-DEMO-2026-09-2;3541000;GRE 7;3548500;2026-09-01;2026-09-01;2026-09-15;2026-09-03;2;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-09-3;3507506;GRE 8;3504503;2026-09-25;2026-09-01;2026-10-09;;;Esclarecimento de registro;Empresa;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-09-4;3549904;GRE 6;3538501;2026-09-01;2026-09-01;2026-09-15;2026-09-19;18;Esclarecimento de registro;Empresa;Portal e chat;50 a 75 km;4
+REQ-DEMO-2026-09-5;3530706;GRE 12;3548104;2026-09-01;2026-09-01;2026-09-15;2026-09-11;10;Informação sobre atribuições;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-09-6;3526902;GRE 4;3521101;2026-09-02;2026-09-01;2026-09-16;2026-09-08;6;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-09-7;3529005;GRE 16;3527108;2026-09-02;2026-09-01;2026-09-16;2026-09-28;26;Atualização cadastral;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-09-8;3543402;GRE 3;3537008;2026-09-23;2026-09-01;2026-10-07;2026-09-28;5;Orientação sobre ART;Empresa;Presencial;25 a 50 km;3
+REQ-DEMO-2026-09-9;3549805;GRE 9;3515202;2026-09-23;2026-09-01;2026-10-07;;;Atualização cadastral;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2026-09-10;3543402;GRE 3;3544905;2026-09-15;2026-09-01;2026-09-29;;;Esclarecimento de registro;Profissional;Telefone;25 a 50 km;3
+REQ-DEMO-2026-09-11;3516200;GRE 3;3518859;2026-09-16;2026-09-01;2026-09-30;;;Atualização cadastral;Empresa;E-mail;25 a 50 km;3
+REQ-DEMO-2026-09-12;3525904;GRE 2;3509502;2026-09-16;2026-09-01;2026-09-30;2026-09-21;5;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-09-13;3503208;GRE 10;3507407;2026-09-16;2026-09-01;2026-09-30;2026-09-29;13;Esclarecimento de registro;Profissional;Presencial;50 a 75 km;4
+REQ-DEMO-2026-09-14;3538709;GRE 4;3538709;2026-09-17;2026-09-01;2026-10-01;;;Atualização cadastral;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-09-15;3505708;GRE 5;3525003;2026-09-17;2026-09-01;2026-10-01;2026-09-18;1;Orientação sobre ART;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-09-16;3554102;GRE 6;3508504;2026-09-17;2026-09-01;2026-10-01;2026-09-26;9;Informação sobre atribuições;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-09-17;3552205;GRE 11;3552205;2026-09-17;2026-09-01;2026-10-01;;;Esclarecimento de registro;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-09-18;3502804;GRE 1;3506201;2026-09-13;2026-09-01;2026-09-27;2026-09-21;8;Informação sobre atribuições;Empresa;Telefone;25 a 50 km;3
+REQ-DEMO-2026-09-19;3541406;GRE 15;3501301;2026-09-13;2026-09-01;2026-09-27;2026-09-29;16;Esclarecimento de registro;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-09-20;3506003;GRE 8;3526803;2026-09-05;2026-09-01;2026-09-19;;;Esclarecimento de registro;Empresa;E-mail;25 a 50 km;3
+REQ-DEMO-2026-09-21;3547809;GRE 14;3548708;2026-09-05;2026-09-01;2026-09-19;;;Informação sobre atribuições;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-09-22;3548906;GRE 10;3548906;2026-09-06;2026-09-01;2026-09-20;2026-09-30;24;Orientação sobre ART;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-09-23;3509502;GRE 2;3525904;2026-09-06;2026-09-01;2026-09-20;2026-09-22;16;Atualização cadastral;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-09-24;3549805;GRE 9;3535705;2026-09-06;2026-09-01;2026-09-20;2026-09-18;12;Esclarecimento de registro;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-09-25;3534401;GRE 5;3552809;2026-09-06;2026-09-01;2026-09-20;2026-09-10;4;Informação sobre atribuições;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-09-26;3516200;GRE 3;3543402;2026-09-07;2026-09-01;2026-09-21;;;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-09-27;3543402;GRE 3;3543402;2026-09-07;2026-09-01;2026-09-21;2026-09-27;20;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-09-28;3503208;GRE 10;3516853;2026-09-08;2026-09-01;2026-09-22;2026-09-24;16;Atualização cadastral;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-09-29;3525904;GRE 2;3525904;2026-09-07;2026-09-01;2026-09-21;2026-09-15;8;Esclarecimento de registro;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-09-30;3548906;GRE 10;3503208;2026-09-16;2026-09-01;2026-09-30;;;Atualização cadastral;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-09-31;3534401;GRE 5;3547304;2026-09-16;2026-09-01;2026-09-30;;;Orientação sobre ART;Profissional;Portal e chat;até 25 km;2
+REQ-DEMO-2026-09-32;3506003;GRE 8;3539400;2026-09-15;2026-09-01;2026-09-29;2026-09-16;1;Informação sobre atribuições;Profissional;Presencial;até 25 km;2
+REQ-DEMO-2026-09-33;3509502;GRE 2;3509502;2026-09-15;2026-09-01;2026-09-29;;;Esclarecimento de registro;Empresa;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-09-34;3541406;GRE 15;3520608;2026-09-14;2026-09-01;2026-09-28;2026-09-27;13;Esclarecimento de registro;Empresa;Telefone;até 25 km;2
+REQ-DEMO-2026-09-35;3547809;GRE 14;3548708;2026-09-15;2026-09-01;2026-09-29;;;Orientação sobre ART;Profissional;Presencial;na cidade da unidade;1
+REQ-DEMO-2026-09-36;3548500;GRE 7;3551009;2026-09-14;2026-09-01;2026-09-28;;;Orientação sobre ART;Profissional;Telefone;até 25 km;2
+REQ-DEMO-2026-09-37;3502804;GRE 1;3502804;2026-09-14;2026-09-01;2026-09-28;2026-09-19;5;Informação sobre atribuições;Profissional;Portal e chat;na cidade da unidade;1
+REQ-DEMO-2026-09-38;3526902;GRE 4;3525854;2026-09-13;2026-09-01;2026-09-27;2026-09-22;9;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-09-39;3518800;GRE 13;3507100;2026-09-14;2026-09-01;2026-09-28;;;Atualização cadastral;Empresa;Presencial;até 25 km;2
+REQ-DEMO-2026-09-40;3502804;GRE 1;3502101;2026-09-06;2026-09-01;2026-09-20;2026-09-15;9;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-09-41;3548500;GRE 7;3506359;2026-09-05;2026-09-01;2026-09-19;;;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-09-42;3518800;GRE 13;3503901;2026-09-05;2026-09-01;2026-09-19;2026-09-25;20;Orientação sobre ART;Empresa;E-mail;até 25 km;2
+REQ-DEMO-2026-09-43;3526902;GRE 4;3538709;2026-09-05;2026-09-01;2026-09-19;2026-09-17;12;Atualização cadastral;Profissional;Telefone;na cidade da unidade;1
+REQ-DEMO-2026-09-44;3529005;GRE 16;3525805;2026-09-04;2026-09-01;2026-09-18;2026-09-08;4;Esclarecimento de registro;Profissional;Portal e chat;25 a 50 km;3
+REQ-DEMO-2026-09-45;3549904;GRE 6;3549904;2026-09-04;2026-09-01;2026-09-18;;;Informação sobre atribuições;Empresa;Presencial;na cidade da unidade;1

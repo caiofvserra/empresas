@@ -1,0 +1,49 @@
+/// Guarda, por unidade e mês, as horas de mesa disponíveis, as usadas e o custo.
+table 'Meses dos coworkings'
+	isHidden
+	lineageTag: 54442386-9460-5a94-baa6-c50e553e357d
+
+	column Unidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Unidade
+		lineageTag: 3eb622cd-cdb0-5717-9e1b-2c755f0e2f22
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 9d4326f7-272b-597d-a6fd-32df255fb6d4
+
+	column 'Horas disponíveis'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Horas disponíveis
+		lineageTag: 2f7197db-e706-5ed9-9d6f-ff93feb86640
+
+	column 'Horas usadas'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Horas usadas
+		lineageTag: f3178107-95f1-596d-a557-513f21e20a6e
+
+	column Custo
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Custo
+		lineageTag: 4c346a5f-055d-5251-a927-c817cb6ea43c
+
+	partition 'Meses dos coworkings' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "coworkings-meses.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Unidade", type text}, {"Mês", type date}, {"Horas disponíveis", Int64.Type}, {"Horas usadas", Int64.Type}, {"Custo", type number}}, "pt-BR")
+				in
+				    Tipos

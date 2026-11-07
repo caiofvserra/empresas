@@ -5,19 +5,26 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { crc32, deflateRawSync } from 'node:zlib';
 import { dataset } from '../src/domain/dataset';
-import { pacotePowerBi } from '../src/powerbi/pacote';
+import { PAINEIS_POWER_BI, pacotePowerBi } from '../src/powerbi/pacote';
 
-const destino = join(import.meta.dirname, '../entrega/powerbi/empresas');
-rmSync(destino, { recursive: true, force: true });
-const arquivos = pacotePowerBi('empresas', dataset);
-for (const [caminho, texto] of arquivos) { const alvo = join(destino, caminho); mkdirSync(dirname(alvo), { recursive: true }); writeFileSync(alvo, texto, 'utf8'); }
-console.log(`${arquivos.size} arquivos em ${destino}`);
+const noZip: [string, Buffer][] = [];
+for (const painel of PAINEIS_POWER_BI) {
+  const destino = join(import.meta.dirname, `../entrega/powerbi/${painel}`);
+  rmSync(destino, { recursive: true, force: true });
+  const arquivos = pacotePowerBi(painel, dataset);
+  for (const [caminho, texto] of arquivos) {
+    const alvo = join(destino, caminho); mkdirSync(dirname(alvo), { recursive: true }); writeFileSync(alvo, texto, 'utf8');
+    noZip.push([`${painel}/${caminho}`, Buffer.from(texto, 'utf8')]);
+  }
+  console.log(`${arquivos.size} arquivos em ${destino}`);
+}
 
+// O zip leva os pacotes de todos os painéis, cada um na sua pasta.
 const zip = process.argv[2];
 if (zip) {
   const alvo = resolve(zip);
   mkdirSync(dirname(alvo), { recursive: true });
-  writeFileSync(alvo, zipar([...arquivos].map(([caminho, texto]) => [`empresas/${caminho}`, Buffer.from(texto, 'utf8')])));
+  writeFileSync(alvo, zipar(noZip));
   console.log(`zip em ${alvo}`);
 }
 

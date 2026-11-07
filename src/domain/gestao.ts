@@ -58,6 +58,8 @@ export interface Processo {
 /** Processos que entram por mês em cada câmara (a Civil é a maior, como no Crea-SP). */
 const entradaMensal: Record<CamaraConselho, number> = { Civil: 22, Elétrica: 8, 'Mecânica e Metalúrgica': 6, 'Segurança do Trabalho': 4, Agronomia: 5, Química: 3, 'Ambiental e Sanitária': 2, Agrimensura: 2, 'Geologia e Minas': 1.5 };
 export const INICIO_PROCESSOS = '2020-01-01';
+/** Sigla de cada câmara no número do processo. As três primeiras letras não servem: Agronomia e Agrimensura dariam o mesmo número. */
+const siglaCamara: Record<CamaraConselho, string> = { Civil: 'CIV', Elétrica: 'ELE', 'Mecânica e Metalúrgica': 'MEC', 'Segurança do Trabalho': 'SEG', Agronomia: 'AGR', Química: 'QUI', 'Ambiental e Sanitária': 'AMB', Agrimensura: 'AGM', 'Geologia e Minas': 'GEO' };
 
 function sorteioMunicipio(lista: Municipio[]) {
   const pesos = lista.map(row => Math.pow(Math.max(5000, row.populacao), 0.9)), total = sum(pesos), acumulado: number[] = [];
@@ -81,7 +83,7 @@ export function buildProcessos(dataset: Dataset): Processo[] {
       const faixa = weighted(`${key}:f`, [0, 1, 2, 3], [48, 31, 13, 8]), relatoria = [between(`${key}:f0`, 25, 120), between(`${key}:f1`, 121, 365), between(`${key}:f2`, 366, 900), between(`${key}:f3`, 901, 1900)][faixa];
       const pautaEm = addDays(relatorEm, relatoria), julgadoPrevisto = addDays(pautaEm, between(`${key}:j`, 0, 40));
       const companyId = (tipo === 'Auto de infração' && chance(`${key}:pj`) < 0.7) || (tipo === 'Registro e atribuição' && chance(`${key}:pj`) < 0.5) ? empresas[Math.floor(chance(`${key}:e`) * empresas.length)].id : undefined;
-      const processo: Processo = { id: `PC-${month.replace('-', '')}-${camara.slice(0, 3).toUpperCase()}-${String(index + 1).padStart(3, '0')}`, camara, tipo, greId: lugar.greId, cityId: lugar.id, ...(companyId ? { companyId } : {}),
+      const processo: Processo = { id: `PC-${month.replace('-', '')}-${siglaCamara[camara]}-${String(index + 1).padStart(3, '0')}`, camara, tipo, greId: lugar.greId, cityId: lugar.id, ...(companyId ? { companyId } : {}),
         entrada, relatorEm, pautaEm, julgadoEm: julgadoPrevisto, decisao: 'Deferido' };
       if (tipo === 'Auto de infração') {
         const fatoEm = addDays(entrada, -between(`${key}:fato`, 30, 720)), prescreveEm = addDays(fatoEm, 1826);

@@ -1,0 +1,174 @@
+Repasse;Organização;Canal;Objeto;Início;Fim;Valor
+REP-ENT-01-1;ENT-01;Patrocínio;Patrocínio de congresso;2025-01-03;2026-12-24;17000
+REP-ENT-01-2;ENT-01;Patrocínio;Patrocínio de feira técnica;2025-03-18;2026-09-09;45000
+REP-ENT-01-3;ENT-01;Patrocínio;Patrocínio de congresso;2026-04-12;2028-02-01;116000
+REP-ENT-02-1;ENT-02;Patrocínio;Patrocínio de congresso;2024-01-28;2025-07-21;33000
+REP-ENT-02-2;ENT-02;Contrato;Produção de conteúdo técnico;2023-03-08;2024-05-31;167000
+REP-ENT-02-3;ENT-02;Patrocínio;Patrocínio de premiação;2023-10-18;2024-02-15;72000
+REP-ENT-02-4;ENT-02;Convênio;Apoio a semanas de engenharia;2021-05-16;2022-05-11;212000
+REP-ENT-02-5;ENT-02;Contrato;Produção de conteúdo técnico;2024-12-15;2026-04-09;377000
+REP-ENT-02-6;ENT-02;Convênio;Eventos técnicos regionais;2021-07-04;2022-11-26;159000
+REP-ENT-03-1;ENT-03;Patrocínio;Patrocínio de premiação;2025-06-07;2027-04-28;55000
+REP-ENT-04-1;ENT-04;Convênio;Cursos e palestras de atualização profissional;2022-10-03;2023-05-31;159000
+REP-ENT-04-2;ENT-04;Convênio;Programa de orientação a recém-formados;2022-01-08;2023-09-30;68000
+REP-ENT-04-3;ENT-04;Patrocínio;Patrocínio de feira técnica;2026-05-31;2028-02-20;35000
+REP-ENT-04-4;ENT-04;Convênio;Eventos técnicos regionais;2021-12-07;2022-05-06;237000
+REP-ENT-05-1;ENT-05;Contrato;Serviço de inscrição e credenciamento;2021-08-05;2021-11-03;81000
+REP-ENT-05-2;ENT-05;Convênio;Cursos e palestras de atualização profissional;2025-02-21;2025-08-20;24000
+REP-ENT-06-1;ENT-06;Contrato;Serviço de inscrição e credenciamento;2025-08-19;2027-08-09;297000
+REP-ENT-06-2;ENT-06;Patrocínio;Patrocínio de congresso;2022-03-01;2023-12-21;96000
+REP-ENT-06-3;ENT-06;Patrocínio;Patrocínio de congresso;2021-08-18;2022-10-12;10000
+REP-ENT-06-4;ENT-06;Convênio;Eventos técnicos regionais;2023-07-13;2025-06-02;31000
+REP-ENT-07-1;ENT-07;Patrocínio;Patrocínio de feira técnica;2026-04-18;2027-01-13;59000
+REP-ENT-07-2;ENT-07;Contrato;Produção de conteúdo técnico;2025-06-29;2026-09-22;271000
+REP-ENT-07-3;ENT-07;Contrato;Produção de conteúdo técnico;2023-07-18;2024-02-13;339000
+REP-ENT-08-1;ENT-08;Patrocínio;Patrocínio de congresso;2022-06-03;2022-09-01;91000
+REP-ENT-09-1;ENT-09;Contrato;Serviço de inscrição e credenciamento;2025-10-06;2027-04-29;22000
+REP-ENT-09-2;ENT-09;Contrato;Serviço de inscrição e credenciamento;2025-08-05;2027-04-27;252000
+REP-ENT-09-3;ENT-09;Patrocínio;Patrocínio de feira técnica;2022-06-12;2023-03-09;112000
+REP-ENT-09-4;ENT-09;Patrocínio;Patrocínio de feira técnica;2023-07-04;2024-06-28;88000
+REP-ENT-10-1;ENT-10;Convênio;Cursos e palestras de atualização profissional;2023-08-15;2024-11-07;36000
+REP-ENT-10-2;ENT-10;Patrocínio;Patrocínio de congresso;2022-11-18;2024-07-10;116000
+REP-ENT-10-3;ENT-10;Convênio;Programa de orientação a recém-formados;2024-01-26;2024-05-25;186000
+REP-ENT-10-4;ENT-10;Contrato;Produção de conteúdo técnico;2022-08-19;2024-02-10;28000
+REP-ENT-10-5;ENT-10;Patrocínio;Patrocínio de premiação;2023-01-01;2024-02-25;120000
+REP-ENT-11-1;ENT-11;Contrato;Locação de auditório para eventos;2022-12-07;2024-09-27;133000
+REP-ENT-11-2;ENT-11;Patrocínio;Patrocínio de premiação;2024-04-04;2025-06-28;90000
+REP-ENT-12-1;ENT-12;Patrocínio;Patrocínio de congresso;2026-03-21;2026-10-17;53000
+REP-ENT-12-2;ENT-12;Convênio;Programa de orientação a recém-formados;2026-05-06;2026-09-03;283000
+REP-ENT-12-3;ENT-12;Patrocínio;Patrocínio de premiação;2021-10-06;2022-04-04;26000
+REP-ENT-12-4;ENT-12;Patrocínio;Patrocínio de premiação;2024-10-31;2026-07-23;97000
+REP-ENT-12-5;ENT-12;Convênio;Cursos e palestras de atualização profissional;2025-07-12;2027-04-03;307000
+REP-ENT-12-6;ENT-12;Contrato;Serviço de inscrição e credenciamento;2025-10-19;2026-05-17;300000
+REP-ENT-13-1;ENT-13;Contrato;Serviço de inscrição e credenciamento;2021-12-02;2022-07-30;106000
+REP-ENT-13-2;ENT-13;Convênio;Cursos e palestras de atualização profissional;2024-12-24;2026-11-14;289000
+REP-ENT-13-3;ENT-13;Patrocínio;Patrocínio de premiação;2023-12-13;2024-03-12;14000
+REP-ENT-13-4;ENT-13;Convênio;Programa de orientação a recém-formados;2023-02-01;2023-07-31;251000
+REP-ENT-13-5;ENT-13;Convênio;Apoio a semanas de engenharia;2025-07-29;2026-11-21;118000
+REP-ENT-13-6;ENT-13;Convênio;Eventos técnicos regionais;2024-05-23;2025-12-14;204000
+REP-ENT-15-1;ENT-15;Patrocínio;Patrocínio de premiação;2022-07-18;2023-07-13;11000
+REP-ENT-15-2;ENT-15;Patrocínio;Patrocínio de feira técnica;2022-09-12;2023-01-10;58000
+REP-ENT-15-3;ENT-15;Contrato;Produção de conteúdo técnico;2024-09-06;2025-06-03;28000
+REP-ENT-16-1;ENT-16;Contrato;Locação de auditório para eventos;2023-05-02;2024-06-25;166000
+REP-ENT-16-2;ENT-16;Convênio;Cursos e palestras de atualização profissional;2021-05-02;2022-08-25;35000
+REP-ENT-16-3;ENT-16;Convênio;Cursos e palestras de atualização profissional;2024-12-16;2025-08-13;377000
+REP-ENT-16-4;ENT-16;Convênio;Eventos técnicos regionais;2023-10-18;2024-01-16;201000
+REP-ENT-17-1;ENT-17;Convênio;Apoio a semanas de engenharia;2025-01-27;2026-02-21;10000
+REP-ENT-17-2;ENT-17;Contrato;Serviço de inscrição e credenciamento;2022-11-05;2023-10-01;143000
+REP-ENT-17-3;ENT-17;Contrato;Produção de conteúdo técnico;2022-11-24;2024-06-16;387000
+REP-ENT-17-4;ENT-17;Patrocínio;Patrocínio de feira técnica;2023-05-23;2025-04-12;88000
+REP-ENT-17-5;ENT-17;Patrocínio;Patrocínio de congresso;2023-04-13;2023-12-09;66000
+REP-ENT-17-6;ENT-17;Convênio;Programa de orientação a recém-formados;2021-11-06;2022-02-04;139000
+REP-ENT-17-7;ENT-17;Convênio;Programa de orientação a recém-formados;2025-07-28;2026-03-25;161000
+REP-ENT-18-1;ENT-18;Convênio;Cursos e palestras de atualização profissional;2022-10-31;2023-08-27;150000
+REP-ENT-19-1;ENT-19;Convênio;Eventos técnicos regionais;2021-05-18;2021-12-14;314000
+REP-ENT-19-2;ENT-19;Contrato;Produção de conteúdo técnico;2024-08-29;2025-03-27;396000
+REP-ENT-19-3;ENT-19;Convênio;Eventos técnicos regionais;2022-12-17;2023-09-13;352000
+REP-ENT-19-4;ENT-19;Patrocínio;Patrocínio de premiação;2021-05-24;2023-03-15;72000
+REP-ENT-20-1;ENT-20;Patrocínio;Patrocínio de feira técnica;2024-12-10;2026-08-02;72000
+REP-ENT-21-1;ENT-21;Convênio;Eventos técnicos regionais;2022-09-30;2024-02-22;209000
+REP-ENT-21-2;ENT-21;Convênio;Cursos e palestras de atualização profissional;2023-01-25;2024-01-20;112000
+REP-ENT-21-3;ENT-21;Convênio;Programa de orientação a recém-formados;2023-08-31;2025-08-20;11000
+REP-ENT-22-1;ENT-22;Convênio;Cursos e palestras de atualização profissional;2026-03-30;2027-01-24;139000
+REP-ENT-22-2;ENT-22;Contrato;Locação de auditório para eventos;2021-01-26;2021-06-25;111000
+REP-ENT-23-1;ENT-23;Patrocínio;Patrocínio de feira técnica;2021-10-23;2023-09-13;67000
+REP-ENT-23-2;ENT-23;Convênio;Cursos e palestras de atualização profissional;2023-07-24;2024-09-16;397000
+REP-ENT-23-3;ENT-23;Convênio;Eventos técnicos regionais;2021-05-08;2022-05-03;116000
+REP-ENT-23-4;ENT-23;Convênio;Programa de orientação a recém-formados;2021-07-23;2023-03-15;399000
+REP-ENT-24-1;ENT-24;Convênio;Cursos e palestras de atualização profissional;2021-03-12;2021-06-10;267000
+REP-ENT-24-2;ENT-24;Convênio;Cursos e palestras de atualização profissional;2023-01-06;2023-04-06;353000
+REP-ENT-24-3;ENT-24;Convênio;Apoio a semanas de engenharia;2022-03-31;2024-03-20;201000
+REP-ENT-24-4;ENT-24;Convênio;Programa de orientação a recém-formados;2023-01-09;2024-03-04;153000
+REP-ENT-24-5;ENT-24;Contrato;Locação de auditório para eventos;2023-05-25;2024-06-18;89000
+REP-ENT-24-6;ENT-24;Convênio;Eventos técnicos regionais;2025-06-26;2026-01-22;38000
+REP-ENT-24-7;ENT-24;Convênio;Apoio a semanas de engenharia;2021-12-23;2022-11-18;215000
+REP-IES-02-1;IES-02;Convênio;Apoio a semanas de engenharia;2023-08-06;2025-06-26;132000
+REP-IES-02-2;IES-02;Convênio;Cursos e palestras de atualização profissional;2025-03-26;2026-02-19;287000
+REP-IES-03-1;IES-03;Convênio;Eventos técnicos regionais;2022-01-27;2023-11-18;238000
+REP-IES-04-1;IES-04;Convênio;Cursos e palestras de atualização profissional;2024-09-04;2025-12-28;369000
+REP-IES-04-2;IES-04;Convênio;Eventos técnicos regionais;2023-04-26;2023-09-23;173000
+REP-IES-05-1;IES-05;Convênio;Programa de orientação a recém-formados;2025-03-03;2025-10-29;125000
+REP-IES-05-2;IES-05;Convênio;Programa de orientação a recém-formados;2026-03-17;2027-05-11;366000
+REP-IES-06-1;IES-06;Convênio;Cursos e palestras de atualização profissional;2024-08-16;2025-03-14;238000
+REP-IES-07-1;IES-07;Convênio;Cursos e palestras de atualização profissional;2024-04-16;2025-07-10;280000
+REP-IES-07-2;IES-07;Convênio;Apoio a semanas de engenharia;2021-08-26;2022-05-23;175000
+REP-IES-07-3;IES-07;Contrato;Produção de conteúdo técnico;2026-04-03;2027-09-25;245000
+REP-IES-07-4;IES-07;Convênio;Eventos técnicos regionais;2023-06-13;2025-04-03;193000
+REP-IES-08-1;IES-08;Convênio;Cursos e palestras de atualização profissional;2023-07-06;2024-04-01;358000
+REP-IES-08-2;IES-08;Contrato;Serviço de inscrição e credenciamento;2024-03-21;2025-06-14;309000
+REP-IES-09-1;IES-09;Convênio;Programa de orientação a recém-formados;2023-09-07;2024-02-04;195000
+REP-IES-10-1;IES-10;Convênio;Programa de orientação a recém-formados;2021-02-26;2022-06-21;297000
+REP-IES-11-1;IES-11;Convênio;Apoio a semanas de engenharia;2026-04-17;2028-04-06;372000
+REP-IES-12-1;IES-12;Contrato;Serviço de inscrição e credenciamento;2021-12-21;2023-11-11;301000
+REP-IES-12-2;IES-12;Convênio;Eventos técnicos regionais;2025-04-04;2026-12-25;275000
+REP-IES-12-3;IES-12;Contrato;Produção de conteúdo técnico;2025-12-28;2026-06-26;214000
+REP-IES-12-4;IES-12;Contrato;Serviço de inscrição e credenciamento;2025-09-23;2027-06-15;179000
+REP-IES-13-1;IES-13;Convênio;Programa de orientação a recém-formados;2025-07-14;2026-05-10;303000
+REP-IES-13-2;IES-13;Contrato;Locação de auditório para eventos;2021-07-04;2022-03-31;72000
+REP-IES-14-1;IES-14;Convênio;Cursos e palestras de atualização profissional;2021-08-11;2023-06-02;143000
+REP-IES-14-2;IES-14;Convênio;Eventos técnicos regionais;2023-12-26;2024-05-24;90000
+REP-IES-15-1;IES-15;Convênio;Eventos técnicos regionais;2026-05-17;2026-12-13;130000
+REP-IES-15-2;IES-15;Convênio;Eventos técnicos regionais;2025-02-07;2026-08-01;319000
+REP-IES-15-3;IES-15;Convênio;Programa de orientação a recém-formados;2025-01-10;2025-07-09;200000
+REP-IES-15-4;IES-15;Contrato;Serviço de inscrição e credenciamento;2024-08-15;2026-02-06;166000
+REP-IES-15-5;IES-15;Convênio;Eventos técnicos regionais;2022-12-22;2024-11-11;25000
+REP-IES-15-6;IES-15;Convênio;Eventos técnicos regionais;2025-01-24;2026-01-19;256000
+REP-IES-15-7;IES-15;Convênio;Eventos técnicos regionais;2025-01-31;2025-12-27;213000
+REP-IES-16-1;IES-16;Convênio;Eventos técnicos regionais;2024-10-08;2026-05-31;315000
+REP-IES-16-2;IES-16;Convênio;Eventos técnicos regionais;2024-01-28;2024-07-26;91000
+REP-IES-16-3;IES-16;Convênio;Eventos técnicos regionais;2022-09-13;2023-11-07;94000
+REP-IES-17-1;IES-17;Patrocínio;Patrocínio de feira técnica;2023-11-17;2024-03-16;38000
+REP-IES-17-2;IES-17;Convênio;Cursos e palestras de atualização profissional;2025-08-21;2026-07-17;83000
+REP-IES-19-1;IES-19;Contrato;Serviço de inscrição e credenciamento;2026-01-08;2027-05-03;40000
+REP-IES-19-2;IES-19;Patrocínio;Patrocínio de feira técnica;2023-11-01;2024-02-29;29000
+REP-IES-20-1;IES-20;Contrato;Produção de conteúdo técnico;2023-03-17;2023-08-14;218000
+REP-IES-21-1;IES-21;Contrato;Produção de conteúdo técnico;2025-06-29;2025-11-26;361000
+REP-IES-21-2;IES-21;Contrato;Locação de auditório para eventos;2024-01-31;2024-04-30;344000
+REP-IES-21-3;IES-21;Contrato;Locação de auditório para eventos;2022-03-10;2024-02-28;397000
+REP-IES-23-1;IES-23;Convênio;Apoio a semanas de engenharia;2022-12-16;2024-10-06;286000
+REP-IES-23-2;IES-23;Contrato;Locação de auditório para eventos;2024-04-09;2024-11-05;273000
+REP-IES-23-3;IES-23;Contrato;Serviço de inscrição e credenciamento;2025-06-06;2027-02-26;53000
+REP-IES-23-4;IES-23;Convênio;Apoio a semanas de engenharia;2023-03-30;2025-02-17;217000
+REP-IES-23-5;IES-23;Convênio;Cursos e palestras de atualização profissional;2023-07-06;2025-01-26;136000
+REP-IES-23-6;IES-23;Patrocínio;Patrocínio de feira técnica;2021-12-24;2022-08-21;38000
+REP-IES-23-7;IES-23;Convênio;Cursos e palestras de atualização profissional;2024-01-14;2025-04-08;312000
+REP-IES-23-8;IES-23;Convênio;Programa de orientação a recém-formados;2025-03-23;2026-05-17;231000
+REP-IES-23-9;IES-23;Convênio;Cursos e palestras de atualização profissional;2022-08-26;2023-09-20;228000
+REP-IES-25-1;IES-25;Patrocínio;Patrocínio de premiação;2025-10-20;2026-07-17;11000
+REP-IES-25-2;IES-25;Convênio;Eventos técnicos regionais;2025-05-02;2025-07-31;393000
+REP-IES-25-3;IES-25;Convênio;Cursos e palestras de atualização profissional;2022-11-16;2024-07-08;57000
+REP-IES-25-4;IES-25;Contrato;Serviço de inscrição e credenciamento;2025-05-07;2026-04-02;325000
+REP-IES-26-1;IES-26;Convênio;Programa de orientação a recém-formados;2021-08-31;2023-02-22;357000
+REP-IES-27-1;IES-27;Contrato;Serviço de inscrição e credenciamento;2025-04-23;2025-12-19;300000
+REP-IES-27-2;IES-27;Convênio;Cursos e palestras de atualização profissional;2025-12-15;2026-03-15;249000
+REP-IES-27-3;IES-27;Convênio;Cursos e palestras de atualização profissional;2025-07-02;2026-09-25;173000
+REP-IES-27-4;IES-27;Convênio;Eventos técnicos regionais;2025-07-02;2027-04-23;356000
+REP-IES-27-5;IES-27;Convênio;Apoio a semanas de engenharia;2022-10-22;2024-04-14;198000
+REP-IES-28-1;IES-28;Contrato;Produção de conteúdo técnico;2023-01-14;2024-12-04;113000
+REP-IES-28-2;IES-28;Convênio;Eventos técnicos regionais;2024-08-09;2026-03-02;153000
+REP-IES-28-3;IES-28;Convênio;Cursos e palestras de atualização profissional;2026-01-08;2026-08-06;391000
+REP-IES-28-4;IES-28;Convênio;Apoio a semanas de engenharia;2022-10-27;2024-09-16;186000
+REP-IES-28-5;IES-28;Patrocínio;Patrocínio de congresso;2026-04-30;2027-12-21;39000
+REP-IES-28-6;IES-28;Contrato;Produção de conteúdo técnico;2026-02-12;2027-10-05;191000
+REP-IES-29-1;IES-29;Convênio;Apoio a semanas de engenharia;2022-04-25;2022-08-23;42000
+REP-IES-30-1;IES-30;Patrocínio;Patrocínio de feira técnica;2024-08-06;2025-02-02;33000
+REP-IES-30-2;IES-30;Convênio;Apoio a semanas de engenharia;2022-12-27;2023-12-22;41000
+REP-IES-30-3;IES-30;Patrocínio;Patrocínio de congresso;2023-03-12;2023-08-09;95000
+REP-IES-30-4;IES-30;Contrato;Locação de auditório para eventos;2022-07-27;2023-05-23;154000
+REP-IES-31-1;IES-31;Convênio;Programa de orientação a recém-formados;2022-02-13;2022-08-12;263000
+REP-IES-31-2;IES-31;Contrato;Serviço de inscrição e credenciamento;2021-08-13;2022-09-07;288000
+REP-IES-31-3;IES-31;Contrato;Locação de auditório para eventos;2024-05-16;2025-07-10;96000
+REP-IES-32-1;IES-32;Patrocínio;Patrocínio de premiação;2024-02-27;2025-07-21;106000
+REP-IES-32-2;IES-32;Convênio;Cursos e palestras de atualização profissional;2024-08-08;2025-11-01;144000
+REP-IES-32-3;IES-32;Convênio;Apoio a semanas de engenharia;2024-06-13;2024-09-11;170000
+REP-IES-32-4;IES-32;Contrato;Locação de auditório para eventos;2024-04-22;2025-10-14;314000
+REP-IES-32-5;IES-32;Convênio;Cursos e palestras de atualização profissional;2024-06-13;2026-05-04;278000
+REP-IES-32-6;IES-32;Contrato;Locação de auditório para eventos;2024-04-24;2026-03-15;55000
+REP-IES-34-1;IES-34;Contrato;Locação de auditório para eventos;2022-02-09;2022-11-06;367000
+REP-IES-34-2;IES-34;Contrato;Locação de auditório para eventos;2026-06-17;2027-08-11;41000
+REP-IES-34-3;IES-34;Convênio;Apoio a semanas de engenharia;2021-10-06;2022-05-04;392000
+REP-IES-34-4;IES-34;Patrocínio;Patrocínio de premiação;2025-05-13;2026-09-05;44000
+REP-IES-34-5;IES-34;Convênio;Eventos técnicos regionais;2021-09-08;2021-12-07;357000
+REP-IES-34-6;IES-34;Convênio;Apoio a semanas de engenharia;2021-07-23;2023-04-14;282000
+REP-IES-34-7;IES-34;Convênio;Apoio a semanas de engenharia;2024-10-19;2025-02-16;47000
+REP-IES-36-1;IES-36;Contrato;Produção de conteúdo técnico;2025-10-02;2027-05-25;331000

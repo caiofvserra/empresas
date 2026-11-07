@@ -1,4 +1,6 @@
 import type { Coluna, Medida, Modelo, Tabela } from '../modelo';
+import { COM_DATA, COM_PERIODO, FORMATO, MESES_DO_GRAFICO, MESES_NA_BASE, PASTA_PARAMETRO, cartao, data, filtrosExtras, inicioDe, inteiro, medida, medidasDeApoio, medidasDosCartoes, n, noMes, parte, sinal, texto, variacaoDe } from '../comum';
+import type { Cartao } from '../comum';
 import { BLOCOS_PARCERIA, COLUNAS_FOTO_EMPRESAS, COORTES, comMarca, fichaDoAcordo, medidaDoBloco, situacoesNoFunil } from './dados';
 
 /*
@@ -7,16 +9,9 @@ import { BLOCOS_PARCERIA, COLUNAS_FOTO_EMPRESAS, COORTES, comMarca, fichaDoAcord
  * somam os fatos do período (ADR 0002). `tests/powerbi-empresas.test.ts` reproduz estas regras sobre os CSV e confere
  * com os números do protótipo.
  */
-const texto = (nome: string, extra: Partial<Coluna> = {}): Coluna => ({ nome, tipo: 'string', ...extra });
-const inteiro = (nome: string, extra: Partial<Coluna> = {}): Coluna => ({ nome, tipo: 'int64', formato: '0', ...extra });
-const data = (nome: string, extra: Partial<Coluna> = {}): Coluna => ({ nome, tipo: 'dateTime', formato: 'dd/mm/yyyy', ...extra });
-const sinal = (nome: string): Coluna => ({ nome, tipo: 'int64', formato: '0', oculta: true });
 const colunaDaFoto = ({ nome, tipo }: typeof COLUNAS_FOTO_EMPRESAS[number]): Coluna =>
   tipo === 'sinal' ? sinal(nome) : tipo === 'inteiro' ? inteiro(nome, { oculta: true }) : texto(nome, nome === 'Tempo de registro' ? { ordenarPor: 'Ordem do tempo de registro' } : {});
 
-export const PASTA_PARAMETRO = 'Pasta dos dados';
-/** Meses do cenário de demonstração, o limite do período. */
-const MESES_NA_BASE = 36;
 const ACORDO_DO_CREDITO = fichaDoAcordo(['bcb']);
 
 const tabelas: Tabela[] = [
@@ -47,8 +42,6 @@ const tabelas: Tabela[] = [
 ];
 
 /* ---------- Pedaços de DAX ---------- */
-const COM_DATA = 'VAR d = [Data escolhida]';
-const filtrosExtras = (filtros: string[]) => filtros.map(filtro => `, ${filtro}`).join('');
 /** Soma uma coluna da foto das empresas na data escolhida. */
 const somaDaFoto = (coluna: string) => `${COM_DATA}\nRETURN CALCULATE(SUM('Foto das empresas'[${coluna}]), 'Foto das empresas'[Data] = d)`;
 /** Conta as empresas da foto na data escolhida com os filtros dados. */
@@ -57,7 +50,6 @@ const naFoto = (coluna: string) => `'Foto das empresas'[${coluna}] = 1`;
 const registradasCom = (coluna: string) => contaNaFoto(naFoto('Registrada'), naFoto(coluna));
 const contaEstabelecimentos = (...filtros: string[]) => `${COM_DATA}\nRETURN CALCULATE(COUNTROWS('Foto dos estabelecimentos'), 'Foto dos estabelecimentos'[Data] = d${filtrosExtras(filtros)})`;
 const NO_MERCADO = "'Foto dos estabelecimentos'[No mercado] = 1", VIGENTE = "'Foto dos estabelecimentos'[Situação no cadastro] = \"Com registro ou visto\"", OBRIGATORIO = "'Estabelecimentos'[Classe] = \"Registro obrigatório\"";
-const COM_PERIODO = `${COM_DATA}\nVAR inicio = [Início do período]`;
 /** O mesmo período um ano antes: início e fim recuados 12 meses (EDATE leva o dia 31 ao último dia do mês, como o painel). */
 const UM_ANO_ANTES = 'VAR inicio = EDATE([Início do período], -12)\nVAR fim = EDATE([Data escolhida], -12)';
 /** Entradas ou saídas contadas no contexto, com filtros a mais. */
@@ -65,17 +57,6 @@ const contaMovimento = (tipo: 'Entrada' | 'Saída', ...filtros: string[]) => `CA
 const movimentoNoPeriodo = (tipo: 'Entrada' | 'Saída', ...filtros: string[]) => `${COM_PERIODO}\nRETURN ${contaMovimento(tipo, "'Entradas e saídas'[Mês] >= inicio", "'Entradas e saídas'[Mês] <= d", ...filtros)}`;
 /** ARTs ou valor em ART entre `inicio` e `fim`. */
 const nasArts = (expressao: string, fim: string) => `CALCULATE(${expressao}, 'ARTs'[Data] >= inicio, 'ARTs'[Data] <= ${fim}) + 0`;
-/** Primeiro dia do mês que começa um período de `n` meses terminado na data `d`. */
-const inicioDe = (n: string) => `DATE(YEAR(d), MONTH(d) - ${n} + 1, 1)`;
-/** Meses do gráfico: 24, ou o período quando passa de 24 (`mesesDaJanela` do painel). */
-const MESES_DO_GRAFICO = 'MAX(24, [Meses do período])';
-const DENTRO_DO_GRAFICO = "KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)";
-/**
- * Medida mês a mês para o eixo do calendário: só os meses do gráfico. O filtro entra mês a mês, então o trimestre da tabela de
- * calor soma só os meses do gráfico e os outros ficam em branco.
- */
-const noMes = (expressao: string) =>
-  `${COM_DATA}\nVAR mes = MAX('Calendário'[Mês])\nVAR inicio = ${inicioDe(MESES_DO_GRAFICO)}\nVAR meses = CALCULATE(COUNTROWS('Calendário'), ${DENTRO_DO_GRAFICO})\nRETURN IF(meses > 0, CALCULATE(${expressao}, ${DENTRO_DO_GRAFICO}))`;
 /**
  * Primeiro mês do gráfico de economia (`ritmoEconomico`): os meses do gráfico, mas nunca antes do 12º mês da base, porque as
  * séries de 12 meses precisam dos 11 anteriores.
@@ -84,33 +65,10 @@ const INICIO_DA_ECONOMIA = `VAR inicio = MAX(${inicioDe(MESES_DO_GRAFICO)}, CALC
 /** Último mês com arquivo da Receita na data escolhida: a abertura mais recente até ela (`ultimoMesReceita`). */
 const ULTIMO_MES_DA_RECEITA = "VAR receita = CALCULATE(MAX('Estabelecimentos'[Mês de abertura]), REMOVEFILTERS(), 'Estabelecimentos'[Aberto em] <= d)";
 
-const medida = (pasta: string, nome: string, dax: string, formato: string, descricao: string): Medida => ({ nome, dax, formato, pasta, descricao });
 const PASTA = { apoio: 'Apoio', registro: 'Registro e mercado', evolucao: 'Evolução', rtArt: 'RT e ART', vinculos: 'Vínculos' } as const;
-const FORMATO = { inteiro: '#,##0', parte: '0.0%', reais: 'R$ #,##0', variacao: '+0.0%;-0.0%;0.0%', pontos: '+0.0;-0.0;0.0', indice: '0.0', texto: '' } as const;
 
 /* ---------- Cartões ---------- */
-/** Como o cartão se compara: estoque e fluxo variam em %, taxa em pontos percentuais (`variacaoAnual` do painel). */
-type Serie = 'estoque' | 'fluxo' | 'taxa';
-const VARIACAO: Record<Serie, { formato: string; unidade: string; calculo: string; descricao: string }> = {
-  estoque: { formato: FORMATO.variacao, unidade: '', calculo: 'IF(antes > 0, DIVIDE(agora - antes, antes))', descricao: 'Compara o cartão com o fim do mesmo mês um ano antes.' },
-  fluxo: { formato: FORMATO.variacao, unidade: '', calculo: 'IF(antes > 0, DIVIDE(agora - antes, antes))', descricao: 'Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.' },
-  taxa: { formato: FORMATO.pontos, unidade: ' p.p.', calculo: 'IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)', descricao: 'Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.' },
-};
-/**
- * A comparação embaixo do número, como no painel: contra um ano antes (a regra geral), contra a meta (parte registrada e RT) ou
- * nos meses do gráfico (emprego). `medida` aponta para a medida numérica; `frase` completa o número formatado.
- */
-type Comparacao = { serie: Serie; medida?: string; frase?: string };
-interface Cartao { nome: string; pasta: string; comparacao?: Comparacao; detalhe?: string }
-/** Nome da medida de variação de um cartão contra um ano antes. */
-export const variacaoDe = (nome: string) => `Variação em um ano: ${nome}`;
-/** Nomes das medidas de texto que o cartão mostra embaixo do número. */
-export const comparacaoDe = (nome: string) => `Comparação: ${nome}`;
-export const detalheDe = (nome: string) => `Detalhe: ${nome}`;
-const n = (expressao: string) => `FORMAT(${expressao}, "#,##0")`;
-const parte = (expressao: string) => `FORMAT(${expressao}, "0.0%")`;
-
-const cartao = (pasta: string) => (nome: string, comparacao?: Comparacao, detalhe?: string): Cartao => ({ nome, pasta, comparacao, detalhe });
+export { comparacaoDe, detalheDe } from '../comum';
 const [noRegistro, naEvolucao, noRtArt] = [cartao(PASTA.registro), cartao(PASTA.evolucao), cartao(PASTA.rtArt)];
 const META = (medidaDaMeta: string) => `" p.p. em relação à meta de " & FORMAT(${medidaDaMeta}, "0%")`;
 /** Os cinco cartões de cada página, com a comparação e a linha de apoio do painel. `paginas.ts` monta os cartões daqui. */
@@ -140,25 +98,6 @@ export const CARTOES = {
   ],
 } satisfies Record<string, Cartao[]>;
 
-/**
- * A mesma medida lida com a data trocada pelo fim do mesmo mês um ano antes (a tabela oculta Datas das fotos tem essas datas).
- * No fluxo, o período continua com o mesmo número de meses. A data entra numa variável antes do CALCULATE, que muda o contexto.
- */
-const variacaoEmUmAno = (nome: string, serie: Serie) =>
-  ['VAR alvo = EOMONTH([Data escolhida], -12)', `VAR agora = [${nome}]`, `VAR antes = CALCULATE([${nome}], 'Datas das fotos'[Data] = alvo)`, `RETURN ${VARIACAO[serie].calculo}`].join('\n');
-/** A frase da comparação: o número com sinal e o que ele compara ("em relação a um ano antes", à meta ou nos meses do gráfico). */
-function fraseDaComparacao({ nome }: Cartao, { serie, medida: outra, frase }: Comparacao) {
-  const { formato, unidade } = VARIACAO[serie];
-  return `VAR v = [${outra ?? variacaoDe(nome)}]\nRETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "${formato}") & ${frase ?? `"${unidade} em relação a um ano antes"`})`;
-}
-function medidasDosCartoes(): Medida[] {
-  return Object.values(CARTOES).flat().flatMap((c: Cartao) => [
-    ...(c.comparacao && !c.comparacao.medida ? [medida(c.pasta, variacaoDe(c.nome), variacaoEmUmAno(c.nome, c.comparacao.serie), VARIACAO[c.comparacao.serie].formato, VARIACAO[c.comparacao.serie].descricao)] : []),
-    ...(c.comparacao ? [medida(c.pasta, comparacaoDe(c.nome), fraseDaComparacao(c, c.comparacao), FORMATO.texto, 'Escreve a comparação que o cartão mostra embaixo do número.')] : []),
-    ...(c.detalhe ? [medida(c.pasta, detalheDe(c.nome), c.detalhe, FORMATO.texto, 'Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.')] : []),
-  ]);
-}
-
 /* ---------- Economia, abertas e registros (índice 100) ---------- */
 /** Cada série do gráfico de economia no mês do eixo: o valor do mês e o índice com o primeiro mês do gráfico igual a 100. */
 const SERIES_DA_ECONOMIA = [
@@ -184,9 +123,7 @@ function medidasDaEconomia(): Medida[] {
 /* ---------- Medidas ---------- */
 const medidas: Medida[] = [
   // Apoio: data, período e metas.
-  medida(PASTA.apoio, 'Data escolhida', "IF(ISFILTERED('Datas das fotos'[Data]), MAX('Datas das fotos'[Data]), MAX('Datas de referência'[Data]))", 'dd/mm/yyyy', 'Devolve a data de referência escolhida; sem escolha, a mais recente. As medidas de variação trocam a data pela de um ano antes.'),
-  medida(PASTA.apoio, 'Meses do período', "SELECTEDVALUE('Período'[Meses], 12)", '0', 'Devolve o período escolhido, em meses; sem escolha, 12.'),
-  medida(PASTA.apoio, 'Início do período', `${COM_DATA}\nRETURN ${inicioDe('[Meses do período]')}`, 'dd/mm/yyyy', 'Devolve o primeiro dia do primeiro mês do período: o período termina na data escolhida e começa no primeiro dia do mês, como no painel.'),
+  ...medidasDeApoio(PASTA.apoio),
   medida(PASTA.apoio, 'Meta da parte do mercado registrada', '0.65', FORMATO.parte, 'A meta padrão da parte do mercado registrada é 65%, a mesma do painel.'),
   medida(PASTA.apoio, 'Meta de RT', '0.95', FORMATO.parte, 'A meta padrão de empresas registradas com responsável técnico é 95%, porque o RT é condição do registro (Lei 5.194/66, art. 8º, parágrafo único).'),
 
@@ -271,7 +208,7 @@ const medidas: Medida[] = [
     bloco.acordos.length ? fichaDoAcordo(bloco.acordos)
       : 'Liga pelo CNPJ as fontes abertas da ANEEL (Agência Nacional de Energia Elétrica), da ANP (Agência Nacional do Petróleo), da ANM (Agência Nacional de Mineração) e do BNDES (Banco Nacional de Desenvolvimento Econômico e Social). Os números são do cenário na data de hoje.')),
 
-  ...medidasDosCartoes(),
+  ...medidasDosCartoes(CARTOES),
 ];
 
 /** Medida mês a mês das abertas na Receita: os meses do gráfico, até o último mês com arquivo da Receita. */

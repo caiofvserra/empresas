@@ -1,0 +1,38 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table Regionais
+ref table 'Municípios'
+ref table 'Câmaras'
+ref table 'Calendário'
+ref table 'Datas de referência'
+ref table 'Datas das fotos'
+ref table 'Período'
+ref table Receitas
+ref table Despesas
+ref table Pessoas
+ref table 'Diárias'
+ref table Fornecedores
+ref table Empenhos
+ref table Contratos
+ref table 'Títulos'
+ref table 'Foto da dívida'
+ref table Processos
+ref table 'Foto dos processos'
+ref table 'Foto do plenário'
+ref table 'Profissionais ativos'
+ref table 'Organizações'
+ref table Repasses
+ref table 'Pagamentos dos repasses'
+ref table 'Solicitações'
+ref table Coworkings
+ref table 'Meses dos coworkings'
+ref table 'Usuários dos coworkings'
+ref table Medidas

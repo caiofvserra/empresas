@@ -1,8 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
-import Ajv from 'ajv';
 import { dataset } from '../src/domain/dataset.ts';
 import { datasetAt, fiscalizacaoAt } from '../src/domain/tempo.ts';
 import { defaultFilters } from '../src/domain/types.ts';
@@ -19,15 +16,18 @@ import { variacaoAnual } from '../src/painel/evolucao.ts';
 import { aberturasRfb, permanenciaCoorte } from '../src/domain/mercado.ts';
 import { janela, mesesDaJanela, quadroTecnico } from '../src/painel/analise.ts';
 import { pacotePowerBi } from '../src/powerbi/pacote.ts';
+import { arquivoDe, conferirCamposDosVisuais, conferirNomesDePasta, conferirReferenciasDax, conferirSchemas, daxDe, fimDoMesUmAnoAntes, inicio, leitorCsv, noPeriodo, soma, conferirChavesUnicas } from './powerbi-pacote.ts';
+import { modeloEmpresas } from '../src/powerbi/empresas/modelo.ts';
 
 /*
  * O pacote Power BI do painel de Empresas, testado pela sua única entrada (`pacotePowerBi`): os arquivos que o Power BI Desktop abre.
  * Três conferências: (1) cada JSON vale pelo schema oficial da Microsoft (baixado em tests/fixtures/powerbi-schemas); (2) toda medida
- * e todo visual apontam para tabelas, colunas e medidas que existem; (3) os cartões, calculados a partir dos CSV pela mesma regra que
- * a medida DAX escreve, dão os números que o painel mostra (as funções do protótipo são a fonte da verdade).
+ * e todo visual apontam para tabelas, colunas e medidas que existem (as duas em `powerbi-pacote.ts`, comuns aos painéis); (3) os
+ * cartões, calculados a partir dos CSV pela mesma regra que a medida DAX escreve, dão os números que o painel mostra (as funções do
+ * protótipo são a fonte da verdade).
  */
 const pacote = pacotePowerBi('empresas', dataset);
-const arquivo = (caminho: string) => { const texto = pacote.get(caminho); assert.ok(texto !== undefined, `falta ${caminho}`); return texto; };
+const arquivo = arquivoDe(pacote), lerCsv = leitorCsv(pacote), dax = daxDe(pacote, 'Empresas');
 
 test('pacote: projeto PBIP com modelo, relatório de quatro páginas, tema, dados e instruções', () => {
   for (const caminho of ['Empresas.pbip', 'LEIA-ME.md', 'Empresas.Report/definition.pbir', 'Empresas.Report/definition/report.json', 'Empresas.Report/definition/version.json',
@@ -36,67 +36,24 @@ test('pacote: projeto PBIP com modelo, relatório de quatro páginas, tema, dado
   assert.deepEqual(paginas, ['registro', 'evolucao', 'rt-art', 'vinculos']);
   for (const pagina of paginas) assert.ok(JSON.parse(arquivo(`Empresas.Report/definition/pages/${pagina}/page.json`)).displayName);
   assert.ok([...pacote.keys()].some(caminho => caminho.startsWith('Empresas.Report/StaticResources/RegisteredResources/') && caminho.endsWith('.json')), 'tema registrado');
-  // Nomes de pasta de página e visual só com [A-Za-z0-9_-]: fora disso o Desktop ignora a pasta sem avisar.
-  for (const caminho of pacote.keys()) { const match = caminho.match(/^Empresas\.Report\/definition\/pages\/([^/]+)\/(?:visuals\/([^/]+)\/)?/); if (match) for (const parte of match.slice(1)) if (parte) assert.match(parte, /^[A-Za-z0-9_-]{1,50}$/); }
+  conferirNomesDePasta(pacote, 'Empresas');
 });
 
 test('pacote: todo JSON do projeto vale pelo schema oficial da Microsoft, e o tema pelo schema de tema', () => {
-  const ajv = new Ajv({ strict: false, allErrors: true });
-  const raiz = join(import.meta.dirname, 'fixtures/powerbi-schemas');
-  const varrer = (pasta: string): string[] => readdirSync(pasta).flatMap(nome => { const caminho = join(pasta, nome); return statSync(caminho).isDirectory() ? varrer(caminho) : [caminho]; });
-  // O $id de alguns schemas diz "schema.embedded.json" e o $ref aponta para "schema-embedded.json": vale o caminho do arquivo.
-  for (const caminho of varrer(join(raiz, 'fabric'))) ajv.addSchema({ ...JSON.parse(readFileSync(caminho, 'utf8')), $id: `https://developer.microsoft.com/json-schemas/${caminho.slice(raiz.length + 1).replaceAll('\\', '/')}` });
-  const tema = new Ajv({ strict: false, allErrors: true, validateSchema: false }).compile(JSON.parse(readFileSync(join(raiz, 'tema/reportThemeSchema-2.159.json'), 'utf8')));
-  let conferidos = 0;
-  for (const [caminho, texto] of pacote) {
-    if (texto.charCodeAt(0) === 0xfeff) assert.fail(`${caminho} começa com BOM`);
-    if (!caminho.endsWith('.json') && !caminho.endsWith('.pbir') && !caminho.endsWith('.pbism') && !caminho.endsWith('.pbip')) continue;
-    const json = JSON.parse(texto);
-    if (caminho.includes('/RegisteredResources/') && !json.$schema?.includes('json-schemas/fabric')) { assert.ok(tema(json), `${caminho}: ${ajv.errorsText(tema.errors)}`); conferidos++; continue; }
-    if (caminho.startsWith('dados/') || caminho.startsWith('mapas/')) continue;
-    const validar = ajv.getSchema(json.$schema); assert.ok(validar, `${caminho}: schema ${json.$schema} não baixado`);
-    assert.ok(validar(json), `${caminho}: ${ajv.errorsText(validar.errors)}`); conferidos++;
-  }
+  const conferidos = conferirSchemas(pacote);
   assert.ok(conferidos > 30, `só ${conferidos} arquivos conferidos`);
 });
 
 /* ---------- referências: medidas e visuais só apontam para o que existe ---------- */
-const tmdl = [...pacote].filter(([caminho]) => caminho.startsWith('Empresas.SemanticModel/definition/tables/'));
-const semAspas = (nome: string) => nome.startsWith("'") ? nome.slice(1, -1).replaceAll("''", "'") : nome;
-const colunas = new Map<string, Set<string>>(), medidas = new Set<string>();
-for (const [, texto] of tmdl) {
-  const tabela = semAspas(texto.match(/^table ('(?:[^']|'')+'|\S+)/m)![1]);
-  colunas.set(tabela, new Set([...texto.matchAll(/^\tcolumn ('(?:[^']|'')+'|\S+)/gm)].map(match => semAspas(match[1]))));
-  for (const match of texto.matchAll(/^\tmeasure ('(?:[^']|'')+'|\S+)/gm)) medidas.add(semAspas(match[1]));
-}
-
 test('referências: cada Tabela[Coluna] e cada [Medida] citados no DAX existem no modelo', () => {
-  assert.ok(medidas.size >= 30, `só ${medidas.size} medidas`);
-  for (const [caminho, texto] of tmdl) for (const bloco of texto.split(/\r\n\tmeasure /).slice(1)) {
-    const dax = bloco.split(/\r\n\t\t(?:formatString|displayFolder|lineageTag):/)[0];
-    for (const match of dax.matchAll(/'((?:[^']|'')+)'\[([^\]]+)\]|\b([A-Za-z_][\w]*)\[([^\]]+)\]/g)) {
-      const tabela = (match[1] ?? match[3]).replaceAll("''", "'"), coluna = match[2] ?? match[4];
-      assert.ok(colunas.get(tabela)?.has(coluna), `${caminho}: ${tabela}[${coluna}] não existe`);
-    }
-    // Colunas que a própria medida cria (ADDCOLUMNS(..., "Nome", ...)) também valem como [Nome].
-    const criadas = new Set([...dax.matchAll(/,\s*"([^"]+)",/g)].map(match => match[1]));
-    for (const match of dax.matchAll(/(?<![\w'\]])\[([^\]]+)\]/g)) assert.ok(medidas.has(match[1]) || criadas.has(match[1]), `${caminho}: medida [${match[1]}] não existe (${bloco.slice(0, 40)})`);
-  }
+  const medidas = conferirReferenciasDax(pacote, 'Empresas');
+  assert.ok(medidas >= 30, `só ${medidas} medidas`);
 });
 
+test('relações: o lado "um" de cada relação tem chave única no CSV', () => conferirChavesUnicas(pacote, modeloEmpresas));
+
 test('referências: todo campo de visual aponta para uma coluna ou medida do modelo', () => {
-  let campos = 0;
-  for (const [caminho, texto] of pacote) {
-    if (!caminho.endsWith('/visual.json')) continue;
-    const visual = JSON.parse(texto).visual;
-    for (const papel of Object.values<{ projections: { field: Record<string, { Expression: { SourceRef: { Entity: string } }; Property: string }> }[] }>(visual.query?.queryState ?? {}))
-      for (const { field } of papel.projections) {
-        const [tipo, alvo] = Object.entries(field)[0];
-        if (tipo === 'Measure') assert.ok(medidas.has(alvo.Property), `${caminho}: medida ${alvo.Property}`);
-        else assert.ok(colunas.get(alvo.Expression.SourceRef.Entity)?.has(alvo.Property), `${caminho}: coluna ${alvo.Expression.SourceRef.Entity}[${alvo.Property}]`);
-        campos++;
-      }
-  }
+  const campos = conferirCamposDosVisuais(pacote, 'Empresas');
   assert.ok(campos >= 40, `só ${campos} campos em visuais`);
 });
 
@@ -110,7 +67,6 @@ test('cartões: o título é o nome do cartão; embaixo do número vêm a compar
     // O cadastro incompleto não tem comparação no painel: só a pendência mais comum.
     assert.deepEqual(valores, nome === 'Registradas com cadastro incompleto' ? [nome, `Detalhe: ${nome}`] : [nome, `Comparação: ${nome}`, `Detalhe: ${nome}`]);
   }
-  const dax = (nome: string) => { const texto = arquivo('Empresas.SemanticModel/definition/tables/Medidas.tmdl'), inicio = texto.indexOf(`measure '${nome}' =`); assert.ok(inicio >= 0, nome); return texto.slice(inicio, texto.indexOf('\r\n\t\tformatString', inicio)); };
   // As frases: um ano antes (em % ou em p.p.), a meta (parte registrada e RT) e os meses do gráfico (emprego).
   assert.match(dax('Comparação: Empresas registradas'), /FORMAT\(v, "\+0\.0%;-0\.0%;0\.0%"\) & " em relação a um ano antes"/);
   assert.match(dax('Comparação: Registradas em dia com a anuidade'), /FORMAT\(v, "\+0\.0;-0\.0;0\.0"\) & " p\.p\. em relação a um ano antes"/);
@@ -125,18 +81,9 @@ test('cartões: o título é o nome do cartão; embaixo do número vêm a compar
 });
 
 /* ---------- os cartões a partir dos CSV ---------- */
-function lerCsv(caminho: string): Record<string, string>[] {
-  const [cabecalho, ...linhas] = arquivo(caminho).replace(/\r?\n$/, '').split(/\r?\n/).map(linha => [...linha.matchAll(/("(?:[^"]|"")*"|[^;]*)(?:;|$)/g)].map(match => match[1].startsWith('"') ? match[1].slice(1, -1).replaceAll('""', '"') : match[1]).slice(0, -1));
-  return linhas.map(linha => Object.fromEntries(cabecalho.map((nome, i) => [nome, linha[i] ?? ''])));
-}
-const numero = (valor: string) => Number(valor.replace(',', '.'));
 const fotoEmpresas = lerCsv('dados/foto-empresas.csv'), fotoEstab = lerCsv('dados/foto-estabelecimentos.csv'), estab = lerCsv('dados/estabelecimentos.csv');
 const movimentos = lerCsv('dados/entradas-saidas.csv'), arts = lerCsv('dados/arts.csv'), emprego = lerCsv('dados/emprego.csv');
 const classeDe = new Map(estab.map(row => [row.Estabelecimento, row.Classe]));
-const soma = (rows: Record<string, string>[], coluna: string) => rows.reduce((total, row) => total + numero(row[coluna]), 0);
-/** Início do período como a medida DAX escreve: DATE(YEAR(D), MONTH(D) - meses + 1, 1). */
-const inicio = (d: string, meses: number) => new Date(Date.UTC(Number(d.slice(0, 4)), Number(d.slice(5, 7)) - meses, 1)).toISOString().slice(0, 10);
-const noPeriodo = (data: string, d: string, meses: number) => data >= inicio(d, meses) && data <= d;
 /** EDATE(data, -12) do DAX: o mesmo dia um ano antes, ou o último dia do mês quando ele não existe. */
 const umAnoAntes = (data: string) => { const ano = Number(data.slice(0, 4)) - 1, mes = Number(data.slice(5, 7)), ultimo = new Date(Date.UTC(ano, mes, 0)).getUTCDate(); return `${ano}-${data.slice(5, 7)}-${String(Math.min(Number(data.slice(8, 10)), ultimo)).padStart(2, '0')}`; };
 
@@ -204,8 +151,6 @@ for (const [d, meses] of [['2026-09-30', 12], ['2026-03-31', 12], ['2025-09-30',
 }
 
 /* ---------- a variação em um ano dos cartões, contra `variacaoAnual` do painel ---------- */
-/** EOMONTH(d, -12): o último dia do mesmo mês um ano antes, a data que a medida de variação lê. */
-const fimDoMesUmAnoAntes = (d: string) => new Date(Date.UTC(Number(d.slice(0, 4)) - 1, Number(d.slice(5, 7)), 0)).toISOString().slice(0, 10);
 /**
  * Cartão do pacote, série do painel e se a série é fluxo. Ficam de fora o "RT que saiu sem substituto" e a permanência: a série do
  * painel recalcula cada mês passado com a base de hoje, e a foto do pacote guarda o que o cartão mostrava naquele mês (ADR 0002).

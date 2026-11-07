@@ -16,8 +16,8 @@ export interface Servidor { id: string; nome: string; funcao: Funcao; vinculo: '
   remuneracao: number }
 export interface Conselheiro { id: string; nome: string; sigla: string; organizacao: string }
 export interface Beneficiario { id: string; nome: string; categoria: Categoria; cargo: string; greId: string | null; quantidade: number; valor: number; km: number; meses: number;
-  /** As diárias da pessoa em cada mês, na ordem dos meses. */
-  lancamentos: { month: string; quantidade: number; valor: number; km: number }[] }
+  /** As diárias da pessoa em cada mês, na ordem dos meses, com a GRE do lançamento (nula na sede). */
+  lancamentos: { month: string; greId: string | null; quantidade: number; valor: number; km: number }[] }
 
 const femininos = ['Adriana', 'Aline', 'Ana', 'Beatriz', 'Bianca', 'Camila', 'Carla', 'Carolina', 'Cláudia', 'Daniela', 'Débora', 'Elisa', 'Fernanda', 'Gabriela', 'Helena', 'Isabela', 'Juliana', 'Larissa', 'Letícia', 'Luciana', 'Mariana', 'Marina', 'Natália', 'Patrícia', 'Paula', 'Priscila', 'Renata', 'Sofia', 'Tatiana', 'Vitória'];
 const masculinos = ['André', 'Antônio', 'Bruno', 'Carlos', 'Daniel', 'Diego', 'Eduardo', 'Fábio', 'Felipe', 'Fernando', 'Gustavo', 'Henrique', 'Hugo', 'João', 'José', 'Leonardo', 'Lucas', 'Marcelo', 'Marcos', 'Mateus', 'Otávio', 'Paulo', 'Rafael', 'Ricardo', 'Rodrigo', 'Sérgio', 'Thiago', 'Vinícius', 'Wagner', 'William'];
@@ -74,12 +74,12 @@ export function conselheiros(entidades: Entidades): Conselheiro[] {
 }
 
 /**
- * Diárias de 12 meses até a data de referência, pessoa a pessoa, maior valor primeiro. Cada lançamento mensal (categoria, sede ou GRE)
+ * Diárias dos `nMeses` meses (12, no painel) até a data de referência, pessoa a pessoa, maior valor primeiro. Cada lançamento mensal (categoria, sede ou GRE)
  * é dividido entre duas a cinco pessoas do grupo certo: inspetores entre os fiscais lotados na GRE, empregados entre os servidores da
  * sede ou da GRE, diretoria entre a direção superior, conselheiros entre o plenário. As somas fecham com o total da categoria.
  */
-export function diariasPorPessoa(conselho: Conselho, equipe: Servidor[], plenario: Conselheiro[], anchor: string, greId: string | null): Beneficiario[] {
-  const meses = new Set(conselho.months.filter(month => `${month}-01` <= anchor).slice(-12));
+export function diariasPorPessoa(conselho: Conselho, equipe: Servidor[], plenario: Conselheiro[], anchor: string, greId: string | null, nMeses = 12): Beneficiario[] {
+  const meses = new Set(conselho.months.filter(month => `${month}-01` <= anchor).slice(-nMeses));
   const efetivos = equipe.filter(s => s.vinculo === 'Efetivo');
   const fiscais = new Map<string | null, Servidor[]>(), outros = new Map<string | null, Servidor[]>();
   for (const s of efetivos) { const alvo = s.funcao === 'Fiscalização' ? fiscais : s.funcao === 'Direção superior' ? null : outros; if (alvo) alvo.set(s.greId, [...(alvo.get(s.greId) ?? []), s]); }
@@ -107,8 +107,8 @@ export function diariasPorPessoa(conselho: Conselho, equipe: Servidor[], plenari
     escolhidos.forEach((p, index) => {
       acumulado += unidades[index]; const ate = Math.round(row.valor * acumulado / row.quantidade), valor = ate - valorAcumulado; valorAcumulado = ate;
       const id = `${row.categoria}:${p.id}`, atual = total.get(id) ?? { id: p.id, nome: p.nome, categoria: row.categoria, cargo: p.cargo, greId: p.greId, quantidade: 0, valor: 0, km: 0, meses: 0, lancamentos: [] };
-      const km = Math.round(row.km * unidades[index] / row.quantidade), doMes = atual.lancamentos.find(l => l.month === row.month);
-      if (doMes) { doMes.quantidade += unidades[index]; doMes.valor += valor; doMes.km += km; } else atual.lancamentos.push({ month: row.month, quantidade: unidades[index], valor, km });
+      const km = Math.round(row.km * unidades[index] / row.quantidade), doMes = atual.lancamentos.find(l => l.month === row.month && l.greId === row.greId);
+      if (doMes) { doMes.quantidade += unidades[index]; doMes.valor += valor; doMes.km += km; } else atual.lancamentos.push({ month: row.month, greId: row.greId, quantidade: unidades[index], valor, km });
       atual.quantidade += unidades[index]; atual.valor += valor; atual.km += km; total.set(id, atual);
       mesesDe.set(id, (mesesDe.get(id) ?? new Set()).add(row.month));
     });

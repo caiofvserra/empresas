@@ -1,0 +1,98 @@
+/// Guarda cada processo das câmaras: entrada, julgamento, decisão e, nos autos de infração, a multa e a data da prescrição (cinco anos do fato, Lei 9.873/1999, art. 1º).
+table Processos
+	lineageTag: c6a98432-3225-5214-b8e7-2bba63ce715f
+
+	column Processo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Processo
+		lineageTag: 1ac2001d-0cc8-5563-8a96-2e951ba4ff3e
+
+	column 'Câmara'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Câmara
+		lineageTag: cc07441d-3e36-53e7-af02-ae85dd722bba
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		lineageTag: bd650521-85da-5d9b-825a-08b9621d8aee
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: bcbe5f93-464e-5f4d-b74c-b9abb1364262
+
+	column Entrada
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Entrada
+		lineageTag: 10ccb30e-142d-5928-9f5f-f6260cb8fba3
+
+	column 'Mês de entrada'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês de entrada
+		lineageTag: 246940cb-87cc-53e1-82b2-3753172ca514
+
+	column 'Julgado em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Julgado em
+		lineageTag: f5103507-460d-5eb9-9b4b-aa9f0cd53ad8
+
+	column 'Mês do julgamento'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês do julgamento
+		lineageTag: ca886372-6d70-5e68-944a-1f5ad299adbb
+
+	column 'Dias até o julgamento'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Dias até o julgamento
+		lineageTag: a163ea1b-cc36-577d-8da1-7963043fbde2
+
+	column 'Decisão'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Decisão
+		lineageTag: 56c95f0b-4adb-5445-8bbe-dbd3a97abcea
+
+	column Multa
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Multa
+		lineageTag: 0944d864-b251-52ae-8dd9-f94c913663a5
+
+	column 'Prescreve em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Prescreve em
+		lineageTag: 429a3294-a652-5e2e-891e-0fbcd6e13e6f
+
+	partition Processos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "processos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Processo", type text}, {"Câmara", type text}, {"Tipo", type text}, {"Código IBGE", type text}, {"Entrada", type date}, {"Mês de entrada", type date}, {"Julgado em", type date}, {"Mês do julgamento", type date}, {"Dias até o julgamento", Int64.Type}, {"Decisão", type text}, {"Multa", type number}, {"Prescreve em", type date}}, "pt-BR")
+				in
+				    Tipos
