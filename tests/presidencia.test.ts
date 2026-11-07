@@ -15,6 +15,8 @@ import { artsPeriodo } from '../src/cockpit/medidas.ts';
 import { buildFiscalizacao } from '../src/painel/fiscalizacao.ts';
 import { camaraDaEmpresa, janela, porRegional, resumoFiscal } from '../src/painel/analise.ts';
 import { estruturaDe } from '../src/cockpit/estrutura.ts';
+import { execucaoDoAno } from '../src/domain/financeiro.ts';
+import { fin, mesDaData, mesesAte, receitaDoMes } from '../src/financeiro/dados.ts';
 import { INDICADORES, fotoPresidencia, insumosPresidencia, porRegionalDaFoto, recortar, valorDe, variacao } from '../src/domain/presidencia.ts';
 import type { IndicadorId } from '../src/domain/presidencia.ts';
 
@@ -40,13 +42,13 @@ function dosPaineis(greId: string | null, cityId: string | null, camara: CamaraC
   const d = quadroDivida(carteira, hoje, { greId, cityId, camara: null }, w.start, w.prevEnd, []);
   const c = quadroColegiado(colegiado, profissionais, hoje, w.start, w.prevStart, w.prevEnd, { colegiado: camara, greId, cityId });
   const a = estruturaDe(view, greId, periodo).atendimento, conselho = buildConselho(view);
-  const receita = receitaMensal(conselho, mesesAteData(hoje, periodo)).reduce((n, row) => n + row.total, 0);
-  const ano = despesaAcumulada(conselho, hoje, null).filter(row => row.realizado !== null).at(-1)!;
+  // A receita e o orçamento são os reais da Transparência, como nas páginas Receita e Orçamento do painel Financeiro.
+  const mesReal = mesDaData(hoje), receita = mesesAte(mesReal, periodo).reduce((n, m) => n + receitaDoMes(m), 0), ano = execucaoDoAno(fin, 'despesa', mesReal);
   return {
     mercado: cobertura(scope, model).taxa, empresas: contagens(scope, model).raizes, rt: model.metrics.rtCoverage.value, artsEmpresas: artsPeriodo(scope, periodo).atual.length,
     profissionais: p.ativos.length, novos: p.novos.length, anuidadePf: p.taxaAdimplencia, artsProfissionais: p.arts.length,
     acoes: rf.acoes.length, autos: rf.autos.length, multas: rf.aplicada,
-    receita, divida: d.total, perto: d.pertoDePrescrever, execucao: ano.realizado! / ano.previsto! * 100,
+    receita, divida: d.total, perto: d.pertoDePrescrever, execucao: ano.realizado / ano.orcado * 100,
     atendimento: a.taxaNoPrazo, solicitacoes: a.pedidos.length, atrasadas: a.partes['Em aberto, prazo vencido'].length,
     pendentes: c.pendentes.length, vermelho: c.pendentes.filter(row => alertaNoStatus(row.diasNoStatus) === 'vermelho').length, prescricao: c.pertoDePrescrever.length, votados: c.votados.length,
   } satisfies Partial<Record<IndicadorId, number | null>>;

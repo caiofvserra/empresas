@@ -2,11 +2,12 @@ import { useMemo } from 'react';
 import { Chart } from '../painel/chart';
 import { brl, data, int, mes, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { Bloco, Indicador, avisoVazio, nomeEmpresa } from '../cockpit/ui';
+import { Bloco, Indicador, Selo, avisoVazio, nomeEmpresa } from '../cockpit/ui';
 import type { Exportavel } from '../cockpit/ui';
 import { corDoTexto } from '../cockpit/formatos';
 import { addDays } from '../domain/hash';
-import { vencimentoContratos } from '../domain/gestao';
+import { contratosQueTerminam, execucaoDoAno } from '../domain/financeiro';
+import type { ContratoVigente } from '../domain/financeiro';
 import type { DevedorLinha } from '../domain/gestao';
 import { alertaNoStatus, colegiados, faixaNoStatus, faixasNoStatus, nomeColegiado, prescricaoDe } from '../domain/colegiado';
 import type { Pendente } from '../domain/colegiado';
@@ -14,21 +15,27 @@ import { indicador, porRegionalDaFoto, valorDe } from '../domain/presidencia';
 import { abrirDevedores, compacto, eixoCategoria, eixoValor, g, legenda } from '../gestao/comum';
 import { abrirPendentes, nomeDe } from '../conselho/comum';
 import { misturar, nomeGre, ondeTexto } from './comum';
+import { fin, fonteReal, mesDaData, mesesAte } from '../financeiro/dados';
+import { abrirContratos, nomeProprio } from '../financeiro/blocos-orcamento';
 
 /**
  * Painel da Presidência, página Riscos (07/11/2026): o que vence ou prescreve nos próximos 12 meses e onde. Anuidades que prescrevem
  * (cinco anos do vencimento), autos de infração que prescrevem (Lei 9.873/1999), processos que passam de 120 dias parados no mesmo
- * status do Votenet, contratos do Conselho que terminam, a fila do colegiado e o orçamento do ano. Toda lista abre com nome.
+ * status do Votenet, contratos do Conselho que terminam, a fila do colegiado e o orçamento do ano. Toda lista abre com nome. Os contratos
+ * e o orçamento são os reais da Transparência, como no painel Financeiro.
  */
 const PRESCREVE = 1827;
 const prescreveEm = (vencimento: string) => addDays(vencimento, PRESCREVE);
-interface Mes { month: string; anuidades: DevedorLinha[]; valor: number; autos: Pendente[]; alerta: Pendente[]; contratos: ReturnType<typeof vencimentoContratos>[number] }
+interface Mes { month: string; anuidades: DevedorLinha[]; valor: number; autos: Pendente[]; alerta: Pendente[]; contratos: { n: number; valor: number; contratos: ContratoVigente[] } }
 function useCalendario(ctx: CockpitCtx) {
   const gestao = g(ctx), c = gestao.colegiado!, anchor = ctx.anchor;
   return useMemo(() => {
-    const contratos = vencimentoContratos(gestao.contas, anchor), meses = contratos.map(row => row.month), fim = `${meses.at(-1)}-31`;
-    return contratos.map((contrato, index): Mes => {
-      const month = meses[index], dentro = (dia: string) => dia > anchor && dia <= fim && dia.startsWith(month);
+    // Os 12 meses a partir do mês da data, e os contratos vigentes que terminam em cada um.
+    const meses = mesesAte(anchor.slice(0, 7), 12).map(m => { const d = new Date(`${m}-01T00:00:00Z`); d.setUTCMonth(d.getUTCMonth() + 11); return d.toISOString().slice(0, 7); }), fim = `${meses.at(-1)}-31`;
+    const vigentes = contratosQueTerminam(fin, anchor, 12);
+    return meses.map((month): Mes => {
+      const lista = vigentes.filter(row => row.fim.startsWith(month)), contrato = { n: lista.length, valor: lista.reduce((n, row) => n + row.valor, 0), contratos: lista };
+      const dentro = (dia: string) => dia > anchor && dia <= fim && dia.startsWith(month);
       const anuidades = gestao.divida.devedores.map(row => { const titulos = row.titulos.filter(t => dentro(prescreveEm(t.vencimento))); return titulos.length ? { ...row, titulos, valor: titulos.reduce((n, t) => n + t.valor, 0), maisAntigo: titulos[0].vencimento } : null; }).filter((row): row is DevedorLinha => row !== null);
       return { month, anuidades, valor: anuidades.reduce((n, row) => n + row.valor, 0), contratos: contrato,
         autos: c.pendentes.filter(row => { const p = prescricaoDe(row); return p !== null && dentro(p.em); }),
@@ -40,8 +47,8 @@ function useCalendario(ctx: CockpitCtx) {
 export default function PaginaRiscos({ ctx }: { ctx: CockpitCtx }) {
   const gestao = g(ctx), c = gestao.colegiado!, d = gestao.divida, a = ctx.estrutura?.atendimento ?? null, cal = useCalendario(ctx);
   const perto = d.devedores.filter(row => d.pertoIds.includes(row.pessoaId)), vermelho = c.pendentes.filter(row => alertaNoStatus(row.diasNoStatus) === 'vermelho');
-  const despesa = gestao.despesaAcumulada.filter(row => row.realizado !== null).at(-1), receita = gestao.receitaAcumulada.filter(row => row.realizado !== null).at(-1);
-  const contratos90 = cal.slice(0, 3).flatMap(row => row.contratos.contratos).filter(row => row.fim <= addDays(ctx.anchor, 90));
+  const mesReal = mesDaData(ctx.anchor), despesa = execucaoDoAno(fin, 'despesa', mesReal), receita = execucaoDoAno(fin, 'receita', mesReal);
+  const contratos90 = contratosQueTerminam(fin, ctx.anchor, 3);
   const vencidas = a?.partes['Em aberto, prazo vencido'] ?? [];
   return <div className="ck-grid ck-grid-pr-riscos">
     <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Os riscos e os prazos">
@@ -52,24 +59,17 @@ export default function PaginaRiscos({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ctx={ctx} ficha="k-vermelho" aspecto="Gestão do Conselho" label="Processos em alerta vermelho" value={int(vermelho.length)} sub={`mais de 120 dias no mesmo status; ${int(vermelho.filter(row => row.diasTotais > 365).length)} há mais de um ano no total`}
         onOpen={() => abrirPendentes(ctx, 'Processos em alerta vermelho', vermelho, 'Processos esperando voto há mais de 120 dias no mesmo status do Votenet.')} />
       <Indicador ctx={ctx} ficha="k-vencidas" aspecto="Atendimento" label="Solicitações com prazo vencido" value={a ? int(vencidas.length) : '…'} sub={a ? `em aberto, de ${int(a.pedidos.length)} solicitações no período${ctx.cidadeId ? ' (na regional)' : ''}` : 'calculando…'} onOpen={() => ctx.go('atendimento')} />
-      <Indicador ctx={ctx} ficha="k-orcamento" aspecto="Financeiro" label={`Despesa do orçamento até ${despesa ? mes(`${ctx.anchor.slice(0, 4)}-${String(despesa.mes).padStart(2, '0')}`) : '—'}`} value={despesa?.previsto ? pct(despesa.realizado! / despesa.previsto * 100) : '—'}
-        sub={receita?.previsto ? `do orçado no período; a receita está em ${pct(receita.realizado! / receita.previsto * 100)} do previsto` : 'do orçado no período'} onOpen={() => ctx.go('orcamento')} />
-      <Indicador ctx={ctx} ficha="k-contratos" aspecto="Financeiro" label="Contratos que terminam em 90 dias" value={int(contratos90.length)} sub={`${brl(contratos90.reduce((n, row) => n + row.valor, 0))} contratados`}
+      <Indicador ctx={ctx} ficha="k-orcamento" aspecto="Real · Financeiro" label={`Execução do orçamento de ${mesReal.slice(0, 4)}`} value={despesa.orcado ? pct(despesa.realizado / despesa.orcado * 100) : '—'}
+        sub={`da despesa orçada, até ${mes(mesReal)}; a receita está em ${receita.orcado ? pct(receita.realizado / receita.orcado * 100) : '—'} da orçada`} onOpen={() => ctx.go('orcamento')} />
+      <Indicador ctx={ctx} ficha="k-contratos" aspecto="Real · Financeiro" label="Contratos que terminam em 90 dias" value={int(contratos90.length)} sub={`${brl(contratos90.reduce((n, row) => n + row.valor, 0))} contratados, pela Transparência`}
         onOpen={() => abrirContratos(ctx, 'Contratos que terminam em 90 dias', contratos90)} />
     </section>
     <Bloco ctx={ctx} id="cl" area="cl" title="O que vence nos próximos 12 meses" exportar={exportarCalendario(cal)}><Calendario ctx={ctx} cal={cal} /></Bloco>
     <Bloco ctx={ctx} id="ur" area="ur" title="O que vence primeiro" vazio={avisoVazio(!cal.some(row => row.autos.length || row.anuidades.length || row.contratos.n), 'Nada vence nos próximos 12 meses')}><Urgentes ctx={ctx} cal={cal} /></Bloco>
     <Bloco ctx={ctx} id="ex" area="ex" title="Dívida perto de prescrever por regional" vazio={ctx.presidencia?.atual ? undefined : 'Calculando as regionais'} exportar={exportarExposicao(ctx)}><Exposicao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="fl" area="fl" title="A fila de cada colegiado pelo tempo no status" vazio={avisoVazio(!c.pendentes.length, 'Nenhum processo esperando voto')} exportar={exportarFila(ctx)}><Fila ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="or" area="or" title="Receita e despesa do ano contra o previsto" exportar={exportarOrcamento(ctx)}><Orcamento ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="or" area="or" title="Receita e despesa do ano contra o orçado" badge={<Selo data={fonteReal.data} />} exportar={exportarOrcamento(ctx)}><Orcamento ctx={ctx} /></Bloco>
   </div>;
-}
-
-function abrirContratos(ctx: CockpitCtx, title: string, rows: ReturnType<typeof vencimentoContratos>[number]['contratos']) {
-  if (!rows.length) return;
-  ctx.open({ kind: 'linhas', title, what: 'Contratos vigentes do Conselho que terminam no prazo, com o fornecedor, o objeto e o valor contratado.', use: 'Renovar ou licitar de novo antes do fim evita serviço parado.', listTitle: 'Contratos, o que termina primeiro no alto',
-    summary: [['Contratos', int(rows.length)], ['Valor contratado', brl(rows.reduce((n, row) => n + row.valor, 0))], ['Com aditivo', int(rows.filter(row => row.aditivos > 0).length)]],
-    rows: rows.map(row => ({ key: row.id, title: row.fornecedor, subtitle: `${row.objeto}, ${row.modalidade.toLowerCase()}`, value: brl(row.valor), note: `termina em ${data(row.fim)}${row.aditivos ? `; ${int(row.aditivos)} ${row.aditivos === 1 ? 'aditivo' : 'aditivos'}` : ''}`, sortValue: Date.parse(row.fim) })) });
 }
 
 /* ---------- Calendário: o que vence em cada mês ---------- */
@@ -115,7 +115,7 @@ function Urgentes({ ctx, cal }: { ctx: CockpitCtx; cal: Mes[] }) {
         out.push({ key: `a:${p.t.id}`, dia: em, tipo: 'Auto prescreve', titulo: empresa, detalhe: `${nomeColegiado(p.t.colegiado)}, com ${nomeDe(ctx, p.evento.com)}`, valor: `${int(p.diasNoStatus)} ${p.diasNoStatus === 1 ? 'dia' : 'dias'} no status`, abrir: () => abrirPendentes(ctx, empresa, [p], 'O auto de infração e quem está com ele.') }); }
       for (const devedor of row.anuidades.filter(item => item.acimaDoPiso)) { const dia = prescreveEm(devedor.titulos[0].vencimento), nome = devedor.devedor === 'Empresa' ? nomeEmpresa(ctx, devedor.pessoaId) : ctx.profissionais.modelo.porId.get(devedor.pessoaId)?.nome ?? devedor.pessoaId;
         out.push({ key: `d:${devedor.pessoaId}:${row.month}`, dia, tipo: 'Anuidade prescreve', titulo: nome, detalhe: `${devedor.devedor === 'Empresa' ? 'empresa' : 'profissional'}, pode ir à execução judicial`, valor: brl(devedor.valor), abrir: () => abrirDevedores(ctx, nome, [devedor], 'As anuidades deste devedor que prescrevem no mês.') }); }
-      for (const contrato of row.contratos.contratos) out.push({ key: `c:${contrato.id}`, dia: contrato.fim, tipo: 'Contrato termina', titulo: contrato.fornecedor, detalhe: contrato.objeto, valor: brl(contrato.valor), abrir: () => abrirContratos(ctx, contrato.fornecedor, [contrato]) });
+      for (const contrato of row.contratos.contratos) { const nome = nomeProprio(contrato.contratada); out.push({ key: `c:${contrato.numero}`, dia: contrato.fim, tipo: 'Contrato termina', titulo: nome, detalhe: `contrato ${contrato.numero}`, valor: brl(contrato.valor), abrir: () => abrirContratos(ctx, nome, [contrato]) }); }
     }
     return out.sort((a, b) => a.dia.localeCompare(b.dia)).slice(0, 12);
   }, [cal, ctx]);
@@ -161,22 +161,26 @@ function Fila({ ctx }: { ctx: CockpitCtx }) {
     abrirPendentes(ctx, `${nomeColegiado(row.col)}${p.seriesIndex < faixasNoStatus.length ? `, ${faixasNoStatus[p.seriesIndex]} no status` : ''}`, lista, `Processos esperando voto no colegiado ${nomeColegiado(row.col)}.`); }} />;
 }
 
-/* ---------- Receita e despesa do ano contra o previsto ---------- */
-const exportarOrcamento = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Mês', 'Receita prevista acumulada', 'Receita realizada acumulada', 'Despesa orçada acumulada', 'Despesa realizada acumulada'],
-  linhas: () => g(ctx).receitaAcumulada.map((row, i) => { const d = g(ctx).despesaAcumulada[i]; return [row.mes, row.previsto ?? '', row.realizado ?? '', d?.previsto ?? '', d?.realizado ?? '']; }) });
+/* ---------- Receita e despesa do ano contra o orçado (reais, da Transparência) ---------- */
+/** O acumulado do ano, mês a mês, e o ritmo do orçado: o orçado do ano dividido em doze partes iguais, como na página Orçamento do Financeiro. */
+function doAno(anchor: string) {
+  const mesReal = mesDaData(anchor), r = execucaoDoAno(fin, 'receita', mesReal), d = execucaoDoAno(fin, 'despesa', mesReal);
+  return r.acumulado.map((row, i) => ({ mes: row.mes, receita: row.realizado, receitaOrcada: r.orcado * (i + 1) / 12, despesa: d.acumulado[i].realizado, despesaOrcada: d.orcado * (i + 1) / 12 }));
+}
+const exportarOrcamento = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Mês', 'Receita orçada no ritmo do ano', 'Receita realizada acumulada', 'Despesa orçada no ritmo do ano', 'Despesa realizada acumulada'],
+  linhas: () => doAno(ctx.anchor).map(row => [row.mes, Math.round(row.receitaOrcada), row.receita ?? '', Math.round(row.despesaOrcada), row.despesa ?? '']) });
 function Orcamento({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, gestao = g(ctx), ano = ctx.anchor.slice(0, 4);
+  const { tokens } = ctx, linhas = useMemo(() => doAno(ctx.anchor), [ctx.anchor]), ano = linhas[0]?.mes.slice(0, 4) ?? '';
   const option = useMemo(() => {
-    const meses = gestao.receitaAcumulada.map(row => mes(`${ano}-${String(row.mes).padStart(2, '0')}`)), ultimo = gestao.receitaAcumulada.filter(row => row.realizado !== null).length - 1;
     const linha = (name: string, valores: (number | null)[], cor: string, tracejada: boolean) => ({ name, type: 'line', data: valores, symbol: 'circle', symbolSize: 4, connectNulls: false, lineStyle: { color: cor, width: tracejada ? 1.5 : 2.4, type: tracejada ? 'dashed' : 'solid' }, itemStyle: { color: cor },
       endLabel: { show: !tracejada, fontSize: 11, fontWeight: 700, color: cor, formatter: (p: any) => `R$ ${compacto(p.value)}` } });
     return {
       grid: { top: 30, right: 62, bottom: 2, left: 4, containLabel: true }, legend: { ...legenda(tokens), itemGap: 8 },
       tooltip: { trigger: 'axis', valueFormatter: (value: number) => value === null || value === undefined ? '—' : brl(value) },
-      xAxis: eixoCategoria(tokens, meses, { boundaryGap: false }), yAxis: eixoValor(tokens),
-      series: [linha('Receita prevista', gestao.receitaAcumulada.map(row => row.previsto), tokens.good, true), linha('Receita', gestao.receitaAcumulada.map((row, i) => i <= ultimo ? row.realizado : null), tokens.good, false),
-        linha('Despesa orçada', gestao.despesaAcumulada.map(row => row.previsto), tokens.bad, true), linha('Despesa', gestao.despesaAcumulada.map((row, i) => i <= ultimo ? row.realizado : null), tokens.bad, false)],
+      xAxis: eixoCategoria(tokens, linhas.map(row => mes(row.mes)), { boundaryGap: false }), yAxis: eixoValor(tokens),
+      series: [linha('Receita orçada', linhas.map(row => row.receitaOrcada), tokens.good, true), linha('Receita', linhas.map(row => row.receita), tokens.good, false),
+        linha('Despesa orçada', linhas.map(row => row.despesaOrcada), tokens.bad, true), linha('Despesa', linhas.map(row => row.despesa), tokens.bad, false)],
     };
-  }, [gestao, tokens, ano]);
-  return <Chart option={option} tokens={tokens} label={`Receita e despesa acumuladas em ${ano} contra o previsto no orçamento`} onPick={() => ctx.go('orcamento')} />;
+  }, [linhas, tokens]);
+  return <Chart option={option} tokens={tokens} label={`Receita e despesa acumuladas em ${ano} contra o orçado, pela Transparência`} onPick={() => ctx.go('orcamento')} />;
 }

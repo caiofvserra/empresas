@@ -1,0 +1,28 @@
+/// Tem os dez grupos de despesa do painel, pela conta contábil.
+table 'Grupos de despesa'
+	lineageTag: 50495032-1bed-5334-a4a9-2a6a1d122457
+
+	column Grupo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Grupo
+		sortByColumn: Ordem
+		lineageTag: 62fbcf0e-2337-5304-bde1-b2f67abba333
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: f157fdd2-beda-563c-b60d-128a73b18047
+
+	partition 'Grupos de despesa' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "grupos-despesa.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Grupo", type text}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "arrecadacao-calendario",
+  "position": {
+    "x": 16,
+    "y": 436,
+    "z": 13000,
+    "width": 411,
+    "height": 268,
+    "tabOrder": 13000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dias"
+                    }
+                  },
+                  "Property": "Semana do mês"
+                }
+              },
+              "queryRef": "Dias.Semana do mês",
+              "nativeQueryRef": "Semana do mês",
+              "active": true
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dias"
+                    }
+                  },
+                  "Property": "Dia da semana"
+                }
+              },
+              "queryRef": "Dias.Dia da semana",
+              "nativeQueryRef": "Dia da semana",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Arrecadado no dia do calendário"
+                }
+              },
+              "queryRef": "Medidas.Arrecadado no dia do calendário",
+              "nativeQueryRef": "Arrecadado no dia do calendário",
+              "displayName": "Arrecadado"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Calendário do mês'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -12,7 +12,8 @@
     "test:integrations": "node --import tsx --test tests/integrations.test.ts",
     "build:painel": "node scripts/build-painel.mjs",
     "build:powerbi": "node --import tsx scripts/build-powerbi.ts",
-    "docs:metodo": "node --import tsx scripts/gerar-metodo.ts"
+    "docs:metodo": "node --import tsx scripts/gerar-metodo.ts",
+    "coletar:financeiro": "node --import tsx scripts/coletar-financeiro.ts"
   },
   "dependencies": {
     "echarts": "^6.1.0",

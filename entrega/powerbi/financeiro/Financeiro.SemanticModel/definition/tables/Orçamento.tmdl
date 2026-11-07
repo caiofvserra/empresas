@@ -1,0 +1,49 @@
+/// Guarda o orçamento de cada ano, inicial e reformulado (atual), da receita por tipo e da despesa por grupo (dado real).
+table 'Orçamento'
+	isHidden
+	lineageTag: 04b7021a-6a4f-5a40-991e-c1628d46602f
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 12f51543-7c06-5941-ab3d-986bf4bbe8ca
+
+	column Natureza
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Natureza
+		lineageTag: 8395468b-db7b-5991-906e-43639721a0b0
+
+	column Grupo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Grupo
+		lineageTag: 67dffcd2-6115-50ec-9839-39ca7feadb9b
+
+	column Inicial
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Inicial
+		lineageTag: 6e144ddc-acee-599a-a67d-3014b1beed4d
+
+	column Atual
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Atual
+		lineageTag: 83b350c2-5bda-58a0-8701-ccda35fc151f
+
+	partition 'Orçamento' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "orcamento.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Natureza", type text}, {"Grupo", type text}, {"Inicial", type number}, {"Atual", type number}}, "pt-BR")
+				in
+				    Tipos

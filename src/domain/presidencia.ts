@@ -6,7 +6,9 @@ import { buildProfissionais, resumoProfissionais } from './profissionais';
 import type { ModeloProfissionais } from './profissionais';
 import { buildConselho } from './conselho';
 import type { Conselho } from './conselho';
-import { buildCarteira, despesaAcumulada, mesesAteData, modalidadeDaCamara, quadroDivida, receitaMensal } from './gestao';
+import { buildCarteira, modalidadeDaCamara, quadroDivida } from './gestao';
+import { execucaoDoAno } from './financeiro';
+import { fin, mesDaData, mesesAte, receitaDoMes } from '../financeiro/dados';
 import type { CamaraConselho, Carteira, QuadroDivida } from './gestao';
 import { alertaNoStatus, buildColegiado, quadroColegiado } from './colegiado';
 import type { BaseColegiado, QuadroColegiado } from './colegiado';
@@ -163,10 +165,11 @@ export function fotoPresidencia(ins: InsumosPresidencia): FotoPresidencia {
   for (const row of rf.acoes) { const camara = camaraDe.get(row.companyId); somar('acoes', row.cityId, camara, 1); somar('regularizacao', row.cityId, camara, row.regularizedAt ? 1 : 0, 1); }
   for (const row of rf.autos) { const camara = camaraDe.get(row.companyId); somar('autos', row.cityId, camara, 1); somar('multas', row.cityId, camara, row.auto!.valor); }
 
-  // Financeiro: a receita e o orçamento do Conselho não têm lugar; as anuidades vencidas e as perto de prescrever, pelo município do devedor.
-  somar('receita', ESTADO, '', receitaMensal(ins.conselho, mesesAteData(anchor, periodo)).reduce((n, row) => n + row.total, 0));
-  const ano = despesaAcumulada(ins.conselho, anchor, null).filter(row => row.realizado !== null).at(-1);
-  if (ano?.previsto) somar('execucao', ESTADO, '', ano.realizado!, ano.previsto);
+  // Financeiro: a receita e o orçamento são os reais da Transparência, do Conselho inteiro, como nas páginas Receita e Orçamento do
+  // painel Financeiro (até o último mês que a Transparência fechou); as anuidades vencidas e as perto de prescrever, pelo município do devedor.
+  const mesReal = mesDaData(anchor), ano = execucaoDoAno(fin, 'despesa', mesReal);
+  somar('receita', ESTADO, '', mesesAte(mesReal, periodo).reduce((n, m) => n + receitaDoMes(m), 0));
+  if (ano.orcado) somar('execucao', ESTADO, '', ano.realizado, ano.orcado);
   const divida = quadroDivida(ins.carteira, anchor, { greId: null, cityId: null, camara: null }, w.start, w.prevEnd, []);
   const pertoIds = new Set(divida.pertoIds);
   for (const devedor of divida.devedores) for (const t of devedor.titulos) {

@@ -1,52 +1,38 @@
-import { useMemo, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { useMemo } from 'react';
 import { brl, int, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { Bloco, Indicador } from '../cockpit/ui';
+import { Bloco, Indicador, Selo } from '../cockpit/ui';
 import type { Evolucao } from '../painel/evolucao';
-import { municipioPorId } from '../domain/municipios';
-import { abrirDevedores, g } from '../gestao/comum';
-import { Arrecadacao, Cascata, Coortes, IdadeDivida, PrevistoRealizado, SituacaoCnpj, exportarArrecadacao, exportarCascata, exportarCoortes, exportarIdadeDivida, exportarPrevisto, exportarSituacaoCnpj, medidaReceita, metricasReceita } from './blocos-receita';
-import type { MetricaReceita } from './blocos-receita';
-import { MapaMunicipios } from '../gestao/comum';
+import { fonteConfea, ufs } from '../cockpit/publico';
+import { Historico, Mensal, OrcadoRealizado, Sazonalidade, exportarHistorico, exportarMensal, exportarOrcado, exportarSazonalidade } from './blocos-receita';
+import { fonteReal, mesDaData, mesesAte, receitaDoMes } from './dados';
+import './financeiro.css';
 
-/** Painel de Gestão do Conselho, página 1: quanto o Conselho arrecada, quanto está vencido, o que pode ir à Justiça e o que está perto de prescrever. */
+/**
+ * Painel Financeiro, página 2 (07/11/2026): de onde vem o dinheiro do Conselho, com a receita REAL publicada na Transparência do
+ * Crea-SP, mês a mês desde 2013. É do estado inteiro: a regional e o município do alto da tela não mudam esta página.
+ */
 export default function PaginaReceita({ ctx }: { ctx: CockpitCtx }) {
-  const gest = g(ctx), d = gest.divida, { tokens, period } = ctx, [metrica, setMetrica] = useState<MetricaReceita>('divida');
-  const meses = gest.meses, periodo = gest.receitaMensal.slice(-period), arrecadado = periodo.reduce((n, row) => n + row.total, 0);
-  const antes = periodo.every(row => row.antes !== null) ? periodo.reduce((n, row) => n + row.antes!, 0) : null;
-  const series = useMemo(() => {
-    const mil = (value: number) => (value / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
-    return { arrecadacao: { tipo: 'fluxo', meses, valores: gest.receitaMensal.map(row => row.total), fmt: brl, curto: mil, unidade: 'em R$ milhões' } as Evolucao,
-      divida: { tipo: 'estoque', meses, valores: d.mensal.map(row => row.valor), fmt: brl, curto: (value: number) => (value / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 0 }), unidade: 'em R$ mil', goodUp: false } as Evolucao };
-  }, [gest, meses, d]);
-  const recuperacao = d.cascata.inicio + d.cascata.novos > 0 ? d.cascata.recebidos / (d.cascata.inicio + d.cascata.novos) * 100 : null;
-  const perto = d.devedores.filter(row => d.pertoIds.includes(row.pessoaId));
-  const medida = useMemo(() => medidaReceita(ctx, metrica), [ctx.gestao, ctx.dataset, ctx.anchor, metrica]); // eslint-disable-line react-hooks/exhaustive-deps
-  const cidades = municipioPorId(ctx.dataset), nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name]));
-  const abrirLocal = (titulo: string, filtro: (row: typeof d.devedores[number]) => boolean) => abrirDevedores(ctx, titulo, d.devedores.filter(filtro), 'Profissionais e empresas com anuidade vencida e não paga na data escolhida.', 'Com o filtro de regional ou município no alto da tela, a lista mostra só o recorte.');
-  return <div className="ck-grid ck-grid-cs-receita">
-    <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores de receita e dívida">
-      <Indicador destaque ficha="k-arrecadacao" ctx={ctx} label="Receita do Conselho" serie={series.arrecadacao} value={brl(arrecadado)} variacao={{ value: antes ? (arrecadado - antes) / antes * 100 : null }} spark={gest.receitaMensal.slice(-12).map(row => row.total)} cor={tokens.accent}
-        sub={`em ${period} meses, de anuidades, ARTs, multas e outras origens`} />
-      <Indicador ficha="k-divida" ctx={ctx} label="Anuidades vencidas" serie={series.divida} value={brl(d.total)} variacao={{ value: d.totalAntes ? (d.total - d.totalAntes) / d.totalAntes * 100 : null, goodUp: false, label: 'em relação ao mesmo mês do ano anterior' }} spark={d.mensal.slice(-12).map(row => row.valor)} cor={tokens.bad}
-        sub={`${int(d.devedores.length)} devedores: ${brl(d.pf)} de profissionais e ${brl(d.pj)} de empresas`} onOpen={() => abrirLocal('Devedores de anuidade', () => true)} />
-      <Indicador ficha="k-piso" ctx={ctx} label="Abaixo do piso de execução" value={d.total ? pct(d.abaixoDoPiso / d.total * 100) : '—'}
-        sub={`${brl(d.abaixoDoPiso)} de devedores que somam menos de ${brl(d.piso)}, cobrados só fora da Justiça`} onOpen={() => abrirLocal('Devedores abaixo do piso de execução', row => !row.acimaDoPiso)} />
-      <Indicador ficha="k-prescricao" ctx={ctx} label="Perto de prescrever" value={brl(d.pertoDePrescrever)} sub={`anuidades vencidas há mais de quatro anos, de ${int(perto.length)} devedores`}
-        onOpen={() => abrirDevedores(ctx, 'Anuidades perto de prescrever', perto, 'Devedores com ao menos uma anuidade vencida há mais de quatro anos: ela prescreve em menos de um ano (Código Tributário Nacional, art. 174).', 'Priorize os que estão acima do piso: a inscrição em dívida ativa e a execução interrompem a prescrição.')} />
-      <Indicador ficha="k-recuperacao" ctx={ctx} label="Recebido da dívida" value={recuperacao === null ? '—' : pct(recuperacao)} sub={`${brl(d.cascata.recebidos)} recebidos no período, de ${brl(d.cascata.inicio + d.cascata.novos)} vencidos`} />
+  const { tokens, period } = ctx, mes = mesDaData(ctx.anchor), meses = mesesAte(mes, period), antes = meses.map(m => `${Number(m.slice(0, 4)) - 1}${m.slice(4)}`);
+  const soma = (lista: string[], tipo?: string) => lista.reduce((s, m) => s + receitaDoMes(m, tipo), 0), variacao = (a: number, b: number) => b ? (a / b - 1) * 100 : null;
+  const total = soma(meses), totalAntes = soma(antes), art = soma(meses, 'ART'), anuidades = soma(meses, 'Anuidades'), anuidadesAntes = soma(antes, 'Anuidades');
+  const divida = soma(meses, 'Dívida ativa'), dividaAntes = soma(antes, 'Dívida ativa'), artAntes = soma(antes, 'ART');
+  const sp = ufs.find(row => row.uf === 'SP'), por12 = soma(mesesAte(mes, 12));
+  const serie = (tipo?: string) => { const lista = mesesAte(mes, 36); return { tipo: 'fluxo', meses: lista, valores: lista.map(m => receitaDoMes(m, tipo)), fmt: brl, curto: (value: number) => (value / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 0 }), unidade: 'em R$ milhões' } as Evolucao; };
+  const series = useMemo(() => ({ total: serie(), anuidades: serie('Anuidades'), divida: serie('Dívida ativa'), art: serie('ART') }), [mes]); // eslint-disable-line react-hooks/exhaustive-deps
+  const selo = <Selo data={fonteReal.data} />;
+  return <div className="ck-grid fin-grid-receita">
+    <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores da receita">
+      <Indicador destaque ficha="k-receita" ctx={ctx} label={`Receita em ${period} meses`} serie={series.total} value={brl(total)} variacao={{ value: variacao(total, totalAntes), label: 'em relação aos mesmos meses um ano antes' }} spark={series.total.valores.slice(-12) as number[]} cor={tokens.accent}
+        sub="dado real da Transparência, do estado inteiro" />
+      <Indicador ficha="k-art" ctx={ctx} label="Parte da ART na receita" serie={series.art} value={total ? pct(art / total * 100) : '—'} variacao={{ value: total && totalAntes ? (art / total - artAntes / totalAntes) * 100 : null, kind: 'pp', label: 'em relação aos mesmos meses um ano antes' }} sub={`${brl(art)} de taxas de ART em ${period} meses`} />
+      <Indicador ficha="k-anuidades" ctx={ctx} label="Anuidades" serie={series.anuidades} value={brl(anuidades)} variacao={{ value: variacao(anuidades, anuidadesAntes), label: 'em relação aos mesmos meses um ano antes' }} sub="de profissionais e empresas, do ano e de anos anteriores" />
+      <Indicador ficha="k-divida-ativa" ctx={ctx} label="Recebido da dívida ativa" serie={series.divida} value={brl(divida)} variacao={{ value: variacao(divida, dividaAntes), label: 'em relação aos mesmos meses um ano antes' }} sub={`${total ? pct(divida / total * 100) : '—'} da receita do período`} />
+      <Indicador ficha="k-por-ativo" ctx={ctx} label="Receita por profissional ativo" value={sp?.ativos ? `R$ ${int(por12 / sp.ativos)}` : '—'} sub={sp ? `receita de 12 meses dividida pelos ${int(sp.ativos)} ativos de SP no Confea em ${fonteConfea.data.split('-').reverse().join('/')}` : ''} />
     </section>
-    <Bloco ctx={ctx} id="ra" area="ra" title="Receita por mês e origem" exportar={exportarArrecadacao(ctx)}><Arrecadacao ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="pr" area="pr" title="Previsto e realizado no ano" exportar={exportarPrevisto(ctx)}><PrevistoRealizado ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="di" area="di" title="Anuidades vencidas por idade" exportar={exportarIdadeDivida(ctx)}><IdadeDivida ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="ca" area="ca" title="Entrou e saiu da dívida no período" exportar={exportarCascata(ctx)}><Cascata ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="co" area="co" title="Quanto se recebe depois do vencimento" exportar={exportarCoortes(ctx)}><Coortes ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="cn" area="cn" title="Dívida das empresas e o CNPJ na Receita" exportar={exportarSituacaoCnpj(ctx)}><SituacaoCnpj ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mp" area="mp" title="Dívida de anuidade por município"
-      exportar={{ cabecalho: ['Município', 'GRE', medida.label], linhas: () => [...medida.cidade].map(([id, value]) => [cidades.get(id)?.nome ?? id, nomeGre.get(cidades.get(id)?.greId ?? '') ?? '', value === null ? null : Math.round(value * 10) / 10]) }}
-      actions={<label className="ck-select is-compact"><span className="sr-only">Indicador do mapa</span><select value={metrica} onChange={event => setMetrica(event.target.value as MetricaReceita)}>{(Object.keys(metricasReceita) as MetricaReceita[]).map(id => <option key={id} value={id}>{metricasReceita[id]}</option>)}</select><ChevronDown size={14} /></label>}>
-      <MapaMunicipios ctx={ctx} medida={medida} onCidade={cityId => abrirLocal(`Devedores de ${cidades.get(cityId)?.nome ?? cityId}`, row => row.cityId === cityId)} onGre={greId => abrirLocal(`Devedores da ${nomeGre.get(greId) ?? greId}`, row => cidades.get(row.cityId)?.greId === greId)} />
-    </Bloco>
+    <Bloco ctx={ctx} id="hi" area="hi" title="Receita de cada ano desde 2013" badge={selo} exportar={exportarHistorico(mes)}><Historico ctx={ctx} mes={mes} /></Bloco>
+    <Bloco ctx={ctx} id="sz" area="sz" title="Receita de cada mês, ano a ano" badge={selo} exportar={exportarSazonalidade(mes)}><Sazonalidade ctx={ctx} mes={mes} /></Bloco>
+    <Bloco ctx={ctx} id="rm" area="rm" title={`Receita mês a mês nos últimos ${Math.max(period, 12)} meses`} badge={selo} exportar={exportarMensal(mes, Math.max(period, 12))}><Mensal ctx={ctx} mes={mes} n={Math.max(period, 12)} /></Bloco>
+    <Bloco ctx={ctx} id="or" area="or" title={`Orçado e realizado em ${mes.slice(0, 4)}`} badge={selo} exportar={exportarOrcado(mes)}><OrcadoRealizado ctx={ctx} mes={mes} /></Bloco>
   </div>;
 }

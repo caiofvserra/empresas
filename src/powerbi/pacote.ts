@@ -14,7 +14,12 @@ import { dadosGestao } from './gestao/dados';
 import type { Dados } from './gestao/dados';
 import { modeloGestao } from './gestao/modelo';
 import { paginasGestao } from './gestao/paginas';
-import { LEIA_ME_ATENDIMENTO, LEIA_ME_FINANCEIRO } from './gestao/leia-me';
+import { LEIA_ME_ATENDIMENTO } from './gestao/leia-me';
+import { dadosFinanceiro } from './financeiro/dados';
+import { modeloFinanceiro } from './financeiro/modelo';
+import { paginasFinanceiro } from './financeiro/paginas';
+import { LEIA_ME_FINANCEIRO, ORIGEM_FINANCEIRO } from './financeiro/leia-me';
+import financeiroReal from '../../public/data/transparencia/financeiro-crea-sp.json';
 import { dadosConselho } from './conselho/dados';
 import { modeloConselho } from './conselho/modelo';
 import { paginasConselho } from './conselho/paginas';
@@ -28,9 +33,9 @@ import type { Modelo } from './modelo';
 import type { Pagina } from './pbir';
 
 /** `titulo` entra no LEIA-ME depois de "Pacote Power BI do", como em "painel de Empresas". */
-interface PainelComPacote { titulo: string; modelo: Modelo; paginas: Pagina[]; dados: (dataset: Dataset) => Dados[]; leiaMe: string }
+interface PainelComPacote { titulo: string; modelo: Modelo; paginas: Pagina[]; dados: (dataset: Dataset) => Dados[]; leiaMe: string; origem?: string }
 /**
- * Um painel que sai do modelo comum de `src/powerbi/gestao/` (Financeiro e Atendimento, separados em 07/11/2026): as suas páginas,
+ * Um painel que sai do modelo comum de `src/powerbi/gestao/` (o Atendimento, separado em 07/11/2026): as suas páginas,
  * o recorte do modelo que elas usam e só os CSV das tabelas desse recorte.
  */
 function daGestao(titulo: string, nome: string, pasta: string, ids: string[], leiaMe: string): PainelComPacote {
@@ -42,7 +47,7 @@ function daGestao(titulo: string, nome: string, pasta: string, ids: string[], le
 const PAINEIS = {
   presidencia: { titulo: 'painel da Presidência', modelo: modeloPresidencia, paginas: paginasPresidencia, dados: dadosPresidencia, leiaMe: LEIA_ME_PRESIDENCIA },
   empresas: { titulo: 'painel de Empresas', modelo: modeloEmpresas, paginas: paginasEmpresas, dados: dadosEmpresas, leiaMe: LEIA_ME_EMPRESAS },
-  financeiro: daGestao('painel Financeiro', 'Financeiro', 'financeiro', ['receita', 'orcamento'], LEIA_ME_FINANCEIRO),
+  financeiro: { titulo: 'painel Financeiro', modelo: modeloFinanceiro, paginas: paginasFinanceiro, dados: dadosFinanceiro, leiaMe: LEIA_ME_FINANCEIRO, origem: ORIGEM_FINANCEIRO(financeiroReal.meta.capturadoEm) },
   atendimento: daGestao('painel de Atendimento', 'Atendimento', 'atendimento', ['atendimento'], LEIA_ME_ATENDIMENTO),
   conselho: { titulo: 'painel de Gestão do Conselho', modelo: modeloConselho, paginas: paginasConselho, dados: dadosConselho, leiaMe: LEIA_ME_CONSELHO },
 } satisfies Record<string, PainelComPacote>;
@@ -50,7 +55,7 @@ export type PainelPowerBi = keyof typeof PAINEIS;
 /** Os painéis com pacote, na ordem em que o build os grava. */
 export const PAINEIS_POWER_BI = Object.keys(PAINEIS) as PainelPowerBi[];
 
-/** O modelo do pacote de um painel (no Financeiro e no Atendimento, já recortado do modelo comum). */
+/** O modelo do pacote de um painel (no Atendimento, já recortado do modelo comum). */
 export const modeloPowerBi = (painel: PainelPowerBi): Modelo => PAINEIS[painel].modelo;
 
 /**
@@ -59,7 +64,7 @@ export const modeloPowerBi = (painel: PainelPowerBi): Modelo => PAINEIS[painel].
  * gerado e a ADR 0001.
  */
 export function pacotePowerBi(painel: PainelPowerBi, dataset: Dataset): Map<string, string> {
-  const { titulo, modelo, paginas, dados, leiaMe: leiaMeDoPainel } = PAINEIS[painel], nome = modelo.nome, arquivos = new Map<string, string>();
+  const { titulo, modelo, paginas, dados, leiaMe: leiaMeDoPainel, origem } = PAINEIS[painel] as PainelComPacote, nome = modelo.nome, arquivos = new Map<string, string>();
   arquivos.set(`${nome}.pbip`, `${JSON.stringify({ $schema: 'https://developer.microsoft.com/json-schemas/fabric/pbip/pbipProperties/1.0.0/schema.json', version: '1.0', artifacts: [{ report: { path: `${nome}.Report` } }], settings: { enableAutoRecovery: true } }, null, 2)}\n`);
   arquivos.set('.gitignore', '**/.pbi/localSettings.json\r\n**/.pbi/cache.abf\r\n');
   for (const [caminho, texto] of modeloTmdl(modelo)) arquivos.set(`${nome}.SemanticModel/${caminho}`, texto);
@@ -67,14 +72,14 @@ export function pacotePowerBi(painel: PainelPowerBi, dataset: Dataset): Map<stri
   for (const [caminho, texto] of relatorio) arquivos.set(`${nome}.Report/${caminho}`, texto);
   for (const tabela of dados(dataset)) arquivos.set(`dados/${tabela.arquivo}`, csv(tabela.cabecalho, tabela.linhas));
   arquivos.set('mapas/sp-municipios.json', JSON.stringify(geometria));
-  arquivos.set('LEIA-ME.md', leiaMe(titulo, nome, painel, dataset, leiaMeDoPainel));
+  arquivos.set('LEIA-ME.md', leiaMe(titulo, nome, painel, dataset, leiaMeDoPainel, origem));
   return arquivos;
 }
 
-function leiaMe(titulo: string, nome: string, pasta: string, dataset: Dataset, secoes: string): string {
+function leiaMe(titulo: string, nome: string, pasta: string, dataset: Dataset, secoes: string, origem?: string): string {
   return `# Pacote Power BI do ${titulo}
 
-Gerado a partir do protótipo em HTML (repositório caiofvserra/empresas, \`npm run build:powerbi\`), com o cenário de demonstração até ${dataset.snapshotDate.split('-').reverse().join('/')}. Os números são fictícios e servem para conferir o modelo e as telas, não o Crea-SP.
+Gerado a partir do protótipo em HTML (repositório caiofvserra/empresas, \`npm run build:powerbi\`), com o cenário de demonstração até ${dataset.snapshotDate.split('-').reverse().join('/')}. ${origem ?? 'Os números são fictícios e servem para conferir o modelo e as telas, não o Crea-SP.'}
 
 ## Como abrir
 

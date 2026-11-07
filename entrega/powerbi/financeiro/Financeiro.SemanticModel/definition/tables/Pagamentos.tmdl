@@ -1,0 +1,35 @@
+/// Guarda o pago a cada fornecedor em cada mês.
+table Pagamentos
+	isHidden
+	lineageTag: 044cae69-28b7-599f-bf06-d0d1e6787ff2
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 6a02eee8-22f0-5d86-842a-bff04e000c17
+
+	column Fornecedor
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Fornecedor
+		lineageTag: 01537d83-88d5-50c1-a5f0-fa2b2088e3a2
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: 683c6752-b1c6-543c-a802-9cbaffd33f19
+
+	partition Pagamentos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "pagamentos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Fornecedor", type text}, {"Valor", type number}}, "pt-BR")
+				in
+				    Tipos

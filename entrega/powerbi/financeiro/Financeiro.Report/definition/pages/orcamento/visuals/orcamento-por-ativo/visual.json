@@ -1,0 +1,91 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "orcamento-por-ativo",
+  "position": {
+    "x": 1063,
+    "y": 436,
+    "z": 16000,
+    "width": 201,
+    "height": 268,
+    "tabOrder": 16000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Despesa por profissional ativo"
+                }
+              },
+              "queryRef": "Medidas.Despesa por profissional ativo",
+              "nativeQueryRef": "Despesa por profissional ativo",
+              "displayName": "Despesa por ativo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Receita por profissional ativo no ano fechado"
+                }
+              },
+              "queryRef": "Medidas.Receita por profissional ativo no ano fechado",
+              "nativeQueryRef": "Receita por profissional ativo no ano fechado",
+              "displayName": "Receita por ativo"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Por profissional ativo'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

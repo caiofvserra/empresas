@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Abaixo do piso de execução"
+                  "Property": "Anuidades no período"
                 }
               },
-              "queryRef": "Medidas.Abaixo do piso de execução",
-              "nativeQueryRef": "Abaixo do piso de execução"
+              "queryRef": "Medidas.Anuidades no período",
+              "nativeQueryRef": "Anuidades no período"
             },
             {
               "field": {
@@ -37,11 +37,25 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Abaixo do piso de execução"
+                  "Property": "Comparação: Anuidades no período"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Abaixo do piso de execução",
-              "nativeQueryRef": "Detalhe: Abaixo do piso de execução"
+              "queryRef": "Medidas.Comparação: Anuidades no período",
+              "nativeQueryRef": "Comparação: Anuidades no período"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Anuidades no período"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Anuidades no período",
+              "nativeQueryRef": "Detalhe: Anuidades no período"
             }
           ]
         }
@@ -76,7 +90,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Abaixo do piso de execução'"
+                  "Value": "'Anuidades no período'"
                 }
               }
             }

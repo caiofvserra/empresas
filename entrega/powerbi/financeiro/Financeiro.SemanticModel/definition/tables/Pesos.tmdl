@@ -1,0 +1,34 @@
+/// Guarda o peso de cada município em cada tipo de receita, para dividir a arrecadação do estado pelo recorte (demonstrativo: anuidade pelos ativos, ART pelos estabelecimentos e um terço dos ativos, dívida ativa pelo vencido, multa pelas ações de fiscalização). O peso vem em milésimos, inteiro, para o CSV não arredondar os municípios pequenos; só a razão entre os pesos conta.
+table Pesos
+	isHidden
+	lineageTag: 76d50bca-3da3-5240-9873-79a27cf4fbd7
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 96d844d1-700a-5ce7-9766-73d9ae2753f4
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		lineageTag: 546d313f-aa38-5d25-b75b-34a7b2f13bc8
+
+	column Peso
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Peso
+		lineageTag: b4676148-ea3c-582a-882a-c8e05c029987
+
+	partition Pesos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "pesos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Código IBGE", type text}, {"Tipo", type text}, {"Peso", Int64.Type}}, "pt-BR")
+				in
+				    Tipos
