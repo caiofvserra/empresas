@@ -164,6 +164,30 @@ _Avoid_: alçada, valor mínimo
 A despesa com fiscalização, atendimento e ações institucionais. O resto (direção e administração) é atividade-meio.
 _Avoid_: finalística, área de negócio
 
+**Protocolo**:
+O pedido de um serviço ao Crea-SP (registro, certidão, ART, anuidade, orientação), com número, data de abertura e um caminho de status. É a unidade do painel de Atendimento.
+_Avoid_: solicitação, chamado, ticket
+
+**Serviço**:
+O subtipo da Carta de Serviços que o protocolo pede (como "Registro com diploma" ou "Certidão de Acervo Técnico"), com o seu prazo em dias úteis e a sua taxa. Os serviços se juntam em tipos (registro de profissional, registro de empresa, serviços de ART, certidões, anuidade e taxas, orientação, instituição de ensino).
+_Avoid_: assunto, categoria
+
+**Situação do protocolo**:
+Uma das cinco do painel antigo: aberto, exigência, sem pagamento, cancelado e fechado. Cada status do caminho cai numa delas.
+_Avoid_: estado, fase
+
+**Prazo do serviço**:
+Os dias úteis que o Crea-SP tem para fechar o protocolo, contados só enquanto o protocolo está com ele. Dentro ou fora do prazo se lê na data escolhida.
+_Avoid_: SLA, prazo de 14 dias
+
+**Exigência**:
+O pedido de documento ou correção que devolve o protocolo ao solicitante. Ele tem 30 dias corridos para responder; esse tempo não conta no prazo do serviço.
+_Avoid_: pendência, diligência (que é do processo no colegiado)
+
+**Sem atribuição**:
+O protocolo aberto ou sem pagamento que nenhum colaborador pegou.
+_Avoid_: órfão, na fila geral
+
 **Unidade de atendimento**:
 A sede de uma regional (GRE) ou a sede do Crea-SP na capital, onde o profissional e a empresa são atendidos pessoalmente.
 _Avoid_: posto, agência, inspetoria

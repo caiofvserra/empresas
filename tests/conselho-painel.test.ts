@@ -24,7 +24,7 @@ const processos = buildProcessos(dataset), modelo = buildProfissionais(dataset);
 
 test('Financeiro, Atendimento e Conselho: o antigo painel de Gestão do Conselho virou três, cada um no seu HTML (07/11/2026)', () => {
   assert.deepEqual(pageIdsFinanceiro, ['arrecadacao', 'receita', 'divida', 'orcamento']);
-  assert.deepEqual(pageIdsAtendimento, ['atendimento']);
+  assert.deepEqual(pageIdsAtendimento, ['protocolos', 'equipe', 'demanda']);
   assert.deepEqual(pageIdsConselho, ['colegiado', 'processos', 'conselheiros', 'decisoes', 'representacao']);
   for (const [paginas, painel] of [[pageIdsFinanceiro, 'financeiro'], [pageIdsAtendimento, 'atendimento'], [pageIdsConselho, 'conselho']] as const) assert.ok(paginas.every(page => painelDaPagina(page) === painel), painel);
   assert.deepEqual(pageIdsGeral, ['presidencia', 'metodo']);
@@ -39,7 +39,7 @@ test('Financeiro, Atendimento e Conselho: o antigo painel de Gestão do Conselho
   // O filtro de colegiado (Plenário ou câmara) só vale no Conselho.
   assert.match(src, /conselho: \{[^}]*filtro: 'colegiado' \}/);
   assert.match(src, /financeiro: \{[^}]*filtro: 'nenhum' \}/);
-  assert.match(src, /atendimento: \{[^}]*filtro: 'nenhum' \}/);
+  assert.match(src, /atendimento: \{[^}]*filtro: 'atendimento' \}/);
   for (const page of [...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho]) assert.ok(Object.keys(fichas).some(key => key.startsWith(`${page}.`)), `fichas da página ${page}`);
   assert.ok(!Object.keys(fichas).some(key => key.startsWith('controle.')), 'a aba Controle virou Orçamento');
 });
@@ -114,9 +114,8 @@ test('fichas do Financeiro, do Atendimento e do Conselho: nenhum bloco leva "!" 
   }
 });
 
-test('páginas do Conselho seguem as regras de design dos outros painéis: fonte de 11px, barra com largura máxima, rótulo com corDoTexto, sem "·" e sem gráfico em recorte vazio', () => {
-  const dir = join(import.meta.dirname, '..', 'src', 'conselho');
-  for (const name of readdirSync(dir).filter(file => file.endsWith('.tsx'))) {
+test('páginas do Conselho e do Atendimento seguem as regras de design dos outros painéis: fonte de 11px, barra com largura máxima, rótulo com corDoTexto, sem "·" e sem gráfico em recorte vazio', () => {
+  for (const dir of ['conselho', 'atendimento'].map(pasta => join(import.meta.dirname, '..', 'src', pasta))) for (const name of readdirSync(dir).filter(file => file.endsWith('.tsx'))) {
     const src = readFileSync(join(dir, name), 'utf8');
     const pequenas = [...src.matchAll(/fontSize: ?(\d+(?:\.\d+)?)/g)].map(m => Number(m[1])).filter(n => n < 11);
     assert.deepEqual(pequenas, [], `${name}: fonte menor que 11px`);

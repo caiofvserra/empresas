@@ -69,8 +69,13 @@ import PaginaDecisoes from '../conselho/PaginaDecisoes';
 import PaginaRepresentacao from '../conselho/PaginaRepresentacao';
 import { buildColegiado, colegiados, quadroColegiado } from '../domain/colegiado';
 import type { Colegiado } from '../domain/colegiado';
-import PaginaAtendimento from '../atendimento/PaginaAtendimento';
-import { adimplenciaPorMunicipio, buildCarteira, despesaAcumulada, despesaMensal, diariasMensais, distanciaUnidade, mesesAteData, municipioDoSolicitante, quadroDivida, receitaAcumulada, receitaMensal } from '../domain/gestao';
+import PaginaProtocolos from '../atendimento/PaginaProtocolos';
+import PaginaEquipe from '../atendimento/PaginaEquipe';
+import PaginaDemanda from '../atendimento/PaginaDemanda';
+import '../atendimento/atendimento.css';
+import { buildAtendimento, quadroAtendimento, demandaAtendimento, serieMensal, tiposServico } from '../domain/atendimento';
+import type { RecorteAtendimento, TipoServico } from '../domain/atendimento';
+import { adimplenciaPorMunicipio, buildCarteira, despesaAcumulada, despesaMensal, diariasMensais, distanciaUnidade, mesesAteData, municipioDoSolicitante, quadroDivida, receitaAcumulada, receitaMensal, unidadesAtendimento } from '../domain/gestao';
 import { conselheiros, diariasPorPessoa, servidores } from '../domain/pessoas-conselho';
 import type { Gestao } from './contexto';
 import { mesesDaSerie } from '../domain/series-mensais';
@@ -128,8 +133,15 @@ const paginasFinanceiro: PaginaDef[] = [
   { id: 'divida', label: 'Dívida', title: 'Dívida e cobrança', subtitle: 'Quanto está vencido com profissionais e empresas, o que pode ir à Justiça, o que vai a protesto, o que está perto de prescrever e quem está em dia', icon: Landmark, Page: PaginaDivida },
   { id: 'orcamento', label: 'Orçamento', title: 'Orçamento e despesa', subtitle: 'Como o orçamento do ano está sendo executado, em que o Conselho gasta, quem recebe diárias, os maiores fornecedores e os contratos que terminam. Dado real, do estado inteiro', icon: ChartPie, Page: PaginaOrcamento },
 ];
-const paginaAtendimento: PaginaDef = { id: 'atendimento', label: 'Atendimento', title: 'Atendimento e estrutura', subtitle: 'Se as solicitações são resolvidas no prazo, por que canal chegam, a que distância cada município está de uma unidade e como os coworkings são usados', icon: Headset, Page: PaginaAtendimento };
-const paginasAtendimento: PaginaDef[] = [paginaAtendimento];
+/**
+ * Painel de Atendimento (07/11/2026): os protocolos de serviço, a partir do painel de protocolos que o Crea-SP já usa, com o prazo
+ * de cada serviço em dias úteis, os colaboradores pelo nome, o território e a demanda que vem de fora (Receita, INEP, LAI).
+ */
+const paginasAtendimento: PaginaDef[] = [
+  { id: 'protocolos', label: 'Protocolos', title: 'Os protocolos', subtitle: 'Quantos protocolos entraram, em que situação estão, quantos passaram do prazo de cada serviço e por que voltam ao solicitante', icon: Headset, Page: PaginaProtocolos },
+  { id: 'equipe', label: 'Equipe e território', title: 'A equipe e o território', subtitle: 'Com quem está cada protocolo, o que está sem atribuição, o prazo de cada regional, onde moram os solicitantes e por que canal chegam', icon: Users, Page: PaginaEquipe },
+  { id: 'demanda', label: 'Demanda', title: 'A demanda', subtitle: 'O que vem de fora e o que se espera: aberturas de empresas na Receita, formaturas, ARTs, pedidos de informação e os próximos três meses', icon: TrendingUp, Page: PaginaDemanda },
+];
 /**
  * Painel de Gestão do Conselho, refeito em 07/11/2026 só com o colegiado: conselheiros, câmaras, Plenário e processos. O caminho do
  * processo segue o guia da SUPCOL (GovAdm e Votenet) e os marcos do Confea; o filtro do alto escolhe o Plenário ou uma câmara.
@@ -142,15 +154,15 @@ const paginasConselho: PaginaDef[] = [
   { id: 'representacao', label: 'Representação', title: 'A representação', subtitle: 'Como as cadeiras se dividem entre as câmaras, as mulheres no Conselho e no registro, o que as organizações com cadeira recebem e as deliberações das atas', icon: Handshake, Page: PaginaRepresentacao },
 ];
 export type PainelId = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho';
-/** `filtro`: o terceiro filtro do alto, a câmara ou a modalidade (com o gênero); no Financeiro e no Atendimento não há terceiro filtro. */
-interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; filtro: 'camara' | 'modalidade' | 'colegiado' | 'nenhum' }
+/** `filtro`: o terceiro filtro do alto, a câmara, a modalidade (com o gênero), o colegiado ou, no Atendimento, o tipo de serviço e a unidade; no Financeiro não há terceiro filtro. */
+interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; filtro: 'camara' | 'modalidade' | 'colegiado' | 'atendimento' | 'nenhum' }
 const paineis: Record<PainelId, Painel> = {
   geral: { id: 'geral', nome: 'Inteligência Estratégica', paginas: paginasGeral, periodos: [3, 6, 12], storage: 'crea-observatorio-v20', filtro: 'camara' },
   empresas: { id: 'empresas', nome: 'Inteligência Estratégica · Empresas', paginas: paginasEmpresas, periodos: [3, 6, 12, 24], storage: 'crea-empresas-v1', filtro: 'camara' },
   profissionais: { id: 'profissionais', nome: 'Inteligência Estratégica · Profissionais', paginas: paginasProfissionais, periodos: [3, 6, 12, 24], storage: 'crea-profissionais-v1', filtro: 'modalidade' },
   fiscalizacao: { id: 'fiscalizacao', nome: 'Inteligência Estratégica · Fiscalização', paginas: paginasFiscalizacao, periodos: [3, 6, 12, 24], storage: 'crea-fiscalizacao-v1', filtro: 'camara' },
   financeiro: { id: 'financeiro', nome: 'Inteligência Estratégica · Financeiro', paginas: paginasFinanceiro, periodos: [3, 6, 12, 24], storage: 'crea-financeiro-v1', filtro: 'nenhum' },
-  atendimento: { id: 'atendimento', nome: 'Inteligência Estratégica · Atendimento', paginas: paginasAtendimento, periodos: [3, 6, 12, 24], storage: 'crea-atendimento-v1', filtro: 'nenhum' },
+  atendimento: { id: 'atendimento', nome: 'Inteligência Estratégica · Atendimento', paginas: paginasAtendimento, periodos: [3, 6, 12, 24], storage: 'crea-atendimento-v2', filtro: 'atendimento' },
   conselho: { id: 'conselho', nome: 'Inteligência Estratégica · Gestão do Conselho', paginas: paginasConselho, periodos: [3, 6, 12, 24], storage: 'crea-conselho-v3', filtro: 'colegiado' },
 };
 /** Atalhos do menu lateral, só no painel geral. Os painéis temáticos são entregues sozinhos e não têm caminho de volta (pedido do Caio, 03/11/2026). */
@@ -190,11 +202,11 @@ const filtros = (greIds: string[], period: number, cityId = '', extra: { porte?:
 const portes: CompanySize[] = ['Microempresa', 'Pequena empresa', 'Média empresa', 'Grande empresa'];
 const situacoes: Establishment['rfbStatus'][] = ['Ativa', 'Baixada', 'Suspensa', 'Inapta'];
 /** Página e filtros no endereço: `#registro?gre=GRE5&cidade=3550308&camara=Civil&meses=24&data=2026-06-30`. */
-type Endereco = Record<'gre' | 'cidade' | 'camara' | 'colegiado' | 'modalidade' | 'genero' | 'meses' | 'data' | 'porte' | 'situacao', string>;
+type Endereco = Record<'gre' | 'cidade' | 'camara' | 'colegiado' | 'modalidade' | 'genero' | 'meses' | 'data' | 'porte' | 'situacao' | 'servico' | 'unidade', string>;
 function lerEndereco(): Endereco & { pagina: string } {
   const [pagina, consulta = ''] = window.location.hash.slice(1).split('?'), params = new URLSearchParams(consulta);
   const chave = (name: keyof Endereco) => params.get(name) ?? '';
-  return { pagina, gre: chave('gre'), cidade: chave('cidade'), camara: chave('camara'), colegiado: chave('colegiado'), modalidade: chave('modalidade'), genero: chave('genero'), meses: chave('meses'), data: chave('data'), porte: chave('porte'), situacao: chave('situacao') };
+  return { pagina, gre: chave('gre'), cidade: chave('cidade'), camara: chave('camara'), colegiado: chave('colegiado'), modalidade: chave('modalidade'), genero: chave('genero'), meses: chave('meses'), data: chave('data'), porte: chave('porte'), situacao: chave('situacao'), servico: chave('servico'), unidade: chave('unidade') };
 }
 function gravarEndereco(pagina: string, valores: Endereco) {
   const params = new URLSearchParams(); for (const [name, value] of Object.entries(valores)) if (value) params.set(name, value);
@@ -221,6 +233,18 @@ function camadasDe(view: Dataset) {
   return value;
 }
 
+/** Painel de Atendimento: a base de protocolos (uma vez por base lida em D), o quadro do recorte e a demanda. */
+/**
+ * Os protocolos e a demanda saem da base inteira e são lidos na data: o protocolo aberto antes da data existe nela, ainda que o
+ * registro que ele pede só entre no cadastro depois (na base cortada na data, ele sumiria). O status na data não vê nada do que veio
+ * depois, e a demanda só conta aberturas, ARTs e registros até a data. Os concluintes do INEP de um ano não mudam com a data lida.
+ */
+function lerAtendimento(anchor: string, period: number, recorte: RecorteAtendimento) {
+  const base = buildAtendimento(dataset), q = quadroAtendimento(base, { anchor, period, recorte });
+  const servidores = [...base.colaboradores.values()].filter(c => !recorte.greId || c.greId === recorte.greId || (c.greId === null && recorte.greId === 'GRE5')).length;
+  return { base, q, d: demandaAtendimento(dataset, base, { anchor, recorte, colaboradores: servidores }), serie: serieMensal(base, { anchor, recorte }), servidores };
+}
+
 export default function Cockpit({ painel: painelId = 'geral' }: { painel?: PainelId }) {
   const painel = paineis[painelId], pages = painel.paginas;
   STORAGE = painel.storage;
@@ -232,6 +256,9 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   const [camara, setCamara] = useState(() => (camaras as string[]).includes(inicial.camara) ? inicial.camara : '');
   // Gestão do Conselho: o Plenário ou uma das nove câmaras (07/11/2026); nos outros painéis fica vazio.
   const [colegiado, setColegiado] = useState<'' | Colegiado>(() => (colegiados as string[]).includes(inicial.colegiado) ? inicial.colegiado as Colegiado : '');
+  // Atendimento (07/11/2026): o tipo de serviço e a unidade de atendimento, como no painel de protocolos antigo.
+  const [servico, setServico] = useState<'' | TipoServico>(() => (tiposServico as string[]).includes(inicial.servico) ? inicial.servico as TipoServico : '');
+  const [unidade, setUnidade] = useState(() => unidadesAtendimento(dataset).some(u => u.nome === inicial.unidade) ? inicial.unidade : '');
   const [modalidade, setModalidade] = useState(() => (modalidades as string[]).includes(inicial.modalidade) ? inicial.modalidade : '');
   const [genero, setGenero] = useState<'' | Genero>(() => inicial.genero === 'Feminino' || inicial.genero === 'Masculino' ? inicial.genero : '');
   const [cidade, setCidade] = useState(() => municipiosSp(dataset).some(row => row.id === inicial.cidade) ? inicial.cidade : '');
@@ -259,7 +286,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   useEffect(() => { const media = window.matchMedia('(prefers-color-scheme: dark)'), update = () => setSystemDark(media.matches); media.addEventListener('change', update); return () => media.removeEventListener('change', update); }, []);
   useEffect(() => { if (theme) document.documentElement.dataset.theme = theme; else delete document.documentElement.dataset.theme; gravar('tema', theme); }, [theme]);
   useEffect(() => { gravar('pagina', page); setFocus(null); }, [page]);
-  useEffect(() => { gravarEndereco(page, { gre, cidade, camara, colegiado, modalidade, genero, meses: period === 12 ? '' : String(period), data: anchorSel ?? '', porte, situacao }); }, [page, gre, cidade, camara, colegiado, modalidade, genero, period, anchorSel, porte, situacao]);
+  useEffect(() => { gravarEndereco(page, { gre, cidade, camara, colegiado, modalidade, genero, meses: period === 12 ? '' : String(period), data: anchorSel ?? '', porte, situacao, servico, unidade }); }, [page, gre, cidade, camara, colegiado, modalidade, genero, period, anchorSel, porte, situacao, servico, unidade]);
   useEffect(() => { gravar('metas', metas); }, [metas]);
   // Atendimento, estrutura e orçamento vêm do modelo institucional (cerca de 1 s na primeira vez): calculado depois da primeira pintura.
   useEffect(() => { if (leve && !deGestao) return; let alive = true; setEstrutura(null); const id = window.setTimeout(() => { const value = estruturaDe(view, gre || null, period); if (alive) setEstrutura(value); }, 30); return () => { alive = false; window.clearTimeout(id); }; }, [view, gre, period, leve, deGestao]);
@@ -342,8 +369,9 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     return { contas: base.conselho, carteira, meses, divida: quadroDivida(carteira, anchor, recorte, w.start, w.prevEnd, meses), receitaMensal: receitaMensal(base.conselho, meses), receitaAcumulada: receitaAcumulada(base.conselho, anchor),
       despesaAcumulada: despesaAcumulada(base.conselho, anchor, gre || null), despesaMensal: despesaMensal(base.conselho, meses, gre || null), diariasMensais: diariasMensais(base.conselho, meses, gre || null),
       adimplencia: adimplenciaPorMunicipio(base.profissionais, anchor), equipe, conselheiros: plenarioNomes, diariasPessoas: diariasPorPessoa(base.conselho, equipe, plenarioNomes, anchor, painel.id === 'conselho' ? null : gre || null), distancia: distanciaUnidade(dataset), origem: municipioDoSolicitante(dataset),
+      atendimento: painel.id === 'atendimento' ? lerAtendimento(anchor, period, { greId: gre || null, cityId: cidade || null, tipo: servico || null, unidade: unidade || null }) : null,
       colegiado: painel.id === 'conselho' ? quadroColegiado(buildColegiado(dataset), base.profissionais, anchor, w.start, w.prevStart, w.prevEnd, { colegiado: colegiado || null, greId: gre || null, cityId: cidade || null }) : null };
-  }, [deGestao, painel.id, anchor, period, gre, cidade, colegiado, base]);
+  }, [deGestao, painel.id, anchor, period, gre, cidade, colegiado, servico, unidade, base, view]);
   const insights = useMemo(() => leitura({ metas, ponte: derived.ponte, cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo: derived.resumo, rec: derived.rec, saldo: model.metrics.overdue.value ?? 0,
     inadimplencia: derived.inadimplencia, linhas: derived.linhas, malha: derived.malha, arts: { atual: derived.arts.atual.length, antes: derived.arts.antes }, cao: derived.cao, estrutura,
     conversao: derived.norte.conversao.atual, tempo: derived.norte.tempo, profissionais: extra.profissionais.resumo, formacao: extra.formacao, conselho: extra.conselho, forcas: extra.forcas }), [metas, derived, model, estrutura, extra]);
@@ -366,6 +394,8 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     ...(cidade ? [{ chave: 'cidade', rotulo: `${municipiosDe('').find(row => row.id === cidade)?.name ?? cidade} (${dataset.gres.find(row => row.id === gre)?.name ?? ''})`, tirar: () => setCidade('') }] : []),
     ...(camara ? [{ chave: 'camara', rotulo: camara, tirar: () => setCamara('') }] : []),
     ...(colegiado ? [{ chave: 'colegiado', rotulo: colegiado === 'Plenário' ? 'Plenário' : `Câmara ${colegiado}`, tirar: () => setColegiado('') }] : []),
+    ...(servico ? [{ chave: 'servico', rotulo: servico, tirar: () => setServico('') }] : []),
+    ...(unidade ? [{ chave: 'unidade', rotulo: `Unidade de ${unidade}`, tirar: () => setUnidade('') }] : []),
     ...(modalidade ? [{ chave: 'modalidade', rotulo: modalidade, tirar: () => setModalidade('') }] : []),
     ...(genero ? [{ chave: 'genero', rotulo: genero === 'Feminino' ? 'Mulheres' : 'Homens', tirar: () => setGenero('') }] : []),
     ...(porte ? [{ chave: 'porte', rotulo: porte, tirar: () => setPorte('') }] : []),
@@ -398,7 +428,10 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
           {painel.filtro === 'modalidade'
             ? <><label className="ck-select"><select aria-label="Modalidade" value={modalidade} onChange={event => change(() => setModalidade(event.target.value))}><option value="">Todas as modalidades</option>{modalidades.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
               <label className="ck-select"><select aria-label="Gênero" value={genero} onChange={event => change(() => setGenero(event.target.value as '' | Genero))}><option value="">Mulheres e homens</option><option value="Feminino">Mulheres</option><option value="Masculino">Homens</option></select><ChevronDown size={14} /></label></>
-            : painel.filtro === 'nenhum' ? null : painel.filtro === 'colegiado' ? <label className="ck-select"><select aria-label="Colegiado" value={colegiado} onChange={event => change(() => setColegiado(event.target.value as '' | Colegiado))}><option value="">Todos os colegiados</option>{colegiados.map(name => <option key={name} value={name}>{name === 'Plenário' ? 'Plenário' : `Câmara ${name}`}</option>)}</select><ChevronDown size={14} /></label> : <><label className="ck-select"><select aria-label="Câmara" value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas as câmaras</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+            : painel.filtro === 'nenhum' ? null : painel.filtro === 'atendimento' ? <>
+              <label className="ck-select"><select aria-label="Tipo de serviço" value={servico} onChange={event => change(() => setServico(event.target.value as '' | TipoServico))}><option value="">Todos os serviços</option>{tiposServico.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
+              <label className="ck-select"><select aria-label="Unidade de atendimento" value={unidade} onChange={event => change(() => setUnidade(event.target.value))}><option value="">Todas as unidades</option>{unidadesAtendimento(dataset).map(u => u.nome).sort((a, b) => a.localeCompare(b, 'pt-BR')).map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label></>
+            : painel.filtro === 'colegiado' ? <label className="ck-select"><select aria-label="Colegiado" value={colegiado} onChange={event => change(() => setColegiado(event.target.value as '' | Colegiado))}><option value="">Todos os colegiados</option>{colegiados.map(name => <option key={name} value={name}>{name === 'Plenário' ? 'Plenário' : `Câmara ${name}`}</option>)}</select><ChevronDown size={14} /></label> : <><label className="ck-select"><select aria-label="Câmara" value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas as câmaras</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
               {!deGestao && <details className={`ck-mais ${porte || situacao ? 'on' : ''}`}><summary title="Mais filtros: porte da empresa e situação do CNPJ na Receita"><SlidersHorizontal size={14} /><span>Mais{porte || situacao ? ` · ${[porte, situacao].filter(Boolean).length}` : ''}</span></summary>
                 <div className="ck-mais-menu">
                   <label className="ck-select"><span>Porte</span><select aria-label="Porte" value={porte} onChange={event => change(() => setPorte(event.target.value))}><option value="">Todos os portes</option>{portes.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
@@ -407,7 +440,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
                 </div></details>}</>}
           <div className="seg" role="radiogroup" aria-label="Período" title={`De ${data(ctx.janela.start)} a ${data(ctx.janela.end)}, comparado com ${data(ctx.janela.prevStart)} a ${data(ctx.janela.prevEnd)}`}>{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => { setPeriod(value); setAvisoPeriodo(''); })}>{value} meses</button>)}
             <label className={`seg-livre ${painel.periodos.includes(period) ? '' : 'on'}`} title={`Qualquer número de meses até ${maxMeses}: o histórico começa em ${mes(view.months[0])}`}><input type="number" inputMode="numeric" min={1} max={maxMeses} step={1} aria-label="Outro período, em meses" placeholder="outro" value={painel.periodos.includes(period) ? '' : period} onChange={event => { const pedido = Number(event.target.value); if (!Number.isInteger(pedido) || pedido < 1) return; const value = Math.min(maxMeses, pedido); setAvisoPeriodo(pedido > maxMeses ? `O histórico começa em ${mes(view.months[0])}, por isso o período foi limitado a ${maxMeses} meses.` : value > 24 && `${ctx.janela.prevStart}` < `${view.months[0]}-01` ? `Com ${value} meses não há período anterior completo para comparar; as variações ficam sem base.` : ''); change(() => setPeriod(value)); }} />{!painel.periodos.includes(period) && <span>meses</span>}</label></div>
-          {(gre || cidade || camara || colegiado || modalidade || genero || porte || situacao || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setColegiado(''); setModalidade(''); setGenero(''); setPorte(''); setSituacao(''); setPeriod(12); setAnchorSel(null); setAvisoPeriodo(''); })} title="Limpar filtros" aria-label="Limpar filtros"><RotateCcw size={14} /><span className="ck-limpar-texto">Limpar</span></button>}
+          {(gre || cidade || camara || colegiado || servico || unidade || modalidade || genero || porte || situacao || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setColegiado(''); setServico(''); setUnidade(''); setModalidade(''); setGenero(''); setPorte(''); setSituacao(''); setPeriod(12); setAnchorSel(null); setAvisoPeriodo(''); })} title="Limpar filtros" aria-label="Limpar filtros"><RotateCcw size={14} /><span className="ck-limpar-texto">Limpar</span></button>}
         </section>
         <div className="ck-meta">
           <span className="demo" title="Dados internos fictícios, gerados para demonstrar o modelo. Dados públicos reais trazem selo próprio.">Demonstrativo</span>
@@ -442,9 +475,9 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
         </section>
       </>}
       <main className={`ck-page ck-page-${page} ${focus ? 'has-focus' : ''}`} key={page}><current.Page ctx={ctx} /></main>
-      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{deGestao && gestao ? (painel.id === 'financeiro' ? `${brl(gestao.divida.total)} de anuidades vencidas no recorte` : painel.id === 'atendimento' ? (estrutura ? `${int(estrutura.atendimento.pedidos.length)} solicitações de atendimento no período` : 'Calculando o atendimento…') : gestao.colegiado ? `${int(gestao.colegiado.pendentes.length)} processos esperando voto no recorte` : '') : deProfissionais ? `${int(extra.profissionais.resumo.ativos.length)} profissionais ativos no recorte` : deFiscalizacao ? (page === 'contratos' ? `${int(derived.malha.contratos.length)} contratos públicos técnicos no recorte` : page === 'obras' ? `${int(obrasDoRecorte(ctx).length)} obras públicas no recorte` : `${int(derived.resumo.acoes.length)} ações de fiscalização no recorte`) : leve ? `${int(model.companyFacts.filter(row => row.active || row.eligibleEstablishments > 0).length)} empresas com atividade de engenharia no recorte` : `${int(scope.companies.length)} empresas no recorte`}</strong>
+      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{deGestao && gestao ? (painel.id === 'financeiro' ? `${brl(gestao.divida.total)} de anuidades vencidas no recorte` : painel.id === 'atendimento' ? (gestao.atendimento ? `${int(gestao.atendimento.q.linhas.length)} protocolos abertos no período, ${int(gestao.atendimento.q.porSituacao.Aberto.length + gestao.atendimento.q.porSituacao['Exigência'].length)} ainda em andamento` : '') : gestao.colegiado ? `${int(gestao.colegiado.pendentes.length)} processos esperando voto no recorte` : '') : deProfissionais ? `${int(extra.profissionais.resumo.ativos.length)} profissionais ativos no recorte` : deFiscalizacao ? (page === 'contratos' ? `${int(derived.malha.contratos.length)} contratos públicos técnicos no recorte` : page === 'obras' ? `${int(obrasDoRecorte(ctx).length)} obras públicas no recorte` : `${int(derived.resumo.acoes.length)} ações de fiscalização no recorte`) : leve ? `${int(model.companyFacts.filter(row => row.active || row.eligibleEstablishments > 0).length)} empresas com atividade de engenharia no recorte` : `${int(scope.companies.length)} empresas no recorte`}</strong>
         {leve && recorte.length > 0 && <ul className="ck-chips" aria-label="Filtros em uso">{recorte.map(chip => <li key={chip.chave}><span>{chip.rotulo}</span><button aria-label={`Tirar o filtro ${chip.rotulo}`} title="Tirar este filtro" onClick={() => change(chip.tirar)}><X size={11} /></button></li>)}</ul>}
-        <span className="ck-status-note">{pending ? 'Recalculando…' : avisoPeriodo ? avisoPeriodo : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : deGestao ? `Clique num item para ver ${painel.id === 'financeiro' ? 'os devedores ou os lançamentos' : painel.id === 'atendimento' ? 'as solicitações ou os profissionais' : 'os processos, os conselheiros ou as organizações'}. O (i) explica cada bloco e diz quais filtros valem para ele.` : leve ? `Clique num item para ver ${deProfissionais ? 'os profissionais' : deFiscalizacao ? 'as ações, as empresas ou os contratos' : 'as empresas'}. O (i) explica cada bloco.${deProfissionais ? '' : ' A tecla / busca uma empresa.'}` : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
+        <span className="ck-status-note">{pending ? 'Recalculando…' : avisoPeriodo ? avisoPeriodo : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : deGestao ? `Clique num item para ver ${painel.id === 'financeiro' ? 'os devedores ou os lançamentos' : painel.id === 'atendimento' ? 'os protocolos, com quem está cada um e há quanto tempo' : 'os processos, os conselheiros ou as organizações'}. O (i) explica cada bloco e diz quais filtros valem para ele.` : leve ? `Clique num item para ver ${deProfissionais ? 'os profissionais' : deFiscalizacao ? 'as ações, as empresas ou os contratos' : 'as empresas'}. O (i) explica cada bloco.${deProfissionais ? '' : ' A tecla / busca uma empresa.'}` : 'As teclas 1 a 9 e M trocam de aba. O botão (i) explica cada bloco. Clique em qualquer número, barra ou regional para ver a lista de empresas.'}</span></footer>
     </div>
     {detail && <Drawer ctx={ctx} detail={detail} onClose={() => setDetail(null)} />}
     {modal === 'metas' && <Janela title="Metas do painel" subtitle="As metas usadas nos cartões, no quadro das regionais e nos destaques. Elas ficam salvas neste navegador." onClose={() => setModal(null)}><MetasForm metas={metas} onChange={setMetas} /></Janela>}
@@ -467,7 +500,7 @@ const camposMeta: { key: keyof Metas; label: string; help: string }[] = [
   { key: 'adimplencia', label: 'Adimplência', help: 'Empresas cobradas sem saldo vencido' },
   { key: 'recuperacao', label: 'Recuperação da dívida', help: 'Parcela do saldo vencido no início recebida no período' },
   { key: 'regularizacao', label: 'Regularização após ação', help: 'Ações do período já regularizadas e conversão em 180 dias da coorte' },
-  { key: 'atendimento', label: 'Atendimento no prazo', help: 'Solicitações resolvidas em até 14 dias' },
+  { key: 'atendimento', label: 'Atendimento no prazo', help: 'Protocolos fechados dentro do prazo do serviço, em dias úteis' },
 ];
 function MetasForm({ metas, onChange }: { metas: Metas; onChange: (value: Metas) => void }) {
   return <div className="ck-metas">{camposMeta.map(field => <label key={field.key}><span><b>{field.label}</b><small>{field.help}</small></span>

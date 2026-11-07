@@ -1,0 +1,67 @@
+/// Guarda, em cada data com foto, os pedidos de acesso à informação (LAI) e as manifestações da ouvidoria de cada um dos cinco anos até ela; o ano da data vai até ela. É o Crea-SP inteiro, sem regional (demonstrativo).
+table 'Ouvidoria e informação'
+	lineageTag: fe0c14e4-3004-580e-a83a-c65cc82193c9
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 08ac7f85-5e2d-5803-b468-c3edf18bb6ae
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 8f374a0b-5031-5add-916e-a6e3be2a93d2
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		sortByColumn: 'Ordem do tipo'
+		lineageTag: 876af65f-b685-5c91-a991-75c77a7cbd00
+
+	column 'Ordem do tipo'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do tipo
+		lineageTag: ea08619f-6618-52a1-914c-816761fd2992
+
+	column Quantidade
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Quantidade
+		lineageTag: abcdbd8b-10d8-53a5-8d85-b2f3d52207ac
+
+	column 'Respondidos no prazo'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Respondidos no prazo
+		lineageTag: ea2234ba-f462-59b4-915f-59626f65bc01
+
+	column Recursos
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Recursos
+		lineageTag: 8e912425-0eb6-526b-a0a5-091db79bbcae
+
+	partition 'Ouvidoria e informação' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "ouvidoria-e-informacao.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Ano", Int64.Type}, {"Tipo", type text}, {"Ordem do tipo", Int64.Type}, {"Quantidade", Int64.Type}, {"Respondidos no prazo", Int64.Type}, {"Recursos", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

@@ -3,7 +3,8 @@ import { datasReferencia, datasetAt } from '../../domain/tempo';
 import { municipiosSp } from '../../domain/municipios';
 import { buildProfissionais, situacaoEm } from '../../domain/profissionais';
 import { buildInstitutionalModel } from '../../domain/institutional';
-import { canalDe, distanciaUnidade, faixaDistancia, faixasDistancia, municipioDoSolicitante } from '../../domain/gestao';
+import { distanciaUnidade } from '../../domain/gestao';
+import { dadosAtendimento } from './dados-atendimento';
 import type { Celula } from '../csv';
 
 /** Uma tabela de dados do pacote: o nome do CSV, o cabeçalho e as linhas. */
@@ -33,7 +34,8 @@ export const centavos = (valor: number) => Math.round(valor * 100) / 100;
  * reaproveitam daqui as funções de datas.
  * Dimensões: regionais, municípios (com a unidade de atendimento mais próxima), calendário e datas.
  * Foto de cada fim de mês: profissionais ativos por município.
- * Fatos com data (somados no período em DAX): solicitações de atendimento e uso dos coworkings.
+ * Fatos com data (somados no período em DAX): uso dos coworkings. Os protocolos, a foto deles em cada fim de mês, o quadro de
+ * atendimento e a demanda de fora vêm de `dados-atendimento.ts`.
  */
 /** As tabelas, uma vez por base. */
 const porBase = new WeakMap<Dataset, Dados[]>();
@@ -48,7 +50,7 @@ function montar(dataset: Dataset): Dados[] {
   const fotos = meses(PRIMEIRA_FOTO, mesHoje).map(fimDoMes).map(data => data > hoje ? hoje : data);
   const municipios = municipiosSp(dataset), nomeGre = new Map(dataset.gres.map(row => [row.id, row.name])), gre = (id: string | null | undefined) => (id ? nomeGre.get(id) : '') ?? '';
   const distancia = distanciaUnidade(dataset);
-  const institucional = buildInstitutionalModel(dataset), origem = municipioDoSolicitante(dataset);
+  const institucional = buildInstitutionalModel(dataset);
 
   /* ---------- Dimensões ---------- */
   const calendario = meses(PRIMEIRO_MES, fimDoMes(`${Number(mesHoje.slice(0, 4)) + 1}${mesHoje.slice(4)}`).slice(0, 7));
@@ -80,11 +82,8 @@ function montar(dataset: Dataset): Dados[] {
 
     { arquivo: 'profissionais-ativos.csv', cabecalho: ['Data', 'Código IBGE', 'Ativos'], linhas: ativos },
 
-    // Atendimento.
-    { arquivo: 'solicitacoes.csv', cabecalho: ['Solicitação', 'Código IBGE', 'GRE', 'Município do solicitante', 'Aberta em', 'Mês', 'Prazo', 'Resolvida em', 'Dias até resolver', 'Assunto', 'Solicitante', 'Canal', 'Distância do solicitante', 'Ordem da distância'],
-      linhas: institucional.serviceRequests.filter(row => row.createdAt <= hoje).map(row => {
-        const km = distancia.get(origem(row))?.km ?? 0, resolvida = row.resolvedAt && row.resolvedAt <= hoje ? row.resolvedAt : null, prazo = new Date(Date.parse(`${row.createdAt}T00:00:00Z`) + row.targetDays * DIA).toISOString().slice(0, 10);
-        return [row.id, row.cityId, gre(row.greId), origem(row), row.createdAt, primeiroDia(row.createdAt), prazo, resolvida, resolvida ? diasEntre(row.createdAt, resolvida) : null, row.category, row.userType, canalDe(row, km), faixasDistancia[faixaDistancia(km)], faixaDistancia(km) + 1]; }) },
+    // Atendimento: protocolos, a foto de cada fim de mês, a equipe e a demanda de fora (em dados-atendimento.ts), e os coworkings.
+    ...dadosAtendimento(dataset, fotos),
     { arquivo: 'coworkings.csv', cabecalho: ['Unidade', 'Código IBGE', 'GRE', 'Mesas'], linhas: institucional.coworkUnits.map(row => [nomeCidade.get(row.cityId) ?? row.name, row.cityId, gre(row.greId), row.desks]) },
     { arquivo: 'coworkings-meses.csv', cabecalho: ['Unidade', 'Mês', 'Horas disponíveis', 'Horas usadas', 'Custo'],
       linhas: institucional.coworkMonths.filter(row => row.month <= mesHoje).map(row => { const unidade = unidades.get(row.unitId)!;

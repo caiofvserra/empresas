@@ -1,0 +1,138 @@
+/// Guarda cada protocolo de atendimento: o serviço (subtipo da Carta de Serviços) e o tipo, o prazo em dias úteis com o Crea-SP, a taxa, o município de quem pediu (a regional vem dele, pela tabela oficial), a unidade mais próxima, o canal e o motivo da exigência, quando houve.
+table Protocolos
+	lineageTag: 8fbce2b0-3ce6-5612-a9ec-5ac84d7d8bb5
+
+	column Protocolo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Protocolo
+		lineageTag: bca6dbd2-4973-5ae4-adaa-fa9ab01cf817
+
+	column 'Serviço'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Serviço
+		lineageTag: cd19e2d2-ee17-5f68-a393-ffaa5e4a29b7
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		lineageTag: 09d1fd8b-49a9-594d-aad0-1fb37553cfb4
+
+	column 'Prazo do serviço'
+		dataType: int64
+		formatString: 0" dias úteis"
+		summarizeBy: none
+		sourceColumn: Prazo do serviço
+		lineageTag: 721781af-9ed4-5bf9-a004-9b27a078b32c
+
+	column Taxa
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Taxa
+		lineageTag: 8ea53dd5-827c-51f3-af82-ee0d04a7be56
+
+	column Solicitante
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Solicitante
+		lineageTag: 7d97af64-d1d5-5de6-9232-35ccef77fd81
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 31e9c13d-d897-598f-9849-cf25a8b25fc0
+
+	column Unidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Unidade
+		lineageTag: 94f1f611-63c8-5017-aa20-334966c99d7c
+
+	column Canal
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Canal
+		lineageTag: 61e07014-2fed-5486-8683-5d4c697fb505
+
+	column 'Aberto em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Aberto em
+		lineageTag: b736a8e6-68b0-532c-8fec-633eae7fcb2f
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 3ba5cdfb-f9dd-527d-a3f3-d2b32e0e4632
+
+	column Trimestre
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Trimestre
+		sortByColumn: 'Ordem do trimestre'
+		lineageTag: 1886205e-8489-55dc-8aaf-db3603921e6f
+
+	column 'Ordem do trimestre'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do trimestre
+		lineageTag: c5388e86-2253-59e4-9cbf-119e0ebb6dad
+
+	column 'Motivo da exigência'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Motivo da exigência
+		lineageTag: 8bc9ea2c-4c8c-5e32-808a-64345ef60375
+
+	column 'Distância do solicitante'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Distância do solicitante
+		sortByColumn: 'Ordem da distância'
+		lineageTag: 191d8f5e-abf4-5338-b201-bf968c507e91
+
+	column 'Ordem da distância'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem da distância
+		lineageTag: 165494be-ba14-5d84-a581-4dd6cde9fe6d
+
+	column 'Serviço de ART'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Serviço de ART
+		lineageTag: db3da0f0-db3b-574e-8cee-f978363e7e83
+
+	column 'Pedido de registro de profissional'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Pedido de registro de profissional
+		lineageTag: 5b33b662-59c4-5d2c-907a-4dca767860b1
+
+	partition Protocolos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "protocolos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Protocolo", type text}, {"Serviço", type text}, {"Tipo", type text}, {"Prazo do serviço", Int64.Type}, {"Taxa", type number}, {"Solicitante", type text}, {"Código IBGE", type text}, {"Unidade", type text}, {"Canal", type text}, {"Aberto em", type date}, {"Mês", type date}, {"Trimestre", type text}, {"Ordem do trimestre", Int64.Type}, {"Motivo da exigência", type text}, {"Distância do solicitante", type text}, {"Ordem da distância", Int64.Type}, {"Serviço de ART", Int64.Type}, {"Pedido de registro de profissional", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

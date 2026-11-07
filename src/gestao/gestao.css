@@ -39,17 +39,12 @@
   "pl pl pl pl mu mu mu mu or or or or"
   "pl pl pl pl mu mu mu mu or or or or"
   "dl dl dl dl dl dl dl dl or or or or"; }
-.ck-grid-cs-atendimento { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
-  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
-  "mp mp mp mp as as as as cd cd cd cd"
-  "mp mp mp mp mm mm mm mm cd cd cd cd"
-  "mp mp mp mp cw cw cw cw cw cw cw cw"; }
-.ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-atendimento, .ck-grid-cs-colegiado, .ck-grid-cs-processos, .ck-grid-cs-conselheiros, .ck-grid-cs-decisoes, .ck-grid-cs-representacao { align-content: stretch; }
+.ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-colegiado, .ck-grid-cs-processos, .ck-grid-cs-conselheiros, .ck-grid-cs-decisoes, .ck-grid-cs-representacao { align-content: stretch; }
 @media (max-height: 699px) and (min-width: 1101px) {
-  .ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-atendimento, .ck-grid-cs-colegiado, .ck-grid-cs-processos, .ck-grid-cs-conselheiros, .ck-grid-cs-decisoes, .ck-grid-cs-representacao { grid-template-rows: auto repeat(3, 230px); }
+  .ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-colegiado, .ck-grid-cs-processos, .ck-grid-cs-conselheiros, .ck-grid-cs-decisoes, .ck-grid-cs-representacao { grid-template-rows: auto repeat(3, 230px); }
 }
 @media (max-width: 1100px) {
-  .ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-atendimento, .ck-grid-cs-colegiado, .ck-grid-cs-processos, .ck-grid-cs-conselheiros, .ck-grid-cs-decisoes, .ck-grid-cs-representacao { grid-template-rows: auto; grid-auto-rows: 340px; }
+  .ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-colegiado, .ck-grid-cs-processos, .ck-grid-cs-conselheiros, .ck-grid-cs-decisoes, .ck-grid-cs-representacao { grid-template-rows: auto; grid-auto-rows: 340px; }
 }
 
 /* Gráfico com uma frase curta embaixo (a parte executada do ano, a concentração dos fornecedores). */

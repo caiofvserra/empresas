@@ -1,0 +1,166 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "protocolos-servicos",
+  "position": {
+    "x": 435,
+    "y": 436,
+    "z": 15000,
+    "width": 515,
+    "height": 268,
+    "tabOrder": 15000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Protocolos"
+                    }
+                  },
+                  "Property": "Serviço"
+                }
+              },
+              "queryRef": "Protocolos.Serviço",
+              "nativeQueryRef": "Serviço",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Protocolos"
+                    }
+                  },
+                  "Property": "Prazo do serviço"
+                }
+              },
+              "queryRef": "Protocolos.Prazo do serviço",
+              "nativeQueryRef": "Prazo do serviço",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Abertos no período"
+                }
+              },
+              "queryRef": "Medidas.Abertos no período",
+              "nativeQueryRef": "Abertos no período",
+              "displayName": "Protocolos"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Em andamento"
+                }
+              },
+              "queryRef": "Medidas.Em andamento",
+              "nativeQueryRef": "Em andamento",
+              "displayName": "Em andamento"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Em andamento fora do prazo"
+                }
+              },
+              "queryRef": "Medidas.Em andamento fora do prazo",
+              "nativeQueryRef": "Em andamento fora do prazo",
+              "displayName": "Fora do prazo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Fechados no prazo"
+                }
+              },
+              "queryRef": "Medidas.Fechados no prazo",
+              "nativeQueryRef": "Fechados no prazo",
+              "displayName": "No prazo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Tempo típico até fechar"
+                }
+              },
+              "queryRef": "Medidas.Tempo típico até fechar",
+              "nativeQueryRef": "Tempo típico até fechar",
+              "displayName": "Tempo típico"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Dias com o solicitante"
+                }
+              },
+              "queryRef": "Medidas.Dias com o solicitante",
+              "nativeQueryRef": "Dias com o solicitante",
+              "displayName": "Com o solicitante"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Cada serviço contra o seu prazo'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

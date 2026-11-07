@@ -15,7 +15,14 @@ ref table 'Datas de referência'
 ref table 'Datas das fotos'
 ref table 'Período'
 ref table 'Profissionais ativos'
-ref table 'Solicitações'
+ref table Protocolos
+ref table 'Foto dos protocolos'
+ref table Colaboradores
+ref table 'Aberturas na Receita'
+ref table 'ARTs por mês'
+ref table Concluintes
+ref table 'Formados registrados'
+ref table 'Ouvidoria e informação'
 ref table Coworkings
 ref table 'Meses dos coworkings'
 ref table 'Usuários dos coworkings'
