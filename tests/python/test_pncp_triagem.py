@@ -57,6 +57,31 @@ class Coleta(unittest.TestCase):
         self.assertEqual(c['ncp_compra'], '')
 
 
+class ColetaParalela(unittest.TestCase):
+    def _paginas(self, falha=None):
+        import urllib.parse
+        from pncp_triagem import coleta
+        def falso(url, **_):
+            pagina = int(urllib.parse.parse_qs(urllib.parse.urlparse(url).query)['pagina'][0])
+            if pagina == falha:
+                return None
+            return {'totalPaginas': 3, 'data': [contrato(numeroControlePNCP=f'11111111000100-2-{pagina:06d}/2026'), contrato()]}
+        original = coleta.pedir_json
+        coleta.pedir_json = falso
+        try:
+            return coleta.buscar_contratos('2026-10-01', '2026-10-31', log=lambda *a: None)
+        finally:
+            coleta.pedir_json = original
+
+    def test_le_todas_as_paginas_em_paralelo_sem_repetir_contrato(self):
+        ids = sorted(c['pncp_id'] for c in self._paginas())
+        self.assertEqual(ids, ['11111111000100-2-000001/2026', '11111111000100-2-000002/2026', '11111111000100-2-000003/2026', '11111111000100-2-000123/2026'])
+
+    def test_pagina_que_nao_responde_para_a_coleta(self):
+        with self.assertRaises(RuntimeError):
+            self._paginas(falha=2)
+
+
 class Rito(unittest.TestCase):
     def test_artigo_de_lei_nao_e_ART(self):
         m = detectar_marcadores('Contratação nos termos do art. 75, II, e do Art. 6º da Lei. ART. 5 trata do prazo.')
@@ -122,3 +147,65 @@ class Saida(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class Retomada(unittest.TestCase):
+    """O script inteiro, com modelo, coleta e documentos falsos: a segunda execução pula o que a primeira gravou."""
+
+    def rodar(self, pasta, ritos):
+        import importlib.util
+        import types
+        from unittest import mock
+        spec = importlib.util.spec_from_file_location('pncp_triagem_cli', RAIZ / 'scripts' / 'pncp-triagem.py')
+        cli = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cli)
+
+        class Modelo:
+            limiar, metadados = 0.5, {'limiar': 0.5}
+
+            def __init__(self, caminho):
+                pass
+
+            def probabilidades(self, objetos):
+                return [0.9 if 'obra' in o else 0.1 for o in objetos]
+        lote = [{'pncp_id': f'11111111000100-2-00000{n}/2026', 'ncp_compra': f'11111111000100-1-00000{n}/2026', 'orgao_cnpj': '11111111000100',
+                 'municipio_ibge': '3550308', 'publicacao': '2026-10-05', 'fornecedor_tipo': 'PJ', 'fornecedor_ni': '01234567000189',
+                 'objeto': objeto} for n, objeto in enumerate(['reforma de obra da escola', 'limpeza de prédios', 'obra de drenagem'])]
+        lidas = []
+
+        def analisar(ncp, pasta_docs):
+            lidas.append(ncp)
+            return ritos.get(ncp)
+        argv = ['pncp-triagem.py', '--pacote', 'x', '--de', '2026-10-01', '--ate', '2026-10-31', '--destino', str(pasta),
+                '--painel', str(pasta / 'painel.json')]
+        with mock.patch.dict(sys.modules, {'pncp_triagem.modelo': types.SimpleNamespace(Modelo=Modelo)}), \
+                mock.patch.object(cli, 'buscar_contratos', return_value=lote), mock.patch.object(cli, 'analisar_compra', analisar), \
+                mock.patch.object(sys, 'argv', argv), mock.patch('builtins.print'):
+            cli.main()
+        return lidas
+
+    def test_compra_que_falhou_fica_pendente_e_so_ela_e_lida_de_novo(self):
+        import csv
+        import tempfile
+        ok = {'desfecho': 'Rito presente', 'marcadores': ['ART', 'CREA'], 'documentos': 1}
+        with tempfile.TemporaryDirectory() as tmp:
+            pasta = Path(tmp)
+            primeira = self.rodar(pasta, {'11111111000100-1-000000/2026': ok})  # a compra da drenagem falha na API
+            self.assertEqual(sorted(primeira), ['11111111000100-1-000000/2026', '11111111000100-1-000002/2026'])
+            self.assertTrue((pasta / 'pendente').exists())
+            segunda = self.rodar(pasta, {'11111111000100-1-000002/2026': ok})
+            self.assertEqual(segunda, ['11111111000100-1-000002/2026'])
+            self.assertFalse((pasta / 'pendente').exists())
+            with (pasta / 'triagem-sp.csv').open(encoding='utf-8') as f:
+                linhas = list(csv.DictReader(f, delimiter=';'))
+            self.assertEqual(len(linhas), 3)
+            self.assertIsNotNone(json.loads((pasta / 'painel.json').read_text(encoding='utf-8'))['rodada'])
+
+    def test_sem_avanco_nao_deixa_pendente(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            pasta = Path(tmp)
+            self.rodar(pasta, {})  # as duas compras suspeitas falham; o contrato de limpeza é gravado
+            self.assertTrue((pasta / 'pendente').exists())
+            self.rodar(pasta, {})  # de novo nada responde: nenhuma linha nova, e a rotina para
+            self.assertFalse((pasta / 'pendente').exists())

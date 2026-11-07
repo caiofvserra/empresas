@@ -8,6 +8,7 @@ import json
 import time
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 
 CONSULTA = 'https://pncp.gov.br/api/consulta/v1/contratos'
 CATEGORIA_SERVICOS = 8
@@ -50,22 +51,34 @@ def ler_pagina(pagina, uf='SP', categoria=CATEGORIA_SERVICOS):
     return saida
 
 
-def buscar_contratos(de, ate, uf='SP', categoria=CATEGORIA_SERVICOS, log=print):
-    """Todas as páginas do período (datas AAAA-MM-DD, pela publicação no PNCP), sem repetir contrato entre páginas."""
-    vistos, contratos, pagina, total = set(), [], 1, 1
-    while pagina <= total:
+def buscar_contratos(de, ate, uf='SP', categoria=CATEGORIA_SERVICOS, log=print, paralelo=8):
+    """Todas as páginas do período (datas AAAA-MM-DD, pela publicação no PNCP), sem repetir contrato entre páginas.
+
+    Um mês do país são umas 600 páginas de 500 contratos, a uns 4 segundos cada: lidas uma a uma, 12 meses passavam das 6 horas
+    que a rotina tem. A primeira página diz quantas são; as outras vão em paralelo, `paralelo` por vez.
+    """
+    def pedir(pagina):
         parametros = {'dataInicial': de.replace('-', ''), 'dataFinal': ate.replace('-', ''), 'pagina': pagina, 'tamanhoPagina': TAMANHO_PAGINA}
-        dados = pedir_json(f'{CONSULTA}?{urllib.parse.urlencode(parametros)}')
-        if not dados:
-            if pagina > 1:  # a API parou no meio: o mês ficaria pela metade, e o cache o daria como completo
-                raise RuntimeError(f'A API do PNCP não respondeu a página {pagina} de {total}; rode de novo.')
-            break
-        total = int(dados.get('totalPaginas') or 0)
+        return pagina, pedir_json(f'{CONSULTA}?{urllib.parse.urlencode(parametros)}')
+
+    _, primeira = pedir(1)
+    if not primeira:
+        return []
+    total = int(primeira.get('totalPaginas') or 0)
+    vistos, contratos = set(), []
+
+    def juntar(dados):
         for c in ler_pagina(dados, uf, categoria):
             if c['pncp_id'] not in vistos:
                 vistos.add(c['pncp_id'])
                 contratos.append(c)
-        if pagina % 50 == 0 or pagina == total:
-            log(f'  página {pagina} de {total}: {len(contratos)} contratos de serviços de {uf}')
-        pagina += 1
+
+    juntar(primeira)
+    with ThreadPoolExecutor(max_workers=paralelo) as pool:
+        for n, (pagina, dados) in enumerate(pool.map(pedir, range(2, total + 1)), start=2):
+            if not dados:  # a API parou no meio: o mês ficaria pela metade, e o cache o daria como completo
+                raise RuntimeError(f'A API do PNCP não respondeu a página {pagina} de {total}; rode de novo.')
+            juntar(dados)
+            if n % 100 == 0 or n == total:
+                log(f'  página {n} de {total}: {len(contratos)} contratos de serviços de {uf}')
     return contratos
