@@ -5,7 +5,8 @@ import { brl, data, int, mes, money, pct, short } from '../painel/ui';
 import { rotulosGre, territorioGre } from '../painel/territorio';
 import { camaraDaEmpresa, camaras, grausVinculo, situacoesFornecedor } from '../painel/analise';
 import type { ContratoPublico, GrauVinculo, SituacaoFornecedor } from '../painel/analise';
-import { tipoLabel } from '../painel/fiscalizacao';
+import { nomeOrigem, nomeTipo, tipoLabel } from '../painel/fiscalizacao';
+export { nomeOrigem } from '../painel/fiscalizacao';
 import type { Acao, Alvo, Origem, StatusMulta, Tipo } from '../painel/fiscalizacao';
 import type { ResultadoFt } from '../painel/forcas';
 import { tempoAteAgir } from '../observatorio/norte';
@@ -27,21 +28,21 @@ import type { PapelCno } from '../domain/parcerias';
  */
 const legenda = (tokens: CockpitCtx['tokens']) => ({ top: 0, left: 0, itemWidth: 10, itemHeight: 8, itemGap: 10, textStyle: { color: tokens.muted, fontSize: 11 } });
 /** Série invisível no fim de uma pilha de barras deitadas: escreve o total à direita, e cada parte da pilha mostra o próprio número. */
-const serieTotal = (tokens: CockpitCtx['tokens'], stack: string, totais: number[]) => ({ name: 'total', type: 'bar', stack, data: totais.map(() => 0), itemStyle: { color: 'transparent' }, silent: true, tooltip: { show: false },
+const serieTotal = (tokens: CockpitCtx['tokens'], stack: string, totais: number[]) => ({ name: 'total', type: 'bar', stack, barMaxWidth: 34, data: totais.map(() => 0), itemStyle: { color: 'transparent' }, silent: true, tooltip: { show: false },
   label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => int(totais[item.dataIndex]) } });
 /** O mesmo aviso de recorte vazio do bloco, para os gráficos que só sabem que estão vazios depois de calcular. */
 const semDados = (quem: string) => <p className="tile-vazio" role="status">{avisoVazio(true, quem)}</p>;
 const dias = (value: number) => `${int(Math.round(value))} dia${Math.round(value) === 1 ? '' : 's'}`;
-export const nomeOrigem: Record<Origem, string> = { 'Cruzamento Receita (CNAE)': 'Cruzamento com a Receita', 'Contrato público (PNCP)': 'Contrato público', Denúncia: 'Denúncia', 'Rotina de campo': 'Rotina de campo', 'Cadastro CREA': 'Cadastro do Crea-SP' };
-const nomeTipo: Record<Tipo, string> = { registro: 'Falta de registro', rt: 'Responsável técnico que saiu', art: 'Contrato sem ART' };
 
+/** Início do subtítulo da gaveta com o CNPJ, ou nada quando o estabelecimento não tem CNPJ. */
+const cnpjDe = (cnpj?: string) => cnpj ? `CNPJ ${cnpjComMascara(cnpj)}, ` : '';
 /** Abre a lista de ações de um item clicado, com o auto, a multa e a regularização. */
 export function abrirAcoes(ctx: CockpitCtx, title: string, acoes: Acao[], what: string, use?: string) {
   if (!acoes.length) return;
   const places = new Map(ctx.dataset.establishments.map(row => [row.id, row]));
   ctx.open({ kind: 'linhas', title, what, use, listTitle: 'Ações, maior multa primeiro',
     summary: [['Ações', int(acoes.length)], ['Multas', brl(acoes.reduce((total, row) => total + (row.auto?.valor ?? 0), 0))], ['Regularizadas', pct(acoes.filter(row => row.regularizedAt).length / acoes.length * 100)]],
-    rows: acoes.map(acao => ({ key: acao.id, companyId: acao.companyId, title: nomeEmpresa(ctx, acao.companyId), subtitle: `CNPJ ${cnpjComMascara(places.get(acao.establishmentId)?.cnpj ?? '')}, ação em ${data(acao.date)}`,
+    rows: acoes.map(acao => ({ key: acao.id, companyId: acao.companyId, title: nomeEmpresa(ctx, acao.companyId), subtitle: `${cnpjDe(places.get(acao.establishmentId)?.cnpj)}ação em ${data(acao.date)}`,
       value: acao.auto ? money(acao.auto.valor) : acao.regularizedAt ? 'regularizada' : 'notificada', note: `${nomeTipo[acao.tipo]}, por ${nomeOrigem[acao.origem].toLowerCase()}${acao.auto ? `; multa ${acao.auto.status.toLowerCase()}` : ''}${acao.regularizedAt ? `; regularizada em ${data(acao.regularizedAt)}` : ''}`, sortValue: acao.auto?.valor ?? 0 })) });
 }
 /** Abre a lista de indícios (casos conhecidos) de um item clicado. */
@@ -49,7 +50,7 @@ export function abrirAlvos(ctx: CockpitCtx, title: string, alvos: Alvo[], what: 
   if (!alvos.length) return;
   const places = new Map(ctx.dataset.establishments.map(row => [row.id, row]));
   ctx.open({ kind: 'linhas', title, what, use, listTitle: 'Indícios, mais antigos primeiro',
-    rows: alvos.map(alvo => ({ key: alvo.id, companyId: alvo.companyId, title: nomeEmpresa(ctx, alvo.companyId), subtitle: `CNPJ ${cnpjComMascara(places.get(alvo.establishmentId)?.cnpj ?? '')}, desde ${data(alvo.since)}`, value: alvo.acaoId ? 'com ação' : 'sem ação', note: nomeTipo[alvo.tipo], sortValue: -Date.parse(alvo.since) })) });
+    rows: alvos.map(alvo => ({ key: alvo.id, companyId: alvo.companyId, title: nomeEmpresa(ctx, alvo.companyId), subtitle: `${cnpjDe(places.get(alvo.establishmentId)?.cnpj)}desde ${data(alvo.since)}`, value: alvo.acaoId ? 'com ação' : 'sem ação', note: nomeTipo[alvo.tipo], sortValue: -Date.parse(alvo.since) })) });
 }
 /** Abre a lista de contratos públicos de um item clicado. */
 export function abrirContratos(ctx: CockpitCtx, rows: ContratoPublico[], title: string, use?: string) {
@@ -102,7 +103,7 @@ export function MapaFiscalizacao({ ctx, metrica }: { ctx: CockpitCtx; metrica: M
     if (!regioes || !rotulos || !centroids) return null;
     const foco = cidade ? { center: centroids.get(cidade.name), zoom: 3.2 } : ctx.greId ? { center: rotulos.get(ctx.greId), zoom: 2.2 } : null;
     const dica = (nome: string, greId: string) => { const row = porId.get(greId); if (!row) return nome; const value = config.get(row), local = cidadePorNome.get(nome), noLocal = local ? t.cidades.get(local.id) ?? 0 : null;
-      return `<b>${nome}</b> · ${row.name}<br/>${config.label} na regional: <b>${value === null ? '—' : config.fmt(value)}</b>${noLocal !== null ? `<br/>No município: ${int(noLocal)} ações no período` : ''}<br/><span style="opacity:.8">${int(row.acoes.length)} ações · ${int(row.autos.length)} autos · ${row.taxa === null ? '—' : pct(row.taxa)} já regularizaram</span><br/><span style="opacity:.7">clique para ver as ações</span>`; };
+      return `<b>${nome}</b>, na ${row.name}<br/>${config.label} na regional: <b>${value === null ? '—' : config.fmt(value)}</b>${noLocal !== null ? `<br/>No município: ${int(noLocal)} ações no período` : ''}<br/><span style="opacity:.8">${int(row.acoes.length)} ações, ${int(row.autos.length)} autos, ${row.taxa === null ? '—' : pct(row.taxa)} já regularizaram</span><br/><span style="opacity:.7">clique para ver as ações</span>`; };
     return {
       tooltip: { trigger: 'item', formatter: (item: any) => item.componentType === 'geo' ? dica(item.name, regioes.get(item.name) ?? '') : dica(porId.get(item.data?.greId)?.name ?? '', item.data?.greId ?? '') },
       geo: { map: 'spPainel', ...proporcaoSp, roam: true, scaleLimit: { min: 1, max: 8 }, ...(foco?.center ? { center: foco.center, zoom: foco.zoom } : { left: 2, right: 2, top: 2, bottom: 2 }), selectedMode: false, tooltip: { show: true },
@@ -137,17 +138,17 @@ export function AcoesMes({ ctx }: { ctx: CockpitCtx }) {
   const autos = (row: typeof rows[number]) => row.autos.registro + row.autos.rt + row.autos.art;
   const option = useMemo(() => ({
     grid: { top: 26, right: 36, bottom: 2, left: 4, containLabel: true }, legend: { ...legenda(tokens), data: ['Ações', 'Autos de infração', 'Regularizações', 'Período escolhido'] },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.acoes)} ações · ${int(autos(row))} autos · ${int(row.regularizacoes)} regularizações<br/><span style="opacity:.75">clique para ver as ações do mês</span>`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.acoes)} ações, ${int(autos(row))} autos, ${int(row.regularizacoes)} regularizações<br/><span style="opacity:.75">clique para ver as ações do mês</span>`; } },
     xAxis: { type: 'category', data: rows.map(row => mes(row.month)), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, interval: 2, fontSize: 11 } },
     yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
     series: [
-      { name: 'Ações', type: 'bar', barWidth: '62%', barMaxWidth: 48, data: rows.map(row => row.acoes), itemStyle: { color: tokens.heat[1], borderRadius: [3, 3, 0, 0] }, label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, fontWeight: 700 },
+      { name: 'Ações', type: 'bar', stack: 'a', barWidth: '62%', barMaxWidth: 48, data: rows.map(row => row.acoes), itemStyle: { color: tokens.heat[1], borderRadius: [3, 3, 0, 0] }, label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, fontWeight: 700 },
         markArea: { silent: true, itemStyle: { color: tokens.blue, opacity: 0.07 }, data: [[{ xAxis: mes(janela.start.slice(0, 7)) }, { xAxis: mes(janela.end.slice(0, 7)) }]] } },
       // O valor do último mês vai na ponta de cada linha; os outros meses ficam no clique e na dica.
       { name: 'Autos de infração', type: 'line', data: rows.map(autos), symbol: 'circle', symbolSize: 4, lineStyle: { color: tokens.bad, width: 2 }, itemStyle: { color: tokens.bad }, endLabel: { show: true, color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => int(item.value) }, labelLayout: { moveOverlap: 'shiftY' } },
       { name: 'Regularizações', type: 'line', data: rows.map(row => row.regularizacoes), symbol: 'circle', symbolSize: 4, lineStyle: { color: tokens.good, width: 2 }, itemStyle: { color: tokens.good }, endLabel: { show: true, color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => int(item.value) }, labelLayout: { moveOverlap: 'shiftY' } },
       // Série vazia só para a legenda explicar a faixa clara do período.
-      { name: 'Período escolhido', type: 'bar', data: [], itemStyle: { color: tokens.blue, opacity: 0.15 } },
+      { name: 'Período escolhido', type: 'bar', stack: 'a', data: [], itemStyle: { color: tokens.blue, opacity: 0.15 } },
     ],
   }), [rows, tokens, janela]);
   return <Chart option={option} tokens={tokens} label="Ações, autos e regularizações por mês" onPick={params => { const row = rows[params.dataIndex]; if (!row) return;
@@ -165,7 +166,7 @@ export function DestinoAcoes({ ctx }: { ctx: CockpitCtx }) {
     yAxis: { type: 'category', inverse: true, data: rows.map(row => nomeTipo[row.tipo]), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 110, overflow: 'break' } },
     series: destinos.map((destino, index) => ({ name: destino, type: 'bar', stack: 'd', barWidth: '54%', barMaxWidth: 34, data: rows.map(row => row.partes[destino].length / row.acoes.length * 100), itemStyle: { color: cores[destino], borderColor: tokens.surface, borderWidth: 1, borderRadius: index === destinos.length - 1 ? [0, 3, 3, 0] : index === 0 ? [3, 0, 0, 3] : 0 },
       label: { show: true, color: corDoTexto(cores[destino]), fontSize: 11, fontWeight: 700, formatter: (item: any) => item.value >= 9 ? pct(item.value) : '' },
-      ...(index === destinos.length - 1 ? { markPoint: undefined } : {}) })).concat([{ name: 'total', type: 'bar', stack: 'd', barWidth: '54%', barMaxWidth: 34, data: rows.map(() => 0), itemStyle: { color: 'transparent' }, silent: true, tooltip: { show: false },
+      })).concat([{ name: 'total', type: 'bar', stack: 'd', barWidth: '54%', barMaxWidth: 34, data: rows.map(() => 0), itemStyle: { color: 'transparent' }, silent: true, tooltip: { show: false },
       label: { show: true, position: 'right', color: tokens.muted, fontSize: 11, formatter: (item: any) => `${int(rows[item.dataIndex].acoes.length)} ações` } } as any]),
   }), [rows, tokens, cores]);
   return <Chart option={{ ...option, legend: { ...option.legend, data: destinos } }} tokens={tokens} label="O que aconteceu com as ações do período, por tipo de caso" onPick={params => { const row = rows[params.dataIndex], destino = params.seriesName as Destino; if (!row || !row.partes[destino]) return;
@@ -177,12 +178,12 @@ export function AcoesOrigem({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = useMemo(() => acoesPorOrigem(ctx.resumo.acoes, ctx.anchor).sort((a, b) => b.acoes.length - a.acoes.length), [ctx.resumo.acoes, ctx.anchor]);
   const option = useMemo(() => ({
     grid: { top: 24, right: 124, bottom: 2, left: 2, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${nomeOrigem[row.origem]}</b><br/>${int(row.acoes.length)} ações · ${int(row.regularizadas.length)} já regularizaram<br/><span style="opacity:.75">clique para ver</span>`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${nomeOrigem[row.origem]}</b><br/>${int(row.acoes.length)} ações, ${int(row.regularizadas.length)} já regularizaram<br/><span style="opacity:.75">clique para ver</span>`; } },
     xAxis: { type: 'value', show: false },
     yAxis: { type: 'category', inverse: true, data: rows.map(row => nomeOrigem[row.origem]), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     series: [
       { name: 'Já regularizaram', type: 'bar', stack: 'o', barWidth: '56%', barMaxWidth: 34, data: rows.map(row => row.regularizadas.length), itemStyle: { color: tokens.good } },
-      { name: 'Ainda não', type: 'bar', stack: 'o', data: rows.map(row => row.acoes.length - row.regularizadas.length), itemStyle: { color: tokens.line, borderRadius: [0, 3, 3, 0] },
+      { name: 'Ainda não', type: 'bar', stack: 'o', barMaxWidth: 34, data: rows.map(row => row.acoes.length - row.regularizadas.length), itemStyle: { color: tokens.line, borderRadius: [0, 3, 3, 0] },
         label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, formatter: (item: any) => { const row = rows[item.dataIndex]; return `${int(row.acoes.length)} ações, {g|${pct(row.regularizadas.length / row.acoes.length * 100)} regularizaram}`; }, rich: { g: { color: tokens.muted, fontSize: 11 } } } },
     ],
   }), [rows, tokens]);
@@ -196,7 +197,7 @@ export function DestinoMultas({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, resumo } = ctx, cores = corStatus(tokens), total = resumo.aplicada;
   const partes = (['Paga', 'Em prazo de defesa', 'Em julgamento', 'Dívida ativa', 'Cancelada'] as StatusMulta[]).map(status => ({ status, ...resumo.multas[status] })).filter(row => row.valor > 0);
   const option = useMemo(() => ({
-    tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${brl(item.value)} · ${pct(item.value / Math.max(1, total) * 100)} do valor<br/>${int(partes[item.dataIndex].acoes.length)} autos<br/><span style="opacity:.75">clique para ver</span>` },
+    tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${brl(item.value)}, ${pct(item.value / Math.max(1, total) * 100)} do valor<br/>${int(partes[item.dataIndex].acoes.length)} autos<br/><span style="opacity:.75">clique para ver</span>` },
     title: { text: brl(total), subtext: 'em multas aplicadas', left: 'center', top: 'center', itemGap: 2, textStyle: { color: tokens.ink, fontSize: 16, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 11 } },
     series: [{ type: 'pie', radius: ['34%', '50%'], padAngle: 1.5, itemStyle: { borderRadius: 3, borderColor: tokens.surface, borderWidth: 1 },
       label: { show: true, position: 'outside', alignTo: 'edge', edgeDistance: 4, fontSize: 11, color: tokens.ink, lineHeight: 13, formatter: (item: any) => `${item.name} (${pct(item.value / Math.max(1, total) * 100)})\n{b|${brl(item.value)}}`, rich: { b: { fontWeight: 800, fontSize: 11 } } }, labelLine: { length: 8, length2: 0 },
@@ -206,19 +207,18 @@ export function DestinoMultas({ ctx }: { ctx: CockpitCtx }) {
 }
 
 /* ---------- Resultado ---------- */
-const nomeTrimestre = rotuloTrimestre;
 /** Ações de cada trimestre que regularizaram em até 180 dias, com a parte escrita no alto da barra; trimestre que não fechou fica claro. */
 export function ConversaoTrimestre({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = ctx.norte.conversao.coortes;
   const option = useMemo(() => ({
     grid: { top: 26, right: 6, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${rotuloTrimestre(row.trimestre)}</b>${row.completa ? '' : ' (ainda dentro dos 180 dias)'}<br/>${int(row.acoes.length)} ações · ${int(row.convertidas.length)} regularizaram em até 180 dias (${row.taxa === null ? '—' : pct(row.taxa)})`; } },
-    xAxis: { type: 'category', data: rows.map(row => nomeTrimestre(row.trimestre)), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 11, lineHeight: 12 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${rotuloTrimestre(row.trimestre)}</b>${row.completa ? '' : ' (ainda dentro dos 180 dias)'}<br/>${int(row.acoes.length)} ações, ${int(row.convertidas.length)} regularizaram em até 180 dias (${row.taxa === null ? '—' : pct(row.taxa)})`; } },
+    xAxis: { type: 'category', data: rows.map(row => rotuloTrimestre(row.trimestre)), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 11, lineHeight: 12 } },
     yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted } },
     series: [
       { name: 'Regularizaram em até 180 dias', type: 'bar', stack: 'c', barWidth: '56%', barMaxWidth: 64, itemStyle: { color: tokens.good }, data: rows.map(row => ({ value: row.convertidas.length, itemStyle: { color: row.completa ? tokens.good : tokens.soft, borderColor: row.completa ? undefined : tokens.good, borderWidth: row.completa ? 0 : 1 } })),
         label: { show: true, position: 'inside', color: corDoTexto(tokens.good), fontSize: 11, fontWeight: 700, formatter: (item: any) => rows[item.dataIndex].completa && item.value ? int(item.value) : '' } },
-      { name: 'Não regularizaram', type: 'bar', stack: 'c', itemStyle: { color: tokens.line }, data: rows.map(row => ({ value: row.acoes.length - row.convertidas.length, itemStyle: { color: row.completa ? tokens.line : tokens.soft, borderColor: row.completa ? undefined : tokens.line, borderWidth: row.completa ? 0 : 1, borderRadius: [3, 3, 0, 0] } })),
+      { name: 'Não regularizaram', type: 'bar', stack: 'c', barMaxWidth: 64, itemStyle: { color: tokens.line }, data: rows.map(row => ({ value: row.acoes.length - row.convertidas.length, itemStyle: { color: row.completa ? tokens.line : tokens.soft, borderColor: row.completa ? undefined : tokens.line, borderWidth: row.completa ? 0 : 1, borderRadius: [3, 3, 0, 0] } })),
         label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, fontWeight: 800, formatter: (item: any) => { const row = rows[item.dataIndex]; return row.completa ? (row.taxa === null ? '' : pct(row.taxa)) : '{e|em curso}'; }, rich: { e: { color: tokens.muted, fontSize: 11, fontWeight: 400 } } } },
     ],
   }), [rows, tokens]);
@@ -263,7 +263,7 @@ export function ForcasTarefas({ ctx }: { ctx: CockpitCtx }) {
   const nome = (item: ResultadoFt) => `${item.ft.nome.split(' · ')[0]}, ${gres.get(item.ft.greId) ?? ''}`;
   const option = useMemo(() => ({
     grid: { top: 24, right: 12, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: ['Na força-tarefa', 'Ações parecidas fora dela'] },
-    tooltip: { trigger: 'item', formatter: (item: any) => { const row = rows[item.dataIndex] ?? rows[item.value?.[1]]; if (!row) return ''; return `<b>${row.ft.nome}</b><br/>${data(row.ft.inicio)} a ${data(row.ft.fim)}${row.fechada ? '' : ' (ainda sem os 180 dias)'}<br/>Na força-tarefa: ${row.grupo.taxa === null ? '—' : pct(row.grupo.taxa)} de ${int(row.grupo.acoes.length)} ações<br/>Fora dela: ${row.comparacao.taxa === null ? '—' : pct(row.comparacao.taxa)} de ${int(row.comparacao.acoes.length)} ações<br/><span style="opacity:.75">clique para ver as ações</span>`; } },
+    tooltip: { trigger: 'item', formatter: (item: any) => { const row = rows[item.dataIndex] ?? rows[item.value?.[1]]; if (!row) return ''; return `<b>Força-tarefa ${nome(row)}</b><br/>${data(row.ft.inicio)} a ${data(row.ft.fim)}${row.fechada ? '' : ' (ainda sem os 180 dias)'}<br/>Na força-tarefa: ${row.grupo.taxa === null ? '—' : pct(row.grupo.taxa)} de ${int(row.grupo.acoes.length)} ações<br/>Fora dela: ${row.comparacao.taxa === null ? '—' : pct(row.comparacao.taxa)} de ${int(row.comparacao.acoes.length)} ações<br/><span style="opacity:.75">clique para ver as ações</span>`; } },
     xAxis: { type: 'value', min: 0, max: 100, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 11, formatter: '{value}%' } },
     yAxis: { type: 'category', data: rows.map(nome), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, lineHeight: 13, formatter: (value: string, index: number) => { const row = rows[index]; return `${value}\n{n|de ${mes(row.ft.inicio.slice(0, 7))} a ${mes(row.ft.fim.slice(0, 7))}, ${int(row.grupo.acoes.length)} ações, ${row.fechada ? 'fechada' : 'em aberto'}}`; }, rich: { n: { color: tokens.muted, fontSize: 11 } } } },
     series: [
@@ -301,7 +301,7 @@ export function Regras({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, malha } = ctx, rows = useMemo(() => [...malha.indicios].filter(row => row.empresas.length).sort((a, b) => b.empresas.length - a.empresas.length), [malha]);
   const option = useMemo(() => ({
     grid: { top: 24, right: 118, bottom: 2, left: 2, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.label}</b><br/>${row.status}: ${statusAjuda[row.status]}<br/>${int(row.empresas.length)} empresas · ${int(row.comAcao.length)} já com ação fiscal<br/>Fontes: ${row.fonte}<br/><span style="opacity:.75">clique para ver as empresas</span>`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.label}</b><br/>${row.status}: ${statusAjuda[row.status]}<br/>${int(row.empresas.length)} empresas, ${int(row.comAcao.length)} já com ação fiscal<br/>Fontes: ${row.fonte}<br/><span style="opacity:.75">clique para ver as empresas</span>`; } },
     xAxis: { type: 'value', show: false },
     yAxis: { type: 'category', inverse: true, data: rows.map(row => row.label), axisTick: { show: false }, axisLine: { show: false },
       axisLabel: { color: tokens.ink, fontSize: 11, formatter: (value: string, index: number) => { const row = rows[index]; return `${value}${row.parceria ? ' {p|!}' : ''}  {${row.status === 'Confirmado' ? 'c' : 'x'}|${nomeStatus[row.status]}}`; },
@@ -309,7 +309,7 @@ export function Regras({ ctx }: { ctx: CockpitCtx }) {
         rich: { c: { color: tokens.ink, fontSize: 11, fontWeight: 800 }, x: { color: tokens.muted, fontSize: 11 }, p: { color: '#FFFFFF', backgroundColor: '#C05621', borderRadius: 7, padding: [1, 4], fontSize: 11, fontWeight: 800 } } } },
     series: [
       { name: 'Já com ação fiscal', type: 'bar', stack: 'r', barWidth: '62%', barMaxWidth: 34, data: rows.map(row => row.comAcao.length), itemStyle: { color: tokens.good } },
-      { name: 'Sem ação fiscal', type: 'bar', stack: 'r', data: rows.map(row => row.empresas.length - row.comAcao.length), itemStyle: { color: tokens.warn, borderRadius: [0, 3, 3, 0] },
+      { name: 'Sem ação fiscal', type: 'bar', stack: 'r', barMaxWidth: 34, data: rows.map(row => row.empresas.length - row.comAcao.length), itemStyle: { color: tokens.warn, borderRadius: [0, 3, 3, 0] },
         label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, formatter: (item: any) => { const row = rows[item.dataIndex], sem = row.empresas.length - row.comAcao.length; return `${int(row.empresas.length)}, {s|${pct(sem / row.empresas.length * 100)} sem ação}`; }, rich: { s: { color: tokens.muted, fontSize: 11 } } } },
     ],
   }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -392,11 +392,11 @@ export function Sucessoes({ ctx }: { ctx: CockpitCtx }) {
   const option = useMemo(() => ({
     // A legenda só mostra as séries que têm algum par no recorte.
     grid: { top: 24, right: 30, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: [porGre.some(row => row.comRt.length) && 'Mesmo responsável técnico', porGre.some(row => row.sem.length) && 'Mesmo município e atividade'].filter(Boolean) },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = porGre[items[0].dataIndex]; return `<b>${row.nome}</b><br/>${int(row.comRt.length)} pares com o mesmo responsável técnico · ${int(row.sem.length)} só no mesmo município e atividade<br/><span style="opacity:.75">clique para ver os pares</span>`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = porGre[items[0].dataIndex]; return `<b>${row.nome}</b><br/>${int(row.comRt.length)} pares com o mesmo responsável técnico, ${int(row.sem.length)} só no mesmo município e atividade<br/><span style="opacity:.75">clique para ver os pares</span>`; } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: porGre.map(row => row.nome), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, interval: 0 } },
     series: [
       { name: 'Mesmo responsável técnico', type: 'bar', stack: 's', barWidth: '60%', barMaxWidth: 34, data: porGre.map(row => row.comRt.length), itemStyle: { color: tokens.warn } },
-      { name: 'Mesmo município e atividade', type: 'bar', stack: 's', data: porGre.map(row => row.sem.length), itemStyle: { color: tokens.heat[1], borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => int(porGre[item.dataIndex].comRt.length + porGre[item.dataIndex].sem.length) } },
+      { name: 'Mesmo município e atividade', type: 'bar', stack: 's', barMaxWidth: 34, data: porGre.map(row => row.sem.length), itemStyle: { color: tokens.heat[1], borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => int(porGre[item.dataIndex].comRt.length + porGre[item.dataIndex].sem.length) } },
     ],
   }), [porGre, tokens]);
   return rows.length ? <Chart option={option} tokens={tokens} label="Pares de empresas que fecham e abrem no lugar, por regional da empresa nova" onPick={params => { const row = porGre[params.dataIndex]; if (!row) return; const pares = params.seriesName === 'Mesmo responsável técnico' ? row.comRt : row.sem; if (!pares.length) return;
@@ -423,12 +423,13 @@ export function NomesEngenharia({ ctx }: { ctx: CockpitCtx }) {
 export function HistoricoMalha({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, h = ctx.historico, pontos = h.pontos;
   const option = useMemo(() => {
-    const serie = (name: string, cor: string, get: (p: typeof pontos[number]) => number) => ({ type: 'line', name, data: pontos.map(get), symbol: 'circle', symbolSize: 5, lineStyle: { color: cor, width: 2 }, itemStyle: { color: cor },
-      label: { show: true, color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => item.dataIndex === 0 || item.dataIndex === pontos.length - 1 ? int(item.value) : '' }, labelLayout: { moveOverlap: 'shiftY' } });
+    // A linha de cima escreve as pontas acima do ponto e a de baixo, abaixo: as linhas do meio e de baixo ficam próximas.
+    const serie = (name: string, cor: string, get: (p: typeof pontos[number]) => number, position: 'top' | 'bottom' = 'top') => ({ type: 'line', name, data: pontos.map(get), symbol: 'circle', symbolSize: 5, lineStyle: { color: cor, width: 2 }, itemStyle: { color: cor },
+      label: { show: true, position, color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => item.dataIndex === 0 || item.dataIndex === pontos.length - 1 ? int(item.value) : '' } });
     return { grid: { top: 34, right: 14, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens), tooltip: { trigger: 'axis' },
       xAxis: { type: 'category', data: pontos.map(p => mes(p.data.slice(0, 7))), axisLabel: { color: tokens.muted, fontSize: 11 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
       yAxis: { type: 'value', splitNumber: 3, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 11 } },
-      series: [serie('Com indício', tokens.blue, p => p.comIndicio), serie('Confirmado', tokens.warn, p => p.confirmadas), serie('Com ação', tokens.good, p => p.comAcao)] };
+      series: [serie('Com indício', tokens.blue, p => p.comIndicio), serie('Confirmado', tokens.warn, p => p.confirmadas), serie('Com ação', tokens.good, p => p.comAcao, 'bottom')] };
   }, [pontos, tokens]);
   return pontos.length ? <div className="stack">{!h.completo && <p className="kpi-line">Calculando {int(pontos.length)} de {int(h.datas.length)} meses…</p>}<Chart option={option} tokens={tokens} label="Empresas com indício, com indício confirmado e com ação fiscal, mês a mês" /></div> : carregando;
 }
@@ -444,7 +445,7 @@ export function ContratosArt({ ctx }: { ctx: CockpitCtx }) {
   const de = (categoria: string, grau: GrauVinculo) => contratos.filter(row => row.categoria === categoria && row.vinculo === grau);
   const option = useMemo(() => ({
     grid: { top: 24, right: 36, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: graus.map(grau => nomeGrau[grau]) },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => `<b>${items[0].name}</b><br/>${graus.map(grau => { const rows = de(items[0].name, grau); return `${nomeGrau[grau]}: ${int(rows.length)} contratos · ${brl(rows.reduce((s, r) => s + r.valor, 0))}`; }).join('<br/>')}<br/><span style="opacity:.75">clique para ver os contratos</span>` },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => `<b>${items[0].name}</b><br/>${graus.map(grau => { const rows = de(items[0].name, grau); return `${nomeGrau[grau]}: ${int(rows.length)} contratos, ${brl(rows.reduce((s, r) => s + r.valor, 0))}`; }).join('<br/>')}<br/><span style="opacity:.75">clique para ver os contratos</span>` },
     xAxis: { type: 'value', show: false },
     yAxis: { type: 'category', inverse: true, data: categorias, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     series: [...graus.map((grau, index) => ({ name: nomeGrau[grau], type: 'bar', stack: 'v', barWidth: '58%', barMaxWidth: 40, data: categorias.map(categoria => de(categoria, grau).length), itemStyle: { color: cores[grau], borderColor: tokens.surface, borderWidth: 1, borderRadius: index === graus.length - 1 ? [0, 3, 3, 0] : 0 },
@@ -460,7 +461,7 @@ export function Fornecedor({ ctx }: { ctx: CockpitCtx }) {
   const cores: Record<SituacaoFornecedor, string> = { 'Sem registro na data': tokens.bad, 'Registrada, com anuidade vencida': tokens.warn, 'Registrada e quitada': tokens.good };
   const grupos = situacoesFornecedor.map(situacao => ({ situacao, rows: contratos.filter(row => row.situacao === situacao) })).filter(row => row.rows.length), total = contratos.reduce((s, r) => s + r.valor, 0);
   const option = useMemo(() => ({
-    tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${brl(item.value)} · ${pct(item.percent)} do valor<br/>${int(grupos[item.dataIndex].rows.length)} contratos<br/><span style="opacity:.75">clique para ver</span>` },
+    tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${brl(item.value)}, ${pct(item.percent)} do valor<br/>${int(grupos[item.dataIndex].rows.length)} contratos<br/><span style="opacity:.75">clique para ver</span>` },
     title: { text: brl(total), subtext: 'contratados', left: 'center', top: 'center', itemGap: 2, textStyle: { color: tokens.ink, fontSize: 15, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 11 } },
     series: [{ type: 'pie', radius: ['32%', '48%'], padAngle: 1.5, itemStyle: { borderRadius: 3, borderColor: tokens.surface, borderWidth: 1 },
       label: { show: true, position: 'outside', alignTo: 'edge', edgeDistance: 4, fontSize: 11, color: tokens.ink, lineHeight: 13, formatter: (item: any) => `${curto[item.name as SituacaoFornecedor]}\n{b|${pct(item.percent)}, ${int(grupos[item.dataIndex].rows.length)} contratos}`, rich: { b: { fontWeight: 800, fontSize: 11 } } }, labelLine: { length: 8, length2: 0 },
@@ -473,7 +474,7 @@ export function Fornecedor({ ctx }: { ctx: CockpitCtx }) {
 export function ContratosSemArt({ ctx }: { ctx: CockpitCtx }) {
   const rows = useMemo(() => ctx.malha.contratos.filter(row => row.vinculo === 'Não identificado').sort((a, b) => b.valor - a.valor), [ctx.malha]);
   return <ul className="side-list is-cheia" aria-label="Contratos sem ART encontrada">{rows.slice(0, 7).map(row => <li key={row.id}><button className="is-acao" onClick={() => abrirContratos(ctx, [row], nomeEmpresa(ctx, row.companyId), 'Verifique com o órgão contratante antes de qualquer notificação.')}><span>{nomeEmpresa(ctx, row.companyId)}<small>{row.objeto}, em {data(row.data)}</small></span><b>{brl(row.valor)}</b></button></li>)}
-    {rows.length > 7 && <li><button className="is-acao" onClick={() => abrirContratos(ctx, rows, 'Contratos sem ART encontrada', 'Verifique primeiro os de maior valor. Não encontrar a ART não é infração.')}><span>Ver todos os {int(rows.length)} contratos</span><b>{brl(rows.reduce((s, r) => s + r.valor, 0))}</b></button></li>}
+    {rows.length > 4 && <li className="is-todos"><button className="is-acao" onClick={() => abrirContratos(ctx, rows, 'Contratos sem ART encontrada', 'Verifique primeiro os de maior valor. Não encontrar a ART não é infração.')}><span>Ver todos os {int(rows.length)} contratos</span><b>{brl(rows.reduce((s, r) => s + r.valor, 0))}</b></button></li>}
     {!rows.length && <li className="side-note">Todos os contratos do recorte têm ART encontrada ou provável.</li>}</ul>;
 }
 
@@ -482,7 +483,7 @@ export function Concentracao({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, c = ctx.mercado.concentracao, top = useMemo(() => c.fornecedores.slice(0, 10), [c]);
   const option = useMemo(() => ({
     grid: { top: 24, right: 92, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: ['Registrada em todos os contratos', ...(top.some(row => !row.registradaEmTodos) ? ['Sem registro em algum contrato'] : [])] },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = top[items[0].dataIndex]; return `<b>${nomeEmpresa(ctx, row.companyId)}</b><br/>${brl(row.valor)} em ${int(row.contratos)} contrato${row.contratos === 1 ? '' : 's'} · ${pct(row.participacao, 1)} do valor${row.registradaEmTodos ? '' : '<br/>sem registro na data de ao menos um contrato'}`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = top[items[0].dataIndex]; return `<b>${nomeEmpresa(ctx, row.companyId)}</b><br/>${brl(row.valor)} em ${int(row.contratos)} contrato${row.contratos === 1 ? '' : 's'}, ${pct(row.participacao, 1)} do valor${row.registradaEmTodos ? '' : '<br/>sem registro na data de ao menos um contrato'}`; } },
     xAxis: { type: 'value', show: false },
     yAxis: { type: 'category', inverse: true, data: top.map(row => nomeEmpresa(ctx, row.companyId)), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 150, overflow: 'truncate' } },
     // Duas séries empilhadas, uma por cor, para a legenda explicar o laranja; cada barra só tem valor numa delas.
@@ -498,7 +499,7 @@ export function PlanoContratacao({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, d = ctx.mercado.demanda, rows = etapasPca.map(etapa => d.porEtapa.find(row => row.etapa === etapa) ?? { etapa, n: 0, valor: 0 });
   const option = useMemo(() => ({
     grid: { top: 4, right: 110, bottom: 2, left: 2, containLabel: true },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.etapa}</b><br/>${int(row.n)} itens técnicos · ${brl(row.valor)}`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.etapa}</b><br/>${int(row.n)} itens técnicos, ${brl(row.valor)}`; } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.etapa), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     series: [{ type: 'bar', barWidth: '56%', barMaxWidth: 34, data: rows.map(row => ({ value: row.valor, itemStyle: { color: tokens.blue, borderRadius: [0, 4, 4, 0] } })), label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, formatter: (item: any) => `{b|${brl(item.value)}}  ${int(rows[item.dataIndex].n)} itens`, rich: { b: { fontWeight: 800, fontSize: 11 } } } }],
   }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -531,7 +532,7 @@ export function ObrasRegional({ ctx }: { ctx: CockpitCtx }) {
   const series = [{ campo: 'com' as const, name: 'Com ART de fiscalização', cor: tokens.good }, { campo: 'sem' as const, name: 'Sem ART de fiscalização', cor: tokens.warn }, { campo: 'nao' as const, name: 'Ainda não começou', cor: tokens.line }].filter(item => grupos.some(row => row[item.campo].length));
   const option = useMemo(() => ({
     grid: { top: 24, right: 30, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: series.map(item => item.name) },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = grupos[items[0].dataIndex]; return `<b>${nomes.get(row.greId)}</b><br/>${int(row.total)} obras · ${int(row.sem.length)} começaram sem ART de fiscalização<br/><span style="opacity:.75">clique para ver as obras</span>`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = grupos[items[0].dataIndex]; return `<b>${nomes.get(row.greId)}</b><br/>${int(row.total)} obras, ${int(row.sem.length)} começaram sem ART de fiscalização<br/><span style="opacity:.75">clique para ver as obras</span>`; } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: grupos.map(row => nomes.get(row.greId) ?? row.greId), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, interval: 0 } },
     series: [...series.map((item, index) => ({ name: item.name, type: 'bar', stack: 'o', barWidth: '62%', barMaxWidth: 34, data: grupos.map(row => row[item.campo].length), itemStyle: { color: item.cor, borderRadius: index === series.length - 1 ? [0, 3, 3, 0] : 0 },
       label: { show: true, color: corDoTexto(item.cor), fontSize: 11, fontWeight: 700, formatter: (params: any) => params.value >= 3 ? int(params.value) : '' } })), serieTotal(tokens, 'o', grupos.map(row => row.total))],
@@ -550,7 +551,7 @@ export function SituacaoObras({ ctx }: { ctx: CockpitCtx }) {
   const cores = { 'Não iniciada': tokens.line, 'Em execução': tokens.blue, Paralisada: tokens.warn, Concluída: tokens.good } as Record<string, string>;
   const partes = (['Em execução', 'Paralisada', 'Concluída', 'Não iniciada'] as const).map(situacao => ({ situacao, rows: obras.filter(row => row.situacao === situacao) })).filter(row => row.rows.length);
   const option = useMemo(() => ({
-    tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${int(item.value)} obras · ${pct(item.percent)}<br/><span style="opacity:.75">clique para ver</span>` },
+    tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${int(item.value)} obras, ${pct(item.percent)}<br/><span style="opacity:.75">clique para ver</span>` },
     title: { text: int(obras.length), subtext: 'obras públicas', left: 'center', top: 'center', itemGap: 2, textStyle: { color: tokens.ink, fontSize: 17, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 11 } },
     series: [{ type: 'pie', radius: ['46%', '66%'], padAngle: 1.5, itemStyle: { borderRadius: 3, borderColor: tokens.surface, borderWidth: 1 },
       label: { show: true, position: 'outside', fontSize: 11, color: tokens.ink, lineHeight: 13, formatter: (item: any) => `${item.name}\n{b|${int(item.value)} (${pct(item.percent)})}`, rich: { b: { fontWeight: 800, fontSize: 11 } } }, labelLine: { length: 6, length2: 6 },
@@ -563,7 +564,7 @@ export function SituacaoObras({ ctx }: { ctx: CockpitCtx }) {
 export function ObrasSemArt({ ctx }: { ctx: CockpitCtx }) {
   const rows = useMemo(() => obrasDoRecorte(ctx).filter(row => row.situacao !== 'Não iniciada' && !row.artFiscalizacao).sort((a, b) => b.valor - a.valor), [ctx.frentes, ctx.cidadeId]); // eslint-disable-line react-hooks/exhaustive-deps
   return <ul className="side-list is-cheia" aria-label="Obras sem ART de fiscalização">{rows.slice(0, 7).map(row => <li key={row.id}><button className="is-acao" onClick={() => abrirObras(ctx, [row], nomeEmpresa(ctx, row.companyId))}><span>{nomeEmpresa(ctx, row.companyId)}<small>{row.objeto}, {row.situacao.toLowerCase()}</small></span><b>{brl(row.valor)}</b></button></li>)}
-    {rows.length > 7 && <li><button className="is-acao" onClick={() => abrirObras(ctx, rows, 'Obras sem ART de fiscalização')}><span>Ver todas as {int(rows.length)} obras</span><b>{brl(rows.reduce((s, r) => s + r.valor, 0))}</b></button></li>}
+    {rows.length > 4 && <li className="is-todos"><button className="is-acao" onClick={() => abrirObras(ctx, rows, 'Obras sem ART de fiscalização')}><span>Ver todas as {int(rows.length)} obras</span><b>{brl(rows.reduce((s, r) => s + r.valor, 0))}</b></button></li>}
     {!rows.length && <li className="side-note">Nenhuma obra começou sem ART de fiscalização no recorte.</li>}</ul>;
 }
 
@@ -587,30 +588,32 @@ export function CnoPapel({ ctx }: { ctx: CockpitCtx }) {
   const nomePapel: Record<PapelCno, string> = { Executora: 'Executa a obra', 'Responsável tributário': 'Responde pelos tributos', Proprietário: 'É a proprietária' };
   const option = useMemo(() => ({
     grid: { top: 24, right: 40, bottom: 2, left: 2, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${nomePapel[row.papel]}</b><br/>${int(row.n)} obras · ${int(row.registradas)} com responsável registrado (${pct(row.registradas / Math.max(1, row.n) * 100)})`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${nomePapel[row.papel]}</b><br/>${int(row.n)} obras, ${int(row.registradas)} com responsável registrado (${pct(row.registradas / Math.max(1, row.n) * 100)})`; } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => nomePapel[row.papel]), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     series: [
       { name: 'Responsável registrado', type: 'bar', stack: 'p', barWidth: '56%', barMaxWidth: 34, data: rows.map(row => row.registradas), itemStyle: { color: tokens.good }, label: { show: true, color: corDoTexto(tokens.good), fontSize: 11, fontWeight: 700, formatter: (item: any) => pct(item.value / Math.max(1, rows[item.dataIndex].n) * 100) } },
-      { name: 'Sem registro', type: 'bar', stack: 'p', data: rows.map(row => row.n - row.registradas), itemStyle: { color: tokens.line, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => int(rows[item.dataIndex].n) } },
+      { name: 'Sem registro', type: 'bar', stack: 'p', barMaxWidth: 34, data: rows.map(row => row.n - row.registradas), itemStyle: { color: tokens.line, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => int(rows[item.dataIndex].n) } },
     ],
   }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <Chart option={option} tokens={tokens} label="Obras privadas pelo papel do responsável e o registro dele no Crea-SP" />;
 }
 
+/** O órgão da licença nas palavras de quem lê o painel. */
+const nomeFonte = (fonte: string) => ({ 'Alvará municipal': 'Alvará da prefeitura', AVCB: 'Corpo de Bombeiros' } as Record<string, string>)[fonte] ?? fonte;
 /** Licenças e alvarás por órgão: titular registrado ou não, com o total e as que têm ART ligada escritos. */
 export function LicencasFonte({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, q = ctx.parcerias.licencas, rows = q.porFonte.filter(row => row.n);
   const option = useMemo(() => ({
     grid: { top: 24, right: 150, bottom: 2, left: 2, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.fonte}</b><br/>${int(row.n)} licenças (${int(row.vigentes)} vigentes) · ${int(row.titularRegistrado)} titulares registrados<br/>${int(row.obras)} de obra ou instalação · ${int(row.artPonte)} com ART ligada<br/><span style="opacity:.75">clique para ver</span>`; } },
-    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.fonte === 'Alvará municipal' ? 'Alvará da prefeitura' : row.fonte === 'AVCB' ? 'Corpo de Bombeiros' : row.fonte), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${nomeFonte(row.fonte)}</b><br/>${int(row.n)} licenças (${int(row.vigentes)} vigentes), ${int(row.titularRegistrado)} titulares registrados<br/>${int(row.obras)} de obra ou instalação, ${int(row.artPonte)} com ART ligada<br/><span style="opacity:.75">clique para ver</span>`; } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => nomeFonte(row.fonte)), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     series: [
       { name: 'Titular registrado', type: 'bar', stack: 'l', barWidth: '58%', barMaxWidth: 34, data: rows.map(row => row.titularRegistrado), itemStyle: { color: tokens.good } },
-      { name: 'Titular sem registro', type: 'bar', stack: 'l', data: rows.map(row => row.n - row.titularRegistrado), itemStyle: { color: tokens.line, borderRadius: [0, 3, 3, 0] },
+      { name: 'Titular sem registro', type: 'bar', stack: 'l', barMaxWidth: 34, data: rows.map(row => row.n - row.titularRegistrado), itemStyle: { color: tokens.line, borderRadius: [0, 3, 3, 0] },
         label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, formatter: (item: any) => { const row = rows[item.dataIndex]; return `{b|${int(row.n)}}  ${row.obras ? `${int(row.artPonte)} de ${int(row.obras)} obra${row.obras === 1 ? '' : 's'} com ART` : 'sem obras'}`; }, rich: { b: { fontWeight: 800, fontSize: 11 } } } },
     ],
   }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <Chart option={option} tokens={tokens} label="Licenças e alvarás por órgão, pelo registro do titular e pela ART" onPick={params => { const row = rows[params.dataIndex]; if (!row) return; const lista = q.licencas.filter(item => item.fonte === row.fonte); if (!lista.length) return;
-    ctx.open({ kind: 'linhas', eyebrow: 'Depende de parceria', title: `Licenças e alvarás: ${row.fonte}`, what: 'Licenças, alvarás e autos de vistoria cujo titular tem atividade de engenharia, na data escolhida.', use: 'O titular nem sempre executa a obra. A ART só se liga pelo número do processo.', listTitle: 'Licenças',
+    ctx.open({ kind: 'linhas', eyebrow: 'Depende de parceria', title: `Licenças e alvarás: ${nomeFonte(row.fonte)}`, what: 'Licenças, alvarás e autos de vistoria cujo titular tem atividade de engenharia, na data escolhida.', use: 'O titular nem sempre executa a obra. A ART só se liga pelo número do processo.', listTitle: 'Licenças',
       rows: lista.map(item => ({ key: item.id, companyId: item.companyId, title: nomeEmpresa(ctx, item.companyId), subtitle: `${item.tipo}, ${item.fase.toLowerCase()}`, value: item.obra ? (item.artPonte ? 'ART ligada' : 'sem ART ligada') : 'não é obra', note: item.executoraId ? `executora: ${nomeEmpresa(ctx, item.executoraId)}` : 'executora não identificada', sortValue: item.obra && !item.artPonte ? 1 : 0 })) }); }} />;
 }
