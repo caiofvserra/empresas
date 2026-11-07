@@ -83,7 +83,13 @@ def main():
     # rodada de 12 meses pode levar mais de uma execução, e a rotina do mês seguinte termina o que ficou.
     feitos = {l['pncp_id'] for l in ler_staging(staging)}
     modelo = Modelo(a.pacote)
-    lidas, adiados, escritos, faltou = 0, 0, 0, False
+    lidas, adiados, escritos, faltou, avancou = 0, 0, 0, False, False
+
+    def pagina_salva(parcial):
+        try:
+            return int(json.loads(parcial.read_text(encoding='utf-8'))['pagina'])
+        except (OSError, ValueError, KeyError):
+            return 0
 
     for de, ate in meses(a.de, a.ate):
         if sem_tempo():
@@ -95,11 +101,15 @@ def main():
             lote = json.loads(cache.read_text(encoding='utf-8'))['contratos']
         else:
             print(f'Coletando {de} a {ate}...')
-            try:
-                lote = buscar_contratos(de, ate)
+            parcial = destino / f'contratos-{de[:7]}.parcial.json'
+            antes = pagina_salva(parcial)
+            try:  # o parcial guarda as páginas lidas: mês interrompido continua da seguinte na próxima execução
+                lote = buscar_contratos(de, ate, parcial=parcial, parar=sem_tempo)
             except Exception as erro:  # noqa: BLE001 - os meses já feitos ficam gravados e o resto vai para a próxima execução
                 print(f'A coleta de {de[:7]} falhou ({erro}); os meses que faltam ficam para a próxima execução.')
-                faltou = True
+                lote = None
+            if lote is None:
+                faltou, avancou = True, avancou or pagina_salva(parcial) > antes
                 break
             gravar(cache, json.dumps({'periodo': [de, ate], 'contratos': lote}, ensure_ascii=False))
         pendentes = [c for c in lote if c['pncp_id'] not in feitos]
@@ -139,10 +149,10 @@ def main():
                 escritos += 1
     if adiados:
         print(f'{adiados} contratos ficaram para a próxima execução (falha da API do PNCP ou tempo esgotado).')
-    # Sobrou trabalho e esta execução andou: a rotina do GitHub lê este arquivo e se chama de novo com o mesmo período. Sem
+    # Sobrou trabalho e esta execução andou (gravou linha ou leu páginas de um mês): a rotina do GitHub lê este arquivo e se chama de novo com o mesmo período. Sem
     # avanço (a API do PNCP fora do ar, por exemplo), não há arquivo, e a rotina para em vez de girar em falso.
     pendente = destino / 'pendente'
-    if (adiados or faltou) and escritos:
+    if (adiados or faltou) and (escritos or avancou):
         pendente.write_text(f'{adiados} contratos adiados; meses por começar: {"sim" if faltou else "não"}\n', encoding='utf-8')
     elif pendente.exists():
         pendente.unlink()
