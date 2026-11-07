@@ -6,7 +6,7 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 
 | Pasta ou arquivo | Conteúdo |
 |---|---|
-| `src/presidencia/` | Painel da Presidência: Resumo (um quadro por painel), Regionais, Riscos e No país. Abre em `/` e em `/presidencia.html`; substituiu o painel geral em 07/11/2026. Ver [docs/PRESIDENCIA.md](docs/PRESIDENCIA.md) |
+| `src/presidencia/` | Painel da Presidência: Resumo (um quadro por painel), Regionais, Riscos e No país. Abre em `/presidencia.html`; substituiu o painel geral em 07/11/2026. Ver [docs/PRESIDENCIA.md](docs/PRESIDENCIA.md) |
 | `src/empresas/` | Painel de Empresas: Registro, Evolução, RT e ART, Vínculos. Abre em `/empresas.html` |
 | `src/profissionais/` | Painel de Profissionais: Registro, Evolução, ART e RT, Formação, Trabalho. Abre em `/profissionais.html` |
 | `src/fiscalizacao/` | Painel de Fiscalização e malha fina: Ações, Resultado, Malha fina, Contratos, Obras. Abre em `/fiscalizacao.html` |
@@ -14,6 +14,8 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 | `src/atendimento/` | Painel de Atendimento: prazos, canais, distância até a unidade e coworkings. Abre em `/atendimento.html` |
 | `src/conselho/` | Painel de Gestão do Conselho, só do colegiado: Câmaras e plenário, Entidades e escolas (em reconstrução). Abre em `/conselho.html` |
 | `src/gestao/` | Peças comuns aos painéis Financeiro, Atendimento e Conselho (mapa por município, listas ao clicar, estilo) |
+| `src/menu/`, `index.html` | Menu inicial do site: lista os sete painéis (Colegiados é o painel de Gestão do Conselho) com as páginas de cada um. Em cada painel do site, o botão Voltar, no alto do menu lateral, traz de volta ao menu |
+| `.github/workflows/pages.yml` | Publica o site no GitHub Pages a cada merge na main (https://caiofvserra.github.io/empresas/). Em Settings > Pages, a origem tem de ser "GitHub Actions" |
 | `src/cockpit/` | A estrutura comum aos painéis: filtros, data de referência, fichas, painel lateral e o menu de cada painel |
 | `docs/METODO.md` | O Método (frentes de dados, cruzamentos, casos de uso, regras da malha fina, fontes, IA, radar normativo e parcerias), que saiu do painel em 07/11/2026. Gerado por `npm run docs:metodo` |
 | `src/observatorio/` | Indicadores-norte com fichas, histórico por data de referência, frentes e matriz de cruzamentos, decisão sobre as 12 lacunas do V18, casos de uso, radar normativo, gate de fontes, parcerias e atlas |
@@ -34,7 +36,7 @@ Node.js 20 ou mais novo.
 
 ```bash
 npm ci
-npm run dev            # painel da Presidência em http://localhost:5173/ de Empresas em http://localhost:5173/empresas.html de Profissionais em http://localhost:5173/profissionais.html de Fiscalização em http://localhost:5173/fiscalizacao.html; Financeiro, Atendimento e Conselho em financeiro.html, atendimento.html e conselho.html
+npm run dev            # menu dos painéis em http://localhost:5173/; Presidência em http://localhost:5173/presidencia.html; Empresas em http://localhost:5173/empresas.html de Profissionais em http://localhost:5173/profissionais.html de Fiscalização em http://localhost:5173/fiscalizacao.html; Financeiro, Atendimento e Conselho em financeiro.html, atendimento.html e conselho.html
 npm test               # testes de domínio, painéis, fiscalização, V20, V21, V22, Empresas, Profissionais, Fiscalização e coletor
 npm run build          # TypeScript e build do site
 npm run build:painel   # gera os painéis em entrega/

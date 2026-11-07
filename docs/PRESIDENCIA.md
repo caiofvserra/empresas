@@ -1,6 +1,6 @@
 # Painel da Presidência
 
-Visão executiva, de 07/11/2026. Substituiu o painel geral. Abre em `/` e em `/presidencia.html` no site, e em `entrega/painel-presidencia-creasp.html` sem servidor. O pacote Power BI está em `entrega/powerbi/presidencia/`.
+Visão executiva, de 07/11/2026. Substituiu o painel geral. Abre em `/presidencia.html` no site (o endereço `/` é o menu que lista todos os painéis), e em `entrega/painel-presidencia-creasp.html` sem servidor. O pacote Power BI está em `entrega/powerbi/presidencia/`.
 
 O painel resume os seis painéis temáticos: Empresas, Profissionais, Fiscalização, Financeiro, Atendimento e Gestão do Conselho. Cada número é o mesmo que o painel de origem mostra no mesmo recorte. O teste `tests/presidencia.test.ts` confere essa igualdade no estado, numa regional, num município e com uma câmara. Clicar num número abre o painel de origem na página certa, com os mesmos filtros.
 
