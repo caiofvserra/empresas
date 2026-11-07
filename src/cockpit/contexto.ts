@@ -12,11 +12,15 @@ import type { Cobertura, Contagens, Coorte, ReceitaAtribuivel, TempoAteAgir } fr
 import type { EmpregoCbo, ModeloProfissionais, RemuneracaoCbo, ResumoProfissionais } from '../domain/profissionais';
 import type { QuadroFormacao } from '../domain/formacao';
 import type { QuadroEntidades } from '../domain/entidades';
-import type { QuadroConselho } from '../domain/conselho';
+import type { Beneficiario, Conselheiro, Servidor } from '../domain/pessoas-conselho';
+import type { Conselho, QuadroConselho } from '../domain/conselho';
 import type { ResultadoFt } from '../painel/forcas';
 import type { QuadroInstalacoes, QuadroObras, QuadroSociedades } from '../domain/frentes';
 import type { Historico } from '../observatorio/historico';
 import type { Aberturas, Concentracao, Permanencia, QuadroDemanda } from '../domain/mercado';
+import type { Acumulado, Carteira, LinhaPlenario, Processo, QuadroCamaras, QuadroDivida, ReceitaMensal } from '../domain/gestao';
+import type { Profissional } from '../domain/profissionais';
+import type { InstitutionalServiceRequest } from '../domain/institutional';
 import type { QuadroCno, QuadroCoorteNominal, QuadroCredenciamentos, QuadroDenominacao, QuadroJucesp, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
 
 /** Indicadores-norte do programa Inteligência Estratégica Crea-SP no recorte. */
@@ -52,6 +56,20 @@ export interface CockpitCtx extends Ctx {
   mercado: Mercado;
   /** V22: camadas que dependem de parceria (marcadas com "!"): CNO, licenças e alvarás, perícias, TCE-SP, contexto econômico, sócios PF, coorte nominal e vínculos. */
   parcerias: Parcerias;
+  /** Painel de Gestão do Conselho (06/11/2026): câmaras, plenário, dívida, receita e despesa mês a mês e distância até a unidade. Nulo nos outros painéis. */
+  gestao: Gestao | null;
+}
+export interface Gestao {
+  /** Lançamentos de receita, despesa, diárias, contratos e pessoal do Conselho, lidos na data de referência. */
+  contas: Conselho;
+  processos: Processo[]; camaras: QuadroCamaras; plenario: LinhaPlenario[]; carteira: Carteira; divida: QuadroDivida;
+  /** Meses da série dos cartões (24 ou o período mais 12), terminando no mês da data de referência. */
+  meses: string[];
+  receitaMensal: ReceitaMensal[]; receitaAcumulada: Acumulado[]; despesaAcumulada: Acumulado[]; despesaMensal: number[]; diariasMensais: number[];
+  adimplencia: Map<string, { ativos: Profissional[]; atraso: Profissional[] }>;
+  /** Gastos com nome: servidores do quadro, conselheiros do plenário e diárias de 12 meses pessoa a pessoa (no recorte de GRE). */
+  equipe: Servidor[]; conselheiros: Conselheiro[]; diariasPessoas: Beneficiario[];
+  distancia: Map<string, { km: number; unidade: string }>; origem: (row: InstitutionalServiceRequest) => string;
 }
 export interface Parcerias { cno: QuadroCno; licencas: QuadroLicencas; pericias: QuadroPericias; tce: QuadroTce; sociosPf: QuadroSociosPf; coorteNominal: QuadroCoorteNominal; vinculos: QuadroVinculos;
   /** Painel de Empresas: credenciamentos no DETRAN-SP e no INMETRO, e atos da Junta Comercial (JUCESP). */

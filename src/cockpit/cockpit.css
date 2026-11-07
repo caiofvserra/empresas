@@ -46,14 +46,10 @@
 @keyframes ck-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .ck-grid { display: grid; gap: 12px; grid-template-columns: repeat(12, minmax(0, 1fr)); height: 100%; }
 .ck-grid-presidencia { grid-template-rows: 268px auto minmax(360px, 1.1fr) minmax(280px, 1fr) 300px; grid-template-areas: "n1 n1 n1 n2 n2 n2 n3 n3 n3 n4 n4 n4" "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map sc sc sc sc sc sc sc" "map map map map map lt lt lt lt lt lt lt" "hs hs hs hs hs hs hs hs hs hs hs hs"; height: auto; }
-.ck-grid-entidades { grid-template-rows: auto 400px 420px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "ec ec ec ec ec er er er er ee ee ee" "et et et et et et et et et et et et"; height: auto; }
-.ck-grid-controle { grid-template-rows: auto repeat(3, 360px); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "cf cf cf cf cf cn cn cn cn cs cs cs" "cd cd cd cd cr cr cr cr cc cc cc cc" "cp cp cp cp ck ck ck ck dp dp dp dp"; height: auto; }
 
 .ck-grid-fiscalizacao { grid-template-rows: auto 480px 400px 340px auto 400px 420px 440px; grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "map map map map map map map ca ca ca ca ca" "me me me me cu cu cu cu it it it it" "cv cv cv cv cv cv ta ta ta ta ta ta" "ft ft ft ft ft ft ft ft ft ft ft ft" "ht ht ht ht ht ht ht ht ht ht ht ht" "ob ob ob ob ob ob mp mp mp mp mp mp" "cn cn cn cn li li li li tc tc tc tc"; height: auto; }
 .ck-grid-malha { grid-template-rows: 640px repeat(4, 400px); grid-template-areas: "mf1 mf1 mf1 mf1 mf1 mf1 mf8 mf8 mf8 mf8 mf8 mf8" "mf2 mf2 mf2 mf2 mf7 mf7 mf7 mf7 mf3 mf3 mf3 mf3" "mf4 mf4 mf4 mf4 mf5 mf5 mf5 mf5 mf6 mf6 mf6 mf6" "mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9 mf9" "mh mh mh mh mh mh mh mh mh mh mh mh"; height: auto; }
 .ck-grid-metodo { grid-template-rows: 560px 640px 640px 640px 600px 560px; grid-template-areas: "fr fr fr fr fr fr fr lc lc lc lc lc" "rl rl rl rl rl rl rl rl rl rl rl rl" "uc uc uc uc uc uc mr mr mr mr mr mr" "ft ft ft ft ft ft ia ia ia ia ia ia" "rn rn rn rn rn rn rn gt gt gt gt gt" "pc pc pc pc pc pc pc pc pc pc pc pc"; height: auto; }
-.ck-grid-receita { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "yoy yoy yoy yoy yoy yoy yoy rg rg rg rg rg" "tr tr tr tr tr tr tr or or or or or"; }
-.ck-grid-atendimento { grid-template-rows: auto minmax(330px, 1fr) minmax(330px, 1fr); grid-template-areas: "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi" "as as as as as as cw cw cw cw cw cw" "mm mm mm mm mm mm qa qa qa qa qa qa"; }
 .ck-page.has-focus .ck-grid { grid-template-areas: none; grid-template-rows: minmax(0, 1fr); height: 100%; }
 .ck-page.has-focus .ck-grid > :not(.is-focus) { display: none; }
 .ck-page.has-focus .ck-grid > .is-focus { grid-area: 1 / 1 / -1 / -1 !important; }
@@ -231,9 +227,6 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 @media (max-width: 1500px), (max-height: 860px) {
   .ck-grid { height: auto; }
   .ck-grid-presidencia { grid-template-rows: 268px auto 400px 330px 300px; }
-  .ck-grid-receita, .ck-grid-atendimento { grid-template-rows: auto 340px 340px; }
-  .ck-grid-entidades { grid-template-rows: auto 340px 380px; }
-  .ck-grid-controle { grid-template-rows: auto repeat(3, 340px); }
 
   .ck-grid-malha { grid-template-rows: 600px repeat(4, 380px); }
   .ck-grid-fiscalizacao { grid-template-rows: auto 440px 380px 340px auto 380px 400px 420px; }

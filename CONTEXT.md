@@ -105,3 +105,41 @@ _Avoid_: mock, dados de teste, fake
 **Parceria ("!")**:
 Fonte que depende de acordo com outro órgão. O bloco que a usa entra demonstrativo e com o marcador "!", e tem um plano B sem acordo.
 _Avoid_: convênio (quando ainda não existe), fonte externa
+
+## Gestão do Conselho
+
+**Processo**:
+Um pedido ou auto que uma câmara especializada julga: auto de infração, registro e atribuição, acervo técnico ou ética. Entra, recebe relator, vai à pauta e é julgado.
+_Avoid_: caso, protocolo (quando se fala da câmara), pendência
+
+**Estoque de processos**:
+Os processos que entraram e ainda não foram julgados na data de referência. É estoque, nunca tem acumulado do ano.
+_Avoid_: fila, passivo, backlog
+
+**Recurso ao plenário**:
+Pedido da parte para o plenário rever a decisão de uma câmara.
+_Avoid_: apelação, segunda instância
+
+**Prescrição do auto**:
+O fim do prazo de cinco anos, contados do fato, para o Conselho punir a infração (Lei 9.873/1999). O auto que chega a esse prazo sem julgamento é arquivado.
+_Avoid_: caducidade, perda de prazo
+
+**Cadeira**:
+Um lugar no plenário, ocupado por um conselheiro indicado por uma entidade de classe ou instituição de ensino registrada.
+_Avoid_: vaga, assento, voto
+
+**Dívida**:
+As anuidades vencidas e não pagas de profissionais e de empresas, ainda dentro do prazo de cobrança de cinco anos.
+_Avoid_: inadimplência (quando se fala do valor), passivo, débito
+
+**Piso de execução**:
+O valor abaixo do qual o Conselho não pode cobrar a dívida na Justiça: cinco vezes a anuidade de pessoa física (Lei 12.514/2011, art. 8º). Abaixo dele, a cobrança é por acordo, protesto ou negativação.
+_Avoid_: alçada, valor mínimo
+
+**Atividade-fim**:
+A despesa com fiscalização, atendimento e ações institucionais. O resto (direção e administração) é atividade-meio.
+_Avoid_: finalística, área de negócio
+
+**Unidade de atendimento**:
+A sede de uma regional (GRE) ou a sede do Crea-SP na capital, onde o profissional e a empresa são atendidos pessoalmente.
+_Avoid_: posto, agência, inspetoria

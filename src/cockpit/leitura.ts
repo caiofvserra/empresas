@@ -9,20 +9,22 @@ import type { QuadroConselho } from '../domain/conselho';
 import type { ResultadoFt } from '../painel/forcas';
 
 /** V20 · leitura do período: frases curtas com o destaque de cada assunto, recalculadas a cada filtro e data de referência. */
-/** Abas do painel geral e páginas dos painéis separados: Empresas (01/11/2026), Profissionais (03/11/2026) e Fiscalização (03/11/2026). */
-export type PaginaGeral = 'presidencia' | 'receita' | 'entidades' | 'controle' | 'atendimento' | 'metodo';
+/** Abas do painel geral e páginas dos painéis separados: Empresas (01/11/2026), Profissionais (03/11/2026), Fiscalização (03/11/2026) e Gestão do Conselho (06/11/2026). */
+export type PaginaGeral = 'presidencia' | 'metodo';
 export type PaginaEmpresas = 'mercado' | 'evolucao' | 'rt' | 'vinculos';
 export type PaginaProfissionais = 'profissionais' | 'fluxo' | 'atuacao' | 'formacao' | 'trabalho';
 export type PaginaFiscalizacao = 'fiscalizacao' | 'resultado' | 'malha' | 'contratos' | 'obras';
-export type PageId = PaginaGeral | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao;
-export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'receita', 'entidades', 'controle', 'atendimento', 'metodo'];
+export type PaginaConselho = 'receita' | 'orcamento' | 'camaras' | 'entidades' | 'atendimento';
+export type PageId = PaginaGeral | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaConselho;
+export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'metodo'];
 export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos'];
 export const pageIdsProfissionais: PaginaProfissionais[] = ['profissionais', 'fluxo', 'atuacao', 'formacao', 'trabalho'];
 export const pageIdsFiscalizacao: PaginaFiscalizacao[] = ['fiscalizacao', 'resultado', 'malha', 'contratos', 'obras'];
-export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao];
+export const pageIdsConselho: PaginaConselho[] = ['receita', 'orcamento', 'camaras', 'entidades', 'atendimento'];
+export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao, ...pageIdsConselho];
 /** Painel em que cada página está: um destaque de outro painel abre aquele painel. */
-export type PainelDaPagina = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao';
-export const painelDaPagina = (page: PageId): PainelDaPagina => (pageIdsEmpresas as PageId[]).includes(page) ? 'empresas' : (pageIdsProfissionais as PageId[]).includes(page) ? 'profissionais' : (pageIdsFiscalizacao as PageId[]).includes(page) ? 'fiscalizacao' : 'geral';
+export type PainelDaPagina = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'conselho';
+export const painelDaPagina = (page: PageId): PainelDaPagina => (pageIdsEmpresas as PageId[]).includes(page) ? 'empresas' : (pageIdsProfissionais as PageId[]).includes(page) ? 'profissionais' : (pageIdsFiscalizacao as PageId[]).includes(page) ? 'fiscalizacao' : (pageIdsConselho as PageId[]).includes(page) ? 'conselho' : 'geral';
 export interface Metas { cobertura: number; rt: number; adimplencia: number; recuperacao: number; regularizacao: number; atendimento: number }
 /** Meta de RT em 95% (05/11/2026): o responsável técnico é condição do registro (Lei 5.194/66, art. 8º), então 40% fazia 78% parecer vitória. */
 export const metasPadrao: Metas = { cobertura: 65, rt: 95, adimplencia: 60, recuperacao: 30, regularizacao: 50, atendimento: 80 };
@@ -71,7 +73,7 @@ export function leitura(input: LeituraInput): Insight[] {
   const coorte = input.formacao?.coortes.filter(row => row.fechada24).at(-1);
   if (coorte?.taxaRegistro24 != null) out.push({ tone: 'neutral', strong: pct(coorte.taxaRegistro24), text: `dos formados em ${coorte.ano} se registraram no Crea-SP em até 24 meses (${int(coorte.registradosEm24.length)} de ${int(coorte.concluintes)}).`, page: 'formacao' });
   const c = input.conselho;
-  if (c?.fimMeioAtual.taxaFim != null) out.push({ tone: 'neutral', strong: pct(c.fimMeioAtual.taxaFim), text: `da despesa dos últimos 12 meses foi com fiscalização, atendimento e ações institucionais, e ${brl(c.fimMeioAtual.meio)} foram para administração.`, page: 'controle' });
+  if (c?.fimMeioAtual.taxaFim != null) out.push({ tone: 'neutral', strong: pct(c.fimMeioAtual.taxaFim), text: `da despesa dos últimos 12 meses foi com fiscalização, atendimento e ações institucionais, e ${brl(c.fimMeioAtual.meio)} foram para administração.`, page: 'orcamento' });
   const taxa = estrutura?.atendimento.taxaNoPrazo ?? null;
   if (taxa !== null) out.push({ tone: taxa >= metas.atendimento ? 'good' : 'bad', strong: pct(taxa), text: `das solicitações de atendimento foram resolvidas em até 14 dias. A meta é ${metas.atendimento}%.`, page: 'atendimento' });
   return out;

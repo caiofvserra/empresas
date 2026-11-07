@@ -48,11 +48,12 @@ test('data de referência: a base lida em D só tem o que existia em D e nada é
 
 test('ficha (i): todo bloco e cartão de todo painel tem ficha registrada, e toda ficha registrada é usada', () => {
   const raiz = join(import.meta.dirname, '..', 'src');
-  const paginaDe: Record<string, string> = { 'cockpit/PaginaPresidencia': 'presidencia', 'cockpit/PaginaReceita': 'receita', 'cockpit/PaginaEntidades': 'entidades', 'cockpit/PaginaControle': 'controle', 'cockpit/PaginaAtendimento': 'atendimento', 'cockpit/PaginaMetodo': 'metodo',
+  const paginaDe: Record<string, string> = { 'cockpit/PaginaPresidencia': 'presidencia', 'cockpit/PaginaMetodo': 'metodo',
+    'conselho/PaginaReceita': 'receita', 'conselho/PaginaOrcamento': 'orcamento', 'conselho/PaginaCamaras': 'camaras', 'conselho/PaginaEntidades': 'entidades', 'conselho/PaginaAtendimento': 'atendimento',
     'empresas/PaginaMercado': 'mercado', 'empresas/PaginaEvolucao': 'evolucao', 'empresas/PaginaRt': 'rt', 'empresas/PaginaVinculos': 'vinculos',
     'profissionais/PaginaProfissionais': 'profissionais', 'profissionais/PaginaFluxo': 'fluxo', 'profissionais/PaginaAtuacao': 'atuacao', 'profissionais/PaginaFormacao': 'formacao', 'profissionais/PaginaTrabalho': 'trabalho',
     'fiscalizacao/PaginaAcoes': 'fiscalizacao', 'fiscalizacao/PaginaResultado': 'resultado', 'fiscalizacao/PaginaMalha': 'malha', 'fiscalizacao/PaginaContratos': 'contratos', 'fiscalizacao/PaginaObras': 'obras' };
-  const arquivos = ['cockpit', 'empresas', 'profissionais', 'fiscalizacao'].flatMap(dir => readdirSync(join(raiz, dir)).filter(name => /^Pagina\w+\.tsx$/.test(name)).map(name => `${dir}/${name.replace('.tsx', '')}`));
+  const arquivos = ['cockpit', 'empresas', 'profissionais', 'fiscalizacao', 'conselho'].flatMap(dir => readdirSync(join(raiz, dir)).filter(name => /^Pagina\w+\.tsx$/.test(name)).map(name => `${dir}/${name.replace('.tsx', '')}`));
   assert.deepEqual(arquivos.map(name => paginaDe[name]).sort(), [...pageIds].sort(), 'uma página por aba, sem páginas sobrando');
   const usadas = new Set<string>();
   for (const name of arquivos) {
