@@ -43,7 +43,6 @@
 .ck-rail-paineis { display: flex; flex-direction: column; margin-top: 10px; border-top: 1px solid rgba(255,255,255,.14); }
 .ck-rail-paineis .ck-rail-painel { margin-top: 0; border-top: 0; border-radius: 0; }
 .ck-rail-paineis .ck-rail-painel:last-child { border-radius: 0 0 12px 12px; }
-@media (max-width: 1100px) { .ck-rail-paineis { flex-direction: row; margin: 0; border: 0; } }
 
 /* Mapa de árvore com os títulos profissionais (04/11/2026): o botão de voltar fica na linha da legenda, à esquerda. */
 .arvore-titulos { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }

@@ -239,11 +239,9 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
   .ck-rail button span { font-size: 11px; } .ck-rail-bottom button span { display: none; }
 }
 @media (max-width: 1100px) {
-  .ck { display: block; height: auto; min-height: 100dvh; }
-  .ck-rail { position: sticky; top: 0; z-index: 10; flex-direction: row; overflow-x: auto; padding: 6px 8px; border-right: 0; border-bottom: 2px solid #FABD07; }
-  .ck-logo { height: auto; margin: 0 6px 0 0; } .ck-logo svg { width: 30px; height: 30px; }
-  .ck-rail button { flex: none; min-width: 72px; }
-  .ck-rail-bottom { margin: 0 0 0 auto; flex-direction: row; padding: 0; border: 0; }
+  /* O menu continua lateral em qualquer largura (pedido do Caio, 07/11/2026): fica preso à esquerda e a página rola ao lado dele. */
+  .ck { height: auto; min-height: 100dvh; align-items: start; }
+  .ck-rail { position: sticky; top: 0; z-index: 10; height: 100dvh; }
   .ck-main { display: block; }
   .ck-header { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .ck-page { overflow: visible; }
@@ -258,6 +256,8 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
   .ck-page.has-focus .ck-grid > .is-focus { min-height: 75vh; }
 }
 @media (max-width: 640px) {
+  .ck { grid-template-columns: 64px minmax(0, 1fr); } .ck-rail { padding: 6px 4px; } .ck-rail button { font-size: 11px; } .ck-logo svg { width: 30px; height: 30px; }
+  .ck-filters.is-inline { flex-wrap: wrap; }
   .ck-filters { padding: 8px 12px; }
   .ck-select { flex: 1 1 100%; } .ck-select select { width: 100%; min-width: 0; }
   .ck-window, .ck-status-note { display: none; }
