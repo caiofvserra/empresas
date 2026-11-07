@@ -52,6 +52,7 @@ import PaginaEvolucao from '../empresas/PaginaEvolucao';
 import PaginaRt from '../empresas/PaginaRt';
 import PaginaVinculos from '../empresas/PaginaVinculos';
 import { mercadoReceita } from '../empresas/receita-federal';
+import { triagemPncp } from '../fiscalizacao/triagem';
 import PaginaProfissionais from '../profissionais/PaginaProfissionais';
 import PaginaFluxo from '../profissionais/PaginaFluxo';
 import PaginaAtuacao from '../profissionais/PaginaAtuacao';
@@ -509,7 +510,8 @@ function MetasForm({ metas, onChange }: { metas: Metas; onChange: (value: Metas)
 
 function Fontes() {
   const reais = [resultados2025.fonte, despesaPublicada.fonte, fonteConfea, registrosNovos.fonte, pisoPublico.fonte, formacaoSp.fonte,
-    { nome: `Dados abertos do CNPJ da Receita Federal, arquivo de ${mes(mercadoReceita.competencia)} (aberturas e baixas da página Evolução do painel de Empresas)`, data: '2026-11-07', url: 'https://arquivos.receitafederal.gov.br/index.php/s/YggdBLfdninEJX9' }];
+    { nome: `Dados abertos do CNPJ da Receita Federal, arquivo de ${mes(mercadoReceita.competencia)} (aberturas e baixas da página Evolução do painel de Empresas)`, data: '2026-11-07', url: 'https://arquivos.receitafederal.gov.br/index.php/s/YggdBLfdninEJX9' },
+    ...(triagemPncp.rodada ? [{ nome: `Contratos de serviços gerais do PNCP triados pelo modelo treinado, rodada de ${data(triagemPncp.rodada)} (cartão Serviço geral de engenharia da página Contratos do painel de Fiscalização)`, data: triagemPncp.rodada, url: 'https://pncp.gov.br/api/consulta/swagger-ui/index.html' }] : [])];
   return <div className="ck-fontes">
     <article><h3>O que é real e o que é demonstrativo</h3><p>Quase todos os números deste painel vêm de um cenário fictício, montado para mostrar como o painel vai funcionar. O cenário é sempre o mesmo (semente {dataset.seed}), por isso os números não mudam de uma abertura para outra. Os poucos dados reais levam o selo “Real” e estão listados no fim desta janela. Em produção, os números virão das bases do Crea-SP e das fontes públicas descritas abaixo.</p></article>
     <article><h3>Dados do Crea-SP</h3><p>O cenário imita o que o Crea-SP já tem: o cadastro de empresas e estabelecimentos, os registros, os responsáveis técnicos, as ARTs, as certidões, as anuidades e os pagamentos. Também imita os profissionais, as entidades de classe e as instituições de ensino com seus repasses e convênios, a despesa e a receita do Conselho, as diárias, os fornecedores, o pessoal, o atendimento, os coworkings e a capacitação.</p><p>As ações de fiscalização, os autos, as multas e as regularizações são sorteados a partir de acontecimentos do cadastro, como um primeiro registro, a saída de um responsável técnico sem substituto ou um contrato público sem ART. Em produção, virão do sistema de fiscalização do Crea-SP.</p></article>

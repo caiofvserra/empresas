@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --import tsx --test tests/*.test.ts",
+    "test:py": "python3 -m unittest discover -s tests/python",
     "sources:refresh": "node --import tsx scripts/refresh-sources.ts",
     "test:integrations": "node --import tsx --test tests/integrations.test.ts",
     "build:painel": "node scripts/build-painel.mjs",

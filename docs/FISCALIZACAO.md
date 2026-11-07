@@ -11,8 +11,36 @@ O filtro de município vale para as ações, os indícios, a malha fina, os cont
 - **Ações.** Ações de fiscalização, autos de infração, multas aplicadas, multas recebidas e registros que vieram da fiscalização. Mapa do estado com o limite de cada município, pintado pela regional no indicador escolhido (ações, ações a cada 100 estabelecimentos de engenharia, autos, parte já regularizada, indícios sem ação, dias até a primeira ação, multas em dívida ativa), com a lista das regionais ao lado. Ações, autos e regularizações dos últimos 24 meses, com o número de cada mês. O que aconteceu com as ações de cada tipo de caso, em barras de 100%. De onde vieram as ações e a parte que já regularizou. Anel com o valor das multas pela situação na data escolhida.
 - **Resultado.** Regularizações depois de uma ação (contra a meta), parte que regularizou em até 180 dias no último trimestre fechado, dias até a primeira ação, receita recebida depois de uma ação e forças-tarefas acima da comparação. Regularização em 180 dias por trimestre, com os trimestres em curso marcados. Cada força-tarefa contra as ações parecidas fora dela (dois pontos ligados). Boxplot dos dias da ação até a regularização, por origem. Boxplot dos dias do indício até a primeira ação, por tipo. Receita depois de uma ação, mês a mês.
 - **Malha fina.** Empresas com algum indício, com indício confirmado, com dois ou mais, já com ação e ainda sem ação. Empresas por regra, com a confiança da ligação escrita ao lado do nome e o "!" nas regras que dependem de acordo. Atividade de engenharia sem registro por câmara. A malha fina refeita mês a mês nos 12 meses anteriores. Registro ativo de empresa fechada na Receita, com o valor vencido. Histograma de ARTs por profissional, com o limite da regra marcado. Empresas que fecham e abrem no lugar. Nome de engenharia sem registro.
-- **Contratos.** Contratos públicos técnicos, parte em que a ART cita o contrato, contratos sem ART encontrada, valor com fornecedor sem registro na data e parte já paga ("!"). Contratos por categoria e pela ART encontrada. Anel do valor pela situação do fornecedor no dia do contrato. Lista dos maiores contratos sem ART. Os dez maiores fornecedores. Planos de contratação por etapa. Contratado, empenhado, liquidado e pago ("!").
+- **Contratos.** Contratos públicos técnicos, parte em que a ART cita o contrato, contratos sem ART encontrada, valor com fornecedor sem registro na data, serviços gerais que o modelo treinado marca como engenharia (dado real, ver abaixo) e parte já paga ("!"). Contratos por categoria e pela ART encontrada. Anel do valor pela situação do fornecedor no dia do contrato. Lista dos maiores contratos sem ART. Os dez maiores fornecedores. Planos de contratação por etapa. Contratado, empenhado, liquidado e pago ("!").
 - **Obras.** Obras públicas, obras que começaram sem ART de fiscalização, obras privadas com ART encontrada ("!"), executoras de obra privada sem ART ("!") e licenças de obra sem ART ligada ("!"). Obras públicas por regional e pela ART de fiscalização. Anel da situação das obras. Lista das maiores obras sem ART de fiscalização. Funil das obras privadas até a ART ("!"). Papel do responsável pela obra privada ("!"). Alvarás e licenças por órgão ("!").
+
+## Serviço geral que é engenharia: o modelo treinado do PNCP
+
+Desde 07/11/2026, o sexto cartão da página Contratos é dado real: os contratos que órgãos paulistas publicaram no PNCP como serviços gerais (categoria Serviços) e que o modelo treinado no estudo do PNCP marca como obra ou serviço de engenharia, e quantos deles não têm nenhum sinal do rito de engenharia nos documentos da compra. Leva o selo Real com a data da rodada. Os outros cartões e os blocos da página continuam no cenário, e os números não se somam. O cartão segue a GRE, o município e o período do alto da tela, contado até o último mês da rodada; não se divide por câmara e não volta no tempo com a data de referência.
+
+Como funciona, em `scripts/pncp-triagem.py` e no pacote `scripts/pncp_triagem/`:
+
+1. Coleta, na API pública de consulta do PNCP, os contratos do período (todas as páginas, porque a API não filtra por UF) e fica com os de unidade paulista, categoria Serviços e objeto de pelo menos 20 caracteres. O valor do contrato não é lido.
+2. Limpa o objeto com os mesmos padrões do treino e calcula a probabilidade de engenharia com o `pacote_reuso.joblib` do estudo (encoder BAAI/bge-m3 e o conjunto de classificadores calibrados). Passa do limiar que o pacote traz, o contrato é suspeito.
+3. Para cada suspeito, do mais provável ao menos provável, lê até três documentos da compra (termo de referência, projeto básico, estudo técnico, edital), com OCR quando o PDF é imagem e o modelo de português do Tesseract está instalado. Os marcadores e a regra vêm do orquestradorfiscaliza: rito presente pede dois marcadores, um deles de engenharia (ART, Crea, engenheiro responsável, obra ou serviço de engenharia, art. 6º, XII ou XXI, da Lei 14.133/2021). A sigla ART só vale em caixa alta, para "art. 75" não contar como ART.
+4. Grava `var/pncp/triagem-sp.csv` (fora do Git, com número de controle, CNPJ e objeto) para a carga de `stg.pncp_triagem`, e `src/domain/pncp-triagem-sp.json`, só com números por município e mês, que o cartão lê.
+5. Na base interna, `integrations/sql/pncp-triagem-x-art.sql` cruza os suspeitos sem rito completo com as ARTs da empresa contratada (30 dias antes a 60 depois da publicação, a ART com o órgão como contratante primeiro) e com o registro no Crea-SP. A view de ART que ele supõe (`bi.vw_art`) ainda precisa ser homologada com a TI.
+
+Para rodar no Colab, onde o pacote já está no Drive e a GPU faz os embeddings em minutos:
+
+```
+from google.colab import drive; drive.mount('/content/drive')
+!apt-get -qq install -y tesseract-ocr-por
+!pip -q install sentence-transformers scikit-learn joblib pymupdf
+!git clone https://github.com/caiofvserra/empresas.git   # repositório privado: use um token ou suba a pasta scripts/
+!python3 empresas/scripts/pncp-triagem.py --pacote /content/drive/MyDrive/PNCP_TCC/resultados_final/pacote_reuso.joblib --de 2025-11-01 --ate 2026-10-31 --destino /content/drive/MyDrive/PNCP_TCC/painel --painel /content/drive/MyDrive/PNCP_TCC/painel/pncp-triagem-sp.json
+```
+
+O `pncp-triagem-sp.json` que sair vai para `src/domain/` num commit, como o arquivo da Receita. Rodar de novo no mesmo dia retoma de onde parou; `--max-rito N` limita a leitura de documentos aos N suspeitos mais prováveis. Com 12 meses ou mais, a evolução do cartão ganha a comparação com um ano antes.
+
+Conferido em 07/11/2026 sem o modelo, que não baixa nesta sessão: a coleta de 01/10/2026 leu as 20 páginas do país em 82 segundos e ficou com 335 contratos de serviços de SP, todos com a compra vinculada; a leitura de documentos levou de 3 a 16 segundos por compra, e metade dos PDFs da amostra era imagem, que só o OCR lê. Os testes ficam em `tests/python` (`npm run test:py`) e em `tests/pncp-triagem.test.ts`.
+
+O modelo é uma triagem e erra. O cartão diz onde procurar primeiro, não que houve infração: não achar sinal de rito não prova que falte ART, e a conferência humana decide.
 
 ## Parcerias e plano B
 
