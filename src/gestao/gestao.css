@@ -101,3 +101,25 @@
 .cs-mais-de-ano { color: var(--bad); font-weight: 700; }
 tr.cs-conflito td { background: color-mix(in srgb, var(--warn) 14%, transparent); }
 .cs-conflito-nota { color: var(--bad) !important; font-weight: 700; }
+
+/* O Plenário desenhado nos Colegiados (07/11/2026): uma bolinha por cadeira, as de cada câmara juntas. */
+.cs-plenario { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+.cs-plenario-desenho { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+.cs-plenario-desenho svg { position: absolute; inset: 0; display: block; }
+.cs-plenario-total { font: 800 30px var(--display); letter-spacing: -.02em; }
+.cs-plenario-sub { font: 700 12px var(--body); }
+.cs-plenario-legenda { margin: 0; padding: 6px 0 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px 8px; border-top: 1px solid var(--line); }
+.cs-plenario-legenda button { width: 100%; display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 6px; align-items: start; padding: 3px 4px; border: 0; border-radius: 7px; background: transparent; color: var(--ink); text-align: left; }
+.cs-plenario-legenda button:hover { background: var(--soft); }
+.cs-plenario-legenda i { width: 12px; height: 12px; margin-top: 2px; border-radius: 50%; }
+.cs-plenario-legenda b { display: block; font-size: 12px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cs-plenario-legenda small { display: block; font-size: 11px; line-height: 1.25; color: var(--muted); }
+.cs-plenario-legenda .is-apagada { opacity: .45; }
+.cs-plenario-n { font: 800 12px var(--body); }
+.cs-plenario.is-curta .cs-plenario-legenda { gap: 0 8px; padding-top: 3px; }
+.cs-plenario.is-curta .cs-plenario-legenda button { display: flex; align-items: center; padding: 1px 4px; }
+.cs-plenario.is-curta .cs-plenario-legenda i { flex: none; margin: 0; width: 10px; height: 10px; }
+.cs-plenario.is-curta .cs-plenario-legenda span { min-width: 0; display: flex; gap: 6px; align-items: baseline; }
+.cs-plenario.is-curta .cs-plenario-legenda b { min-width: 0; }
+.cs-plenario.is-curta .cs-plenario-legenda small { flex: none; }
+.cs-plenario-chave { margin: 0; font-size: 11px; color: var(--muted); }

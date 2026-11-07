@@ -19,7 +19,7 @@ import type { Celula } from '../csv';
  */
 export const PERIODO_DA_FOTO = 12;
 /** Nome do painel de cada indicador, como no HTML. */
-export const NOME_DO_PAINEL: Record<string, string> = { empresas: 'Empresas', profissionais: 'Profissionais', fiscalizacao: 'Fiscalização', financeiro: 'Financeiro', atendimento: 'Atendimento', conselho: 'Gestão do Conselho' };
+export const NOME_DO_PAINEL: Record<string, string> = { empresas: 'Empresas', profissionais: 'Profissionais', fiscalizacao: 'Fiscalização', financeiro: 'Financeiro', atendimento: 'Atendimento', conselho: 'Colegiados' };
 /**
  * Como a medida lê cada indicador: pela soma dos municípios; pela soma das regionais (o município segue a sua regional); pelo estado
  * sem filtro e pela regional com filtro, porque as empresas não se somam entre lugares; ou só pelo estado.

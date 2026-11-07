@@ -5,7 +5,7 @@ Painéis de dados estratégicos do Crea-SP, prototipados aqui e implementados de
 ## Painéis e telas
 
 **Painel**:
-Conjunto de páginas para um público e uma regra de acesso (Empresas, Profissionais e formação, Fiscalização e malha fina, Financeiro, Atendimento, Gestão do Conselho, Presidência). O de Gestão do Conselho é só do colegiado: conselheiros, câmaras, Plenário e processos. No Power BI, cada painel é um relatório com o seu próprio modelo.
+Conjunto de páginas para um público e uma regra de acesso (Empresas, Profissionais e formação, Fiscalização e malha fina, Financeiro, Atendimento, Colegiados, Presidência). O de Colegiados (até 07/11/2026, Gestão do Conselho) é só do colegiado: conselheiros, câmaras, Plenário e processos. No Power BI, cada painel é um relatório com o seu próprio modelo.
 _Avoid_: dashboard, aba, relatório (quando se fala do protótipo)
 
 **Página**:
@@ -110,10 +110,10 @@ _Avoid_: mock, dados de teste, fake
 Fonte que depende de acordo com outro órgão. O bloco que a usa entra demonstrativo e com o marcador "!", e tem um plano B sem acordo.
 _Avoid_: convênio (quando ainda não existe), fonte externa
 
-## Gestão do Conselho
+## Colegiados
 
 **Colegiado**:
-Quem vota os processos: o Plenário ou uma das nove câmaras especializadas. É o filtro do alto do painel de Gestão do Conselho.
+Quem vota os processos: o Plenário ou uma das nove câmaras especializadas. É o filtro do alto do painel de Colegiados.
 _Avoid_: órgão julgador, instância (quando se fala de quem vota)
 
 **Processo**:

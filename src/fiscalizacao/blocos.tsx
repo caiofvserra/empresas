@@ -18,6 +18,7 @@ import type { CockpitCtx } from '../cockpit/contexto';
 import { avisoVazio, carregando, linhasEmpresas, nomeEmpresa } from '../cockpit/ui';
 import { classesPorPosto, cnpjComMascara, corDoTexto, rotuloTrimestre } from '../cockpit/formatos';
 import { etapasPca } from '../domain/mercado';
+import { useTamanho } from '../cockpit/tamanho';
 import type { PapelCno } from '../domain/parcerias';
 
 /**
@@ -194,16 +195,17 @@ export function AcoesOrigem({ ctx }: { ctx: CockpitCtx }) {
 const corStatus = (tokens: CockpitCtx['tokens']): Record<StatusMulta, string> => ({ Paga: tokens.good, 'Em prazo de defesa': tokens.heat[1], 'Em julgamento': tokens.warn, 'Dívida ativa': tokens.bad, Cancelada: tokens.muted });
 /** Anel com o valor das multas aplicadas no período, pela situação na data escolhida; o valor e a parte vão escritos em cada fatia. */
 export function DestinoMultas({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, resumo } = ctx, cores = corStatus(tokens), total = resumo.aplicada;
+  const { tokens, resumo } = ctx, cores = corStatus(tokens), total = resumo.aplicada, [ref, { h }] = useTamanho<HTMLDivElement>();
+  const cabe = h === 0 || h > 250; // o total no meio do anel só cabe com o bloco alto; em 1366 × 768 ele fica no cartão de multas, no alto da página
   const partes = (['Paga', 'Em prazo de defesa', 'Em julgamento', 'Dívida ativa', 'Cancelada'] as StatusMulta[]).map(status => ({ status, ...resumo.multas[status] })).filter(row => row.valor > 0);
   const option = useMemo(() => ({
     tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${brl(item.value)}, ${pct(item.value / Math.max(1, total) * 100)} do valor<br/>${int(partes[item.dataIndex].acoes.length)} autos<br/><span style="opacity:.75">clique para ver</span>` },
-    title: { text: brl(total), subtext: 'em multas aplicadas', left: 'center', top: 'center', itemGap: 2, textStyle: { color: tokens.ink, fontSize: 16, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 11 } },
+    title: { show: cabe, text: brl(total), subtext: 'em multas aplicadas', left: 'center', top: 'center', itemGap: 2, textStyle: { color: tokens.ink, fontSize: 16, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 11 } },
     series: [{ type: 'pie', radius: ['34%', '50%'], padAngle: 1.5, itemStyle: { borderRadius: 3, borderColor: tokens.surface, borderWidth: 1 },
       label: { show: true, position: 'outside', alignTo: 'edge', edgeDistance: 4, fontSize: 11, color: tokens.ink, lineHeight: 13, formatter: (item: any) => `${item.name} (${pct(item.value / Math.max(1, total) * 100)})\n{b|${brl(item.value)}}`, rich: { b: { fontWeight: 800, fontSize: 11 } } }, labelLine: { length: 8, length2: 0 },
       data: partes.map(row => ({ name: row.status, value: row.valor, itemStyle: { color: cores[row.status] } })) }],
-  }), [partes, tokens, total]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <Chart option={option} tokens={tokens} label="Valor das multas aplicadas no período pela situação na data escolhida" onPick={params => { const row = partes[params.dataIndex]; if (row) abrirAcoes(ctx, `Multas: ${row.status.toLowerCase()}`, row.acoes, 'Autos do período com a multa nesta situação na data escolhida.', row.status === 'Dívida ativa' ? 'A cobrança segue pela dívida ativa; confira se a empresa continua ativa na Receita.' : undefined); }} />;
+  }), [partes, tokens, total, cabe]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <div ref={ref} className="fs-anel"><Chart option={option} tokens={tokens} label="Valor das multas aplicadas no período pela situação na data escolhida" onPick={params => { const row = partes[params.dataIndex]; if (row) abrirAcoes(ctx, `Multas: ${row.status.toLowerCase()}`, row.acoes, 'Autos do período com a multa nesta situação na data escolhida.', row.status === 'Dívida ativa' ? 'A cobrança segue pela dívida ativa; confira se a empresa continua ativa na Receita.' : undefined); }} /></div>;
 }
 
 /* ---------- Resultado ---------- */

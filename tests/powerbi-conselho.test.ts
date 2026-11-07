@@ -21,23 +21,23 @@ import { arquivoDe, conferirCamposDosVisuais, conferirChavesUnicas, conferirNome
  * cartões e gráficos das cinco páginas refeitos a partir dos CSV pela regra que a medida DAX escreve, contra `quadroColegiado`, a
  * função das páginas do painel (a fonte da verdade), sem recorte e com o colegiado e a regional escolhidos.
  */
-const pacote = pacotePowerBi('conselho', dataset), arquivo = arquivoDe(pacote), lerCsv = leitorCsv(pacote), dax = daxDe(pacote, 'Conselho');
+const pacote = pacotePowerBi('conselho', dataset), arquivo = arquivoDe(pacote), lerCsv = leitorCsv(pacote), dax = daxDe(pacote, 'Colegiados');
 const PAGINAS = ['colegiado', 'processos', 'conselheiros', 'decisoes', 'representacao'];
 
 test('conselho: projeto PBIP com modelo, relatório com as cinco páginas, tema, dados e instruções', () => {
-  for (const caminho of ['Conselho.pbip', 'LEIA-ME.md', 'Conselho.Report/definition.pbir', 'Conselho.Report/definition/report.json', 'Conselho.SemanticModel/definition/model.tmdl', '.gitignore']) arquivo(caminho);
-  assert.deepEqual(JSON.parse(arquivo('Conselho.Report/definition/pages/pages.json')).pageOrder, PAGINAS);
-  conferirNomesDePasta(pacote, 'Conselho');
+  for (const caminho of ['Colegiados.pbip', 'LEIA-ME.md', 'Colegiados.Report/definition.pbir', 'Colegiados.Report/definition/report.json', 'Colegiados.SemanticModel/definition/model.tmdl', '.gitignore']) arquivo(caminho);
+  assert.deepEqual(JSON.parse(arquivo('Colegiados.Report/definition/pages/pages.json')).pageOrder, PAGINAS);
+  conferirNomesDePasta(pacote, 'Colegiados');
   assert.match(arquivo('LEIA-ME.md'), /C:\\\\CREA-SP\\\\powerbi\\\\conselho\\\\dados\\\\/);
-  assert.match(arquivo('Conselho.SemanticModel/definition/expressions.tmdl'), /powerbi\\conselho\\dados/);
+  assert.match(arquivo('Colegiados.SemanticModel/definition/expressions.tmdl'), /powerbi\\conselho\\dados/);
   // O painel é só do colegiado: nada de receita, orçamento ou atendimento.
   for (const caminho of ['dados/receitas.csv', 'dados/despesas.csv', 'dados/solicitacoes.csv', 'dados/foto-divida.csv']) assert.equal(pacote.has(caminho), false, caminho);
 });
 
 test('conselho: todo JSON vale pelo schema oficial, cada Tabela[Coluna] e [Medida] do DAX existe, e o lado "um" das relações tem chave única', () => {
   assert.ok(conferirSchemas(pacote) > 40);
-  assert.ok(conferirReferenciasDax(pacote, 'Conselho') >= 80);
-  assert.ok(conferirCamposDosVisuais(pacote, 'Conselho') >= 100);
+  assert.ok(conferirReferenciasDax(pacote, 'Colegiados') >= 80);
+  assert.ok(conferirCamposDosVisuais(pacote, 'Colegiados') >= 100);
   conferirChavesUnicas(pacote, modeloPowerBi('conselho'));
 });
 
@@ -46,7 +46,7 @@ test('cartões: os do painel em cada página, com o título do cartão, a compar
     const lista = CARTOES[pagina as keyof typeof CARTOES];
     assert.equal(lista.length, pagina === 'colegiado' ? 6 : 5, pagina);
     lista.forEach((cartao, i) => {
-      const visual = JSON.parse(arquivo(`Conselho.Report/definition/pages/${pagina}/visuals/${pagina}-cartao-${i + 1}/visual.json`)).visual;
+      const visual = JSON.parse(arquivo(`Colegiados.Report/definition/pages/${pagina}/visuals/${pagina}-cartao-${i + 1}/visual.json`)).visual;
       const valores = (visual.query.queryState.Values.projections as { field: { Measure: { Property: string } } }[]).map(row => row.field.Measure.Property);
       assert.equal(visual.visualContainerObjects.title[0].properties.text.expr.Literal.Value, `'${cartao.nome}'`);
       assert.deepEqual(valores, cartao.comparacao ? [cartao.nome, `Comparação: ${cartao.nome}`, `Detalhe: ${cartao.nome}`] : [cartao.nome, `Detalhe: ${cartao.nome}`]);
@@ -56,7 +56,7 @@ test('cartões: os do painel em cada página, com o título do cartão, a compar
   const fotos = new Set(lerCsv('dados/datas-das-fotos.csv').map(row => row.Data));
   for (const { Data: d } of lerCsv('dados/datas-referencia.csv')) assert.ok(fotos.has(fimDoMesUmAnoAntes(d)), d);
   // O filtro de colegiado é de uma escolha só: as medidas leem o colegiado escolhido.
-  const filtro = JSON.parse(arquivo('Conselho.Report/definition/pages/colegiado/visuals/colegiado-filtro-3/visual.json')).visual;
+  const filtro = JSON.parse(arquivo('Colegiados.Report/definition/pages/colegiado/visuals/colegiado-filtro-3/visual.json')).visual;
   assert.equal(filtro.visualContainerObjects.title[0].properties.text.expr.Literal.Value, "'Colegiado'");
   assert.match(dax('Conselheiros no terço'), /SELECTEDVALUE\('Colegiados'\[Colegiado\]\)/);
 });
@@ -66,7 +66,7 @@ test('nomes: a fila, as diárias e as deliberações mostram quem, e toda pessoa
   for (const row of lerCsv('dados/foto-fila.csv')) assert.ok(pessoas.has(row.Pessoa), `${row.Tramitação}: ${row.Pessoa}`);
   for (const row of lerCsv('dados/diarias.csv')) assert.ok(pessoas.has(row.Pessoa), row.Pessoa);
   for (const id of ['processos-fila', 'conselheiros-diarias']) {
-    const visual = JSON.parse(arquivo(`Conselho.Report/definition/pages/${id.split('-')[0]}/visuals/${id}/visual.json`)).visual;
+    const visual = JSON.parse(arquivo(`Colegiados.Report/definition/pages/${id.split('-')[0]}/visuals/${id}/visual.json`)).visual;
     assert.ok(visual.query.queryState.Values.projections.some((row: { field: { Column?: { Property: string } } }) => row.field.Column?.Property === 'Nome'), id);
   }
   assert.ok(lerCsv('dados/deliberacoes.csv').every(row => row['Proposta por'].split(' ').length >= 2));

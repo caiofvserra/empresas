@@ -3,10 +3,10 @@
  * numa tela de computador, sem rolagem; as linhas da grade dividem a altura da tela e os blocos têm larguras diferentes. O visual
  * enxuto (.is-enxuto) vem de empresas.css. Só abaixo de 700 px de altura, ou em telas estreitas, a página volta a rolar.
  */
-.ck-grid-fs-acoes { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+.ck-grid-fs-acoes { grid-template-rows: auto minmax(0, 1fr) minmax(0, .8fr) minmax(0, 1.35fr); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
   "mp mp mp mp mp me me me me me me me"
-  "mp mp mp mp mp ds ds ds ds mu mu mu"
+  "mp mp mp mp mp ds ds ds ds ds ds ds"
   "mp mp mp mp mp or or or or mu mu mu"; }
 .ck-grid-fs-resultado { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
@@ -46,3 +46,18 @@
 @media (max-height: 800px) { .side-list.is-cheia li:nth-child(n+5):not(.is-todos) { display: none; } }
 /* Em 1366, o bloco de empresa fechada é estreito: o valor vencido fica numa coluna menor, para os nomes das situações aparecerem. */
 @media (max-width: 1600px) { .split.is-wide.is-estreita { grid-template-columns: minmax(0, 1fr) 120px; } .split.is-wide.is-estreita .side-big b { font-size: 17px; } }
+
+/* O caminho das ações como linha de metrô (07/11/2026). */
+.fs-metro { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+.fs-metro svg { position: absolute; inset: 0; display: block; }
+.fs-metro-estacao { cursor: pointer; outline: none; }
+.fs-metro-estacao:hover circle, .fs-metro-estacao:focus-visible circle { stroke-width: 6; }
+.fs-metro-nome { font: 700 12px var(--body); }
+.fs-metro-num { font: 800 22px var(--display); letter-spacing: -.01em; }
+.fs-metro-num.is-ramal { font-size: 17px; }
+.fs-metro-parte { font: 700 12px var(--body); letter-spacing: 0; }
+.fs-metro-trecho { font: 400 11.5px var(--body); }
+.fs-metro-num.is-compacto { font-size: 16px; }
+.fs-metro-num.is-ramal.is-compacto { font-size: 13px; }
+.fs-metro-num.is-compacto .fs-metro-parte, .fs-metro-num.is-compacto .fs-metro-nome { font-size: 11.5px; }
+.fs-anel { flex: 1; min-height: 0; display: flex; flex-direction: column; }

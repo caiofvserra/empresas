@@ -260,7 +260,7 @@ const medidas: Medida[] = [
 ];
 
 export const modeloConselho: Modelo = {
-  nome: 'Conselho',
+  nome: 'Colegiados',
   parametros: [{ nome: PASTA_PARAMETRO, valor: 'C:\\CREA-SP\\powerbi\\conselho\\dados\\', descricao: 'Pasta onde estão os CSV do pacote (termina com \\). Troque em Transformar dados > Editar parâmetros e clique em Atualizar.' }],
   tabelas: [...tabelas, { nome: 'Medidas', descricao: 'Guarda as medidas do painel, em pastas por página.', colunas: [{ nome: 'Medidas', tipo: 'string', oculta: true }], medidas }],
   relacoes: [

@@ -6,6 +6,7 @@ import { Bloco, Indicador, avisoVazio } from '../cockpit/ui';
 import type { Exportavel } from '../cockpit/ui';
 import { canais } from '../domain/entidades';
 import { change, legenda } from '../gestao/comum';
+import { PlenarioDesenhado } from './plenario';
 import { abrirDeliberacoes, abrirMembros, nomeDe, parte, q } from './comum';
 
 /**
@@ -28,7 +29,7 @@ export default function PaginaRepresentacao({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ficha="k-conflitos" ctx={ctx} label="Propostos pela própria organização" value={int(c.conflitos.length)} sub="o conselheiro propôs repasse à organização que o indicou"
         onOpen={() => abrirDeliberacoes(ctx, 'Propostos pela própria organização', c.conflitos, 'Deliberações em que o conselheiro que propôs o repasse foi indicado pela organização que o recebe.', 'Não é irregularidade por si: confira na ata se o conselheiro declarou o impedimento e se absteve.')} />
     </section>
-    <Bloco ctx={ctx} id="pl" area="pl" title="Cadeiras e profissionais de cada câmara" exportar={exportarPlenario(ctx)}><Plenario ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="pl" area="pl" title="O Plenário, câmara por câmara" exportar={exportarPlenario(ctx)}><PlenarioDesenhado ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="mu" area="mu" title="Mulheres no Conselho e no registro" exportar={exportarMulheres(ctx)}><Mulheres ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="or" vazio={avisoVazio(!q(ctx).organizacoesComCadeira.length, 'Nenhuma organização com cadeira')} area="or" title="Organizações com cadeira e o que receberam" exportar={exportarOrganizacoes(ctx)}><Organizacoes ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="dl" vazio={avisoVazio(!q(ctx).deliberacoes.length, 'Nenhuma deliberação de repasse no período')} area="dl" title="Deliberações das atas" exportar={exportarDeliberacoes(ctx)}><Deliberacoes ctx={ctx} /></Bloco>
@@ -54,11 +55,6 @@ function Haltere({ ctx, linhas, nomes, a, b, label, rotuloA, rotuloB }: { ctx: C
 
 /* ---------- Cadeiras e profissionais por câmara ---------- */
 const exportarPlenario = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Câmara', 'Cadeiras', 'Cadeiras (%)', 'Profissionais ativos', 'Profissionais ativos (%)', 'Organizações'], linhas: () => q(ctx).plenario.map(row => [row.camara, row.cadeiras, row.parteCadeiras === null ? null : Math.round(row.parteCadeiras * 10) / 10, row.profissionais, row.parteProfissionais === null ? null : Math.round(row.parteProfissionais * 10) / 10, row.organizacoes.join(', ')]) });
-function Plenario({ ctx }: { ctx: CockpitCtx }) {
-  const rows = useMemo(() => [...q(ctx).plenario].sort((a, b) => (b.parteProfissionais ?? b.parteCadeiras ?? 0) - (a.parteProfissionais ?? a.parteCadeiras ?? 0)), [ctx.gestao]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <Haltere ctx={ctx} linhas={rows.map(row => row.camara)} nomes={['Cadeiras no Plenário', 'Profissionais ativos']} a={rows.map(row => row.parteCadeiras)} b={rows.map(row => row.parteProfissionais)}
-    rotuloA={i => `${int(rows[i].cadeiras)} cadeiras`} rotuloB={i => `${int(rows[i].profissionais)} profissionais`} label="Parte das cadeiras do Plenário e parte dos profissionais ativos de cada câmara" />;
-}
 
 /* ---------- Mulheres por câmara ---------- */
 const exportarMulheres = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Câmara', 'Conselheiras', 'Conselheiros e conselheiras', 'Conselheiras (%)', 'Mulheres no registro da modalidade (%)'], linhas: () => q(ctx).mulheres.map(row => [row.camara, row.conselheiras, row.conselheiros, row.parteConselho === null ? null : Math.round(row.parteConselho * 10) / 10, row.parteRegistro === null ? null : Math.round(row.parteRegistro * 10) / 10]) });

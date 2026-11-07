@@ -12,7 +12,7 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 | `src/fiscalizacao/` | Painel de Fiscalização e malha fina: Ações, Resultado, Malha fina, Contratos, Obras. Abre em `/fiscalizacao.html` |
 | `src/financeiro/` | Painel Financeiro: Arrecadação, Receita, Dívida e cobrança, Orçamento e despesa, com a receita, a despesa e os gastos reais da Transparência. Abre em `/financeiro.html` |
 | `src/atendimento/` | Painel de Atendimento: prazos, canais, distância até a unidade e coworkings. Abre em `/atendimento.html` |
-| `src/conselho/` | Painel de Gestão do Conselho, só do colegiado: Câmaras e plenário, Entidades e escolas (em reconstrução). Abre em `/conselho.html` |
+| `src/conselho/` | Painel de Colegiados (antes Gestão do Conselho), só do colegiado: Câmaras e plenário, Entidades e escolas (em reconstrução). Abre em `/conselho.html` |
 | `src/gestao/` | Peças comuns aos painéis Financeiro, Atendimento e Conselho (mapa por município, listas ao clicar, estilo) |
 | `src/menu/`, `index.html` | Menu inicial do site: lista os sete painéis (Colegiados é o painel de Gestão do Conselho) com as páginas de cada um. Em cada painel do site, o botão Voltar, no alto do menu lateral, traz de volta ao menu |
 | `.github/workflows/pages.yml` | Publica o site no GitHub Pages a cada merge na main (https://caiofvserra.github.io/empresas/). Em Settings > Pages, a origem tem de ser "GitHub Actions" |
@@ -26,7 +26,7 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 | `observatorio/` | Plano em etapas (revisão 2), atlas de 98 fontes públicas e catálogo unificado em CSV e XLSX, publicados com os nomes anteriores (Observatório, Prumo) |
 | `planejamento-fontes-2026-10/` | Levantamento de 29/10/2026: 104 entradas de fontes, 34 casos de uso com fórmula, arquitetura, revisão independente e revisão crítica do V18. Retrato datado |
 | `scripts/refresh-sources.ts`, `scripts/integrations/`, `src/integrations/catalog.ts` | Coletor PNCP com histórico, cobertura e testes; ponto de partida dos conectores |
-| `src/powerbi/`, `entrega/powerbi/<painel>/` | Gerador dos pacotes Power BI e os pacotes dos painéis da Presidência, de Empresas, Financeiro, Atendimento e Gestão do Conselho, que abrem no Power BI Desktop pelo `.pbip` de cada um (`npm run build:powerbi`, ver [docs/POWERBI.md](docs/POWERBI.md)) |
+| `src/powerbi/`, `entrega/powerbi/<painel>/` | Gerador dos pacotes Power BI e os pacotes dos painéis da Presidência, de Empresas, Financeiro, Atendimento e Colegiados, que abrem no Power BI Desktop pelo `.pbip` de cada um (`npm run build:powerbi`, ver [docs/POWERBI.md](docs/POWERBI.md)) |
 | `integrations/power-query/`, `integrations/powerbi-theme-creasp-v13.json` | Consultas de exemplo para SQL Server e Db2 via gateway e o tema Power BI |
 | `public/data/engineer-statistics/`, `archives/data-publica-v6/` | Somente os arquivos públicos que o painel lê |
 
