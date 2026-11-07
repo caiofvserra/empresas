@@ -18,6 +18,7 @@ import type { FichaBloco } from './fichas';
 import type { Profissional } from '../domain/profissionais';
 import { statusAjuda } from './cruzamentos';
 import type { StatusLigacao } from './cruzamentos';
+import { variacaoPlana } from './formatos';
 
 /**
  * Componentes do cockpit V20: bloco com ampliação e ficha (i), cartão de indicador com ficha e selo de dado real.
@@ -34,18 +35,24 @@ export function Parceria({ id, compacto }: { id: ParceriaId; compacto?: boolean 
 }
 /** Dados de um bloco para exportar em CSV: cabeçalho e linhas, calculados só quando o botão é apertado. */
 export interface Exportavel { cabecalho: string[]; linhas: () => Celula[][] }
-export function Bloco({ ctx, id, area, title, question, help, badge, actions, children, className, exportar }: { ctx: CockpitCtx; id: string; area: string; title: string; question?: string; help?: string; badge?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; exportar?: Exportavel }) {
+/**
+ * Frase do bloco quando o recorte não tem nenhuma empresa com atividade de engenharia (07/11/2026, crítica de design): antes os
+ * anéis e o mapa de árvore desenhavam fatias e caixas com zero, e a tela parecia ter proporções que não existiam.
+ */
+export const recorteVazio = (ctx: CockpitCtx) => ctx.model.companyFacts.some(row => row.active || row.eligibleEstablishments > 0) ? undefined
+  : 'Nenhuma empresa neste recorte. Tire um dos filtros do alto da tela.';
+export function Bloco({ ctx, id, area, title, question, help, badge, actions, children, className, exportar, vazio }: { ctx: CockpitCtx; id: string; area: string; title: string; question?: string; help?: string; badge?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; exportar?: Exportavel; vazio?: string }) {
   // No painel de Empresas o visual fica enxuto: a pergunta e a leitura do bloco vão para o (i), e o bloco mostra só o título.
   const focus = ctx.focus === id, ficha = fichaDe(ctx.page, id), leitura = ctx.enxuto ? [question, help].filter(Boolean).join(' ') || undefined : help;
   const alvo = useRef<HTMLElement>(null);
   return <section ref={alvo} className={`tile ck-tile ${focus ? 'is-focus' : ''} ${ficha?.parceria ? 'is-parceria' : ''} ${className ?? ''}`} style={{ gridArea: area }} aria-label={title}>
     <header><div><h3>{title}<Parcerias ids={parceriasDe(ficha)} />{badge}</h3>{question && !ctx.enxuto && <p>{question}</p>}</div>
       <div className="tile-tools">{actions}
-        <ExportaPop ctx={ctx} titulo={title} exportar={exportar} alvo={alvo} />
+        {!vazio && <ExportaPop ctx={ctx} titulo={title} exportar={exportar} alvo={alvo} />}
         <FichaPop ficha={ficha} titulo={title} leitura={leitura} anchor={ctx.anchor} />
         <button className="icon-btn ghost-icon" aria-label={focus ? `Restaurar ${title}` : `Ampliar ${title}`} title={focus ? 'Restaurar (Esc)' : 'Ampliar'} onClick={() => ctx.toggleFocus(id)}>{focus ? <Minimize2 size={14} /> : <Maximize2 size={14} />}</button>
       </div></header>
-    <div className="tile-body">{children}</div>
+    <div className="tile-body">{vazio ? <p className="tile-vazio" role="status">{vazio}</p> : children}</div>
   </section>;
 }
 
@@ -113,9 +120,10 @@ export const Selo = ({ data }: { data: string }) => <span className="selo" title
 export interface Variacao { value: number | null; kind?: 'pct' | 'pp'; goodUp?: boolean; label?: string }
 export function Var({ value, kind = 'pct', goodUp = true, label = 'em relação ao ano anterior' }: Variacao) {
   if (value === null || !Number.isFinite(value)) return <span className="delta is-none">sem base de comparação</span>;
-  const good = goodUp ? value >= 0 : value <= 0, Icon = Math.abs(value) < 0.5 ? Minus : value > 0 ? ArrowUpRight : ArrowDownRight;
+  const plana = variacaoPlana(value, kind);
+  const good = goodUp ? value >= 0 : value <= 0, Icon = plana ? Minus : value > 0 ? ArrowUpRight : ArrowDownRight;
   const text = kind === 'pp' ? `${value > 0 ? '+' : ''}${value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} p.p.` : `${value > 0 ? '+' : ''}${pct(value)}`;
-  return <span className={`delta ${good ? 'is-good' : 'is-bad'}`}><Icon size={12} />{text}<em>{label}</em></span>;
+  return <span className={`delta ${plana ? 'is-flat' : good ? 'is-good' : 'is-bad'}`}><Icon size={12} />{plana ? (kind === 'pp' ? '0 p.p.' : '0%') : text}<em>{label}</em></span>;
 }
 
 /**

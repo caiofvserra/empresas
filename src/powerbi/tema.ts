@@ -8,7 +8,7 @@ export function temaCreaSp(nome: string) {
     $schema: 'https://raw.githubusercontent.com/microsoft/powerbi-desktop-samples/main/Report%20Theme%20JSON%20Schema/reportThemeSchema-2.159.json',
     name: nome,
     dataColors: ['#3182CE', '#FABD07', '#805AD5', '#2D3748', '#2C9C8F', '#082D74', '#DD8A0B', '#A9C9EE'],
-    good: '#007061', neutral: '#DD8A0B', bad: '#C53030',
+    good: '#007061', neutral: '#DD8A0B', bad: '#B02525',
     maximum: '#082D74', center: '#A9C9EE', minimum: '#EAF1FA', null: '#DCE3EC',
     firstLevelElements: '#1A202C', secondLevelElements: '#4A5568', thirdLevelElements: '#DCE3EC', fourthLevelElements: '#4A5568',
     background: '#FFFFFF', secondaryBackground: '#EAF1FA', tableAccent: '#082D74',
