@@ -215,3 +215,22 @@ Regras:
 
 O cruzamento com o cadastro do Crea-SP fica na base interna, pelas consultas de `integrations/sql/receita-x-cadastro.sql`: estabelecimentos sem registro (registro obrigatório e, à parte, a analisar), parte do mercado registrada por município, registros por câmara, registradas com CNPJ baixado ou inapto, registradas fora da lista ou fora de SP, sócios que podem ser profissionais e sócio que é responsável técnico da própria empresa. A parte do mercado por câmara depende de uma tabela oficial que ligue cada atividade a uma câmara, que ainda não existe. No painel, o cadastro ainda é o cenário demonstrativo, e misturar o real com o fictício daria número sem sentido. A regra do sócio (nome igual e os seis dígitos visíveis do CPF iguais; com mais de um profissional no par, é homônimo) está em `scripts/integrations/receita.ts`, com teste.
 
+
+## Empresas sancionadas: CEIS e CNEP (07/11/2026)
+
+A CGU publica todo dia, sem credencial, dois cadastros de sanções: o CEIS, com as empresas inidôneas, suspensas ou impedidas de contratar com a administração, e o CNEP, com as punidas pela Lei Anticorrupção (Lei 12.846/2013). O coletor `scripts/sancoes-cgu.ts` baixa os dois e grava em `var/sancoes`, fora do Git, o `sancoes-pj.csv` para a base interna:
+
+```bash
+NODE_USE_ENV_PROXY=1 node --import tsx scripts/sancoes-cgu.ts --data 2026-11-07
+```
+
+O `NODE_USE_ENV_PROXY=1` só é preciso atrás de proxy. O arquivo do dia sai no fim da tarde: sem ele, o coletor usa o mais recente dos dez dias anteriores, e cada cadastro pode ficar com um dia diferente. Sem `--data`, vale o dia de hoje em Brasília. Ainda falta agendar a coleta diária na máquina da rede interna. No arquivo de 06/11/2026 havia 16.404 sanções contra empresas, no país inteiro: 9.193 empresas não podiam contratar com alguma parte da administração, 1.845 delas em todas as esferas, e 1.025 tinham sanção do CNEP em vigor.
+
+Regras (`scripts/integrations/sancoes.ts`, com teste):
+
+- Só entra pessoa jurídica. CPF de sancionado não vai para o staging.
+- Impede contratar: impedimento ou proibição de contratar (Lei 14.133/2021, art. 156, III, e a proibição da Lei de Improbidade, Lei 8.429/1992, art. 12), inidoneidade (art. 156, IV, e Lei 8.666/1993, art. 87, IV) e suspensão de licitar (Lei 8.666/1993, art. 87, III). A suspensão ou interdição das atividades da Lei Anticorrupção não entra.
+- Alcance: vale o que o órgão sancionador informou à CGU (todas as esferas, a esfera do órgão, a esfera e o poder do órgão, só o órgão ou outro órgão). Quando não informou, a inidoneidade vale em todas as esferas (Lei 14.133/2021, art. 156, § 5º), e as outras ficam "sem informação". O informado nunca é trocado pela regra da lei, porque a sanção pode vir de outra lei ou de decisão judicial.
+- Em vigor na data: a sanção começou até ela e não terminou antes dela. Sem data final, segue em vigor.
+
+O cruzamento fica na base interna, pelas consultas de `integrations/sql/sancoes-x-cadastro.sql`, pela raiz do CNPJ: empresas registradas com sanção que impede contratar, a contagem por câmara e alcance, as registradas no CNEP e os contratos de SP no PNCP com fornecedor sancionado em todas as esferas na data do contrato. O painel não ganhou página nova: o número entra num bloco das páginas que já existem quando o cadastro real chegar, porque cruzar a sanção real com o cadastro fictício não daria número com sentido.

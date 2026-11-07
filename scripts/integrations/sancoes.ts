@@ -1,0 +1,85 @@
+/**
+ * Sanções da CGU contra empresas (07/11/2026): o CEIS (inidôneas, suspensas e impedidas de contratar) e o CNEP (punidas pela
+ * Lei Anticorrupção, Lei 12.846/2013), em ZIP diário e sem credencial no Portal da Transparência. O cruzamento com as empresas
+ * registradas no Crea-SP roda na base interna (integrations/sql/sancoes-x-cadastro.sql). Funções puras: o download fica em
+ * scripts/sancoes-cgu.ts. Só pessoa jurídica: CPF de sancionado não entra no staging.
+ */
+import { normalizar, registros } from './csv-ponto-e-virgula.ts';
+
+/** Onde a sanção vale, como o órgão sancionador informou à CGU. Sem informação, só a inidoneidade ganha alcance pela lei. */
+export type AlcanceSancao = 'Todas as esferas' | 'Esfera do órgão' | 'Esfera e poder do órgão' | 'Só o órgão' | 'Outro órgão' | 'Sem informação';
+export type CadastroCgu = 'CEIS' | 'CNEP';
+export interface SancaoPj {
+  cadastro: CadastroCgu; codigo: string; cnpj: string; cnpjBasico: string; nome: string; processo: string;
+  categoria: string; impedeContratar: boolean; alcance: AlcanceSancao;
+  inicio: string; fim: string | null; orgao: string; ufOrgao: string; esfera: string; fundamentacao: string;
+}
+
+/** Começo do nome de cada coluna, sem acento: a CGU já mudou cabeçalho, e "ABRAGÊNCIA" está escrito assim no arquivo. */
+const colunas = {
+  cadastro: ['cadastro'], codigo: ['codigo da sancao'], tipo: ['tipo de pessoa'], documento: ['cpf ou cnpj'], nome: ['nome do sancionado'],
+  processo: ['numero do processo'], categoria: ['categoria da sancao'], inicio: ['data inicio'], fim: ['data final'],
+  abrangencia: ['abragencia', 'abrangencia'], orgao: ['orgao sancionador'], uf: ['uf orgao'], esfera: ['esfera orgao'], fundamentacao: ['fundamentacao'],
+} as const;
+
+/**
+ * Impede contratar com a administração: impedimento ou proibição de contratar (Lei 14.133/2021, art. 156, III, e a proibição
+ * da Lei de Improbidade, Lei 8.429/1992, art. 12), inidoneidade (Lei 14.133/2021, art. 156, IV; Lei 8.666/1993, art. 87, IV) e
+ * a suspensão de licitar e contratar (Lei 8.666/1993, art. 87, III). A suspensão ou interdição das atividades (Lei 12.846/2013,
+ * art. 19, II) é outra coisa e não entra.
+ */
+function impedeContratar(categoria: string) {
+  const c = normalizar(categoria);
+  return /impedimento|proibicao de contratar|inidoneidade/.test(c) || (c.startsWith('suspensao') && !c.includes('interdicao'));
+}
+
+/**
+ * O alcance que o órgão sancionador informou. Quando ele não informou, a inidoneidade vale em toda a administração pública
+ * (Lei 14.133/2021, art. 156, § 5º); as outras ficam sem informação. O alcance informado nunca é trocado pela regra da lei,
+ * porque a sanção pode vir de outra lei ou de decisão judicial com alcance próprio.
+ */
+function alcance(categoria: string, abrangencia: string): AlcanceSancao {
+  const a = normalizar(abrangencia);
+  if (a.startsWith('todas as esferas')) return 'Todas as esferas';
+  if (a.startsWith('em todos os poderes da esfera')) return 'Esfera do órgão';
+  if (a.startsWith('na esfera e no poder')) return 'Esfera e poder do órgão';
+  if (a.startsWith('no orgao sancionador')) return 'Só o órgão';
+  if (a.startsWith('em outro orgao')) return 'Outro órgão';
+  return normalizar(categoria).includes('inidoneidade') ? 'Todas as esferas' : 'Sem informação';
+}
+
+const dataIso = (texto: string) => { const m = texto.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? `${m[3]}-${m[2]}-${m[1]}` : null; };
+const nomeDaEsfera = (texto: string) => (texto ? texto[0].toUpperCase() + texto.slice(1).toLowerCase() : '');
+
+/** Lê o CSV do CEIS ou do CNEP (";", entre aspas) pelo nome das colunas e devolve só as sanções contra pessoa jurídica (CNPJ com 14 dígitos). */
+export function lerSancoes(texto: string): SancaoPj[] {
+  const [primeira = [], ...linhas] = registros(texto.replace(/^﻿/, '')), cabecalho = primeira.map(normalizar);
+  const indice = Object.fromEntries(Object.entries(colunas).map(([campo, trechos]) => [campo, cabecalho.findIndex(c => trechos.some(t => c.startsWith(t)))])) as Record<keyof typeof colunas, number>;
+  if (indice.documento < 0) throw new Error(`O arquivo da CGU não tem a coluna CPF OU CNPJ DO SANCIONADO. Cabeçalho lido: ${primeira.join(';')}`);
+  const saida: SancaoPj[] = [];
+  for (const campos of linhas) {
+    const valor = (campo: keyof typeof colunas) => (indice[campo] < 0 ? '' : campos[indice[campo]] ?? '').trim();
+    const cnpj = valor('documento').replace(/\D/g, ''), cadastro = valor('cadastro').toUpperCase();
+    if (cnpj.length !== 14 || valor('tipo') === 'F' || (cadastro !== 'CEIS' && cadastro !== 'CNEP')) continue; // tipo vazio com 14 dígitos é empresa
+    const categoria = valor('categoria');
+    saida.push({
+      cadastro, codigo: valor('codigo'), cnpj, cnpjBasico: cnpj.slice(0, 8), nome: valor('nome'), processo: valor('processo'),
+      categoria, impedeContratar: impedeContratar(categoria), alcance: alcance(categoria, valor('abrangencia')),
+      inicio: dataIso(valor('inicio')) ?? '', fim: dataIso(valor('fim')), orgao: valor('orgao'), ufOrgao: valor('uf'), esfera: nomeDaEsfera(valor('esfera')),
+      fundamentacao: valor('fundamentacao'),
+    });
+  }
+  return saida;
+}
+
+/** As sanções em vigor na data (AAAA-MM-DD): começaram até ela e não terminaram antes dela. Sem data final, seguem em vigor. */
+export const vigentes = (sancoes: SancaoPj[], dia: string) => sancoes.filter(s => s.inicio && s.inicio <= dia && (s.fim === null || s.fim >= dia));
+
+/** O CSV de staging que o coletor grava e o SQL do cruzamento lê. Valores em texto, datas em AAAA-MM-DD, vazio quando não há. */
+export const colunasStagingSancoes = {
+  arquivo: 'sancoes-pj.csv', tabela: 'stg.cgu_sancao',
+  colunas: ['data_arquivo', 'cadastro', 'codigo', 'cnpj', 'cnpj_basico', 'nome', 'categoria', 'impede_contratar', 'alcance', 'inicio', 'fim', 'orgao', 'uf_orgao', 'esfera', 'processo', 'fundamentacao'],
+} as const;
+
+export const linhaStaging = (dataArquivo: string, s: SancaoPj) => [dataArquivo, s.cadastro, s.codigo, s.cnpj, s.cnpjBasico, s.nome, s.categoria,
+  s.impedeContratar ? 'Sim' : 'Não', s.alcance, s.inicio, s.fim ?? '', s.orgao, s.ufOrgao, s.esfera, s.processo, s.fundamentacao];

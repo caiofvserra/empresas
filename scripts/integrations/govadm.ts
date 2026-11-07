@@ -7,6 +7,7 @@
  * `saida/relatorio_processos_AAAAMMDD_HHMM_limpo.csv`. Funções puras: a leitura dos arquivos fica em scripts/govadm-diario.ts.
  * O histórico tem o nome do responsável e fica fora do Git; o quadro por câmara e fase só tem números.
  */
+import { normalizar, registros } from './csv-ponto-e-virgula.ts';
 
 /** O que o histórico guarda de cada processo numa cópia: onde está, em que fase e com quem. */
 export interface SituacaoGovadm { lotacao: string; fase: string; responsavel: string; cargo: string }
@@ -16,8 +17,6 @@ export interface PeriodoNaFase extends SituacaoGovadm { desde: string; ate: stri
 /** As cópias registradas (data e lotações que vieram em cada uma) e os períodos de cada processo. */
 export interface HistoricoGovadm { copias: { data: string; lotacoes: string[] }[]; processos: Record<string, PeriodoNaFase[]> }
 
-/** Igual ao `normalizar` do extracao-govadm (NFKD, sem acento, minúsculo): "Nº" vira "no". */
-const normalizar = (texto: string) => texto.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
 /** Nomes que o GovAdm já usou para cada coluna, como no extracao-govadm (extracao/metricas.py). O cargo pode faltar. */
 const colunas = { processo: ['Nº do Processo', 'N° do Processo', 'Numero do Processo'], lotacao: ['Lotação Atual'], responsavel: ['Responsável', 'Responsável Atual'], fase: ['Fase', 'Fase Atual'], cargo: ['Cargo'] } as const;
 const obrigatorias: (keyof typeof colunas)[] = ['processo', 'lotacao', 'responsavel', 'fase'];
@@ -25,21 +24,6 @@ const obrigatorias: (keyof typeof colunas)[] = ['processo', 'lotacao', 'responsa
 const arquivado = (fase: string) => /(^|[^a-z])arquivad[oa]s?($|[^a-z])/.test(normalizar(fase));
 /** Dias acima dos quais o processo conta como parado no quadro por câmara e fase. */
 export const DIAS_PARADO = 90;
-
-/** Registros de um CSV com ";": campo entre aspas pode ter ponto e vírgula, aspas dobradas e quebra de linha (como grava o csv do Python). */
-function registros(texto: string): string[][] {
-  const saida: string[][] = []; let campos: string[] = [], atual = '', aspas = false;
-  for (let i = 0; i < texto.length; i++) {
-    const c = texto[i];
-    if (aspas) { if (c === '"' && texto[i + 1] === '"') { atual += '"'; i++; } else if (c === '"') aspas = false; else atual += c; continue; }
-    if (c === '"') aspas = true;
-    else if (c === ';') { campos.push(atual); atual = ''; }
-    else if (c === '\n' || c === '\r') { if (c === '\r' && texto[i + 1] === '\n') i++; campos.push(atual); saida.push(campos); campos = []; atual = ''; }
-    else atual += c;
-  }
-  if (atual || campos.length) { campos.push(atual); saida.push(campos); }
-  return saida;
-}
 
 /** Lê o CSV limpo (";", com ou sem BOM) pelo nome das colunas. Linha sem número de processo e processo arquivado ficam de fora. */
 export function lerRelatorio(texto: string): LinhaGovadm[] {
