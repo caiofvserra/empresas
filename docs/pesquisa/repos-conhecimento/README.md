@@ -8,6 +8,7 @@ Leitura de 07/11/2026, feita com a skill `research` do Matt (quatro leituras em 
 | [conselho-govadm-iadecisao.md](conselho-govadm-iadecisao.md) | `caiofvserra/conselho` (QUEDA), `caiofvserra/extracao-govadm`, `caiofvserra/iadecisao` |
 | [estatisticas-receita.md](estatisticas-receita.md) | `caiofvserra/engineer-statistics`, `caiofvserra/receita-socios-eng`, `caiofvserra/pncp-engineering-activity` |
 | [orquestrador.md](orquestrador.md) | `caiofvserra/orquestradorfiscaliza` |
+| [pncp-tcc.md](pncp-tcc.md) | `caiofvserra/pncp-engineering-analytics` e `caiofvserra/engineering-analytics-pncp` (acrescentados em 07/11/2026) |
 
 ## O que cada repositório é, em uma linha
 
@@ -18,7 +19,9 @@ Leitura de 07/11/2026, feita com a skill `research` do Matt (quatro leituras em 
 - **engineer-statistics**: site de jornalismo de dados sobre engenheiros e o piso salarial. Tem um bruto real do SIC do Confea (30/08/2026) e agregados reais do Portal da Transparência do Crea-SP.
 - **receita-socios-eng**: pipeline PySpark sobre o CNPJ aberto da Receita, com CNAE elegível e sócios. Só código.
 - **orquestradorfiscaliza**: auditor externo do próprio Crea-SP (Implanta, PNCP, CEIS/CNEP, Receita, DataJud, TCU). Só código; o achado novo é o leitor de documentos do PNCP que procura ART e CREA no processo.
-- **pncp-engineering-activity**: vazio. Um commit sem arquivos. Num ramo do GitHub que não veio para a cópia local há uma planilha de portfólio de inovação (23 projetos).
+- **pncp-engineering-activity**: vazio. Um commit sem arquivos. Num ramo do GitHub que não veio para a cópia local há uma planilha de portfólio de inovação (23 projetos). O Caio o trocou pelos dois repositórios abaixo.
+- **pncp-engineering-analytics**: repositório do TCC do Caio (268 commits, de 05/05 a 01/09/2026, e um ramo de 12/09/2026 que só mexe na apresentação e no caderno enxuto). Procura, entre os contratos de SP publicados no PNCP como serviços gerais, os que são de engenharia sem o rito (ART, projeto básico, responsável técnico). Traz o relatório final, as apresentações e os números agregados da rodada de 31/07/2026.
+- **engineering-analytics-pncp**: cópia limpa do TCC enviada em 01/09/2026 (4 commits), com o caderno final idêntico ao do outro repositório e as planilhas de CNAEs do Crea e de GREs. É a que o `src/domain/pncp-public-aggregate.json` já cita.
 
 ## O que é dado real e o que é só código
 
@@ -28,6 +31,7 @@ Dado real que já pode entrar:
 2. **Portal da Transparência do Crea-SP, 2013 a 2026**, em agregados: o `conta-do-conselho.json` já está em `public/data/engineer-statistics/`; o `orgao-maquina.json`, com a receita (ART com 34,81% em 2025, receita de R$ 578,6 mi contra R$ 465,5 mi de despesa), anuidades e dívida ativa, foi removido do site e se recupera com `git show f51b71e^:data/orgao-maquina.json` no engineer-statistics.
 3. **Sessão 2138 da CEEC, 16/07/2026** (iadecisao, anonimizada): 24 decisões, 8 pelo art. 59, 3 multas somando R$ 10.801,42. Serve de amostra do formato, não de indicador.
 4. **Taxas oficiais da Tabela B de 2024** (ARTs, `docs/fontes/normas`).
+5. **Rodada do TCC sobre o PNCP, 31/07/2026** (`pncp-engineering-analytics/docs/apresentacao/relatorio_vivo_atual.md`), em agregados: contratos de SP de jan/2024 a mai/2026, 126.465 na base de trabalho, 117.882 de serviços gerais, 31.805 suspeitos, 11.922 confirmados como engenharia pelo modelo de linguagem local e pelo engenheiro. Desses, 9.841 têm o rito no processo apesar do rótulo errado, 596 têm rito parcial e 525 não têm nenhuma evidência de rito. No conjunto reservado: precisão de 78,8%, recall de 89,7% e ROC-AUC de 0,947. A lista nominal dos 525 casos não está no repositório (fica no Google Drive do autor) e não traz o CNPJ do fornecedor.
 
 O resto é coletor pronto (QUEDA, orquestrador, extracao-govadm, iadecisao, fetch-confea), especificação (ARTs) ou número transcrito de fonte secundária (salários por CBO, CAGED, INEP no engineer-statistics). O próprio `src/integrations/catalog.ts` já exclui o snapshot do engineer-statistics como fonte automática, e isso deve continuar.
 
@@ -50,6 +54,7 @@ O resto é coletor pronto (QUEDA, orquestrador, extracao-govadm, iadecisao, fetc
 
 ### Fiscalização e malha fina
 
+- **Serviço geral que é engenharia (TCC do Caio).** É a regra que falta à malha fina: contrato publicado como serviço geral cujo objeto é obra ou serviço de engenharia, sem rito no processo. O TCC entrega o método completo (embeddings, aprendizado positivo-não-rotulado, limiar, revisão por modelo local, leitura dos documentos), o funil da rodada de 31/07/2026 (de 117.882 serviços gerais a 525 sem rito) e a concentração por município: Mococa (111) e Lençóis Paulista (74) somam 35% dos 525. Dos 493 casos com CNPJ, 26,4% têm contratado sem atividade de registro obrigatório, contra 5,5% nos casos com rito. Para dizer "sem ART" falta cruzar o CNPJ e o contrato com a base de ART e de registro do CreaNet. Dois cuidados: os 12 marcadores do TCC acendem em "art." de artigo e em "CREAS", e a regra de dois marcadores quaisquer aceita genéricos, o que tende a inflar os 9.841 "com rito" e a subestimar os 525; o orquestrador já corrigiu isso (abaixo). A planilha de CNAEs do TCC é igual ao `src/domain/cnae-catalog.json`, e o `src/domain/gre-municipios.json` é melhor que o GRE.xlsx dele.
 - **Contrato de engenharia sem ART.** O orquestrador lê TR, edital e contrato no PNCP atrás de oito marcadores (ART, CREA, engenheiro responsável...) e exige dois, sendo um específico de engenharia (`checks/rito_engenharia.py`). Hoje roda só sobre contratos do Crea-SP; a função para varrer os contratos de órgãos de SP (`pncp_contratos_por_periodo`) existe e não é usada. Com a base de ART do CreaNet (CNPJ da contratada e número do contrato), o candidato vira "contrato de engenharia sem ART registrada", o card que hoje é demonstrativo.
 - **Aditivo como gatilho de ART complementar.** `valorAcumulado` acima de 1,25 vez o `valorGlobal` no PNCP, e acréscimo acima de 25% (Lei 14.133, art. 125). Para a fiscalização, aditivo de obra pede ART complementar.
 - **Contratada sem registro.** Fornecedor do PNCP × cadastro de PJ do CreaNet, priorizado pelo CNAE de construção. Nenhum repositório faz; é o cruzamento interno × externo de maior valor.
@@ -85,6 +90,7 @@ Este bloco foi passado à thread que repensa o painel de Gestão do Conselho.
 
 ### Presidência
 
+- Três números do TCC sobre o PNCP: cerca de 12 mil contratos de engenharia publicados como serviço geral em SP, 9.841 com rito apesar do rótulo e 525 sem nenhuma evidência de rito (jan/2024 a mai/2026).
 - Crea-SP contra os outros 26 Creas pelo SIC (ativos por 100 mil habitantes, % de ativos, % de mulheres).
 - **Painel de exposição:** o que um auditor externo encontra e pediria por LAI ao Crea-SP. O orquestrador lista as bases que o portal publica vazias e os achados de gravidade alta; números citados no código, como R$ 1,33 bi pagos ao favorecido genérico "DIVERSOS FUNCIONARIOS" e 965 de 965 contratos sem número de licitação, são hipóteses a conferir contra a contabilidade interna antes que um terceiro os use.
 - Acórdãos do TCU sobre o conselho.
@@ -94,7 +100,7 @@ Este bloco foi passado à thread que repensa o painel de Gestão do Conselho.
 1. **CNPJ da Receita × cadastro de empresas** (receita-socios-eng ajustado). Só dado aberto, mensal, e destrava o painel de Empresas e a lista de fiscalização.
 2. **Receita e despesa reais do portal** no Financeiro, a partir do que já está no engineer-statistics, e o coletor do Implanta do QUEDA para manter atualizado.
 3. **GOV ADM diário** no painel de Gestão do Conselho, guardando uma foto por dia para ter dias na fase.
-4. **Contrato de engenharia sem ART** no PNCP de órgãos de SP, com o leitor de documentos do orquestrador e a base de ART do CreaNet.
+4. **Contrato de engenharia sem ART** no PNCP de órgãos de SP: o modelo do TCC para achar os serviços gerais que são engenharia, o leitor de documentos do orquestrador (regra mais rigorosa) para o rito e a base de ART do CreaNet para confirmar. Começar pedindo ao autor a lista dos 525 e relendo os documentos com a regra do orquestrador.
 5. **CEIS/CNEP × empresas registradas**, diário e sem credencial.
 
 ## Cuidados
