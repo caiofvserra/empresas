@@ -18,9 +18,9 @@ import type { Beneficiario } from '../domain/pessoas-conselho';
 export const g = (ctx: CockpitCtx): Gestao => ctx.gestao!;
 export const change = (now: number, before: number | null | undefined) => before ? (now - before) / before * 100 : null;
 export const compacto = (value: number) => value.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 });
-export const legenda = (tokens: CockpitCtx['tokens']) => ({ top: 0, left: 0, itemWidth: 10, itemHeight: 8, itemGap: 10, textStyle: { color: tokens.muted, fontSize: 10.5 } });
-export const eixoCategoria = (tokens: CockpitCtx['tokens'], data: string[], extra: Record<string, unknown> = {}) => ({ type: 'category', data, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 }, ...extra });
-export const eixoValor = (tokens: CockpitCtx['tokens'], extra: Record<string, unknown> = {}) => ({ type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 10, formatter: compacto }, ...extra });
+export const legenda = (tokens: CockpitCtx['tokens']) => ({ top: 0, left: 0, itemWidth: 10, itemHeight: 8, itemGap: 10, textStyle: { color: tokens.muted, fontSize: 11 } });
+export const eixoCategoria = (tokens: CockpitCtx['tokens'], data: string[], extra: Record<string, unknown> = {}) => ({ type: 'category', data, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 11 }, ...extra });
+export const eixoValor = (tokens: CockpitCtx['tokens'], extra: Record<string, unknown> = {}) => ({ type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 11, formatter: compacto }, ...extra });
 const dataBr = (value: string) => value.split('-').reverse().join('/');
 
 /** As diárias de uma pessoa, mês a mês, no painel lateral (Financeiro e Conselho). */

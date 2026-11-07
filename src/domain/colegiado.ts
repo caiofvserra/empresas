@@ -330,12 +330,13 @@ export function quadroColegiado(base: BaseColegiado, modelo: ModeloProfissionais
   const autosVotados = desd.filter(d => inside(d.processo.julgadoEm, start, anchor));
   const recursos = tram.filter(t => t.instancia === 'Plenário' && t.entrada <= anchor && t.votadoEm > anchor);
   const recursosAntes = tram.filter(t => t.instancia === 'Plenário' && t.entrada <= anoAntes && t.votadoEm > anoAntes).length;
-  const votadosPlenario = tram.filter(t => t.instancia === 'Plenário' && inside(t.votadoEm, start, anchor));
   const camarasDoRecorte = colegiado && colegiado !== 'Plenário' ? [colegiado] : camarasConselho;
   const desfechoPorCamara = camarasDoRecorte.map(camara => ({ camara, porDesfecho: Object.fromEntries(desfechos.map(d => [d, autosVotados.filter(row => row.processo.camara === camara && row.desfecho === d)])) as Record<Desfecho, Desdobramento[]> }));
   const comMulta = autosVotados.filter(d => d.multaCamara > 0);
   const porAlinea = alineas.map(alinea => { const rows = comMulta.filter(d => d.alinea === alinea); return { alinea, autos: rows, valor: sum(rows.map(d => d.multaCamara)) }; });
   const plenarioDoRecorte = base.tramitacoes.filter(t => t.instancia === 'Plenário' && doLugar(t.processo) && inside(t.votadoEm, start, anchor));
+  // Com uma câmara escolhida, os recursos dela votados pelo Plenário (pela câmara de origem); sem escolha ou no Plenário, todos.
+  const votadosPlenario = plenarioDoRecorte.filter(t => camarasDoRecorte.includes(t.processo.camara));
   const plenarioPorCamara = camarasDoRecorte.map(camara => { const rows = plenarioDoRecorte.filter(t => t.processo.camara === camara); return { camara, mantidas: rows.filter(t => t.processo.decisaoPlenario === 'Decisão mantida'), reformadas: rows.filter(t => t.processo.decisaoPlenario === 'Decisão reformada') }; });
   const destino = (d: Desdobramento): DestinoMulta => d.multaFinal === 0 && d.processo.plenarioEm && d.processo.plenarioEm <= anchor ? 'Anulada no recurso' : d.pagoEm && d.pagoEm <= anchor ? 'Paga' : d.transitoEm && d.transitoEm <= anchor ? 'Em cobrança' : 'Em recurso';
   const anos = [0, 1, 2, 3].map(n => String(Number(anchor.slice(0, 4)) - 3 + n));

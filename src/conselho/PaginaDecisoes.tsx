@@ -31,9 +31,9 @@ export default function PaginaDecisoes({ ctx }: { ctx: CockpitCtx }) {
         onOpen={() => abrirTramitacoes(ctx, 'Recursos votados pelo Plenário', c.votadosPlenario, 'Recursos votados pelo Plenário no período, com a decisão mantida ou reformada.')} />
     </section>
     <Bloco ctx={ctx} id="de" vazio={avisoVazio(!comAutos(ctx).length, 'Nenhum auto de infração votado no período')} area="de" title="O que as câmaras decidiram nos autos" exportar={exportarDesfechos(ctx)}><Desfechos ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="al" area="al" title="Multas por infração do art. 73" exportar={exportarAlineas(ctx)}><Alineas ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="al" vazio={avisoVazio(!q(ctx).porAlinea.some(row => row.valor), 'Nenhuma multa aplicada no período')} area="al" title="Multas por infração do art. 73" exportar={exportarAlineas(ctx)}><Alineas ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="pl" vazio={avisoVazio(!comRecurso(ctx).length, 'Nenhum recurso votado pelo Plenário no período')} area="pl" title="O Plenário mantém ou reforma" exportar={exportarPlenario(ctx)}><Plenario ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mu" area="mu" title="O que aconteceu com as multas" exportar={exportarDestino(ctx)}><Destino ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mu" vazio={avisoVazio(!q(ctx).multasPorAno.some(row => destinosMulta.some(d => row.valor[d])), 'Nenhuma multa decidida')} area="mu" title="O que aconteceu com as multas" exportar={exportarDestino(ctx)}><Destino ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -42,7 +42,7 @@ const comAutos = (ctx: CockpitCtx) => q(ctx).desfechoPorCamara.filter(row => des
 const totalDe = (row: { porDesfecho: Record<string, Desdobramento[]> }) => Object.values(row.porDesfecho).reduce((n, rows) => n + rows.length, 0);
 const exportarDesfechos = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Câmara', ...desfechos], linhas: () => comAutos(ctx).map(row => [row.camara, ...desfechos.map(d => row.porDesfecho[d].length)]) });
 function Desfechos({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = comAutos(ctx), cores = [tokens.brand, tokens.blue, tokens.bad, '#6B46C1', tokens.heat[1], tokens.muted];
+  const { tokens } = ctx, rows = comAutos(ctx), cores = [tokens.brand, tokens.blue, tokens.bad, tokens.cat[2], tokens.heat[1], tokens.muted];
   const option = useMemo(() => ({
     grid: { top: 40, right: 34, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: desfechos },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex], n = totalDe(row); return `<b>Câmara ${row.camara}</b>, ${int(n)} autos votados<br/>${desfechos.map(d => `${d}: ${int(row.porDesfecho[d].length)} (${pct(row.porDesfecho[d].length / Math.max(1, n) * 100)})`).join('<br/>')}`; } },
@@ -87,6 +87,8 @@ function Plenario({ ctx }: { ctx: CockpitCtx }) {
 }
 
 /* ---------- Destino das multas, pelo ano da decisão ---------- */
+/** Valor curto para caber dentro da coluna: o eixo já diz que é em reais. */
+const milhar = (valor: number) => valor >= 1e6 ? `${(valor / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mi` : `${int(Math.round(valor / 1000))} mil`;
 const exportarDestino = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Ano da decisão', ...destinosMulta.map(d => `${d} (autos)`), ...destinosMulta.map(d => `${d} (R$)`)], linhas: () => q(ctx).multasPorAno.map(row => [row.ano, ...destinosMulta.map(d => row.porDestino[d].length), ...destinosMulta.map(d => row.valor[d])]) });
 function Destino({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = q(ctx).multasPorAno, cores = [tokens.good, tokens.accent, tokens.blue, tokens.muted], maior = Math.max(1, ...rows.map(row => destinosMulta.reduce((n, d) => n + row.valor[d], 0)));
@@ -95,7 +97,7 @@ function Destino({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>Multas decididas em ${row.ano}</b>${row.ano === ctx.anchor.slice(0, 4) ? ' (até a data)' : ''}<br/>${destinosMulta.map(d => `${d}: ${brl(row.valor[d])} em ${int(row.porDestino[d].length)} autos`).join('<br/>')}`; } },
     xAxis: eixoCategoria(tokens, rows.map(row => row.ano)), yAxis: eixoValor(tokens),
     series: destinosMulta.map((d, index) => ({ name: d, type: 'bar', barMaxWidth: 64, stack: 'm', barWidth: '62%', data: rows.map(row => row.valor[d]), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
-      label: { show: true, position: 'inside', color: corDoTexto(cores[index]), fontSize: 11, fontWeight: 700, formatter: (p: any) => p.value >= maior * 0.2 ? `${int(Math.round(p.value / 1000))} mil` : '' } })),
+      label: { show: true, position: 'inside', color: corDoTexto(cores[index]), fontSize: 11, fontWeight: 700, formatter: (p: any) => p.value >= maior * 0.2 ? milhar(p.value) : '' } })),
   }), [rows, tokens, ctx.anchor, maior]);
   return <Chart option={option} tokens={tokens} label="Valor das multas aplicadas pelas câmaras, pelo ano da decisão e pelo que aconteceu depois" onPick={params => { const row = rows[params.dataIndex], d = destinosMulta[params.seriesIndex]; if (row && d) abrirAutos(ctx, `Multas de ${row.ano}: ${d.toLowerCase()}`, row.porDestino[d], `Autos com multa decididos pelas câmaras em ${row.ano}, hoje ${d.toLowerCase()}.`); }} />;
 }

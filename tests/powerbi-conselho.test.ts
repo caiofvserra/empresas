@@ -100,6 +100,8 @@ function cartoesDoPacote(d: string, meses: number, { colegiado: c, gre }: Recort
   const orgs = new Set(membros.map(row => row.Organização)), quem = new Set(membros.map(row => row.Pessoa));
   const conta = (coluna: string) => naFila.filter(row => row[coluna] === '1').length;
   const votados = tram.filter(row => periodo(row['Votado em'])), plenario = votados.filter(row => row.Instância === 'Plenário');
+  // Os recursos no Plenário vêm pela câmara de origem: com uma câmara escolhida, os que vieram dela.
+  const recursosVotados = tramitacoes.filter(row => row.Instância === 'Plenário' && periodo(row['Votado em']) && (!gre || greDe.get(row['Código IBGE']) === gre) && (!c || c === 'Plenário' || row['Câmara de origem'] === c));
   const cadastrados = tram.filter(row => row.Instância === 'Câmara' && periodo(row.Entrada)), relatos = tram.filter(row => periodo(row['Assinado em']) && row['Dias de relato'] !== '');
   const comIa = relatos.filter(row => row['Relato com IA'] === '1'), semIa = relatos.filter(row => row['Relato com IA'] === '0' && row['Distribuído depois da IA'] === '1');
   const sessoes = presencas.filter(row => (!c || row.Colegiado === c) && periodo(row.Data));
@@ -126,7 +128,7 @@ function cartoesDoPacote(d: string, meses: number, { colegiado: c, gre }: Recort
     autos: autosVotados.length, reincidentes: autosVotados.filter(row => row.Reincidente === '1').length, multas: soma(autosVotados, 'Multa da câmara'),
     arquivados: share(arquivados.length, autosVotados.length), prescritos: arquivados.filter(row => row.Desfecho === 'Arquivamento pela prescrição').length,
     recursos: naFila.filter(row => tramitacao.get(row.Tramitação)!.Instância === 'Plenário').length,
-    reformadas: share(plenario.filter(row => row['Decisão do Plenário'] === 'Decisão reformada').length, plenario.length),
+    reformadas: share(recursosVotados.filter(row => row['Decisão do Plenário'] === 'Decisão reformada').length, recursosVotados.length), recursosVotados: recursosVotados.length,
     organizacoes: orgs.size, mulheres: share(membros.filter(row => row.Gênero === 'Feminino').length, membros.length), conselheiras: membros.filter(row => row.Gênero === 'Feminino').length,
     mulheresRegistro: share(soma(camaras, 'Profissionais ativas'), soma(camaras, 'Profissionais ativos')),
     repasses: soma(pagos, 'Valor'), receberam: distintos(pagos, 'Organização'), deliberacoes: delib.length, aprovado: soma(delib, 'Valor'), conflitos: delib.filter(row => row['Proposta pela própria organização'] === '1').length,
@@ -155,7 +157,7 @@ function cartoesDoPainel(d: string, meses: number, recorte: Recorte) {
       parados: q.parados.length, cadastro: q.cadastroMediana, cadastrados: q.cadastro.flat().length, demorados: q.cadastro.slice(4).flat().length,
       presenca: q.presenca, sessoes: q.sessoes, tempoRelato: q.tempoRelato, tempoComIa: q.tempoComIa, tempoSemIa: q.tempoSemIa, comIa: q.comIa.length, semIa: q.semIa.length, vistas: q.vistas,
       autos: q.autosVotados.length, reincidentes: q.autosVotados.filter(x => x.reincidente).length, multas: q.multasAplicadas, arquivados: q.arquivados, prescritos: q.autosVotados.filter(x => x.desfecho === 'Arquivamento pela prescrição').length,
-      recursos: q.recursos.length, reformadas: q.reformadas,
+      recursos: q.recursos.length, reformadas: q.reformadas, recursosVotados: q.votadosPlenario.length,
       organizacoes: q.organizacoesComCadeira.length, mulheres: q.parteMulheres, conselheiras: q.membros.filter(m => m.genero === 'Feminino').length, mulheresRegistro: q.parteMulheresRegistro,
       repasses: repassado, receberam: q.organizacoesComCadeira.filter(row => row.repassado > 0).length,
       deliberacoes: q.deliberacoes.length, aprovado: q.deliberacoes.reduce((n, x) => n + x.valor, 0), conflitos: q.conflitos.length,

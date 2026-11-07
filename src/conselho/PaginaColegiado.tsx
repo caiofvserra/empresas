@@ -16,7 +16,7 @@ import { abrirMembros, abrirPendentes, abrirTramitacoes, decimal, diasOu, q } fr
  * em que status do Votenet, quanto o colegiado pauta e vota por mês e o caminho do processo até a multa paga.
  */
 export default function PaginaColegiado({ ctx }: { ctx: CockpitCtx }) {
-  const c = q(ctx), { tokens } = ctx;
+  const c = q(ctx), { tokens } = ctx, semPendentes = avisoVazio(!c.pendentes.length, 'Nenhum processo esperando voto');
   const series = useMemo(() => {
     const meses = c.mensal.map(row => row.month);
     return { pendentes: { tipo: 'estoque', meses, valores: c.mensal.map(row => row.pendentes), fmt: int, goodUp: false } as Evolucao, votados: { tipo: 'fluxo', meses, valores: c.mensal.map(row => row.votados), fmt: int } as Evolucao };
@@ -33,17 +33,17 @@ export default function PaginaColegiado({ ctx }: { ctx: CockpitCtx }) {
         onOpen={() => abrirPendentes(ctx, 'Processos esperando voto', c.pendentes, 'Processos que entraram no colegiado e ainda não foram votados, na data escolhida, com o status do Votenet e quem está com cada um.')} />
       <Indicador ficha="k-media" ctx={ctx} label="Processos por conselheiro" value={media === null ? '—' : decimal(media)} sub={maior ? `o maior: ${maior.pessoa.nome}, com ${int(maior.pendentes.length)}` : 'nenhum processo com conselheiro'} />
       <Indicador ficha="k-votados" ctx={ctx} label="Votados no período" serie={series.votados} value={int(c.votados.length)} variacao={{ value: change(c.votados.length, c.votadosAntes) }}
-        sub={`${int(c.votados.filter(t => t.instancia === 'Plenário').length)} deles no Plenário, em recurso`} onOpen={() => abrirTramitacoes(ctx, 'Votados no período', c.votados, 'Processos votados no período escolhido, nas câmaras e no Plenário.')} />
+        sub={c.recorte.colegiado && c.recorte.colegiado !== 'Plenário' ? `e ${int(c.votadosPlenario.length)} recursos dela votados no Plenário` : `${int(c.votados.filter(t => t.instancia === 'Plenário').length)} deles no Plenário, em recurso`} onOpen={() => abrirTramitacoes(ctx, 'Votados no período', c.votados, 'Processos votados no período escolhido, nas câmaras e no Plenário.')} />
       <Indicador ficha="k-decisao" ctx={ctx} label="Da abertura à decisão" value={diasOu(c.tempoDecisao)} variacao={{ value: c.tempoDecisao === null || c.tempoDecisaoAntes === null ? null : change(c.tempoDecisao, c.tempoDecisaoAntes), goodUp: false }}
         sub="mediana dos votados na câmara, da abertura no GovAdm" />
       <Indicador ficha="k-anteriores" ctx={ctx} label="De exercícios anteriores" value={int(c.deExerciciosAnteriores.length)} sub={`${c.pendentes.length ? pct(c.deExerciciosAnteriores.length / c.pendentes.length * 100) : '—'} dos pendentes entraram antes de ${ano}`}
         onOpen={() => abrirPendentes(ctx, `Pendentes que entraram antes de ${ano}`, c.deExerciciosAnteriores, `Processos ainda sem voto que entraram no colegiado antes de 1º de janeiro de ${ano}: o marco do Confea para os pendentes de exercícios anteriores.`)} />
     </section>
-    <Bloco ctx={ctx} id="po" vazio={avisoVazio(!c.pendentes.length, 'Nenhum processo esperando voto')} area="po" title="Com quem estão os processos" exportar={exportarPosse(ctx)}><Posse ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="st" vazio={avisoVazio(!c.pendentes.length, 'Nenhum processo esperando voto')} area="st" title="Em que status do Votenet" exportar={exportarStatus(ctx)}><Status ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="tc" area="tc" title="Terços do mandato" exportar={exportarTercos(ctx)}><Tercos ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="me" area="me" title="Pautados e votados por mês" exportar={exportarMensal(ctx)}><Mensal ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="ca" area="ca" title="O caminho do processo no período" exportar={exportarCaminho(ctx)}><Caminho ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="po" vazio={semPendentes} area="po" title="Com quem estão os processos" exportar={exportarPosse(ctx)}><Posse ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="st" vazio={semPendentes} area="st" title="Em que status do Votenet" exportar={exportarStatus(ctx)}><Status ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="tc" vazio={avisoVazio(!c.membros.length, 'Nenhum conselheiro em exercício')} area="tc" title="Terços do mandato" exportar={exportarTercos(ctx)}><Tercos ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="me" vazio={avisoVazio(!c.mensal.some(row => row.pautados || row.votados), 'Nenhum processo pautado ou votado')} area="me" title="Pautados e votados por mês" exportar={exportarMensal(ctx)}><Mensal ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="ca" vazio={avisoVazio(!c.caminho.some(row => row.total), 'Nenhum processo passou pelo caminho no período')} area="ca" title="O caminho do processo no período" exportar={exportarCaminho(ctx)}><Caminho ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -60,7 +60,7 @@ function Posse({ ctx }: { ctx: CockpitCtx }) {
     yAxis: { type: 'category', inverse: true, data: rows.map(row => row.pessoa.id), axisTick: { show: false }, axisLine: { show: false },
       axisLabel: { fontSize: 11, formatter: (id: string) => { const row = rows.find(r => r.pessoa.id === id)!; return `{n|${row.pessoa.nome}}\n{p|${row.pessoa.papel === 'Funcionário' ? 'funcionário' : 'conselheiro'}, ${row.pessoa.detalhe.split(',')[0]}}`; }, rich: { n: { color: tokens.ink, fontSize: 11, fontWeight: 700 }, p: { color: tokens.muted, fontSize: 11 } } } },
     series: faixasAlerta.map((faixa, index) => ({ name: faixa, type: 'bar', stack: 'p', barMaxWidth: 16, data: rows.map(row => porAlerta(row.pendentes)[index].length), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
-      label: { show: true, position: 'inside', color: corDoTexto(cores[index]), fontSize: 11, fontWeight: 700, formatter: (params: any) => params.value >= 2 ? params.value : '' } }))
+      label: { show: true, position: 'inside', color: corDoTexto(cores[index]), fontSize: 11, fontWeight: 700, formatter: (params: any) => params.value >= 2 ? params.value : '' } })) // um processo só não cabe o número: o total vai na ponta
       .concat([{ name: 'total', type: 'bar', stack: 'p', barMaxWidth: 16, data: rows.map(() => 0), itemStyle: { color: 'transparent' }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 800, formatter: (params: any) => int(rows[params.dataIndex].pendentes.length) } } as any]),
   }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <div className="cs-com-nota">
@@ -80,7 +80,7 @@ function Status({ ctx }: { ctx: CockpitCtx }) {
   // As fatias com menos de 3% não levam rótulo no anel, que ficaria encavalado: vão escritas numa linha embaixo, para ler sem passar o mouse.
   const total = Math.max(1, c.pendentes.length), pequena = (n: number) => n / total < 0.03;
   const dados = statusPendentes.map((status, index) => ({ name: status, value: c.porStatus[status].length, itemStyle: { color: cores[index] }, ...(pequena(c.porStatus[status].length) ? { label: { show: false }, labelLine: { show: false } } : {}) })).filter(row => row.value > 0);
-  const pequenas = dados.filter(row => pequena(row.value)).map(row => `${row.name.toLowerCase()} ${int(row.value)}`).join(', ');
+  const pequenas = dados.filter(row => pequena(row.value));
   const option = useMemo(() => ({
     tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${int(item.value)} processos (${pct(item.percent)})<br/><span style="opacity:.7">clique para ver os processos</span>` },
     series: [{ type: 'pie', radius: ['42%', '66%'], center: ['50%', '50%'], data: dados, itemStyle: { borderColor: tokens.surface, borderWidth: 2 }, minAngle: 4,
@@ -89,7 +89,7 @@ function Status({ ctx }: { ctx: CockpitCtx }) {
     graphic: [{ type: 'text', left: 'center', top: 'middle', style: { text: int(c.pendentes.length), fill: tokens.ink, font: '800 18px Raleway, Lato, sans-serif', align: 'center' } }],
   }), [dados, tokens, c.pendentes.length]); // eslint-disable-line react-hooks/exhaustive-deps
   return <div className="cs-com-nota"><Chart option={option} tokens={tokens} label="Processos esperando voto por status do Votenet" onPick={params => { const rows = c.porStatus[params.name as keyof typeof c.porStatus]; if (rows) abrirPendentes(ctx, `Status: ${params.name}`, rows, `Processos esperando voto que estão no status "${params.name}" do Votenet, na data escolhida.`); }} />
-    {pequenas && <p className="cs-nota">Também esperam voto: {pequenas}.</p>}</div>;
+    {pequenas.length > 0 && <p className="cs-nota">Também esperam voto, em fatias finas do anel: {pequenas.map((row, i) => <span key={row.name}>{i ? ', ' : ''}<span style={{ color: row.itemStyle.color }} aria-hidden>●</span> {int(row.value)} em {row.name.toLowerCase()}</span>)}.</p>}</div>;
 }
 
 /* ---------- Terços do mandato ---------- */

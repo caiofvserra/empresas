@@ -74,6 +74,8 @@ const naFila = (expressao: string, ...extra: string[]) => `${COM_DATA}\nRETURN C
 const FILA = (...extra: string[]) => `${naFila("COUNTROWS('Foto da fila')", ...extra)} + 0`;
 /** Uma coluna de data de um fato dentro do período escolhido. */
 const noPeriodo = (tabela: string, quando: string, expressao: string, ...extra: string[]) => `${COM_PERIODO}\nRETURN CALCULATE(${expressao}, '${tabela}'[${quando}] >= inicio, '${tabela}'[${quando}] <= d${extras(extra)})`;
+/** Os recursos votados pelo Plenário no período; com uma câmara escolhida, os que vieram dela (pela câmara de origem, e não pela relação com os colegiados). */
+const recursosNoPlenario = (...extra: string[]) => `${COM_PERIODO}\n${COM_COLEGIADO}\nRETURN CALCULATE(COUNTROWS('Tramitações'), REMOVEFILTERS('Colegiados'), 'Tramitações'[Instância] = "Plenário", 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Tramitações'[Câmara de origem] = c)${extras(extra)})`;
 const contar = (tabela: string, quando: string, ...extra: string[]) => `${noPeriodo(tabela, quando, `COUNTROWS('${tabela}')`, ...extra)} + 0`;
 /** Os conselheiros em exercício na data, do colegiado escolhido (no Plenário, todos). */
 const NO_MANDATO = "'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = \"Plenário\" || 'Conselheiros'[Câmara] = c)";
@@ -222,10 +224,10 @@ const medidas: Medida[] = [
   medida(P.decisoes, 'Autos arquivados no período', `${autos("COUNTROWS('Autos')", "'Autos'[Desfecho] IN {\"Arquivamento\", \"Arquivamento pela prescrição\"}")} + 0`, FORMATO.inteiro, 'Conta os autos votados no período que a câmara arquivou, inclusive pela prescrição.'),
   medida(P.decisoes, 'Autos arquivados', 'DIVIDE([Autos arquivados no período], [Autos votados])', FORMATO.parte, 'Mostra a parte dos autos votados no período que a câmara arquivou, inclusive pela prescrição.'),
   medida(P.decisoes, 'Recursos esperando o Plenário', FILA("'Tramitações'[Instância] = \"Plenário\""), FORMATO.inteiro, 'Conta os recursos que já chegaram ao Plenário e ainda não foram votados na data escolhida. É um estoque.'),
-  medida(P.decisoes, 'Recursos votados pelo Plenário', contar('Tramitações', 'Votado em', "'Tramitações'[Instância] = \"Plenário\""), FORMATO.inteiro, 'Conta os recursos votados pelo Plenário no período.'),
-  medida(P.decisoes, 'Recursos reformados pelo Plenário', contar('Tramitações', 'Votado em', "'Tramitações'[Instância] = \"Plenário\"", "'Tramitações'[Decisão do Plenário] = \"Decisão reformada\""), FORMATO.inteiro, 'Conta os recursos votados pelo Plenário no período em que ele reformou a decisão da câmara.'),
+  medida(P.decisoes, 'Recursos votados pelo Plenário', `${recursosNoPlenario()} + 0`, FORMATO.inteiro, 'Conta os recursos votados pelo Plenário no período. Com uma câmara escolhida, conta os que vieram dela.'),
+  medida(P.decisoes, 'Recursos reformados pelo Plenário', `${recursosNoPlenario("'Tramitações'[Decisão do Plenário] = \"Decisão reformada\"")} + 0`, FORMATO.inteiro, 'Conta os recursos votados pelo Plenário no período em que ele reformou a decisão da câmara. Com uma câmara escolhida, conta os que vieram dela.'),
   medida(P.decisoes, 'Reformadas pelo Plenário', 'DIVIDE([Recursos reformados pelo Plenário], [Recursos votados pelo Plenário])', FORMATO.parte, 'Mostra a parte dos recursos votados pelo Plenário no período em que ele reformou a decisão da câmara.'),
-  medida(P.decisoes, 'Recursos votados no Plenário por câmara', `${COM_PERIODO}\n${COM_COLEGIADO}\nRETURN CALCULATE(COUNTROWS('Tramitações'), REMOVEFILTERS('Colegiados'), 'Tramitações'[Instância] = "Plenário", 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Tramitações'[Câmara de origem] = c))`, FORMATO.inteiro,
+  medida(P.decisoes, 'Recursos votados no Plenário por câmara', recursosNoPlenario(), FORMATO.inteiro,
     'Conta os recursos votados pelo Plenário no período, pela câmara de onde vieram. Com uma câmara escolhida, só os dela.'),
   medida(P.decisoes, 'Multa paga', destino(`NOT (${ANULADA}) && ${PAGA}`), FORMATO.reais, 'Soma, pelo ano da decisão da câmara (os quatro últimos), as multas já pagas na data escolhida.'),
   medida(P.decisoes, 'Multa em cobrança', destino(`NOT (${ANULADA}) && NOT (${PAGA}) && ${TRANSITOU}`), FORMATO.reais, 'Soma, pelo ano da decisão, as multas que transitaram em julgado e ainda não foram pagas.'),
