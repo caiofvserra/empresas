@@ -61,12 +61,18 @@
     "dn dn dn dn sp sp sp sp in in in in"
     "jc jc jc jc vn vn vn vn cr cr cr cr"; }
 }
+/* Página CNPJ (07/11/2026): dado real da Receita. O mapa ocupa a esquerda; atividades e situação dividem o alto da direita, e o mês a mês corre embaixo. */
+.ck-grid-cnpj { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "mp mp mp mp mp at at at at sp sp sp"
+  "mp mp mp mp mp mm mm mm mm mm mm mm"; }
 @media (max-height: 699px) and (min-width: 1101px) {
   .ck-grid-mercado { grid-template-rows: auto repeat(3, 230px); }
   .ck-grid-evolucao, .ck-grid-rt { grid-template-rows: auto repeat(2, 300px); }
   .ck-grid-vinculos { grid-template-rows: repeat(2, 320px); }
+  .ck-grid-cnpj { grid-template-rows: auto repeat(2, 300px); }
 }
-.ck-grid-mercado, .ck-grid-evolucao, .ck-grid-rt, .ck-grid-vinculos { align-content: stretch; }
+.ck-grid-mercado, .ck-grid-evolucao, .ck-grid-rt, .ck-grid-vinculos, .ck-grid-cnpj { align-content: stretch; }
 
 /* Receita comparada com o cadastro (05/11/2026): barras de 100% da correspondência em cima e a situação do CNPJ das registradas embaixo. */
 .duas-partes { flex: 1; min-height: 0; display: grid; grid-template-rows: minmax(0, 11fr) auto minmax(0, 9fr); }

@@ -8,6 +8,9 @@ test-results/
 runtime/
 var/source-ingestion/
 dist-presidencia/
+# Arquivos baixados da Receita e CSV de staging com razão social e sócios: nunca vão para o Git (scripts/receita-cnpj.ts).
+var/receita/
+staging/
 dist-empresas/
 dist-profissionais/
 dist-fiscalizacao/
