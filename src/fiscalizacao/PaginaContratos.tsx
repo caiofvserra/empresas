@@ -1,6 +1,7 @@
 import { brl, int, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { Bloco, Indicador, avisoVazio } from '../cockpit/ui';
+import { Bloco, Indicador, Selo, avisoVazio } from '../cockpit/ui';
+import { triagemPncp, useTriagem } from './triagem';
 import { Concentracao, ContratosArt, ContratosSemArt, EtapasTce, Fornecedor, PlanoContratacao, abrirContratos } from './blocos';
 
 const soma = (rows: { valor: number }[]) => rows.reduce((total, row) => total + row.valor, 0);
@@ -11,8 +12,10 @@ export default function PaginaContratos({ ctx }: { ctx: CockpitCtx }) {
   const citada = comChave.filter(row => row.vinculo === 'Confirmado por documento'), semArt = comChave.filter(row => row.vinculo === 'Não identificado');
   const vazio = avisoVazio(!contratos.length, 'Nenhum contrato técnico');
   const semRegistro = contratos.filter(row => row.situacao === 'Sem registro na data');
+  // Serviços gerais que o modelo treinado marca como engenharia: dado real, à parte do cenário dos outros cartões (07/11/2026).
+  const triagem = useTriagem(ctx), rodada = triagemPncp.rodada;
   return <div className="ck-grid ck-grid-fs-contratos">
-    <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores dos contratos públicos">
+    <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Indicadores dos contratos públicos">
       <Indicador destaque ficha="k-contratos" ctx={ctx} label="Contratos públicos técnicos" value={int(contratos.length)} sub={`${brl(soma(contratos))} contratados no período`}
         onOpen={() => abrirContratos(ctx, contratos, 'Contratos públicos técnicos do período')} />
       <Indicador ficha="k-citada" ctx={ctx} label="ART cita o contrato" value={comChave.length ? pct(citada.length / comChave.length * 100) : '—'} sub={`${int(citada.length)} de ${int(comChave.length)} contratos com CNPJ válido`}
@@ -21,6 +24,8 @@ export default function PaginaContratos({ ctx }: { ctx: CockpitCtx }) {
         onOpen={() => abrirContratos(ctx, semArt, 'Contratos sem ART encontrada', 'Verifique primeiro os de maior valor. Não encontrar a ART não é infração.')} />
       <Indicador ficha="k-semregistro" ctx={ctx} label="Fornecedor sem registro na data" value={brl(soma(semRegistro))} sub={`em ${int(semRegistro.length)} contratos de ${int(new Set(semRegistro.map(row => row.companyId)).size)} empresas`}
         onOpen={() => abrirContratos(ctx, semRegistro, 'Contratos de fornecedor sem registro na data', 'Confirme o objeto e a atividade; informe o órgão contratante quando couber.')} />
+      <Indicador ficha="k-triagem" ctx={ctx} label="Serviço geral de engenharia" serie={triagem.serie} value={rodada ? int(triagem.q.suspeitos) : '—'}
+        sub={rodada ? <><Selo data={rodada} /> {int(triagem.q.semSinal)} sem sinal de rito</> : 'aguardando a primeira rodada do modelo'} />
       <Indicador ficha="k-pago" ctx={ctx} label="Já pago dos contratos" value={ctx.parcerias.tce.contratado ? pct(ctx.parcerias.tce.pago / ctx.parcerias.tce.contratado * 100) : '—'} sub={`${brl(ctx.parcerias.tce.pago)} pagos, segundo o Tribunal de Contas`} />
     </section>
     <Bloco ctx={ctx} id="mf8" vazio={vazio} area="mf8" title="Contratos técnicos e a ART encontrada" question="Os contratos técnicos do período, por categoria, pela ART encontrada: a ART cita o número do contrato, há uma ART provável a conferir, nenhuma ART foi encontrada ou o CNPJ não permite a busca." help="A ART é provável quando a mesma empresa registrou ART entre 30 dias antes e 60 dias depois do contrato. Quando nada aparece, o contrato deve ser verificado, mas isso não prova que falte ART. Clique numa parte para ver os contratos."><ContratosArt ctx={ctx} /></Bloco>
