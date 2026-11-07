@@ -39,8 +39,9 @@ export interface Exportavel { cabecalho: string[]; linhas: () => Celula[][] }
  * Frase do bloco quando o recorte não tem nenhuma empresa com atividade de engenharia (07/11/2026, crítica de design): antes os
  * anéis e o mapa de árvore desenhavam fatias e caixas com zero, e a tela parecia ter proporções que não existiam.
  */
-export const recorteVazio = (ctx: CockpitCtx) => ctx.model.companyFacts.some(row => row.active || row.eligibleEstablishments > 0) ? undefined
-  : 'Nenhuma empresa neste recorte. Tire um dos filtros do alto da tela.';
+/** Aviso do bloco quando o recorte não tem dados (07/11/2026): no lugar de um gráfico de zeros, que parece real. */
+export const avisoVazio = (vazio: boolean, quem: string) => vazio ? `${quem} neste recorte. Tire um dos filtros do alto da tela.` : undefined;
+export const recorteVazio = (ctx: CockpitCtx) => avisoVazio(!ctx.model.companyFacts.some(row => row.active || row.eligibleEstablishments > 0), 'Nenhuma empresa');
 export function Bloco({ ctx, id, area, title, question, help, badge, actions, children, className, exportar, vazio }: { ctx: CockpitCtx; id: string; area: string; title: string; question?: string; help?: string; badge?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; exportar?: Exportavel; vazio?: string }) {
   // No painel de Empresas o visual fica enxuto: a pergunta e a leitura do bloco vão para o (i), e o bloco mostra só o título.
   const focus = ctx.focus === id, ficha = fichaDe(ctx.page, id), leitura = ctx.enxuto ? [question, help].filter(Boolean).join(' ') || undefined : help;

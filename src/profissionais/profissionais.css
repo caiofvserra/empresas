@@ -11,7 +11,7 @@
 .ck-grid-pf-fluxo { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
   "me me me me me me me sk sk sk sk sk"
-  "hm hm hm hm hm hm pa pa pa pa pa pa"; }
+  "hm hm hm hm hm pa pa pa pa pa pa pa"; }
 .ck-grid-pf-atuacao { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
   "am am am am am mm mm mm mm mm mm mm"
@@ -23,7 +23,7 @@
 .ck-grid-pf-trabalho { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
   "ev ev ev ev ev pe pe pe pe ps ps ps"
-  "eh eh eh eh eh pp pp pp pp pr pr pr"; }
+  "eh eh eh eh pp pp pp pp pp pr pr pr"; }
 .ck-grid-pf-registro, .ck-grid-pf-fluxo, .ck-grid-pf-atuacao, .ck-grid-pf-formacao, .ck-grid-pf-trabalho { align-content: stretch; }
 @media (max-height: 699px) and (min-width: 1101px) {
   .ck-grid-pf-registro { grid-template-rows: auto repeat(3, 230px); }

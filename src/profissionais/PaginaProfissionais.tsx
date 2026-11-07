@@ -3,7 +3,7 @@ import { noRecorte, situacaoEm } from '../domain/profissionais';
 import { ChevronDown } from 'lucide-react';
 import { int, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { Bloco, Indicador } from '../cockpit/ui';
+import { avisoVazio, Bloco, Indicador } from '../cockpit/ui';
 import { ArvoreModalidade, IdadeModalidade, MapaProfissionais, Piramide, SituacaoAnuidade, abrirProfissionais, filtroDe, metricasMapa, porIds } from './blocos';
 import type { MetricaMapa } from './blocos';
 import { useSeriesProfissionais } from './series';
@@ -12,6 +12,7 @@ const change = (now: number, before: number) => before > 0 ? (now - before) / be
 
 /** Painel de Profissionais, página 1: quantos têm registro ativo, onde moram, em que modalidade e nível, quem são e se pagam a anuidade. */
 export default function PaginaProfissionais({ ctx }: { ctx: CockpitCtx }) {
+  const vazio = avisoVazio(!ctx.profissionais.resumo.registrados.length, 'Nenhum profissional');
   const { metas } = ctx, p = ctx.profissionais.resumo, antes = p.porNivel.reduce((sum, row) => sum + row.antes, 0);
   const sessenta = porIds(ctx, p.porIdade.at(-1)?.ids ?? []), mulheres = porIds(ctx, p.porGenero.find(row => row.nome === 'Feminino')?.ids ?? []);
   const [metrica, setMetrica] = useState<MetricaMapa>('ativos'), series = useSeriesProfissionais(ctx);
@@ -33,9 +34,9 @@ export default function PaginaProfissionais({ ctx }: { ctx: CockpitCtx }) {
     </section>
     <Bloco ctx={ctx} id="mp" area="mp" title="Mapa por município" question="Cada município é pintado pelo próprio valor no indicador escolhido, em cinco faixas. A lista ao lado traz as GREs em ordem, com o valor de cada uma; passar o mouse numa GRE acende os municípios dela. Clicar num município ou numa GRE abre os profissionais." help="O profissional fica na regional do endereço que ele declara no cadastro. Passe o mouse num município para ver também quantos ativos moram nele. Clique num município ou numa regional da lista para ver os profissionais."
       actions={<label className="ck-select is-compact"><span className="sr-only">Indicador do mapa</span><select value={metrica} onChange={event => setMetrica(event.target.value as MetricaMapa)}>{(Object.keys(metricasMapa) as MetricaMapa[]).map(id => <option key={id} value={id}>{metricasMapa[id].label}</option>)}</select><ChevronDown size={14} /></label>}><MapaProfissionais ctx={ctx} metrica={metrica} /></Bloco>
-    <Bloco ctx={ctx} id="tm" area="tm" title="Modalidade, nível e título" question="Cada retângulo grande é uma modalidade, dividida pelos títulos principais e os demais juntos. Só Segurança do Trabalho se divide em níveis (engenheiros, tecnólogos e técnicos): no Crea-SP, técnico e tecnólogo só dessa modalidade. O tamanho é o número de ativos. Clicar numa modalidade ou em outros títulos abre todos os títulos, pelo código do catálogo do Confea; clicar num título abre os profissionais." help="Clique num retângulo para ver os profissionais."><ArvoreModalidade ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="an" area="an" title="Situação e anuidade" question="Todos os que já se registraram, em quatro situações: ativo com a anuidade em dia, ativo com a anuidade atrasada, interrompido e cancelado."><SituacaoAnuidade ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="pi" area="pi" title="Idade e gênero" question="Mulheres à esquerda e homens à direita, por faixa de idade, entre os ativos. Ajuda a prever quando será preciso repor o quadro técnico."><Piramide ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mt" area="mt" title="Idade em cada modalidade" question="A parte dos ativos de cada modalidade em cada faixa de idade. Cada linha soma 100%. Linhas escuras à direita são modalidades com quadro mais velho."><IdadeModalidade ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} vazio={vazio} id="tm" area="tm" title="Modalidade, nível e título" question="Cada retângulo grande é uma modalidade, dividida pelos títulos principais e os demais juntos. Só Segurança do Trabalho se divide em níveis (engenheiros, tecnólogos e técnicos): no Crea-SP, técnico e tecnólogo só dessa modalidade. O tamanho é o número de ativos. Clicar numa modalidade ou em outros títulos abre todos os títulos, pelo código do catálogo do Confea; clicar num título abre os profissionais." help="Clique num retângulo para ver os profissionais."><ArvoreModalidade ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} vazio={vazio} id="an" area="an" title="Situação e anuidade" question="Todos os que já se registraram, em quatro situações: ativo com a anuidade em dia, ativo com a anuidade atrasada, interrompido e cancelado."><SituacaoAnuidade ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} vazio={vazio} id="pi" area="pi" title="Idade e gênero" question="Mulheres à esquerda e homens à direita, por faixa de idade, entre os ativos. Ajuda a prever quando será preciso repor o quadro técnico."><Piramide ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} vazio={vazio} id="mt" area="mt" title="Idade em cada modalidade" question="A parte dos ativos de cada modalidade em cada faixa de idade. Cada linha soma 100%. Linhas escuras à direita são modalidades com quadro mais velho."><IdadeModalidade ctx={ctx} /></Bloco>
   </div>;
 }
