@@ -84,21 +84,21 @@ def ler_pagina(pagina, uf='SP', categoria=CATEGORIA_SERVICOS):
     return saida
 
 
-def buscar_contratos(de, ate, uf='SP', categoria=CATEGORIA_SERVICOS, log=print, paralelo=4):
+def buscar_contratos(de, ate, uf='SP', categoria=CATEGORIA_SERVICOS, log=print, paralelo=4, bloco=40, parcial=None, parar=None):
     """Todas as páginas do período (datas AAAA-MM-DD, pela publicação no PNCP), sem repetir contrato entre páginas.
 
     Um mês do país são umas 600 páginas de 500 contratos, a uns 4 segundos cada: lidas uma a uma, 12 meses passavam das 6 horas
     que a rotina tem. A primeira página diz quantas são; as outras vão em paralelo, `paralelo` por vez. Com 8 ao mesmo tempo a API responde
     cada página em 30 s e devolve 429; com 4, em uns 8 s, o dobro do ritmo de uma por vez (conferido em 07/11/2026).
+
+    Como na coleta do caderno do estudo, o progresso fica gravado: a cada `bloco` páginas, o arquivo `parcial` guarda a última
+    página lida e os contratos até ali. Se `parar()` diz que o tempo acabou, ou a API para no meio, a função devolve None e a
+    próxima chamada continua da página seguinte. Com o mês completo, devolve a lista e apaga o parcial.
     """
     def pedir(pagina):
         parametros = {'dataInicial': de.replace('-', ''), 'dataFinal': ate.replace('-', ''), 'pagina': pagina, 'tamanhoPagina': TAMANHO_PAGINA}
         return pagina, pedir_json(f'{CONSULTA}?{urllib.parse.urlencode(parametros)}')
 
-    _, primeira = pedir(1)
-    if not primeira:
-        return []
-    total = int(primeira.get('totalPaginas') or 0)
     vistos, contratos = set(), []
 
     def juntar(dados):
@@ -107,12 +107,42 @@ def buscar_contratos(de, ate, uf='SP', categoria=CATEGORIA_SERVICOS, log=print, 
                 vistos.add(c['pncp_id'])
                 contratos.append(c)
 
-    juntar(primeira)
+    def guardar(feita):
+        if parcial:
+            tmp = parcial.with_name(parcial.name + '.tmp')
+            tmp.write_text(json.dumps({'periodo': [de, ate], 'pagina': feita, 'total': total, 'contratos': contratos}, ensure_ascii=False), encoding='utf-8')
+            tmp.replace(parcial)
+
+    salvo = json.loads(parcial.read_text(encoding='utf-8')) if parcial and parcial.exists() else None
+    if salvo and salvo.get('periodo') == [de, ate]:
+        total, feita = int(salvo['total']), int(salvo['pagina'])
+        for c in salvo['contratos']:
+            vistos.add(c['pncp_id'])
+            contratos.append(c)
+        log(f'  retomando da página {feita + 1} de {total}: {len(contratos)} contratos já lidos')
+    else:
+        _, primeira = pedir(1)
+        if not primeira:
+            return []
+        total, feita = int(primeira.get('totalPaginas') or 0), 1
+        juntar(primeira)
+        guardar(feita)
+
     with ThreadPoolExecutor(max_workers=paralelo) as pool:
-        for n, (pagina, dados) in enumerate(pool.map(pedir, range(2, total + 1)), start=2):
-            if not dados:  # a API parou no meio: o mês ficaria pela metade, e o cache o daria como completo
-                raise RuntimeError(f'A API do PNCP não respondeu a página {pagina} de {total}; rode de novo.')
-            juntar(dados)
-            if n % 100 == 0 or n == total:
-                log(f'  página {n} de {total}: {len(contratos)} contratos de serviços de {uf}')
+        while feita < total:
+            if parar and parar():
+                log(f'  tempo esgotado na página {feita} de {total}; o resto fica para a próxima execução')
+                return None
+            paginas = range(feita + 1, min(total, feita + bloco) + 1)
+            for pagina, dados in pool.map(pedir, paginas):
+                if not dados:  # a API parou no meio: o que veio antes fica no parcial, e o mês não entra no cache como completo
+                    log(f'  a API do PNCP não respondeu a página {pagina} de {total}; o resto fica para a próxima execução')
+                    return None
+                juntar(dados)
+                feita = pagina
+            guardar(feita)
+            if feita % 100 < bloco or feita == total:
+                log(f'  página {feita} de {total}: {len(contratos)} contratos de serviços de {uf}')
+    if parcial and parcial.exists():
+        parcial.unlink()
     return contratos

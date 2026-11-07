@@ -77,9 +77,41 @@ class ColetaParalela(unittest.TestCase):
         ids = sorted(c['pncp_id'] for c in self._paginas())
         self.assertEqual(ids, ['11111111000100-2-000001/2026', '11111111000100-2-000002/2026', '11111111000100-2-000003/2026', '11111111000100-2-000123/2026'])
 
-    def test_pagina_que_nao_responde_para_a_coleta(self):
-        with self.assertRaises(RuntimeError):
-            self._paginas(falha=2)
+    def test_pagina_que_nao_responde_deixa_o_mes_incompleto(self):
+        self.assertIsNone(self._paginas(falha=2))
+
+
+class RetomadaPorPagina(unittest.TestCase):
+    """Como na coleta do caderno do estudo: o mês interrompido continua da última página gravada, sem pedir tudo de novo."""
+
+    def test_mes_interrompido_continua_da_pagina_seguinte(self):
+        import tempfile
+        import urllib.parse
+        from unittest import mock
+        from pncp_triagem import coleta
+        pedidas = []
+
+        def falso(url, **_):
+            pagina = int(urllib.parse.parse_qs(urllib.parse.urlparse(url).query)['pagina'][0])
+            pedidas.append(pagina)
+            return {'totalPaginas': 7, 'data': [contrato(numeroControlePNCP=f'11111111000100-2-{pagina:06d}/2026')]}
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(coleta, 'pedir_json', falso):
+            parcial = Path(tmp) / 'contratos-2026-10.parcial.json'
+            chamadas = {'n': 0}
+
+            def parar():
+                chamadas['n'] += 1
+                return chamadas['n'] > 1  # o prazo acaba depois do primeiro bloco
+            primeira = coleta.buscar_contratos('2026-10-01', '2026-10-31', log=lambda *a: None, paralelo=2, bloco=2,
+                                               parcial=parcial, parar=parar)
+            self.assertIsNone(primeira)
+            self.assertTrue(parcial.exists())
+            feitas = sorted(set(pedidas))
+            pedidas.clear()
+            completo = coleta.buscar_contratos('2026-10-01', '2026-10-31', log=lambda *a: None, paralelo=2, bloco=2, parcial=parcial)
+            self.assertEqual(len(completo), 7)
+            self.assertFalse(set(pedidas) & set(feitas), 'página já gravada foi pedida de novo')
+            self.assertFalse(parcial.exists())
 
 
 class LimiteDaApi(unittest.TestCase):
@@ -183,7 +215,7 @@ if __name__ == '__main__':
 class Retomada(unittest.TestCase):
     """O script inteiro, com modelo, coleta e documentos falsos: a segunda execução pula o que a primeira gravou."""
 
-    def rodar(self, pasta, ritos):
+    def rodar(self, pasta, ritos, coleta=None):
         import importlib.util
         import types
         from unittest import mock
@@ -210,7 +242,7 @@ class Retomada(unittest.TestCase):
         argv = ['pncp-triagem.py', '--pacote', 'x', '--de', '2026-10-01', '--ate', '2026-10-31', '--destino', str(pasta),
                 '--painel', str(pasta / 'painel.json')]
         with mock.patch.dict(sys.modules, {'pncp_triagem.modelo': types.SimpleNamespace(Modelo=Modelo)}), \
-                mock.patch.object(cli, 'buscar_contratos', return_value=lote), mock.patch.object(cli, 'analisar_compra', analisar), \
+                mock.patch.object(cli, 'buscar_contratos', coleta or (lambda *a, **k: lote)), mock.patch.object(cli, 'analisar_compra', analisar), \
                 mock.patch.object(sys, 'argv', argv), mock.patch('builtins.print'):
             cli.main()
         return lidas
@@ -239,4 +271,17 @@ class Retomada(unittest.TestCase):
             self.rodar(pasta, {})  # as duas compras suspeitas falham; o contrato de limpeza é gravado
             self.assertTrue((pasta / 'pendente').exists())
             self.rodar(pasta, {})  # de novo nada responde: nenhuma linha nova, e a rotina para
+            self.assertFalse((pasta / 'pendente').exists())
+
+    def test_mes_coletado_pela_metade_tambem_e_avanco(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            pasta = Path(tmp)
+
+            def metade(de, ate, parcial=None, parar=None, **_):
+                parcial.write_text(json.dumps({'periodo': [de, ate], 'pagina': 300, 'total': 600, 'contratos': []}), encoding='utf-8')
+                return None  # o prazo acabou no meio do mês
+            self.rodar(pasta, {}, coleta=metade)
+            self.assertTrue((pasta / 'pendente').exists(), 'leu 300 páginas: a rotina deve se chamar de novo')
+            self.rodar(pasta, {}, coleta=lambda *a, **k: None)  # nada novo: a página salva não mudou
             self.assertFalse((pasta / 'pendente').exists())
