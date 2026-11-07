@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { Chart } from '../painel/chart';
 import { brl, int, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { Bloco, Indicador } from '../cockpit/ui';
+import { Bloco, Indicador, avisoVazio } from '../cockpit/ui';
+import { corDoTexto } from '../cockpit/formatos';
 import type { Exportavel } from '../cockpit/ui';
 import { alertaNoStatus, faixasCadastro, faixasNoStatus, faixasPrescricaoRelator, nomeColegiado, prescricaoDe, statusPendentes } from '../domain/colegiado';
 import type { Pendente } from '../domain/colegiado';
@@ -34,9 +35,9 @@ export default function PaginaProcessos({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ficha="k-cadastro" ctx={ctx} label="Do GovAdm ao Votenet" value={diasOu(c.cadastroMediana)} sub={`mediana; ${recebidos.length ? pct(demorados / recebidos.length * 100) : '—'} levaram mais de 15 dias`}
         onOpen={() => abrirTramitacoes(ctx, 'Recebidos no período', recebidos, 'Processos recebidos nas câmaras no período, com o tempo até o cadastro no Votenet.')} />
     </section>
-    <Bloco ctx={ctx} id="fi" area="fi" title="A fila, do mais parado ao menos" exportar={exportarFila(ctx)}><Fila ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="ca" area="ca" title="Há quanto tempo estão no status" exportar={exportarCalor(ctx)}><Calor ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="pr" area="pr" title="Perto da prescrição, por relator" exportar={exportarPrescricao(ctx)}><Prescricao ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="fi" vazio={avisoVazio(!c.pendentes.length, 'Nenhum processo esperando voto')} area="fi" title="A fila, do mais parado ao menos" exportar={exportarFila(ctx)}><Fila ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="ca" vazio={avisoVazio(!c.pendentes.length, 'Nenhum processo esperando voto')} area="ca" title="Há quanto tempo estão no status" exportar={exportarCalor(ctx)}><Calor ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="pr" vazio={avisoVazio(!q(ctx).prescricaoPorRelator.length, 'Nenhum auto esperando voto prescreve nos próximos 12 meses')} area="pr" title="Perto da prescrição, por relator" exportar={exportarPrescricao(ctx)}><Prescricao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="cd" area="cd" title="Do GovAdm ao Votenet" exportar={exportarCadastro(ctx)}><Cadastro ctx={ctx} /></Bloco>
   </div>;
 }
@@ -46,18 +47,17 @@ const exportarFila = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Processo',
   linhas: () => q(ctx).pendentes.map(row => [row.t.id, row.t.processo.tipo, nomeColegiado(row.t.colegiado), row.evento.status, nomeDe(ctx, row.evento.com), q(ctx).pessoas.get(row.evento.com)?.papel ?? '', row.diasNoStatus, row.diasTotais, alertaNoStatus(row.diasNoStatus) ?? '']) });
 function Fila({ ctx }: { ctx: CockpitCtx }) {
   const c = q(ctx), rows = c.pendentes.slice(0, 40);
-  if (!rows.length) return <div className="empty-note">Nenhum processo esperando voto neste recorte.</div>;
   return <div className="cs-com-nota">
     <div className="table-wrap"><table className="metodo is-dense cs-fila">
       <thead><tr><th>Processo</th><th>Status</th><th>Com quem</th><th className="num">No status</th><th className="num">No total</th></tr></thead>
       <tbody>{rows.map(row => { const alerta = alertaNoStatus(row.diasNoStatus), pessoa = c.pessoas.get(row.evento.com);
         return <tr key={row.t.id} className="is-clicavel" onClick={() => abrirPendentes(ctx, row.t.id, [row], 'O processo, com o status do Votenet, quem está com ele e há quanto tempo.')}>
-          <td><b>{row.t.processo.tipo}</b><small>{nomeColegiado(row.t.colegiado)} · {row.t.id}</small></td><td>{row.evento.status}</td>
+          <td><b>{row.t.processo.tipo}</b><small>{nomeColegiado(row.t.colegiado)}, processo {row.t.id}</small></td><td>{row.evento.status}</td>
           <td><b>{pessoa?.nome ?? row.evento.com}</b><small>{pessoa?.papel === 'Funcionário' ? 'funcionário' : 'conselheiro'}</small></td>
           <td className="num"><span className={`cs-alerta ${alerta ? `is-${alerta}` : ''}`}>{int(row.diasNoStatus)} dias</span></td>
           <td className={`num ${row.diasTotais > 365 ? 'cs-mais-de-ano' : ''}`}>{int(row.diasTotais)} dias</td></tr>; })}</tbody>
     </table></div>
-    <p className="cs-nota"><button className="cs-link" onClick={() => abrirPendentes(ctx, 'A fila inteira', c.pendentes, 'Todos os processos esperando voto, do mais parado ao menos.')}>Ver os {int(c.pendentes.length)} processos da fila</button> · vermelho acima de 120 dias no status, amarelo de 90 a 120; o total acende acima de 1 ano</p>
+    <p className="cs-nota"><button className="cs-link" onClick={() => abrirPendentes(ctx, 'A fila inteira', c.pendentes, 'Todos os processos esperando voto, do mais parado ao menos.')}>Ver os {int(c.pendentes.length)} processos da fila</button>. Vermelho acima de 120 dias no status, amarelo de 90 a 120; o total acende acima de 1 ano</p>
   </div>;
 }
 
@@ -69,30 +69,28 @@ function Calor({ ctx }: { ctx: CockpitCtx }) {
   const option = useMemo(() => ({
     grid: { top: 2, right: 4, bottom: 2, left: 2, containLabel: true },
     tooltip: { formatter: (item: any) => `<b>${linhas[item.value[1]].status}</b><br/>Há ${faixasNoStatus[item.value[0]]} no status: <b>${int(item.value[2])}</b>` },
-    xAxis: { type: 'category', position: 'top', data: faixasNoStatus, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { fontSize: 9.5, interval: 0, color: (_: string, index: number) => index >= 3 ? tokens.bad : index === 2 ? tokens.warn : tokens.muted } },
-    yAxis: { type: 'category', inverse: true, data: linhas.map(row => row.status), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10 } },
+    xAxis: { type: 'category', position: 'top', data: faixasNoStatus, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { fontSize: 11, interval: 0, color: (_: string, index: number) => index >= 3 ? tokens.bad : index === 2 ? tokens.warn : tokens.muted } },
+    yAxis: { type: 'category', inverse: true, data: linhas.map(row => row.status), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     visualMap: { show: false, min: 0, max, inRange: { color: [tokens.soft, tokens.heat[1], tokens.accent, tokens.bad] } },
-    series: [{ type: 'heatmap', data: linhas.flatMap((row, y) => row.faixas.map((f, x) => [x, y, f.length])), label: { show: true, fontSize: 10.5, fontWeight: 700, color: tokens.ink, formatter: (item: any) => item.value[2] ? int(item.value[2]) : '' }, itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 3 } }],
+    series: [{ type: 'heatmap', data: linhas.flatMap((row, y) => row.faixas.map((f, x) => [x, y, f.length])), label: { show: true, fontSize: 11, fontWeight: 700, color: tokens.ink, formatter: (item: any) => item.value[2] ? int(item.value[2]) : '' }, itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 3 } }],
   }), [linhas, tokens, max]); // eslint-disable-line react-hooks/exhaustive-deps
-  if (!linhas.length) return <div className="empty-note">Nenhum processo esperando voto neste recorte.</div>;
-  return <Chart option={option} tokens={tokens} label="Processos esperando voto por status e tempo no status" onPick={params => { const [x, y] = params.value ?? []; const row = linhas[y]; if (row) abrirPendentes(ctx, `${row.status} · há ${faixasNoStatus[x]}`, row.faixas[x], 'Processos neste status do Votenet há este tempo, na data escolhida.'); }} />;
+  return <Chart option={option} tokens={tokens} label="Processos esperando voto por status e tempo no status" onPick={params => { const [x, y] = params.value ?? []; const row = linhas[y]; if (row) abrirPendentes(ctx, `${row.status}, há ${faixasNoStatus[x]}`, row.faixas[x], 'Processos neste status do Votenet há este tempo, na data escolhida.'); }} />;
 }
 
 /* ---------- Prescrição por relator ---------- */
 const exportarPrescricao = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Relator', ...faixasPrescricaoRelator.map(f => `Prescreve em ${f}`), 'Multas (R$)'], linhas: () => q(ctx).prescricaoPorRelator.map(row => [row.pessoa.nome, ...row.faixas.map(f => f.length), row.multas]) });
 function Prescricao({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = q(ctx).prescricaoPorRelator.slice(0, 8), cores = [tokens.bad, tokens.accent, tokens.heat[1]];
+  const { tokens } = ctx, rows = q(ctx).prescricaoPorRelator.slice(0, 6), cores = [tokens.bad, tokens.accent, tokens.heat[1]];
   const option = useMemo(() => ({
-    grid: { top: 24, right: 58, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: faixasPrescricaoRelator.map(f => `em ${f}`) },
+    grid: { top: 24, right: 112, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: [...faixasPrescricaoRelator] },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.pessoa.nome}</b><br/>${faixasPrescricaoRelator.map((f, i) => `Prescreve em ${f}: ${int(row.faixas[i].length)}`).join('<br/>')}<br/>Multas: <b>${brl(row.multas)}</b>`; } },
-    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.pessoa.nome), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10 } },
-    series: faixasPrescricaoRelator.map((faixa, index) => ({ name: `em ${faixa}`, type: 'bar', stack: 'p', barWidth: 11, data: rows.map(row => row.faixas[index].length), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
-      label: { show: true, position: 'inside', color: index === 2 ? '#1A202C' : '#FFFFFF', fontSize: 9, fontWeight: 700, formatter: (params: any) => params.value || '' } }))
-      .concat([{ name: 'multas', type: 'bar', stack: 'p', barWidth: 11, data: rows.map(() => 0), itemStyle: { color: 'transparent' }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5, fontWeight: 700, formatter: (params: any) => brl(rows[params.dataIndex].multas) } } as any]),
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.pessoa.nome), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
+    series: faixasPrescricaoRelator.map((faixa, index) => ({ name: faixa, type: 'bar', stack: 'p', barMaxWidth: 13, data: rows.map(row => row.faixas[index].length), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
+      label: { show: true, position: 'inside', color: corDoTexto(cores[index]), fontSize: 11, fontWeight: 700, formatter: (params: any) => params.value >= 2 ? params.value : '' } }))
+      .concat([{ name: 'multas', type: 'bar', stack: 'p', barMaxWidth: 13, data: rows.map(() => 0), itemStyle: { color: 'transparent' }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (params: any) => { const row = rows[params.dataIndex]; return `${int(row.faixas.flat().length)} ${row.faixas.flat().length === 1 ? 'auto' : 'autos'}, ${brl(row.multas)}`; } } } as any]),
   }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
-  if (!rows.length) return <div className="empty-note">Nenhum auto esperando voto prescreve nos próximos 12 meses neste recorte.</div>;
   return <Chart option={option} tokens={tokens} label="Autos que prescrevem em até 12 meses, por relator" onPick={params => { const row = rows[params.dataIndex]; if (!row) return; const lista = params.seriesIndex < 3 ? row.faixas[params.seriesIndex] : row.faixas.flat();
-    abrirPendentes(ctx, `Relator ${row.pessoa.nome} · perto da prescrição`, [...lista].sort((a, b) => prescricaoDe(a)!.em.localeCompare(prescricaoDe(b)!.em)), 'Autos de infração deste relator que prescrevem em até 12 meses (cinco anos do fato ou três anos parados).', 'Paute primeiro os que prescrevem antes.'); }} />;
+    abrirPendentes(ctx, `Perto da prescrição, com o relator ${row.pessoa.nome}`, [...lista].sort((a, b) => prescricaoDe(a)!.em.localeCompare(prescricaoDe(b)!.em)), 'Autos de infração deste relator que prescrevem em até 12 meses (cinco anos do fato ou três anos parados).', 'Paute primeiro os que prescrevem antes.'); }} />;
 }
 
 /* ---------- Do recebimento no GovAdm ao cadastro no Votenet ---------- */
@@ -102,10 +100,10 @@ function Cadastro({ ctx }: { ctx: CockpitCtx }) {
   const option = useMemo(() => ({
     grid: { top: 18, right: 4, bottom: 2, left: 2, containLabel: true },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => `<b>${faixasCadastro[items[0].dataIndex]}</b><br/>${int(items[0].value)} processos (${pct(items[0].value / total * 100)})` },
-    xAxis: { type: 'category', data: faixasCadastro, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 9, interval: 0, formatter: (v: string) => v.replace(' dias', '\ndias').replace('no mesmo dia', 'no mesmo\ndia') } },
+    xAxis: { type: 'category', data: faixasCadastro, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 11, interval: 0, formatter: (v: string) => v.replace(' dias', '\ndias').replace('no mesmo dia', 'no mesmo\ndia') } },
     yAxis: { type: 'value', show: false },
-    series: [{ type: 'bar', barWidth: '58%', data: c.cadastro.map((rows, index) => ({ value: rows.length, itemStyle: { color: index >= 4 ? tokens.bad : index === 3 ? tokens.warn : tokens.brand, borderRadius: [3, 3, 0, 0] } })),
-      label: { show: true, position: 'top', color: tokens.ink, fontSize: 9.5, fontWeight: 700, formatter: (params: any) => `${int(params.value)}` } }],
+    series: [{ type: 'bar', barMaxWidth: 34, barWidth: '58%', data: c.cadastro.map((rows, index) => ({ value: rows.length, itemStyle: { color: index >= 4 ? tokens.bad : index === 3 ? tokens.warn : tokens.brand, borderRadius: [3, 3, 0, 0] } })),
+      label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (params: any) => `${int(params.value)}` } }],
   }), [c.cadastro, tokens, total]);
   return <Chart option={option} tokens={tokens} label="Processos recebidos no período pelo tempo até o cadastro no Votenet" onPick={params => { const rows = c.cadastro[params.dataIndex]; if (rows) abrirTramitacoes(ctx, `Cadastrados no Votenet ${faixasCadastro[params.dataIndex]}`, rows, `Processos recebidos no período e cadastrados no Votenet ${faixasCadastro[params.dataIndex]} depois do recebimento no GovAdm.`); }} />;
 }

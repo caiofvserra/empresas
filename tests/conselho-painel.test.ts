@@ -113,3 +113,17 @@ test('fichas do Financeiro, do Atendimento e do Conselho: nenhum bloco leva "!" 
     assert.ok(!/\bGRE \d+ ·|· GRE/.test(src), `${name} escreve a regional com cidade`);
   }
 });
+
+test('páginas do Conselho seguem as regras de design dos outros painéis: fonte de 11px, barra com largura máxima, rótulo com corDoTexto, sem "·" e sem gráfico em recorte vazio', () => {
+  const dir = join(import.meta.dirname, '..', 'src', 'conselho');
+  for (const name of readdirSync(dir).filter(file => file.endsWith('.tsx'))) {
+    const src = readFileSync(join(dir, name), 'utf8');
+    const pequenas = [...src.matchAll(/fontSize: ?(\d+(?:\.\d+)?)/g)].map(m => Number(m[1])).filter(n => n < 11);
+    assert.deepEqual(pequenas, [], `${name}: fonte menor que 11px`);
+    assert.ok(!/\b([0-9]|10)px (Lato|Raleway)/.test(src), `${name}: fonte menor que 11px no texto do gráfico`);
+    assert.equal((src.match(/type: 'bar'/g) ?? []).length, (src.match(/type: 'bar',[^}]{0,90}barMaxWidth/g) ?? []).length, `${name}: barra sem barMaxWidth`);
+    assert.ok(!/'#(FFFFFF|FFF|1A202C)'/i.test(src), `${name}: rótulo com cor fixa, use corDoTexto`);
+    assert.ok(!src.includes('·'), `${name}: "·" no texto visível`);
+    assert.ok(!src.includes('empty-note'), `${name}: recorte vazio sem o aviso do Bloco`);
+  }
+});
