@@ -12,7 +12,9 @@ Grava:
     rodada, para a carga de stg.pncp_triagem e o cruzamento de integrations/sql/pncp-triagem-x-art.sql;
   - var/pncp/contratos-AAAA-MM.json, a coleta de cada mês, e var/pncp/documentos/, os PDFs lidos, para retomar sem baixar de novo;
   - src/domain/pncp-triagem-sp.json, só números por município e mês, que o painel de Fiscalização lê.
-Rodar de novo no mesmo dia retoma de onde parou. O arquivo do painel junta todas as rodadas do staging, a mais recente de cada
+Rodar de novo retoma de onde parou: contrato que já tem linha no staging não é lido outra vez. Quando sobra trabalho
+(--minutos esgotado ou API que falhou) e a execução gravou alguma linha, fica o arquivo var/pncp/pendente, que a rotina do
+GitHub usa para se chamar de novo. O arquivo do painel junta todas as rodadas do staging, a mais recente de cada
 contrato. O valor do contrato não é lido nem gravado. A primeira rodada deve cobrir 12 meses ou mais (--de), para a evolução do
 cartão comparar com um ano antes.
 """
@@ -22,6 +24,8 @@ import datetime as dt
 import json
 import os
 import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -64,16 +68,28 @@ def main():
     p.add_argument('--ate', default=fim_mes_passado.isoformat())
     p.add_argument('--destino', default=str(RAIZ / 'var' / 'pncp'))
     p.add_argument('--painel', default=str(RAIZ / 'src' / 'domain' / 'pncp-triagem-sp.json'))
-    p.add_argument('--max-rito', type=int, default=None, help='lê os documentos só dos N suspeitos mais prováveis')
+    p.add_argument('--max-rito', type=int, default=None, help='lê os documentos de no máximo N compras nesta execução')
+    p.add_argument('--minutos', type=float, default=None, help='para de começar mês ou compra nova depois de N minutos; o resto fica para a próxima execução')
+    p.add_argument('--paralelo', type=int, default=6, help='compras lidas ao mesmo tempo')
     a = p.parse_args()
 
     from pncp_triagem.modelo import Modelo  # só aqui: o resto do pacote não precisa do sentence-transformers
     destino = Path(a.destino)
     destino.mkdir(parents=True, exist_ok=True)
     rodada, staging = hoje.isoformat(), destino / ARQUIVO_STAGING
+    prazo = time.monotonic() + a.minutos * 60 if a.minutos else None
+    sem_tempo = lambda: prazo is not None and time.monotonic() > prazo  # noqa: E731
+    # Contrato que já tem linha, de qualquer rodada, não é lido de novo: cada execução só acrescenta o que falta. Assim a primeira
+    # rodada de 12 meses pode levar mais de uma execução, e a rotina do mês seguinte termina o que ficou.
+    feitos = {l['pncp_id'] for l in ler_staging(staging)}
+    modelo = Modelo(a.pacote)
+    lidas, adiados, escritos, faltou = 0, 0, 0, False
 
-    contratos = []
     for de, ate in meses(a.de, a.ate):
+        if sem_tempo():
+            print(f'Tempo esgotado antes de {de[:7]}: os meses que faltam ficam para a próxima execução.')
+            faltou = True
+            break
         cache = destino / f'contratos-{de[:7]}.json'
         if cache.exists() and json.loads(cache.read_text(encoding='utf-8'))['periodo'] == [de, ate]:
             lote = json.loads(cache.read_text(encoding='utf-8'))['contratos']
@@ -81,43 +97,50 @@ def main():
             print(f'Coletando {de} a {ate}...')
             lote = buscar_contratos(de, ate)
             gravar(cache, json.dumps({'periodo': [de, ate], 'contratos': lote}, ensure_ascii=False))
-        contratos += lote
-    desta_rodada = [l for l in ler_staging(staging) if l['rodada'] == rodada]
-    feitos = {l['pncp_id'] for l in desta_rodada}
-    # --max-rito vale para a rodada inteira, somando o que execuções anteriores do mesmo dia já leram.
-    ja_lidas = len({l['ncp_compra'] or l['pncp_id'] for l in desta_rodada if l['desfecho_rito'] != 'Não analisado'})
-    pendentes = [c for c in contratos if c['pncp_id'] not in feitos]
-    print(f'{len(contratos)} contratos de serviços em SP no período; {len(pendentes)} ainda sem triagem nesta rodada.')
+        pendentes = [c for c in lote if c['pncp_id'] not in feitos]
+        print(f'{de[:7]}: {len(lote)} contratos de serviços em SP, {len(pendentes)} sem triagem.')
+        if not pendentes:
+            continue
+        probs = [float(x) for x in modelo.probabilidades([c['objeto'] for c in pendentes])]
+        suspeitos = sorted((i for i in range(len(pendentes)) if probs[i] >= modelo.limiar), key=lambda i: -probs[i])
+        # Compras a ler, da mais provável para a menos; a mesma compra serve a todos os contratos dela.
+        ncps = list(dict.fromkeys(pendentes[i]['ncp_compra'] or pendentes[i]['pncp_id'] for i in suspeitos))
+        if a.max_rito is not None:
+            ncps = ncps[:max(0, a.max_rito - lidas)]
+        por_compra = {}
 
-    modelo = Modelo(a.pacote)
-    if pendentes:
-        probs = modelo.probabilidades([c['objeto'] for c in pendentes])
-        ordem = sorted(range(len(pendentes)), key=lambda i: -probs[i])
+        def ler(ncp):
+            return ncp, (None if sem_tempo() else analisar_compra(ncp, destino / 'documentos'))
+        with ThreadPoolExecutor(max_workers=a.paralelo) as pool:
+            for n, (ncp, rito) in enumerate(pool.map(ler, ncps), start=1):
+                por_compra[ncp] = rito
+                if n % 50 == 0:
+                    print(f'  documentos de {n} de {len(ncps)} compras lidos')
+        lidas += sum(r is not None for r in por_compra.values())
+
         novo = not staging.exists()
-        lidas, por_compra, adiadas = ja_lidas, {}, 0
         with staging.open('a', encoding='utf-8', newline='') as f:
             w = csv.writer(f, delimiter=';')
             if novo:
                 w.writerow(COLUNAS_STAGING)
-            for n, i in enumerate(ordem):
-                c, prob = pendentes[i], float(probs[i])
-                suspeito = prob >= modelo.limiar
-                rito = None
-                if suspeito and (a.max_rito is None or lidas < a.max_rito):
-                    ncp = c['ncp_compra'] or c['pncp_id']
-                    if ncp not in por_compra:
-                        por_compra[ncp] = analisar_compra(ncp, destino / 'documentos')
-                        lidas += 1
-                    rito = por_compra[ncp]
-                    if rito is None:  # a API falhou: sem linha agora, o contrato é lido de novo na próxima execução
-                        adiadas += 1
-                        continue
-                w.writerow(linha_staging(rodada, c, prob, suspeito, rito))
-                if n % 100 == 0:
-                    f.flush()
-                    print(f'  {n + 1} de {len(pendentes)} contratos (documentos de {lidas} compras lidos)')
-        if adiadas:
-            print(f'{adiadas} contratos ficaram para a próxima execução: a API do PNCP falhou na leitura dos documentos.')
+            for i, c in enumerate(pendentes):
+                suspeito, ncp = probs[i] >= modelo.limiar, c['ncp_compra'] or c['pncp_id']
+                rito = por_compra.get(ncp) if suspeito else None
+                if suspeito and ncp in por_compra and rito is None:
+                    adiados += 1  # a API falhou ou o tempo acabou: sem linha agora, o contrato volta na próxima execução
+                    continue
+                w.writerow(linha_staging(rodada, c, probs[i], suspeito, rito))
+                feitos.add(c['pncp_id'])
+                escritos += 1
+    if adiados:
+        print(f'{adiados} contratos ficaram para a próxima execução (falha da API do PNCP ou tempo esgotado).')
+    # Sobrou trabalho e esta execução andou: a rotina do GitHub lê este arquivo e se chama de novo com o mesmo período. Sem
+    # avanço (a API do PNCP fora do ar, por exemplo), não há arquivo, e a rotina para em vez de girar em falso.
+    pendente = destino / 'pendente'
+    if (adiados or faltou) and escritos:
+        pendente.write_text(f'{adiados} contratos adiados; meses por começar: {"sim" if faltou else "não"}\n', encoding='utf-8')
+    elif pendente.exists():
+        pendente.unlink()
 
     # O painel lê a linha mais recente de cada contrato de todas as rodadas do staging, e não só do período pedido: a rodada do
     # mês acrescenta um mês ao que já estava, em vez de trocar doze meses por um.

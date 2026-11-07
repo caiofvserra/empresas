@@ -1,6 +1,9 @@
 # Rotina mensal da triagem dos serviços gerais do PNCP com o modelo treinado (scripts/pncp-triagem.py), 07/11/2026.
 # Roda todo dia 5, às 6h de Brasília, sobre o mês anterior; a primeira vez, sem staging guardado, cobre os 12 meses anteriores.
 # Também roda à mão em Actions > Triagem do PNCP > Run workflow, com datas opcionais.
+# Cada execução trabalha até 5 horas e guarda o que fez. Se sobrar trabalho (a primeira rodada de 12 meses passa disso), ela
+# se chama de novo com o mesmo período, e a seguinte pula os contratos que já têm linha no staging; para quando acaba ou quando
+# uma execução inteira não grava nada.
 #
 # Uma vez só, antes da primeira rodada: crie a release `modelo-pncp` e anexe o pacote_reuso.joblib do Drive
 # (Releases > Draft a new release > tag modelo-pncp > anexar o arquivo > Publish). O staging, com número de controle e CNPJ,
@@ -17,6 +20,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: pncp-triagem
@@ -55,6 +59,13 @@ jobs:
             || { echo "::error::Falta a release modelo-pncp com o pacote_reuso.joblib (ver o começo deste arquivo)."; exit 1; }
           gh release download pncp-triagem-dados -p triagem-sp.csv -D var/pncp 2>/dev/null || echo "Primeira rodada: sem staging guardado."
 
+      - name: Coleta das execuções anteriores
+        uses: actions/cache/restore@v4
+        with:
+          path: var/pncp/contratos-*.json
+          key: pncp-contratos-${{ github.run_id }}
+          restore-keys: pncp-contratos-
+
       - name: Período
         id: periodo
         run: |
@@ -68,7 +79,7 @@ jobs:
           echo "Período: $de a $ate"
 
       - name: Triagem
-        run: python3 scripts/pncp-triagem.py --pacote var/modelo/pacote_reuso.joblib --de ${{ steps.periodo.outputs.de }} --ate ${{ steps.periodo.outputs.ate }}
+        run: python3 scripts/pncp-triagem.py --pacote var/modelo/pacote_reuso.joblib --de ${{ steps.periodo.outputs.de }} --ate ${{ steps.periodo.outputs.ate }} --minutos 290
 
       - name: Guardar o staging (fora do Git)
         if: always()
@@ -77,6 +88,13 @@ jobs:
           gh release view pncp-triagem-dados > /dev/null 2>&1 || gh release create pncp-triagem-dados --prerelease \
             --title "Staging da triagem do PNCP" --notes "triagem-sp.csv para a carga de stg.pncp_triagem (integrations/sql/pncp-triagem-x-art.sql). Atualizado pela rotina mensal."
           gh release upload pncp-triagem-dados var/pncp/triagem-sp.csv --clobber
+
+      - name: Guardar a coleta para a próxima execução
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: var/pncp/contratos-*.json
+          key: pncp-contratos-${{ github.run_id }}
 
       - uses: actions/setup-node@v4
         with:
@@ -93,4 +111,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/domain/pncp-triagem-sp.json entrega/
           git commit -m "Triagem do PNCP: rodada de $(date -u +%F) (${{ steps.periodo.outputs.de }} a ${{ steps.periodo.outputs.ate }})"
+          git pull --rebase -q origin main
           git push
+
+      - name: Continuar o que sobrou
+        if: success()
+        run: |
+          [ -f var/pncp/pendente ] || { echo "Nada pendente."; exit 0; }
+          cat var/pncp/pendente
+          gh workflow run pncp-triagem.yml --ref main -f de=${{ steps.periodo.outputs.de }} -f ate=${{ steps.periodo.outputs.ate }}
