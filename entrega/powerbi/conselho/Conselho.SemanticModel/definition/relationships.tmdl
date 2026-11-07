@@ -1,45 +1,43 @@
 relationship ea355114-d0bd-5776-9c2b-960c1f869d55
-	crossFilteringBehavior: bothDirections
 	fromColumn: 'Municípios'.GRE
 	toColumn: Regionais.GRE
 
-relationship 7e0cafa5-7bc3-5823-89b7-d27db3be723a
-	fromColumn: Processos.'Câmara'
-	toColumn: 'Câmaras'.'Câmara'
+relationship cd4942fd-a6b6-5733-a6c8-2475e9669c9c
+	fromColumn: 'Tramitações'.Colegiado
+	toColumn: Colegiados.Colegiado
 
-relationship 51b2532a-95dc-5444-ab57-ccc21f77e687
-	fromColumn: Processos.'Código IBGE'
+relationship 87af8133-20cb-5b4d-af86-e82b3d53f9ce
+	fromColumn: 'Tramitações'.'Código IBGE'
 	toColumn: 'Municípios'.'Código IBGE'
 
-relationship 90470252-d62a-51a8-9aad-7b0a17ad0dfd
-	fromColumn: Processos.'Mês de entrada'
-	toColumn: 'Calendário'.'Mês'
+relationship eff80b62-36b3-5fb4-962e-24dadaa4e13b
+	fromColumn: 'Foto da fila'.'Tramitação'
+	toColumn: 'Tramitações'.'Tramitação'
 
-relationship d9f8d4a7-f604-5b3d-85ee-e81f92b3bc72
-	isActive: false
-	fromColumn: Processos.'Mês do julgamento'
-	toColumn: 'Calendário'.'Mês'
+relationship 009f6718-95e8-500e-9712-8580d07102c1
+	fromColumn: 'Foto da fila'.Pessoa
+	toColumn: Pessoas.Pessoa
 
-relationship c467e80f-3b76-5ce9-bb0a-6177a43bab56
-	fromColumn: 'Foto dos processos'.Processo
-	toColumn: Processos.Processo
+relationship 53d80bdb-bfeb-5a51-b511-9483f31fa77c
+	fromColumn: Eventos.'Tramitação'
+	toColumn: 'Tramitações'.'Tramitação'
 
-relationship 8914b4c1-f594-5d4b-ba43-fdf9595c4568
-	fromColumn: 'Foto do plenário'.'Câmara'
-	toColumn: 'Câmaras'.'Câmara'
+relationship 2d6f667b-c062-5f79-9ba1-88e3184308c2
+	fromColumn: 'Presenças'.Colegiado
+	toColumn: Colegiados.Colegiado
 
-relationship 2401b07b-53e8-5aa9-9979-33d376e1d39e
-	fromColumn: 'Organizações'.GRE
-	toColumn: Regionais.GRE
+relationship facb45f5-3780-57fb-873c-aebd950eb5ae
+	fromColumn: 'Presenças'.Pessoa
+	toColumn: Pessoas.Pessoa
 
-relationship 384137ea-8d44-54a0-81a3-8572ea06fb89
-	fromColumn: Repasses.'Organização'
+relationship 7507f4cc-7722-5a36-bf58-bde48bc1023b
+	fromColumn: 'Diárias'.Pessoa
+	toColumn: Pessoas.Pessoa
+
+relationship 82a29ef3-1f2e-5af1-846d-2c3b5727f656
+	fromColumn: Autos.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship 57f9f51b-e03d-5e3d-95c3-8673fc32d85a
+	fromColumn: 'Pagamentos dos repasses'.'Organização'
 	toColumn: 'Organizações'.'Organização'
-
-relationship ca29f774-0959-57ba-9321-572c6e13cb41
-	fromColumn: 'Pagamentos dos repasses'.Repasse
-	toColumn: Repasses.Repasse
-
-relationship 49028690-5071-510e-b40d-27a8c83b13f1
-	fromColumn: 'Pagamentos dos repasses'.'Mês'
-	toColumn: 'Calendário'.'Mês'

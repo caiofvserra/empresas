@@ -1,0 +1,136 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "representacao-deliberacoes",
+  "position": {
+    "x": 644,
+    "y": 436,
+    "z": 14000,
+    "width": 620,
+    "height": 268,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Deliberações"
+                    }
+                  },
+                  "Property": "Data"
+                }
+              },
+              "queryRef": "Deliberações.Data",
+              "nativeQueryRef": "Data",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Deliberações"
+                    }
+                  },
+                  "Property": "Nome da organização"
+                }
+              },
+              "queryRef": "Deliberações.Nome da organização",
+              "nativeQueryRef": "Nome da organização",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Deliberações"
+                    }
+                  },
+                  "Property": "Canal"
+                }
+              },
+              "queryRef": "Deliberações.Canal",
+              "nativeQueryRef": "Canal",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Deliberações"
+                    }
+                  },
+                  "Property": "Proposta por"
+                }
+              },
+              "queryRef": "Deliberações.Proposta por",
+              "nativeQueryRef": "Proposta por",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Deliberações"
+                    }
+                  },
+                  "Property": "Conflito de interesse"
+                }
+              },
+              "queryRef": "Deliberações.Conflito de interesse",
+              "nativeQueryRef": "Conflito de interesse",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Valor das deliberações"
+                }
+              },
+              "queryRef": "Medidas.Valor das deliberações",
+              "nativeQueryRef": "Valor das deliberações",
+              "displayName": "Valor"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Deliberações das atas'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

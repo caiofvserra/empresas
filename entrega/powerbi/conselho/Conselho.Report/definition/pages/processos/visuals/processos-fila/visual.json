@@ -1,0 +1,151 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "processos-fila",
+  "position": {
+    "x": 16,
+    "y": 160,
+    "z": 11000,
+    "width": 620,
+    "height": 544,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Tramitações"
+                    }
+                  },
+                  "Property": "Processo"
+                }
+              },
+              "queryRef": "Tramitações.Processo",
+              "nativeQueryRef": "Processo",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Colegiados"
+                    }
+                  },
+                  "Property": "Nome"
+                }
+              },
+              "queryRef": "Colegiados.Nome",
+              "nativeQueryRef": "Nome",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Foto da fila"
+                    }
+                  },
+                  "Property": "Status"
+                }
+              },
+              "queryRef": "Foto da fila.Status",
+              "nativeQueryRef": "Status",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pessoas"
+                    }
+                  },
+                  "Property": "Nome"
+                }
+              },
+              "queryRef": "Pessoas.Nome",
+              "nativeQueryRef": "Nome",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Foto da fila"
+                    }
+                  },
+                  "Property": "Alerta"
+                }
+              },
+              "queryRef": "Foto da fila.Alerta",
+              "nativeQueryRef": "Alerta",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Dias no status"
+                }
+              },
+              "queryRef": "Medidas.Dias no status",
+              "nativeQueryRef": "Dias no status",
+              "displayName": "Dias no status"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Dias desde a entrada"
+                }
+              },
+              "queryRef": "Medidas.Dias desde a entrada",
+              "nativeQueryRef": "Dias desde a entrada",
+              "displayName": "Dias desde a entrada"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'A fila, do mais parado ao menos'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

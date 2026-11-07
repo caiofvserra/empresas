@@ -18,7 +18,8 @@ import type { ResultadoFt } from '../painel/forcas';
 import type { QuadroInstalacoes, QuadroObras, QuadroSociedades } from '../domain/frentes';
 import type { Historico } from '../observatorio/historico';
 import type { Aberturas, Concentracao, Permanencia, QuadroDemanda } from '../domain/mercado';
-import type { Acumulado, Carteira, LinhaPlenario, Processo, QuadroCamaras, QuadroDivida, ReceitaMensal } from '../domain/gestao';
+import type { Acumulado, Carteira, QuadroDivida, ReceitaMensal } from '../domain/gestao';
+import type { QuadroColegiado } from '../domain/colegiado';
 import type { Profissional } from '../domain/profissionais';
 import type { InstitutionalServiceRequest } from '../domain/institutional';
 import type { QuadroCno, QuadroCoorteNominal, QuadroCredenciamentos, QuadroDenominacao, QuadroJucesp, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
@@ -62,7 +63,7 @@ export interface CockpitCtx extends Ctx {
 export interface Gestao {
   /** Lançamentos de receita, despesa, diárias, contratos e pessoal do Conselho, lidos na data de referência. */
   contas: Conselho;
-  processos: Processo[]; camaras: QuadroCamaras; plenario: LinhaPlenario[]; carteira: Carteira; divida: QuadroDivida;
+  carteira: Carteira; divida: QuadroDivida;
   /** Meses da série dos cartões (24 ou o período mais 12), terminando no mês da data de referência. */
   meses: string[];
   receitaMensal: ReceitaMensal[]; receitaAcumulada: Acumulado[]; despesaAcumulada: Acumulado[]; despesaMensal: number[]; diariasMensais: number[];
@@ -70,6 +71,8 @@ export interface Gestao {
   /** Gastos com nome: servidores do quadro, conselheiros do plenário e diárias de 12 meses pessoa a pessoa (no recorte de GRE). */
   equipe: Servidor[]; conselheiros: Conselheiro[]; diariasPessoas: Beneficiario[];
   distancia: Map<string, { km: number; unidade: string }>; origem: (row: InstitutionalServiceRequest) => string;
+  /** Painel de Gestão do Conselho (07/11/2026): o colegiado lido na data, no período e no recorte (colegiado, regional e município). Nulo no Financeiro e no Atendimento. */
+  colegiado: QuadroColegiado | null;
 }
 export interface Parcerias { cno: QuadroCno; licencas: QuadroLicencas; pericias: QuadroPericias; tce: QuadroTce; sociosPf: QuadroSociosPf; coorteNominal: QuadroCoorteNominal; vinculos: QuadroVinculos;
   /** Painel de Empresas: credenciamentos no DETRAN-SP e no INMETRO, e atos da Junta Comercial (JUCESP). */

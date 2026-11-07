@@ -1,0 +1,47 @@
+/// Guarda, em cada sessão ordinária, cada conselheiro do colegiado e se esteve presente (pela ata).
+table 'Presenças'
+	isHidden
+	lineageTag: d999f16b-eb34-5b5d-b3e3-afe33fb5114a
+
+	column 'Sessão'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Sessão
+		lineageTag: edc5dd5a-fbc3-5724-a1fc-4d324136a035
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: fe8a161a-da03-5988-a478-26628e53bb4d
+
+	column Colegiado
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Colegiado
+		lineageTag: bbfe2d3b-86f0-56b5-976f-3833f556e5fe
+
+	column Pessoa
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Pessoa
+		lineageTag: dccdf473-0aca-504d-b2cc-be8b92fca5a0
+
+	column Presente
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Presente
+		lineageTag: 85adcf20-b0a9-5faa-92a0-86f857740703
+
+	partition 'Presenças' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "presencas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Sessão", type text}, {"Data", type date}, {"Colegiado", type text}, {"Pessoa", type text}, {"Presente", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

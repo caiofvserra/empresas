@@ -14,7 +14,7 @@ Gerado a partir do protótipo em HTML (repositório caiofvserra/empresas, `npm r
 - O modelo em esquema estrela: regionais, municípios, calendário, datas de referência e período; a foto de cada fim de mês da dívida de anuidade; e os fatos com data: receita, despesa, diárias por pessoa, empenhos, contratos e títulos de anuidade.
 - As medidas dos cartões e dos gráficos, em pastas com o nome de cada página, cada uma com a descrição de como é calculada.
 - As duas páginas (Receita e Orçamento e despesa). Os filtros no alto (regional, município, data de referência e período) ficam sincronizados entre as páginas, com o tema do Crea-SP. Os gráficos saem com rótulos de dados e legenda, para ler sem passar o mouse.
-- Em cada cartão, como no painel: o número, a comparação (com um ano antes, ou com os 12 meses anteriores na despesa, nas diárias e nos repasses) e a linha de apoio.
+- Em cada cartão, como no painel: o número, a comparação (com um ano antes, ou com os 12 meses anteriores na despesa e nas diárias) e a linha de apoio.
 - Os gastos com nome: a tabela de diárias por beneficiário (nome, categoria, cargo, lotação, valor, diárias, meses e quilômetros), os fornecedores pela razão social com os empenhos de cada um e o pessoal por função com cada servidor. No cenário, os nomes são fictícios.
 - O período é um parâmetro do tipo "Intervalo numérico", de 1 a 36 meses, com controle deslizante. A despesa, as diárias e os fornecedores usam sempre os 12 meses até a data, como no painel.
 

@@ -4,9 +4,8 @@ import { dataset } from '../src/domain/dataset.ts';
 import { datasetAt } from '../src/domain/tempo.ts';
 import { addDays } from '../src/domain/hash.ts';
 import { buildConselho, quadroConselho } from '../src/domain/conselho.ts';
-import { buildEntidades, quadroEntidades } from '../src/domain/entidades.ts';
 import { buildProfissionais, situacaoEm } from '../src/domain/profissionais.ts';
-import { buildCarteira, buildProcessos, plenario, receitaAcumulada, vencimentoContratos, despesaAcumulada, despesaMensal, distanciaUnidade, mediana, mesesAteData, quadroCamaras, quadroDivida, receitaMensal } from '../src/domain/gestao.ts';
+import { buildCarteira, receitaAcumulada, vencimentoContratos, despesaAcumulada, despesaMensal, distanciaUnidade, mediana, mesesAteData, quadroDivida, receitaMensal } from '../src/domain/gestao.ts';
 import { mesesDaSerie } from '../src/domain/series-mensais.ts';
 import { estruturaDe } from '../src/cockpit/estrutura.ts';
 import { janela } from '../src/painel/analise.ts';
@@ -15,21 +14,20 @@ import { servidores } from '../src/domain/pessoas-conselho.ts';
 import { arquivoDe, conferirCamposDosVisuais, conferirChavesUnicas, conferirNomesDePasta, conferirReferenciasDax, conferirSchemas, fimDoMesUmAnoAntes, inicio, leitorCsv, noPeriodo, numero, soma } from './powerbi-pacote.ts';
 
 /*
- * Os pacotes Power BI que saem do modelo comum de `src/powerbi/gestao/`: Financeiro (Receita e Orçamento), Atendimento e Gestão do
- * Conselho (Câmaras e Entidades), separados em 07/11/2026. Cada um é testado pela única entrada (`pacotePowerBi`), como o de Empresas:
+ * Os pacotes Power BI que saem do modelo comum de `src/powerbi/gestao/`: Financeiro (Receita e Orçamento) e Atendimento, separados
+ * em 07/11/2026 (o de Gestão do Conselho tem modelo próprio e é testado em `powerbi-conselho.test.ts`). Cada um é testado pela única entrada (`pacotePowerBi`), como o de Empresas:
  * os schemas oficiais, as referências do DAX e dos visuais (conferências comuns em `powerbi-pacote.ts`) e os cartões das cinco
  * páginas refeitos a partir dos CSV pela regra que a medida DAX escreve, contra as funções do protótipo (a fonte da verdade).
  */
 const PAINEIS = [
   { painel: 'financeiro', nome: 'Financeiro', paginas: ['receita', 'orcamento'] },
   { painel: 'atendimento', nome: 'Atendimento', paginas: ['atendimento'] },
-  { painel: 'conselho', nome: 'Conselho', paginas: ['camaras', 'entidades'] },
 ] as const;
 const pacotes = new Map(PAINEIS.map(({ painel }) => [painel, pacotePowerBi(painel, dataset)]));
 const PAGINAS = PAINEIS.flatMap(({ paginas }) => paginas);
 /** O nome do projeto do pacote que tem a página: os visuais ficam em `<Nome>.Report/definition/pages/<página>/`. */
 const nomeDaPagina = (pagina: string) => PAINEIS.find(({ paginas }) => (paginas as readonly string[]).includes(pagina))!.nome;
-/** Os CSV que dois pacotes levam são os mesmos: os cartões e os gráficos leem da união dos três. */
+/** Os CSV que os dois pacotes levam são os mesmos: os cartões e os gráficos leem da união dos dois. */
 const todos = new Map(PAINEIS.flatMap(({ painel }) => [...pacotes.get(painel)!]));
 const arquivo = arquivoDe(todos), lerCsv = leitorCsv(todos);
 /** O texto DAX de uma medida, no pacote que a tem. */
@@ -66,44 +64,29 @@ for (const { painel, nome, paginas } of PAINEIS) {
   test(`${painel}: o lado "um" de cada relação tem chave única no CSV`, () => conferirChavesUnicas(pacote, modeloPowerBi(painel)));
 }
 
-test('recorte: cada pacote leva só as tabelas das suas páginas, o filtro de câmara só no Conselho, e o CSV comum é o mesmo nos três', () => {
+test('recorte: cada pacote leva só as tabelas das suas páginas, e o CSV comum é o mesmo nos dois', () => {
   const csvs = (painel: string) => new Set([...pacotes.get(painel)!.keys()].filter(caminho => caminho.startsWith('dados/')));
-  const financeiro = csvs('financeiro'), atendimento = csvs('atendimento'), conselho = csvs('conselho');
-  for (const caminho of ['dados/receitas.csv', 'dados/despesas.csv', 'dados/diarias.csv', 'dados/titulos.csv', 'dados/foto-divida.csv']) assert.ok(financeiro.has(caminho) && !atendimento.has(caminho) && !conselho.has(caminho), caminho);
-  for (const caminho of ['dados/solicitacoes.csv', 'dados/coworkings-meses.csv']) assert.ok(atendimento.has(caminho) && !financeiro.has(caminho) && !conselho.has(caminho), caminho);
-  for (const caminho of ['dados/processos.csv', 'dados/foto-processos.csv', 'dados/repasses.csv']) assert.ok(conselho.has(caminho) && !financeiro.has(caminho) && !atendimento.has(caminho), caminho);
-  for (const caminho of ['dados/regionais.csv', 'dados/municipios.csv', 'dados/datas-referencia.csv']) for (const painel of ['financeiro', 'atendimento']) assert.equal(pacotes.get(painel)!.get(caminho), pacotes.get('conselho')!.get(caminho), `${painel}: ${caminho}`);
-  for (const { painel, nome, paginas } of PAINEIS) for (const pagina of paginas) {
-    const filtros = [...pacotes.get(painel)!].filter(([caminho]) => caminho.startsWith(`${nome}.Report/definition/pages/${pagina}/visuals/${pagina}-filtro-`)).map(([, texto]) => JSON.parse(texto).visual.visualContainerObjects?.title?.[0]?.properties?.text?.expr?.Literal?.Value);
-    assert.equal(filtros.includes("'Câmara'"), painel === 'conselho', `${pagina}: ${filtros.join(', ')}`);
-  }
-});
-
-test('plenário: as cadeiras e os profissionais ativos de cada câmara dão os do painel (plenario)', () => {
-  const foto = lerCsv('dados/foto-plenario.csv');
-  for (const d of ['2026-09-30', '2025-06-30']) {
-    const view = datasetAt(dataset, d);
-    for (const linha of plenario(buildEntidades(view), buildProfissionais(view), d)) {
-      const row = foto.find(item => item.Data === d && item.Câmara === linha.camara); assert.ok(row, `${d}: ${linha.camara}`);
-      assert.deepEqual([numero(row.Cadeiras), numero(row['Profissionais ativos'])], [linha.cadeiras, linha.profissionais], `${d}: ${linha.camara}`);
-    }
-  }
+  const financeiro = csvs('financeiro'), atendimento = csvs('atendimento');
+  for (const caminho of ['dados/receitas.csv', 'dados/despesas.csv', 'dados/diarias.csv', 'dados/titulos.csv', 'dados/foto-divida.csv']) assert.ok(financeiro.has(caminho) && !atendimento.has(caminho), caminho);
+  for (const caminho of ['dados/solicitacoes.csv', 'dados/coworkings-meses.csv']) assert.ok(atendimento.has(caminho) && !financeiro.has(caminho), caminho);
+  for (const caminho of ['dados/regionais.csv', 'dados/municipios.csv', 'dados/datas-referencia.csv']) assert.equal(pacotes.get('financeiro')!.get(caminho), pacotes.get('atendimento')!.get(caminho), caminho);
+  // Os processos, as câmaras e as entidades saíram para o pacote do Conselho.
+  for (const painel of ['financeiro', 'atendimento']) for (const caminho of ['dados/processos.csv', 'dados/camaras.csv', 'dados/organizacoes.csv']) assert.equal(csvs(painel).has(caminho), false, `${painel}: ${caminho}`);
 });
 
 test('cartões: o título é o nome do cartão; embaixo vêm a comparação (quando o painel tem) e a linha de apoio', () => {
-  const semComparacao = new Set(['Abaixo do piso de execução', 'Perto de prescrever', 'Recebido da dívida', 'Execução do orçamento no ano', 'Em atividades-fim', 'Contratos vigentes', 'Autos perto da prescrição',
-    'Organizações registradas', 'Cadeiras no plenário', 'Instrumentos vigentes', 'Tempo de resolução', 'Moram a mais de 50 km de uma unidade']);
+  const semComparacao = new Set(['Abaixo do piso de execução', 'Perto de prescrever', 'Recebido da dívida', 'Execução do orçamento no ano', 'Em atividades-fim', 'Contratos vigentes', 'Tempo de resolução', 'Moram a mais de 50 km de uma unidade']);
   let cartoes = 0;
   for (const pagina of PAGINAS) for (let i = 1; i <= 5; i++) {
-    const texto = todos.get(`${nomeDaPagina(pagina)}.Report/definition/pages/${pagina}/visuals/${pagina}-cartao-${i}/visual.json`); if (!texto) { assert.ok(pagina === 'entidades' && i === 5, `${pagina}: falta o cartão ${i}`); continue; }
-    const visual = JSON.parse(texto).visual, valores = (visual.query.queryState.Values.projections as { field: { Measure: { Property: string } } }[]).map(row => row.field.Measure.Property), [nome] = valores;
+    const visual = JSON.parse(arquivo(`${nomeDaPagina(pagina)}.Report/definition/pages/${pagina}/visuals/${pagina}-cartao-${i}/visual.json`)).visual;
+    const valores = (visual.query.queryState.Values.projections as { field: { Measure: { Property: string } } }[]).map(row => row.field.Measure.Property), [nome] = valores;
     assert.equal(visual.visualContainerObjects.title[0].properties.text.expr.Literal.Value, `'${nome}'`);
     assert.deepEqual(valores, semComparacao.has(nome) ? [nome, `Detalhe: ${nome}`] : [nome, `Comparação: ${nome}`, `Detalhe: ${nome}`]);
     cartoes++;
   }
-  assert.equal(cartoes, 24);
-  // A despesa, as diárias e os repasses comparam com os 12 meses anteriores, como no painel; os outros, com um ano antes.
-  for (const nome of ['Despesa em 12 meses', 'Diárias e passagens', 'Repasses em 12 meses']) assert.match(dax(`Comparação: ${nome}`), /" em relação aos 12 meses anteriores"/);
+  assert.equal(cartoes, 15);
+  // A despesa e as diárias comparam com os 12 meses anteriores, como no painel; os outros, com um ano antes.
+  for (const nome of ['Despesa em 12 meses', 'Diárias e passagens']) assert.match(dax(`Comparação: ${nome}`), /" em relação aos 12 meses anteriores"/);
   assert.match(dax('Comparação: Solicitações resolvidas no prazo'), /" p\.p\. em relação a um ano antes"/);
   // EOMONTH(data, -12) de cada data que se pode escolher precisa estar na tabela oculta de datas das fotos.
   const fotos = new Set(lerCsv('dados/datas-das-fotos.csv').map(row => row.Data));
@@ -122,12 +105,9 @@ test('gastos com nome: a tabela de diárias mostra quem recebeu, e os nomes de p
 
 /* ---------- os cartões a partir dos CSV ---------- */
 const receitas = lerCsv('dados/receitas.csv'), despesas = lerCsv('dados/despesas.csv'), diarias = lerCsv('dados/diarias.csv'), contratos = lerCsv('dados/contratos.csv');
-const titulos = lerCsv('dados/titulos.csv'), fotoDivida = lerCsv('dados/foto-divida.csv'), processos = lerCsv('dados/processos.csv'), fotoProcessos = lerCsv('dados/foto-processos.csv');
-const organizacoes = lerCsv('dados/organizacoes.csv'), repasses = lerCsv('dados/repasses.csv'), pagamentos = lerCsv('dados/pagamentos-repasses.csv');
+const titulos = lerCsv('dados/titulos.csv'), fotoDivida = lerCsv('dados/foto-divida.csv');
 const solicitacoes = lerCsv('dados/solicitacoes.csv'), coworkingsMeses = lerCsv('dados/coworkings-meses.csv'), coworkingsUsuarios = lerCsv('dados/coworkings-usuarios.csv'), coworkings = lerCsv('dados/coworkings.csv');
 const ativosCsv = lerCsv('dados/profissionais-ativos.csv'), distanciaDe = new Map(lerCsv('dados/municipios.csv').map(row => [row['Código IBGE'], numero(row['Distância até a unidade (km)'])]));
-const multaDe = new Map(processos.map(row => [row.Processo, row.Multa ? numero(row.Multa) : 0]));
-const registradaEm = new Map(organizacoes.map(row => [row.Organização, row['Registrada em']])), repasseDe = new Map(repasses.map(row => [row.Repasse, row]));
 const distintos = (rows: Record<string, string>[], coluna: string) => new Set(rows.map(row => row[coluna])).size;
 const medianaDe = (rows: Record<string, string>[], coluna: string) => mediana(rows.map(row => numero(row[coluna])));
 const taxa = (parte: number, todo: number) => todo > 0 ? parte / todo * 100 : null;
@@ -144,13 +124,6 @@ function cartoesDoPacote(d: string, meses: number) {
   const prescritos = soma(titulos.filter(row => row.Vencimento >= addDays(x, -1826) && row.Vencimento < addDays(d, -1826) && emAberto(row, d)), 'Valor');
   // Orçamento e despesa.
   const desp12 = despesas.filter(nos12), despAno = despesas.filter(row => row.Mês >= ano && row.Mês <= d), vigentes = contratos.filter(row => row.Início <= d && row.Fim >= d);
-  // Câmaras.
-  const foto = fotoProcessos.filter(row => row.Data === d), emJulgamento = foto.filter(row => row.Fase), emRisco = foto.filter(row => row['Prescreve em até 12 meses'] === '1');
-  const julgados = processos.filter(row => row['Julgado em'] && noPeriodo(row['Julgado em'], d, meses));
-  // Entidades.
-  const registradas = organizacoes.filter(row => row['Registrada em'] <= d), daOrganizacao = (row: Record<string, string>) => registradaEm.get(row.Organização)! <= d;
-  const pagos = (de: string, ate: string) => soma(pagamentos.filter(row => row.Data > de && row.Data <= ate && repasseDe.get(row.Repasse)!.Início <= d && daOrganizacao(row)), 'Valor');
-  const instrumentos = repasses.filter(row => row.Início <= d && row.Fim >= d && daOrganizacao(row));
   // Atendimento.
   const pedidos = solicitacoes.filter(row => noPeriodo(row['Aberta em'], d, meses)), resolvida = (row: Record<string, string>) => row['Resolvida em'] !== '' && row['Resolvida em'] <= d;
   const noPrazo = pedidos.filter(row => resolvida(row) && row['Resolvida em'] <= row.Prazo).length, atraso = pedidos.filter(row => resolvida(row) && row['Resolvida em'] > row.Prazo).length;
@@ -165,11 +138,6 @@ function cartoesDoPacote(d: string, meses: number) {
     despesa: soma(desp12, 'Realizado'), execucao: taxa(soma(despAno, 'Realizado'), soma(despAno, 'Orçado')), fim: soma(desp12.filter(row => row.Atividade === 'Atividade-fim'), 'Realizado'),
     diarias: soma(diarias.filter(nos12), 'Valor'), quantidadeDiarias: soma(diarias.filter(nos12), 'Diárias'),
     contratos: vigentes.length, valorContratos: soma(vigentes, 'Valor'), vencem90: vigentes.filter(row => row.Fim <= addDays(d, 90)).length,
-    estoque: emJulgamento.length, entradas: processos.filter(row => noPeriodo(row.Entrada, d, meses)).length, julgados: julgados.length, medianaDias: medianaDe(julgados, 'Dias até o julgamento'),
-    emRisco: emRisco.length, multas: emRisco.reduce((total, row) => total + (multaDe.get(row.Processo) ?? 0), 0), prescritosAutos: julgados.filter(row => row.Decisão === 'Arquivado pela prescrição').length,
-    recursos: foto.filter(row => row['Recurso esperando o plenário'] === '1').length,
-    organizacoes: registradas.length, cadeiras: soma(registradas, 'Cadeiras'), repasses: pagos(addDays(d, -365), d), repassesAntes: pagos(addDays(d, -730), addDays(d, -365)),
-    instrumentos: instrumentos.length, comInstrumento: distintos(instrumentos, 'Organização'),
     noPrazo: taxa(noPrazo, noPrazo + atraso + vencidas), pedidos: pedidos.length, empresas: pedidos.filter(row => row.Solicitante === 'Empresa').length, vencidas,
     tempoResolucao: medianaDe(pedidos.filter(resolvida), 'Dias até resolver'),
     ativos: soma(ativos, 'Ativos'), longe: soma(ativos.filter(row => (distanciaDe.get(row['Código IBGE']) ?? 0) > 50), 'Ativos'),
@@ -178,18 +146,17 @@ function cartoesDoPacote(d: string, meses: number) {
   };
 }
 
-/** Os mesmos cartões pelas funções do protótipo, como as páginas do painel de Gestão do Conselho os calculam, sem recorte. */
-const carteira = buildCarteira(dataset, buildProfissionais(dataset)), todosProcessos = buildProcessos(dataset), distancia = distanciaUnidade(dataset);
+/** Os mesmos cartões pelas funções do protótipo, como as páginas dos painéis Financeiro e de Atendimento os calculam, sem recorte. */
+const carteira = buildCarteira(dataset, buildProfissionais(dataset)), distancia = distanciaUnidade(dataset);
 const semRecorte = { greId: null, cityId: null, camara: null };
 function cartoesDoPainel(d: string, meses: number) {
   const view = datasetAt(dataset, d), conselho = buildConselho(view), w = janela(d, meses), serie = mesesAteData(d, mesesDaSerie(meses));
   const rm = receitaMensal(conselho, serie).slice(-meses), dv = quadroDivida(carteira, d, semRecorte, w.start, w.prevEnd, serie);
   const qc = quadroConselho(conselho, d, null, new Map()), ano = despesaAcumulada(conselho, d, null).filter(row => row.realizado !== null).at(-1)!;
-  const q = quadroCamaras(todosProcessos, d, meses, semRecorte, w.start, w.prevStart, w.prevEnd, serie), e = quadroEntidades(buildEntidades(view), d, null);
   const { atendimento: at, coworking: cw } = estruturaDe(view, null, meses), ativos = buildProfissionais(view).profissionais.filter(row => situacaoEm(row, d) === 'Ativo');
   return {
     antes: { receita: rm.every(row => row.antes !== null) ? rm.reduce((n, row) => n + row.antes!, 0) : null, divida: dv.totalAntes, despesa: despesaMensal(conselho, serie, null).slice(-24, -12).reduce((n, v) => n + v, 0),
-      diarias: qc.diarias.reduce((n, row) => n + row.antes, 0), estoque: q.mensal.at(-13)!.estoque, julgados: q.julgadosAntes, medianaDias: q.medianaDiasAntes, recursos: q.recursosAntes,
+      diarias: qc.diarias.reduce((n, row) => n + row.antes, 0),
       noPrazo: at.taxaNoPrazoAntes, pedidos: at.totalAntes, ocupacao: cw.ocupacaoAntes },
     agora: {
       receita: rm.reduce((n, row) => n + row.total, 0),
@@ -198,9 +165,6 @@ function cartoesDoPainel(d: string, meses: number) {
       despesa: despesaMensal(conselho, serie, null).slice(-12).reduce((n, v) => n + v, 0), execucao: ano.previsto ? ano.realizado! / ano.previsto * 100 : null, fim: qc.fimMeioAtual.fim,
       diarias: qc.diarias.reduce((n, row) => n + row.valor, 0), quantidadeDiarias: qc.diarias.reduce((n, row) => n + row.quantidade, 0),
       contratos: qc.contratos.vigentes, valorContratos: qc.contratos.valorVigente, vencem90: qc.contratos.vencem90,
-      estoque: q.estoque.length, entradas: q.entradas, julgados: q.julgados.length, medianaDias: q.medianaDias,
-      emRisco: q.emRisco.length, multas: q.emRisco.reduce((n, row) => n + (row.multa ?? 0), 0), prescritosAutos: q.prescritos.length, recursos: q.recursos.length,
-      organizacoes: e.linhas.length, cadeiras: e.cadeiras, repasses: e.total, repassesAntes: e.totalAntes, instrumentos: e.linhas.reduce((n, row) => n + row.vigentes, 0), comInstrumento: e.linhas.filter(row => row.vigentes).length,
       noPrazo: at.taxaNoPrazo, pedidos: at.pedidos.length, empresas: at.empresas, vencidas: at.partes['Em aberto, prazo vencido'].length, tempoResolucao: at.medianaDias,
       ativos: ativos.length, longe: ativos.filter(row => (distancia.get(row.cityId)?.km ?? 0) > 50).length,
       ocupacao: cw.ocupacao, usuarios: cw.usuarios, unidades: cw.unidades.length, custo: cw.custo,
@@ -233,7 +197,6 @@ for (const [d, meses] of [['2026-09-30', 12], ['2026-06-30', 3]] as const) {
 
 /* ---------- os gráficos, contra as funções do protótipo (sem recorte) ---------- */
 const doMes = (rows: Record<string, string>[], coluna: string, mes: string) => rows.filter(row => row[coluna] === `${mes}-01`);
-const camaraDe = new Map(processos.map(row => [row.Processo, row.Câmara]));
 
 test('gráficos da receita: receita por mês e origem, previsto e realizado no ano e a dívida por idade e piso dão os do painel', () => {
   for (const [d, meses] of [['2026-09-30', 12], ['2026-03-31', 6]] as const) {
@@ -273,33 +236,9 @@ test('gráficos do orçamento: despesa por natureza, fornecedores, contratos que
   }
 });
 
-test('gráficos das câmaras: fase, ritmo mês a mês, prescrição e decisões de cada câmara dão os do painel', () => {
-  for (const [d, meses] of [['2026-09-30', 12], ['2026-04-30', 6]] as const) {
-    const w = janela(d, meses), serie = mesesAteData(d, mesesDaSerie(meses)), q = quadroCamaras(todosProcessos, d, meses, semRecorte, w.start, w.prevStart, w.prevEnd, serie);
-    const foto = fotoProcessos.filter(row => row.Data === d), daCamara = (rows: typeof foto, camara: string) => rows.filter(row => camaraDe.get(row.Processo) === camara);
-    const julgados = processos.filter(row => row['Julgado em'] && noPeriodo(row['Julgado em'], d, meses) && row.Tipo === 'Auto de infração');
-    for (const linha of q.linhas) {
-      for (const [fase, rows] of Object.entries(linha.porFase)) assert.equal(daCamara(foto, linha.camara).filter(row => row.Fase === fase).length, rows.length, `${d} ${linha.camara} ${fase}`);
-      linha.prescricao.forEach((rows, i) => assert.equal(daCamara(foto, linha.camara).filter(row => row['Ordem do prazo'] === String(i + 1)).length, rows.length, `${d} ${linha.camara} prazo ${i + 1}`));
-      for (const [decisao, rows] of Object.entries(linha.decisoes)) assert.equal(julgados.filter(row => row.Câmara === linha.camara && row.Decisão === decisao).length, rows.length, `${d} ${linha.camara} ${decisao}`);
-    }
-    // Em julgamento no fim de cada mês: a foto do último dia do mês (no mês da data, a própria data).
-    for (const row of q.mensal.filter(item => item.month >= '2022-01')) {
-      const fim = [new Date(Date.UTC(Number(row.month.slice(0, 4)), Number(row.month.slice(5, 7)), 0)).toISOString().slice(0, 10), d].sort()[0];
-      assert.deepEqual([doMes(processos, 'Mês de entrada', row.month).length, doMes(processos, 'Mês do julgamento', row.month).length, fotoProcessos.filter(item => item.Data === fim && item.Fase).length],
-        [row.entradas, row.julgados, row.estoque], `${d} ${row.month}`);
-    }
-  }
-});
-
-test('gráficos de entidades e atendimento: repasses por ano e canal, assunto e situação e ocupação de cada coworking dão os do painel', () => {
+test('gráficos do atendimento: assunto e situação e ocupação de cada coworking dão os do painel', () => {
   for (const [d, meses] of [['2026-09-30', 12], ['2025-12-31', 6]] as const) {
-    const view = datasetAt(dataset, d), e = quadroEntidades(buildEntidades(view), d, null);
-    for (const ano of e.anos) for (const canal of ['Convênio', 'Contrato', 'Patrocínio']) {
-      const esperado = e.repassePorAno.filter(row => row.ano === ano && row.canal === canal).reduce((n, row) => n + row.valor, 0);
-      const obtido = soma(pagamentos.filter(row => row.Data <= d && row.Data.startsWith(ano) && repasseDe.get(row.Repasse)!.Canal === canal && repasseDe.get(row.Repasse)!.Início <= d && registradaEm.get(row.Organização)! <= d), 'Valor');
-      igual(obtido, esperado, `${d} ${ano} ${canal}`);
-    }
+    const view = datasetAt(dataset, d);
     const { atendimento: at, coworking: cw } = estruturaDe(view, null, meses), pedidos = solicitacoes.filter(row => noPeriodo(row['Aberta em'], d, meses));
     const resolvida = (row: Record<string, string>) => row['Resolvida em'] !== '' && row['Resolvida em'] <= d;
     const situacaoDe = (row: Record<string, string>) => resolvida(row) ? (row['Resolvida em'] <= row.Prazo ? 'Resolvido no prazo' : 'Resolvido com atraso') : row.Prazo < d ? 'Em aberto, prazo vencido' : 'Em aberto, no prazo';
@@ -309,11 +248,10 @@ test('gráficos de entidades e atendimento: repasses por ano e canal, assunto e 
   }
 });
 
-test('recorte por regional: organizações, solicitações e coworkings seguem a GRE, como no painel', () => {
+test('recorte por regional: solicitações e coworkings seguem a GRE, como no painel', () => {
   const d = dataset.snapshotDate, meses = 12;
   for (const gre of dataset.gres.slice(0, 4)) {
-    const e = quadroEntidades(buildEntidades(dataset), d, gre.id), { atendimento: at, coworking: cw } = estruturaDe(dataset, gre.id, meses);
-    assert.equal(organizacoes.filter(row => row.GRE === gre.name && row['Registrada em'] <= d).length, e.linhas.length, `${gre.name}: organizações`);
+    const { atendimento: at, coworking: cw } = estruturaDe(dataset, gre.id, meses);
     assert.equal(solicitacoes.filter(row => row.GRE === gre.name && noPeriodo(row['Aberta em'], d, meses)).length, at.pedidos.length, `${gre.name}: solicitações`);
     assert.equal(coworkings.filter(row => row.GRE === gre.name).length, cw.unidades.length, `${gre.name}: coworkings`);
   }

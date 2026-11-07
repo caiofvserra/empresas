@@ -1,0 +1,51 @@
+/// Guarda, no último dia de cada mês, as cadeiras de cada câmara no Plenário e os profissionais ativos (e as profissionais ativas) da modalidade que ela julga.
+table 'Foto das câmaras'
+	lineageTag: 5928065e-e4ce-5ff8-8ac2-ea66bf151805
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 4f30ba85-7950-51bb-8135-903d2ebfdf04
+
+	column 'Câmara'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Câmara
+		lineageTag: 0e61da73-643b-5ff5-a518-7c7bbfa18746
+
+	column Cadeiras
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Cadeiras
+		lineageTag: 4838c595-abac-50a7-bea0-98fd1e91ec90
+
+	column 'Profissionais ativos'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Profissionais ativos
+		lineageTag: 6af3f00a-be5d-549c-9e3e-4b02b4b3a29b
+
+	column 'Profissionais ativas'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Profissionais ativas
+		lineageTag: 52d13800-c643-594e-a642-d4c8a490f729
+
+	partition 'Foto das câmaras' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "foto-camaras.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Câmara", type text}, {"Cadeiras", Int64.Type}, {"Profissionais ativos", Int64.Type}, {"Profissionais ativas", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

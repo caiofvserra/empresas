@@ -23,359 +23,1134 @@ table Medidas
 		displayFolder: Apoio
 		lineageTag: 5d427e01-5534-5783-80c3-7f69e9c6259c
 
-	/// Conta os processos que já entraram nas câmaras e ainda não foram julgados na data escolhida.
-	measure 'Processos em julgamento' = ```
+	/// Conta os conselheiros em exercício na data escolhida (mandato em curso, de organização já registrada), do colegiado escolhido; no Plenário, todos. Sem o + 0, para o gráfico dos terços mostrar só os terços em curso.
+	measure 'Conselheiros no terço' = ```
 			VAR d = [Data escolhida]
-			RETURN CALCULATE(COUNTROWS('Foto dos processos'), REMOVEFILTERS('Calendário'), 'Foto dos processos'[Data] = d, KEEPFILTERS('Foto dos processos'[Fase] <> ""))
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Conselheiros'), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
-		lineageTag: dc31c62a-1aa2-53cc-997b-a76294984263
+		displayFolder: Colegiado
+		lineageTag: 15b66e7f-fb1f-5e65-ab9f-98e732227ed2
 
-	/// Conta os processos que entraram nas câmaras no período.
-	measure 'Processos que entraram no período' = ```
+	/// Conta os conselheiros em exercício na data escolhida, do colegiado escolhido; no Plenário, todos. O conselheiro representa uma modalidade, e não uma regional: a regional e o município não mudam este número.
+	measure 'Conselheiros em exercício' = [Conselheiros no terço] + 0
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 746a59b4-19d0-5ef6-82e9-f7fc90b1aa59
+
+	/// Conta as entidades de classe que indicaram os conselheiros em exercício.
+	measure 'Entidades com cadeira' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = [Início do período]
-			RETURN CALCULATE(COUNTROWS('Processos'), REMOVEFILTERS('Calendário'), 'Processos'[Entrada] >= inicio, 'Processos'[Entrada] <= d) + 0
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(DISTINCTCOUNT('Conselheiros'[Organização]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c), KEEPFILTERS('Conselheiros'[Natureza] = "Entidade de classe")) + 0
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
-		lineageTag: 5274c0a4-587c-5646-8bc3-caecab88597d
+		displayFolder: Colegiado
+		lineageTag: 379cae68-ec7f-5ffe-84e1-2a7026d2302d
 
-	/// Conta os processos julgados pelas câmaras no período.
-	measure 'Julgados no período' = ```
+	/// Conta as instituições de ensino que indicaram os conselheiros em exercício.
+	measure 'Escolas com cadeira' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = [Início do período]
-			RETURN CALCULATE(COUNTROWS('Processos'), REMOVEFILTERS('Calendário'), 'Processos'[Julgado em] >= inicio, 'Processos'[Julgado em] <= d) + 0
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(DISTINCTCOUNT('Conselheiros'[Organização]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c), KEEPFILTERS('Conselheiros'[Natureza] = "Instituição de ensino")) + 0
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
-		lineageTag: 88d85d77-c75f-59b1-b5da-d9ef6638edce
+		displayFolder: Colegiado
+		lineageTag: 976e4b8f-d1bf-52f5-aa5b-c41754773d8a
 
-	/// Conta os autos de infração julgados no período, pela decisão da câmara.
-	measure 'Autos julgados no período' = ```
+	/// Conta os processos esperando voto na data escolhida, para os gráficos (sem o + 0, a pessoa ou o status sem processo some do gráfico).
+	measure 'Processos na fila' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = [Início do período]
-			RETURN CALCULATE(COUNTROWS('Processos'), REMOVEFILTERS('Calendário'), 'Processos'[Julgado em] >= inicio, 'Processos'[Julgado em] <= d, KEEPFILTERS('Processos'[Tipo] = "Auto de infração"))
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d)
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
-		lineageTag: a87f3117-1c52-59d1-8e5a-a07fe8734b92
+		displayFolder: Colegiado
+		lineageTag: 82bd2e01-3439-5deb-bfb8-cc492aa080ec
 
-	/// Mostra o tempo típico (a mediana), em dias, da entrada ao julgamento dos processos julgados no período.
-	measure 'Tempo até o julgamento' = ```
+	/// Conta os processos que já entraram no colegiado e ainda não foram votados na data escolhida, em qualquer status do Votenet. É um estoque: não tem acumulado do ano.
+	measure 'Processos esperando voto' = [Processos na fila] + 0
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 837a8301-6447-56bb-80cb-f6c96f900d4e
+
+	/// Conta os processos esperando voto que ainda não foram distribuídos a um relator.
+	measure 'Aguardando distribuição' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d, KEEPFILTERS('Foto da fila'[Status] = "Aguardando distribuição")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: a3d407d3-2981-5269-9cab-fb2b3c260562
+
+	/// Divide os processos esperando voto que estão com um conselheiro (relator ou pedido de vista) pelos conselheiros em exercício. Os que estão com a assessoria ficam de fora.
+	measure 'Processos por conselheiro' = DIVIDE(CALCULATE([Processos esperando voto], 'Pessoas'[Papel] = "Conselheiro"), [Conselheiros em exercício])
+		formatString: 0.0
+		displayFolder: Colegiado
+		lineageTag: 284187d0-861f-57a2-9600-d95852188491
+
+	/// Conta os processos votados no período, nas câmaras e no Plenário. Um processo que foi ao Plenário conta duas vezes: uma em cada colegiado.
+	measure 'Votados no período' = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]
-			RETURN CALCULATE(MEDIAN('Processos'[Dias até o julgamento]), REMOVEFILTERS('Calendário'), 'Processos'[Julgado em] >= inicio, 'Processos'[Julgado em] <= d)
+			RETURN CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: f09f6592-b0c8-5aa8-956e-058a75ed1d11
+
+	/// Conta os recursos votados pelo Plenário no período.
+	measure 'Votados no Plenário no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS('Tramitações'[Instância] = "Plenário")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 265bf95d-9741-5b37-a93e-4cd59c7486fa
+
+	/// Mostra o tempo típico (a mediana), em dias, da abertura no GovAdm ao voto da câmara, nos processos votados nas câmaras no período. É o marco do Confea para a 1ª instância.
+	measure 'Da abertura à decisão' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(MEDIAN('Tramitações'[Dias da abertura ao voto]), 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d)
 			```
 		formatString: #,##0" dias"
-		displayFolder: Câmaras e plenário
-		lineageTag: 9c3b154b-9636-5f5d-a795-ac236753a6b4
+		displayFolder: Colegiado
+		lineageTag: 50df4c2a-bf51-5d3c-b6e9-18628b06c9ef
 
-	/// Conta os autos de infração sem julgamento que completam cinco anos do fato em até 12 meses (Lei 9.873/1999, art. 1º).
-	measure 'Autos perto da prescrição' = ```
+	/// Conta os processos esperando voto que entraram no colegiado antes de 1º de janeiro do ano da data escolhida: os pendentes de exercícios anteriores, marco do Confea.
+	measure 'De exercícios anteriores' = ```
 			VAR d = [Data escolhida]
-			RETURN CALCULATE(COUNTROWS('Foto dos processos'), REMOVEFILTERS('Calendário'), 'Foto dos processos'[Data] = d, KEEPFILTERS('Foto dos processos'[Prescreve em até 12 meses] = 1))
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d, KEEPFILTERS('Foto da fila'[De exercício anterior] = 1)) + 0
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
+		displayFolder: Colegiado
+		lineageTag: d9e79686-71b3-58e8-85b4-4e5e6eca1e0d
+
+	/// Conta as idas à pauta em cada mês, nos meses do gráfico. Um processo pautado de novo depois de uma vista conta outra vez.
+	measure 'Pautados no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('Eventos'), 'Eventos'[Status] = "Pautado", 'Eventos'[Mês] = mes, 'Eventos'[Desde] <= d) + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 6c3303d3-1477-59b9-9b79-d77b12e5dfc2
+
+	/// Conta os processos votados em cada mês, nos meses do gráfico.
+	measure 'Votados no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Mês do voto] = mes, 'Tramitações'[Votado em] <= d) + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 9a7573d0-fd9c-588a-85bf-ba98a3c796db
+
+	/// Conta os processos votados no mesmo mês um ano antes, para comparar.
+	measure 'Votados no mesmo mês do ano anterior' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
+			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
+			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Mês do voto] = EDATE(mes, -12)) + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 4733f044-25e7-52aa-82c9-327c2257453b
+
+	/// Conta os processos recebidos nas câmaras no período (o recebimento no GovAdm).
+	measure 'Caminho: recebidos nas câmaras' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Tramitações'[Processo]), 'Tramitações'[Entrada] <= d, 'Tramitações'[Entrada do processo] >= inicio, 'Tramitações'[Entrada do processo] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: de23ca5b-ce56-5bf1-a96e-8663c42aef68
+
+	/// Conta os processos votados pelas câmaras no período.
+	measure 'Caminho: votados nas câmaras' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Tramitações'[Processo]), 'Tramitações'[Entrada] <= d, 'Tramitações'[Julgado na câmara em] >= inicio, 'Tramitações'[Julgado na câmara em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: c9c4d5db-288a-5cfd-8cca-57e39804fba8
+
+	/// Conta os recursos ao Plenário apresentados no período.
+	measure 'Caminho: recursos ao Plenário' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Tramitações'[Processo]), 'Tramitações'[Entrada] <= d, 'Tramitações'[Recurso em] >= inicio, 'Tramitações'[Recurso em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 453ae804-a5f2-573a-aebd-33bc29c3d735
+
+	/// Conta os recursos votados pelo Plenário no período.
+	measure 'Caminho: votados no Plenário' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Tramitações'[Processo]), 'Tramitações'[Entrada] <= d, 'Tramitações'[Plenário em] >= inicio, 'Tramitações'[Plenário em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 057282ff-a1c1-5d8d-8034-a627c89bbac8
+
+	/// Conta os autos com recurso ao Confea no período.
+	measure 'Caminho: recursos ao Confea' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Autos'), 'Autos'[Recurso ao Confea em] >= inicio, 'Autos'[Recurso ao Confea em] <= d, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d)))) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 05edcc30-397f-5052-8e0f-2de8bab1fee1
+
+	/// Conta os autos que transitaram em julgado no período: a multa passa a ser cobrada.
+	measure 'Caminho: transitados em julgado' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Autos'), 'Autos'[Trânsito em julgado] >= inicio, 'Autos'[Trânsito em julgado] <= d, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d)))) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: 7ed463e0-894f-577e-b6e6-c30863adbeb1
+
+	/// Conta os autos com a multa paga no período.
+	measure 'Caminho: multas pagas' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Autos'), 'Autos'[Pago em] >= inicio, 'Autos'[Pago em] <= d, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d)))) + 0
+			```
+		formatString: #,##0
+		displayFolder: Colegiado
+		lineageTag: ce7f9de2-5ec1-5bc4-8f03-203a37055ddb
+
+	/// Conta os processos há mais de 120 dias no mesmo status do Votenet na data escolhida (decisão do Caio, 07/11/2026).
+	measure 'Em alerta vermelho' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d, KEEPFILTERS('Foto da fila'[Alerta] = "Vermelho")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Processos
+		lineageTag: 67305388-86d6-58aa-9c70-f330a1e238b7
+
+	/// Conta os processos de 90 a 120 dias no mesmo status do Votenet.
+	measure 'Em alerta amarelo' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d, KEEPFILTERS('Foto da fila'[Alerta] = "Amarelo")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Processos
+		lineageTag: 1b5608e9-1487-52f3-91d5-14b1b36ed7bc
+
+	/// Conta os processos esperando voto que entraram no colegiado há mais de um ano.
+	measure 'Há mais de 1 ano no colegiado' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d, KEEPFILTERS('Foto da fila'[Mais de um ano] = 1)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Processos
+		lineageTag: f1c4522a-6a34-590c-b06e-05d24e22ee7b
+
+	/// Conta os autos perto da prescrição, para o gráfico por relator.
+	measure 'Perto da prescrição' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d, KEEPFILTERS('Foto da fila'[Perto da prescrição] = 1))
+			```
+		formatString: #,##0
+		displayFolder: Processos
+		lineageTag: c9d835e5-f73f-5be7-abcd-f3edc6274efc
+
+	/// Conta os autos de infração esperando voto que prescrevem em até 12 meses: cinco anos do fato (Lei 9.873/1999, art. 1º) ou três anos parados no mesmo status (a intercorrente, art. 1º, § 1º), o que vier primeiro. No Plenário, só corre a intercorrente.
+	measure 'Autos perto da prescrição' = [Perto da prescrição] + 0
+		formatString: #,##0
+		displayFolder: Processos
 		lineageTag: 36ae8705-7106-5387-9be8-1d9d62662ea8
 
-	/// Soma o valor das multas dos autos que prescrevem em até 12 meses.
+	/// Soma as multas dos autos que prescrevem em até 12 meses.
 	measure 'Multas dos autos perto da prescrição' = ```
 			VAR d = [Data escolhida]
-			RETURN SUMX(CALCULATETABLE('Foto dos processos', REMOVEFILTERS('Calendário'), 'Foto dos processos'[Data] = d, 'Foto dos processos'[Prescreve em até 12 meses] = 1), RELATED('Processos'[Multa])) + 0
+			RETURN CALCULATE(SUM('Foto da fila'[Multa]), 'Foto da fila'[Data] = d, KEEPFILTERS('Foto da fila'[Perto da prescrição] = 1)) + 0
 			```
 		formatString: R$ #,##0
-		displayFolder: Câmaras e plenário
+		displayFolder: Processos
 		lineageTag: cebd094b-bd49-542d-9b9b-f38370a95c58
 
-	/// Conta os autos arquivados pela prescrição no período.
-	measure 'Autos prescritos no período' = CALCULATE([Julgados no período], KEEPFILTERS('Processos'[Decisão] = "Arquivado pela prescrição"))
-		formatString: #,##0
-		displayFolder: Câmaras e plenário
-		lineageTag: 065d72e2-d30c-5b0c-ae3d-907a300aa2bf
-
-	/// Conta os processos em que a parte recorreu da decisão da câmara e o plenário ainda não julgou, na data escolhida.
-	measure 'Recursos esperando o plenário' = ```
+	/// Conta os autos que prescrevem em até 12 meses por estarem parados há quase três anos no mesmo status.
+	measure 'Perto da prescrição pela intercorrente' = ```
 			VAR d = [Data escolhida]
-			RETURN CALCULATE(COUNTROWS('Foto dos processos'), REMOVEFILTERS('Calendário'), 'Foto dos processos'[Data] = d, KEEPFILTERS('Foto dos processos'[Recurso esperando o plenário] = 1))
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d, KEEPFILTERS('Foto da fila'[Pela intercorrente] = 1)) + 0
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
-		lineageTag: af108ce3-c861-5861-953e-627b4011998e
+		displayFolder: Processos
+		lineageTag: 2c798eaf-b09e-5401-b75c-1397c6b922d4
 
-	/// Conta os processos que entraram em cada mês, nos meses do gráfico.
-	measure 'Entraram no mês' = ```
+	/// Conta os processos há mais de dois anos no mesmo status: com três, o auto prescreve pela intercorrente.
+	measure 'Parados há mais de 2 anos' = ```
 			VAR d = [Data escolhida]
-			VAR mes = MAX('Calendário'[Mês])
-			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
-			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
-			RETURN IF(meses > 0, CALCULATE(COUNTROWS('Processos') + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d, KEEPFILTERS('Foto da fila'[Parado há mais de dois anos] = 1)) + 0
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
-		lineageTag: 346ef0d8-c21b-5a3a-a12e-43900ce37935
+		displayFolder: Processos
+		lineageTag: 2cfdddb6-a7f2-532c-aa08-bc4e618301ef
 
-	/// Conta os processos julgados em cada mês, nos meses do gráfico.
-	measure 'Julgados no mês' = ```
+	/// Mostra há quantos dias o processo está no status do Votenet, na data escolhida.
+	measure 'Dias no status' = ```
 			VAR d = [Data escolhida]
-			VAR mes = MAX('Calendário'[Mês])
-			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
-			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
-			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('Processos'), USERELATIONSHIP('Processos'[Mês do julgamento], 'Calendário'[Mês])) + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			RETURN CALCULATE(MAX('Foto da fila'[Dias no status]), 'Foto da fila'[Data] = d)
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
-		lineageTag: f6ce9875-c819-587b-bcd4-a19d4b02fa8c
+		displayFolder: Processos
+		lineageTag: ae117dad-16c2-5693-9938-4e05402cc5da
 
-	/// Conta os processos em julgamento no último dia de cada mês (no mês da data escolhida, nela).
-	measure 'Em julgamento no fim do mês' = ```
+	/// Mostra há quantos dias o processo entrou no colegiado, na data escolhida.
+	measure 'Dias desde a entrada' = ```
 			VAR d = [Data escolhida]
-			VAR mes = MAX('Calendário'[Mês])
-			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
-			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
-			RETURN IF(meses > 0, CALCULATE(CALCULATE(COUNTROWS('Foto dos processos'), REMOVEFILTERS('Calendário'), 'Foto dos processos'[Data] = MIN(EOMONTH(mes, 0), d), 'Foto dos processos'[Fase] <> ""), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			RETURN CALCULATE(MAX('Foto da fila'[Dias desde a entrada]), 'Foto da fila'[Data] = d)
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
-		lineageTag: 9161d469-139b-53d7-b202-a41121153e98
+		displayFolder: Processos
+		lineageTag: 44c84785-15f7-5167-943b-4fadbd533a5e
 
-	/// Conta as cadeiras de cada câmara no plenário na data escolhida, pelas modalidades das entidades e escolas que as indicam.
+	/// Conta os processos recebidos nas câmaras no período, que a assessoria cadastra à mão no Votenet.
+	measure 'Cadastrados no Votenet' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Entrada] >= inicio, 'Tramitações'[Entrada] <= d, KEEPFILTERS('Tramitações'[Instância] = "Câmara"))
+			```
+		formatString: #,##0
+		displayFolder: Processos
+		lineageTag: 38749cfe-3cd3-5ad0-a500-72b6a953411d
+
+	/// Conta os recebidos no período que levaram mais de 15 dias até o cadastro no Votenet.
+	measure 'Cadastrados no Votenet depois de 15 dias' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Entrada] >= inicio, 'Tramitações'[Entrada] <= d, KEEPFILTERS('Tramitações'[Instância] = "Câmara"), KEEPFILTERS('Tramitações'[Dias até o Votenet] > 15)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Processos
+		lineageTag: d7f9f862-cbd7-5fa8-b0a3-d16af45f4bad
+
+	/// Mostra o tempo típico (a mediana), em dias, entre o recebimento na câmara pelo GovAdm e o cadastro no Votenet, nos processos recebidos no período.
+	measure 'Do GovAdm ao Votenet' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(MEDIAN('Tramitações'[Dias até o Votenet]), 'Tramitações'[Entrada] >= inicio, 'Tramitações'[Entrada] <= d, KEEPFILTERS('Tramitações'[Instância] = "Câmara"))
+			```
+		formatString: #,##0" dias"
+		displayFolder: Processos
+		lineageTag: 670696bb-a921-5fad-8d8b-e22395b175a0
+
+	/// Conta as sessões ordinárias do colegiado escolhido no período.
+	measure 'Sessões no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Presenças'[Sessão]), 'Presenças'[Data] >= inicio, 'Presenças'[Data] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Conselheiros
+		lineageTag: 0f577e63-8a41-5cf1-8afe-187b80ea1594
+
+	/// Divide as presenças pelos lugares nas sessões ordinárias do período (cada conselheiro do colegiado em cada sessão), pela ata. Na base real, até a API de transparência publicar as atas, o jeton pago aproxima a presença.
+	measure 'Presença nas sessões' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR presentes = CALCULATE(SUM('Presenças'[Presente]), 'Presenças'[Data] >= inicio, 'Presenças'[Data] <= d)
+			VAR lugares = CALCULATE(COUNTROWS('Presenças'), 'Presenças'[Data] >= inicio, 'Presenças'[Data] <= d)
+			RETURN DIVIDE(presentes, lugares)
+			```
+		formatString: 0.0%
+		displayFolder: Conselheiros
+		lineageTag: 80fd0ccf-6dc5-5709-b3c0-8397b9ff0d2c
+
+	/// Mostra o tempo típico (a mediana), em dias, da distribuição ao relator ao relato assinado, nos relatos assinados no período antes do voto.
+	measure 'Tempo de relato' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(MEDIAN('Tramitações'[Dias de relato]), 'Tramitações'[Assinado em] >= inicio, 'Tramitações'[Assinado em] <= d)
+			```
+		formatString: #,##0" dias"
+		displayFolder: Conselheiros
+		lineageTag: bdd684b2-0109-5b94-b8bb-284a905dc57b
+
+	/// Mostra o tempo típico de relato dos relatos feitos com a IA no período.
+	measure 'Relato com IA' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(MEDIAN('Tramitações'[Dias de relato]), 'Tramitações'[Assinado em] >= inicio, 'Tramitações'[Assinado em] <= d, KEEPFILTERS('Tramitações'[Relato com IA] = 1))
+			```
+		formatString: #,##0" dias"
+		displayFolder: Conselheiros
+		lineageTag: d0c7aecb-0109-5271-8c5c-9c336b3e4536
+
+	/// Mostra o tempo típico de relato dos relatos sem IA, só dos processos distribuídos depois que a IA chegou (julho de 2025), para comparar.
+	measure 'Relato sem IA' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(MEDIAN('Tramitações'[Dias de relato]), 'Tramitações'[Assinado em] >= inicio, 'Tramitações'[Assinado em] <= d, KEEPFILTERS('Tramitações'[Relato com IA] = 0), KEEPFILTERS('Tramitações'[Distribuído depois da IA] = 1))
+			```
+		formatString: #,##0" dias"
+		displayFolder: Conselheiros
+		lineageTag: d8caf971-f906-57cb-8b8b-88e9053656f8
+
+	/// Conta os relatos feitos com a IA no período.
+	measure 'Relatos com IA' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNT('Tramitações'[Dias de relato]), 'Tramitações'[Assinado em] >= inicio, 'Tramitações'[Assinado em] <= d, KEEPFILTERS('Tramitações'[Relato com IA] = 1)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Conselheiros
+		lineageTag: 69423740-bc8e-5fa6-b196-2a980739e1a3
+
+	/// Conta os relatos sem IA no período, dos processos distribuídos depois que a IA chegou.
+	measure 'Relatos sem IA' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNT('Tramitações'[Dias de relato]), 'Tramitações'[Assinado em] >= inicio, 'Tramitações'[Assinado em] <= d, KEEPFILTERS('Tramitações'[Relato com IA] = 0), KEEPFILTERS('Tramitações'[Distribuído depois da IA] = 1)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Conselheiros
+		lineageTag: 61a0678e-b72b-5b88-98db-4d56ae5aadf9
+
+	/// Mostra o tempo típico de relato com IA em cada trimestre do eixo, até a data escolhida.
+	measure 'Relato com IA no trimestre' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(MEDIAN('Tramitações'[Dias de relato]), 'Tramitações'[Assinado em] <= d, 'Tramitações'[Relato com IA] = 1, 'Tramitações'[Distribuído depois da IA] = 1)
+			```
+		formatString: #,##0" dias"
+		displayFolder: Conselheiros
+		lineageTag: f74ba1ff-3312-5c2d-bae6-16d7fb1a9968
+
+	/// Mostra o tempo típico de relato sem IA em cada trimestre do eixo, dos processos distribuídos depois que a IA chegou.
+	measure 'Relato sem IA no trimestre' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(MEDIAN('Tramitações'[Dias de relato]), 'Tramitações'[Assinado em] <= d, 'Tramitações'[Relato com IA] = 0, 'Tramitações'[Distribuído depois da IA] = 1)
+			```
+		formatString: #,##0" dias"
+		displayFolder: Conselheiros
+		lineageTag: 3365612d-f6f8-5cff-b2b3-ec9597ae1062
+
+	/// Conta os processos com pedido de vista no período: saíram da pauta para outro conselheiro ler.
+	measure 'Pedidos de vista' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Eventos'[Tramitação]), 'Eventos'[Desde] >= inicio, 'Eventos'[Desde] <= d, KEEPFILTERS('Eventos'[Status] = "Pedido de vista")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Conselheiros
+		lineageTag: c50dcd5d-979d-5017-ab44-62d50b7b04ea
+
+	/// Conta os processos em que o relator se declarou impedido no período: o processo volta à distribuição.
+	measure Impedimentos = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Eventos'[Tramitação]), 'Eventos'[Desde] >= inicio, 'Eventos'[Desde] <= d, KEEPFILTERS('Eventos'[Status] = "Impedimento")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Conselheiros
+		lineageTag: 9b4b925d-49f1-50ab-b91a-3a454d998fe2
+
+	/// Conta os processos que saíram em diligência no período, para buscar informação antes do voto.
+	measure 'Diligências' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Eventos'[Tramitação]), 'Eventos'[Desde] >= inicio, 'Eventos'[Desde] <= d, KEEPFILTERS('Eventos'[Status] = "Diligência")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Conselheiros
+		lineageTag: 0d93ae62-ebc7-5574-9602-e23a2b702647
+
+	/// Conta os processos esperando voto que estão com cada conselheiro na data escolhida, como relator ou no pedido de vista.
+	measure 'Processos com o conselheiro' = CALCULATE([Processos na fila], 'Pessoas'[Papel] = "Conselheiro")
+		formatString: #,##0
+		displayFolder: Conselheiros
+		lineageTag: a67c9f39-d780-5b4f-8df2-eac1347a9c00
+
+	/// Soma as diárias pagas nos 12 meses até a data a cada conselheiro em exercício nela, do colegiado escolhido.
+	measure 'Valor das diárias de conselheiros' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			VAR quem = CALCULATETABLE(VALUES('Conselheiros'[Pessoa]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
+			RETURN CALCULATE(SUM('Diárias'[Valor]), 'Diárias'[Mês] >= DATE(YEAR(d), MONTH(d) - 12 + 1, 1), 'Diárias'[Mês] <= d, KEEPFILTERS('Diárias'[Pessoa] IN quem))
+			```
+		formatString: R$ #,##0
+		displayFolder: Conselheiros
+		lineageTag: 60220251-45f1-5f03-a2ce-0ec994d5f57c
+
+	/// Soma as diárias pagas nos 12 meses até a data aos conselheiros em exercício nela, do colegiado escolhido. Quem recebeu aparece pelo nome na tabela.
+	measure 'Diárias dos conselheiros' = [Valor das diárias de conselheiros] + 0
+		formatString: R$ #,##0
+		displayFolder: Conselheiros
+		lineageTag: 4e43e3dc-14ec-574a-9f82-867400ca2ddf
+
+	/// Conta as diárias pagas a cada conselheiro nos 12 meses.
+	measure 'Diárias de conselheiros em 12 meses' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			VAR quem = CALCULATETABLE(VALUES('Conselheiros'[Pessoa]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
+			RETURN CALCULATE(SUM('Diárias'[Diárias]), 'Diárias'[Mês] >= DATE(YEAR(d), MONTH(d) - 12 + 1, 1), 'Diárias'[Mês] <= d, KEEPFILTERS('Diárias'[Pessoa] IN quem))
+			```
+		formatString: #,##0
+		displayFolder: Conselheiros
+		lineageTag: b828daf1-5c18-5597-ab99-6b09fd4887d8
+
+	/// Conta os meses dos 12 em que o conselheiro recebeu diária.
+	measure 'Meses com diária de conselheiro' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			VAR quem = CALCULATETABLE(VALUES('Conselheiros'[Pessoa]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
+			RETURN CALCULATE(DISTINCTCOUNT('Diárias'[Mês]), 'Diárias'[Mês] >= DATE(YEAR(d), MONTH(d) - 12 + 1, 1), 'Diárias'[Mês] <= d, KEEPFILTERS('Diárias'[Pessoa] IN quem))
+			```
+		formatString: 0
+		displayFolder: Conselheiros
+		lineageTag: d0e988a1-a219-5bbb-bd5a-79098fa2a7b4
+
+	/// Conta os conselheiros em exercício que receberam diária nos 12 meses.
+	measure 'Conselheiros com diária' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			VAR quem = CALCULATETABLE(VALUES('Conselheiros'[Pessoa]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
+			RETURN CALCULATE(DISTINCTCOUNT('Diárias'[Pessoa]), 'Diárias'[Mês] >= DATE(YEAR(d), MONTH(d) - 12 + 1, 1), 'Diárias'[Mês] <= d, KEEPFILTERS('Diárias'[Pessoa] IN quem)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Conselheiros
+		lineageTag: 8eef2b2c-02fd-500a-8433-4a8442545e71
+
+	/// Conta os autos de infração votados pelas câmaras no período, para os gráficos.
+	measure 'Autos votados' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Autos'), 'Autos'[Julgado em] >= inicio, 'Autos'[Julgado em] <= d, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d))))
+			```
+		formatString: #,##0
+		displayFolder: Decisões
+		lineageTag: 0603606d-1441-5f23-8dce-77f5313e1800
+
+	/// Conta os autos de infração votados pelas câmaras no período. Com o Plenário escolhido, só os autos que chegaram a ele em recurso.
+	measure 'Autos votados nas câmaras' = [Autos votados] + 0
+		formatString: #,##0
+		displayFolder: Decisões
+		lineageTag: b1022e00-c854-56d6-8910-d9c84e74bf51
+
+	/// Conta os autos votados de empresas ou profissionais que já tinham multa antes: a multa vem em dobro (Lei 5.194/66, art. 73, parágrafo único).
+	measure 'Autos de reincidentes' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Autos'), 'Autos'[Julgado em] >= inicio, 'Autos'[Julgado em] <= d, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d))), KEEPFILTERS('Autos'[Reincidente] = 1)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Decisões
+		lineageTag: f5753421-cad7-5783-8f14-a889cd625258
+
+	/// Soma as multas da decisão das câmaras no período, antes do recurso. É um fluxo.
+	measure 'Multas aplicadas' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(SUM('Autos'[Multa da câmara]), 'Autos'[Julgado em] >= inicio, 'Autos'[Julgado em] <= d, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d)))) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Decisões
+		lineageTag: f68e826d-5ba3-5843-9473-db95a838a4d2
+
+	/// Conta os autos arquivados porque prescreveram.
+	measure 'Autos arquivados pela prescrição' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Autos'), 'Autos'[Julgado em] >= inicio, 'Autos'[Julgado em] <= d, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d))), KEEPFILTERS('Autos'[Desfecho] = "Arquivamento pela prescrição")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Decisões
+		lineageTag: 1e45598d-d28c-5043-adc8-a7f55f1c3eca
+
+	/// Conta os autos votados no período que a câmara arquivou, inclusive pela prescrição.
+	measure 'Autos arquivados no período' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Autos'), 'Autos'[Julgado em] >= inicio, 'Autos'[Julgado em] <= d, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d))), KEEPFILTERS('Autos'[Desfecho] IN {"Arquivamento", "Arquivamento pela prescrição"})) + 0
+			```
+		formatString: #,##0
+		displayFolder: Decisões
+		lineageTag: 278d28a9-7f64-5333-9399-3b4185a6e0cc
+
+	/// Mostra a parte dos autos votados no período que a câmara arquivou, inclusive pela prescrição.
+	measure 'Autos arquivados' = DIVIDE([Autos arquivados no período], [Autos votados])
+		formatString: 0.0%
+		displayFolder: Decisões
+		lineageTag: 76d16fec-7226-5b8e-b809-5d4492c227f7
+
+	/// Conta os recursos que já chegaram ao Plenário e ainda não foram votados na data escolhida. É um estoque.
+	measure 'Recursos esperando o Plenário' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto da fila'), 'Foto da fila'[Data] = d, KEEPFILTERS('Tramitações'[Instância] = "Plenário")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Decisões
+		lineageTag: 5f45a8c3-a8e5-5b81-82ed-555b5f8b636e
+
+	/// Conta os recursos votados pelo Plenário no período.
+	measure 'Recursos votados pelo Plenário' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS('Tramitações'[Instância] = "Plenário")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Decisões
+		lineageTag: 85b1f4f1-b4be-506b-8e90-6c89cb5d5cde
+
+	/// Conta os recursos votados pelo Plenário no período em que ele reformou a decisão da câmara.
+	measure 'Recursos reformados pelo Plenário' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS('Tramitações'[Instância] = "Plenário"), KEEPFILTERS('Tramitações'[Decisão do Plenário] = "Decisão reformada")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Decisões
+		lineageTag: 1fbf6de9-9316-56b7-a9d7-6481d09b662c
+
+	/// Mostra a parte dos recursos votados pelo Plenário no período em que ele reformou a decisão da câmara.
+	measure 'Reformadas pelo Plenário' = DIVIDE([Recursos reformados pelo Plenário], [Recursos votados pelo Plenário])
+		formatString: 0.0%
+		displayFolder: Decisões
+		lineageTag: 47f05da9-41ca-5a27-9eb0-46f152f018ce
+
+	/// Conta os recursos votados pelo Plenário no período, pela câmara de onde vieram. Com uma câmara escolhida, só os dela.
+	measure 'Recursos votados no Plenário por câmara' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Tramitações'), REMOVEFILTERS('Colegiados'), 'Tramitações'[Instância] = "Plenário", 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Tramitações'[Câmara de origem] = c))
+			```
+		formatString: #,##0
+		displayFolder: Decisões
+		lineageTag: 3036c823-2073-5619-8f9a-026b0523d972
+
+	/// Soma, pelo ano da decisão da câmara (os quatro últimos), as multas já pagas na data escolhida.
+	measure 'Multa paga' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN SUMX(FILTER(CALCULATETABLE('Autos', 'Autos'[Julgado em] <= d, 'Autos'[Ano da decisão] >= YEAR(d) - 3, 'Autos'[Multa da câmara] > 0, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d)))), NOT ('Autos'[Multa final] = 0 && NOT ISBLANK('Autos'[Plenário em]) && 'Autos'[Plenário em] <= d) && NOT ISBLANK('Autos'[Pago em]) && 'Autos'[Pago em] <= d), 'Autos'[Multa da câmara])
+			```
+		formatString: R$ #,##0
+		displayFolder: Decisões
+		lineageTag: d7ddc97d-79f2-5113-ae58-f5852576b44e
+
+	/// Soma, pelo ano da decisão, as multas que transitaram em julgado e ainda não foram pagas.
+	measure 'Multa em cobrança' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN SUMX(FILTER(CALCULATETABLE('Autos', 'Autos'[Julgado em] <= d, 'Autos'[Ano da decisão] >= YEAR(d) - 3, 'Autos'[Multa da câmara] > 0, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d)))), NOT ('Autos'[Multa final] = 0 && NOT ISBLANK('Autos'[Plenário em]) && 'Autos'[Plenário em] <= d) && NOT (NOT ISBLANK('Autos'[Pago em]) && 'Autos'[Pago em] <= d) && NOT ISBLANK('Autos'[Trânsito em julgado]) && 'Autos'[Trânsito em julgado] <= d), 'Autos'[Multa da câmara])
+			```
+		formatString: R$ #,##0
+		displayFolder: Decisões
+		lineageTag: 74a39919-c8fa-5f77-ab8e-d3613809c20c
+
+	/// Soma, pelo ano da decisão, as multas ainda em recurso (no Plenário ou no Confea).
+	measure 'Multa em recurso' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN SUMX(FILTER(CALCULATETABLE('Autos', 'Autos'[Julgado em] <= d, 'Autos'[Ano da decisão] >= YEAR(d) - 3, 'Autos'[Multa da câmara] > 0, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d)))), NOT ('Autos'[Multa final] = 0 && NOT ISBLANK('Autos'[Plenário em]) && 'Autos'[Plenário em] <= d) && NOT (NOT ISBLANK('Autos'[Pago em]) && 'Autos'[Pago em] <= d) && NOT (NOT ISBLANK('Autos'[Trânsito em julgado]) && 'Autos'[Trânsito em julgado] <= d)), 'Autos'[Multa da câmara])
+			```
+		formatString: R$ #,##0
+		displayFolder: Decisões
+		lineageTag: 89cc40d3-8050-5829-acaa-1ddbd8ee49a0
+
+	/// Soma, pelo ano da decisão, as multas que o Plenário anulou ao reformar a decisão da câmara.
+	measure 'Multa anulada no recurso' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN SUMX(FILTER(CALCULATETABLE('Autos', 'Autos'[Julgado em] <= d, 'Autos'[Ano da decisão] >= YEAR(d) - 3, 'Autos'[Multa da câmara] > 0, KEEPFILTERS(FILTER(ALL('Autos'[Câmara], 'Autos'[Recurso ao Plenário em]), ISBLANK(c) || 'Autos'[Câmara] = c || (c = "Plenário" && NOT ISBLANK('Autos'[Recurso ao Plenário em]) && 'Autos'[Recurso ao Plenário em] <= d)))), 'Autos'[Multa final] = 0 && NOT ISBLANK('Autos'[Plenário em]) && 'Autos'[Plenário em] <= d), 'Autos'[Multa da câmara])
+			```
+		formatString: R$ #,##0
+		displayFolder: Decisões
+		lineageTag: 5fd5acf4-1d6a-5cd6-95e3-766cf9be30e7
+
+	/// Conta as cadeiras com conselheiro em exercício na data escolhida, do colegiado escolhido.
+	measure 'Cadeiras ocupadas' = [Conselheiros em exercício]
+		formatString: #,##0
+		displayFolder: Representação
+		lineageTag: 44b4be1d-51e1-5273-8547-96558b935350
+
+	/// Conta as organizações que indicaram os conselheiros em exercício.
+	measure 'Organizações com cadeira' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(DISTINCTCOUNT('Conselheiros'[Organização]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Representação
+		lineageTag: e8569fca-c213-50e0-b05d-8d422fd5abe1
+
+	/// Conta as mulheres entre os conselheiros em exercício.
+	measure 'Conselheiras em exercício' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Conselheiros'), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c), KEEPFILTERS('Conselheiros'[Gênero] = "Feminino")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Representação
+		lineageTag: 34dd867e-004e-5d7c-b4e9-eb764841f4df
+
+	/// Mostra a parte de mulheres entre os conselheiros em exercício.
+	measure Conselheiras = DIVIDE([Conselheiras em exercício], [Conselheiros em exercício])
+		formatString: 0.0%
+		displayFolder: Representação
+		lineageTag: 007f7acd-5017-589f-a3f7-0c0567b8e246
+
+	/// Mostra a parte de mulheres entre os conselheiros em exercício de cada câmara do eixo.
+	measure 'Mulheres entre os conselheiros' = ```
+			VAR camaras = VALUES('Foto das câmaras'[Câmara])
+			RETURN DIVIDE(CALCULATE([Conselheiras em exercício], TREATAS(camaras, 'Conselheiros'[Câmara])), CALCULATE([Conselheiros em exercício], TREATAS(camaras, 'Conselheiros'[Câmara])))
+			```
+		formatString: 0.0%
+		displayFolder: Representação
+		lineageTag: 0549d548-8477-5d36-a68e-adc05e761cff
+
+	/// Conta os profissionais ativos da modalidade que cada câmara julga, na data escolhida; com uma câmara escolhida, só os dela.
+	measure 'Profissionais ativos da câmara' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(SUM('Foto das câmaras'[Profissionais ativos]), 'Foto das câmaras'[Data] = d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Foto das câmaras'[Câmara] = c))
+			```
+		formatString: #,##0
+		displayFolder: Representação
+		lineageTag: 5d321cc5-2e87-5e4f-a8f2-139d66c2b5aa
+
+	/// Conta as mulheres entre os profissionais ativos da modalidade que cada câmara julga.
+	measure 'Profissionais ativas da câmara' = ```
+			VAR d = [Data escolhida]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(SUM('Foto das câmaras'[Profissionais ativas]), 'Foto das câmaras'[Data] = d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Foto das câmaras'[Câmara] = c))
+			```
+		formatString: #,##0
+		displayFolder: Representação
+		lineageTag: 3b94821f-12b9-5375-bd9c-76275286c868
+
+	/// Mostra a parte de mulheres entre os profissionais ativos das modalidades que as câmaras do recorte julgam, na data escolhida. A Ambiental e Sanitária não tem modalidade própria no cenário.
+	measure 'Mulheres no registro' = DIVIDE([Profissionais ativas da câmara], [Profissionais ativos da câmara])
+		formatString: 0.0%
+		displayFolder: Representação
+		lineageTag: 014b71bc-1083-5482-b7d5-e6748b28a4b7
+
+	/// Conta as cadeiras de cada câmara no Plenário na data escolhida, pelas modalidades das entidades e escolas que as indicam.
 	measure 'Cadeiras da câmara' = ```
 			VAR d = [Data escolhida]
-			RETURN CALCULATE(SUM('Foto do plenário'[Cadeiras]), REMOVEFILTERS('Calendário'), 'Foto do plenário'[Data] = d)
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(SUM('Foto das câmaras'[Cadeiras]), 'Foto das câmaras'[Data] = d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Foto das câmaras'[Câmara] = c))
 			```
 		formatString: #,##0
-		displayFolder: Câmaras e plenário
+		displayFolder: Representação
 		lineageTag: 4d21c41e-49f5-50b8-a6e6-f2c66084d2d1
 
-	/// Mostra a parte das cadeiras do plenário que é de cada câmara.
-	measure 'Parte das cadeiras' = DIVIDE([Cadeiras da câmara], CALCULATE([Cadeiras da câmara], REMOVEFILTERS('Câmaras')))
+	/// Mostra a parte das cadeiras do Plenário que é de cada câmara.
+	measure 'Parte das cadeiras' = ```
+			VAR d = [Data escolhida]
+			RETURN DIVIDE([Cadeiras da câmara], CALCULATE(SUM('Foto das câmaras'[Cadeiras]), 'Foto das câmaras'[Data] = d, REMOVEFILTERS('Foto das câmaras'[Câmara])))
+			```
 		formatString: 0.0%
-		displayFolder: Câmaras e plenário
+		displayFolder: Representação
 		lineageTag: d4d2bc7d-2b1f-55eb-9867-e3354236220e
 
-	/// Mostra a parte dos profissionais ativos que é da modalidade que cada câmara julga. A Ambiental e Sanitária não tem modalidade própria no cenário.
+	/// Mostra a parte dos profissionais ativos que é da modalidade que cada câmara julga.
 	measure 'Parte dos profissionais ativos' = ```
 			VAR d = [Data escolhida]
-			VAR camara = CALCULATE(SUM('Foto do plenário'[Profissionais ativos]), 'Foto do plenário'[Data] = d)
-			VAR todas = CALCULATE(SUM('Foto do plenário'[Profissionais ativos]), 'Foto do plenário'[Data] = d, REMOVEFILTERS('Câmaras'))
-			RETURN DIVIDE(camara, todas)
+			RETURN DIVIDE([Profissionais ativos da câmara], CALCULATE(SUM('Foto das câmaras'[Profissionais ativos]), 'Foto das câmaras'[Data] = d, REMOVEFILTERS('Foto das câmaras'[Câmara])))
 			```
 		formatString: 0.0%
-		displayFolder: Câmaras e plenário
+		displayFolder: Representação
 		lineageTag: 28405f70-819e-5b0a-b918-d2a8c516d037
 
-	/// Conta as entidades de classe e as instituições de ensino registradas até a data escolhida.
-	measure 'Organizações registradas' = ```
+	/// Soma os pagamentos dos 365 dias até a data às organizações com cadeira no colegiado escolhido, por convênio, contrato ou patrocínio.
+	measure 'Repassado em 12 meses a quem tem cadeira' = ```
 			VAR d = [Data escolhida]
-			RETURN CALCULATE(COUNTROWS('Organizações'), 'Organizações'[Registrada em] <= d) + 0
-			```
-		formatString: #,##0
-		displayFolder: Entidades e escolas
-		lineageTag: e30dce79-1965-5883-b043-e0118c0869a6
-
-	/// Soma as cadeiras no plenário das organizações registradas até a data escolhida.
-	measure 'Cadeiras no plenário' = ```
-			VAR d = [Data escolhida]
-			RETURN CALCULATE(SUM('Organizações'[Cadeiras]), 'Organizações'[Registrada em] <= d) + 0
-			```
-		formatString: #,##0
-		displayFolder: Entidades e escolas
-		lineageTag: e635c334-3f48-57a6-babf-0dec056b7a27
-
-	/// Soma os pagamentos de convênios, contratos e patrocínios às organizações nos 365 dias até a data escolhida.
-	measure 'Repasses em 12 meses' = ```
-			VAR d = [Data escolhida]
-			RETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), REMOVEFILTERS('Calendário'), 'Pagamentos dos repasses'[Data] > d - 365, 'Pagamentos dos repasses'[Data] <= d, 'Repasses'[Início] <= d, 'Organizações'[Registrada em] <= d) + 0
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			VAR orgs = CALCULATETABLE(VALUES('Conselheiros'[Organização]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
+			RETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), 'Pagamentos dos repasses'[Data] > d - 365, 'Pagamentos dos repasses'[Data] <= d, 'Pagamentos dos repasses'[Início do repasse] <= d, KEEPFILTERS('Pagamentos dos repasses'[Organização] IN orgs))
 			```
 		formatString: R$ #,##0
-		displayFolder: Entidades e escolas
-		lineageTag: 6aaef487-df16-5e2d-a820-3a8f7dd384b0
+		displayFolder: Representação
+		lineageTag: e5851949-9bd5-508f-806b-59f118deb4ea
 
-	/// Soma os pagamentos às organizações nos 365 dias anteriores, para comparar.
-	measure 'Repasses nos 12 meses anteriores' = ```
-			VAR d = [Data escolhida]
-			RETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), REMOVEFILTERS('Calendário'), 'Pagamentos dos repasses'[Data] > d - 730, 'Pagamentos dos repasses'[Data] <= d - 365, 'Repasses'[Início] <= d, 'Organizações'[Registrada em] <= d) + 0
-			```
+	/// Soma o que as organizações com cadeira no colegiado escolhido receberam do Conselho nos 365 dias até a data.
+	measure 'Repasses a quem tem cadeira' = [Repassado em 12 meses a quem tem cadeira] + 0
 		formatString: R$ #,##0
-		displayFolder: Entidades e escolas
-		lineageTag: 2a1a849d-cdfe-52db-b7c7-8c851ff33752
+		displayFolder: Representação
+		lineageTag: a0b3e543-c8ef-58d1-8499-3d6b764252fa
 
-	/// Compara os repasses dos 12 meses com os dos 12 meses anteriores, como o cartão do painel.
-	measure 'Variação em um ano: Repasses em 12 meses' = DIVIDE([Repasses em 12 meses] - [Repasses nos 12 meses anteriores], [Repasses nos 12 meses anteriores])
-		formatString: +0.0%;-0.0%;0.0%
-		displayFolder: Entidades e escolas
-		lineageTag: 26a005a7-7219-501d-865c-d15fa5c561ac
-
-	/// Soma os pagamentos às organizações registradas, no ano do gráfico, até a data escolhida.
-	measure 'Repassado no ano' = ```
+	/// Conta as organizações com cadeira que receberam algum pagamento nos 365 dias.
+	measure 'Organizações com cadeira que receberam' = ```
 			VAR d = [Data escolhida]
-			RETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), 'Pagamentos dos repasses'[Data] <= d, 'Repasses'[Início] <= d, 'Organizações'[Registrada em] <= d)
-			```
-		formatString: R$ #,##0
-		displayFolder: Entidades e escolas
-		lineageTag: f0f4aba4-37cb-53be-befb-fb9c8ee6ac83
-
-	/// Soma tudo o que foi pago à organização até a data escolhida.
-	measure 'Repassado até a data' = ```
-			VAR d = [Data escolhida]
-			RETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), REMOVEFILTERS('Calendário'), 'Pagamentos dos repasses'[Data] <= d, 'Repasses'[Início] <= d, 'Organizações'[Registrada em] <= d)
-			```
-		formatString: R$ #,##0
-		displayFolder: Entidades e escolas
-		lineageTag: 98df3932-ccfe-5f74-988d-657a73fa5575
-
-	/// Conta os convênios, contratos e patrocínios em vigor na data escolhida.
-	measure 'Instrumentos vigentes' = ```
-			VAR d = [Data escolhida]
-			RETURN CALCULATE(COUNTROWS('Repasses'), 'Repasses'[Início] <= d, 'Repasses'[Fim] >= d, 'Organizações'[Registrada em] <= d) + 0
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			VAR orgs = CALCULATETABLE(VALUES('Conselheiros'[Organização]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
+			RETURN CALCULATE(DISTINCTCOUNT('Pagamentos dos repasses'[Organização]), 'Pagamentos dos repasses'[Data] > d - 365, 'Pagamentos dos repasses'[Data] <= d, 'Pagamentos dos repasses'[Início do repasse] <= d, KEEPFILTERS('Pagamentos dos repasses'[Organização] IN orgs)) + 0
 			```
 		formatString: #,##0
-		displayFolder: Entidades e escolas
-		lineageTag: 3d516f51-2657-5c17-ac58-b3d997c91b64
+		displayFolder: Representação
+		lineageTag: ffb8b813-0f16-58f1-98a5-d01b3ec16240
 
-	/// Conta as organizações com ao menos um instrumento em vigor.
-	measure 'Organizações com instrumento vigente' = ```
+	/// Soma o valor das deliberações de repasse aprovadas pelo Plenário no período; na tabela, o valor de cada uma.
+	measure 'Valor das deliberações' = ```
 			VAR d = [Data escolhida]
-			RETURN CALCULATE(DISTINCTCOUNT('Repasses'[Organização]), 'Repasses'[Início] <= d, 'Repasses'[Fim] >= d, 'Organizações'[Registrada em] <= d) + 0
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			VAR orgs = CALCULATETABLE(VALUES('Conselheiros'[Organização]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
+			RETURN CALCULATE(SUM('Deliberações'[Valor]), 'Deliberações'[Data] >= inicio, 'Deliberações'[Data] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Deliberações'[Organização] IN orgs))
+			```
+		formatString: R$ #,##0
+		displayFolder: Representação
+		lineageTag: 70c8053f-725b-5d89-8f3e-b6a755fe44c4
+
+	/// Conta as deliberações de repasse aprovadas pelo Plenário no período, pelas atas. Com uma câmara escolhida, as de organizações com cadeira nela.
+	measure 'Deliberações de repasse' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			VAR orgs = CALCULATETABLE(VALUES('Conselheiros'[Organização]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
+			RETURN CALCULATE(COUNTROWS('Deliberações'), 'Deliberações'[Data] >= inicio, 'Deliberações'[Data] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Deliberações'[Organização] IN orgs)) + 0
 			```
 		formatString: #,##0
-		displayFolder: Entidades e escolas
-		lineageTag: 18c514f5-76a1-5ae3-a8d5-3f4d78a02d16
+		displayFolder: Representação
+		lineageTag: 709d8e5f-278d-56f9-b47e-7397cf6f94ba
+
+	/// Conta as deliberações em que quem propôs o repasse é conselheiro indicado pela organização que recebe: o conflito de interesse.
+	measure 'Propostos pela própria organização' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			VAR orgs = CALCULATETABLE(VALUES('Conselheiros'[Organização]), 'Conselheiros'[Início] <= d, 'Conselheiros'[Fim] >= d, 'Conselheiros'[Organização registrada em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Conselheiros'[Câmara] = c))
+			RETURN CALCULATE(COUNTROWS('Deliberações'), 'Deliberações'[Data] >= inicio, 'Deliberações'[Data] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Deliberações'[Organização] IN orgs), KEEPFILTERS('Deliberações'[Proposta pela própria organização] = 1)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Representação
+		lineageTag: e351ca2f-e56b-5465-8455-3c9714175978
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Conselheiros em exercício' = "indicados por " & FORMAT([Entidades com cadeira], "#,##0") & " entidades de classe e " & FORMAT([Escolas com cadeira], "#,##0") & " escolas"
+		displayFolder: Colegiado
+		lineageTag: 3a7126ad-082b-5c5f-83c6-74d56aba6b7a
 
 	/// Compara o cartão com o fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Processos em julgamento' = ```
+	measure 'Variação em um ano: Processos esperando voto' = ```
 			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Processos em julgamento]
-			VAR antes = CALCULATE([Processos em julgamento], 'Datas das fotos'[Data] = alvo)
+			VAR agora = [Processos esperando voto]
+			VAR antes = CALCULATE([Processos esperando voto], 'Datas das fotos'[Data] = alvo)
 			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
 			```
 		formatString: +0.0%;-0.0%;0.0%
-		displayFolder: Câmaras e plenário
-		lineageTag: 5a191eca-f0de-579c-bd23-3912c7516047
+		displayFolder: Colegiado
+		lineageTag: 1e1450a1-f3eb-5b4b-b59b-c0f9751eea02
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Processos em julgamento' = ```
-			VAR v = [Variação em um ano: Processos em julgamento]
+	measure 'Comparação: Processos esperando voto' = ```
+			VAR v = [Variação em um ano: Processos esperando voto]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
-		displayFolder: Câmaras e plenário
-		lineageTag: 17b91552-8264-52c8-b91e-35aa7a91a7ab
+		displayFolder: Colegiado
+		lineageTag: bf9c0239-e59d-5ec7-8bae-0981657f84c6
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Processos em julgamento' = FORMAT([Processos que entraram no período], "#,##0") & " entraram no período"
-		displayFolder: Câmaras e plenário
-		lineageTag: 3bae43ff-7089-5709-acfb-8797fac1fde8
+	measure 'Detalhe: Processos esperando voto' = FORMAT([Aguardando distribuição], "#,##0") & " ainda aguardam distribuição"
+		displayFolder: Colegiado
+		lineageTag: 6bb0ba6a-151e-5cec-bb10-9fd200e903e7
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Processos por conselheiro' = ```
+			VAR t = TOPN(1, ADDCOLUMNS(CALCULATETABLE(VALUES('Pessoas'[Nome]), 'Pessoas'[Papel] = "Conselheiro"), "N", [Processos na fila]), [N], DESC, 'Pessoas'[Nome], ASC)
+			RETURN IF(MAXX(t, [N]) > 0, "o maior: " & MAXX(t, 'Pessoas'[Nome]) & ", com " & FORMAT(MAXX(t, [N]), "#,##0"), "nenhum processo com conselheiro")
+			```
+		displayFolder: Colegiado
+		lineageTag: 8dccfb15-f4ec-5b3f-989a-78ddbf1eb056
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Julgados no período' = ```
+	measure 'Variação em um ano: Votados no período' = ```
 			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Julgados no período]
-			VAR antes = CALCULATE([Julgados no período], 'Datas das fotos'[Data] = alvo)
+			VAR agora = [Votados no período]
+			VAR antes = CALCULATE([Votados no período], 'Datas das fotos'[Data] = alvo)
 			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
 			```
 		formatString: +0.0%;-0.0%;0.0%
-		displayFolder: Câmaras e plenário
-		lineageTag: 36b0e217-1672-5861-bf64-79bf571a772a
+		displayFolder: Colegiado
+		lineageTag: fde9d8b2-6a72-58d8-8a0b-f05a773a9d35
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Julgados no período' = ```
-			VAR v = [Variação em um ano: Julgados no período]
+	measure 'Comparação: Votados no período' = ```
+			VAR v = [Variação em um ano: Votados no período]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
-		displayFolder: Câmaras e plenário
-		lineageTag: bb4250ff-364f-5e95-b255-c3f74a706a96
+		displayFolder: Colegiado
+		lineageTag: 9ee37d9a-38d6-5254-8f3a-af12f2c47079
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Julgados no período' = "contra " & FORMAT([Processos que entraram no período], "#,##0") & " que entraram"
-		displayFolder: Câmaras e plenário
-		lineageTag: e529fb22-1920-565c-9172-d1dac841d835
+	measure 'Detalhe: Votados no período' = FORMAT([Votados no Plenário no período], "#,##0") & " deles no Plenário, em recurso"
+		displayFolder: Colegiado
+		lineageTag: ae7e828d-7408-57ab-856e-b6e5997b4874
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Tempo até o julgamento' = ```
+	measure 'Variação em um ano: Da abertura à decisão' = ```
 			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Tempo até o julgamento]
-			VAR antes = CALCULATE([Tempo até o julgamento], 'Datas das fotos'[Data] = alvo)
+			VAR agora = [Da abertura à decisão]
+			VAR antes = CALCULATE([Da abertura à decisão], 'Datas das fotos'[Data] = alvo)
 			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
 			```
 		formatString: +0.0%;-0.0%;0.0%
-		displayFolder: Câmaras e plenário
-		lineageTag: 48099c6b-c5c8-52cd-ae7f-f9f34f02dea8
+		displayFolder: Colegiado
+		lineageTag: 4bc9394a-8f0b-5f0c-af4a-0692f63aadd3
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Tempo até o julgamento' = ```
-			VAR v = [Variação em um ano: Tempo até o julgamento]
+	measure 'Comparação: Da abertura à decisão' = ```
+			VAR v = [Variação em um ano: Da abertura à decisão]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
-		displayFolder: Câmaras e plenário
-		lineageTag: fdda8cb3-d346-53b9-925e-b0cbde8cc89c
+		displayFolder: Colegiado
+		lineageTag: 1386bb52-8f1f-5ad8-afe3-f3aaf1710177
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Tempo até o julgamento' = "tempo típico (mediana) dos julgados no período"
-		displayFolder: Câmaras e plenário
-		lineageTag: 389bcc80-99ce-527a-82c4-a9189709ded9
+	measure 'Detalhe: Da abertura à decisão' = "mediana dos votados na câmara, da abertura no GovAdm"
+		displayFolder: Colegiado
+		lineageTag: c15c1b2b-b15c-5f1d-989f-da23b48a9bf8
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Autos perto da prescrição' = FORMAT([Multas dos autos perto da prescrição], "R$ #,##0") & " em multas prescrevem em até 12 meses, e " & FORMAT([Autos prescritos no período], "#,##0") & " autos já prescreveram no período"
-		displayFolder: Câmaras e plenário
+	measure 'Detalhe: De exercícios anteriores' = ```
+			VAR d = [Data escolhida]
+			RETURN IF([Processos esperando voto] > 0, FORMAT(DIVIDE([De exercícios anteriores], [Processos esperando voto]), "0.0%"), "—") & " dos pendentes entraram antes de " & YEAR(d)
+			```
+		displayFolder: Colegiado
+		lineageTag: a1ce65c1-0e06-5fc3-983d-1eb97bd1466c
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Em alerta vermelho' = "mais de 120 dias no mesmo status, e " & FORMAT([Em alerta amarelo], "#,##0") & " em amarelo (90 a 120)"
+		displayFolder: Processos
+		lineageTag: bf85825b-0ddb-59dd-94a2-592336e018ae
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Há mais de 1 ano no colegiado' = IF([Processos esperando voto] > 0, FORMAT(DIVIDE([Há mais de 1 ano no colegiado], [Processos esperando voto]), "0.0%"), "—") & " dos que esperam voto"
+		displayFolder: Processos
+		lineageTag: 9c8c60f7-c55b-5a11-9342-eddf1bd1ca88
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Autos perto da prescrição' = FORMAT([Multas dos autos perto da prescrição], "R$ #,##0") & " em multas; " & FORMAT([Perto da prescrição pela intercorrente], "#,##0") & " por três anos parados"
+		displayFolder: Processos
 		lineageTag: 130d6e1c-a692-5b2e-a5c6-65149bd579ab
 
-	/// Compara o cartão com o fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Recursos esperando o plenário' = ```
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Parados há mais de 2 anos' = "no mesmo status; com 3 anos, o auto prescreve"
+		displayFolder: Processos
+		lineageTag: 867ab40b-5104-5a69-a2a5-c1631b1ce9d8
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Do GovAdm ao Votenet' = "mediana; " & IF([Cadastrados no Votenet] > 0, FORMAT(DIVIDE([Cadastrados no Votenet depois de 15 dias], [Cadastrados no Votenet]), "0.0%"), "—") & " levaram mais de 15 dias"
+		displayFolder: Processos
+		lineageTag: 9ac518e4-80dd-5b9e-bc3f-ba6c2936af01
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Presença nas sessões' = ```
 			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Recursos esperando o plenário]
-			VAR antes = CALCULATE([Recursos esperando o plenário], 'Datas das fotos'[Data] = alvo)
+			VAR agora = [Presença nas sessões]
+			VAR antes = CALCULATE([Presença nas sessões], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Conselheiros
+		lineageTag: 1ad0ddef-45e0-57f9-bca7-d2e75e6e7340
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Presença nas sessões' = ```
+			VAR v = [Variação em um ano: Presença nas sessões]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
+			```
+		displayFolder: Conselheiros
+		lineageTag: 101d6527-f445-5375-ac02-5d4fc4d3ca04
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Presença nas sessões' = FORMAT([Sessões no período], "#,##0") & " sessões ordinárias no período"
+		displayFolder: Conselheiros
+		lineageTag: f39a59c8-287b-5952-a769-a5f01d440a95
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Tempo de relato' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Tempo de relato]
+			VAR antes = CALCULATE([Tempo de relato], 'Datas das fotos'[Data] = alvo)
 			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
 			```
 		formatString: +0.0%;-0.0%;0.0%
-		displayFolder: Câmaras e plenário
-		lineageTag: 1cb4ff03-c32a-5391-840d-120b5264c212
+		displayFolder: Conselheiros
+		lineageTag: f6858dd2-0c7f-50c4-bfef-87dadea0ee77
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Recursos esperando o plenário' = ```
-			VAR v = [Variação em um ano: Recursos esperando o plenário]
+	measure 'Comparação: Tempo de relato' = ```
+			VAR v = [Variação em um ano: Tempo de relato]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
-		displayFolder: Câmaras e plenário
-		lineageTag: 33c03fcb-6eb7-568d-a25c-916378c850d6
+		displayFolder: Conselheiros
+		lineageTag: 410c8c1a-9807-5de8-a3f2-843276d13ee3
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Recursos esperando o plenário' = "decisões das câmaras levadas ao plenário"
-		displayFolder: Câmaras e plenário
-		lineageTag: 8a5fda6a-d5b3-5fa0-800d-9d025becd1ad
+	measure 'Detalhe: Tempo de relato' = "mediana, da distribuição ao relato assinado"
+		displayFolder: Conselheiros
+		lineageTag: ba5af6cf-f7b6-5d69-b982-65a7fc549c08
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Organizações registradas' = FORMAT(CALCULATE([Organizações registradas], 'Organizações'[Natureza] = "Entidade de classe"), "#,##0") & " entidades de classe" & ", " & FORMAT(CALCULATE([Organizações registradas], 'Organizações'[Natureza] = "IES pública"), "#,##0") & " instituições de ensino públicas" & ", " & FORMAT(CALCULATE([Organizações registradas], 'Organizações'[Natureza] = "IES privada"), "#,##0") & " instituições de ensino privadas"
-		displayFolder: Entidades e escolas
-		lineageTag: 18e5ecf2-b339-5eb4-bd0e-7f6a0bfa38ef
+	measure 'Detalhe: Relato com IA' = "sem IA: " & IF(ISBLANK([Relato sem IA]), "—", FORMAT([Relato sem IA], "#,##0") & " dias") & "; " & IF([Relatos com IA] + [Relatos sem IA] > 0, FORMAT(DIVIDE([Relatos com IA], [Relatos com IA] + [Relatos sem IA]), "0.0%"), "—") & " dos relatos usaram IA"
+		displayFolder: Conselheiros
+		lineageTag: 17502c6a-91f6-56b0-92e7-e5b22d5efbe5
 
-	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Cadeiras no plenário' = FORMAT(CALCULATE([Cadeiras no plenário], 'Organizações'[Natureza] = "Entidade de classe"), "#,##0") & " de entidades de classe" & ", " & FORMAT(CALCULATE([Cadeiras no plenário], 'Organizações'[Natureza] = "IES pública"), "#,##0") & " de instituições de ensino públicas" & ", " & FORMAT(CALCULATE([Cadeiras no plenário], 'Organizações'[Natureza] = "IES privada"), "#,##0") & " de instituições de ensino privadas"
-		displayFolder: Entidades e escolas
-		lineageTag: 5d325413-8950-5bb5-a1ee-b8cb2d76a5f2
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Pedidos de vista' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Pedidos de vista]
+			VAR antes = CALCULATE([Pedidos de vista], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Conselheiros
+		lineageTag: cadf017d-46a7-5c07-a8fc-f065bd9210ae
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Repasses em 12 meses' = ```
-			VAR v = [Variação em um ano: Repasses em 12 meses]
-			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação aos 12 meses anteriores")
+	measure 'Comparação: Pedidos de vista' = ```
+			VAR v = [Variação em um ano: Pedidos de vista]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
-		displayFolder: Entidades e escolas
-		lineageTag: 25672b1f-69eb-5d91-a25f-1307f6d5d6c8
+		displayFolder: Conselheiros
+		lineageTag: 654570a5-7565-55f3-8321-03ddfd2a5a12
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Repasses em 12 meses' = ```
-			VAR d = [Data escolhida]
-			RETURN FORMAT(CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "Convênio"), "R$ #,##0") & " em convênios" & ", " & FORMAT(CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "Contrato"), "R$ #,##0") & " em contratos" & ", " & FORMAT(CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "Patrocínio"), "R$ #,##0") & " em patrocínios" & " no ano corrente"
-			```
-		displayFolder: Entidades e escolas
-		lineageTag: b9cf4ef4-7a72-5172-90fc-dc1cf7115331
+	measure 'Detalhe: Pedidos de vista' = "processos que saíram da pauta para outro conselheiro ler"
+		displayFolder: Conselheiros
+		lineageTag: 1a08ab06-4fa4-5f20-b020-bd1ef049e613
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Instrumentos vigentes' = "convênios, contratos e patrocínios em vigor, com " & FORMAT([Organizações com instrumento vigente], "#,##0") & " organizações"
-		displayFolder: Entidades e escolas
-		lineageTag: ab1b2198-0088-5706-a9bc-34a09b0c203b
+	measure 'Detalhe: Diárias dos conselheiros' = ```
+			VAR k = [Conselheiros com diária]
+			RETURN FORMAT(k, "#,##0") & IF(k = 1, " conselheiro recebeu", " conselheiros receberam") & " em 12 meses"
+			```
+		displayFolder: Conselheiros
+		lineageTag: 3b289733-5f67-5979-870a-6a8b8ebbaf5e
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Autos votados nas câmaras' = FORMAT([Autos de reincidentes], "#,##0") & " de reincidentes, com a multa em dobro"
+		displayFolder: Decisões
+		lineageTag: 32ee07a5-ba46-57b3-a59e-88eda5d588fa
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Multas aplicadas' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Multas aplicadas]
+			VAR antes = CALCULATE([Multas aplicadas], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Decisões
+		lineageTag: 82fbc50d-e654-55f3-98a8-e1e50899fe26
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Multas aplicadas' = ```
+			VAR v = [Variação em um ano: Multas aplicadas]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Decisões
+		lineageTag: e5bbfea5-ce2a-567f-b4a1-b8ed69b51aca
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Multas aplicadas' = "na decisão da câmara, antes do recurso"
+		displayFolder: Decisões
+		lineageTag: 5f25e1ae-bbea-5dcc-938a-6d5630a77f9f
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Autos arquivados' = "dos votados; " & FORMAT([Autos arquivados pela prescrição], "#,##0") & " pela prescrição"
+		displayFolder: Decisões
+		lineageTag: b4d5bc0b-776d-5f45-a17c-ac23063dc122
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Recursos esperando o Plenário' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Recursos esperando o Plenário]
+			VAR antes = CALCULATE([Recursos esperando o Plenário], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Decisões
+		lineageTag: c0488323-ba3b-57b1-b1c9-57eb56176df2
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Recursos esperando o Plenário' = ```
+			VAR v = [Variação em um ano: Recursos esperando o Plenário]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Decisões
+		lineageTag: 56954bab-1eed-556d-ba13-8b4319e2fef6
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Recursos esperando o Plenário' = "decisões das câmaras levadas ao Plenário"
+		displayFolder: Decisões
+		lineageTag: 2b78f58a-dbe0-5480-83c1-dbe255be29cd
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Reformadas pelo Plenário' = "dos " & FORMAT([Recursos votados pelo Plenário], "#,##0") & " recursos votados no período"
+		displayFolder: Decisões
+		lineageTag: 81da104a-94bb-5620-99a9-6e927c2c1c03
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Cadeiras ocupadas' = "por " & FORMAT([Organizações com cadeira], "#,##0") & " organizações: " & FORMAT([Entidades com cadeira], "#,##0") & " entidades e " & FORMAT([Escolas com cadeira], "#,##0") & " escolas"
+		displayFolder: Representação
+		lineageTag: 58cdfd6c-fa09-5972-a672-42047e980faf
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Conselheiras' = FORMAT([Conselheiras em exercício], "#,##0") & " mulheres; no registro, elas são " & FORMAT([Mulheres no registro], "0.0%")
+		displayFolder: Representação
+		lineageTag: fdbd340a-a304-5b04-bdc2-9ea2d03a4733
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Repasses a quem tem cadeira' = "em 12 meses, a " & FORMAT([Organizações com cadeira que receberam], "#,##0") & " das " & FORMAT([Organizações com cadeira], "#,##0") & " organizações"
+		displayFolder: Representação
+		lineageTag: 6a23f50e-2ef8-50fc-a060-18d681c35af5
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Deliberações de repasse' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Deliberações de repasse]
+			VAR antes = CALCULATE([Deliberações de repasse], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Representação
+		lineageTag: c551c17f-0d43-5b49-9fa2-ddc7f8e2094e
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Deliberações de repasse' = ```
+			VAR v = [Variação em um ano: Deliberações de repasse]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Representação
+		lineageTag: c540b907-e20d-5c75-a3c6-bbdf50ee4442
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Deliberações de repasse' = FORMAT([Valor das deliberações], "R$ #,##0") & " aprovados pelo Plenário no período"
+		displayFolder: Representação
+		lineageTag: 9818a866-519b-5bd0-8819-145ecfc2b215
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Propostos pela própria organização' = "o conselheiro propôs repasse à organização que o indicou"
+		displayFolder: Representação
+		lineageTag: bc4df5bc-7c41-50ba-886c-e044a7cade29
 
 	column Medidas
 		dataType: string

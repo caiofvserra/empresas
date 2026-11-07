@@ -1,0 +1,92 @@
+/// Guarda cada mandato de cada cadeira: três anos, de janeiro a dezembro, com um terço renovado por ano. O reeleito aparece num mandato novo com a mesma pessoa. Está em exercício quem tem mandato em curso, de organização já registrada.
+table Conselheiros
+	lineageTag: 16aa89a5-7161-58ab-bafb-ea3dcf220a46
+
+	column Mandato
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mandato
+		lineageTag: 93280dd8-6e22-5f4e-886b-9740cdb3066f
+
+	column Pessoa
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Pessoa
+		lineageTag: 091f7187-965c-53fd-a6a6-b53fd11e253e
+
+	column Nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome
+		lineageTag: 2f308dbf-de0d-59f9-bf9b-ca17e8bcc27a
+
+	column 'Gênero'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Gênero
+		lineageTag: b580efd9-0a00-5e47-abbb-63918dea5990
+
+	column 'Câmara'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Câmara
+		lineageTag: 01df5c4c-3f72-5f72-986c-6b64a66e61f9
+
+	column 'Organização'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Organização
+		lineageTag: adc0f2da-be36-5a38-a2af-5d2249613c35
+
+	column Sigla
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Sigla
+		lineageTag: 782f5fb0-92c9-5eae-b3d7-d428da02fdff
+
+	column Natureza
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Natureza
+		lineageTag: 30311918-3e65-5f6e-aaac-f9a0e9e46ed9
+
+	column 'Terço'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Terço
+		lineageTag: c121d6ff-4405-5e41-8998-f187ab4f7fb8
+
+	column 'Início'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Início
+		lineageTag: 30d9ecf1-81f4-5277-9f0e-2b693c6b3834
+
+	column Fim
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Fim
+		lineageTag: edd1945a-027e-5454-8ae8-98b21cb555f1
+
+	column 'Organização registrada em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Organização registrada em
+		lineageTag: c5c09a38-e124-568e-9ad9-aea0f06f8307
+
+	partition Conselheiros = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "conselheiros.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mandato", type text}, {"Pessoa", type text}, {"Nome", type text}, {"Gênero", type text}, {"Câmara", type text}, {"Organização", type text}, {"Sigla", type text}, {"Natureza", type text}, {"Terço", type text}, {"Início", type date}, {"Fim", type date}, {"Organização registrada em", type date}}, "pt-BR")
+				in
+				    Tipos

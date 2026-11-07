@@ -1,0 +1,121 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "conselheiros-diarias",
+  "position": {
+    "x": 853,
+    "y": 160,
+    "z": 13000,
+    "width": 411,
+    "height": 268,
+    "tabOrder": 13000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pessoas"
+                    }
+                  },
+                  "Property": "Nome"
+                }
+              },
+              "queryRef": "Pessoas.Nome",
+              "nativeQueryRef": "Nome",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pessoas"
+                    }
+                  },
+                  "Property": "Detalhe"
+                }
+              },
+              "queryRef": "Pessoas.Detalhe",
+              "nativeQueryRef": "Detalhe",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Diárias de conselheiros em 12 meses"
+                }
+              },
+              "queryRef": "Medidas.Diárias de conselheiros em 12 meses",
+              "nativeQueryRef": "Diárias de conselheiros em 12 meses",
+              "displayName": "Diárias"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Meses com diária de conselheiro"
+                }
+              },
+              "queryRef": "Medidas.Meses com diária de conselheiro",
+              "nativeQueryRef": "Meses com diária de conselheiro",
+              "displayName": "Meses"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Valor das diárias de conselheiros"
+                }
+              },
+              "queryRef": "Medidas.Valor das diárias de conselheiros",
+              "nativeQueryRef": "Valor das diárias de conselheiros",
+              "displayName": "Valor"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Diárias por conselheiro'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

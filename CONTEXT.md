@@ -108,24 +108,48 @@ _Avoid_: convênio (quando ainda não existe), fonte externa
 
 ## Gestão do Conselho
 
+**Colegiado**:
+Quem vota os processos: o Plenário ou uma das nove câmaras especializadas. É o filtro do alto do painel de Gestão do Conselho.
+_Avoid_: órgão julgador, instância (quando se fala de quem vota)
+
 **Processo**:
-Um pedido ou auto que uma câmara especializada julga: auto de infração, registro e atribuição, acervo técnico ou ética. Entra, recebe relator, vai à pauta e é julgado.
-_Avoid_: caso, protocolo (quando se fala da câmara), pendência
+Um pedido ou auto que um colegiado vota: auto de infração, registro e atribuição, acervo técnico ou ética. Abre no GovAdm, é recebido na câmara, cadastrado no Votenet, distribuído a um relator, relatado, pautado e votado.
+_Avoid_: caso, protocolo (quando se fala do colegiado), pendência
 
-**Estoque de processos**:
-Os processos que entraram e ainda não foram julgados na data de referência. É estoque, nunca tem acumulado do ano.
-_Avoid_: fila, passivo, backlog
+**Tramitação**:
+A passagem de um processo por um colegiado: a da câmara e, se houver recurso, a do Plenário. Um processo com recurso tem duas.
+_Avoid_: andamento, fase (quando se fala do colegiado inteiro)
 
-**Recurso ao plenário**:
-Pedido da parte para o plenário rever a decisão de uma câmara.
+**Status do Votenet**:
+Onde a tramitação está: aguardando distribuição, distribuído ao relator, em revisão, assinado, pautado, pedido de vista, impedimento, diligência ou votado. Cada status está com uma pessoa: o relator, o conselheiro que pediu vista ou um funcionário da assessoria.
+_Avoid_: fase do GovAdm (são listas diferentes), etapa
+
+**Processo esperando voto**:
+O processo que entrou num colegiado e ainda não foi votado na data. Juntos, formam a fila do colegiado, do mais parado ao menos. É estoque, nunca tem acumulado do ano.
+_Avoid_: estoque de processos, passivo, backlog, processo em julgamento
+
+**Alerta da fila**:
+Amarelo quando o processo está de 90 a 120 dias no mesmo status; vermelho acima de 120. Os dias desde a entrada acendem acima de um ano.
+_Avoid_: atraso, prazo vencido (não há prazo legal para o status)
+
+**Recurso ao Plenário**:
+Pedido da parte para o Plenário rever a decisão de uma câmara. O Plenário mantém ou reforma a decisão; depois dele, cabe recurso ao Confea.
 _Avoid_: apelação, segunda instância
 
 **Prescrição do auto**:
-O fim do prazo de cinco anos, contados do fato, para o Conselho punir a infração (Lei 9.873/1999). O auto que chega a esse prazo sem julgamento é arquivado.
+O fim do prazo para o Conselho punir a infração (Lei 9.873/1999): cinco anos do fato, ou três anos com o processo parado no mesmo status (a prescrição intercorrente), o que vier primeiro. A decisão da câmara interrompe a de cinco anos; no Plenário, só corre a intercorrente.
 _Avoid_: caducidade, perda de prazo
 
+**Terço**:
+O grupo de conselheiros com o mesmo mandato de três anos. Um terço do Plenário se renova a cada ano; a recondução é um mandato novo.
+_Avoid_: turma, mandato (quando se fala do grupo)
+
+**Deliberação de repasse**:
+A decisão do Plenário, registrada em ata, que aprova convênio, contrato ou patrocínio com uma organização. Quando quem propôs foi indicado pela organização que recebe, a deliberação fica marcada.
+_Avoid_: aprovação, conflito de interesse (o painel não julga)
+
 **Cadeira**:
-Um lugar no plenário, ocupado por um conselheiro indicado por uma entidade de classe ou instituição de ensino registrada.
+Um lugar no Plenário, ocupado por um conselheiro indicado por uma entidade de classe ou instituição de ensino registrada.
 _Avoid_: vaga, assento, voto
 
 **Dívida**:

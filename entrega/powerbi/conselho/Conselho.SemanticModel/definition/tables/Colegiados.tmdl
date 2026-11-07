@@ -1,0 +1,35 @@
+/// Tem o Plenário e as nove câmaras especializadas, com os nomes do sistema do Conselho. Escolha um por vez.
+table Colegiados
+	lineageTag: bfbd8d01-013c-55af-82d7-a9d945619ff2
+
+	column Colegiado
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Colegiado
+		lineageTag: 0b7af5db-5e7a-5631-8c07-587379346508
+
+	column Nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome
+		sortByColumn: Ordem
+		lineageTag: 5978c61b-47db-57bd-ae6e-11d369a0bcae
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: bc97152b-b7ab-5a51-a6f0-f7839365ddc8
+
+	partition Colegiados = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "colegiados.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Colegiado", type text}, {"Nome", type text}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

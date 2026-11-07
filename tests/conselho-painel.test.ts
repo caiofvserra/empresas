@@ -25,7 +25,7 @@ const processos = buildProcessos(dataset), modelo = buildProfissionais(dataset);
 test('Financeiro, Atendimento e Conselho: o antigo painel de Gestão do Conselho virou três, cada um no seu HTML (07/11/2026)', () => {
   assert.deepEqual(pageIdsFinanceiro, ['receita', 'orcamento']);
   assert.deepEqual(pageIdsAtendimento, ['atendimento']);
-  assert.deepEqual(pageIdsConselho, ['camaras', 'entidades']);
+  assert.deepEqual(pageIdsConselho, ['colegiado', 'processos', 'conselheiros', 'decisoes', 'representacao']);
   for (const [paginas, painel] of [[pageIdsFinanceiro, 'financeiro'], [pageIdsAtendimento, 'atendimento'], [pageIdsConselho, 'conselho']] as const) assert.ok(paginas.every(page => painelDaPagina(page) === painel), painel);
   assert.deepEqual(pageIdsGeral, ['presidencia', 'metodo']);
   const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8'), vite = readFileSync(join(import.meta.dirname, '..', 'vite.config.ts'), 'utf8');
@@ -36,7 +36,8 @@ test('Financeiro, Atendimento e Conselho: o antigo painel de Gestão do Conselho
     assert.ok(build.includes(`'entrega/painel-${painel}-creasp.html'`), `${painel}: HTML da entrega`);
     assert.match(readFileSync(join(import.meta.dirname, '..', `${painel}.html`), 'utf8'), new RegExp(`src/${painel}/main.tsx`));
   }
-  // O filtro de câmara só vale no Conselho.
+  // O filtro de colegiado (Plenário ou câmara) só vale no Conselho.
+  assert.match(src, /conselho: \{[^}]*filtro: 'colegiado' \}/);
   assert.match(src, /financeiro: \{[^}]*filtro: 'nenhum' \}/);
   assert.match(src, /atendimento: \{[^}]*filtro: 'nenhum' \}/);
   for (const page of [...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho]) assert.ok(Object.keys(fichas).some(key => key.startsWith(`${page}.`)), `fichas da página ${page}`);

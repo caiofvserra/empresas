@@ -992,104 +992,104 @@ SRV-0990;João Martins Dias;Servidor;Coordenador administrativo;Administração;
 SRV-0991;Hugo Rocha Nunes;Servidor;Coordenador administrativo;Administração;Comissionado;Sede;19657;
 SRV-0992;Henrique Borges Barbosa;Servidor;Coordenador administrativo;Administração;Comissionado;Sede;16667;
 SRV-0993;Gustavo Gomes Lima;Servidor;Coordenador administrativo;Administração;Comissionado;Sede;19050;
-CONS-ENT-01-1;Eng. Rafael Campos Dias;Conselheiro;Conselheiro indicado por SEE;;;Sede;;SEE
-CONS-ENT-01-2;Eng. Paulo Lima Nunes;Conselheiro;Conselheiro indicado por SEE;;;Sede;;SEE
-CONS-ENT-02-1;Eng. Otávio Queiroz Araújo;Conselheiro;Conselheiro indicado por AAP;;;Sede;;AAP
-CONS-ENT-02-2;Eng. Mateus Barbosa Gomes;Conselheiro;Conselheiro indicado por AAP;;;Sede;;AAP
-CONS-ENT-04-1;Eng. Marcos Farias Ribeiro;Conselheiro;Conselheiro indicado por AEM;;;Sede;;AEM
-CONS-ENT-05-1;Eng. agr. Marcelo Nunes Cardoso;Conselheiro;Conselheiro indicado por AEST;;;Sede;;AEST
-CONS-ENT-05-2;Eng. agr. Lucas Almeida Moraes;Conselheiro;Conselheiro indicado por AEST;;;Sede;;AEST
-CONS-ENT-05-3;Eng. agr. Leonardo Costa Almeida;Conselheiro;Conselheiro indicado por AEST;;;Sede;;AEST
-CONS-ENT-06-1;Eng. José Mendes Esteves;Conselheiro;Conselheiro indicado por AEQ;;;Sede;;AEQ
-CONS-ENT-06-2;Eng. João Santos Pereira;Conselheiro;Conselheiro indicado por AEQ;;;Sede;;AEQ
-CONS-ENT-06-3;Eng. Hugo Campos Batista;Conselheiro;Conselheiro indicado por AEQ;;;Sede;;AEQ
-CONS-ENT-07-1;Eng. Henrique Lima Machado;Conselheiro;Conselheiro indicado por AGM;;;Sede;;AGM
-CONS-ENT-09-1;Eng. Gustavo Queiroz Siqueira;Conselheiro;Conselheiro indicado por AEC;;;Sede;;AEC
-CONS-ENT-10-1;Eng. Fernando Barbosa Dias;Conselheiro;Conselheiro indicado por ATI;;;Sede;;ATI
-CONS-ENT-10-2;Eng. Felipe Farias Nunes;Conselheiro;Conselheiro indicado por ATI;;;Sede;;ATI
-CONS-ENT-10-3;Eng. Fábio Nunes Araújo;Conselheiro;Conselheiro indicado por ATI;;;Sede;;ATI
-CONS-ENT-11-1;Eng. Eduardo Almeida Gomes;Conselheiro;Conselheiro indicado por ATE;;;Sede;;ATE
-CONS-ENT-12-1;Eng. Diego Costa Ribeiro;Conselheiro;Conselheiro indicado por AEP;;;Sede;;AEP
-CONS-ENT-12-2;Eng. Daniel Mendes Cardoso;Conselheiro;Conselheiro indicado por AEP;;;Sede;;AEP
-CONS-ENT-12-3;Eng. Carlos Santos Mendes;Conselheiro;Conselheiro indicado por AEP;;;Sede;;AEP
-CONS-ENT-12-4;Eng. Bruno Campos Almeida;Conselheiro;Conselheiro indicado por AEP;;;Sede;;AEP
-CONS-ENT-13-1;Eng. agr. Antônio Lima Esteves;Conselheiro;Conselheiro indicado por SEE-GUA;;;Sede;;SEE-GUA
-CONS-ENT-14-1;Eng. André Queiroz Pereira;Conselheiro;Conselheiro indicado por AAP-PRE;;;Sede;;AAP-PRE
-CONS-ENT-14-2;Eng. Vitória Barbosa Borges;Conselheiro;Conselheiro indicado por AAP-PRE;;;Sede;;AAP-PRE
-CONS-ENT-14-3;Eng. Tatiana Farias Machado;Conselheiro;Conselheiro indicado por AAP-PRE;;;Sede;;AAP-PRE
-CONS-ENT-16-1;Eng. Sofia Nunes Siqueira;Conselheiro;Conselheiro indicado por AEM-SÃO;;;Sede;;AEM-SÃO
-CONS-ENT-16-2;Eng. Renata Almeida Dias;Conselheiro;Conselheiro indicado por AEM-SÃO;;;Sede;;AEM-SÃO
-CONS-ENT-16-3;Eng. Priscila Costa Nunes;Conselheiro;Conselheiro indicado por AEM-SÃO;;;Sede;;AEM-SÃO
-CONS-ENT-16-4;Eng. Paula Mendes Araújo;Conselheiro;Conselheiro indicado por AEM-SÃO;;;Sede;;AEM-SÃO
-CONS-ENT-17-1;Eng. Patrícia Santos Freitas;Conselheiro;Conselheiro indicado por AEST-JUN;;;Sede;;AEST-JUN
-CONS-ENT-17-2;Eng. Natália Campos Ribeiro;Conselheiro;Conselheiro indicado por AEST-JUN;;;Sede;;AEST-JUN
-CONS-ENT-17-3;Eng. Marina Lima Cardoso;Conselheiro;Conselheiro indicado por AEST-JUN;;;Sede;;AEST-JUN
-CONS-ENT-19-1;Eng. Mariana Queiroz Mendes;Conselheiro;Conselheiro indicado por AGM-SÃO;;;Sede;;AGM-SÃO
-CONS-ENT-23-1;Eng. Luciana Barbosa Almeida;Conselheiro;Conselheiro indicado por ATE-BAU;;;Sede;;ATE-BAU
-CONS-ENT-23-2;Eng. Letícia Farias Esteves;Conselheiro;Conselheiro indicado por ATE-BAU;;;Sede;;ATE-BAU
-CONS-ENT-23-3;Eng. Larissa Nunes Pinto;Conselheiro;Conselheiro indicado por ATE-BAU;;;Sede;;ATE-BAU
-CONS-ENT-23-4;Eng. Juliana Almeida Borges;Conselheiro;Conselheiro indicado por ATE-BAU;;;Sede;;ATE-BAU
-CONS-ENT-24-1;Eng. Isabela Costa Machado;Conselheiro;Conselheiro indicado por AEP-OSA;;;Sede;;AEP-OSA
-CONS-ENT-24-2;Eng. Helena Mendes Siqueira;Conselheiro;Conselheiro indicado por AEP-OSA;;;Sede;;AEP-OSA
-CONS-ENT-24-3;Eng. Gabriela Santos Costa;Conselheiro;Conselheiro indicado por AEP-OSA;;;Sede;;AEP-OSA
-CONS-IES-01-1;Eng. Fernanda Campos Nunes;Conselheiro;Conselheiro indicado por UE-CAM;;;Sede;;UE-CAM
-CONS-IES-01-2;Eng. Elisa Lima Araújo;Conselheiro;Conselheiro indicado por UE-CAM;;;Sede;;UE-CAM
-CONS-IES-03-1;Eng. Débora Queiroz Freitas;Conselheiro;Conselheiro indicado por FP-MOG;;;Sede;;FP-MOG
-CONS-IES-03-2;Eng. Daniela Barbosa Ribeiro;Conselheiro;Conselheiro indicado por FP-MOG;;;Sede;;FP-MOG
-CONS-IES-03-3;Eng. Cláudia Farias Cardoso;Conselheiro;Conselheiro indicado por FP-MOG;;;Sede;;FP-MOG
-CONS-IES-05-1;Eng. Carolina Nunes Mendes;Conselheiro;Conselheiro indicado por UE-FRA;;;Sede;;UE-FRA
-CONS-IES-06-1;Eng. Carla Almeida Alves;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
-CONS-IES-06-2;Eng. Camila Costa Farias;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
-CONS-IES-06-3;Eng. Bianca Mendes Pinto;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
-CONS-IES-06-4;Eng. Beatriz Santos Batista;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
-CONS-IES-07-1;Eng. Ana Campos Machado;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
-CONS-IES-07-2;Eng. Aline Lima Siqueira;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
-CONS-IES-07-3;Eng. Adriana Queiroz Costa;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
-CONS-IES-07-4;Eng. William Araújo Nogueira;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
-CONS-IES-08-1;Eng. Wagner Esteves Andrade;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
-CONS-IES-08-2;Eng. Vinícius Nogueira Ferraz;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
-CONS-IES-09-1;Eng. Thiago Teixeira Queiroz;Conselheiro;Conselheiro indicado por UE-TAU;;;Sede;;UE-TAU
-CONS-IES-12-1;Eng. Sérgio Castro Campos;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
-CONS-IES-13-1;Eng. Rodrigo Martins Mendes;Conselheiro;Conselheiro indicado por UE-MOG;;;Sede;;UE-MOG
-CONS-IES-13-2;Eng. Ricardo Rocha Teixeira;Conselheiro;Conselheiro indicado por UE-MOG;;;Sede;;UE-MOG
-CONS-IES-13-3;Eng. Rafael Borges Esteves;Conselheiro;Conselheiro indicado por UE-MOG;;;Sede;;UE-MOG
-CONS-IES-14-1;Eng. Paulo Gomes Pereira;Conselheiro;Conselheiro indicado por UP-TAU;;;Sede;;UP-TAU
-CONS-IES-15-1;Eng. Otávio Pinto Barros;Conselheiro;Conselheiro indicado por CUP-FRA;;;Sede;;CUP-FRA
-CONS-IES-15-2;Eng. Mateus Araújo Lopes;Conselheiro;Conselheiro indicado por CUP-FRA;;;Sede;;CUP-FRA
-CONS-IES-15-3;Eng. Marcos Esteves Santos;Conselheiro;Conselheiro indicado por CUP-FRA;;;Sede;;CUP-FRA
-CONS-IES-15-4;Eng. Marcelo Nogueira Castro;Conselheiro;Conselheiro indicado por CUP-FRA;;;Sede;;CUP-FRA
-CONS-IES-16-1;Eng. Lucas Teixeira Moreira;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
-CONS-IES-16-2;Eng. Leonardo Castro Andrade;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
-CONS-IES-17-1;Eng. José Martins Ferraz;Conselheiro;Conselheiro indicado por UE-SAN;;;Sede;;UE-SAN
-CONS-IES-17-2;Eng. João Rocha Queiroz;Conselheiro;Conselheiro indicado por UE-SAN;;;Sede;;UE-SAN
-CONS-IES-18-1;Eng. Hugo Borges Cardoso;Conselheiro;Conselheiro indicado por UP-MOG;;;Sede;;UP-MOG
-CONS-IES-21-1;Eng. Henrique Gomes Mendes;Conselheiro;Conselheiro indicado por UE-CAM;;;Sede;;UE-CAM
-CONS-IES-21-2;Eng. Gustavo Pinto Teixeira;Conselheiro;Conselheiro indicado por UE-CAM;;;Sede;;UE-CAM
-CONS-IES-23-1;Eng. Fernando Araújo Esteves;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
-CONS-IES-23-2;Eng. Felipe Esteves Pereira;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
-CONS-IES-23-3;Eng. Fábio Nogueira Barros;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
-CONS-IES-23-4;Eng. Eduardo Teixeira Lima;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
-CONS-IES-25-1;Eng. Diego Castro Santos;Conselheiro;Conselheiro indicado por UE-FRA2;;;Sede;;UE-FRA2
-CONS-IES-25-2;Eng. Daniel Martins Castro;Conselheiro;Conselheiro indicado por UE-FRA2;;;Sede;;UE-FRA2
-CONS-IES-26-1;Eng. Carlos Rocha Moreira;Conselheiro;Conselheiro indicado por FP-CAM2;;;Sede;;FP-CAM2
-CONS-IES-26-2;Eng. Bruno Borges Andrade;Conselheiro;Conselheiro indicado por FP-CAM2;;;Sede;;FP-CAM2
-CONS-IES-26-3;Eng. Antônio Gomes Ferraz;Conselheiro;Conselheiro indicado por FP-CAM2;;;Sede;;FP-CAM2
-CONS-IES-26-4;Eng. André Pinto Ramos;Conselheiro;Conselheiro indicado por FP-CAM2;;;Sede;;FP-CAM2
-CONS-IES-27-1;Eng. Vitória Araújo Cardoso;Conselheiro;Conselheiro indicado por CUP-SAN2;;;Sede;;CUP-SAN2
-CONS-IES-27-2;Eng. Tatiana Esteves Mendes;Conselheiro;Conselheiro indicado por CUP-SAN2;;;Sede;;CUP-SAN2
-CONS-IES-28-1;Eng. Sofia Nogueira Teixeira;Conselheiro;Conselheiro indicado por FP-MOG2;;;Sede;;FP-MOG2
-CONS-IES-28-2;Eng. Renata Teixeira Duarte;Conselheiro;Conselheiro indicado por FP-MOG2;;;Sede;;FP-MOG2
-CONS-IES-28-3;Eng. Priscila Castro Pereira;Conselheiro;Conselheiro indicado por FP-MOG2;;;Sede;;FP-MOG2
-CONS-IES-28-4;Eng. Paula Martins Barros;Conselheiro;Conselheiro indicado por FP-MOG2;;;Sede;;FP-MOG2
-CONS-IES-29-1;Eng. Patrícia Rocha Lima;Conselheiro;Conselheiro indicado por UE-TAU2;;;Sede;;UE-TAU2
-CONS-IES-30-1;Eng. Natália Borges Santos;Conselheiro;Conselheiro indicado por FP-FRA2;;;Sede;;FP-FRA2
-CONS-IES-30-2;Eng. Marina Gomes Castro;Conselheiro;Conselheiro indicado por FP-FRA2;;;Sede;;FP-FRA2
-CONS-IES-30-3;Eng. Mariana Pinto Moreira;Conselheiro;Conselheiro indicado por FP-FRA2;;;Sede;;FP-FRA2
-CONS-IES-31-1;Eng. Luciana Araújo Andrade;Conselheiro;Conselheiro indicado por CUP-CAM2;;;Sede;;CUP-CAM2
-CONS-IES-32-1;Eng. Letícia Esteves Freitas;Conselheiro;Conselheiro indicado por UP-SAN2;;;Sede;;UP-SAN2
-CONS-IES-32-2;Eng. Larissa Nogueira Ramos;Conselheiro;Conselheiro indicado por UP-SAN2;;;Sede;;UP-SAN2
-CONS-IES-33-1;Eng. Juliana Teixeira Campos;Conselheiro;Conselheiro indicado por UE-MOG2;;;Sede;;UE-MOG2
-CONS-IES-34-1;Eng. Isabela Castro Mendes;Conselheiro;Conselheiro indicado por FP-TAU2;;;Sede;;FP-TAU2
-CONS-IES-34-2;Eng. Helena Martins Teixeira;Conselheiro;Conselheiro indicado por FP-TAU2;;;Sede;;FP-TAU2
-CONS-IES-34-3;Eng. Gabriela Rocha Duarte;Conselheiro;Conselheiro indicado por FP-TAU2;;;Sede;;FP-TAU2
-CONS-IES-35-1;Eng. Fernanda Borges Pereira;Conselheiro;Conselheiro indicado por FP-FRA2;;;Sede;;FP-FRA2
+CONS-ENT-01-1-2026;William Araújo Nogueira;Conselheiro;Conselheiro indicado por SEE;;;Sede;;SEE
+CONS-ENT-01-2-2025;William Andrade Oliveira;Conselheiro;Conselheiro indicado por SEE;;;Sede;;SEE
+CONS-ENT-02-1-2022;Wagner Dias Batista;Conselheiro;Conselheiro indicado por AAP;;;Sede;;AAP
+CONS-ENT-02-2-2024;Vitória Alves Dias;Conselheiro;Conselheiro indicado por AAP;;;Sede;;AAP
+CONS-ENT-04-1-2024;Vinícius Mendes Martins;Conselheiro;Conselheiro indicado por AEM;;;Sede;;AEM
+CONS-ENT-05-1-2019;Tatiana Costa Pereira;Conselheiro;Conselheiro indicado por AEST;;;Sede;;AEST
+CONS-ENT-05-2-2024;Thiago Rocha Alves;Conselheiro;Conselheiro indicado por AEST;;;Sede;;AEST
+CONS-ENT-05-3-2024;Paulo Esteves Souza;Conselheiro;Conselheiro indicado por AEST;;;Sede;;AEST
+CONS-ENT-06-1-2026;Marcelo Martins Gomes;Conselheiro;Conselheiro indicado por AEQ;;;Sede;;AEQ
+CONS-ENT-06-2-2025;Vinícius Machado Nunes;Conselheiro;Conselheiro indicado por AEQ;;;Sede;;AEQ
+CONS-ENT-06-3-2026;Rafael Andrade Moraes;Conselheiro;Conselheiro indicado por AEQ;;;Sede;;AEQ
+CONS-ENT-07-1-2026;Vitória Souza Freitas;Conselheiro;Conselheiro indicado por AGM;;;Sede;;AGM
+CONS-ENT-09-1-2026;Thiago Ramos Barros;Conselheiro;Conselheiro indicado por AEC;;;Sede;;AEC
+CONS-ENT-10-1-2024;Vitória Siqueira Lima;Conselheiro;Conselheiro indicado por ATI;;;Sede;;ATI
+CONS-ENT-10-2-2018;Wagner Campos Ferraz;Conselheiro;Conselheiro indicado por ATI;;;Sede;;ATI
+CONS-ENT-10-3-2025;Ricardo Nunes Dias;Conselheiro;Conselheiro indicado por ATI;;;Sede;;ATI
+CONS-ENT-11-1-2025;Vitória Santos Machado;Conselheiro;Conselheiro indicado por ATE;;;Sede;;ATE
+CONS-ENT-12-1-2022;Thiago Pinto Cardoso;Conselheiro;Conselheiro indicado por AEP;;;Sede;;AEP
+CONS-ENT-12-2-2026;Vitória Rocha Mendes;Conselheiro;Conselheiro indicado por AEP;;;Sede;;AEP
+CONS-ENT-12-3-2024;Vitória Ramos Nunes;Conselheiro;Conselheiro indicado por AEP;;;Sede;;AEP
+CONS-ENT-12-4-2026;Thiago Nunes Esteves;Conselheiro;Conselheiro indicado por AEP;;;Sede;;AEP
+CONS-ENT-13-1-2025;William Pinto Castro;Conselheiro;Conselheiro indicado por SEE-GUA;;;Sede;;SEE-GUA
+CONS-ENT-14-1-2019;Thiago Nogueira Ferraz;Conselheiro;Conselheiro indicado por AAP-PRE;;;Sede;;AAP-PRE
+CONS-ENT-14-2-2026;Rafael Rocha Teixeira;Conselheiro;Conselheiro indicado por AAP-PRE;;;Sede;;AAP-PRE
+CONS-ENT-14-3-2019;Otávio Gomes Pereira;Conselheiro;Conselheiro indicado por AAP-PRE;;;Sede;;AAP-PRE
+CONS-ENT-16-1-2025;Wagner Andrade Oliveira;Conselheiro;Conselheiro indicado por AEM-SÃO;;;Sede;;AEM-SÃO
+CONS-ENT-16-2-2024;Wagner Alves Pinto;Conselheiro;Conselheiro indicado por AEM-SÃO;;;Sede;;AEM-SÃO
+CONS-ENT-16-3-2022;Sérgio Siqueira Santos;Conselheiro;Conselheiro indicado por AEM-SÃO;;;Sede;;AEM-SÃO
+CONS-ENT-16-4-2026;Wagner Almeida Ramos;Conselheiro;Conselheiro indicado por AEM-SÃO;;;Sede;;AEM-SÃO
+CONS-ENT-17-1-2025;Thiago Mendes Martins;Conselheiro;Conselheiro indicado por AEST-JUN;;;Sede;;AEST-JUN
+CONS-ENT-17-2-2024;Paulo Barbosa Lopes;Conselheiro;Conselheiro indicado por AEST-JUN;;;Sede;;AEST-JUN
+CONS-ENT-17-3-2025;Marcelo Costa Andrade;Conselheiro;Conselheiro indicado por AEST-JUN;;;Sede;;AEST-JUN
+CONS-ENT-19-1-2025;William Nogueira Gomes;Conselheiro;Conselheiro indicado por AGM-SÃO;;;Sede;;AGM-SÃO
+CONS-ENT-23-1-2024;Wagner Souza Santos;Conselheiro;Conselheiro indicado por ATE-BAU;;;Sede;;ATE-BAU
+CONS-ENT-23-2-2024;Rodrigo Batista Gomes;Conselheiro;Conselheiro indicado por ATE-BAU;;;Sede;;ATE-BAU
+CONS-ENT-23-3-2024;Otávio Duarte Almeida;Conselheiro;Conselheiro indicado por ATE-BAU;;;Sede;;ATE-BAU
+CONS-ENT-23-4-2016;Vitória Moreira Araújo;Conselheiro;Conselheiro indicado por ATE-BAU;;;Sede;;ATE-BAU
+CONS-ENT-24-1-2021;Thiago Lopes Pereira;Conselheiro;Conselheiro indicado por AEP-OSA;;;Sede;;AEP-OSA
+CONS-ENT-24-2-2025;Vitória Mendes Borges;Conselheiro;Conselheiro indicado por AEP-OSA;;;Sede;;AEP-OSA
+CONS-ENT-24-3-2026;Vinícius Borges Gomes;Conselheiro;Conselheiro indicado por AEP-OSA;;;Sede;;AEP-OSA
+CONS-IES-01-1-2015;Sérgio Pinto Cardoso;Conselheiro;Conselheiro indicado por UE-CAM;;;Sede;;UE-CAM
+CONS-IES-01-2-2024;Otávio Castro Batista;Conselheiro;Conselheiro indicado por UE-CAM;;;Sede;;UE-CAM
+CONS-IES-03-1-2023;Wagner Ribeiro Barros;Conselheiro;Conselheiro indicado por FP-MOG;;;Sede;;FP-MOG
+CONS-IES-03-2-2024;Sérgio Pereira Castro;Conselheiro;Conselheiro indicado por FP-MOG;;;Sede;;FP-MOG
+CONS-IES-03-3-2025;Vinícius Barros Martins;Conselheiro;Conselheiro indicado por FP-MOG;;;Sede;;FP-MOG
+CONS-IES-05-1-2026;Vitória Lopes Dias;Conselheiro;Conselheiro indicado por UE-FRA;;;Sede;;UE-FRA
+CONS-IES-06-1-2024;Tatiana Queiroz Pereira;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
+CONS-IES-06-2-2021;Vinícius Araújo Nogueira;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
+CONS-IES-06-3-2025;William Freitas Souza;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
+CONS-IES-06-4-2021;Thiago Duarte Barbosa;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
+CONS-IES-07-1-2025;Paulo Ribeiro Alves;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
+CONS-IES-07-2-2026;William Farias Andrade;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
+CONS-IES-07-3-2025;Sérgio Mendes Martins;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
+CONS-IES-07-4-2025;William Duarte Batista;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
+CONS-IES-08-1-2024;William Dias Campos;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
+CONS-IES-08-2-2025;Thiago Campos Ferraz;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
+CONS-IES-09-1-2025;Rafael Farias Souza;Conselheiro;Conselheiro indicado por UE-TAU;;;Sede;;UE-TAU
+CONS-IES-12-1-2022;William Castro Dias;Conselheiro;Conselheiro indicado por FP-SAN;;;Sede;;FP-SAN
+CONS-IES-13-1-2022;Sérgio Gomes Ribeiro;Conselheiro;Conselheiro indicado por UE-MOG;;;Sede;;UE-MOG
+CONS-IES-13-2-2024;Vinícius Ribeiro Barros;Conselheiro;Conselheiro indicado por UE-MOG;;;Sede;;UE-MOG
+CONS-IES-13-3-2024;Vitória Carvalho Santos;Conselheiro;Conselheiro indicado por UE-MOG;;;Sede;;UE-MOG
+CONS-IES-14-1-2025;Sérgio Ferraz Souza;Conselheiro;Conselheiro indicado por UP-TAU;;;Sede;;UP-TAU
+CONS-IES-15-1-2026;Paulo Moraes Gomes;Conselheiro;Conselheiro indicado por CUP-FRA;;;Sede;;CUP-FRA
+CONS-IES-15-2-2026;Vinícius Queiroz Cardoso;Conselheiro;Conselheiro indicado por CUP-FRA;;;Sede;;CUP-FRA
+CONS-IES-15-3-2026;Vitória Borges Andrade;Conselheiro;Conselheiro indicado por CUP-FRA;;;Sede;;CUP-FRA
+CONS-IES-15-4-2025;Vinícius Pereira Dias;Conselheiro;Conselheiro indicado por CUP-FRA;;;Sede;;CUP-FRA
+CONS-IES-16-1-2025;Sofia Pereira Rocha;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
+CONS-IES-16-2-2024;Sérgio Dias Batista;Conselheiro;Conselheiro indicado por FP-CAM;;;Sede;;FP-CAM
+CONS-IES-17-1-2024;Paulo Lopes Nunes;Conselheiro;Conselheiro indicado por UE-SAN;;;Sede;;UE-SAN
+CONS-IES-17-2-2026;Vitória Barbosa Cardoso;Conselheiro;Conselheiro indicado por UE-SAN;;;Sede;;UE-SAN
+CONS-IES-18-1-2018;Wagner Esteves Barbosa;Conselheiro;Conselheiro indicado por UP-MOG;;;Sede;;UP-MOG
+CONS-IES-21-1-2024;Wagner Duarte Batista;Conselheiro;Conselheiro indicado por UE-CAM;;;Sede;;UE-CAM
+CONS-IES-21-2-2022;Sérgio Carvalho Dias;Conselheiro;Conselheiro indicado por UE-CAM;;;Sede;;UE-CAM
+CONS-IES-23-1-2025;Vinícius Moraes Martins;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
+CONS-IES-23-2-2017;Sérgio Cardoso Esteves;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
+CONS-IES-23-3-2023;William Almeida Rocha;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
+CONS-IES-23-4-2023;Thiago Santos Alves;Conselheiro;Conselheiro indicado por CUP-MOG;;;Sede;;CUP-MOG
+CONS-IES-25-1-2025;Ricardo Queiroz Borges;Conselheiro;Conselheiro indicado por UE-FRA2;;;Sede;;UE-FRA2
+CONS-IES-25-2-2026;Mateus Almeida Oliveira;Conselheiro;Conselheiro indicado por UE-FRA2;;;Sede;;UE-FRA2
+CONS-IES-26-1-2018;William Teixeira Santos;Conselheiro;Conselheiro indicado por FP-CAM2;;;Sede;;FP-CAM2
+CONS-IES-26-2-2026;William Souza Teixeira;Conselheiro;Conselheiro indicado por FP-CAM2;;;Sede;;FP-CAM2
+CONS-IES-26-3-2025;William Siqueira Alves;Conselheiro;Conselheiro indicado por FP-CAM2;;;Sede;;FP-CAM2
+CONS-IES-26-4-2023;Wagner Campos Gomes;Conselheiro;Conselheiro indicado por FP-CAM2;;;Sede;;FP-CAM2
+CONS-IES-27-1-2022;Wagner Borges Lopes;Conselheiro;Conselheiro indicado por CUP-SAN2;;;Sede;;CUP-SAN2
+CONS-IES-27-2-2025;Rodrigo Esteves Andrade;Conselheiro;Conselheiro indicado por CUP-SAN2;;;Sede;;CUP-SAN2
+CONS-IES-28-1-2024;Wagner Batista Martins;Conselheiro;Conselheiro indicado por FP-MOG2;;;Sede;;FP-MOG2
+CONS-IES-28-2-2023;William Queiroz Castro;Conselheiro;Conselheiro indicado por FP-MOG2;;;Sede;;FP-MOG2
+CONS-IES-28-3-2024;Thiago Nunes Ferraz;Conselheiro;Conselheiro indicado por FP-MOG2;;;Sede;;FP-MOG2
+CONS-IES-28-4-2025;Rafael Santos Teixeira;Conselheiro;Conselheiro indicado por FP-MOG2;;;Sede;;FP-MOG2
+CONS-IES-29-1-2023;William Pinto Dias;Conselheiro;Conselheiro indicado por UE-TAU2;;;Sede;;UE-TAU2
+CONS-IES-30-1-2024;Vitória Pinto Rocha;Conselheiro;Conselheiro indicado por FP-FRA2;;;Sede;;FP-FRA2
+CONS-IES-30-2-2021;Thiago Moreira Lopes;Conselheiro;Conselheiro indicado por FP-FRA2;;;Sede;;FP-FRA2
+CONS-IES-30-3-2018;Ricardo Machado Nunes;Conselheiro;Conselheiro indicado por FP-FRA2;;;Sede;;FP-FRA2
+CONS-IES-31-1-2026;Wagner Alves Ramos;Conselheiro;Conselheiro indicado por CUP-CAM2;;;Sede;;CUP-CAM2
+CONS-IES-32-1-2025;Rodrigo Cardoso Esteves;Conselheiro;Conselheiro indicado por UP-SAN2;;;Sede;;UP-SAN2
+CONS-IES-32-2-2023;Otávio Ferraz Santos;Conselheiro;Conselheiro indicado por UP-SAN2;;;Sede;;UP-SAN2
+CONS-IES-33-1-2025;Lucas Moraes Ferraz;Conselheiro;Conselheiro indicado por UE-MOG2;;;Sede;;UE-MOG2
+CONS-IES-34-1-2023;Hugo Ramos Teixeira;Conselheiro;Conselheiro indicado por FP-TAU2;;;Sede;;FP-TAU2
+CONS-IES-34-2-2026;Felipe Alves Lopes;Conselheiro;Conselheiro indicado por FP-TAU2;;;Sede;;FP-TAU2
+CONS-IES-34-3-2026;Daniel Cardoso Andrade;Conselheiro;Conselheiro indicado por FP-TAU2;;;Sede;;FP-TAU2
+CONS-IES-35-1-2025;Vitória Oliveira Teixeira;Conselheiro;Conselheiro indicado por FP-FRA2;;;Sede;;FP-FRA2

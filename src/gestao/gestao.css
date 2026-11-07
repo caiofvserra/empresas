@@ -13,27 +13,43 @@
   "ex ex ex ex fm fm fm na na na na na"
   "st st st st dr dr dr vc vc vc vc vc"
   "fo fo fo fo fo pe pe pe bc bc bc bc"; }
-.ck-grid-cs-camaras { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+/* Gestão do Conselho (07/11/2026): as cinco páginas do colegiado. */
+.ck-grid-cs-colegiado { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
-  "es es es es rt rt rt rt rt pl pl pl"
-  "es es es es id id id id id pl pl pl"
-  "pz pz pz pz de de de de de pl pl pl"; }
-.ck-grid-cs-entidades { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
+  "po po po po st st st tc tc tc tc tc"
+  "po po po po me me me me ca ca ca ca"
+  "po po po po me me me me ca ca ca ca"; }
+.ck-grid-cs-processos { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
-  "ec ec ec er er er er er ie ie ie ie"
-  "et et et et et et et et ie ie ie ie"; }
+  "fi fi fi fi fi fi ca ca ca ca ca ca"
+  "fi fi fi fi fi fi ca ca ca ca ca ca"
+  "fi fi fi fi fi fi pr pr pr cd cd cd"; }
+.ck-grid-cs-conselheiros { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "cr cr cr cr cr pr pr pr di di di di"
+  "cr cr cr cr cr pr pr pr di di di di"
+  "ia ia ia ia ia ia dv dv dv dv dv dv"; }
+.ck-grid-cs-decisoes { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "de de de de de de al al al al al al"
+  "de de de de de de pl pl pl pl pl pl"
+  "mu mu mu mu mu mu pl pl pl pl pl pl"; }
+.ck-grid-cs-representacao { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "pl pl pl pl mu mu mu mu or or or or"
+  "pl pl pl pl mu mu mu mu or or or or"
+  "dl dl dl dl dl dl dl dl or or or or"; }
 .ck-grid-cs-atendimento { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
   "mp mp mp mp as as as as cd cd cd cd"
   "mp mp mp mp mm mm mm mm cd cd cd cd"
   "mp mp mp mp cw cw cw cw cw cw cw cw"; }
-.ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-camaras, .ck-grid-cs-entidades, .ck-grid-cs-atendimento { align-content: stretch; }
+.ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-atendimento, .ck-grid-cs-colegiado, .ck-grid-cs-processos, .ck-grid-cs-conselheiros, .ck-grid-cs-decisoes, .ck-grid-cs-representacao { align-content: stretch; }
 @media (max-height: 699px) and (min-width: 1101px) {
-  .ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-camaras, .ck-grid-cs-atendimento { grid-template-rows: auto repeat(3, 230px); }
-  .ck-grid-cs-entidades { grid-template-rows: auto repeat(2, 300px); }
+  .ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-atendimento, .ck-grid-cs-colegiado, .ck-grid-cs-processos, .ck-grid-cs-conselheiros, .ck-grid-cs-decisoes, .ck-grid-cs-representacao { grid-template-rows: auto repeat(3, 230px); }
 }
 @media (max-width: 1100px) {
-  .ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-camaras, .ck-grid-cs-entidades, .ck-grid-cs-atendimento { grid-template-rows: auto; grid-auto-rows: 340px; }
+  .ck-grid-cs-receita, .ck-grid-cs-orcamento, .ck-grid-cs-atendimento, .ck-grid-cs-colegiado, .ck-grid-cs-processos, .ck-grid-cs-conselheiros, .ck-grid-cs-decisoes, .ck-grid-cs-representacao { grid-template-rows: auto; grid-auto-rows: 340px; }
 }
 
 /* Gráfico com uma frase curta embaixo (a parte executada do ano, a concentração dos fornecedores). */
@@ -77,3 +93,16 @@
 .cs-benchmark table { margin: 0; }
 .cs-a-ligar { color: var(--muted); font-style: italic; }
 @media (max-width: 640px) { .cs-benchmark { grid-template-columns: minmax(0, 1fr); } }
+
+/* Conselho: link de texto que abre a lista inteira, alerta da fila e deliberação proposta pela própria organização. */
+.cs-link { padding: 0; border: 0; background: none; color: var(--brand); font: inherit; font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.cs-link:hover, .cs-link:focus-visible { color: var(--ink); outline: none; }
+.cs-com-nota > .table-wrap { flex: 1; min-height: 0; overflow: auto; }
+.cs-fila tr.is-clicavel { cursor: pointer; }
+.cs-fila tr.is-clicavel:hover td { background: var(--soft); }
+.cs-alerta { display: inline-block; padding: 1px 6px; border-radius: 999px; font-weight: 700; white-space: nowrap; }
+.cs-alerta.is-amarelo { background: #FBD38D; color: #1A202C; }
+.cs-alerta.is-vermelho { background: var(--bad); color: #FFFFFF; }
+.cs-mais-de-ano { color: var(--bad); font-weight: 700; }
+tr.cs-conflito td { background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.cs-conflito-nota { color: var(--bad) !important; font-weight: 700; }

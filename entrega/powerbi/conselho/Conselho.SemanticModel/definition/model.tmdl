@@ -10,15 +10,21 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 ref table Regionais
 ref table 'Municípios'
-ref table 'Câmaras'
+ref table Colegiados
 ref table 'Calendário'
 ref table 'Datas de referência'
 ref table 'Datas das fotos'
 ref table 'Período'
-ref table Processos
-ref table 'Foto dos processos'
-ref table 'Foto do plenário'
+ref table Pessoas
+ref table 'Tramitações'
+ref table 'Foto da fila'
+ref table Eventos
+ref table Conselheiros
+ref table 'Presenças'
+ref table 'Diárias'
+ref table Autos
+ref table 'Foto das câmaras'
 ref table 'Organizações'
-ref table Repasses
 ref table 'Pagamentos dos repasses'
+ref table 'Deliberações'
 ref table Medidas

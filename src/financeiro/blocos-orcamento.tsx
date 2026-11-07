@@ -5,7 +5,7 @@ import type { CockpitCtx } from '../cockpit/contexto';
 import type { Exportavel } from '../cockpit/ui';
 import { vencimentoContratos } from '../domain/gestao';
 import { despesaPublicada, ufs } from '../cockpit/publico';
-import { change, compacto, eixoCategoria, eixoValor, g, legenda } from '../gestao/comum';
+import { abrirPessoaDiarias, change, compacto, eixoCategoria, eixoValor, g, legenda } from '../gestao/comum';
 
 /**
  * Blocos da página Orçamento e despesa (06/11/2026). Vêm da antiga aba Controle interno do painel geral, organizada como no QUEDA
@@ -104,12 +104,6 @@ export function abrirDiarias(ctx: CockpitCtx, categoria: string | null) {
     listTitle: 'Pessoas, maior valor primeiro', summary: [['Pessoas', int(pessoas.length)], ['Diárias', int(pessoas.reduce((n, row) => n + row.quantidade, 0))], ['Valor', brl(pessoas.reduce((n, row) => n + row.valor, 0))]],
     rows: pessoas.map(row => ({ key: `${row.categoria}:${row.id}`, title: row.nome, subtitle: `${row.cargo} · ${row.greId ? nomeGre.get(row.greId) ?? row.greId : 'sede'}${categoria ? '' : ` · ${row.categoria}`}`, value: money(row.valor),
       note: `${int(row.quantidade)} diárias em ${int(row.meses)} ${row.meses === 1 ? 'mês' : 'meses'}${row.km ? ` · ${int(row.km)} km` : ''}`, sortValue: row.valor })) });
-}
-function abrirPessoaDiarias(ctx: CockpitCtx, p: (ReturnType<typeof g>)['diariasPessoas'][number]) {
-  const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name]));
-  ctx.open({ kind: 'linhas', title: p.nome, eyebrow: p.categoria, what: `${p.cargo}, ${p.greId ? `lotação na ${nomeGre.get(p.greId) ?? p.greId}` : 'na sede'}. Diárias recebidas em cada mês dos 12 meses até a data de referência.`, use: 'Diária paga não é irregularidade: compare com a função da pessoa e com as outras da mesma categoria.',
-    listTitle: 'Meses com diária', summary: [['Diárias', int(p.quantidade)], ['Valor', brl(p.valor)], ['Quilômetros', p.km ? int(p.km) : '—']],
-    rows: p.lancamentos.map(l => ({ key: l.month, title: mes(l.month), subtitle: `${int(l.quantidade)} ${l.quantidade === 1 ? 'diária' : 'diárias'}${l.km ? ` em ${int(l.km)} km` : ''}`, value: money(l.valor), note: '', sortValue: -Number(l.month.replace('-', '')) })) });
 }
 export const exportarDiarias = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Nome', 'Categoria', 'Cargo', 'Lotação', 'Diárias em 12 meses', 'Meses com diária', 'Valor (R$)', 'Quilômetros'],
   linhas: () => { const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name])); return g(ctx).diariasPessoas.map(row => [row.nome, row.categoria, row.cargo, row.greId ? nomeGre.get(row.greId) ?? row.greId : 'sede', row.quantidade, row.meses, Math.round(row.valor), row.km]); } });

@@ -1,0 +1,131 @@
+/// Guarda cada auto de infração votado na câmara: o desfecho, a infração (alínea do art. 73 da Lei 5.194/66), a multa da câmara e a que vale depois do Plenário, e as datas do recurso ao Plenário e ao Confea, do trânsito em julgado e do pagamento.
+table Autos
+	lineageTag: 0e47ddd1-01c2-595f-bf02-b389e138c1bc
+
+	column Processo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Processo
+		lineageTag: 243271be-4a1f-53e8-892d-79c60ea8de75
+
+	column 'Câmara'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Câmara
+		lineageTag: 5f947d3a-e3c0-5c40-9aa1-fa72155b2865
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 8074d6e2-3f5a-57e8-b4fa-e2ea3ff2440b
+
+	column 'Julgado em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Julgado em
+		lineageTag: dc6a3158-f6e4-52e6-a5c9-952027ddc97f
+
+	column 'Ano da decisão'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano da decisão
+		lineageTag: 1b0ace39-7a13-5e5b-a4ee-b1414683f322
+
+	column Desfecho
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Desfecho
+		sortByColumn: 'Ordem do desfecho'
+		lineageTag: bec40523-8d26-5c45-976a-fbcb14c4c21c
+
+	column 'Ordem do desfecho'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do desfecho
+		lineageTag: 1fcda119-767c-5bbb-8a5f-f5a10262056c
+
+	column 'Infração'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Infração
+		lineageTag: 465c267d-b0e3-5627-b52e-f2d50a98cad6
+
+	column Reincidente
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Reincidente
+		lineageTag: 01d48d9a-e9bd-5518-b0ee-48b211b627a3
+
+	column 'Multa da câmara'
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Multa da câmara
+		lineageTag: 62e63e62-618d-5ce4-8340-bf2a8accb66f
+
+	column 'Multa final'
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Multa final
+		lineageTag: c31f9045-c38a-5e3b-b6b4-4c0dbe3d14fc
+
+	column 'Recurso ao Plenário em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Recurso ao Plenário em
+		lineageTag: 2544e107-c00d-5b8d-a6b9-e89f0adaacec
+
+	column 'Plenário em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Plenário em
+		lineageTag: d621e8d2-9ad2-5c3c-b7f7-4afa50fa01eb
+
+	column 'Recurso ao Confea em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Recurso ao Confea em
+		lineageTag: 5e7ed7df-575a-5951-ab77-6c571a751e64
+
+	column 'Trânsito em julgado'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Trânsito em julgado
+		lineageTag: d93391dd-6a4f-51bb-b319-9e05ca429cc4
+
+	column 'Pago em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Pago em
+		lineageTag: 3d7c10cd-5b1e-52cb-8a48-9f0539ddff28
+
+	partition Autos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "autos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Processo", type text}, {"Câmara", type text}, {"Código IBGE", type text}, {"Julgado em", type date}, {"Ano da decisão", Int64.Type}, {"Desfecho", type text}, {"Ordem do desfecho", Int64.Type}, {"Infração", type text}, {"Reincidente", Int64.Type}, {"Multa da câmara", type number}, {"Multa final", type number}, {"Recurso ao Plenário em", type date}, {"Plenário em", type date}, {"Recurso ao Confea em", type date}, {"Trânsito em julgado", type date}, {"Pago em", type date}}, "pt-BR")
+				in
+				    Tipos

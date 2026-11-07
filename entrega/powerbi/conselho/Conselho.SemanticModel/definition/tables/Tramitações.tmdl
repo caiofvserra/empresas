@@ -1,0 +1,201 @@
+/// Guarda cada passagem de um processo por um colegiado: a câmara (1ª instância) ou o Plenário, no recurso. Tem as datas do GovAdm (abertura, recebimento, recurso) e do Votenet (relato, voto), o relator e o tempo até o cadastro no Votenet.
+table 'Tramitações'
+	lineageTag: 57de34ad-d882-541f-ab4f-93b5c453366c
+
+	column 'Tramitação'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Tramitação
+		lineageTag: c56e907f-7c0e-5ac5-9340-9907ac179aa0
+
+	column Processo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Processo
+		lineageTag: 9fc5a5b6-a4b1-5f64-a66d-acced9c0451d
+
+	column Colegiado
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Colegiado
+		lineageTag: aa69adb5-e92d-5dc7-b835-c7dd6f359aa0
+
+	column 'Instância'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Instância
+		lineageTag: 1e5015ab-ad95-5869-9bb4-e5b3d3202586
+
+	column 'Câmara de origem'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Câmara de origem
+		lineageTag: 1e4a8fc0-6d44-542e-b5dd-71d8640a218f
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		lineageTag: eabc65c6-125d-54a0-829b-dcbeafd8fa21
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: d371709a-fcb9-52cc-aa59-8872797b9693
+
+	column Entrada
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Entrada
+		lineageTag: 9485669b-89f9-569d-8d69-75534b147a0e
+
+	column 'Mês de entrada'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês de entrada
+		lineageTag: 689af35c-28bf-51d2-9fda-ee04274d5dcb
+
+	column 'Entrada do processo'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Entrada do processo
+		lineageTag: aeda55c6-3194-5dbc-9807-d24e61f70157
+
+	column 'Julgado na câmara em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Julgado na câmara em
+		lineageTag: a1ddcbfb-bf70-55c5-aa07-ca33f0746f7c
+
+	column 'Recurso em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Recurso em
+		lineageTag: 58bafefb-2aa2-5305-a2cc-dab39ea2c084
+
+	column 'Plenário em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Plenário em
+		lineageTag: 089ace0a-774f-5a18-b0a0-b58224b37353
+
+	column 'Votado em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Votado em
+		lineageTag: 9a1326cd-29e3-5d63-946d-1e252dfd7144
+
+	column 'Mês do voto'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês do voto
+		lineageTag: 340a589d-796c-55af-882b-7df540d53620
+
+	column Relator
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Relator
+		lineageTag: 534e1817-2939-597d-a121-6c1f98e752ae
+
+	column 'Dias da abertura ao voto'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Dias da abertura ao voto
+		lineageTag: 7b12d916-0367-5e4c-baef-5e4e98130091
+
+	column 'Assinado em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Assinado em
+		lineageTag: 1a983256-4ed9-5eb8-8089-a95ebb7d6ac3
+
+	column 'Dias de relato'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Dias de relato
+		lineageTag: 9cc6fff9-66d4-553b-a457-be219ad1e102
+
+	column 'Relato com IA'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Relato com IA
+		lineageTag: d33be4f0-b095-5112-84b9-9ee8fb7ee819
+
+	column 'Distribuído depois da IA'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Distribuído depois da IA
+		lineageTag: 085f7143-1513-5ff9-a0e6-2e2bdd92fee8
+
+	column 'Trimestre do relato'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Trimestre do relato
+		lineageTag: 01324ccd-70be-5daf-8070-f5253dcf9778
+
+	column 'Dias até o Votenet'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Dias até o Votenet
+		lineageTag: 9b0cdad9-c729-581b-9f05-40419fcd05ca
+
+	column 'Tempo até o Votenet'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tempo até o Votenet
+		sortByColumn: 'Ordem do tempo até o Votenet'
+		lineageTag: 784f24c9-653d-5aef-b722-2f313b4a5d2c
+
+	column 'Ordem do tempo até o Votenet'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do tempo até o Votenet
+		lineageTag: ad13d04f-d9ee-5aa5-89b2-e917f4970a5c
+
+	column 'Decisão do Plenário'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Decisão do Plenário
+		lineageTag: a29c12f5-ec58-56e7-b3f4-100d4573e91c
+
+	partition 'Tramitações' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "tramitacoes.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Tramitação", type text}, {"Processo", type text}, {"Colegiado", type text}, {"Instância", type text}, {"Câmara de origem", type text}, {"Tipo", type text}, {"Código IBGE", type text}, {"Entrada", type date}, {"Mês de entrada", type date}, {"Entrada do processo", type date}, {"Julgado na câmara em", type date}, {"Recurso em", type date}, {"Plenário em", type date}, {"Votado em", type date}, {"Mês do voto", type date}, {"Relator", type text}, {"Dias da abertura ao voto", Int64.Type}, {"Assinado em", type date}, {"Dias de relato", Int64.Type}, {"Relato com IA", Int64.Type}, {"Distribuído depois da IA", Int64.Type}, {"Trimestre do relato", type text}, {"Dias até o Votenet", Int64.Type}, {"Tempo até o Votenet", type text}, {"Ordem do tempo até o Votenet", Int64.Type}, {"Decisão do Plenário", type text}}, "pt-BR")
+				in
+				    Tipos

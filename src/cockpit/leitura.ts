@@ -20,7 +20,7 @@ export type PaginaProfissionais = 'profissionais' | 'fluxo' | 'atuacao' | 'forma
 export type PaginaFiscalizacao = 'fiscalizacao' | 'resultado' | 'malha' | 'contratos' | 'obras';
 export type PaginaFinanceiro = 'receita' | 'orcamento';
 export type PaginaAtendimento = 'atendimento';
-export type PaginaConselho = 'camaras' | 'entidades';
+export type PaginaConselho = 'colegiado' | 'processos' | 'conselheiros' | 'decisoes' | 'representacao';
 export type PageId = PaginaGeral | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaFinanceiro | PaginaAtendimento | PaginaConselho;
 export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'metodo'];
 export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos'];
@@ -28,7 +28,7 @@ export const pageIdsProfissionais: PaginaProfissionais[] = ['profissionais', 'fl
 export const pageIdsFiscalizacao: PaginaFiscalizacao[] = ['fiscalizacao', 'resultado', 'malha', 'contratos', 'obras'];
 export const pageIdsFinanceiro: PaginaFinanceiro[] = ['receita', 'orcamento'];
 export const pageIdsAtendimento: PaginaAtendimento[] = ['atendimento'];
-export const pageIdsConselho: PaginaConselho[] = ['camaras', 'entidades'];
+export const pageIdsConselho: PaginaConselho[] = ['colegiado', 'processos', 'conselheiros', 'decisoes', 'representacao'];
 export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao, ...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho];
 /** Painel em que cada página está: um destaque de outro painel abre aquele painel. */
 export type PainelDaPagina = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho';
