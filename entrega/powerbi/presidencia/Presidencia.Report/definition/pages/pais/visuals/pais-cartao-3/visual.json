@@ -1,0 +1,89 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "pais-cartao-3",
+  "position": {
+    "x": 435,
+    "y": 68,
+    "z": 3000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Mulheres entre os profissionais do Crea-SP"
+                }
+              },
+              "queryRef": "Medidas.Mulheres entre os profissionais do Crea-SP",
+              "nativeQueryRef": "Mulheres entre os profissionais do Crea-SP"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Mulheres entre os profissionais do Crea-SP"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Mulheres entre os profissionais do Crea-SP",
+              "nativeQueryRef": "Detalhe: Mulheres entre os profissionais do Crea-SP"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Mulheres entre os profissionais do Crea-SP'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

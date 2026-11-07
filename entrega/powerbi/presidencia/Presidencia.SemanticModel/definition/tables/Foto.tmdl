@@ -1,0 +1,63 @@
+/// Guarda, no último dia de cada mês, cada indicador em partes (N é o numerador, D o denominador das taxas) pelo nível (município, regional ou estado), pela regional, pelo município e pela câmara. Os fluxos somam os 12 meses até a data.
+table Foto
+	isHidden
+	lineageTag: 28c9b541-4cb4-5f27-8c96-5469adc74430
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: a09dba52-42fd-5444-83d3-ad4a6294e9fd
+
+	column Indicador
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Indicador
+		lineageTag: 8e68b387-ef6b-5af5-b8b7-6b0fc764d636
+
+	column 'Nível'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nível
+		lineageTag: 58d5841e-c91a-50f4-89c6-0ed6356423e7
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 1d5229d6-0305-5064-acd1-419ebf3928a3
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 85926280-6439-54f6-81d3-af98af8dfb69
+
+	column 'Câmara'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Câmara
+		lineageTag: 0605c4a8-5a75-5e86-8364-bd108e3d0b3b
+
+	column N
+		dataType: double
+		summarizeBy: none
+		sourceColumn: N
+		lineageTag: 42344d84-4ad9-53b6-b88f-c4bcf8329ae9
+
+	column D
+		dataType: double
+		summarizeBy: none
+		sourceColumn: D
+		lineageTag: 3c344412-50d9-5d28-828f-d47afe32a45b
+
+	partition Foto = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "foto.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Indicador", type text}, {"Nível", type text}, {"GRE", type text}, {"Código IBGE", type text}, {"Câmara", type text}, {"N", type number}, {"D", type number}}, "pt-BR")
+				in
+				    Tipos

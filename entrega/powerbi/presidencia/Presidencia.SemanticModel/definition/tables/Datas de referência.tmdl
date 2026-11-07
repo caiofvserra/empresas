@@ -1,0 +1,27 @@
+/// Tem os 12 fins de mês antes de hoje e hoje. Não se liga às outras tabelas: a escolha vale para todas as medidas.
+table 'Datas de referência'
+	lineageTag: 9016d6c8-6790-5cb2-ae8e-9450ba24e083
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 2c2cfb89-10e6-5dbf-a0a3-d5e12a1b7ab8
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		sortByColumn: Data
+		lineageTag: a98017c0-e146-55b2-9344-94d8bbc3826d
+
+	partition 'Datas de referência' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "datas-referencia.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Rótulo", type text}}, "pt-BR")
+				in
+				    Tipos

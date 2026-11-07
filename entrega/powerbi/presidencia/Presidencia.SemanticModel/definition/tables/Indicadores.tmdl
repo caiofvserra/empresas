@@ -1,0 +1,99 @@
+/// Tem os indicadores dos seis painéis: o painel, a unidade (taxa, contagem ou reais), o jeito de ler a foto, se divide por câmara, a meta padrão do painel e se é o número principal do painel.
+table Indicadores
+	lineageTag: fed24e44-a894-52b6-b931-275c80400867
+
+	column Indicador
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Indicador
+		lineageTag: 42a0993e-b554-5818-9e9b-cf76f40aac55
+
+	column Nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome
+		sortByColumn: Ordem
+		lineageTag: 61688060-a69d-55fe-aa78-e13881c9e845
+
+	column Painel
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Painel
+		sortByColumn: 'Ordem do painel'
+		lineageTag: 0a4c9ac4-73ed-51be-bbdb-a45c3ce293cd
+
+	column 'Ordem do painel'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do painel
+		lineageTag: 2dda3884-b46b-554e-8d5a-3dfc0f96c7b7
+
+	column Unidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Unidade
+		lineageTag: f01f9785-65a9-5bd3-9aea-6ffdf487fa76
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		lineageTag: 164f94ef-82d6-5749-9e02-eb778f23fdb2
+
+	column Leitura
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Leitura
+		lineageTag: 887b6e17-7ed6-5215-9a68-878f7021a57c
+
+	column 'Divide por câmara'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Divide por câmara
+		lineageTag: 388e8871-fc8b-5c93-8cdc-e7e91916d66e
+
+	column 'Sobe é bom'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Sobe é bom
+		lineageTag: 9a53e503-bd7e-55d5-825e-e58b27f561ea
+
+	column Meta
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: Meta
+		lineageTag: 838c97e8-2f4c-502e-9c6b-da40e5687d89
+
+	column Principal
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Principal
+		lineageTag: 30f2eb59-0334-5907-905f-7f9138ae8c76
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: 29b5fda6-bf0e-5458-a488-629e0cb85379
+
+	partition Indicadores = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "indicadores.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Indicador", type text}, {"Nome", type text}, {"Painel", type text}, {"Ordem do painel", Int64.Type}, {"Unidade", type text}, {"Tipo", type text}, {"Leitura", type text}, {"Divide por câmara", Int64.Type}, {"Sobe é bom", Int64.Type}, {"Meta", type number}, {"Principal", Int64.Type}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

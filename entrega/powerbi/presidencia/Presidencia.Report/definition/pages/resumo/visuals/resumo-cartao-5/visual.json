@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "resumo-cartao-5",
+  "position": {
+    "x": 853,
+    "y": 68,
+    "z": 9000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Solicitações resolvidas no prazo"
+                }
+              },
+              "queryRef": "Medidas.Solicitações resolvidas no prazo",
+              "nativeQueryRef": "Solicitações resolvidas no prazo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Solicitações resolvidas no prazo"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Solicitações resolvidas no prazo",
+              "nativeQueryRef": "Comparação: Solicitações resolvidas no prazo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Solicitações resolvidas no prazo"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Solicitações resolvidas no prazo",
+              "nativeQueryRef": "Detalhe: Solicitações resolvidas no prazo"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Solicitações resolvidas no prazo'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

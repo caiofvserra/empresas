@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "riscos-cartao-5",
+  "position": {
+    "x": 853,
+    "y": 68,
+    "z": 9000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Orçamento de despesa executado no ano"
+                }
+              },
+              "queryRef": "Medidas.Orçamento de despesa executado no ano",
+              "nativeQueryRef": "Orçamento de despesa executado no ano"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Orçamento de despesa executado no ano"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Orçamento de despesa executado no ano",
+              "nativeQueryRef": "Comparação: Orçamento de despesa executado no ano"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Orçamento de despesa executado no ano"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Orçamento de despesa executado no ano",
+              "nativeQueryRef": "Detalhe: Orçamento de despesa executado no ano"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Orçamento de despesa executado no ano'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

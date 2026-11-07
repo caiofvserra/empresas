@@ -1,0 +1,36 @@
+/// Tem os registros profissionais novos por ano no país e no Crea-SP, pelo SIC do Confea. O Crea-SP aparece separado até 2022. Dado real.
+table 'Registros por ano'
+	lineageTag: 6f562a76-7614-5684-ae7a-9c3e3fdabb05
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 966bf505-18be-5b6b-b91e-344d30404fd6
+
+	column 'No país'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: No país
+		lineageTag: 05964573-13fc-5e15-bb0e-ca4b74a7464c
+
+	column 'No Crea-SP'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: No Crea-SP
+		lineageTag: 1e7f67ad-06cc-5ccb-a01c-bf75a0757c34
+
+	partition 'Registros por ano' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "registros-novos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"No país", Int64.Type}, {"No Crea-SP", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

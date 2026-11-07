@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "riscos-cartao-4",
+  "position": {
+    "x": 644,
+    "y": 68,
+    "z": 8000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Solicitações em aberto com o prazo vencido"
+                }
+              },
+              "queryRef": "Medidas.Solicitações em aberto com o prazo vencido",
+              "nativeQueryRef": "Solicitações em aberto com o prazo vencido"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Solicitações em aberto com o prazo vencido"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Solicitações em aberto com o prazo vencido",
+              "nativeQueryRef": "Comparação: Solicitações em aberto com o prazo vencido"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Solicitações em aberto com o prazo vencido"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Solicitações em aberto com o prazo vencido",
+              "nativeQueryRef": "Detalhe: Solicitações em aberto com o prazo vencido"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Solicitações em aberto com o prazo vencido'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

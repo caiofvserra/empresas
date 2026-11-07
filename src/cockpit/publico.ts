@@ -1,12 +1,6 @@
 import management from '../domain/creasp-management-public.json';
 import despesa from '../../public/data/engineer-statistics/conta-do-conselho.json';
-import ativosUf from '../../public/data/engineer-statistics/confea-uf.json';
-import situacaoUf from '../../public/data/engineer-statistics/confea-situacao-uf.json';
-import generoUf from '../../public/data/engineer-statistics/confea-genero.json';
-import populacaoUf from '../../public/data/engineer-statistics/populacao-uf.json';
 import pisos from '../../public/data/engineer-statistics/pisos.json';
-import registrosAno from '../../public/data/engineer-statistics/confea-registros-ano.json';
-import orgaoMaquina from '../../public/data/engineer-statistics/orgao-maquina.json';
 import formacaoCsv from '../../archives/data-publica-v6/educacao_sp_cine_ano.csv?raw';
 
 /** Dados públicos REAIS versionados no repositório (sem consulta de rede), com fonte e data de captura. O Portal Salário (coleta pontual, fonte secundária) saiu na V20. */
@@ -26,9 +20,10 @@ export function parseCsv(text: string): Record<string, string>[] {
   return body.map(values => Object.fromEntries(head.map((key, index) => [key, values[index] ?? ''])));
 }
 
-const UF = ['RO', 'AC', 'AM', 'RR', 'PA', 'AP', 'TO', 'MA', 'PI', 'CE', 'RN', 'PB', 'PE', 'AL', 'SE', 'BA', 'MG', 'ES', 'RJ', 'SP', 'PR', 'SC', 'RS', 'MS', 'MT', 'GO', 'DF'];
-const UF_CODE = ['11', '12', '13', '14', '15', '16', '17', '21', '22', '23', '24', '25', '26', '27', '28', '29', '31', '32', '33', '35', '41', '42', '43', '50', '51', '52', '53'];
-export interface Fonte { nome: string; url: string; data: string }
+import type { Fonte } from '../domain/publico-pais';
+export type { Fonte } from '../domain/publico-pais';
+export { brasil, contasPublicadas, fonteConfea, registrosNovos, ufs } from '../domain/publico-pais';
+export type { UfRow } from '../domain/publico-pais';
 
 export const resultados2025 = { fonte: { nome: management.metadata.sourceTitle, url: management.metadata.sourceUrl, data: management.metadata.retrievedAt } as Fonte,
   itens: management.facts.map(row => ({ id: row.id, label: row.label, display: row.displayValue, value: row.value, domain: row.domain })) };
@@ -37,19 +32,6 @@ export const despesaPublicada = { fonte: { nome: 'Portal da Transparência do CR
   exercicios: despesa.data.itens.filter(row => row.bloco === 'execucao').map(row => ({ ano: row.ano, valor: row.valor })),
   subgrupos: despesa.data.itens.filter(row => row.bloco === 'subgrupos').map(row => ({ label: row.rotulo.toLocaleLowerCase('pt-BR').replace(/^./, character => character.toUpperCase()), valor: row.valor })),
   periodo: despesa.data.periodo };
-
-export interface UfRow { uf: string; ativos: number; populacao: number; por100mil: number; pctAtivos: number | null; pctMulheres: number | null }
-const population = new Map(populacaoUf.data.valores.map(row => [row.ufCodigo, row.valor]));
-const situation = new Map(situacaoUf.data.valores.map(row => [row.ufCodigo, row.percentualAtivos]));
-const gender = new Map(generoUf.data.valores.map(row => [row.ufCodigo, row.percentualFeminino]));
-export const ufs: UfRow[] = ativosUf.data.valores.map(row => { const residents = population.get(row.ufCodigo) ?? 0;
-  return { uf: UF[UF_CODE.indexOf(row.ufCodigo)] ?? row.ufCodigo, ativos: row.valor, populacao: residents, por100mil: residents ? row.valor / residents * 100000 : 0, pctAtivos: situation.get(row.ufCodigo) ?? null, pctMulheres: gender.get(row.ufCodigo) ?? null }; });
-export const fonteConfea: Fonte = { nome: 'Confea SIC × IBGE (agregado 6579)', url: ativosUf.meta.snapshot.consultaUrl, data: ativosUf.meta.snapshot.capturadoEm };
-export const brasil = { ativos: ufs.reduce((sum, row) => sum + row.ativos, 0), populacao: ufs.reduce((sum, row) => sum + row.populacao, 0), pctMulheres: generoUf.data.brasil ? generoUf.data.brasil.percentualFeminino : null };
-
-const nacional = registrosAno.data.series.find(row => row.id === 'nacional')!, sp = registrosAno.data.series.find(row => row.id === 'crea-sp-decada')!;
-export const registrosNovos = { fonte: { nome: 'Confea SIC · registros profissionais novos por ano', url: registrosAno.meta.snapshot.consultaUrl, data: registrosAno.meta.snapshot.capturadoEm } as Fonte,
-  serie: nacional.valores.filter(row => /^\d{4}$/.test(row.periodo) && row.periodo >= '2010').map(row => ({ ano: row.periodo, brasil: row.valor, sp: sp.valores.find(item => item.periodo === row.periodo)?.valor ?? null })) };
 
 /** Piso da Lei 4.950-A/66 na leitura do Confea (8,5 salários mínimos vigentes, jornada de 8 h). */
 const leitura = pisos.data.leituras.find(row => row.id === 'confea-8_5sm')!;
@@ -66,21 +48,3 @@ export const formacaoSp = { fonte: { nome: 'INEP · Censo da Educação Superior
 /** Mediana das admissões de engenheiro civil (Novo CAGED), referência para o piso. */
 const admissao = (pisos.data.admissao as { id: string; rotulo: string; valor: number | null; ano: string }[]).find(row => row.id === 'mediana-eng-civil');
 export const medianaAdmissaoCivil = admissao?.valor ? { valor: admissao.valor, periodo: admissao.ano } : null;
-
-/**
- * Receita e despesa publicadas pelo Crea-SP no Portal da Transparência, de 2013 a 2026 (07/11/2026, painel da Presidência), copiadas
- * do anexo de dados do repositório engineer-statistics. A receita é a realizada no exercício; a despesa é a paga, com a dotação do
- * orçamento ao lado. O exercício de 2026 não estava encerrado na última coleta.
- */
-type ItemOrgao = { id: string; rotulo: string; valor: number; pct: number | null; ano: string; medidas?: { id: string; valor: number }[] };
-const blocoOrgao = (id: string) => (orgaoMaquina.data.blocos.find(row => row.id === id)?.itens ?? []) as ItemOrgao[];
-const receitasAno = new Map(blocoOrgao('receita-por-exercicio').map(row => [row.ano, row.valor]));
-export const contasPublicadas = {
-  fonte: { nome: 'Portal da Transparência do Crea-SP · receita e execução do orçamento', url: 'https://transparencia.creasp.org.br', data: orgaoMaquina.meta.atualizadoEm } as Fonte,
-  /** O último exercício da série, ainda aberto na data da coleta. */
-  aberto: '2026', coletaAte: '2026-09-08',
-  exercicios: blocoOrgao('execucao-orcamentaria').map(row => { const medida = (id: string) => row.medidas?.find(m => m.id === id)?.valor ?? null;
-    return { ano: row.ano, receita: receitasAno.get(row.ano) ?? null, paga: row.valor, dotacao: medida('dotacao'), empenhada: medida('empenhada') }; }),
-  /** Parte da receita de 2013 a 2026 que veio de cada uma das maiores contas (a de ART primeiro). */
-  contas: blocoOrgao('contas-de-receita').map(row => ({ nome: row.rotulo.replace(/^[\d.]+\s+/, ''), valor: row.valor, parte: row.pct })),
-};

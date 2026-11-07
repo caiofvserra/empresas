@@ -1,0 +1,106 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "pais-tabela",
+  "position": {
+    "x": 330,
+    "y": 160,
+    "z": 8000,
+    "width": 411,
+    "height": 268,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "UFs"
+                    }
+                  },
+                  "Property": "UF"
+                }
+              },
+              "queryRef": "UFs.UF",
+              "nativeQueryRef": "UF",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "UFs"
+                    }
+                  },
+                  "Property": "Profissionais ativos"
+                }
+              },
+              "queryRef": "UFs.Profissionais ativos",
+              "nativeQueryRef": "Profissionais ativos",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "UFs"
+                    }
+                  },
+                  "Property": "Ativos entre os registros (%)"
+                }
+              },
+              "queryRef": "UFs.Ativos entre os registros (%)",
+              "nativeQueryRef": "Ativos entre os registros (%)",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "UFs"
+                    }
+                  },
+                  "Property": "Mulheres (%)"
+                }
+              },
+              "queryRef": "UFs.Mulheres (%)",
+              "nativeQueryRef": "Mulheres (%)",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Registro ativo e mulheres em cada estado'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

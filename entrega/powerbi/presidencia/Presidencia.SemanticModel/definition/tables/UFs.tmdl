@@ -1,0 +1,55 @@
+/// Tem as 27 unidades da federação: profissionais ativos (Confea SIC), população (IBGE), ativos por 100 mil habitantes, a parte ativa dos registros e a parte de mulheres. Dado real.
+table UFs
+	lineageTag: 60471b05-c830-5b53-b101-813db55b52c6
+
+	column UF
+		dataType: string
+		summarizeBy: none
+		sourceColumn: UF
+		lineageTag: 4f0cf4ff-5493-5dfd-a55d-ab478177edce
+
+	column 'Profissionais ativos'
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: none
+		sourceColumn: Profissionais ativos
+		lineageTag: 4bdad803-1919-5621-a159-a64bb7b92f3e
+
+	column 'População'
+		dataType: int64
+		formatString: #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: População
+		lineageTag: fc93850c-ae85-56aa-870a-a33443c37ebb
+
+	column 'Por 100 mil habitantes'
+		dataType: double
+		formatString: #,##0
+		summarizeBy: none
+		sourceColumn: Por 100 mil habitantes
+		lineageTag: 25cd2597-a50a-520d-9fe0-5a6f142247a2
+
+	column 'Ativos entre os registros (%)'
+		dataType: double
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: Ativos entre os registros (%)
+		lineageTag: 95b0365e-0cf7-5c80-971d-c516e79b9575
+
+	column 'Mulheres (%)'
+		dataType: double
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: Mulheres (%)
+		lineageTag: 4d0f314b-0cb9-547d-b03b-4943a64fd9aa
+
+	partition UFs = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "ufs.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"UF", type text}, {"Profissionais ativos", Int64.Type}, {"População", Int64.Type}, {"Por 100 mil habitantes", type number}, {"Ativos entre os registros (%)", type number}, {"Mulheres (%)", type number}}, "pt-BR")
+				in
+				    Tipos

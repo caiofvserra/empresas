@@ -1,0 +1,175 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "resumo-taxas",
+  "position": {
+    "x": 644,
+    "y": 160,
+    "z": 12000,
+    "width": 620,
+    "height": 268,
+    "tabOrder": 12000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Meses da série"
+                    }
+                  },
+                  "Property": "Rótulo"
+                }
+              },
+              "queryRef": "Meses da série.Rótulo",
+              "nativeQueryRef": "Rótulo",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Parte do mercado registrada no mês"
+                }
+              },
+              "queryRef": "Medidas.Parte do mercado registrada no mês",
+              "nativeQueryRef": "Parte do mercado registrada no mês",
+              "displayName": "Mercado registrado"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Empresas com responsável técnico no mês"
+                }
+              },
+              "queryRef": "Medidas.Empresas com responsável técnico no mês",
+              "nativeQueryRef": "Empresas com responsável técnico no mês",
+              "displayName": "Com responsável técnico"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Profissionais com a anuidade em dia no mês"
+                }
+              },
+              "queryRef": "Medidas.Profissionais com a anuidade em dia no mês",
+              "nativeQueryRef": "Profissionais com a anuidade em dia no mês",
+              "displayName": "Anuidade em dia"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Ações que terminaram em regularização no mês"
+                }
+              },
+              "queryRef": "Medidas.Ações que terminaram em regularização no mês",
+              "nativeQueryRef": "Ações que terminaram em regularização no mês",
+              "displayName": "Regularização"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Solicitações resolvidas no prazo no mês"
+                }
+              },
+              "queryRef": "Medidas.Solicitações resolvidas no prazo no mês",
+              "nativeQueryRef": "Solicitações resolvidas no prazo no mês",
+              "displayName": "Atendimento no prazo"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'As taxas com meta nos últimos 13 meses'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

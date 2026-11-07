@@ -19,6 +19,10 @@ import { dadosConselho } from './conselho/dados';
 import { modeloConselho } from './conselho/modelo';
 import { paginasConselho } from './conselho/paginas';
 import { LEIA_ME_CONSELHO } from './conselho/leia-me';
+import { dadosPresidencia } from './presidencia/dados';
+import { modeloPresidencia } from './presidencia/modelo';
+import { paginasPresidencia } from './presidencia/paginas';
+import { LEIA_ME_PRESIDENCIA } from './presidencia/leia-me';
 import { recortarModelo } from './recorte';
 import type { Modelo } from './modelo';
 import type { Pagina } from './pbir';
@@ -36,6 +40,7 @@ function daGestao(titulo: string, nome: string, pasta: string, ids: string[], le
 }
 /** Os painéis com pacote: o modelo, as páginas e as tabelas de dados de cada um, em `src/powerbi/<painel>/`. */
 const PAINEIS = {
+  presidencia: { titulo: 'painel da Presidência', modelo: modeloPresidencia, paginas: paginasPresidencia, dados: dadosPresidencia, leiaMe: LEIA_ME_PRESIDENCIA },
   empresas: { titulo: 'painel de Empresas', modelo: modeloEmpresas, paginas: paginasEmpresas, dados: dadosEmpresas, leiaMe: LEIA_ME_EMPRESAS },
   financeiro: daGestao('painel Financeiro', 'Financeiro', 'financeiro', ['receita', 'orcamento'], LEIA_ME_FINANCEIRO),
   atendimento: daGestao('painel de Atendimento', 'Atendimento', 'atendimento', ['atendimento'], LEIA_ME_ATENDIMENTO),

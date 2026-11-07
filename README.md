@@ -6,6 +6,7 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 
 | Pasta ou arquivo | Conteúdo |
 |---|---|
+| `src/presidencia/` | Painel da Presidência: Resumo (um quadro por painel), Regionais, Riscos e No país. Abre em `/` e em `/presidencia.html`; substituiu o painel geral em 07/11/2026. Ver [docs/PRESIDENCIA.md](docs/PRESIDENCIA.md) |
 | `src/empresas/` | Painel de Empresas: Registro, Evolução, RT e ART, Vínculos. Abre em `/empresas.html` |
 | `src/profissionais/` | Painel de Profissionais: Registro, Evolução, ART e RT, Formação, Trabalho. Abre em `/profissionais.html` |
 | `src/fiscalizacao/` | Painel de Fiscalização e malha fina: Ações, Resultado, Malha fina, Contratos, Obras. Abre em `/fiscalizacao.html` |
@@ -13,16 +14,17 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 | `src/atendimento/` | Painel de Atendimento: prazos, canais, distância até a unidade e coworkings. Abre em `/atendimento.html` |
 | `src/conselho/` | Painel de Gestão do Conselho, só do colegiado: Câmaras e plenário, Entidades e escolas (em reconstrução). Abre em `/conselho.html` |
 | `src/gestao/` | Peças comuns aos painéis Financeiro, Atendimento e Conselho (mapa por município, listas ao clicar, estilo) |
-| `src/cockpit/` | Painel geral: Presidência, Receita, Entidades, Controle, Atendimento e Método. Abre em `/` e em `/painel.html`. A estrutura comum aos painéis (filtros, data de referência, fichas, painel lateral) também mora aqui |
+| `src/cockpit/` | A estrutura comum aos painéis: filtros, data de referência, fichas, painel lateral e o menu de cada painel |
+| `docs/METODO.md` | O Método (frentes de dados, cruzamentos, casos de uso, regras da malha fina, fontes, IA, radar normativo e parcerias), que saiu do painel em 07/11/2026. Gerado por `npm run docs:metodo` |
 | `src/observatorio/` | Indicadores-norte com fichas, histórico por data de referência, frentes e matriz de cruzamentos, decisão sobre as 12 lacunas do V18, casos de uso, radar normativo, gate de fontes, parcerias e atlas |
 | `src/domain/` | Cenário determinístico e camadas: profissionais, formação, entidades, conselho, frentes (QSA PJ, Obrasgov, ANEEL/ANP/ANM/BNDES), mercado (concentração, PCA, densidade, aberturas, permanência) e parcerias (CNO, licenças e alvarás, perícias, TCE-SP, crédito e PIB, sócios PF, coorte nominal, vínculos por empresa) |
 | `src/painel/`, `src/gestao-v14/` (medidas e widgets), `src/enterprise-v10/` (modelo e filtros) | Módulos que o painel reaproveita das versões anteriores |
 | `docs/EMPRESAS.md`, `docs/PROFISSIONAIS.md`, `docs/FISCALIZACAO.md`, `docs/FINANCEIRO.md`, `docs/ATENDIMENTO.md`, `docs/CONSELHO.md`, `docs/V22.md`, `docs/V21.md`, `docs/DESIGN_SYSTEM_V13.md`, `docs/NORMAS.md` | Os painéis de Empresas, de Profissionais e de Fiscalização e a divisão recomendada, o que a V22 e a V21 acrescentam, identidade visual e base normativa |
-| `entrega/painel-<painel>-creasp.html` | Painel geral (`gestao`) e painéis de Empresas, Profissionais, Fiscalização, Financeiro, Atendimento e Conselho, cada um em um único HTML, para abrir sem servidor na mesma pasta |
+| `entrega/painel-<painel>-creasp.html` | Painéis da Presidência, de Empresas, Profissionais, Fiscalização, Financeiro, Atendimento e Conselho, cada um em um único HTML, para abrir sem servidor na mesma pasta |
 | `observatorio/` | Plano em etapas (revisão 2), atlas de 98 fontes públicas e catálogo unificado em CSV e XLSX, publicados com os nomes anteriores (Observatório, Prumo) |
 | `planejamento-fontes-2026-10/` | Levantamento de 29/10/2026: 104 entradas de fontes, 34 casos de uso com fórmula, arquitetura, revisão independente e revisão crítica do V18. Retrato datado |
 | `scripts/refresh-sources.ts`, `scripts/integrations/`, `src/integrations/catalog.ts` | Coletor PNCP com histórico, cobertura e testes; ponto de partida dos conectores |
-| `src/powerbi/`, `entrega/powerbi/<painel>/` | Gerador dos pacotes Power BI e os pacotes dos painéis de Empresas, Financeiro, Atendimento e Gestão do Conselho, que abrem no Power BI Desktop pelo `.pbip` de cada um (`npm run build:powerbi`, ver [docs/POWERBI.md](docs/POWERBI.md)) |
+| `src/powerbi/`, `entrega/powerbi/<painel>/` | Gerador dos pacotes Power BI e os pacotes dos painéis da Presidência, de Empresas, Financeiro, Atendimento e Gestão do Conselho, que abrem no Power BI Desktop pelo `.pbip` de cada um (`npm run build:powerbi`, ver [docs/POWERBI.md](docs/POWERBI.md)) |
 | `integrations/power-query/`, `integrations/powerbi-theme-creasp-v13.json` | Consultas de exemplo para SQL Server e Db2 via gateway e o tema Power BI |
 | `public/data/engineer-statistics/`, `archives/data-publica-v6/` | Somente os arquivos públicos que o painel lê |
 
@@ -32,11 +34,11 @@ Node.js 20 ou mais novo.
 
 ```bash
 npm ci
-npm run dev            # painel geral em http://localhost:5173/ de Empresas em http://localhost:5173/empresas.html de Profissionais em http://localhost:5173/profissionais.html de Fiscalização em http://localhost:5173/fiscalizacao.html; Financeiro, Atendimento e Conselho em financeiro.html, atendimento.html e conselho.html
+npm run dev            # painel da Presidência em http://localhost:5173/ de Empresas em http://localhost:5173/empresas.html de Profissionais em http://localhost:5173/profissionais.html de Fiscalização em http://localhost:5173/fiscalizacao.html; Financeiro, Atendimento e Conselho em financeiro.html, atendimento.html e conselho.html
 npm test               # testes de domínio, painéis, fiscalização, V20, V21, V22, Empresas, Profissionais, Fiscalização e coletor
 npm run build          # TypeScript e build do site
 npm run build:painel   # gera os painéis em entrega/
-npm run build:powerbi  # gera os pacotes Power BI em entrega/powerbi/<painel>/ (empresas, financeiro, atendimento e conselho)
+npm run build:powerbi  # gera os pacotes Power BI em entrega/powerbi/<painel>/ (presidencia, empresas, financeiro, atendimento e conselho)
 npm run sources:refresh -- --config integrations/refresh-sources.example.json
 ```
 
