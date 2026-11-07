@@ -31,14 +31,14 @@ export const paginasGestao: Pagina[] = [
     { id: 'protocolos-servicos', tipo: 'tableEx', ...caixa(lugar(4, 1, 5)), titulo: 'Cada serviço contra o seu prazo', papeis: { Values: [PROTOCOLO('Serviço'), PROTOCOLO('Prazo do serviço'),
       campoMedida('Abertos no período', 'Protocolos'), campoMedida('Em andamento', 'Em andamento'), campoMedida('Em andamento fora do prazo', 'Fora do prazo'), campoMedida('Fechados no prazo', 'No prazo'),
       campoMedida('Tempo típico até fechar', 'Tempo típico'), campoMedida('Dias com o solicitante', 'Com o solicitante')] } },
-    { id: 'protocolos-motivos', tipo: 'barChart', ...caixa(lugar(9, 1, 3)), titulo: 'Por que há exigência', papeis: { Category: [PROTOCOLO('Motivo da exigência')], Y: [campoMedida('Com exigência', 'Protocolos')] } },
+    { id: 'protocolos-motivos', tipo: 'barChart', ...caixa(lugar(9, 1, 3)), titulo: 'Por que há exigência', papeis: { Category: [PROTOCOLO('Motivo da exigência')], Series: [PROTOCOLO('Tipo')], Y: [campoMedida('Com exigência', 'Protocolos')] } },
   ] },
   { id: 'equipe', nome: 'Equipe e território', visuais: [
     ...cabecalho('equipe', 'Equipe e território'),
     ...cartoes('equipe'),
     // A linha "Sem atribuição" vem junto; no Desktop, o filtro N superior deixa as pessoas com mais protocolos.
     { id: 'equipe-colaboradores', tipo: 'barChart', ...caixa(lugar(0, 0, 4, 2)), titulo: 'Com quem estão os protocolos',
-      papeis: { Category: [campoColuna('Colaboradores', 'Nome')], Series: [FOTO('Situação')], Y: [campoMedida('Abertos no período', 'Protocolos')] } },
+      papeis: { Category: [campoColuna('Colaboradores', 'Nome')], Series: [FOTO('Situação')], Y: [campoMedida('Com a pessoa', 'Protocolos')] } },
     aMontar('equipe-mapa', lugar(4, 0, 4), 'Os 645 municípios', 'Use o Mapa de formas com o mapa dos 645 municípios que vem no pacote, pintado pelos protocolos abertos no período (ou pelos fechados no prazo).'),
     { id: 'equipe-calor', tipo: 'pivotTable', ...caixa(lugar(8, 0, 4)), titulo: 'Fechados no prazo, por regional e trimestre',
       papeis: { Rows: [campoColuna('Regionais', 'GRE')], Columns: [PROTOCOLO('Trimestre')], Values: [campoMedida('Fechados no prazo nos meses do gráfico', 'No prazo')] } },

@@ -32,6 +32,25 @@
             }
           ]
         },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Protocolos"
+                    }
+                  },
+                  "Property": "Tipo"
+                }
+              },
+              "queryRef": "Protocolos.Tipo",
+              "nativeQueryRef": "Tipo",
+              "active": true
+            }
+          ]
+        },
         "Y": {
           "projections": [
             {

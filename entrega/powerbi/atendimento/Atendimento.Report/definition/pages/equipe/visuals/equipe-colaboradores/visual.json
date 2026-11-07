@@ -61,11 +61,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Abertos no período"
+                  "Property": "Com a pessoa"
                 }
               },
-              "queryRef": "Medidas.Abertos no período",
-              "nativeQueryRef": "Abertos no período",
+              "queryRef": "Medidas.Com a pessoa",
+              "nativeQueryRef": "Com a pessoa",
               "displayName": "Protocolos"
             }
           ]

@@ -389,7 +389,7 @@ export interface QuadroAtendimento {
 }
 
 /**
- * A leitura das cinco páginas: os protocolos abertos no período (o painel antigo filtra pela data de abertura), cada um com a
+ * A leitura das três páginas: os protocolos abertos no período (o painel antigo filtra pela data de abertura), cada um com a
  * situação na data escolhida. O recorte (regional, município, tipo de serviço e unidade) vale para todas as linhas.
  */
 export function quadroAtendimento(base: BaseAtendimento, { anchor, period, recorte }: { anchor: string; period: number; recorte: RecorteAtendimento }): QuadroAtendimento {
@@ -500,7 +500,8 @@ export function demandaAtendimento(dataset: Dataset, base: BaseAtendimento, { an
   // O mês da data ainda não acabou quando a data não é o último dia: a previsão começa nele.
   const previsao = [...meses.map(mes => ({ mes, total: total(mes), previsto: null as number | null })), ...seguintes.map(mes => ({ mes, total: null, previsto: Math.round(total(umAnoAntes(mes)) * tendencia) }))];
   const proximos = seguintes.reduce((n, mes) => n + Math.round(total(umAnoAntes(mes)) * tendencia), 0);
-  const fechadosAno = protocolos.filter(p => { const f = fechadoEm(p, anchor); return f && f >= `${mesesAte(anchor, 12)[0]}-01`; }).length;
+  // Só os fechados: o cancelado por falta de pagamento não passou por ninguém.
+  const fechadosAno = protocolos.filter(p => { const f = fechadoEm(p, anchor); return f && f >= `${mesesAte(anchor, 12)[0]}-01` && situacaoEm(p, anchor) === 'Fechado'; }).length;
   const porColaborador = colaboradores ? fechadosAno / 12 / colaboradores : null;
   const matriz = new Map<string, string>(); for (const e of dataset.establishments) if (e.branch === 'Matriz' || !matriz.has(e.companyId)) matriz.set(e.companyId, e.cityId);
   const arts = dataset.arts.filter(a => ate(a.date) && noLugar(matriz.get(a.companyId) ?? ''));

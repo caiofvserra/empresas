@@ -42,7 +42,7 @@ export default function PaginaEquipe({ ctx }: { ctx: CockpitCtx }) {
     <Mapa ctx={ctx} />
     <Bloco ctx={ctx} id="ca" vazio={avisoVazio(!q.calor.some(row => row.trimestres.some(t => t.fechados)), 'Nenhum protocolo fechado')} area="ca" title="Fechados no prazo, por regional e trimestre" exportar={exportarCalor(ctx)}><Calor ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="cd" vazio={vazio} area="cd" title="Canal pela distância até a unidade" exportar={exportarCanal(ctx)}><CanalDistancia ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="cw" area="cw" title="Uso dos coworkings" vazio={cw && !cw.unidades.length ? 'Nenhuma unidade de coworking nesta regional. Tire o filtro de regional do alto da tela.' : undefined}
+    <Bloco ctx={ctx} id="cw" area="cw" title="Uso dos coworkings" vazio={avisoVazio(Boolean(cw && !cw.unidades.length), 'Nenhuma unidade de coworking')}
       exportar={cw ? { cabecalho: ['Unidade', 'Ocupação (%)', 'Usuários', 'Custo por hora usada (R$)', 'Mesas'], linhas: () => cw.unidades.map(row => [row.nome, row.ocupacao === null ? null : Math.round(row.ocupacao), row.usuarios, row.custoHora === null ? null : Math.round(row.custoHora), row.mesas]) } : undefined}>
       {cw ? <Coworkings ctx={ctx} /> : <div className="loading">Calculando…</div>}</Bloco>
   </div>;
@@ -60,7 +60,7 @@ function abrirEquipe(ctx: CockpitCtx, rows: LinhaColaborador[]) {
 
 /* ---------- Colaboradores pelo nome ---------- */
 const exportarColaboradores = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Colaborador', 'Cargo', 'GRE', ...situacoes, 'Na fila', 'Fora do prazo na fila', 'Fechados no prazo (%)', 'Mediana (dias úteis)'],
-  linhas: () => a(ctx).q.colaboradores.map(c => [c.nome, c.cargo, c.greId ?? 'sede', ...situacoes.map(s => c.partes[s].length), c.fila.length, c.filaFora.length, c.noPrazo === null ? null : Math.round(c.noPrazo), c.mediana]) });
+  linhas: () => a(ctx).q.colaboradores.map(c => [c.nome, c.cargo, c.greId ? ctx.dataset.gres.find(row => row.id === c.greId)?.name ?? '' : 'Sede', ...situacoes.map(s => c.partes[s].length), c.fila.length, c.filaFora.length, c.noPrazo === null ? null : Math.round(c.noPrazo), c.mediana]) });
 function Colaboradores({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, q = a(ctx).q, cores = coresSituacao(tokens);
   const semAtrib = useMemo(() => { const partes = Object.fromEntries(situacoes.map(s => [s, q.semAtribuicao.filter(l => l.situacao === s)])) as Record<typeof situacoes[number], Linha[]>; return partes; }, [q]);
@@ -108,7 +108,7 @@ function Mapa({ ctx }: { ctx: CockpitCtx }) {
 }
 
 /* ---------- Calor: fechados no prazo por regional e trimestre ---------- */
-const exportarCalor = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['GRE', ...a(ctx).q.trimestres.flatMap(t => [`${t}: fechados`, `${t}: no prazo (%)`])], linhas: () => a(ctx).q.calor.map(row => [row.greId, ...row.trimestres.flatMap(t => [t.fechados, t.noPrazo === null ? null : Math.round(t.noPrazo)])]) });
+const exportarCalor = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['GRE', ...a(ctx).q.trimestres.flatMap(t => [`${t}: fechados`, `${t}: no prazo (%)`])], linhas: () => a(ctx).q.calor.map(row => [ctx.dataset.gres.find(gre => gre.id === row.greId)?.name ?? '', ...row.trimestres.flatMap(t => [t.fechados, t.noPrazo === null ? null : Math.round(t.noPrazo)])]) });
 function Calor({ ctx }: { ctx: CockpitCtx }) {
   const { tokens, metas } = ctx, q = a(ctx).q, nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name]));
   const linhas = q.calor.filter(row => row.trimestres.some(t => t.fechados)), colunas = q.trimestres;

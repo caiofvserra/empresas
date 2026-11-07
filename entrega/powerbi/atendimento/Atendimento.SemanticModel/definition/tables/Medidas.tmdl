@@ -233,10 +233,19 @@ table Medidas
 		displayFolder: Equipe e território
 		lineageTag: 9eb7f379-8527-55db-9688-5611b9a3ad22
 
-	/// Conta os protocolos do lugar que fecharam ou foram cancelados nos 12 meses até a data escolhida, abertos em qualquer data.
+	/// Conta os protocolos do período com cada pessoa, pela situação. Na linha "Sem atribuição", só os abertos e os sem pagamento, como o painel: o fechado e o cancelado sem ninguém não esperam por ninguém.
+	measure 'Com a pessoa' = ```
+			VAR semNinguem = SELECTEDVALUE('Colaboradores'[Pessoa]) = "sem-atribuicao"
+			RETURN IF(semNinguem && NOT SELECTEDVALUE('Foto dos protocolos'[Situação]) IN {"Aberto", "Sem pagamento"}, BLANK(), [Abertos no período])
+			```
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: ba6dacff-47c9-5309-8ebb-8fe72a601afa
+
+	/// Conta os protocolos do lugar que fecharam nos 12 meses até a data escolhida, abertos em qualquer data (os cancelados não entram).
 	measure 'Fechados nos 12 meses' = ```
 			VAR d = [Data escolhida]
-			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Foto dos protocolos'[Data] = d, NOT ISBLANK('Foto dos protocolos'[Fechado em]), 'Foto dos protocolos'[Fechado em] >= DATE(YEAR(d), MONTH(d) - 11, 1), 'Foto dos protocolos'[Fechado em] <= d) + 0
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Foto dos protocolos'[Data] = d, 'Foto dos protocolos'[Situação] = "Fechado", 'Foto dos protocolos'[Fechado em] >= DATE(YEAR(d), MONTH(d) - 11, 1), 'Foto dos protocolos'[Fechado em] <= d) + 0
 			```
 		formatString: #,##0
 		displayFolder: Equipe e território

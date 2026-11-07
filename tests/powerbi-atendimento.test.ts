@@ -5,6 +5,9 @@ import { distanciaUnidade, faixaDistancia, faixasDistancia, mediana } from '../s
 import { buildAtendimento, demandaAtendimento, quadroAtendimento, situacoes, statusProtocolo } from '../src/domain/atendimento.ts';
 import type { RecorteAtendimento } from '../src/domain/atendimento.ts';
 import { pacotePowerBi } from '../src/powerbi/pacote.ts';
+import { datasetAt } from '../src/domain/tempo.ts';
+import { buildProfissionais, situacaoEm } from '../src/domain/profissionais.ts';
+import { estruturaDe } from '../src/cockpit/estrutura.ts';
 import { rotuloTrimestre } from '../src/cockpit/formatos.ts';
 import { arquivoDe, daxDe, fimDoMesUmAnoAntes, inicio, leitorCsv, numero, soma } from './powerbi-pacote.ts';
 
@@ -52,8 +55,8 @@ function cartoesDoPacote(d: string, meses: number, filtro: Filtro = {}) {
     item.total++; if (f.Situação === 'Aberto' || f.Situação === 'Exigência') { item.fila++; if (f.Prazo === 'Fora do prazo') item.fora++; } fila.set(f.Pessoa, item); }
   const maior = [...fila.values()].sort((x, y) => y.fila - x.fila || y.fora - x.fora || y.total - x.total || x.nome.localeCompare(y.nome))[0];
   const noQuadro = colaboradores.filter(c => sim(c['No quadro']) && (!filtro.gre || c.GRE === nomeGre.get(filtro.gre))).length;
-  // Fechados nos 12 meses: todo protocolo do lugar (sem o tipo), aberto em qualquer data, que fechou ou foi cancelado nos 12 meses.
-  const fechadosNoAno = naFoto(d, { gre: filtro.gre }).filter(({ f }) => f['Fechado em'] && f['Fechado em'] >= inicio(d, 12) && f['Fechado em'] <= d).length;
+  // Fechados nos 12 meses: todo protocolo do lugar (sem o tipo), aberto em qualquer data, que fechou nos 12 meses (o cancelado não entra).
+  const fechadosNoAno = naFoto(d, { gre: filtro.gre }).filter(({ f }) => f.Situação === 'Fechado' && f['Fechado em'] >= inicio(d, 12) && f['Fechado em'] <= d).length;
   return {
     noPrazo: taxa(fechados.filter(({ f }) => f.Prazo === 'Dentro do prazo').length, fechados.length), fechados: fechados.length,
     abertos: rows.length, mediana: mediana(fechados.map(({ f }) => numero(f['Dias com o Crea-SP']))),
@@ -164,6 +167,9 @@ test('gráficos dos protocolos: status contra o prazo, mês a mês, cada serviç
 test('gráficos da equipe: cada colaborador pela situação, o calor por regional e trimestre e o canal pela distância dão os do painel', () => {
   const d = hoje, meses = 12, q = quadroAtendimento(base, { anchor: d, period: meses, recorte: SEM_RECORTE }), rows = doPeriodo(d, meses), distancia = distanciaUnidade(dataset);
   for (const c of q.colaboradores) assert.deepEqual(situacoes.map(s => em(rows, s).filter(({ f }) => f.Pessoa === c.id).length), situacoes.map(s => c.partes[s].length), c.nome);
+  // A linha "Sem atribuição" da medida "Com a pessoa": só os abertos e os sem pagamento, como a do painel.
+  assert.match(dax('Com a pessoa'), /IN \{"Aberto", "Sem pagamento"\}/);
+  assert.equal(em(rows, 'Aberto', 'Sem pagamento').filter(({ f }) => f.Pessoa === 'sem-atribuicao').length, q.semAtribuicao.length, 'sem atribuição');
   // O calor usa os meses do gráfico (12 a 24), não o período; o trimestre é o da abertura.
   const doGrafico = naFoto(d).filter(({ p }) => p['Aberto em'] >= inicio(d, Math.min(24, Math.max(12, meses))));
   for (const row of q.calor) for (const t of row.trimestres) {
@@ -208,4 +214,31 @@ test('demanda: previsão, aberturas na Receita, formatura, ART por 1.000 e pedid
 test('status e situações: as colunas de ordem seguem o caminho do protocolo e as cinco situações do painel antigo', () => {
   const lidos = foto.filter(row => row.Data === hoje);
   for (const row of lidos) { assert.equal(numero(row['Ordem do status']), statusProtocolo.indexOf(row.Status as never) + 1, row.Status); assert.equal(numero(row['Ordem da situação']), situacoes.indexOf(row.Situação as never) + 1, row.Situação); }
+});
+
+/* ---------- os cartões que não saem dos protocolos: a distância, os coworkings e a ART por 1.000 ---------- */
+test('cartões: a distância até a unidade, a ocupação dos coworkings e os protocolos de ART por 1.000 ARTs dão os do painel, agora e um ano antes', () => {
+  const ativosCsv = lerCsv('dados/profissionais-ativos.csv'), distanciaDe = new Map(municipios.map(row => [row['Código IBGE'], numero(row['Distância até a unidade (km)'])]));
+  const cwMeses = lerCsv('dados/coworkings-meses.csv'), distancia = distanciaUnidade(dataset);
+  const ocupacao = (d: string, meses: number) => { const rows = cwMeses.filter(row => row.Mês >= inicio(d, meses) && row.Mês <= d); return taxa(soma(rows, 'Horas usadas'), soma(rows, 'Horas disponíveis')); };
+  const artPorMil = (d: string, filtro: Filtro) => {
+    const meses = new Set(Array.from({ length: 12 }, (_, i) => mesAntes(d, i)));
+    const arts = soma(artsPorMes.filter(row => meses.has(row.Mês) && noLugar(row['Código IBGE'], filtro)), 'ARTs');
+    const n = [...protocolos.values()].filter(p => meses.has(p.Mês) && p['Aberto em'] <= d && sim(p['Serviço de ART']) && noLugar(p['Código IBGE'], filtro)).length;
+    return arts ? n / arts * 1000 : null;
+  };
+  const porMil = (rows: { protocolos: number; arts: number }[]) => { const arts = rows.reduce((n, m) => n + m.arts, 0); return arts ? rows.reduce((n, m) => n + m.protocolos, 0) / arts * 1000 : null; };
+  for (const [d, meses] of [['2026-09-30', 12], ['2026-06-30', 3]] as const) {
+    // A mais de 50 km: a foto dos profissionais ativos na data, pela distância do município, contra o cadastro lido na data.
+    const ativos = ativosCsv.filter(row => row.Data === d), doPainel = buildProfissionais(datasetAt(dataset, d)).profissionais.filter(row => situacaoEm(row, d) === 'Ativo');
+    igual(soma(ativos, 'Ativos'), doPainel.length, `${d}: ativos`);
+    igual(soma(ativos.filter(row => (distanciaDe.get(row['Código IBGE']) ?? 0) > 50), 'Ativos'), doPainel.filter(row => (distancia.get(row.cityId)?.km ?? 0) > 50).length, `${d}: a mais de 50 km`);
+    const cw = estruturaDe(datasetAt(dataset, d), null, meses).coworking;
+    igual(ocupacao(d, meses), cw.ocupacao, `${d}: ocupação`); igual(ocupacao(fimDoMesUmAnoAntes(d), meses), cw.ocupacaoAntes, `${d}: ocupação um ano antes`);
+    for (const gre of [null, 'GRE2'] as const) {
+      const art = demandaAtendimento(dataset, base, { anchor: d, recorte: { ...SEM_RECORTE, greId: gre }, colaboradores: 1 }).art, filtro = gre ? { gre } : {};
+      igual(artPorMil(d, filtro), porMil(art.slice(-12)), `${d} ${gre}: ART por 1.000`);
+      igual(artPorMil(fimDoMesUmAnoAntes(d), filtro), porMil(art.slice(-24, -12)), `${d} ${gre}: ART por 1.000 nos 12 meses anteriores`);
+    }
+  }
 });

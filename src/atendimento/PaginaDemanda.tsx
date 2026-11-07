@@ -28,7 +28,7 @@ export default function PaginaDemanda({ ctx }: { ctx: CockpitCtx }) {
   return <div className="ck-grid ck-grid-at-demanda">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores da demanda">
       <Indicador destaque ficha="k-previsao" ctx={ctx} label="Previstos nos próximos 3 meses" serie={series.total} value={int(d.proximos)}
-        sub={`de ${mesAno(seguintes[0].mes)} a ${mesAno(seguintes.at(-1)!.mes)}${servidores ? `, cerca de ${int(d.proximos / servidores)} por colaborador` : ''}`} />
+        sub={`de ${mesAno(seguintes[0].mes)} a ${mesAno(seguintes.at(-1)!.mes)}${servidores ? `, cerca de ${int(d.proximos / servidores)} por colaborador nos três meses` : ''}`} />
       <Indicador ficha="k-aberturas" ctx={ctx} label="Empresas novas que pediram registro" value={conv.aberturas ? pct(conv.pediram / conv.aberturas * 100) : '—'}
         sub={`${int(conv.pediram)} das ${int(conv.aberturas)} aberturas de engenharia na Receita, em até 180 dias`} onOpen={() => abrirSemPedido(ctx)} />
       <Indicador ficha="k-formados" ctx={ctx} label={`Formados de ${f.ano} já registrados`} value={f.concluintes ? pct(f.registrados / f.concluintes * 100) : '—'}
@@ -37,7 +37,7 @@ export default function PaginaDemanda({ ctx }: { ctx: CockpitCtx }) {
         variacao={{ value: artAgora === null || artAntes === null ? null : change(artAgora, artAntes), goodUp: false, label: 'em relação aos 12 meses anteriores' }} sub="baixa, cancelamento e regularização, em 12 meses" />
       <Indicador ficha="k-lai" ctx={ctx} label={`Pedidos de informação em ${lai.ano}`} value={int(lai.pedidos)} sub={`${lai.pedidos ? pct(lai.noPrazo / lai.pedidos * 100) : '—'} respondidos no prazo; ${int(lai.recursos)} recursos`} />
     </section>
-    <Bloco ctx={ctx} id="pv" area="pv" title="Protocolos por mês e os três meses seguintes" exportar={{ cabecalho: ['Mês', 'Protocolos abertos', 'Previstos'], linhas: () => d.previsao.map(m => [m.mes, m.total, m.previsto]) }}><Previsao ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="pv" vazio={avisoVazio(!d.previsao.some(m => m.total), 'Nenhum protocolo aberto')} area="pv" title="Protocolos por mês e os três meses seguintes" exportar={{ cabecalho: ['Mês', 'Protocolos abertos', 'Previstos'], linhas: () => d.previsao.map(m => [m.mes, m.total, m.previsto]) }}><Previsao ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ab" vazio={avisoVazio(!d.aberturas.some(m => m.aberturas || m.pedidos), 'Nenhuma abertura nem pedido de registro')} area="ab" title="Aberturas na Receita e pedidos de registro de empresa" exportar={{ cabecalho: ['Mês', 'Aberturas de engenharia na Receita', 'Pedidos de registro de empresa'], linhas: () => d.aberturas.map(m => [m.mes, m.aberturas, m.pedidos]) }}><Aberturas ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="fo" vazio={avisoVazio(!d.registros.some(m => m.pedidos), 'Nenhum pedido de registro de profissional')} area="fo" title="Pedidos de registro de profissional e a formatura" exportar={{ cabecalho: ['Mês', 'Pedidos de registro de profissional'], linhas: () => d.registros.map(m => [m.mes, m.pedidos]) }}><Formatura ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ar" vazio={avisoVazio(!d.art.some(m => m.arts), 'Nenhuma ART registrada')} area="ar" title="Protocolos de ART por 1.000 ARTs registradas" exportar={{ cabecalho: ['Mês', 'Protocolos de ART', 'ARTs registradas', 'Por 1.000 ARTs'], linhas: () => d.art.map(m => [m.mes, m.protocolos, m.arts, m.porMil === null ? null : Math.round(m.porMil * 10) / 10]) }}><Art ctx={ctx} /></Bloco>
