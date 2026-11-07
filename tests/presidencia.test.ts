@@ -38,7 +38,7 @@ function dosPaineis(greId: string | null, cityId: string | null) {
   const receita = receitaMensal(buildConselho(view), mesesAteData(hoje, periodo)).reduce((n, row) => n + row.total, 0);
   return {
     mercado: cobertura(scope, model).taxa, profissionais: p.ativos.length, anuidadePf: p.taxaAdimplencia, acoes: rf.acoes.length,
-    receita, divida: d.total, perto: d.pertoDePrescrever, atendimento: a.taxaNoPrazo, solicitacoes: a.pedidos.length,
+    receita, divida: d.total, perto: d.pertoDePrescrever, atendimento: a.taxaNoPrazo, solicitacoes: a.pedidos.length, atrasadas: a.partes['Em aberto, prazo vencido'].length,
     pendentes: c.pendentes.length, vermelho: c.pendentes.filter(row => alertaNoStatus(row.diasNoStatus) === 'vermelho').length, prescricao: c.pertoDePrescrever.length,
   } satisfies Partial<Record<IndicadorId, number | null>>;
 }
@@ -59,7 +59,7 @@ test('presidência: numa regional e num município, os números são os do paine
   const municipio = recortar(foto, dataset, { greId: gre, cityId: cidade }), daCidade = dosPaineis(gre, cidade);
   // O atendimento não tem município no painel dele: segue a regional. A receita do Conselho não tem lugar: é a do estado.
   for (const id of ['mercado', 'profissionais', 'anuidadePf', 'acoes', 'divida', 'perto', 'pendentes', 'vermelho', 'prescricao', 'receita'] as const) perto(v(municipio, id), daCidade[id], `${cidade}: ${id}`);
-  for (const id of ['atendimento', 'solicitacoes'] as const) perto(v(municipio, id), paineis[id], `${cidade}: ${id} segue a regional`);
+  for (const id of ['atendimento', 'solicitacoes', 'atrasadas'] as const) perto(v(municipio, id), paineis[id], `${cidade}: ${id} segue a regional`);
 });
 
 test('presidência: as regionais somam o estado nas contagens e nos valores, e as taxas saem da soma das partes', () => {

@@ -28,7 +28,7 @@ import type { Metas } from '../cockpit/leitura';
  */
 export type PainelResumo = 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho';
 export const paineisResumo: PainelResumo[] = ['empresas', 'profissionais', 'fiscalizacao', 'financeiro', 'atendimento', 'conselho'];
-export type IndicadorId = 'mercado' | 'profissionais' | 'anuidadePf' | 'acoes' | 'regularizacao' | 'receita' | 'divida' | 'perto' | 'atendimento' | 'solicitacoes' | 'pendentes' | 'vermelho' | 'prescricao';
+export type IndicadorId = 'mercado' | 'profissionais' | 'anuidadePf' | 'acoes' | 'regularizacao' | 'receita' | 'divida' | 'perto' | 'atendimento' | 'solicitacoes' | 'atrasadas' | 'pendentes' | 'vermelho' | 'prescricao';
 export interface Indicador {
   id: IndicadorId; painel: PainelResumo; nome: string;
   /** Taxa (numerador sobre denominador, em %), contagem ou valor em reais. */
@@ -54,6 +54,7 @@ export const INDICADORES: Indicador[] = [
   { id: 'perto', painel: 'financeiro', nome: 'Dívida perto de prescrever', unidade: 'reais', tipo: 'estoque', sobeBom: false, lugar: 'municipio' },
   { id: 'atendimento', painel: 'atendimento', nome: 'Solicitações resolvidas no prazo', unidade: 'taxa', tipo: 'fluxo', sobeBom: true, lugar: 'regional', meta: 'atendimento', principal: true },
   { id: 'solicitacoes', painel: 'atendimento', nome: 'Solicitações de atendimento', unidade: 'contagem', tipo: 'fluxo', sobeBom: true, lugar: 'regional' },
+  { id: 'atrasadas', painel: 'atendimento', nome: 'Solicitações em aberto com o prazo vencido', unidade: 'contagem', tipo: 'estoque', sobeBom: false, lugar: 'regional' },
   { id: 'pendentes', painel: 'conselho', nome: 'Processos esperando voto', unidade: 'contagem', tipo: 'estoque', sobeBom: false, lugar: 'municipio', principal: true },
   { id: 'vermelho', painel: 'conselho', nome: 'Processos em alerta vermelho', unidade: 'contagem', tipo: 'estoque', sobeBom: false, lugar: 'municipio' },
   { id: 'prescricao', painel: 'conselho', nome: 'Autos perto da prescrição', unidade: 'contagem', tipo: 'estoque', sobeBom: false, lugar: 'municipio' },
@@ -131,7 +132,7 @@ export function fotoPresidencia(ins: InsumosPresidencia): FotoPresidencia {
   // Atendimento: o painel conhece a regional, e não o município.
   for (const [greId, a] of ins.atendimento) {
     const ok = a.partes['Resolvido no prazo'].length, fora = a.partes['Resolvido com atraso'].length + a.partes['Em aberto, prazo vencido'].length;
-    somar('atendimento', greId, ok, ok + fora); somar('solicitacoes', greId, a.pedidos.length);
+    somar('atendimento', greId, ok, ok + fora); somar('solicitacoes', greId, a.pedidos.length); somar('atrasadas', greId, a.partes['Em aberto, prazo vencido'].length);
   }
 
   // Conselho: a fila do colegiado inteiro, pelo lugar do processo.
