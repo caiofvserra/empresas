@@ -17,7 +17,7 @@ import type { Conselho, QuadroConselho } from '../domain/conselho';
 import type { ResultadoFt } from '../painel/forcas';
 import type { QuadroInstalacoes, QuadroObras, QuadroSociedades } from '../domain/frentes';
 import type { Historico } from '../observatorio/historico';
-import type { Aberturas, Concentracao, Permanencia, QuadroDemanda } from '../domain/mercado';
+import type { Concentracao, Permanencia, QuadroDemanda } from '../domain/mercado';
 import type { Acumulado, Carteira, QuadroDivida, ReceitaMensal } from '../domain/gestao';
 import type { QuadroColegiado } from '../domain/colegiado';
 import type { Presidencia } from '../presidencia/fotos';
@@ -85,4 +85,4 @@ export interface Parcerias { cno: QuadroCno; licencas: QuadroLicencas; pericias:
   credenciamentos: QuadroCredenciamentos; jucesp: QuadroJucesp;
   /** Nome com “engenharia” ou “engenheiro” e quem dirige a empresa (Lei 5.194/66, arts. 4º e 5º); depende do CPF completo dos sócios. */
   denominacao: QuadroDenominacao }
-export interface Mercado { concentracao: Concentracao; demanda: QuadroDemanda; aberturas: Aberturas; permanencia: Permanencia[] }
+export interface Mercado { concentracao: Concentracao; demanda: QuadroDemanda; permanencia: Permanencia[] }

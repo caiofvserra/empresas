@@ -116,7 +116,8 @@ export function FichaPop({ ficha, titulo, leitura, anchor }: { ficha?: FichaBloc
 }
 
 /** Selo para dados públicos reais (o restante do painel é demonstrativo, indicado no cabeçalho). */
-export const Selo = ({ data }: { data: string }) => <span className="selo" title="Dado público real versionado no painel">Real · {data.split('-').reverse().join('/')}</span>;
+/** Selo de dado público real. `parte` diz onde está o real quando o bloco mistura real e cenário (por exemplo, "à esquerda"). */
+export const Selo = ({ data, parte }: { data: string; parte?: string }) => <span className="selo" title="Dado público real versionado no painel">{parte ? `Real ${parte}` : 'Real'} · {data.split('-').reverse().join('/')}</span>;
 
 export interface Variacao { value: number | null; kind?: 'pct' | 'pp'; goodUp?: boolean; label?: string }
 export function Var({ value, kind = 'pct', goodUp = true, label = 'em relação ao ano anterior' }: Variacao) {

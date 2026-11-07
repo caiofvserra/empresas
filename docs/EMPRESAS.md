@@ -193,10 +193,18 @@ Pedido do Caio: tirar o botão Imprimir, pensar em quais indicadores vale ver a 
 
 ## Dados abertos do CNPJ (07/11/2026)
 
-A página CNPJ é a primeira do painel de Empresas com dado real. O coletor `scripts/receita-cnpj.ts` lê o arquivo mensal da Receita e grava duas coisas:
+As aberturas e baixas na Receita da página Evolução são dado real (07/11/2026). Elas ficaram uma tarde numa página CNPJ própria, que saiu porque repetia o que Registro e Evolução já mostram. O coletor `scripts/receita-cnpj.ts` lê o arquivo mensal da Receita e grava duas coisas:
 
-1. `src/domain/receita-mercado-sp.json`, a contagem por município do IBGE que a página lê: estabelecimentos ativos com atividade da lista (registro obrigatório e a analisar), por atividade, por porte, por situação, e as aberturas e baixas por mês dos 36 meses até a competência (o mês da competência sai pela metade, porque a Receita gera o arquivo nos primeiros dias dele, e fica fora dos gráficos). Atividades: todas no estado e em cada GRE, e as 20 maiores em cada município. Só números, cerca de 600 KB.
+1. `src/domain/receita-mercado-sp.json`, a contagem por município do IBGE que o painel lê: estabelecimentos ativos com atividade da lista (registro obrigatório e a analisar), por atividade, por porte, por situação, e as aberturas e baixas por mês dos 36 meses até a competência (o mês da competência sai pela metade, porque a Receita gera o arquivo nos primeiros dias dele, e fica fora dos gráficos). Atividades: todas no estado e em cada GRE, e as 20 maiores em cada município. Só números, cerca de 600 KB.
 2. Na pasta indicada, `staging/`, quatro CSV para a base interna, todos com a competência na primeira coluna: a situação de todos os estabelecimentos paulistas, os que têm atividade da lista (com o município do IBGE), as empresas deles e os sócios (CPF mascarado como a Receita publica, e o nome normalizado para o casamento com o cadastro). Ficam fora do Git (`.gitignore`).
+
+Na página Evolução, o dado real aparece em três lugares, todos no recorte de GRE e município, até o último mês completo do arquivo:
+
+- o cartão dos abertos na Receita no período, com os baixados embaixo e a evolução dos 35 meses do arquivo;
+- a série das abertas no gráfico de ritmo, em soma de 12 meses (o mês sem os 12 meses no arquivo fica vazio);
+- o bloco de abertos e baixados mês a mês, com o saldo, ao lado da permanência no cadastro, que continua do cenário.
+
+A Receita não se divide por câmara: com uma câmara escolhida, esses três continuam mostrando todas as atividades da lista. Saiu do HTML a parte das abertas que já se registrou, porque cruzaria o real com o cadastro fictício. No pacote Power BI, a medida continua: em produção, a tabela de estabelecimentos vem do staging da Receita e se cruza com o cadastro real.
 
 Para atualizar, todo mês:
 

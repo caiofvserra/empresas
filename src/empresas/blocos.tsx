@@ -12,7 +12,9 @@ import { fontesInstalacao } from '../domain/frentes';
 import type { FonteInstalacao } from '../domain/frentes';
 import { desfechosJucesp, faixasVinculos } from '../domain/parcerias';
 import type { DesfechoJucesp } from '../domain/parcerias';
-import { artsMensais, artsPorProfissional, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico, ultimoMesReceita } from '../domain/empresas';
+import { BarrasReceita } from './receita-federal';
+import type { QuadroReceita } from '../domain/receita-mercado';
+import { artsMensais, artsPorProfissional, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico } from '../domain/empresas';
 import type { LinhaCnae, RamoMercado } from '../domain/empresas';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { artPorCamara, camaraPorte, entradasSaidas, pagamento, portes, situacaoReceita } from '../cockpit/medidas';
@@ -250,27 +252,17 @@ export function Instalacoes({ ctx }: { ctx: CockpitCtx }) {
   </div>;
 }
 
-/** Aberturas na Receita mês a mês, até o último mês com arquivo (05/11/2026: antes, o mês sem arquivo aparecia como barra zero), e a permanência das coortes ao lado. */
-export const exportarDinamica = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Parte', 'Linha', 'Abertos ou registradas na coorte', 'Já registrados ou continuam registradas'],
-  linhas: () => { const ultimo = ultimoMesReceita(ctx.dataset); return [...ctx.mercado.aberturas.meses.filter(row => row.month <= ultimo).map(row => ['Abertas na Receita', mes(row.month), row.aberturas, row.comRegistro]),
-    ...ctx.mercado.permanencia.map(row => ['Permanência', `Registradas há ${row.mesesAtras} meses`, row.coorte.length, row.permanecem.length])]; } });
-export function Dinamica({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens, dark } = ctx, a = ctx.mercado.aberturas, coortes = ctx.mercado.permanencia;
-  const meses = useMemo(() => { const ultimo = ultimoMesReceita(ctx.dataset); return a.meses.filter(row => row.month <= ultimo); }, [a, ctx.dataset]);
-  const option = useMemo(() => ({
-    grid: { top: 24, right: 8, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 11 } },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = meses[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.aberturas)} estabelecimentos abertos com CNAE da lista<br/>${int(row.comRegistro)} já com registro ou visto na data escolhida`; } },
-    xAxis: { type: 'category', data: meses.map(row => mes(row.month)), axisLabel: { color: tokens.muted, fontSize: 11, interval: 2 }, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } } },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 11 } },
-    series: [
-      { type: 'bar', name: 'Já registrados', stack: 'a', barWidth: 10, data: meses.map(row => row.comRegistro), itemStyle: { color: tokens.good } },
-      { type: 'bar', name: 'Sem registro na data escolhida', stack: 'a', data: meses.map(row => row.aberturas - row.comRegistro), itemStyle: { color: dark ? '#3D5E95' : tokens.soft, borderColor: tokens.line, borderWidth: 1 },
-        // O total aberto no mês em cima da pilha, a cada dois meses para caber (07/11/2026).
-        label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, formatter: (item: any) => (meses.length - 1 - item.dataIndex) % 2 === 0 ? int(meses[item.dataIndex].aberturas) : '' } },
-    ],
-  }), [meses, tokens, dark]);
+/**
+ * Abertos e baixados na Receita mês a mês, com dado real dos dados abertos do CNPJ (07/11/2026, quando a página CNPJ saiu), e a
+ * permanência das coortes do cadastro ao lado. Os dois lados não se cruzam: a Receita não diz quem tem registro no Crea-SP.
+ */
+export const exportarDinamica = (ctx: CockpitCtx, q: QuadroReceita): Exportavel => ({ cabecalho: ['Parte', 'Linha', 'Abertos na Receita ou registradas na coorte', 'Baixados na Receita ou continuam registradas'],
+  linhas: () => [...q.meses.map(row => ['Abertos e baixados na Receita', mes(row.mes), row.aberturas, row.baixas]),
+    ...ctx.mercado.permanencia.map(row => ['Permanência no cadastro', `Registradas há ${row.mesesAtras} meses`, row.coorte.length, row.permanecem.length])] });
+export function Dinamica({ ctx, q }: { ctx: CockpitCtx; q: QuadroReceita }) {
+  const coortes = ctx.mercado.permanencia;
   return <div className="split is-wide">
-      <Chart option={option} tokens={tokens} label="Estabelecimentos abertos na Receita por mês e situação no cadastro" onPick={() => a.ids.length && ctx.open({ kind: 'cnpjs', title: 'Abertos na Receita em 24 meses', what: 'Estabelecimentos com CNAE da lista do Crea-SP abertos nos últimos 24 meses antes da data de referência (data de abertura da Receita).', use: 'Aberturas são mercado novo; a correspondência no cadastro é uma decomposição, não um filtro. Sem registro não quer dizer irregular.', ids: a.ids })} />
+    <BarrasReceita ctx={ctx} q={q} />
     <ul className="side-list" aria-label="Permanência das coortes">
       <li className="side-head">Continuam registradas</li>
       {coortes.map(row => <li key={row.mesesAtras}><button onClick={() => row.saidas.length && ctx.open({ kind: 'empresas', title: `Saíram da base em ${row.mesesAtras} meses`, what: `Empresas com registro ou visto vigente em ${data(row.d0)} e sem registro vigente na data de referência.`, use: 'Perda de vínculo institucional; cadastro vigente não prova atividade e a saída não tem causa atribuída.', ids: row.saidas })} className="is-acao"><span>Registradas há {row.mesesAtras} meses<br /><small>{int(row.permanecem.length)} de {int(row.coorte.length)} seguem registradas</small></span><b>{row.taxa === null ? '—' : pct(row.taxa, 1)}</b></button></li>)}
@@ -525,7 +517,7 @@ export function Denominacao({ ctx }: { ctx: CockpitCtx }) {
 const seriesRitmo = [
   { key: 'emprego', nome: 'Emprego formal em engenharia', curto: 'Emprego', fonte: 'Novo CAGED e RAIS', parceria: false },
   { key: 'credito', nome: 'Crédito a empresas de engenharia (!)', curto: 'Crédito a empresas (!)', fonte: 'Banco Central, depende de acordo', parceria: true },
-  { key: 'aberturas12', nome: 'Empresas de engenharia abertas na Receita', curto: 'Abertas na Receita', fonte: 'soma de 12 meses', parceria: false },
+  { key: 'aberturas12', nome: 'Empresas de engenharia abertas na Receita', curto: 'Abertas na Receita', fonte: 'dado real da Receita, soma de 12 meses', parceria: false },
   { key: 'registros12', nome: 'Empresas que se registraram no Crea-SP', curto: 'Registradas no Crea-SP', fonte: 'soma de 12 meses', parceria: false },
 ] as const;
 /** O gráfico cobre os meses da janela do alto da tela (`janela.months`), e não mais a constante 24. */
