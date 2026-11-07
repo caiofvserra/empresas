@@ -1,4 +1,4 @@
-/// Guarda a receita prevista e a realizada de cada mês, por origem. A receita do Conselho é do estado inteiro: não muda com a regional.
+/// Guarda a receita realizada de cada mês desde 2013, por tipo, da Transparência do Crea-SP (dado real, do estado inteiro).
 table Receitas
 	lineageTag: f0b1bc88-f477-5a6a-95c6-8150d6c4370b
 
@@ -10,27 +10,20 @@ table Receitas
 		sourceColumn: Mês
 		lineageTag: 6b25220f-b5bb-5059-9518-3fd7bb5e7e74
 
-	column Origem
+	column Tipo
 		dataType: string
+		isHidden
 		summarizeBy: none
-		sourceColumn: Origem
-		lineageTag: 6aae6d16-3b32-5968-9d7e-e3fe5c03530b
+		sourceColumn: Tipo
+		lineageTag: 128167cf-7aca-59a9-a04d-66e7f9cc38ee
 
-	column Prevista
+	column Valor
 		dataType: double
 		formatString: R$ #,##0
 		isHidden
 		summarizeBy: none
-		sourceColumn: Prevista
-		lineageTag: da66330f-4b35-5e29-9547-c7b7917f4776
-
-	column Realizada
-		dataType: double
-		formatString: R$ #,##0
-		isHidden
-		summarizeBy: none
-		sourceColumn: Realizada
-		lineageTag: 4c19d032-8199-5da4-b615-326a2df5ec99
+		sourceColumn: Valor
+		lineageTag: 6d2449f1-6b8f-5adf-80db-41d93732b38e
 
 	partition Receitas = m
 		mode: import
@@ -38,6 +31,6 @@ table Receitas
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "receitas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Origem", type text}, {"Prevista", type number}, {"Realizada", type number}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Tipo", type text}, {"Valor", type number}}, "pt-BR")
 				in
 				    Tipos

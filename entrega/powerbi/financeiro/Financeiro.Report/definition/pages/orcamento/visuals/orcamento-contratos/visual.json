@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "orcamento-contratos",
   "position": {
-    "x": 749,
+    "x": 853,
     "y": 436,
-    "z": 16000,
-    "width": 306,
+    "z": 15000,
+    "width": 201,
     "height": 268,
-    "tabOrder": 16000
+    "tabOrder": 15000
   },
   "visual": {
     "visualType": "columnChart",
@@ -102,7 +102,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Contratos que terminam nos próximos 12 meses'"
+                  "Value": "'Contratos a vencer'"
                 }
               }
             }

@@ -1,4 +1,4 @@
-/// Tem um mês por linha, de 2020 até 12 meses depois de hoje (para os contratos que terminam), para os gráficos mês a mês e ano a ano.
+/// Tem um mês por linha, de 2020 até 12 meses depois de hoje, para os gráficos mês a mês.
 table 'Calendário'
 	lineageTag: 752ff1b4-8ec2-53ba-a2ef-89bc5ba1ef01
 

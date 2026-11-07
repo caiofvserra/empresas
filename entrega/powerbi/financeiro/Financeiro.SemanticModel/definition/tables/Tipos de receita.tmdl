@@ -1,0 +1,28 @@
+/// Tem os cinco tipos de receita do painel: anuidades, ART, dívida ativa, multas e serviços e outras.
+table 'Tipos de receita'
+	lineageTag: 8542da3d-33ac-5913-9fd2-d7e5d0dc2ade
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		sortByColumn: Ordem
+		lineageTag: 90750e4e-9dfa-5c54-807f-ac262a2577ab
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: b270c5cd-6e80-5e73-8cfc-a115b5e21efa
+
+	partition 'Tipos de receita' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "tipos-receita.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Tipo", type text}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

@@ -4,16 +4,16 @@
   "position": {
     "x": 435,
     "y": 436,
-    "z": 15000,
-    "width": 306,
+    "z": 14000,
+    "width": 411,
     "height": 268,
-    "tabOrder": 15000
+    "tabOrder": 14000
   },
   "visual": {
-    "visualType": "pivotTable",
+    "visualType": "tableEx",
     "query": {
       "queryState": {
-        "Rows": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -35,34 +35,15 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Empenhos"
+                      "Entity": "Fornecedores"
                     }
                   },
-                  "Property": "Empenho"
+                  "Property": "Objeto"
                 }
               },
-              "queryRef": "Empenhos.Empenho",
-              "nativeQueryRef": "Empenho",
+              "queryRef": "Fornecedores.Objeto",
+              "nativeQueryRef": "Objeto",
               "active": true
-            }
-          ]
-        },
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Medidas"
-                    }
-                  },
-                  "Property": "Empenhado em 12 meses"
-                }
-              },
-              "queryRef": "Medidas.Empenhado em 12 meses",
-              "nativeQueryRef": "Empenhado em 12 meses",
-              "displayName": "Empenhado"
             },
             {
               "field": {
@@ -72,11 +53,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Pago em 12 meses"
+                  "Property": "Pago no período"
                 }
               },
-              "queryRef": "Medidas.Pago em 12 meses",
-              "nativeQueryRef": "Pago em 12 meses",
+              "queryRef": "Medidas.Pago no período",
+              "nativeQueryRef": "Pago no período",
               "displayName": "Pago"
             }
           ]

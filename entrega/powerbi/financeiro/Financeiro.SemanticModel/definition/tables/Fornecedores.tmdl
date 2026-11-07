@@ -1,4 +1,4 @@
-/// Tem os fornecedores do Conselho, pela razão social. No cenário, os nomes são fictícios e terminam com "(demonstrativo)".
+/// Tem as 150 empresas que mais receberam do Crea-SP nos últimos 37 meses (sem a folha e a cota-parte), pela razão social e o CNPJ, com o objeto mais frequente.
 table Fornecedores
 	lineageTag: 9274f413-8851-53c9-bf29-a01b3dddba98
 
@@ -15,17 +15,17 @@ table Fornecedores
 		sourceColumn: Nome
 		lineageTag: 926c9f57-e9d6-50b9-825e-f1df014853be
 
+	column CNPJ
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CNPJ
+		lineageTag: de5ac9f9-0c0b-585f-b3f3-73d1ea28139c
+
 	column Objeto
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Objeto
 		lineageTag: 341b01b7-1727-5479-bec7-5bdfba3095b2
-
-	column Natureza
-		dataType: string
-		summarizeBy: none
-		sourceColumn: Natureza
-		lineageTag: 51bc26e0-7167-592e-a185-1338d6cfc6ed
 
 	partition Fornecedores = m
 		mode: import
@@ -33,6 +33,6 @@ table Fornecedores
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "fornecedores.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Fornecedor", type text}, {"Nome", type text}, {"Objeto", type text}, {"Natureza", type text}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Fornecedor", type text}, {"Nome", type text}, {"CNPJ", type text}, {"Objeto", type text}}, "pt-BR")
 				in
 				    Tipos

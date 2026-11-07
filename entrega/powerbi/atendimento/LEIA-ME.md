@@ -14,7 +14,7 @@ Gerado a partir do protótipo em HTML (repositório caiofvserra/empresas, `npm r
 - O modelo em esquema estrela: regionais, municípios (com a unidade de atendimento mais próxima e a distância), calendário, datas de referência e período; os protocolos (o serviço, o prazo em dias úteis, a taxa, o município de quem pediu, a unidade, o canal); a foto de cada fim de mês dos protocolos (status, situação, dentro ou fora do prazo, com quem está, dias úteis com o Crea-SP) e dos profissionais ativos; o quadro de atendimento; e a demanda de fora: aberturas de engenharia na Receita, ARTs registradas, concluintes do INEP, formados que se registraram, pedidos de informação e ouvidoria, e o uso dos coworkings.
 - As medidas dos cartões e dos gráficos, em pastas com o nome de cada página, cada uma com a descrição de como é calculada.
 - As três páginas (Protocolos, Equipe e território, Demanda). Os filtros no alto (regional, município, tipo de serviço, unidade, data de referência e período) ficam sincronizados entre as páginas, com o tema do Crea-SP. Os gráficos saem com rótulos de dados e legenda, para ler sem passar o mouse.
-- Em cada cartão, como no painel: o número, a comparação (com um ano antes, ou com os 12 meses anteriores na despesa e nas diárias) e a linha de apoio.
+- Em cada cartão, como no painel: o número, a comparação com um ano antes e a linha de apoio.
 - O nome de cada colaborador, com a fila dele, e a linha "Sem atribuição". No cenário, os nomes são fictícios.
 - O período é um parâmetro do tipo "Intervalo numérico", de 1 a 36 meses, com controle deslizante.
 

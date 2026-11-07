@@ -1,0 +1,36 @@
+/// Tem as categorias do que vai a protesto e quanto cada uma soma sobre a anuidade protestável, em milionésimos (1.000.000 é uma vez a anuidade; demonstrativo, até a TI ligar os protestos do CreaNet).
+table 'Categorias de protesto'
+	lineageTag: 3f1b8f89-20f7-5b43-8437-700101c2f1fa
+
+	column Categoria
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Categoria
+		sortByColumn: Ordem
+		lineageTag: 13935873-f278-5a95-959d-7f2bbfa44008
+
+	column 'Fator por milhão'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Fator por milhão
+		lineageTag: ac32c085-2d15-5637-ada3-8f1da5d5d6e8
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: 9f3dfb3d-962f-5be7-a188-b115eb360d9e
+
+	partition 'Categorias de protesto' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "categorias-protesto.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Categoria", type text}, {"Fator por milhão", Int64.Type}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

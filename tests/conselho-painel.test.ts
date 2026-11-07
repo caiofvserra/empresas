@@ -23,7 +23,7 @@ const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 const processos = buildProcessos(dataset), modelo = buildProfissionais(dataset);
 
 test('Financeiro, Atendimento e Conselho: o antigo painel de Gestão do Conselho virou três, cada um no seu HTML (07/11/2026)', () => {
-  assert.deepEqual(pageIdsFinanceiro, ['receita', 'orcamento']);
+  assert.deepEqual(pageIdsFinanceiro, ['arrecadacao', 'receita', 'divida', 'orcamento']);
   assert.deepEqual(pageIdsAtendimento, ['protocolos', 'equipe', 'demanda']);
   assert.deepEqual(pageIdsConselho, ['colegiado', 'processos', 'conselheiros', 'decisoes', 'representacao']);
   for (const [paginas, painel] of [[pageIdsFinanceiro, 'financeiro'], [pageIdsAtendimento, 'atendimento'], [pageIdsConselho, 'conselho']] as const) assert.ok(paginas.every(page => painelDaPagina(page) === painel), painel);
