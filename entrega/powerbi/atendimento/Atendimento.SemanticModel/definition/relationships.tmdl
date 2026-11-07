@@ -1,0 +1,36 @@
+relationship fd82e363-b1c3-5101-910a-dfeb697d9a68
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Municípios'.GRE
+	toColumn: Regionais.GRE
+
+relationship 4a211559-d61e-5b13-abd1-69b1c32baf58
+	fromColumn: 'Profissionais ativos'.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship af622c8b-cbde-532d-a227-e1337f2b8414
+	fromColumn: 'Solicitações'.GRE
+	toColumn: Regionais.GRE
+
+relationship 5aebe58a-5bc6-528c-9c70-bc6221eb8adb
+	fromColumn: 'Solicitações'.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship c5eeb117-c9f8-5951-8ee3-7defb8431d54
+	fromColumn: Coworkings.GRE
+	toColumn: Regionais.GRE
+
+relationship a1c7dd57-7ff0-578d-b0a5-fe4f7e4b8cb2
+	fromColumn: 'Meses dos coworkings'.Unidade
+	toColumn: Coworkings.Unidade
+
+relationship de2984e7-ed31-5d51-bf65-e0cf13f9eee6
+	fromColumn: 'Meses dos coworkings'.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship a019f8ad-796c-5d97-b280-b0855582cb86
+	fromColumn: 'Usuários dos coworkings'.Unidade
+	toColumn: Coworkings.Unidade
+
+relationship 0f312bf1-9f5e-5a27-aed4-6cd9b606be3a
+	fromColumn: 'Usuários dos coworkings'.'Mês'
+	toColumn: 'Calendário'.'Mês'

@@ -1,0 +1,44 @@
+/// Tem os 645 municípios de SP, a GRE de cada um pela tabela oficial e a unidade de atendimento mais próxima, com a distância em linha reta.
+table 'Municípios'
+	lineageTag: ba515b0c-01d0-561a-8ecb-12f4d31acf6d
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 13760465-b084-5d63-999a-6e1d145b4c60
+
+	column 'Município'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Município
+		lineageTag: 4c6a24be-9be3-5b80-b44e-86862b37f143
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 07c36237-ce44-53d5-b755-be9f3fd6f3b6
+
+	column 'Unidade mais próxima'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Unidade mais próxima
+		lineageTag: 91a9422f-1b59-5119-97f6-0cf7af034ca8
+
+	column 'Distância até a unidade (km)'
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: none
+		sourceColumn: Distância até a unidade (km)
+		lineageTag: 9bb06c80-eac2-5be2-862e-57d8b2ed64b7
+
+	partition 'Municípios' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "municipios.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Código IBGE", type text}, {"Município", type text}, {"GRE", type text}, {"Unidade mais próxima", type text}, {"Distância até a unidade (km)", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

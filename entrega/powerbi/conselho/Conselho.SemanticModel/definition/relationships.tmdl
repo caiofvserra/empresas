@@ -3,50 +3,6 @@ relationship ea355114-d0bd-5776-9c2b-960c1f869d55
 	fromColumn: 'Municípios'.GRE
 	toColumn: Regionais.GRE
 
-relationship 0e389f4d-906b-5093-9d3e-88452a4438a6
-	fromColumn: Receitas.'Mês'
-	toColumn: 'Calendário'.'Mês'
-
-relationship 389e3f59-a1c0-541f-9014-1381cc7e826e
-	fromColumn: Despesas.'Mês'
-	toColumn: 'Calendário'.'Mês'
-
-relationship ee6f78ca-1707-51c8-80b7-f6223911c23f
-	fromColumn: Despesas.GRE
-	toColumn: Regionais.GRE
-
-relationship 0fb53c92-6b3c-5080-9f8a-cf0a6b7f6073
-	fromColumn: 'Diárias'.'Mês'
-	toColumn: 'Calendário'.'Mês'
-
-relationship 3de9f4a3-9ec2-5811-b578-b40be51ff9dc
-	fromColumn: 'Diárias'.GRE
-	toColumn: Regionais.GRE
-
-relationship 7507f4cc-7722-5a36-bf58-bde48bc1023b
-	fromColumn: 'Diárias'.Pessoa
-	toColumn: Pessoas.Pessoa
-
-relationship 5c3ba829-2bc6-5437-a104-6441be565cb6
-	fromColumn: Empenhos.Fornecedor
-	toColumn: Fornecedores.Fornecedor
-
-relationship e2c52a0e-fc28-58e4-8355-8976ec196c55
-	fromColumn: Empenhos.'Mês'
-	toColumn: 'Calendário'.'Mês'
-
-relationship ab9e4c8f-b214-5cb5-9eec-9ae7b11771d6
-	fromColumn: Contratos.Fornecedor
-	toColumn: Fornecedores.Fornecedor
-
-relationship a68384dd-2d9e-5e7b-bfce-c5e5ba8c353c
-	fromColumn: 'Títulos'.'Código IBGE'
-	toColumn: 'Municípios'.'Código IBGE'
-
-relationship de2819f3-5bc0-5675-9241-271bde78b194
-	fromColumn: 'Foto da dívida'.'Código IBGE'
-	toColumn: 'Municípios'.'Código IBGE'
-
 relationship 7e0cafa5-7bc3-5823-89b7-d27db3be723a
 	fromColumn: Processos.'Câmara'
 	toColumn: 'Câmaras'.'Câmara'
@@ -72,10 +28,6 @@ relationship 8914b4c1-f594-5d4b-ba43-fdf9595c4568
 	fromColumn: 'Foto do plenário'.'Câmara'
 	toColumn: 'Câmaras'.'Câmara'
 
-relationship f773a164-7e84-540a-8caf-aa2c3c9f22a7
-	fromColumn: 'Profissionais ativos'.'Código IBGE'
-	toColumn: 'Municípios'.'Código IBGE'
-
 relationship 2401b07b-53e8-5aa9-9979-33d376e1d39e
 	fromColumn: 'Organizações'.GRE
 	toColumn: Regionais.GRE
@@ -90,32 +42,4 @@ relationship ca29f774-0959-57ba-9321-572c6e13cb41
 
 relationship 49028690-5071-510e-b40d-27a8c83b13f1
 	fromColumn: 'Pagamentos dos repasses'.'Mês'
-	toColumn: 'Calendário'.'Mês'
-
-relationship 582f6178-9338-5dfe-bbe2-84b0258af579
-	fromColumn: 'Solicitações'.GRE
-	toColumn: Regionais.GRE
-
-relationship 76b7008f-797b-544d-bbb0-b6174363ac78
-	fromColumn: 'Solicitações'.'Mês'
-	toColumn: 'Calendário'.'Mês'
-
-relationship b43c2010-e3e3-514e-bbb3-02b81f149c55
-	fromColumn: Coworkings.GRE
-	toColumn: Regionais.GRE
-
-relationship 3ff7ec86-9b0e-5338-9737-6a8ea7808869
-	fromColumn: 'Meses dos coworkings'.Unidade
-	toColumn: Coworkings.Unidade
-
-relationship ca5cbf3a-43cc-5a90-ba5e-51b29eea592d
-	fromColumn: 'Meses dos coworkings'.'Mês'
-	toColumn: 'Calendário'.'Mês'
-
-relationship a6df8ad2-2035-5000-84ad-12dad0eacd8b
-	fromColumn: 'Usuários dos coworkings'.Unidade
-	toColumn: Coworkings.Unidade
-
-relationship eb8b1d86-981b-5888-ba8c-5ade3657e1ab
-	fromColumn: 'Usuários dos coworkings'.'Mês'
 	toColumn: 'Calendário'.'Mês'

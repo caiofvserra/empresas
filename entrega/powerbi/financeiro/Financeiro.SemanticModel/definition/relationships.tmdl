@@ -1,0 +1,48 @@
+relationship fd813971-9823-5ddf-96ed-9809fd34f7e4
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Municípios'.GRE
+	toColumn: Regionais.GRE
+
+relationship b276b892-11b3-52f4-81ef-698ad13f339d
+	fromColumn: Receitas.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship 7bee995a-9643-59f4-b945-f602fbffc789
+	fromColumn: Despesas.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship 850cf69b-398f-5445-82c9-51d3f43c953a
+	fromColumn: Despesas.GRE
+	toColumn: Regionais.GRE
+
+relationship 8b2d0ed7-ff20-5af9-a818-630fdfeecca2
+	fromColumn: 'Diárias'.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship 2a7aac70-32cf-5aea-9c29-2bf883a34d73
+	fromColumn: 'Diárias'.GRE
+	toColumn: Regionais.GRE
+
+relationship 23f6674f-5200-5a95-a5a9-4207d552681c
+	fromColumn: 'Diárias'.Pessoa
+	toColumn: Pessoas.Pessoa
+
+relationship 985dae1a-0d79-59cc-8820-f432e1ffda99
+	fromColumn: Empenhos.Fornecedor
+	toColumn: Fornecedores.Fornecedor
+
+relationship f7737b81-b305-50eb-bb4c-8d49b67cecbe
+	fromColumn: Empenhos.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship 61cea1c2-ae20-5e84-a028-c79a5557151f
+	fromColumn: Contratos.Fornecedor
+	toColumn: Fornecedores.Fornecedor
+
+relationship 6cab6938-f4f9-5bda-ac3b-b48070b2a16d
+	fromColumn: 'Títulos'.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship 796b4b70-ebf8-588e-8ebf-ccd850b59363
+	fromColumn: 'Foto da dívida'.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'

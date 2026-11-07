@@ -1,5 +1,6 @@
 // Gera os painéis em HTML único e autocontido: entrega/painel-gestao-creasp.html (geral), entrega/painel-empresas-creasp.html (Empresas)
-// entrega/painel-profissionais-creasp.html (Profissionais) entrega/painel-fiscalizacao-creasp.html (Fiscalização e malha fina) e entrega/painel-conselho-creasp.html (Gestão do Conselho). Com --artifact <arquivo>, grava também a versão do painel de Empresas sem o
+// entrega/painel-profissionais-creasp.html (Profissionais), entrega/painel-fiscalizacao-creasp.html (Fiscalização e malha fina), entrega/painel-financeiro-creasp.html
+// (Financeiro), entrega/painel-atendimento-creasp.html (Atendimento) e entrega/painel-conselho-creasp.html (Gestão do Conselho). Com --artifact <arquivo>, grava também a versão do painel de Empresas sem o
 // esqueleto <html>/<head>/<body>, usada para publicar como página.
 import { execSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -16,6 +17,8 @@ gerar('vite.painel.config.ts', 'dist-painel', 'painel.html', 'entrega/painel-ges
 const empresas = gerar('vite.empresas.config.ts', 'dist-empresas', 'empresas.html', 'entrega/painel-empresas-creasp.html');
 gerar('vite.profissionais.config.ts', 'dist-profissionais', 'profissionais.html', 'entrega/painel-profissionais-creasp.html');
 gerar('vite.fiscalizacao.config.ts', 'dist-fiscalizacao', 'fiscalizacao.html', 'entrega/painel-fiscalizacao-creasp.html');
+gerar('vite.financeiro.config.ts', 'dist-financeiro', 'financeiro.html', 'entrega/painel-financeiro-creasp.html');
+gerar('vite.atendimento.config.ts', 'dist-atendimento', 'atendimento.html', 'entrega/painel-atendimento-creasp.html');
 gerar('vite.conselho.config.ts', 'dist-conselho', 'conselho.html', 'entrega/painel-conselho-creasp.html');
 const index = process.argv.indexOf('--artifact');
 if (index > 0) {

@@ -1,0 +1,38 @@
+/// Tem os fornecedores do Conselho, pela razão social. No cenário, os nomes são fictícios e terminam com "(demonstrativo)".
+table Fornecedores
+	lineageTag: 9274f413-8851-53c9-bf29-a01b3dddba98
+
+	column Fornecedor
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Fornecedor
+		lineageTag: d32098b1-8434-51df-a8eb-a919ebed7ffc
+
+	column Nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome
+		lineageTag: 926c9f57-e9d6-50b9-825e-f1df014853be
+
+	column Objeto
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Objeto
+		lineageTag: 341b01b7-1727-5479-bec7-5bdfba3095b2
+
+	column Natureza
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Natureza
+		lineageTag: 51bc26e0-7167-592e-a185-1338d6cfc6ed
+
+	partition Fornecedores = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "fornecedores.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Fornecedor", type text}, {"Nome", type text}, {"Objeto", type text}, {"Natureza", type text}}, "pt-BR")
+				in
+				    Tipos

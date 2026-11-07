@@ -1,0 +1,86 @@
+/// Guarda a dívida de anuidade no último dia de cada mês: uma linha por devedor e idade da anuidade, com o valor vencido e não pago, se o devedor está acima do piso de execução, a parte perto de prescrever e, nas empresas, a situação do CNPJ na Receita Federal.
+table 'Foto da dívida'
+	lineageTag: 96253da2-13e2-5d90-8bd9-d93a38c5d3e5
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: d51e5a77-d7a0-5541-908f-dcfffe4b8a5e
+
+	column Devedor
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Devedor
+		lineageTag: 498fff86-abf2-5930-814c-be2e5a660851
+
+	column 'Tipo de devedor'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo de devedor
+		lineageTag: a35b3247-ca3d-5395-952d-77ef9af70460
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 173fc157-4c37-5acd-891b-d67ff41a7ebc
+
+	column 'Idade da anuidade'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Idade da anuidade
+		sortByColumn: 'Ordem da idade'
+		lineageTag: 8fbb8986-ff0e-5d40-bc8d-e44e1fb33105
+
+	column 'Ordem da idade'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem da idade
+		lineageTag: 2d7d9ee4-425d-5c5e-8cd3-dcfc2424cfed
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: 1b7557bb-91f7-5f1d-b44b-dd3364629814
+
+	column 'Acima do piso'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Acima do piso
+		lineageTag: f2e9659a-469f-56f8-bdbc-bde28b19cb39
+
+	column 'Perto de prescrever'
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Perto de prescrever
+		lineageTag: 73dc38e1-c252-5677-849e-2189ee9f7fea
+
+	column 'Situação do CNPJ'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Situação do CNPJ
+		lineageTag: b012347e-1de5-5ea0-93bc-0c96671bca87
+
+	partition 'Foto da dívida' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "foto-divida.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Devedor", type text}, {"Tipo de devedor", type text}, {"Código IBGE", type text}, {"Idade da anuidade", type text}, {"Ordem da idade", Int64.Type}, {"Valor", type number}, {"Acima do piso", Int64.Type}, {"Perto de prescrever", type number}, {"Situação do CNPJ", type text}}, "pt-BR")
+				in
+				    Tipos

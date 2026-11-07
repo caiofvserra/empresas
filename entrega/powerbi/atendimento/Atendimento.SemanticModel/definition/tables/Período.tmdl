@@ -1,0 +1,19 @@
+/// Guarda o número de meses somados nos fluxos, contados para trás a partir da data de referência. No Power BI Desktop, é um parâmetro do tipo "Intervalo numérico", de 1 a 36 meses.
+table 'Período'
+	lineageTag: 8f577554-35a5-5d8a-905e-c97c1189b5cf
+
+	column Meses
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Value]
+		lineageTag: 53142a6e-82a8-562c-9731-c346dd6cc8f5
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+	partition 'Período' = calculated
+		mode: import
+		source = GENERATESERIES(1, 36, 1)

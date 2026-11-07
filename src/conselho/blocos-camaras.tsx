@@ -5,7 +5,7 @@ import type { CockpitCtx } from '../cockpit/contexto';
 import type { Exportavel } from '../cockpit/ui';
 import { decisoesAuto, faixasIdadeProcesso, faixasPrescricao, fases } from '../domain/gestao';
 import type { LinhaCamara } from '../domain/gestao';
-import { abrirProcessos, eixoCategoria, eixoValor, g, legenda } from './comum';
+import { abrirProcessos, eixoCategoria, eixoValor, g, legenda } from '../gestao/comum';
 
 /**
  * Blocos da página Câmaras e plenário (06/11/2026): o estoque de processos de cada câmara especializada, a idade, o ritmo de entrada e

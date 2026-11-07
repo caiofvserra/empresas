@@ -1,0 +1,41 @@
+/// Tem as unidades de coworking do Crea-SP, pelo município, com o número de mesas. Os filtros chegam pela GRE, como no painel.
+table Coworkings
+	lineageTag: f668bc10-fe0e-590a-89c1-5d482d725915
+
+	column Unidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Unidade
+		lineageTag: 4b728151-7974-51b7-92d3-6589acdecb4c
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 4d88f1fd-6cce-5caf-a1e9-1ae5401aba50
+
+	column GRE
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 0f036bff-2b77-5c69-826e-91b73bb880a6
+
+	column Mesas
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mesas
+		lineageTag: 86c95120-24bc-5eb2-be49-3388c9eac579
+
+	partition Coworkings = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "coworkings.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Unidade", type text}, {"Código IBGE", type text}, {"GRE", type text}, {"Mesas", Int64.Type}}, "pt-BR")
+				in
+				    Tipos
