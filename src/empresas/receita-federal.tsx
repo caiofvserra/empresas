@@ -15,14 +15,14 @@ import { compacto, eixoCategoria, eixoValor, legenda } from '../gestao/comum';
  */
 export const mercadoReceita = mercadoJson as unknown as MercadoReceita;
 /** Meses dos gráficos e dos cartões: o período do alto da tela, contado até o último mês completo do arquivo da Receita (no máximo 35, o que o arquivo guarda). */
-export const mesesReceita = (ctx: CockpitCtx) => Math.min(mesesDoArquivo(mercadoReceita).length - 1, Math.max(1, ctx.period));
-export const ultimoMesReceita = ultimoMesCompleto(mercadoReceita);
-export function useQuadroReceita(ctx: CockpitCtx, meses = mesesReceita(ctx)): QuadroReceita {
+export const janelaReceita = (ctx: CockpitCtx) => Math.min(mesesDoArquivo(mercadoReceita).length - 1, Math.max(1, ctx.period));
+export const mesFinalReceita = ultimoMesCompleto(mercadoReceita);
+export function useQuadroReceita(ctx: CockpitCtx, meses = janelaReceita(ctx)): QuadroReceita {
   return useMemo(() => quadroReceita(mercadoReceita, municipiosSp(ctx.dataset), { greId: ctx.greId, cityId: ctx.cidadeId, meses }), [ctx.dataset, ctx.greId, ctx.cidadeId, meses]);
 }
 
 /* ---------- Abertos e baixados, mês a mês ---------- */
-export function MesesReceita({ ctx, q }: { ctx: CockpitCtx; q: QuadroReceita }) {
+export function BarrasReceita({ ctx, q }: { ctx: CockpitCtx; q: QuadroReceita }) {
   const { tokens } = ctx, rows = q.meses, poucos = rows.length <= 12;
   const option = useMemo(() => ({
     grid: { top: 30, right: 6, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens),

@@ -16,7 +16,7 @@ import { buildConselho, quadroConselho } from '../domain/conselho';
 import { buildInstalacoes, buildObras, buildSociedades, quadroInstalacoes, quadroObras, quadroSociedades } from '../domain/frentes';
 import { datasHistorico, pontoHistorico } from '../observatorio/historico';
 import type { PontoHistorico } from '../observatorio/historico';
-import { aberturasRfb, buildDemandaPlanejada, concentracaoMercado, permanenciaCoorte, quadroDemanda } from '../domain/mercado';
+import { buildDemandaPlanejada, concentracaoMercado, permanenciaCoorte, quadroDemanda } from '../domain/mercado';
 import { buildCno, buildCredenciamentos, buildDespesaTce, buildJucesp, buildLicencas, buildPericias, buildSociosPf, buildVinculos, coorteNominal, quadroCno, quadroCredenciamentos, quadroDenominacao, quadroJucesp, quadroLicencas, quadroPericias, quadroSociosPf, quadroTce, quadroVinculos } from '../domain/parcerias';
 import type { EnterpriseModel } from '../enterprise-v10/types';
 import { EngineeringEmblem } from '../components/EngineeringIdentity';
@@ -51,7 +51,7 @@ import PaginaMercado from '../empresas/PaginaMercado';
 import PaginaEvolucao from '../empresas/PaginaEvolucao';
 import PaginaRt from '../empresas/PaginaRt';
 import PaginaVinculos from '../empresas/PaginaVinculos';
-import { mercadoReceita } from '../empresas/blocos-receita';
+import { mercadoReceita } from '../empresas/receita-federal';
 import PaginaProfissionais from '../profissionais/PaginaProfissionais';
 import PaginaFluxo from '../profissionais/PaginaFluxo';
 import PaginaAtuacao from '../profissionais/PaginaAtuacao';
@@ -351,7 +351,7 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
     const linhas = linhasGre(stateModel, stateHistory, stateScope, regionais, period, stateMalha, stateArts.atual);
     const cobradas = model.metrics.compliance.denominatorCompanyIds?.length ?? 0;
     const norte = { cobertura: cobertura(scope, model), contagens: contagens(scope, model), conversao: conversao(f, gre || null), receita: receitaAtribuivel(view, f, gre || null, period), tempo: tempoAteAgir(view, f, gre || null, period, tipoLabel) };
-    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), aberturas: aberturasRfb(view, gre || null, mesesHist, cidade || null), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
+    const mercado = { concentracao: concentracaoMercado(contratos), demanda: quadroDemanda(buildDemandaPlanejada(view)), permanencia: [3, 6, 12].map(meses => permanenciaCoorte(view, scope.companyIds, meses)) };
     return { resumo, regionais, contratos, malha, arts, linhas, ponte: ponteBase(model, scope, f, period), rec: receita(history, f, gre || null, period),
       inadimplencia: cobradas ? devedoras(model).size / cobradas * 100 : null, cao: caoService(scope).median, norte, mercado };
   }, [view, f, fEstado, gre, cidade, period, mesesHist, camara, scope, model, history, stateScope, stateModel, stateHistory]);

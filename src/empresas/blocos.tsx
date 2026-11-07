@@ -12,9 +12,9 @@ import { fontesInstalacao } from '../domain/frentes';
 import type { FonteInstalacao } from '../domain/frentes';
 import { desfechosJucesp, faixasVinculos } from '../domain/parcerias';
 import type { DesfechoJucesp } from '../domain/parcerias';
-import { MesesReceita } from './blocos-receita';
+import { BarrasReceita } from './receita-federal';
 import type { QuadroReceita } from '../domain/receita-mercado';
-import { artsMensais, artsPorProfissional, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico, ultimoMesReceita } from '../domain/empresas';
+import { artsMensais, artsPorProfissional, idadeCapital, mercadoEmArvore, registrosPorCamara, ritmoEconomico } from '../domain/empresas';
 import type { LinhaCnae, RamoMercado } from '../domain/empresas';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { artPorCamara, camaraPorte, entradasSaidas, pagamento, portes, situacaoReceita } from '../cockpit/medidas';
@@ -262,7 +262,7 @@ export const exportarDinamica = (ctx: CockpitCtx, q: QuadroReceita): Exportavel 
 export function Dinamica({ ctx, q }: { ctx: CockpitCtx; q: QuadroReceita }) {
   const coortes = ctx.mercado.permanencia;
   return <div className="split is-wide">
-    <MesesReceita ctx={ctx} q={q} />
+    <BarrasReceita ctx={ctx} q={q} />
     <ul className="side-list" aria-label="Permanência das coortes">
       <li className="side-head">Continuam registradas</li>
       {coortes.map(row => <li key={row.mesesAtras}><button onClick={() => row.saidas.length && ctx.open({ kind: 'empresas', title: `Saíram da base em ${row.mesesAtras} meses`, what: `Empresas com registro ou visto vigente em ${data(row.d0)} e sem registro vigente na data de referência.`, use: 'Perda de vínculo institucional; cadastro vigente não prova atividade e a saída não tem causa atribuída.', ids: row.saidas })} className="is-acao"><span>Registradas há {row.mesesAtras} meses<br /><small>{int(row.permanecem.length)} de {int(row.coorte.length)} seguem registradas</small></span><b>{row.taxa === null ? '—' : pct(row.taxa, 1)}</b></button></li>)}
