@@ -82,7 +82,7 @@ export function MapaMunicipios({ ctx, medida, onCidade, onGre }: { ctx: CockpitC
           return { name, itemStyle: { areaColor: cor(name), opacity: apagado ? 0.25 : 1, borderColor: escolhido ? tokens.ink : tokens.surface, borderWidth: escolhido ? 1.6 : 0.35 } }; }) },
       series: [{ type: 'scatter', coordinateSystem: 'geo', symbolSize: 1, itemStyle: { color: 'transparent' }, silent: true,
         data: [...rotulos].map(([greId, at]) => ({ name: nomeGre.get(greId) ?? greId, value: at })),
-        label: { show: true, formatter: (item: any) => item.name, color: dark ? '#E2E8F0' : '#1A202C', fontSize: 9.5, fontWeight: 700, textBorderColor: dark ? 'rgba(8,20,40,.9)' : 'rgba(255,255,255,.85)', textBorderWidth: 2.5 },
+        label: { show: true, formatter: (item: any) => item.name, color: dark ? '#E2E8F0' : '#1A202C', fontSize: 11, fontWeight: 700, textBorderColor: dark ? 'rgba(8,20,40,.9)' : 'rgba(255,255,255,.85)', textBorderWidth: 2.5 },
         labelLayout: { hideOverlap: true } }],
     };
   }, [regioes, rotulos, centroids, classes, medida, tokens, destaque, ctx.greId, local, porNome, nomeGre]); // eslint-disable-line react-hooks/exhaustive-deps
