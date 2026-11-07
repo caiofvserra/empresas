@@ -1,0 +1,96 @@
+# Rotina mensal da triagem dos serviços gerais do PNCP com o modelo treinado (scripts/pncp-triagem.py), 07/11/2026.
+# Roda todo dia 5, às 6h de Brasília, sobre o mês anterior; a primeira vez, sem staging guardado, cobre os 12 meses anteriores.
+# Também roda à mão em Actions > Triagem do PNCP > Run workflow, com datas opcionais.
+#
+# Uma vez só, antes da primeira rodada: crie a release `modelo-pncp` e anexe o pacote_reuso.joblib do Drive
+# (Releases > Draft a new release > tag modelo-pncp > anexar o arquivo > Publish). O staging, com número de controle e CNPJ,
+# fica na release `pncp-triagem-dados` deste repositório privado, fora do Git; no Git entra só o JSON de números do painel.
+name: Triagem do PNCP
+
+on:
+  schedule:
+    - cron: '0 9 5 * *'
+  workflow_dispatch:
+    inputs:
+      de: { description: 'Início (AAAA-MM-DD). Vazio = mês anterior, ou 12 meses na primeira rodada', required: false }
+      ate: { description: 'Fim (AAAA-MM-DD). Vazio = último dia do mês anterior', required: false }
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pncp-triagem
+  cancel-in-progress: false
+
+jobs:
+  triagem:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Dependências (CPU, OCR em português)
+        run: |
+          sudo apt-get -qq update && sudo apt-get -qq install -y tesseract-ocr-por > /dev/null
+          pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          # SKLEARN_VERSAO (variável do repositório) fixa a versão do treino, se o pacote avisar de versão diferente.
+          pip install -q sentence-transformers joblib pymupdf "scikit-learn${{ vars.SKLEARN_VERSAO && format('=={0}', vars.SKLEARN_VERSAO) || '' }}"
+
+      - name: Cache do encoder (BAAI/bge-m3)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-bge-m3-v1
+
+      - name: Modelo treinado e staging das rodadas anteriores
+        run: |
+          mkdir -p var/modelo var/pncp
+          gh release download modelo-pncp -p pacote_reuso.joblib -D var/modelo \
+            || { echo "::error::Falta a release modelo-pncp com o pacote_reuso.joblib (ver o começo deste arquivo)."; exit 1; }
+          gh release download pncp-triagem-dados -p triagem-sp.csv -D var/pncp 2>/dev/null || echo "Primeira rodada: sem staging guardado."
+
+      - name: Período
+        id: periodo
+        run: |
+          inicio_mes=$(date -u +%Y-%m-01)
+          ate="${{ inputs.ate }}"; de="${{ inputs.de }}"
+          [ -n "$ate" ] || ate=$(date -u -d "$inicio_mes -1 day" +%F)
+          if [ -z "$de" ]; then
+            if [ -f var/pncp/triagem-sp.csv ]; then de=$(date -u -d "$inicio_mes -1 month" +%F); else de=$(date -u -d "$inicio_mes -12 months" +%F); fi
+          fi
+          echo "de=$de" >> "$GITHUB_OUTPUT"; echo "ate=$ate" >> "$GITHUB_OUTPUT"
+          echo "Período: $de a $ate"
+
+      - name: Triagem
+        run: python3 scripts/pncp-triagem.py --pacote var/modelo/pacote_reuso.joblib --de ${{ steps.periodo.outputs.de }} --ate ${{ steps.periodo.outputs.ate }}
+
+      - name: Guardar o staging (fora do Git)
+        if: always()
+        run: |
+          [ -f var/pncp/triagem-sp.csv ] || exit 0
+          gh release view pncp-triagem-dados > /dev/null 2>&1 || gh release create pncp-triagem-dados --prerelease \
+            --title "Staging da triagem do PNCP" --notes "triagem-sp.csv para a carga de stg.pncp_triagem (integrations/sql/pncp-triagem-x-art.sql). Atualizado pela rotina mensal."
+          gh release upload pncp-triagem-dados var/pncp/triagem-sp.csv --clobber
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Painel com a rodada nova
+        run: |
+          git diff --quiet -- src/domain/pncp-triagem-sp.json && { echo "Nada mudou no painel."; exit 0; }
+          npm ci --no-audit --no-fund
+          npm test
+          npm run build:painel
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/domain/pncp-triagem-sp.json entrega/
+          git commit -m "Triagem do PNCP: rodada de $(date -u +%F) (${{ steps.periodo.outputs.de }} a ${{ steps.periodo.outputs.ate }})"
+          git push

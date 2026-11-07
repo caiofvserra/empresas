@@ -14,8 +14,10 @@ SEM_LEITURA = ('Sem compra vinculada', 'Sem documento', 'Documento ilegível')
 def linha_staging(rodada, contrato, prob, suspeito, rito):
     """Uma linha por contrato lido. `rito` é None para quem não passou do limiar: o documento só é lido para os suspeitos."""
     rito = rito or {'desfecho': NAO_ANALISADO, 'marcadores': [], 'documentos': 0}
+    # CPF de fornecedor pessoa física não é gravado: o cruzamento é só com empresas, e o staging fica guardado fora do Git.
+    ni = '' if contrato['fornecedor_tipo'] == 'PF' else contrato['fornecedor_ni']
     return [rodada, contrato['pncp_id'], contrato['ncp_compra'], contrato['pncp_id'][:14], contrato['municipio_ibge'], contrato['publicacao'],
-            contrato['fornecedor_tipo'], contrato['fornecedor_ni'], contrato['objeto'], f'{prob:.4f}', 'Sim' if suspeito else 'Não',
+            contrato['fornecedor_tipo'], ni, contrato['objeto'], f'{prob:.4f}', 'Sim' if suspeito else 'Não',
             rito['desfecho'], '|'.join(rito['marcadores']), str(rito['documentos'])]
 
 
