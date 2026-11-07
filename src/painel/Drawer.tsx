@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { municipioPorId } from '../domain/municipios';
 import { Copy, Download, Filter, Search, X } from 'lucide-react';
 import { baixarCsv, nomeArquivo, textoCsv } from './exportar';
@@ -23,6 +23,23 @@ export default function Drawer({ ctx, detail, onClose }: { ctx: Ctx; detail: Det
   const semLista = Boolean(detail.evolucao) && !content.rows.length;
   const [query, setQuery] = useState(''), [open, setOpen] = useState<string | null>(null), [limit, setLimit] = useState(50), [copied, setCopied] = useState('');
   useEffect(() => { setQuery(''); setOpen(null); setLimit(50); setCopied(''); }, [detail]);
+  // Foco (07/11/2026, crítica de design): ao abrir, o foco entra no painel e fica preso nele com Tab; ao fechar, volta para o
+  // cartão ou o item que o abriu. Antes quem navega pelo teclado continuava atrás do painel.
+  const painel = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const anterior = document.activeElement as HTMLElement | null;
+    painel.current?.focus();
+    const preso = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab' || !painel.current) return;
+      const focaveis = [...painel.current.querySelectorAll<HTMLElement>('button:not(:disabled), input, select, textarea, summary, a[href], [tabindex="0"]')];
+      if (!focaveis.length) return;
+      const [primeiro, ultimo] = [focaveis[0], focaveis.at(-1)!];
+      if (event.shiftKey && (document.activeElement === primeiro || document.activeElement === painel.current)) { event.preventDefault(); ultimo.focus(); }
+      else if (!event.shiftKey && document.activeElement === ultimo) { event.preventDefault(); primeiro.focus(); }
+    };
+    document.addEventListener('keydown', preso);
+    return () => { document.removeEventListener('keydown', preso); if (anterior?.isConnected) anterior.focus(); };
+  }, []);
   const visible = content.rows.filter(row => !query || `${row.title} ${row.subtitle} ${row.note}`.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')));
   const cabecalho = ['Nome', 'Identificação', 'Valor', 'Situação'], linhas = () => visible.map(row => [row.title, row.subtitle, row.value, row.note]);
   const copy = async () => {
@@ -30,7 +47,7 @@ export default function Drawer({ ctx, detail, onClose }: { ctx: Ctx; detail: Det
   };
   const baixar = () => { baixarCsv(nomeArquivo(['empresas', content.title, ctx.f.anchor], 'csv'), cabecalho, linhas()); setCopied(`${int(visible.length)} linhas salvas em CSV, prontas para o Excel.`); };
   return <div className="drawer-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
-    <aside className="drawer" role="dialog" aria-modal="true" aria-label={content.title}>
+    <aside ref={painel} tabIndex={-1} className="drawer" role="dialog" aria-modal="true" aria-label={content.title}>
       <header><div><span className="eyebrow">{content.eyebrow}</span><h2>{content.title}</h2></div>
         <div className="drawer-actions">{content.greId && <button className="ghost" onClick={() => { ctx.filterGre(content.greId!); onClose(); }}><Filter size={14} />Filtrar a página</button>}
           {content.recorte && <button className="ghost" onClick={() => { ctx.filtrar(content.recorte!); onClose(); }} title="Aplica este recorte aos filtros do alto da tela, como o filtro cruzado do Power BI"><Filter size={14} />Filtrar a página por {rotuloRecorte(ctx, content.recorte)}</button>}<button className="icon-btn" onClick={onClose} aria-label="Fechar detalhe"><X size={18} /></button></div></header>

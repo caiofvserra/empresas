@@ -251,7 +251,9 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
-      if (event.key === 'Escape') { if (detail) setDetail(null); else if (modal) setModal(null); else setFocus(null); return; }
+      // Esc fecha primeiro o balão aberto (ficha (i) ou exportação), depois (07/11/2026) o painel lateral, a janela e o bloco ampliado.
+      if (event.key === 'Escape') { const balao = document.querySelector<HTMLDetailsElement>('details.ficha-pop[open], details.exporta-pop[open], details.ck-mais[open]');
+        if (balao) { balao.open = false; balao.querySelector('summary')?.focus(); } else if (detail) setDetail(null); else if (modal) setModal(null); else setFocus(null); return; }
       if (event.ctrlKey || event.metaKey || event.altKey || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName) || modal || detail) return;
       if (event.key === '/' && leve && !deProfissionais && !deGestao) { event.preventDefault(); buscarRef.current(); return; }
       if (/^[0-9]$/.test(event.key)) { const index = event.key === '0' ? 9 : Number(event.key) - 1; if (pages[index]) setPage(pages[index].id); }
