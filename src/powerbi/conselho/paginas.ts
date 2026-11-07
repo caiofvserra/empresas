@@ -2,7 +2,6 @@ import type { Pagina, Visual } from '../pbir';
 import { CARTOES } from './modelo';
 import { MES, cabecalho as cabecalhoComum, campoColuna, campoMedida, cartoes as cartoesComuns, caixa, lugar } from '../layout';
 import type { Filtro } from '../layout';
-export { TAMANHO_DA_PAGINA } from '../layout';
 
 /*
  * As cinco páginas do painel de Gestão do Conselho no relatório PBIR, na grade comum de `layout.ts`. Os mapas por município, que
@@ -50,12 +49,14 @@ export const paginasConselho: Pagina[] = [
     // Os gastos com nome: quem recebeu as diárias e os fornecedores pela razão social.
     { id: 'orcamento-diarias', tipo: 'tableEx', ...caixa(lugar(0, 1, 4)), titulo: 'Diárias por beneficiário', papeis: { Values: [campoColuna('Pessoas', 'Nome'), campoColuna('Diárias', 'Categoria'), campoColuna('Pessoas', 'Cargo'),
       campoColuna('Pessoas', 'Lotação'), campoMedida('Diárias e passagens', 'Valor'), campoMedida('Diárias pagas em 12 meses', 'Diárias'), campoMedida('Meses com diária', 'Meses'), campoMedida('Quilômetros em 12 meses', 'Quilômetros')] } },
-    { id: 'orcamento-fornecedores', tipo: 'clusteredBarChart', ...caixa(lugar(4, 1, 3)), titulo: 'Maiores fornecedores',
-      papeis: { Category: [campoColuna('Fornecedores', 'Nome')], Y: [campoMedida('Empenhado em 12 meses', 'Empenhado'), campoMedida('Pago em 12 meses', 'Pago')] } },
+    // Matriz: cada fornecedor abre (+) nos empenhos dos 12 meses, com o contrato de cada um, como o detalhe do painel.
+    { id: 'orcamento-fornecedores', tipo: 'pivotTable', ...caixa(lugar(4, 1, 3)), titulo: 'Maiores fornecedores',
+      papeis: { Rows: [campoColuna('Fornecedores', 'Nome'), campoColuna('Empenhos', 'Empenho')], Values: [campoMedida('Empenhado em 12 meses', 'Empenhado'), campoMedida('Pago em 12 meses', 'Pago')] } },
     { id: 'orcamento-contratos', tipo: 'columnChart', ...caixa(lugar(7, 1, 3)), titulo: 'Contratos que terminam nos próximos 12 meses',
       papeis: { Category: [MES], Y: [campoMedida('Contratos que terminam no mês', 'Contratos')] } },
+    // Cada função abre (+) na lista dos servidores dela, pelo nome, como o detalhe do painel.
     { id: 'orcamento-pessoal', tipo: 'pivotTable', ...caixa(lugar(10, 1, 2)), titulo: 'Pessoal por função',
-      papeis: { Rows: [campoColuna('Pessoas', 'Função')], Values: [campoMedida('Servidores efetivos', 'Efetivos'), campoMedida('Servidores comissionados', 'Comissionados'), campoMedida('Custo mensal do pessoal', 'Custo por mês')] } },
+      papeis: { Rows: [campoColuna('Pessoas', 'Função'), campoColuna('Pessoas', 'Nome')], Values: [campoMedida('Servidores efetivos', 'Efetivos'), campoMedida('Servidores comissionados', 'Comissionados'), campoMedida('Custo mensal do pessoal', 'Custo por mês')] } },
   ] },
   { id: 'camaras', nome: 'Câmaras e plenário', visuais: [
     ...cabecalho('camaras', 'Câmaras e plenário'),

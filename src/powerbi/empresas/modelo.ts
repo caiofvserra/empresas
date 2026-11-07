@@ -12,7 +12,6 @@ import { BLOCOS_PARCERIA, COLUNAS_FOTO_EMPRESAS, COORTES, comMarca, fichaDoAcord
 const colunaDaFoto = ({ nome, tipo }: typeof COLUNAS_FOTO_EMPRESAS[number]): Coluna =>
   tipo === 'sinal' ? sinal(nome) : tipo === 'inteiro' ? inteiro(nome, { oculta: true }) : texto(nome, nome === 'Tempo de registro' ? { ordenarPor: 'Ordem do tempo de registro' } : {});
 
-export { PASTA_PARAMETRO };
 const ACORDO_DO_CREDITO = fichaDoAcordo(['bcb']);
 
 const tabelas: Tabela[] = [

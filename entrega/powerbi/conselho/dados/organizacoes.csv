@@ -1,61 +1,61 @@
-Organização;Sigla;Nome;Natureza;Tipo;Código IBGE;Registrada em;Cadeiras;Ensino a distância
-ENT-01;SEE;Associação de Engenheiros do Estado (demonstrativo);Entidade de classe;Associação;3538709;2008-08-01;2;
-ENT-02;AAP;Sindicato dos Agrônomos Paulistas (demonstrativo);Entidade de classe;Sindicato;3552205;2012-03-11;2;
-ENT-03;AEE;Federação de Engenharia Elétrica (demonstrativo);Entidade de classe;Federação;3541000;2014-04-07;0;
-ENT-04;AEM;Sindicato dos Engenharia Mecânica (demonstrativo);Entidade de classe;Sindicato;3529005;1990-10-12;1;
-ENT-05;AEST;Associação de Segurança do Trabalho (demonstrativo);Entidade de classe;Associação;3548500;1998-06-12;3;
-ENT-06;AEQ;Associação de Engenharia Química (demonstrativo);Entidade de classe;Associação;3547809;2002-08-25;3;
-ENT-07;AGM;Sindicato dos Geólogos e Minas (demonstrativo);Entidade de classe;Sindicato;3548906;2020-08-18;1;
-ENT-08;AAG;Sindicato dos Agrimensura (demonstrativo);Entidade de classe;Sindicato;3543402;2007-07-28;0;
-ENT-09;AEC;Associação de Engenharia Civil (demonstrativo);Entidade de classe;Associação;3503208;2017-01-04;1;
-ENT-10;ATI;Instituto de Técnicos Industriais (demonstrativo);Entidade de classe;Instituto;3554102;2007-12-24;3;
-ENT-11;ATE;Instituto de Tecnólogos (demonstrativo);Entidade de classe;Instituto;3507506;2010-08-23;1;
-ENT-12;AEP;Instituto de Engenharia de Produção (demonstrativo);Entidade de classe;Instituto;3549904;1990-01-25;4;
-ENT-13;SEE-GUA;Sindicato dos Engenheiros do Estado · Guarulhos (demonstrativo);Entidade de classe;Sindicato;3518800;2011-07-19;1;
-ENT-14;AAP-PRE;Sindicato dos Agrônomos Paulistas · Presidente Prudente (demonstrativo);Entidade de classe;Sindicato;3541406;1994-06-08;3;
-ENT-15;AEE-CAM;Federação de Engenharia Elétrica · Campinas (demonstrativo);Entidade de classe;Federação;3509502;1996-09-23;0;
-ENT-16;AEM-SÃO;Associação de Engenharia Mecânica · São José do Rio Preto (demonstrativo);Entidade de classe;Associação;3549805;1996-03-13;4;
-ENT-17;AEST-JUN;Instituto de Segurança do Trabalho · Jundiaí (demonstrativo);Entidade de classe;Instituto;3525904;2015-04-20;3;
-ENT-18;AEQ-BAR;Associação de Engenharia Química · Barueri (demonstrativo);Entidade de classe;Associação;3505708;1992-03-31;0;
-ENT-19;AGM-SÃO;Associação de Geólogos e Minas · São Paulo (demonstrativo);Entidade de classe;Associação;3550308;1994-08-29;1;
-ENT-20;AAG-MOG;Associação de Agrimensura · Mogi Guaçu (demonstrativo);Entidade de classe;Associação;3530706;2018-03-15;0;
-ENT-21;AEC-LIM;Associação de Engenharia Civil · Limeira (demonstrativo);Entidade de classe;Associação;3526902;2012-07-09;0;
-ENT-22;ATI-ARA;Associação de Técnicos Industriais · Araçatuba (demonstrativo);Entidade de classe;Associação;3502804;2016-07-28;0;
-ENT-23;ATE-BAU;Federação de Tecnólogos · Bauru (demonstrativo);Entidade de classe;Federação;3506003;2018-11-21;4;
-ENT-24;AEP-OSA;Instituto de Engenharia de Produção · Osasco (demonstrativo);Entidade de classe;Instituto;3534401;2019-06-01;3;
-IES-01;UE-CAM;Universidade Estadual de Campinas (demonstrativo);IES pública;Universidade;3509502;2012-01-27;2;0,01
-IES-02;CUP-SAN;Centro universitário Particular de Santos (demonstrativo);IES privada;Centro universitário;3548500;2001-03-11;0;0,64
-IES-03;FP-MOG;Faculdade Particular de Mogi Guaçu (demonstrativo);IES privada;Faculdade;3530706;2016-02-01;3;0,27
-IES-04;CUP-TAU;Centro universitário Particular de Taubaté (demonstrativo);IES privada;Centro universitário;3554102;1988-06-06;0;0,55
-IES-05;UE-FRA;Universidade Estadual de Franca (demonstrativo);IES pública;Universidade;3516200;1995-06-11;1;0,04
-IES-06;FP-CAM;Faculdade Particular de Campinas (demonstrativo);IES privada;Faculdade;3509502;1985-11-13;4;0,39
-IES-07;FP-SAN;Faculdade Particular de Santos (demonstrativo);IES privada;Faculdade;3548500;1994-11-16;4;0,15
-IES-08;CUP-MOG;Centro universitário Particular de Mogi Guaçu (demonstrativo);IES privada;Centro universitário;3530706;1992-03-04;2;0,81
-IES-09;UE-TAU;Universidade Estadual de Taubaté (demonstrativo);IES pública;Universidade;3554102;1986-11-27;1;0,05
-IES-10;FP-FRA;Faculdade Particular de Franca (demonstrativo);IES privada;Faculdade;3516200;2011-12-27;0;0,28
-IES-11;FP-CAM;Faculdade Particular de Campinas (demonstrativo);IES privada;Faculdade;3509502;2010-04-26;0;0,29
-IES-12;FP-SAN;Faculdade Particular de Santos (demonstrativo);IES privada;Faculdade;3548500;1999-07-08;1;0,42
-IES-13;UE-MOG;Universidade Estadual de Mogi Guaçu (demonstrativo);IES pública;Universidade;3530706;2014-11-23;3;0,02
-IES-14;UP-TAU;Universidade Particular de Taubaté (demonstrativo);IES privada;Universidade;3554102;1999-05-24;1;0,83
-IES-15;CUP-FRA;Centro universitário Particular de Franca (demonstrativo);IES privada;Centro universitário;3516200;1987-08-14;4;0,66
-IES-16;FP-CAM;Faculdade Particular de Campinas (demonstrativo);IES privada;Faculdade;3509502;1992-10-12;2;0,33
-IES-17;UE-SAN;Universidade Estadual de Santos (demonstrativo);IES pública;Universidade;3548500;1985-04-11;2;0,07
-IES-18;UP-MOG;Universidade Particular de Mogi Guaçu (demonstrativo);IES privada;Universidade;3530706;2018-11-06;1;0,83
-IES-19;FP-TAU;Faculdade Particular de Taubaté (demonstrativo);IES privada;Faculdade;3554102;2004-05-05;0;0,28
-IES-20;FP-FRA;Faculdade Particular de Franca (demonstrativo);IES privada;Faculdade;3516200;2018-02-02;0;0,16
-IES-21;UE-CAM;Universidade Estadual de Campinas (demonstrativo);IES pública;Universidade;3509502;2014-01-25;2;0,04
-IES-22;FP-SAN;Faculdade Particular de Santos (demonstrativo);IES privada;Faculdade;3548500;1997-10-13;0;0,52
-IES-23;CUP-MOG;Centro universitário Particular de Mogi Guaçu (demonstrativo);IES privada;Centro universitário;3530706;2003-12-02;4;0,87
-IES-24;CUP-TAU;Centro universitário Particular de Taubaté (demonstrativo);IES privada;Centro universitário;3554102;2009-10-20;0;0,41
-IES-25;UE-FRA2;Universidade Estadual de Franca II (demonstrativo);IES pública;Universidade;3516200;1996-07-16;2;0,08
-IES-26;FP-CAM2;Faculdade Particular de Campinas II (demonstrativo);IES privada;Faculdade;3509502;1990-10-07;4;0,21
-IES-27;CUP-SAN2;Centro universitário Particular de Santos II (demonstrativo);IES privada;Centro universitário;3548500;1989-10-15;2;0,41
-IES-28;FP-MOG2;Faculdade Particular de Mogi Guaçu II (demonstrativo);IES privada;Faculdade;3530706;2014-07-24;4;0,23
-IES-29;UE-TAU2;Universidade Estadual de Taubaté II (demonstrativo);IES pública;Universidade;3554102;2006-07-16;1;0,03
-IES-30;FP-FRA2;Faculdade Particular de Franca II (demonstrativo);IES privada;Faculdade;3516200;1987-04-24;3;0,38
-IES-31;CUP-CAM2;Centro universitário Particular de Campinas II (demonstrativo);IES privada;Centro universitário;3509502;1986-07-18;1;0,73
-IES-32;UP-SAN2;Universidade Particular de Santos II (demonstrativo);IES privada;Universidade;3548500;2011-05-13;2;0,88
-IES-33;UE-MOG2;Universidade Estadual de Mogi Guaçu II (demonstrativo);IES pública;Universidade;3530706;2003-12-09;1;0,01
-IES-34;FP-TAU2;Faculdade Particular de Taubaté II (demonstrativo);IES privada;Faculdade;3554102;2000-03-27;3;0,5
-IES-35;FP-FRA2;Faculdade Particular de Franca II (demonstrativo);IES privada;Faculdade;3516200;1988-08-11;1;0,17
-IES-36;CUP-CAM2;Centro universitário Particular de Campinas II (demonstrativo);IES privada;Centro universitário;3509502;1997-10-02;0;0,83
+Organização;Sigla;Nome;Natureza;Tipo;Código IBGE;GRE;Registrada em;Cadeiras;Ensino a distância
+ENT-01;SEE;Associação de Engenheiros do Estado (demonstrativo);Entidade de classe;Associação;3538709;GRE 4;2008-08-01;2;
+ENT-02;AAP;Sindicato dos Agrônomos Paulistas (demonstrativo);Entidade de classe;Sindicato;3552205;GRE 11;2012-03-11;2;
+ENT-03;AEE;Federação de Engenharia Elétrica (demonstrativo);Entidade de classe;Federação;3541000;GRE 7;2014-04-07;0;
+ENT-04;AEM;Sindicato dos Engenharia Mecânica (demonstrativo);Entidade de classe;Sindicato;3529005;GRE 16;1990-10-12;1;
+ENT-05;AEST;Associação de Segurança do Trabalho (demonstrativo);Entidade de classe;Associação;3548500;GRE 7;1998-06-12;3;
+ENT-06;AEQ;Associação de Engenharia Química (demonstrativo);Entidade de classe;Associação;3547809;GRE 14;2002-08-25;3;
+ENT-07;AGM;Sindicato dos Geólogos e Minas (demonstrativo);Entidade de classe;Sindicato;3548906;GRE 10;2020-08-18;1;
+ENT-08;AAG;Sindicato dos Agrimensura (demonstrativo);Entidade de classe;Sindicato;3543402;GRE 3;2007-07-28;0;
+ENT-09;AEC;Associação de Engenharia Civil (demonstrativo);Entidade de classe;Associação;3503208;GRE 10;2017-01-04;1;
+ENT-10;ATI;Instituto de Técnicos Industriais (demonstrativo);Entidade de classe;Instituto;3554102;GRE 6;2007-12-24;3;
+ENT-11;ATE;Instituto de Tecnólogos (demonstrativo);Entidade de classe;Instituto;3507506;GRE 8;2010-08-23;1;
+ENT-12;AEP;Instituto de Engenharia de Produção (demonstrativo);Entidade de classe;Instituto;3549904;GRE 6;1990-01-25;4;
+ENT-13;SEE-GUA;Sindicato dos Engenheiros do Estado · Guarulhos (demonstrativo);Entidade de classe;Sindicato;3518800;GRE 13;2011-07-19;1;
+ENT-14;AAP-PRE;Sindicato dos Agrônomos Paulistas · Presidente Prudente (demonstrativo);Entidade de classe;Sindicato;3541406;GRE 15;1994-06-08;3;
+ENT-15;AEE-CAM;Federação de Engenharia Elétrica · Campinas (demonstrativo);Entidade de classe;Federação;3509502;GRE 2;1996-09-23;0;
+ENT-16;AEM-SÃO;Associação de Engenharia Mecânica · São José do Rio Preto (demonstrativo);Entidade de classe;Associação;3549805;GRE 9;1996-03-13;4;
+ENT-17;AEST-JUN;Instituto de Segurança do Trabalho · Jundiaí (demonstrativo);Entidade de classe;Instituto;3525904;GRE 2;2015-04-20;3;
+ENT-18;AEQ-BAR;Associação de Engenharia Química · Barueri (demonstrativo);Entidade de classe;Associação;3505708;GRE 5;1992-03-31;0;
+ENT-19;AGM-SÃO;Associação de Geólogos e Minas · São Paulo (demonstrativo);Entidade de classe;Associação;3550308;GRE 5;1994-08-29;1;
+ENT-20;AAG-MOG;Associação de Agrimensura · Mogi Guaçu (demonstrativo);Entidade de classe;Associação;3530706;GRE 12;2018-03-15;0;
+ENT-21;AEC-LIM;Associação de Engenharia Civil · Limeira (demonstrativo);Entidade de classe;Associação;3526902;GRE 4;2012-07-09;0;
+ENT-22;ATI-ARA;Associação de Técnicos Industriais · Araçatuba (demonstrativo);Entidade de classe;Associação;3502804;GRE 1;2016-07-28;0;
+ENT-23;ATE-BAU;Federação de Tecnólogos · Bauru (demonstrativo);Entidade de classe;Federação;3506003;GRE 8;2018-11-21;4;
+ENT-24;AEP-OSA;Instituto de Engenharia de Produção · Osasco (demonstrativo);Entidade de classe;Instituto;3534401;GRE 5;2019-06-01;3;
+IES-01;UE-CAM;Universidade Estadual de Campinas (demonstrativo);IES pública;Universidade;3509502;GRE 2;2012-01-27;2;0,01
+IES-02;CUP-SAN;Centro universitário Particular de Santos (demonstrativo);IES privada;Centro universitário;3548500;GRE 7;2001-03-11;0;0,64
+IES-03;FP-MOG;Faculdade Particular de Mogi Guaçu (demonstrativo);IES privada;Faculdade;3530706;GRE 12;2016-02-01;3;0,27
+IES-04;CUP-TAU;Centro universitário Particular de Taubaté (demonstrativo);IES privada;Centro universitário;3554102;GRE 6;1988-06-06;0;0,55
+IES-05;UE-FRA;Universidade Estadual de Franca (demonstrativo);IES pública;Universidade;3516200;GRE 3;1995-06-11;1;0,04
+IES-06;FP-CAM;Faculdade Particular de Campinas (demonstrativo);IES privada;Faculdade;3509502;GRE 2;1985-11-13;4;0,39
+IES-07;FP-SAN;Faculdade Particular de Santos (demonstrativo);IES privada;Faculdade;3548500;GRE 7;1994-11-16;4;0,15
+IES-08;CUP-MOG;Centro universitário Particular de Mogi Guaçu (demonstrativo);IES privada;Centro universitário;3530706;GRE 12;1992-03-04;2;0,81
+IES-09;UE-TAU;Universidade Estadual de Taubaté (demonstrativo);IES pública;Universidade;3554102;GRE 6;1986-11-27;1;0,05
+IES-10;FP-FRA;Faculdade Particular de Franca (demonstrativo);IES privada;Faculdade;3516200;GRE 3;2011-12-27;0;0,28
+IES-11;FP-CAM;Faculdade Particular de Campinas (demonstrativo);IES privada;Faculdade;3509502;GRE 2;2010-04-26;0;0,29
+IES-12;FP-SAN;Faculdade Particular de Santos (demonstrativo);IES privada;Faculdade;3548500;GRE 7;1999-07-08;1;0,42
+IES-13;UE-MOG;Universidade Estadual de Mogi Guaçu (demonstrativo);IES pública;Universidade;3530706;GRE 12;2014-11-23;3;0,02
+IES-14;UP-TAU;Universidade Particular de Taubaté (demonstrativo);IES privada;Universidade;3554102;GRE 6;1999-05-24;1;0,83
+IES-15;CUP-FRA;Centro universitário Particular de Franca (demonstrativo);IES privada;Centro universitário;3516200;GRE 3;1987-08-14;4;0,66
+IES-16;FP-CAM;Faculdade Particular de Campinas (demonstrativo);IES privada;Faculdade;3509502;GRE 2;1992-10-12;2;0,33
+IES-17;UE-SAN;Universidade Estadual de Santos (demonstrativo);IES pública;Universidade;3548500;GRE 7;1985-04-11;2;0,07
+IES-18;UP-MOG;Universidade Particular de Mogi Guaçu (demonstrativo);IES privada;Universidade;3530706;GRE 12;2018-11-06;1;0,83
+IES-19;FP-TAU;Faculdade Particular de Taubaté (demonstrativo);IES privada;Faculdade;3554102;GRE 6;2004-05-05;0;0,28
+IES-20;FP-FRA;Faculdade Particular de Franca (demonstrativo);IES privada;Faculdade;3516200;GRE 3;2018-02-02;0;0,16
+IES-21;UE-CAM;Universidade Estadual de Campinas (demonstrativo);IES pública;Universidade;3509502;GRE 2;2014-01-25;2;0,04
+IES-22;FP-SAN;Faculdade Particular de Santos (demonstrativo);IES privada;Faculdade;3548500;GRE 7;1997-10-13;0;0,52
+IES-23;CUP-MOG;Centro universitário Particular de Mogi Guaçu (demonstrativo);IES privada;Centro universitário;3530706;GRE 12;2003-12-02;4;0,87
+IES-24;CUP-TAU;Centro universitário Particular de Taubaté (demonstrativo);IES privada;Centro universitário;3554102;GRE 6;2009-10-20;0;0,41
+IES-25;UE-FRA2;Universidade Estadual de Franca II (demonstrativo);IES pública;Universidade;3516200;GRE 3;1996-07-16;2;0,08
+IES-26;FP-CAM2;Faculdade Particular de Campinas II (demonstrativo);IES privada;Faculdade;3509502;GRE 2;1990-10-07;4;0,21
+IES-27;CUP-SAN2;Centro universitário Particular de Santos II (demonstrativo);IES privada;Centro universitário;3548500;GRE 7;1989-10-15;2;0,41
+IES-28;FP-MOG2;Faculdade Particular de Mogi Guaçu II (demonstrativo);IES privada;Faculdade;3530706;GRE 12;2014-07-24;4;0,23
+IES-29;UE-TAU2;Universidade Estadual de Taubaté II (demonstrativo);IES pública;Universidade;3554102;GRE 6;2006-07-16;1;0,03
+IES-30;FP-FRA2;Faculdade Particular de Franca II (demonstrativo);IES privada;Faculdade;3516200;GRE 3;1987-04-24;3;0,38
+IES-31;CUP-CAM2;Centro universitário Particular de Campinas II (demonstrativo);IES privada;Centro universitário;3509502;GRE 2;1986-07-18;1;0,73
+IES-32;UP-SAN2;Universidade Particular de Santos II (demonstrativo);IES privada;Universidade;3548500;GRE 7;2011-05-13;2;0,88
+IES-33;UE-MOG2;Universidade Estadual de Mogi Guaçu II (demonstrativo);IES pública;Universidade;3530706;GRE 12;2003-12-09;1;0,01
+IES-34;FP-TAU2;Faculdade Particular de Taubaté II (demonstrativo);IES privada;Faculdade;3554102;GRE 6;2000-03-27;3;0,5
+IES-35;FP-FRA2;Faculdade Particular de Franca II (demonstrativo);IES privada;Faculdade;3516200;GRE 3;1988-08-11;1;0,17
+IES-36;CUP-CAM2;Centro universitário Particular de Campinas II (demonstrativo);IES privada;Centro universitário;3509502;GRE 2;1997-10-02;0;0,83

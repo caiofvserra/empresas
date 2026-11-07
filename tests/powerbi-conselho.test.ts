@@ -6,11 +6,12 @@ import { addDays } from '../src/domain/hash.ts';
 import { buildConselho, quadroConselho } from '../src/domain/conselho.ts';
 import { buildEntidades, quadroEntidades } from '../src/domain/entidades.ts';
 import { buildProfissionais, situacaoEm } from '../src/domain/profissionais.ts';
-import { buildCarteira, buildProcessos, plenario, despesaAcumulada, despesaMensal, distanciaUnidade, mediana, mesesAteData, quadroCamaras, quadroDivida, receitaMensal } from '../src/domain/gestao.ts';
+import { buildCarteira, buildProcessos, plenario, receitaAcumulada, vencimentoContratos, despesaAcumulada, despesaMensal, distanciaUnidade, mediana, mesesAteData, quadroCamaras, quadroDivida, receitaMensal } from '../src/domain/gestao.ts';
 import { mesesDaSerie } from '../src/domain/series-mensais.ts';
 import { estruturaDe } from '../src/cockpit/estrutura.ts';
 import { janela } from '../src/painel/analise.ts';
 import { pacotePowerBi } from '../src/powerbi/pacote.ts';
+import { servidores } from '../src/domain/pessoas-conselho.ts';
 import { modeloConselho } from '../src/powerbi/conselho/modelo.ts';
 import { arquivoDe, conferirCamposDosVisuais, conferirChavesUnicas, conferirNomesDePasta, conferirReferenciasDax, conferirSchemas, daxDe, fimDoMesUmAnoAntes, inicio, leitorCsv, noPeriodo, numero, soma } from './powerbi-pacote.ts';
 
@@ -195,3 +196,91 @@ for (const [d, meses] of [['2026-09-30', 12], ['2026-06-30', 3]] as const) {
     for (const chave of Object.keys(painel) as (keyof typeof painel)[]) igual(antes[chave], painel[chave], chave);
   });
 }
+
+/* ---------- os gráficos, contra as funções do protótipo (sem recorte) ---------- */
+const doMes = (rows: Record<string, string>[], coluna: string, mes: string) => rows.filter(row => row[coluna] === `${mes}-01`);
+const camaraDe = new Map(processos.map(row => [row.Processo, row.Câmara]));
+
+test('gráficos da receita: receita por mês e origem, previsto e realizado no ano e a dívida por idade e piso dão os do painel', () => {
+  for (const [d, meses] of [['2026-09-30', 12], ['2026-03-31', 6]] as const) {
+    const conselho = buildConselho(datasetAt(dataset, d)), serie = mesesAteData(d, mesesDaSerie(meses));
+    for (const row of receitaMensal(conselho, serie).slice(-meses)) for (const [origem, valor] of Object.entries(row.porFonte))
+      igual(soma(doMes(receitas, 'Mês', row.month).filter(item => item.Origem === origem), 'Realizada'), valor, `${d} ${row.month} ${origem}`);
+    // Acumulado de janeiro até o mês do eixo; no ano da data, só até o mês dela.
+    const ano = Number(d.slice(0, 4)), acumulado = (rows: Record<string, string>[], coluna: string, a: number, m: number) => soma(rows.filter(row => row.Mês >= `${a}-01-01` && row.Mês <= `${a}-${String(m).padStart(2, '0')}-01`), coluna);
+    for (const row of receitaAcumulada(conselho, d)) {
+      igual(acumulado(receitas, 'Realizada', ano - 1, row.mes), row.realizadoAntes, `${d} receita do ano anterior até ${row.mes}`);
+      if (row.realizado !== null) { igual(acumulado(receitas, 'Realizada', ano, row.mes), row.realizado, `${d} receita até ${row.mes}`); igual(acumulado(receitas, 'Prevista', ano, row.mes), row.previsto, `${d} prevista até ${row.mes}`); }
+    }
+    for (const row of despesaAcumulada(conselho, d, null)) if (row.realizado !== null) igual(acumulado(despesas, 'Orçado', ano, row.mes), row.previsto, `${d} orçado até ${row.mes}`);
+    const w = janela(d, meses), dv = quadroDivida(carteira, d, semRecorte, w.start, w.prevEnd, serie), foto = fotoDivida.filter(row => row.Data === d);
+    for (const faixa of dv.idade) {
+      const daFaixa = foto.filter(row => row['Idade da anuidade'] === faixa.faixa);
+      igual(soma(daFaixa.filter(row => row['Acima do piso'] === '0'), 'Valor'), faixa.abaixo, `${d} ${faixa.faixa} abaixo`); igual(soma(daFaixa.filter(row => row['Acima do piso'] === '1'), 'Valor'), faixa.acima, `${d} ${faixa.faixa} acima`);
+    }
+  }
+});
+
+test('gráficos do orçamento: despesa por natureza, fornecedores, contratos que terminam e pessoal por função dão os do painel', () => {
+  const d = dataset.snapshotDate, conselho = buildConselho(dataset), qc = quadroConselho(conselho, d, null, new Map()), desp12 = despesas.filter(row => noPeriodo(row.Mês, d, 12));
+  for (const row of qc.porNatureza) { const daNatureza = desp12.filter(item => item.Natureza === row.natureza); igual(soma(daNatureza, 'Realizado'), row.realizado, row.natureza); igual(soma(daNatureza, 'Orçado'), row.orcado, row.natureza); }
+  const empenhos = lerCsv('dados/empenhos.csv').filter(row => noPeriodo(row.Mês, d, 12));
+  for (const row of qc.fornecedores) igual(soma(empenhos.filter(item => item.Fornecedor === row.fornecedor.id), 'Valor'), row.empenhado, row.fornecedor.nome);
+  // Os 12 meses a partir do mês da data, com os contratos vigentes nela.
+  const vigentes = contratos.filter(row => row.Início <= d && row.Fim >= d);
+  for (const row of vencimentoContratos(conselho, d)) assert.equal(vigentes.filter(item => item.Fim.startsWith(row.month)).length, row.n, row.month);
+  // O bloco Pessoal conta os servidores da equipe (`servidores`) e soma o custo de cada um.
+  const pessoas = lerCsv('dados/pessoas.csv').filter(row => row.Tipo === 'Servidor'), equipe = servidores(conselho, dataset);
+  for (const { funcao } of conselho.pessoal) {
+    const daFuncao = pessoas.filter(item => item.Função === funcao), daEquipe = equipe.filter(s => s.funcao === funcao);
+    assert.deepEqual([daFuncao.filter(item => item.Vínculo === 'Efetivo').length, daFuncao.filter(item => item.Vínculo === 'Comissionado').length],
+      [daEquipe.filter(s => s.vinculo === 'Efetivo').length, daEquipe.filter(s => s.vinculo === 'Comissionado').length], funcao);
+    igual(soma(daFuncao, 'Custo mensal'), daEquipe.reduce((n, s) => n + s.remuneracao, 0), funcao);
+  }
+});
+
+test('gráficos das câmaras: fase, ritmo mês a mês, prescrição e decisões de cada câmara dão os do painel', () => {
+  for (const [d, meses] of [['2026-09-30', 12], ['2026-04-30', 6]] as const) {
+    const w = janela(d, meses), serie = mesesAteData(d, mesesDaSerie(meses)), q = quadroCamaras(todosProcessos, d, meses, semRecorte, w.start, w.prevStart, w.prevEnd, serie);
+    const foto = fotoProcessos.filter(row => row.Data === d), daCamara = (rows: typeof foto, camara: string) => rows.filter(row => camaraDe.get(row.Processo) === camara);
+    const julgados = processos.filter(row => row['Julgado em'] && noPeriodo(row['Julgado em'], d, meses) && row.Tipo === 'Auto de infração');
+    for (const linha of q.linhas) {
+      for (const [fase, rows] of Object.entries(linha.porFase)) assert.equal(daCamara(foto, linha.camara).filter(row => row.Fase === fase).length, rows.length, `${d} ${linha.camara} ${fase}`);
+      linha.prescricao.forEach((rows, i) => assert.equal(daCamara(foto, linha.camara).filter(row => row['Ordem do prazo'] === String(i + 1)).length, rows.length, `${d} ${linha.camara} prazo ${i + 1}`));
+      for (const [decisao, rows] of Object.entries(linha.decisoes)) assert.equal(julgados.filter(row => row.Câmara === linha.camara && row.Decisão === decisao).length, rows.length, `${d} ${linha.camara} ${decisao}`);
+    }
+    // Em julgamento no fim de cada mês: a foto do último dia do mês (no mês da data, a própria data).
+    for (const row of q.mensal.filter(item => item.month >= '2022-01')) {
+      const fim = [new Date(Date.UTC(Number(row.month.slice(0, 4)), Number(row.month.slice(5, 7)), 0)).toISOString().slice(0, 10), d].sort()[0];
+      assert.deepEqual([doMes(processos, 'Mês de entrada', row.month).length, doMes(processos, 'Mês do julgamento', row.month).length, fotoProcessos.filter(item => item.Data === fim && item.Fase).length],
+        [row.entradas, row.julgados, row.estoque], `${d} ${row.month}`);
+    }
+  }
+});
+
+test('gráficos de entidades e atendimento: repasses por ano e canal, assunto e situação e ocupação de cada coworking dão os do painel', () => {
+  for (const [d, meses] of [['2026-09-30', 12], ['2025-12-31', 6]] as const) {
+    const view = datasetAt(dataset, d), e = quadroEntidades(buildEntidades(view), d, null);
+    for (const ano of e.anos) for (const canal of ['Convênio', 'Contrato', 'Patrocínio']) {
+      const esperado = e.repassePorAno.filter(row => row.ano === ano && row.canal === canal).reduce((n, row) => n + row.valor, 0);
+      const obtido = soma(pagamentos.filter(row => row.Data <= d && row.Data.startsWith(ano) && repasseDe.get(row.Repasse)!.Canal === canal && repasseDe.get(row.Repasse)!.Início <= d && registradaEm.get(row.Organização)! <= d), 'Valor');
+      igual(obtido, esperado, `${d} ${ano} ${canal}`);
+    }
+    const { atendimento: at, coworking: cw } = estruturaDe(view, null, meses), pedidos = solicitacoes.filter(row => noPeriodo(row['Aberta em'], d, meses));
+    const resolvida = (row: Record<string, string>) => row['Resolvida em'] !== '' && row['Resolvida em'] <= d;
+    const situacaoDe = (row: Record<string, string>) => resolvida(row) ? (row['Resolvida em'] <= row.Prazo ? 'Resolvido no prazo' : 'Resolvido com atraso') : row.Prazo < d ? 'Em aberto, prazo vencido' : 'Em aberto, no prazo';
+    for (const linha of at.porAssunto) for (const [situacao, rows] of Object.entries(linha.partes)) assert.equal(pedidos.filter(row => row.Assunto === linha.assunto && situacaoDe(row) === situacao).length, rows.length, `${d} ${linha.assunto} ${situacao}`);
+    const cwMeses = coworkingsMeses.filter(row => noPeriodo(row.Mês, d, meses));
+    for (const unidade of cw.unidades) { const daUnidade = cwMeses.filter(row => row.Unidade === unidade.nome); igual(taxa(soma(daUnidade, 'Horas usadas'), soma(daUnidade, 'Horas disponíveis')), unidade.ocupacao, `${d} ${unidade.nome}`); }
+  }
+});
+
+test('recorte por regional: organizações, solicitações e coworkings seguem a GRE, como no painel', () => {
+  const d = dataset.snapshotDate, meses = 12;
+  for (const gre of dataset.gres.slice(0, 4)) {
+    const e = quadroEntidades(buildEntidades(dataset), d, gre.id), { atendimento: at, coworking: cw } = estruturaDe(dataset, gre.id, meses);
+    assert.equal(organizacoes.filter(row => row.GRE === gre.name && row['Registrada em'] <= d).length, e.linhas.length, `${gre.name}: organizações`);
+    assert.equal(solicitacoes.filter(row => row.GRE === gre.name && noPeriodo(row['Aberta em'], d, meses)).length, at.pedidos.length, `${gre.name}: solicitações`);
+    assert.equal(coworkings.filter(row => row.GRE === gre.name).length, cw.unidades.length, `${gre.name}: coworkings`);
+  }
+});

@@ -15,7 +15,7 @@ Gerado a partir do protótipo em HTML (repositório caiofvserra/empresas, `npm r
 - As medidas dos cartões e dos gráficos, em pastas com o nome de cada página, cada uma com a descrição de como é calculada.
 - As cinco páginas (Receita, Orçamento e despesa, Câmaras e plenário, Entidades e escolas, Atendimento), com os filtros no alto sincronizados entre elas e o tema do Crea-SP. Os gráficos saem com rótulos de dados e legenda, para ler sem passar o mouse.
 - Em cada cartão, como no painel: o número, a comparação (com um ano antes, ou com os 12 meses anteriores na despesa, nas diárias e nos repasses) e a linha de apoio.
-- Os gastos com nome: a tabela de diárias por beneficiário (nome, categoria, cargo, lotação, valor, diárias, meses e quilômetros), os fornecedores pela razão social e o pessoal por função. No cenário, os nomes são fictícios.
+- Os gastos com nome: a tabela de diárias por beneficiário (nome, categoria, cargo, lotação, valor, diárias, meses e quilômetros), os fornecedores pela razão social com os empenhos de cada um e o pessoal por função com cada servidor. No cenário, os nomes são fictícios.
 - O período é um parâmetro do tipo "Intervalo numérico", de 1 a 36 meses, com controle deslizante. A despesa, as diárias, os fornecedores e os repasses usam sempre os 12 meses até a data, como no painel.
 
 Os estoques (dívida, processos em julgamento, recursos, cadeiras, profissionais ativos) vêm da foto da data escolhida; os fluxos (receita, despesa, julgados, solicitações) são somados no período. Na base real, a carga precisa gravar a foto todo fim de mês sem reescrever as anteriores.
@@ -26,7 +26,7 @@ As regras: o piso de execução é cinco vezes a anuidade de pessoa física (Lei
 
 Os dois mapas por município (dívida de anuidade e distância até a unidade): insira o visual Mapa de formas no lugar do bloco "A montar"; em Formatar > Configurações do mapa > Mapa personalizado, carregue `mapas/sp-municipios.json`; ponha Municípios[Município] em Local e a medida "Anuidades vencidas" (na Receita) ou a coluna Municípios[Distância até a unidade (km)] (no Atendimento) em Saturação de cor.
 
-A ordem das tabelas: na de diárias por beneficiário, clique no título da coluna Valor para pôr quem mais recebeu no alto; no gráfico de fornecedores, ordene pelo empenhado e, se quiser só os oito maiores, use o filtro N superior do visual.
+A ordem das tabelas: na de diárias por beneficiário, clique no título da coluna Valor para pôr quem mais recebeu no alto; na matriz de fornecedores, clique no título Empenhado. Cada fornecedor abre (+) nos empenhos dos 12 meses, com o contrato, e cada função do pessoal abre na lista dos servidores, pelo nome. Para ver só os maiores, use o filtro N superior do visual.
 
 A escala de cor da matriz "Há quanto tempo esperam julgamento": em Formatar > Elementos da célula, ligue a Cor da tela de fundo e escolha a escala de cor. Os números já aparecem nas células.
 

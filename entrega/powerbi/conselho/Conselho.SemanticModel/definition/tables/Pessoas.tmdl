@@ -1,4 +1,4 @@
-/// Tem os servidores (um por posto, com cargo, vínculo, lotação e custo mensal) e os conselheiros (um por cadeira, com a organização que indicou). Os nomes do cenário são fictícios.
+/// Tem os servidores (com cargo, vínculo, lotação e custo mensal) e os conselheiros (um por cadeira, com a organização que indicou). Os nomes do cenário são fictícios.
 table Pessoas
 	lineageTag: c48ab5f3-c1e9-53a1-a663-9f2b953fe2da
 

@@ -76,9 +76,9 @@ relationship f773a164-7e84-540a-8caf-aa2c3c9f22a7
 	fromColumn: 'Profissionais ativos'.'Código IBGE'
 	toColumn: 'Municípios'.'Código IBGE'
 
-relationship 63d15aaa-84c7-5a60-9661-f632bef649c9
-	fromColumn: 'Organizações'.'Código IBGE'
-	toColumn: 'Municípios'.'Código IBGE'
+relationship 2401b07b-53e8-5aa9-9979-33d376e1d39e
+	fromColumn: 'Organizações'.GRE
+	toColumn: Regionais.GRE
 
 relationship 384137ea-8d44-54a0-81a3-8572ea06fb89
 	fromColumn: Repasses.'Organização'
@@ -92,17 +92,17 @@ relationship 49028690-5071-510e-b40d-27a8c83b13f1
 	fromColumn: 'Pagamentos dos repasses'.'Mês'
 	toColumn: 'Calendário'.'Mês'
 
-relationship 3d83f2a3-1f00-5da9-8925-d32b48722b30
-	fromColumn: 'Solicitações'.'Código IBGE'
-	toColumn: 'Municípios'.'Código IBGE'
+relationship 582f6178-9338-5dfe-bbe2-84b0258af579
+	fromColumn: 'Solicitações'.GRE
+	toColumn: Regionais.GRE
 
 relationship 76b7008f-797b-544d-bbb0-b6174363ac78
 	fromColumn: 'Solicitações'.'Mês'
 	toColumn: 'Calendário'.'Mês'
 
-relationship 75e0398b-ca68-5ff9-bc56-72e34c760bcc
-	fromColumn: Coworkings.'Código IBGE'
-	toColumn: 'Municípios'.'Código IBGE'
+relationship b43c2010-e3e3-514e-bbb3-02b81f149c55
+	fromColumn: Coworkings.GRE
+	toColumn: Regionais.GRE
 
 relationship 3ff7ec86-9b0e-5338-9737-6a8ea7808869
 	fromColumn: 'Meses dos coworkings'.Unidade

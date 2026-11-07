@@ -23,7 +23,7 @@ table Medidas
 		displayFolder: Apoio
 		lineageTag: 5d427e01-5534-5783-80c3-7f69e9c6259c
 
-	/// Cinco vezes a anuidade de pessoa física do ano da data escolhida (Lei 12.514/2011, art. 8º, com a redação da Lei 14.195/2021). Abaixo dele, o Conselho não pode executar a dívida na Justiça. A anuidade do cenário é demonstrativa.
+	/// Calcula cinco vezes a anuidade de pessoa física do ano da data escolhida (Lei 12.514/2011, art. 8º, com a redação da Lei 14.195/2021). Abaixo dele, o Conselho não pode executar a dívida na Justiça. A anuidade do cenário é demonstrativa.
 	measure 'Piso de execução' = ```
 			VAR d = [Data escolhida]
 			RETURN 5 * ROUND(520 * POWER(1.055, MAX(0, YEAR(d) - 2020)), 0)
@@ -32,7 +32,7 @@ table Medidas
 		displayFolder: Apoio
 		lineageTag: 3fbb586a-cafb-5074-b440-e7f202da4631
 
-	/// A meta padrão de solicitações resolvidas no prazo é 80%, a mesma do painel.
+	/// Guarda a meta padrão de solicitações resolvidas no prazo, 80%, a mesma do painel.
 	measure 'Meta de resolução no prazo' = 0.8
 		formatString: 0.0%
 		displayFolder: Apoio
@@ -233,7 +233,7 @@ table Medidas
 	/// Soma a despesa realizada nos 12 meses até o mês da data escolhida. Com uma regional escolhida, só a despesa lançada nela, sem a sede.
 	measure 'Despesa em 12 meses' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
 			RETURN CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d) + 0
 			```
 		formatString: R$ #,##0
@@ -243,7 +243,7 @@ table Medidas
 	/// Soma a despesa orçada nos 12 meses até o mês da data escolhida.
 	measure 'Orçado em 12 meses' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
 			RETURN CALCULATE(SUM('Despesas'[Orçado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d) + 0
 			```
 		formatString: R$ #,##0
@@ -253,8 +253,8 @@ table Medidas
 	/// Soma a despesa de fiscalização, atendimento e ações institucionais nos 12 meses.
 	measure 'Despesa em atividades-fim em 12 meses' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
-			RETURN CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d, 'Despesas'[Atividade] = "Atividade-fim") + 0
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d, KEEPFILTERS('Despesas'[Atividade] = "Atividade-fim")) + 0
 			```
 		formatString: R$ #,##0
 		displayFolder: Orçamento e despesa
@@ -269,8 +269,8 @@ table Medidas
 	/// Soma a despesa de fiscalização lançada em cada GRE nos 12 meses (sem a sede).
 	measure 'Despesa de fiscalização em 12 meses' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
-			RETURN CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d, 'Despesas'[Função] = "Fiscalização", 'Despesas'[GRE] <> "") + 0
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
+			RETURN CALCULATE(SUM('Despesas'[Realizado]), REMOVEFILTERS('Calendário'), 'Despesas'[Mês] >= inicio, 'Despesas'[Mês] <= d, KEEPFILTERS('Despesas'[Função] = "Fiscalização"), KEEPFILTERS('Despesas'[GRE] <> "")) + 0
 			```
 		formatString: R$ #,##0
 		displayFolder: Orçamento e despesa
@@ -345,7 +345,7 @@ table Medidas
 	/// Soma o valor das diárias pagas nos 12 meses até o mês da data escolhida. Com uma regional escolhida, só as lançadas nela.
 	measure 'Diárias e passagens' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
 			RETURN CALCULATE(SUM('Diárias'[Valor]), REMOVEFILTERS('Calendário'), 'Diárias'[Mês] >= inicio, 'Diárias'[Mês] <= d) + 0
 			```
 		formatString: R$ #,##0
@@ -355,7 +355,7 @@ table Medidas
 	/// Conta as diárias pagas nos 12 meses.
 	measure 'Diárias pagas em 12 meses' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
 			RETURN CALCULATE(SUM('Diárias'[Diárias]), REMOVEFILTERS('Calendário'), 'Diárias'[Mês] >= inicio, 'Diárias'[Mês] <= d) + 0
 			```
 		formatString: #,##0
@@ -365,7 +365,7 @@ table Medidas
 	/// Soma os quilômetros rodados nas viagens com diária nos 12 meses.
 	measure 'Quilômetros em 12 meses' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
 			RETURN CALCULATE(SUM('Diárias'[Quilômetros]), REMOVEFILTERS('Calendário'), 'Diárias'[Mês] >= inicio, 'Diárias'[Mês] <= d) + 0
 			```
 		formatString: #,##0
@@ -375,7 +375,7 @@ table Medidas
 	/// Conta os meses dos 12 em que a pessoa recebeu diária.
 	measure 'Meses com diária' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
 			RETURN CALCULATE(DISTINCTCOUNT('Diárias'[Mês]), REMOVEFILTERS('Calendário'), 'Diárias'[Mês] >= inicio, 'Diárias'[Mês] <= d)
 			```
 		formatString: 0
@@ -423,7 +423,7 @@ table Medidas
 	/// Soma o valor empenhado nos 12 meses até o mês da data escolhida.
 	measure 'Empenhado em 12 meses' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
 			RETURN CALCULATE(SUM('Empenhos'[Valor]), REMOVEFILTERS('Calendário'), 'Empenhos'[Mês] >= inicio, 'Empenhos'[Mês] <= d) + 0
 			```
 		formatString: R$ #,##0
@@ -433,7 +433,7 @@ table Medidas
 	/// Soma o valor pago dos empenhos dos 12 meses.
 	measure 'Pago em 12 meses' = ```
 			VAR d = [Data escolhida]
-			VAR inicio = DATE(YEAR(d), MONTH(d) - 11, 1)
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 12 + 1, 1)
 			RETURN CALCULATE(SUM('Empenhos'[Pago]), REMOVEFILTERS('Calendário'), 'Empenhos'[Mês] >= inicio, 'Empenhos'[Mês] <= d) + 0
 			```
 		formatString: R$ #,##0
@@ -441,18 +441,18 @@ table Medidas
 		lineageTag: a6bba436-2654-5844-867a-744eece1bf5d
 
 	/// Conta os servidores efetivos. Com uma regional escolhida, só os lotados nela.
-	measure 'Servidores efetivos' = IF(ISCROSSFILTERED('Regionais'), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", 'Pessoas'[Vínculo] = "Efetivo", TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", 'Pessoas'[Vínculo] = "Efetivo"))
+	measure 'Servidores efetivos' = IF(ISCROSSFILTERED('Regionais'), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", KEEPFILTERS('Pessoas'[Vínculo] = "Efetivo"), TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", KEEPFILTERS('Pessoas'[Vínculo] = "Efetivo")))
 		formatString: #,##0
 		displayFolder: Orçamento e despesa
 		lineageTag: 26f711e0-2b17-5dd6-a26f-6e18f54e7381
 
 	/// Conta os servidores comissionados. Com uma regional escolhida, só os lotados nela.
-	measure 'Servidores comissionados' = IF(ISCROSSFILTERED('Regionais'), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", 'Pessoas'[Vínculo] = "Comissionado", TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", 'Pessoas'[Vínculo] = "Comissionado"))
+	measure 'Servidores comissionados' = IF(ISCROSSFILTERED('Regionais'), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", KEEPFILTERS('Pessoas'[Vínculo] = "Comissionado"), TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(COUNTROWS('Pessoas'), 'Pessoas'[Tipo] = "Servidor", KEEPFILTERS('Pessoas'[Vínculo] = "Comissionado")))
 		formatString: #,##0
 		displayFolder: Orçamento e despesa
 		lineageTag: 0267bf9e-b91a-5be8-87ed-96568fa974f1
 
-	/// Soma o custo mensal dos postos (salário e encargos). Com uma regional escolhida, só os lotados nela.
+	/// Soma o custo mensal dos servidores (salário e encargos). Com uma regional escolhida, só os lotados nela.
 	measure 'Custo mensal do pessoal' = IF(ISCROSSFILTERED('Regionais'), CALCULATE(SUM('Pessoas'[Custo mensal]), 'Pessoas'[Tipo] = "Servidor", TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(SUM('Pessoas'[Custo mensal]), 'Pessoas'[Tipo] = "Servidor"))
 		formatString: R$ #,##0
 		displayFolder: Orçamento e despesa
@@ -526,7 +526,7 @@ table Medidas
 		lineageTag: cebd094b-bd49-542d-9b9b-f38370a95c58
 
 	/// Conta os autos arquivados pela prescrição no período.
-	measure 'Autos prescritos no período' = CALCULATE([Julgados no período], 'Processos'[Decisão] = "Arquivado pela prescrição")
+	measure 'Autos prescritos no período' = CALCULATE([Julgados no período], KEEPFILTERS('Processos'[Decisão] = "Arquivado pela prescrição"))
 		formatString: #,##0
 		displayFolder: Câmaras e plenário
 		lineageTag: 065d72e2-d30c-5b0c-ae3d-907a300aa2bf
@@ -647,7 +647,7 @@ table Medidas
 	/// Soma os pagamentos às organizações registradas, no ano do gráfico, até a data escolhida.
 	measure 'Repassado no ano' = ```
 			VAR d = [Data escolhida]
-			RETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), 'Pagamentos dos repasses'[Data] <= d, 'Organizações'[Registrada em] <= d)
+			RETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), 'Pagamentos dos repasses'[Data] <= d, 'Repasses'[Início] <= d, 'Organizações'[Registrada em] <= d)
 			```
 		formatString: R$ #,##0
 		displayFolder: Entidades e escolas
@@ -691,7 +691,7 @@ table Medidas
 		lineageTag: b9c485d4-08ee-5a72-9615-1cfcff7942d1
 
 	/// Conta as solicitações do período feitas por empresas.
-	measure 'Solicitações de empresas' = CALCULATE([Solicitações de atendimento], 'Solicitações'[Solicitante] = "Empresa")
+	measure 'Solicitações de empresas' = CALCULATE([Solicitações de atendimento], KEEPFILTERS('Solicitações'[Solicitante] = "Empresa"))
 		formatString: #,##0
 		displayFolder: Atendimento
 		lineageTag: b79f6b9a-db0d-5edc-985f-ebb2b614769d
@@ -746,7 +746,7 @@ table Medidas
 	measure 'Tempo de resolução' = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]
-			RETURN CALCULATE(MEDIAN('Solicitações'[Dias até resolver]), REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d, 'Solicitações'[Resolvida em] <= d)
+			RETURN CALCULATE(MEDIAN('Solicitações'[Dias até resolver]), REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d, KEEPFILTERS(NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d))
 			```
 		formatString: #,##0" dias"
 		displayFolder: Atendimento
@@ -1065,12 +1065,12 @@ table Medidas
 		lineageTag: 8a5fda6a-d5b3-5fa0-800d-9d025becd1ad
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Organizações registradas' = FORMAT(CALCULATE([Organizações registradas], 'Organizações'[Natureza] = "Entidade de classe"), "#,##0") & " entidade de classe" & ", " & FORMAT(CALCULATE([Organizações registradas], 'Organizações'[Natureza] = "IES pública"), "#,##0") & " IES pública" & ", " & FORMAT(CALCULATE([Organizações registradas], 'Organizações'[Natureza] = "IES privada"), "#,##0") & " IES privada"
+	measure 'Detalhe: Organizações registradas' = FORMAT(CALCULATE([Organizações registradas], 'Organizações'[Natureza] = "Entidade de classe"), "#,##0") & " entidades de classe" & ", " & FORMAT(CALCULATE([Organizações registradas], 'Organizações'[Natureza] = "IES pública"), "#,##0") & " instituições de ensino públicas" & ", " & FORMAT(CALCULATE([Organizações registradas], 'Organizações'[Natureza] = "IES privada"), "#,##0") & " instituições de ensino privadas"
 		displayFolder: Entidades e escolas
 		lineageTag: 18e5ecf2-b339-5eb4-bd0e-7f6a0bfa38ef
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Cadeiras no plenário' = FORMAT(CALCULATE([Cadeiras no plenário], 'Organizações'[Natureza] = "Entidade de classe"), "#,##0") & " de entidade de classe" & ", " & FORMAT(CALCULATE([Cadeiras no plenário], 'Organizações'[Natureza] = "IES pública"), "#,##0") & " de IES pública" & ", " & FORMAT(CALCULATE([Cadeiras no plenário], 'Organizações'[Natureza] = "IES privada"), "#,##0") & " de IES privada"
+	measure 'Detalhe: Cadeiras no plenário' = FORMAT(CALCULATE([Cadeiras no plenário], 'Organizações'[Natureza] = "Entidade de classe"), "#,##0") & " de entidades de classe" & ", " & FORMAT(CALCULATE([Cadeiras no plenário], 'Organizações'[Natureza] = "IES pública"), "#,##0") & " de instituições de ensino públicas" & ", " & FORMAT(CALCULATE([Cadeiras no plenário], 'Organizações'[Natureza] = "IES privada"), "#,##0") & " de instituições de ensino privadas"
 		displayFolder: Entidades e escolas
 		lineageTag: 5d325413-8950-5bb5-a1ee-b8cb2d76a5f2
 
@@ -1085,7 +1085,7 @@ table Medidas
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Repasses em 12 meses' = ```
 			VAR d = [Data escolhida]
-			RETURN FORMAT(CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "Convênio"), "R$ #,##0") & " convênios" & ", " & FORMAT(CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "Contrato"), "R$ #,##0") & " contratos" & ", " & FORMAT(CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "Patrocínio"), "R$ #,##0") & " patrocínios" & " no ano corrente"
+			RETURN FORMAT(CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "Convênio"), "R$ #,##0") & " em convênios" & ", " & FORMAT(CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "Contrato"), "R$ #,##0") & " em contratos" & ", " & FORMAT(CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "Patrocínio"), "R$ #,##0") & " em patrocínios" & " no ano corrente"
 			```
 		displayFolder: Entidades e escolas
 		lineageTag: b9cf4ef4-7a72-5172-90fc-dc1cf7115331

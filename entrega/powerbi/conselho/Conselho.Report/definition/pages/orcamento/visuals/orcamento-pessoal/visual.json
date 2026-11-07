@@ -29,6 +29,21 @@
               "queryRef": "Pessoas.Função",
               "nativeQueryRef": "Função",
               "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pessoas"
+                    }
+                  },
+                  "Property": "Nome"
+                }
+              },
+              "queryRef": "Pessoas.Nome",
+              "nativeQueryRef": "Nome",
+              "active": true
             }
           ]
         },

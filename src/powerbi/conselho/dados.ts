@@ -140,19 +140,19 @@ export function dadosConselho(dataset: Dataset): Dados[] {
     { arquivo: 'profissionais-ativos.csv', cabecalho: ['Data', 'Código IBGE', 'Ativos'], linhas: ativos },
 
     // Entidades e escolas.
-    { arquivo: 'organizacoes.csv', cabecalho: ['Organização', 'Sigla', 'Nome', 'Natureza', 'Tipo', 'Código IBGE', 'Registrada em', 'Cadeiras', 'Ensino a distância'],
-      linhas: entidades.organizacoes.map(org => [org.id, org.sigla, org.nome, grupoOrganizacao(org), org.tipo, org.cityId, org.registradaEm, org.cadeiras, org.ead === null ? null : centavos(org.ead / 100)]) },
+    { arquivo: 'organizacoes.csv', cabecalho: ['Organização', 'Sigla', 'Nome', 'Natureza', 'Tipo', 'Código IBGE', 'GRE', 'Registrada em', 'Cadeiras', 'Ensino a distância'],
+      linhas: entidades.organizacoes.map(org => [org.id, org.sigla, org.nome, grupoOrganizacao(org), org.tipo, org.cityId, gre(org.greId), org.registradaEm, org.cadeiras, org.ead === null ? null : centavos(org.ead / 100)]) },
     { arquivo: 'repasses.csv', cabecalho: ['Repasse', 'Organização', 'Canal', 'Objeto', 'Início', 'Fim', 'Valor'],
       linhas: entidades.repasses.map(row => [row.id, row.orgId, row.canal, row.objeto, row.inicio, row.fim, row.valor]) },
     { arquivo: 'pagamentos-repasses.csv', cabecalho: ['Repasse', 'Organização', 'Data', 'Mês', 'Valor'],
       linhas: entidades.repasses.flatMap(row => row.pagamentos.filter(pay => pay.data <= hoje).map(pay => [row.id, row.orgId, pay.data, primeiroDia(pay.data), pay.valor])) },
 
     // Atendimento.
-    { arquivo: 'solicitacoes.csv', cabecalho: ['Solicitação', 'Código IBGE', 'Município do solicitante', 'Aberta em', 'Mês', 'Prazo', 'Resolvida em', 'Dias até resolver', 'Assunto', 'Solicitante', 'Canal', 'Distância do solicitante', 'Ordem da distância'],
+    { arquivo: 'solicitacoes.csv', cabecalho: ['Solicitação', 'Código IBGE', 'GRE', 'Município do solicitante', 'Aberta em', 'Mês', 'Prazo', 'Resolvida em', 'Dias até resolver', 'Assunto', 'Solicitante', 'Canal', 'Distância do solicitante', 'Ordem da distância'],
       linhas: institucional.serviceRequests.filter(row => row.createdAt <= hoje).map(row => {
         const km = distancia.get(origem(row))?.km ?? 0, resolvida = row.resolvedAt && row.resolvedAt <= hoje ? row.resolvedAt : null, prazo = new Date(Date.parse(`${row.createdAt}T00:00:00Z`) + row.targetDays * DIA).toISOString().slice(0, 10);
-        return [row.id, row.cityId, origem(row), row.createdAt, primeiroDia(row.createdAt), prazo, resolvida, resolvida ? diasEntre(row.createdAt, resolvida) : null, row.category, row.userType, canalDe(row, km), faixasDistancia[faixaDistancia(km)], faixaDistancia(km) + 1]; }) },
-    { arquivo: 'coworkings.csv', cabecalho: ['Unidade', 'Código IBGE', 'Mesas'], linhas: institucional.coworkUnits.map(row => [nomeCidade.get(row.cityId) ?? row.name, row.cityId, row.desks]) },
+        return [row.id, row.cityId, gre(row.greId), origem(row), row.createdAt, primeiroDia(row.createdAt), prazo, resolvida, resolvida ? diasEntre(row.createdAt, resolvida) : null, row.category, row.userType, canalDe(row, km), faixasDistancia[faixaDistancia(km)], faixaDistancia(km) + 1]; }) },
+    { arquivo: 'coworkings.csv', cabecalho: ['Unidade', 'Código IBGE', 'GRE', 'Mesas'], linhas: institucional.coworkUnits.map(row => [nomeCidade.get(row.cityId) ?? row.name, row.cityId, gre(row.greId), row.desks]) },
     { arquivo: 'coworkings-meses.csv', cabecalho: ['Unidade', 'Mês', 'Horas disponíveis', 'Horas usadas', 'Custo'],
       linhas: institucional.coworkMonths.filter(row => row.month <= mesHoje).map(row => { const unidade = unidades.get(row.unitId)!;
         return [nomeCidade.get(unidade.cityId) ?? unidade.name, primeiroDia(row.month), row.availableDeskHours, usoPorMes.get(row.id)?.horas ?? 0, centavos(custoCoworking.get(`${unidade.cityId}:${row.month}`) ?? 0)]; }) },

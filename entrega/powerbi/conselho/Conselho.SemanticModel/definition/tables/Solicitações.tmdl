@@ -1,4 +1,4 @@
-/// Guarda cada solicitação de atendimento: a unidade que atendeu (pelo município), o município de quem pediu, o prazo, a resolução, o assunto, o canal e a distância de quem pediu até a unidade mais próxima.
+/// Guarda cada solicitação de atendimento: a unidade que atendeu (pelo município), o município de quem pediu, o prazo, a resolução, o assunto, o canal e a distância de quem pediu até a unidade mais próxima. Os filtros chegam pela GRE da unidade, como no painel.
 table 'Solicitações'
 	lineageTag: e636db59-0a59-584f-a0d1-df715c8ca282
 
@@ -15,6 +15,13 @@ table 'Solicitações'
 		summarizeBy: none
 		sourceColumn: Código IBGE
 		lineageTag: 03d28fa8-8ee0-597e-9ad1-7990a2f9116b
+
+	column GRE
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 669daa6e-02f9-559c-9e48-eb663963cc6d
 
 	column 'Município do solicitante'
 		dataType: string
@@ -99,6 +106,6 @@ table 'Solicitações'
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "solicitacoes.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Solicitação", type text}, {"Código IBGE", type text}, {"Município do solicitante", type text}, {"Aberta em", type date}, {"Mês", type date}, {"Prazo", type date}, {"Resolvida em", type date}, {"Dias até resolver", Int64.Type}, {"Assunto", type text}, {"Solicitante", type text}, {"Canal", type text}, {"Distância do solicitante", type text}, {"Ordem da distância", Int64.Type}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Solicitação", type text}, {"Código IBGE", type text}, {"GRE", type text}, {"Município do solicitante", type text}, {"Aberta em", type date}, {"Mês", type date}, {"Prazo", type date}, {"Resolvida em", type date}, {"Dias até resolver", Int64.Type}, {"Assunto", type text}, {"Solicitante", type text}, {"Canal", type text}, {"Distância do solicitante", type text}, {"Ordem da distância", Int64.Type}}, "pt-BR")
 				in
 				    Tipos

@@ -3,7 +3,6 @@ import { BLOCOS_PARCERIA, COORTES, comMarca, medidaDoBloco } from './dados';
 import { CARTOES, indiceDe } from './modelo';
 import { MES, TOPO, cabecalho as cabecalhoComum, campoColuna, campoMedida, cartoes as cartoesComuns, caixa, lugar } from '../layout';
 import type { Filtro } from '../layout';
-export { TAMANHO_DA_PAGINA } from '../layout';
 
 /*
  * As quatro páginas do painel de Empresas no relatório PBIR, na grade comum de `layout.ts`. Só o mapa por município, que não tem

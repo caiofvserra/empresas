@@ -1,4 +1,4 @@
-/// Tem as entidades de classe e as instituições de ensino registradas no Crea-SP, com a natureza, o município e as cadeiras no plenário.
+/// Tem as entidades de classe e as instituições de ensino registradas no Crea-SP, com a natureza, o município, a GRE e as cadeiras no plenário. Os filtros chegam pela GRE, como no painel: escolher um município mostra as organizações da regional dele.
 table 'Organizações'
 	lineageTag: f0ad315e-d264-5f94-8f93-0976e135f34d
 
@@ -40,6 +40,13 @@ table 'Organizações'
 		sourceColumn: Código IBGE
 		lineageTag: 5d491f39-f6a5-5a6f-9fd2-f561eb3b75a2
 
+	column GRE
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 4354e3f3-a0e1-51a9-b673-ad4b0f7e05e8
+
 	column 'Registrada em'
 		dataType: dateTime
 		formatString: dd/mm/yyyy
@@ -69,6 +76,6 @@ table 'Organizações'
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "organizacoes.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Organização", type text}, {"Sigla", type text}, {"Nome", type text}, {"Natureza", type text}, {"Tipo", type text}, {"Código IBGE", type text}, {"Registrada em", type date}, {"Cadeiras", Int64.Type}, {"Ensino a distância", type number}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Organização", type text}, {"Sigla", type text}, {"Nome", type text}, {"Natureza", type text}, {"Tipo", type text}, {"Código IBGE", type text}, {"GRE", type text}, {"Registrada em", type date}, {"Cadeiras", Int64.Type}, {"Ensino a distância", type number}}, "pt-BR")
 				in
 				    Tipos

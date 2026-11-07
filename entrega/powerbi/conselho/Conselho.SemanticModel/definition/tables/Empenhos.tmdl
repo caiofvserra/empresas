@@ -1,6 +1,5 @@
 /// Guarda cada empenho, com o mês, o fornecedor, o valor empenhado, o pago e o contrato.
 table Empenhos
-	isHidden
 	lineageTag: 69ee6eba-81b1-5a08-9c56-ed12d48af86d
 
 	column Empenho
@@ -12,12 +11,14 @@ table Empenhos
 	column 'Mês'
 		dataType: dateTime
 		formatString: dd/mm/yyyy
+		isHidden
 		summarizeBy: none
 		sourceColumn: Mês
 		lineageTag: 6867a5cf-fe16-5665-b1b1-6e87e572ddd0
 
 	column Fornecedor
 		dataType: string
+		isHidden
 		summarizeBy: none
 		sourceColumn: Fornecedor
 		lineageTag: 74ff567a-1ede-5a90-a517-a292354b1f8b
