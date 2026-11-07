@@ -1,0 +1,55 @@
+/// Guarda cada empenho, com o mês, o fornecedor, o valor empenhado, o pago e o contrato.
+table Empenhos
+	isHidden
+	lineageTag: 69ee6eba-81b1-5a08-9c56-ed12d48af86d
+
+	column Empenho
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Empenho
+		lineageTag: 8c46aa1b-097b-5679-b06c-c27355e84a30
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 6867a5cf-fe16-5665-b1b1-6e87e572ddd0
+
+	column Fornecedor
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Fornecedor
+		lineageTag: 74ff567a-1ede-5a90-a517-a292354b1f8b
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: 35314fb1-cb6a-584b-9be0-8be966b8339a
+
+	column Pago
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Pago
+		lineageTag: bd9e2a18-f9c8-5592-a5c4-eaf0cda4b1cd
+
+	column Contrato
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Contrato
+		lineageTag: e27c425d-084d-54f3-b047-dbd5d63f4b50
+
+	partition Empenhos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "empenhos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Empenho", type text}, {"Mês", type date}, {"Fornecedor", type text}, {"Valor", type number}, {"Pago", type number}, {"Contrato", type text}}, "pt-BR")
+				in
+				    Tipos

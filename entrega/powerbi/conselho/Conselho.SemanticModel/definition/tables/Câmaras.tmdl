@@ -1,0 +1,28 @@
+/// Tem as nove câmaras especializadas do Crea-SP, com os nomes do sistema do Conselho.
+table 'Câmaras'
+	lineageTag: 41d5e862-eb38-5d80-b6aa-f85ae5fe22a3
+
+	column 'Câmara'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Câmara
+		sortByColumn: Ordem
+		lineageTag: a5f02c39-7849-590f-9a52-8ab148ab0c1e
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: 054c310c-2f78-5d52-beb8-ede4a3b9ced1
+
+	partition 'Câmaras' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "camaras.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Câmara", type text}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

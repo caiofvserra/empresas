@@ -14,6 +14,10 @@ Segue as regras de tela dos outros painéis. Cada página cabe numa tela Full HD
 - **Entidades e escolas.** Organizações registradas, cadeiras no plenário, repasses e instrumentos vigentes. Cadeiras por natureza. Repasses por ano, por natureza ou por canal. Cada escola pelos formados e pela parte que se registrou em até 24 meses (Censo da Educação Superior com o cadastro). Tabela de cada organização.
 - **Atendimento.** Prazo de resposta, solicitações, tempo de resposta, profissionais que moram a mais de 50 km de uma unidade e uso dos coworkings. Mapa da distância até a unidade mais próxima em cada município. Solicitações por assunto e situação. Canal do atendimento pela distância. Solicitações por mês. Uso dos coworkings.
 
+## Pacote Power BI
+
+O painel tem pacote Power BI em `entrega/powerbi/conselho/`, que abre pelo `Conselho.pbip`: as cinco páginas, os cartões com a comparação e a linha de apoio, os gráficos e os gastos com nome (a tabela de diárias por beneficiário, os fornecedores e o pessoal por função). Os mapas por município montam-se no Desktop, com o passo no LEIA-ME do pacote. Ver [POWERBI.md](POWERBI.md).
+
 ## Gastos com nome
 
 A pedido do Caio, os gastos mostram quem recebe. Na tela ficam os maiores, e a lista inteira abre ao clicar.

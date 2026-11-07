@@ -1,0 +1,156 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "receita-cascata",
+  "position": {
+    "x": 435,
+    "y": 436,
+    "z": 15000,
+    "width": 411,
+    "height": 268,
+    "tabOrder": 15000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Dívida no início do período"
+                }
+              },
+              "queryRef": "Medidas.Dívida no início do período",
+              "nativeQueryRef": "Dívida no início do período",
+              "displayName": "No início"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Novos vencimentos no período"
+                }
+              },
+              "queryRef": "Medidas.Novos vencimentos no período",
+              "nativeQueryRef": "Novos vencimentos no período",
+              "displayName": "Venceu no período"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Recebido da dívida no período"
+                }
+              },
+              "queryRef": "Medidas.Recebido da dívida no período",
+              "nativeQueryRef": "Recebido da dívida no período",
+              "displayName": "Recebido"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Prescrito no período"
+                }
+              },
+              "queryRef": "Medidas.Prescrito no período",
+              "nativeQueryRef": "Prescrito no período",
+              "displayName": "Prescreveu"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Anuidades vencidas"
+                }
+              },
+              "queryRef": "Medidas.Anuidades vencidas",
+              "nativeQueryRef": "Anuidades vencidas",
+              "displayName": "No fim"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Entrou e saiu da dívida no período'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

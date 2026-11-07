@@ -1,0 +1,27 @@
+/// Tem os fins de mês em que a base pode ser lida, e hoje. Não se liga às outras tabelas: a escolha vale para todas as medidas.
+table 'Datas de referência'
+	lineageTag: 6e5d3900-09d6-5fc2-95c5-763800e81909
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: ce9dd9d1-79dd-524f-96d9-efb96cb815fa
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		sortByColumn: Data
+		lineageTag: 575cb3a8-3d92-5d62-a90a-58d0b347dceb
+
+	partition 'Datas de referência' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "datas-referencia.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Rótulo", type text}}, "pt-BR")
+				in
+				    Tipos

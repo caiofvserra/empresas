@@ -1,0 +1,70 @@
+/// Tem os servidores (um por posto, com cargo, vínculo, lotação e custo mensal) e os conselheiros (um por cadeira, com a organização que indicou). Os nomes do cenário são fictícios.
+table Pessoas
+	lineageTag: c48ab5f3-c1e9-53a1-a663-9f2b953fe2da
+
+	column Pessoa
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Pessoa
+		lineageTag: 5f38d9e3-b12a-5791-ad6c-4f5bf5a1e704
+
+	column Nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome
+		lineageTag: b07e3f4b-9e35-582d-9d73-65036553293c
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		lineageTag: ee17e0ac-935f-588a-9220-c89460bd6a9b
+
+	column Cargo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Cargo
+		lineageTag: 5ca67032-f661-5a28-a9da-1bba7c130eeb
+
+	column 'Função'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Função
+		lineageTag: 0f5ccd42-427f-5360-9b6b-bceaa3657329
+
+	column 'Vínculo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Vínculo
+		lineageTag: 03a25fa6-4525-5634-972f-c9be73007f2f
+
+	column 'Lotação'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Lotação
+		lineageTag: 706a2e8f-3f3e-5b4d-b66d-5257a5b976fa
+
+	column 'Custo mensal'
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Custo mensal
+		lineageTag: b6166d0e-588c-5c7c-a34f-0af6af2d7cb9
+
+	column 'Indicado por'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Indicado por
+		lineageTag: 034447f6-ece5-5614-86f9-942e05c8fd09
+
+	partition Pessoas = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "pessoas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Pessoa", type text}, {"Nome", type text}, {"Tipo", type text}, {"Cargo", type text}, {"Função", type text}, {"Vínculo", type text}, {"Lotação", type text}, {"Custo mensal", type number}, {"Indicado por", type text}}, "pt-BR")
+				in
+				    Tipos

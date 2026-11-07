@@ -1,0 +1,34 @@
+/// Tem as unidades de coworking do Crea-SP, pelo município, com o número de mesas.
+table Coworkings
+	lineageTag: becbc919-d8a1-50e7-bf07-81619f5982c6
+
+	column Unidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Unidade
+		lineageTag: e5f8cd70-35ad-5bda-992e-ce7848f9e583
+
+	column 'Código IBGE'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 6c524aa4-9dca-526a-94a2-505c918720ab
+
+	column Mesas
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mesas
+		lineageTag: 45c57945-2d65-5d3b-82f6-a93d7882fda6
+
+	partition Coworkings = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "coworkings.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Unidade", type text}, {"Código IBGE", type text}, {"Mesas", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

@@ -1,0 +1,74 @@
+/// Tem os contratos do Conselho, com a vigência, o valor e os aditivos.
+table Contratos
+	lineageTag: b0ae3314-2840-5d5a-8e25-bbccf68fb995
+
+	column Contrato
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Contrato
+		lineageTag: cbe380dd-f3d9-5383-b052-3a3555d03f82
+
+	column Fornecedor
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Fornecedor
+		lineageTag: e120f8fa-886b-5f00-93bf-c9f217c0a0fd
+
+	column 'Nome do fornecedor'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome do fornecedor
+		lineageTag: b79518b4-8e3c-5646-8318-324c5556eb7f
+
+	column Objeto
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Objeto
+		lineageTag: 2868af6c-6e2b-56be-948c-cf046801d9eb
+
+	column Modalidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Modalidade
+		lineageTag: 7e6f6109-9e53-5737-bcb8-17b1bc777a5a
+
+	column 'Início'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Início
+		lineageTag: 2e78c1de-b00d-5cf4-8789-30b6e0efca25
+
+	column Fim
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Fim
+		lineageTag: 722e15b7-3486-51b1-9c1c-decf85ad456e
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: b1017b31-09e4-571b-a53f-efc98f25cc70
+
+	column Aditivos
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Aditivos
+		lineageTag: 69e42018-d4d8-5726-9fcb-ccb0fbbabf87
+
+	partition Contratos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "contratos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Contrato", type text}, {"Fornecedor", type text}, {"Nome do fornecedor", type text}, {"Objeto", type text}, {"Modalidade", type text}, {"Início", type date}, {"Fim", type date}, {"Valor", type number}, {"Aditivos", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

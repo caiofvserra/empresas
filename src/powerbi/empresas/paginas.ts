@@ -1,48 +1,22 @@
-import type { Campo, Pagina, Visual } from '../pbir';
+import type { Pagina, Visual } from '../pbir';
 import { BLOCOS_PARCERIA, COORTES, comMarca, medidaDoBloco } from './dados';
-import { CARTOES, comparacaoDe, detalheDe, indiceDe } from './modelo';
+import { CARTOES, indiceDe } from './modelo';
+import { MES, TOPO, cabecalho as cabecalhoComum, campoColuna, campoMedida, cartoes as cartoesComuns, caixa, lugar } from '../layout';
+import type { Filtro } from '../layout';
+export { TAMANHO_DA_PAGINA } from '../layout';
 
 /*
- * As quatro páginas do painel de Empresas no relatório PBIR, em 1280 × 720 (o tamanho padrão do Power BI, que escala para
- * Full HD): título e filtros no alto, os cinco cartões e os gráficos. Cada cartão mostra o número, a comparação e a linha de
- * apoio, como no painel. Só o mapa por município, que não tem visual nativo, vira uma caixa "A montar" com o passo a passo.
+ * As quatro páginas do painel de Empresas no relatório PBIR, na grade comum de `layout.ts`. Só o mapa por município, que não tem
+ * visual nativo, vira uma caixa "A montar" com o passo a passo.
  */
-const campoMedida = (medida: string, rotulo?: string): Campo => ({ medida, ...(rotulo ? { rotulo } : {}) });
-const campoColuna = (tabela: string, coluna: string): Campo => ({ coluna: [tabela, coluna] });
-const LARGURA = 1280, ALTURA = 720, MARGEM = 16, VAO = 8, TOPO = 68, ALTURA_CARTAO = 84, CORPO = TOPO + ALTURA_CARTAO + VAO;
-export const TAMANHO_DA_PAGINA = { largura: LARGURA, altura: ALTURA };
-
-function cabecalho(pagina: string, titulo: string): Visual[] {
-  // Lista suspensa nos recortes; a data de referência aceita uma só escolha e o período é o controle deslizante do parâmetro.
-  const filtros: { nome: string; campo: Campo; unica?: boolean; modo?: 'Single' }[] = [
-    { nome: 'Regional', campo: campoColuna('Regionais', 'GRE') }, { nome: 'Município', campo: campoColuna('Municípios', 'Município') }, { nome: 'Câmara', campo: campoColuna('Empresas', 'Câmara') },
-    { nome: 'Porte', campo: campoColuna('Empresas', 'Porte') }, { nome: 'Situação na Receita', campo: campoColuna('Empresas', 'Situação na Receita') },
-    { nome: 'Data de referência', campo: campoColuna('Datas de referência', 'Rótulo'), unica: true }, { nome: 'Período (meses)', campo: campoColuna('Período', 'Meses'), modo: 'Single' },
-  ];
-  const inicio = 336, largura = Math.floor((LARGURA - MARGEM - inicio - VAO * (filtros.length - 1)) / filtros.length);
-  return [
-    { id: `${pagina}-titulo`, tipo: 'textbox', x: MARGEM, y: 8, w: 312, h: 52, texto: titulo },
-    ...filtros.map(({ nome, campo, unica, modo }, i): Visual => ({ id: `${pagina}-filtro-${i + 1}`, tipo: 'slicer', x: inicio + i * (largura + VAO), y: 8, w: largura, h: 52, titulo: nome,
-      papeis: { Values: [campo] }, segmentacao: { grupo: `filtro-${i + 1}`, unica, modo } })),
-  ];
-}
-
-/** Os cinco cartões da página: o título é o nome do cartão; embaixo do número, a comparação e a linha de apoio. */
-function cartoes(pagina: keyof typeof CARTOES): Visual[] {
-  const lista = CARTOES[pagina], largura = (LARGURA - 2 * MARGEM - VAO * (lista.length - 1)) / lista.length;
-  return lista.map(({ nome, comparacao, detalhe }, i) => ({ id: `${pagina}-cartao-${i + 1}`, tipo: 'multiRowCard', x: Math.round(MARGEM + i * (largura + VAO)), y: TOPO, w: Math.round(largura), h: ALTURA_CARTAO, titulo: nome,
-    papeis: { Values: [campoMedida(nome), ...(comparacao ? [campoMedida(comparacaoDe(nome))] : []), ...(detalhe ? [campoMedida(detalheDe(nome))] : [])] } }));
-}
-
-/** Lugar de um bloco na grade: coluna, linha, colunas e linhas ocupadas. */
-type Lugar = { coluna: number; linha: number; colunas: number; linhas: number };
-/** Grade do corpo: colunas e linhas em frações da área abaixo de `topo` (os cartões, por padrão). */
-function caixa({ coluna, linha, colunas, linhas }: Lugar, totalColunas = 12, totalLinhas = 2, topo = CORPO) {
-  const largura = (LARGURA - 2 * MARGEM - VAO * (totalColunas - 1)) / totalColunas, altura = (ALTURA - MARGEM - topo - VAO * (totalLinhas - 1)) / totalLinhas;
-  return { x: Math.round(MARGEM + coluna * (largura + VAO)), y: Math.round(topo + linha * (altura + VAO)), w: Math.round(colunas * largura + (colunas - 1) * VAO), h: Math.round(linhas * altura + (linhas - 1) * VAO) };
-}
-const lugar = (coluna: number, linha: number, colunas: number, linhas = 1): Lugar => ({ coluna, linha, colunas, linhas });
-const MES = campoColuna('Calendário', 'Rótulo');
+// Lista suspensa nos recortes; a data de referência aceita uma só escolha e o período é o controle deslizante do parâmetro.
+const FILTROS: Filtro[] = [
+  { nome: 'Regional', campo: campoColuna('Regionais', 'GRE') }, { nome: 'Município', campo: campoColuna('Municípios', 'Município') }, { nome: 'Câmara', campo: campoColuna('Empresas', 'Câmara') },
+  { nome: 'Porte', campo: campoColuna('Empresas', 'Porte') }, { nome: 'Situação na Receita', campo: campoColuna('Empresas', 'Situação na Receita') },
+  { nome: 'Data de referência', campo: campoColuna('Datas de referência', 'Rótulo'), unica: true }, { nome: 'Período (meses)', campo: campoColuna('Período', 'Meses'), modo: 'Single' },
+];
+const cabecalho = (pagina: string, titulo: string): Visual[] => cabecalhoComum(pagina, titulo, FILTROS);
+const cartoes = (pagina: keyof typeof CARTOES): Visual[] => cartoesComuns(pagina, CARTOES[pagina]);
 
 export const paginasEmpresas: Pagina[] = [
   { id: 'registro', nome: 'Registro e mercado', visuais: [

@@ -1,0 +1,61 @@
+Fornecedor;Nome;Objeto;Natureza
+FORN-001;Vértice Sistemas Ltda. (demonstrativo);Tecnologia da informação;Investimentos
+FORN-002;Vértice Serviços Gerais Ltda. (demonstrativo);Limpeza e conservação;Serviços de terceiros
+FORN-003;Vértice Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
+FORN-004;Vértice Locadora de Veículos S.A. (demonstrativo);Locação de veículos;Serviços de terceiros
+FORN-005;Vértice Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
+FORN-006;Vértice Consultoria Ltda. (demonstrativo);Consultoria;Serviços de terceiros
+FORN-007;Vértice Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
+FORN-008;Vértice Manutenção Predial S.A. (demonstrativo);Manutenção predial;Serviços de terceiros
+FORN-009;Vértice Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
+FORN-010;Vértice Papelaria Ltda. (demonstrativo);Material de escritório;Material de consumo
+FORN-011;Alvorada Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
+FORN-012;Alvorada Serviços Gerais S.A. (demonstrativo);Limpeza e conservação;Serviços de terceiros
+FORN-013;Alvorada Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
+FORN-014;Alvorada Locadora de Veículos Ltda. (demonstrativo);Locação de veículos;Serviços de terceiros
+FORN-015;Alvorada Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
+FORN-016;Alvorada Consultoria S.A. (demonstrativo);Consultoria;Serviços de terceiros
+FORN-017;Alvorada Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
+FORN-018;Alvorada Manutenção Predial Ltda. (demonstrativo);Manutenção predial;Serviços de terceiros
+FORN-019;Alvorada Telecom Ltda. (demonstrativo);Telefonia e dados;Investimentos
+FORN-020;Alvorada Papelaria S.A. (demonstrativo);Material de escritório;Material de consumo
+FORN-021;Horizonte Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
+FORN-022;Horizonte Serviços Gerais Ltda. (demonstrativo);Limpeza e conservação;Serviços de terceiros
+FORN-023;Horizonte Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
+FORN-024;Horizonte Locadora de Veículos S.A. (demonstrativo);Locação de veículos;Serviços de terceiros
+FORN-025;Horizonte Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
+FORN-026;Horizonte Consultoria Ltda. (demonstrativo);Consultoria;Serviços de terceiros
+FORN-027;Horizonte Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
+FORN-028;Horizonte Manutenção Predial S.A. (demonstrativo);Manutenção predial;Investimentos
+FORN-029;Horizonte Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
+FORN-030;Horizonte Papelaria Ltda. (demonstrativo);Material de escritório;Material de consumo
+FORN-031;Prisma Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
+FORN-032;Prisma Serviços Gerais S.A. (demonstrativo);Limpeza e conservação;Serviços de terceiros
+FORN-033;Prisma Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
+FORN-034;Prisma Locadora de Veículos Ltda. (demonstrativo);Locação de veículos;Serviços de terceiros
+FORN-035;Prisma Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
+FORN-036;Prisma Consultoria S.A. (demonstrativo);Consultoria;Serviços de terceiros
+FORN-037;Prisma Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Investimentos
+FORN-038;Prisma Manutenção Predial Ltda. (demonstrativo);Manutenção predial;Serviços de terceiros
+FORN-039;Prisma Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
+FORN-040;Prisma Papelaria S.A. (demonstrativo);Material de escritório;Material de consumo
+FORN-041;Centauro Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
+FORN-042;Centauro Serviços Gerais Ltda. (demonstrativo);Limpeza e conservação;Serviços de terceiros
+FORN-043;Centauro Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
+FORN-044;Centauro Locadora de Veículos S.A. (demonstrativo);Locação de veículos;Serviços de terceiros
+FORN-045;Centauro Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
+FORN-046;Centauro Consultoria Ltda. (demonstrativo);Consultoria;Investimentos
+FORN-047;Centauro Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
+FORN-048;Centauro Manutenção Predial S.A. (demonstrativo);Manutenção predial;Serviços de terceiros
+FORN-049;Centauro Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
+FORN-050;Centauro Papelaria Ltda. (demonstrativo);Material de escritório;Material de consumo
+FORN-051;Meridiano Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
+FORN-052;Meridiano Serviços Gerais S.A. (demonstrativo);Limpeza e conservação;Serviços de terceiros
+FORN-053;Meridiano Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
+FORN-054;Meridiano Locadora de Veículos Ltda. (demonstrativo);Locação de veículos;Serviços de terceiros
+FORN-055;Meridiano Logística Ltda. (demonstrativo);Correios e logística;Investimentos
+FORN-056;Meridiano Consultoria S.A. (demonstrativo);Consultoria;Serviços de terceiros
+FORN-057;Meridiano Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
+FORN-058;Meridiano Manutenção Predial Ltda. (demonstrativo);Manutenção predial;Serviços de terceiros
+FORN-059;Meridiano Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
+FORN-060;Meridiano Papelaria S.A. (demonstrativo);Material de escritório;Material de consumo
