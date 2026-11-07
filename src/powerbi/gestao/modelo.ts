@@ -1,22 +1,20 @@
 import type { Medida, Modelo, Tabela } from '../modelo';
-import { COM_DATA, COM_PERIODO, FORMATO, MESES_NA_BASE, PASTA_PARAMETRO, cartao, data, filtrosExtras, inicioDe, inteiro, medida, medidasDeApoio, medidasDosCartoes, n, noMes, parte, reais, sinal, texto, variacaoDe } from '../comum';
+import { COM_DATA, COM_PERIODO, FORMATO, MESES_NA_BASE, PASTA_PARAMETRO, cartao, data, filtrosExtras, inicioDe, inteiro, medida, medidasDeApoio, medidasDosCartoes, n, noMes, parte, reais, sinal, texto } from '../comum';
 import type { Cartao } from '../comum';
 
 /*
- * Modelo do painel de Gestão do Conselho no Power BI: as tabelas de `dados.ts`, as relações do esquema estrela e as medidas DAX
- * dos cartões e gráficos das cinco páginas, em pastas com o nome de cada página. Estoques (dívida, processos em julgamento,
- * recursos, plenário, profissionais ativos) leem a foto da data escolhida; fluxos (receita, despesa, diárias, julgados,
- * repasses, solicitações) somam os fatos do período (ADR 0002). `tests/powerbi-conselho.test.ts` reproduz estas regras sobre os
- * CSV e confere com os números do protótipo.
+ * Modelo comum dos painéis Financeiro e Atendimento no Power BI: as tabelas de `dados.ts`, as relações do esquema estrela e as
+ * medidas DAX dos cartões e gráficos das três páginas, em pastas com o nome de cada página. Estoques (dívida, profissionais
+ * ativos) leem a foto da data escolhida; fluxos (receita, despesa, diárias, solicitações) somam os fatos do período (ADR 0002).
+ * `tests/powerbi-gestao.test.ts` reproduz estas regras sobre os CSV e confere com os números do protótipo.
  */
-const PASTA = { apoio: 'Apoio', receita: 'Receita', orcamento: 'Orçamento e despesa', camaras: 'Câmaras e plenário', entidades: 'Entidades e escolas', atendimento: 'Atendimento' } as const;
+const PASTA = { apoio: 'Apoio', receita: 'Receita', orcamento: 'Orçamento e despesa', atendimento: 'Atendimento' } as const;
 
 const tabelas: Tabela[] = [
   // Dimensões.
   { nome: 'Regionais', arquivo: 'regionais.csv', descricao: 'Tem uma linha para cada uma das 16 gerências regionais do Crea-SP.', colunas: [texto('GRE', { ordenarPor: 'Ordem' }), inteiro('Ordem', { oculta: true })] },
   { nome: 'Municípios', arquivo: 'municipios.csv', descricao: 'Tem os 645 municípios de SP, a GRE de cada um pela tabela oficial e a unidade de atendimento mais próxima, com a distância em linha reta.',
     colunas: [texto('Código IBGE'), texto('Município'), texto('GRE'), texto('Unidade mais próxima'), inteiro('Distância até a unidade (km)', { formato: '#,##0' })] },
-  { nome: 'Câmaras', arquivo: 'camaras.csv', descricao: 'Tem as nove câmaras especializadas do Crea-SP, com os nomes do sistema do Conselho.', colunas: [texto('Câmara', { ordenarPor: 'Ordem' }), inteiro('Ordem', { oculta: true })] },
   { nome: 'Calendário', arquivo: 'calendario.csv', descricao: 'Tem um mês por linha, de 2020 até 12 meses depois de hoje (para os contratos que terminam), para os gráficos mês a mês e ano a ano.',
     colunas: [data('Mês', { formato: 'mmm/yy' }), texto('Rótulo', { ordenarPor: 'Mês' }), inteiro('Ano'), inteiro('Mês do ano', { oculta: true }), texto('Nome do mês', { ordenarPor: 'Mês do ano' }), inteiro('Ordem', { oculta: true })] },
   { nome: 'Datas de referência', arquivo: 'datas-referencia.csv', descricao: 'Tem os fins de mês em que a base pode ser lida, e hoje. Não se liga às outras tabelas: a escolha vale para todas as medidas.', colunas: [data('Data'), texto('Rótulo', { ordenarPor: 'Data' })] },
@@ -44,21 +42,7 @@ const tabelas: Tabela[] = [
     colunas: [data('Data', { oculta: true }), texto('Devedor', { oculta: true }), texto('Tipo de devedor'), texto('Código IBGE', { oculta: true }), texto('Idade da anuidade', { ordenarPor: 'Ordem da idade' }), inteiro('Ordem da idade', { oculta: true }),
       reais('Valor'), sinal('Acima do piso'), reais('Perto de prescrever'), texto('Situação do CNPJ')] },
 
-  // Câmaras e plenário.
-  { nome: 'Processos', arquivo: 'processos.csv', descricao: 'Guarda cada processo das câmaras: entrada, julgamento, decisão e, nos autos de infração, a multa e a data da prescrição (cinco anos do fato, Lei 9.873/1999, art. 1º).',
-    colunas: [texto('Processo'), texto('Câmara', { oculta: true }), texto('Tipo'), texto('Código IBGE', { oculta: true }), data('Entrada'), data('Mês de entrada', { oculta: true }), data('Julgado em'), data('Mês do julgamento', { oculta: true }),
-      inteiro('Dias até o julgamento', { oculta: true }), texto('Decisão'), reais('Multa'), data('Prescreve em')] },
-  { nome: 'Foto dos processos', arquivo: 'foto-processos.csv', descricao: 'Guarda, no último dia de cada mês, os processos em julgamento (com a fase, o tempo de espera e o prazo da prescrição) e os que têm recurso esperando o plenário.',
-    colunas: [data('Data', { oculta: true }), texto('Processo', { oculta: true }), texto('Fase'), texto('Tempo em julgamento', { ordenarPor: 'Ordem do tempo' }), inteiro('Ordem do tempo', { oculta: true }), texto('Prazo da prescrição', { ordenarPor: 'Ordem do prazo' }), inteiro('Ordem do prazo', { oculta: true }),
-      sinal('Prescreve em até 12 meses'), sinal('Recurso esperando o plenário')] },
-  { nome: 'Foto do plenário', arquivo: 'foto-plenario.csv', oculta: true, descricao: 'Guarda, no último dia de cada mês, as cadeiras de cada câmara no plenário e os profissionais ativos da modalidade que ela julga.', colunas: [data('Data'), texto('Câmara'), inteiro('Cadeiras'), inteiro('Profissionais ativos')] },
   { nome: 'Profissionais ativos', arquivo: 'profissionais-ativos.csv', oculta: true, descricao: 'Conta os profissionais com registro ativo no último dia de cada mês, por município onde moram.', colunas: [data('Data'), texto('Código IBGE'), inteiro('Ativos')] },
-
-  // Entidades e escolas.
-  { nome: 'Organizações', arquivo: 'organizacoes.csv', descricao: 'Tem as entidades de classe e as instituições de ensino registradas no Crea-SP, com a natureza, o município, a GRE e as cadeiras no plenário. Os filtros chegam pela GRE, como no painel: escolher um município mostra as organizações da regional dele.',
-    colunas: [texto('Organização', { oculta: true }), texto('Sigla'), texto('Nome'), texto('Natureza'), texto('Tipo'), texto('Código IBGE', { oculta: true }), texto('GRE', { oculta: true }), data('Registrada em'), inteiro('Cadeiras', { oculta: true }), { nome: 'Ensino a distância', tipo: 'double', formato: '0%', oculta: true }] },
-  { nome: 'Repasses', arquivo: 'repasses.csv', descricao: 'Guarda os convênios, contratos e patrocínios com as organizações, com a vigência e o valor.', colunas: [texto('Repasse', { oculta: true }), texto('Organização', { oculta: true }), texto('Canal'), texto('Objeto'), data('Início'), data('Fim'), reais('Valor')] },
-  { nome: 'Pagamentos dos repasses', arquivo: 'pagamentos-repasses.csv', oculta: true, descricao: 'Guarda cada pagamento de um repasse, com a data.', colunas: [texto('Repasse'), texto('Organização'), data('Data'), data('Mês'), reais('Valor')] },
 
   // Atendimento.
   { nome: 'Solicitações', arquivo: 'solicitacoes.csv', descricao: 'Guarda cada solicitação de atendimento: a unidade que atendeu (pelo município), o município de quem pediu, o prazo, a resolução, o assunto, o canal e a distância de quem pediu até a unidade mais próxima. Os filtros chegam pela GRE da unidade, como no painel.',
@@ -88,8 +72,6 @@ const acumulado = (tabela: string, coluna: string, anoAnterior: boolean) => [COM
 /** Soma uma coluna de uma foto na data escolhida, com filtros a mais (KEEPFILTERS, para não apagar a série do gráfico). */
 const naFoto = (tabela: string, expressao: string, ...extra: string[]) => `${COM_DATA}\nRETURN CALCULATE(${expressao}, REMOVEFILTERS('Calendário'), '${tabela}'[Data] = d${extra.map(filtro => `, KEEPFILTERS(${filtro})`).join('')})`;
 const DIVIDA = (...extra: string[]) => naFoto('Foto da dívida', "SUM('Foto da dívida'[Valor])", ...extra);
-const PROCESSOS = (...extra: string[]) => naFoto('Foto dos processos', "COUNTROWS('Foto dos processos')", ...extra);
-const EM_JULGAMENTO = "'Foto dos processos'[Fase] <> \"\"";
 
 /* ---------- Dívida: início, novos, recebidos e prescritos no período (a cascata do painel) ---------- */
 /** Título vencido e não pago num dia `x`, ainda não prescrito (`vencidoEm`): venceu antes de `x`, há até 1.826 dias, e não foi pago até `x`. */
@@ -102,18 +84,9 @@ const situacao = (condicao: string) => `${COM_PERIODO}\nRETURN COUNTROWS(FILTER(
 /* ---------- Pessoal: a lotação é o nome da GRE ou "Sede"; com regional escolhida, conta só quem está lotado nela ---------- */
 const doPessoal = (expressao: string, ...extra: string[]) => `IF(ISCROSSFILTERED('Regionais'), CALCULATE(${expressao}, 'Pessoas'[Tipo] = "Servidor"${filtros(extra)}, TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(${expressao}, 'Pessoas'[Tipo] = "Servidor"${filtros(extra)}))`;
 
-/* ---------- Entidades: só as organizações registradas até a data ---------- */
-const REGISTRADA = "'Organizações'[Registrada em] <= d";
-/** Repasses pagos entre `de` (exclusive) e `ate` (inclusive), dos repasses que começaram até a data. */
-const pagosEntre = (de: string, ate: string) => `${COM_DATA}\nRETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), REMOVEFILTERS('Calendário'), 'Pagamentos dos repasses'[Data] > ${de}, 'Pagamentos dos repasses'[Data] <= ${ate}, 'Repasses'[Início] <= d, ${REGISTRADA}) + 0`;
-
 /* ---------- Cartões ---------- */
-const [naReceita, noOrcamento, nasCamaras, nasEntidades, noAtendimento] = [cartao(PASTA.receita), cartao(PASTA.orcamento), cartao(PASTA.camaras), cartao(PASTA.entidades), cartao(PASTA.atendimento)];
+const [naReceita, noOrcamento, noAtendimento] = [cartao(PASTA.receita), cartao(PASTA.orcamento), cartao(PASTA.atendimento)];
 const DOZE_ANTERIORES = '" em relação aos 12 meses anteriores"';
-/** A natureza escrita por extenso e no plural, para a linha de apoio ("12 entidades de classe"). */
-const NO_PLURAL: Record<string, string> = { 'Entidade de classe': 'entidades de classe', 'IES pública': 'instituições de ensino públicas', 'IES privada': 'instituições de ensino privadas' };
-const porNatureza = (medidaBase: string, prefixo: string) => ['Entidade de classe', 'IES pública', 'IES privada']
-  .map(natureza => `${n(`CALCULATE(${medidaBase}, 'Organizações'[Natureza] = "${natureza}")`)} & "${prefixo}${NO_PLURAL[natureza]}"`).join(' & ", " & ');
 /** Os cartões de cada página, com a comparação e a linha de apoio do painel. `paginas.ts` monta os cartões daqui. */
 export const CARTOES = {
   receita: [
@@ -129,20 +102,6 @@ export const CARTOES = {
     noOrcamento('Em atividades-fim', undefined, `${rs('[Despesa em atividades-fim em 12 meses]')} & " em fiscalização, atendimento e ações institucionais"`),
     noOrcamento('Diárias e passagens', { serie: 'fluxo', frase: DOZE_ANTERIORES }, `${n('[Diárias pagas em 12 meses]')} & " diárias em 12 meses"`),
     noOrcamento('Contratos vigentes', undefined, `${rs('[Valor dos contratos vigentes]')} & "; " & ${n('[Contratos que terminam em 90 dias]')} & " terminam em 90 dias"`),
-  ],
-  camaras: [
-    nasCamaras('Processos em julgamento', { serie: 'estoque' }, `${n('[Processos que entraram no período]')} & " entraram no período"`),
-    nasCamaras('Julgados no período', { serie: 'fluxo' }, `"contra " & ${n('[Processos que entraram no período]')} & " que entraram"`),
-    nasCamaras('Tempo até o julgamento', { serie: 'fluxo' }, '"tempo típico (mediana) dos julgados no período"'),
-    nasCamaras('Autos perto da prescrição', undefined, `${rs('[Multas dos autos perto da prescrição]')} & " em multas prescrevem em até 12 meses, e " & ${n('[Autos prescritos no período]')} & " autos já prescreveram no período"`),
-    nasCamaras('Recursos esperando o plenário', { serie: 'estoque' }, '"decisões das câmaras levadas ao plenário"'),
-  ],
-  entidades: [
-    nasEntidades('Organizações registradas', undefined, porNatureza('[Organizações registradas]', ' ')),
-    nasEntidades('Cadeiras no plenário', undefined, porNatureza('[Cadeiras no plenário]', ' de ')),
-    nasEntidades('Repasses em 12 meses', { serie: 'fluxo', medida: variacaoDe('Repasses em 12 meses'), frase: DOZE_ANTERIORES },
-      `${COM_DATA}\nRETURN ${['Convênio', 'Contrato', 'Patrocínio'].map(canal => `${rs(`CALCULATE([Repassado no ano], REMOVEFILTERS('Calendário'), 'Calendário'[Ano] = YEAR(d), 'Repasses'[Canal] = "${canal}")`)} & " em ${canal.toLowerCase()}s"`).join(' & ", " & ')} & " no ano corrente"`),
-    nasEntidades('Instrumentos vigentes', undefined, `"convênios, contratos e patrocínios em vigor, com " & ${n('[Organizações com instrumento vigente]')} & " organizações"`),
   ],
   atendimento: [
     noAtendimento('Solicitações resolvidas no prazo', { serie: 'taxa' }, '"em até 14 dias; a meta é " & FORMAT([Meta de resolução no prazo], "0%")'),
@@ -216,37 +175,6 @@ const medidas: Medida[] = [
   medida(PASTA.orcamento, 'Servidores comissionados', doPessoal("COUNTROWS('Pessoas')", "'Pessoas'[Vínculo] = \"Comissionado\""), FORMATO.inteiro, 'Conta os servidores comissionados. Com uma regional escolhida, só os lotados nela.'),
   medida(PASTA.orcamento, 'Custo mensal do pessoal', doPessoal("SUM('Pessoas'[Custo mensal])"), FORMATO.reais, 'Soma o custo mensal dos servidores (salário e encargos). Com uma regional escolhida, só os lotados nela.'),
 
-  // Câmaras e plenário.
-  medida(PASTA.camaras, 'Processos em julgamento', PROCESSOS(EM_JULGAMENTO), FORMATO.inteiro, 'Conta os processos que já entraram nas câmaras e ainda não foram julgados na data escolhida.'),
-  medida(PASTA.camaras, 'Processos que entraram no período', `${noPeriodo('Processos', 'Entrada', "COUNTROWS('Processos')")} + 0`, FORMATO.inteiro, 'Conta os processos que entraram nas câmaras no período.'),
-  medida(PASTA.camaras, 'Julgados no período', `${noPeriodo('Processos', 'Julgado em', "COUNTROWS('Processos')")} + 0`, FORMATO.inteiro, 'Conta os processos julgados pelas câmaras no período.'),
-  medida(PASTA.camaras, 'Autos julgados no período', noPeriodo('Processos', 'Julgado em', "COUNTROWS('Processos')", "'Processos'[Tipo] = \"Auto de infração\""), FORMATO.inteiro, 'Conta os autos de infração julgados no período, pela decisão da câmara.'),
-  medida(PASTA.camaras, 'Tempo até o julgamento', noPeriodo('Processos', 'Julgado em', "MEDIAN('Processos'[Dias até o julgamento])"), dias, 'Mostra o tempo típico (a mediana), em dias, da entrada ao julgamento dos processos julgados no período.'),
-  medida(PASTA.camaras, 'Autos perto da prescrição', PROCESSOS("'Foto dos processos'[Prescreve em até 12 meses] = 1"), FORMATO.inteiro, 'Conta os autos de infração sem julgamento que completam cinco anos do fato em até 12 meses (Lei 9.873/1999, art. 1º).'),
-  medida(PASTA.camaras, 'Multas dos autos perto da prescrição', `${COM_DATA}\nRETURN SUMX(CALCULATETABLE('Foto dos processos', REMOVEFILTERS('Calendário'), 'Foto dos processos'[Data] = d, 'Foto dos processos'[Prescreve em até 12 meses] = 1), RELATED('Processos'[Multa])) + 0`, FORMATO.reais,
-    'Soma o valor das multas dos autos que prescrevem em até 12 meses.'),
-  medida(PASTA.camaras, 'Autos prescritos no período', `CALCULATE([Julgados no período], KEEPFILTERS('Processos'[Decisão] = "Arquivado pela prescrição"))`, FORMATO.inteiro, 'Conta os autos arquivados pela prescrição no período.'),
-  medida(PASTA.camaras, 'Recursos esperando o plenário', PROCESSOS("'Foto dos processos'[Recurso esperando o plenário] = 1"), FORMATO.inteiro, 'Conta os processos em que a parte recorreu da decisão da câmara e o plenário ainda não julgou, na data escolhida.'),
-  medida(PASTA.camaras, 'Entraram no mês', noMes("COUNTROWS('Processos') + 0"), FORMATO.inteiro, 'Conta os processos que entraram em cada mês, nos meses do gráfico.'),
-  medida(PASTA.camaras, 'Julgados no mês', noMes("CALCULATE(COUNTROWS('Processos'), USERELATIONSHIP('Processos'[Mês do julgamento], 'Calendário'[Mês])) + 0"), FORMATO.inteiro, 'Conta os processos julgados em cada mês, nos meses do gráfico.'),
-  medida(PASTA.camaras, 'Em julgamento no fim do mês', noMes("CALCULATE(COUNTROWS('Foto dos processos'), REMOVEFILTERS('Calendário'), 'Foto dos processos'[Data] = MIN(EOMONTH(mes, 0), d), 'Foto dos processos'[Fase] <> \"\")"), FORMATO.inteiro,
-    'Conta os processos em julgamento no último dia de cada mês (no mês da data escolhida, nela).'),
-  medida(PASTA.camaras, 'Cadeiras da câmara', naFoto('Foto do plenário', "SUM('Foto do plenário'[Cadeiras])"), FORMATO.inteiro, 'Conta as cadeiras de cada câmara no plenário na data escolhida, pelas modalidades das entidades e escolas que as indicam.'),
-  medida(PASTA.camaras, 'Parte das cadeiras', "DIVIDE([Cadeiras da câmara], CALCULATE([Cadeiras da câmara], REMOVEFILTERS('Câmaras')))", FORMATO.parte, 'Mostra a parte das cadeiras do plenário que é de cada câmara.'),
-  medida(PASTA.camaras, 'Parte dos profissionais ativos', `${COM_DATA}\nVAR camara = CALCULATE(SUM('Foto do plenário'[Profissionais ativos]), 'Foto do plenário'[Data] = d)\nVAR todas = CALCULATE(SUM('Foto do plenário'[Profissionais ativos]), 'Foto do plenário'[Data] = d, REMOVEFILTERS('Câmaras'))\nRETURN DIVIDE(camara, todas)`, FORMATO.parte,
-    'Mostra a parte dos profissionais ativos que é da modalidade que cada câmara julga. A Ambiental e Sanitária não tem modalidade própria no cenário.'),
-
-  // Entidades e escolas.
-  medida(PASTA.entidades, 'Organizações registradas', `${COM_DATA}\nRETURN CALCULATE(COUNTROWS('Organizações'), ${REGISTRADA}) + 0`, FORMATO.inteiro, 'Conta as entidades de classe e as instituições de ensino registradas até a data escolhida.'),
-  medida(PASTA.entidades, 'Cadeiras no plenário', `${COM_DATA}\nRETURN CALCULATE(SUM('Organizações'[Cadeiras]), ${REGISTRADA}) + 0`, FORMATO.inteiro, 'Soma as cadeiras no plenário das organizações registradas até a data escolhida.'),
-  medida(PASTA.entidades, 'Repasses em 12 meses', pagosEntre('d - 365', 'd'), FORMATO.reais, 'Soma os pagamentos de convênios, contratos e patrocínios às organizações nos 365 dias até a data escolhida.'),
-  medida(PASTA.entidades, 'Repasses nos 12 meses anteriores', pagosEntre('d - 730', 'd - 365'), FORMATO.reais, 'Soma os pagamentos às organizações nos 365 dias anteriores, para comparar.'),
-  medida(PASTA.entidades, variacaoDe('Repasses em 12 meses'), 'DIVIDE([Repasses em 12 meses] - [Repasses nos 12 meses anteriores], [Repasses nos 12 meses anteriores])', FORMATO.variacao, 'Compara os repasses dos 12 meses com os dos 12 meses anteriores, como o cartão do painel.'),
-  medida(PASTA.entidades, 'Repassado no ano', `${COM_DATA}\nRETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), 'Pagamentos dos repasses'[Data] <= d, 'Repasses'[Início] <= d, ${REGISTRADA})`, FORMATO.reais, 'Soma os pagamentos às organizações registradas, no ano do gráfico, até a data escolhida.'),
-  medida(PASTA.entidades, 'Repassado até a data', `${COM_DATA}\nRETURN CALCULATE(SUM('Pagamentos dos repasses'[Valor]), REMOVEFILTERS('Calendário'), 'Pagamentos dos repasses'[Data] <= d, 'Repasses'[Início] <= d, ${REGISTRADA})`, FORMATO.reais, 'Soma tudo o que foi pago à organização até a data escolhida.'),
-  medida(PASTA.entidades, 'Instrumentos vigentes', `${COM_DATA}\nRETURN CALCULATE(COUNTROWS('Repasses'), 'Repasses'[Início] <= d, 'Repasses'[Fim] >= d, ${REGISTRADA}) + 0`, FORMATO.inteiro, 'Conta os convênios, contratos e patrocínios em vigor na data escolhida.'),
-  medida(PASTA.entidades, 'Organizações com instrumento vigente', `${COM_DATA}\nRETURN CALCULATE(DISTINCTCOUNT('Repasses'[Organização]), 'Repasses'[Início] <= d, 'Repasses'[Fim] >= d, ${REGISTRADA}) + 0`, FORMATO.inteiro, 'Conta as organizações com ao menos um instrumento em vigor.'),
-
   // Atendimento.
   medida(PASTA.atendimento, 'Solicitações de atendimento', `${noPeriodo('Solicitações', 'Aberta em', "COUNTROWS('Solicitações')")} + 0`, FORMATO.inteiro, 'Conta as solicitações abertas no período.'),
   medida(PASTA.atendimento, 'Solicitações de empresas', "CALCULATE([Solicitações de atendimento], KEEPFILTERS('Solicitações'[Solicitante] = \"Empresa\"))", FORMATO.inteiro, 'Conta as solicitações do período feitas por empresas.'),
@@ -271,10 +199,10 @@ const medidas: Medida[] = [
   ...medidasDosCartoes(CARTOES),
 ];
 
-/** O modelo de origem dos painéis Financeiro, Atendimento e Gestão do Conselho: cada pacote leva o recorte das suas páginas (ver recorte.ts). */
+/** O modelo de origem dos painéis Financeiro e Atendimento: cada pacote leva o recorte das suas páginas (ver recorte.ts). */
 export const modeloGestao: Modelo = {
   nome: 'Gestao',
-  parametros: [{ nome: PASTA_PARAMETRO, valor: 'C:\\CREA-SP\\powerbi\\conselho\\dados\\', descricao: 'Pasta onde estão os CSV do pacote (termina com \\). Troque em Transformar dados > Editar parâmetros e clique em Atualizar.' }],
+  parametros: [{ nome: PASTA_PARAMETRO, valor: 'C:\\CREA-SP\\powerbi\\financeiro\\dados\\', descricao: 'Pasta onde estão os CSV do pacote (termina com \\). Troque em Transformar dados > Editar parâmetros e clique em Atualizar.' }],
   tabelas: [...tabelas, { nome: 'Medidas', descricao: 'Guarda as medidas do painel, em pastas por página.', colunas: [{ nome: 'Medidas', tipo: 'string', oculta: true }], medidas }],
   relacoes: [
     // Nos dois sentidos: escolher um município leva a despesa, as diárias e o pessoal à regional dele.
@@ -290,19 +218,8 @@ export const modeloGestao: Modelo = {
     { de: ['Contratos', 'Fornecedor'], para: ['Fornecedores', 'Fornecedor'] },
     { de: ['Títulos', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] },
     { de: ['Foto da dívida', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] },
-    { de: ['Processos', 'Câmara'], para: ['Câmaras', 'Câmara'] },
-    { de: ['Processos', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] },
-    { de: ['Processos', 'Mês de entrada'], para: ['Calendário', 'Mês'] },
-    // Inativa: os julgados por mês a ligam com USERELATIONSHIP.
-    { de: ['Processos', 'Mês do julgamento'], para: ['Calendário', 'Mês'], inativa: true },
-    { de: ['Foto dos processos', 'Processo'], para: ['Processos', 'Processo'] },
-    { de: ['Foto do plenário', 'Câmara'], para: ['Câmaras', 'Câmara'] },
     { de: ['Profissionais ativos', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] },
-    // Organizações, solicitações e coworkings seguem a GRE, como no painel: o município escolhido leva à regional dele.
-    { de: ['Organizações', 'GRE'], para: ['Regionais', 'GRE'] },
-    { de: ['Repasses', 'Organização'], para: ['Organizações', 'Organização'] },
-    { de: ['Pagamentos dos repasses', 'Repasse'], para: ['Repasses', 'Repasse'] },
-    { de: ['Pagamentos dos repasses', 'Mês'], para: ['Calendário', 'Mês'] },
+    // Solicitações e coworkings seguem a GRE, como no painel: o município escolhido leva à regional dele.
     { de: ['Solicitações', 'GRE'], para: ['Regionais', 'GRE'] },
     { de: ['Solicitações', 'Mês'], para: ['Calendário', 'Mês'] },
     { de: ['Coworkings', 'GRE'], para: ['Regionais', 'GRE'] },

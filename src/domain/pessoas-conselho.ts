@@ -4,6 +4,8 @@ import { municipiosSp } from './municipios';
 import { funcoes } from './conselho';
 import type { Categoria, Conselho, Funcao } from './conselho';
 import type { Entidades } from './entidades';
+import { camaraDaCadeira } from './gestao';
+import type { CamaraConselho } from './gestao';
 
 /**
  * Gastos com nome (06/11/2026): quem são os servidores de cada função, quem são os conselheiros e quem recebeu cada diária.
@@ -64,13 +66,46 @@ export function servidores(conselho: Conselho, dataset: Dataset): Servidor[] {
   cacheServidores.set(conselho, out); return out;
 }
 
-/** Um conselheiro por cadeira do plenário, com a entidade de classe ou a escola que o indicou. Nomes numerados depois dos servidores. */
+/**
+ * Membro do Plenário (07/11/2026): quem ocupa uma cadeira, a câmara em que atua, a organização que o indicou e o mandato. O mandato
+ * é de três anos, e um terço das cadeiras se renova a cada ano (os terços 2024 a 2026, 2025 a 2027 e 2026 a 2028). `assiduidade`
+ * é a chance de ir a cada sessão e `ritmo` multiplica a carga que recebe; os dois são do cenário.
+ */
+export interface Membro { id: string; nome: string; genero: 'Feminino' | 'Masculino'; camara: CamaraConselho; orgId: string; sigla: string; organizacao: string;
+  natureza: 'Entidade de classe' | 'Instituição de ensino'; cadeira: string; inicio: string; fim: string; terco: string; assiduidade: number; ritmo: number }
+const PRIMEIRO_MANDATO = 2015, ULTIMO_MANDATO = 2029;
+const cacheMembros = new WeakMap<Entidades, Membro[]>();
+/** Um registro por mandato de cada cadeira, de 2015 a 2031; o reeleito repete o id e o nome no mandato seguinte. Nomes numerados depois dos servidores. */
+export function membrosDoPlenario(entidades: Entidades): Membro[] {
+  const saved = cacheMembros.get(entidades); if (saved) return saved;
+  const out: Membro[] = []; let numero = 5000;
+  for (const org of entidades.organizacoes.filter(row => row.cadeiras > 0)) for (let index = 0; index < org.cadeiras; index++) {
+    const cadeira = `${org.id}-${index + 1}`, terco = between(`terco:${cadeira}`, 0, 2), camara = camaraDaCadeira(org, index);
+    const daCadeira: Membro[] = [];
+    for (let ano = PRIMEIRO_MANDATO + terco; ano <= ULTIMO_MANDATO; ano += 3) {
+      const inicio = `${ano}-01-01`, fim = `${ano + 2}-12-31`, terceiro = `${ano} a ${ano + 2}`;
+      // Reeleição: a mesma pessoa (mesmo id e nome) num registro novo para o mandato seguinte.
+      const anterior = daCadeira.at(-1);
+      if (anterior && chance(`reeleito:${cadeira}:${ano}`) < 0.3) { daCadeira.push({ ...anterior, inicio, fim, terco: terceiro }); continue; }
+      // Cerca de um quinto das cadeiras com mulheres, perto da parte delas no registro.
+      const genero = chance(`genero:${cadeira}:${ano}`) < 0.2 ? 'Feminino' as const : 'Masculino' as const;
+      let nome = nomeNumero(++numero); while (femininos.includes(nome.split(' ')[0]) !== (genero === 'Feminino')) nome = nomeNumero(++numero);
+      daCadeira.push({ id: `CONS-${cadeira}-${ano}`, nome, genero, camara, orgId: org.id, sigla: org.sigla, organizacao: org.nome, natureza: org.grupo === 'IES' ? 'Instituição de ensino' : 'Entidade de classe',
+        cadeira, inicio, fim, terco: terceiro, assiduidade: 0.6 + Math.pow(chance(`assid:${cadeira}:${ano}`), 0.45) * 0.39, ritmo: 0.5 + chance(`ritmo:${cadeira}:${ano}`) });
+    }
+    out.push(...daCadeira);
+  }
+  cacheMembros.set(entidades, out); return out;
+}
+/** Quem está no Plenário na data: mandato em curso e organização já registrada. */
+export const membrosEm = (entidades: Entidades, data: string) => {
+  const registrada = new Map(entidades.organizacoes.map(org => [org.id, org.registradaEm]));
+  return membrosDoPlenario(entidades).filter(m => m.inicio <= data && m.fim >= data && registrada.get(m.orgId)! <= data);
+};
+
+/** Um conselheiro por cadeira do plenário na data das entidades, com a entidade de classe ou a escola que o indicou. */
 export function conselheiros(entidades: Entidades): Conselheiro[] {
-  let numero = 5000;
-  return entidades.organizacoes.flatMap(org => Array.from({ length: org.cadeiras }, (_, index) => {
-    const titulo = org.modalidades[0] === 'Agronomia' ? 'Eng. agr.' : 'Eng.';
-    return { id: `CONS-${org.id}-${index + 1}`, nome: `${titulo} ${nomeNumero(++numero)}`, sigla: org.sigla, organizacao: org.nome };
-  }));
+  return membrosEm(entidades, entidades.anchor).map(m => ({ id: m.id, nome: m.nome, sigla: m.sigla, organizacao: m.organizacao }));
 }
 
 /**

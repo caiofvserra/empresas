@@ -1,0 +1,80 @@
+/// Guarda cada deliberação de repasse aprovada pelo Plenário, pela ata: a organização, o valor, o objeto, quem propôs e se quem propôs foi indicado pela própria organização.
+table 'Deliberações'
+	lineageTag: 14b3e54f-e647-5609-94cb-fee7403117a8
+
+	column 'Deliberação'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Deliberação
+		lineageTag: cf0c834f-5882-51e5-bbee-6af7cd0e0410
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: a70292a4-3cc0-53f2-818f-2f6cb7d0af89
+
+	column Canal
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Canal
+		lineageTag: bd69a1d3-c55a-5c65-8df2-eecb7bae2e9c
+
+	column 'Organização'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Organização
+		lineageTag: c5210824-14d7-5dde-aa23-3a8c2694cb2b
+
+	column 'Nome da organização'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome da organização
+		lineageTag: b11b8988-7ea3-5532-b033-fc404f5c4503
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: 7ebd4a12-f282-5f38-83b4-e64a7aba3fd5
+
+	column Objeto
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Objeto
+		lineageTag: 7e6ab705-3d7e-5ad3-b983-e23d5a8c2dc0
+
+	column 'Proposta por'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Proposta por
+		lineageTag: 28703ec5-4b21-56b3-bb84-ed1d84d3acbc
+
+	column 'Proposta pela própria organização'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Proposta pela própria organização
+		lineageTag: 24813a27-fa28-5745-acf6-736fb5975618
+
+	column 'Quem propôs é da organização'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Quem propôs é da organização
+		lineageTag: 44078bc2-77db-5dac-98aa-624a68e5f5e3
+
+	partition 'Deliberações' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "deliberacoes.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Deliberação", type text}, {"Data", type date}, {"Canal", type text}, {"Organização", type text}, {"Nome da organização", type text}, {"Valor", type number}, {"Objeto", type text}, {"Proposta por", type text}, {"Proposta pela própria organização", Int64.Type}, {"Quem propôs é da organização", type text}}, "pt-BR")
+				in
+				    Tipos

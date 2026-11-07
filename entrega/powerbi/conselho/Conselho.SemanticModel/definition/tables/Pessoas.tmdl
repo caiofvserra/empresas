@@ -1,0 +1,38 @@
+/// Tem quem pode estar com um processo: os conselheiros (com a câmara e a organização que indicou) e os funcionários da assessoria de cada colegiado. Os nomes do cenário são fictícios.
+table Pessoas
+	lineageTag: c48ab5f3-c1e9-53a1-a663-9f2b953fe2da
+
+	column Pessoa
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Pessoa
+		lineageTag: 5f38d9e3-b12a-5791-ad6c-4f5bf5a1e704
+
+	column Nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome
+		lineageTag: b07e3f4b-9e35-582d-9d73-65036553293c
+
+	column Papel
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Papel
+		lineageTag: 720a851e-f014-5484-a3e6-986602aef05b
+
+	column Detalhe
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Detalhe
+		lineageTag: 8a6c4abd-ad7a-5eb3-913b-99b5db7bcccc
+
+	partition Pessoas = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "pessoas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Pessoa", type text}, {"Nome", type text}, {"Papel", type text}, {"Detalhe", type text}}, "pt-BR")
+				in
+				    Tipos

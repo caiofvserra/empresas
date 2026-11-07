@@ -1,0 +1,42 @@
+/// Guarda as diárias pagas a cada conselheiro em cada mês, pela contabilidade.
+table 'Diárias'
+	isHidden
+	lineageTag: 70d56916-5a60-5e5c-8178-601e5e70d6af
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 9febe981-9247-5747-b3ef-95690085f27c
+
+	column Pessoa
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Pessoa
+		lineageTag: 512af76a-c89f-5630-919f-13b28c99a96d
+
+	column 'Diárias'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Diárias
+		lineageTag: 267a890e-f7eb-54c4-a276-81f6930e270f
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: abde9f67-fdf9-55a9-8dbf-7f4f420ea0d6
+
+	partition 'Diárias' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "diarias.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Pessoa", type text}, {"Diárias", Int64.Type}, {"Valor", type number}}, "pt-BR")
+				in
+				    Tipos

@@ -2,8 +2,8 @@ import type { Modelo } from './modelo';
 import type { Pagina } from './pbir';
 
 /**
- * O modelo de um painel tirado de um modelo maior (07/11/2026: o antigo painel de Gestão do Conselho virou três, Financeiro,
- * Atendimento e Conselho, que partem do mesmo modelo). Ficam:
+ * O modelo de um painel tirado de um modelo maior (07/11/2026: do antigo painel de Gestão do Conselho saíram o Financeiro e o
+ * Atendimento, que partem do mesmo modelo). Ficam:
  * - as medidas que os visuais das páginas usam e as que essas medidas citam;
  * - as tabelas que esses visuais e medidas leem;
  * - as tabelas do lado "um" das relações das que ficaram, para os filtros continuarem chegando aos fatos;

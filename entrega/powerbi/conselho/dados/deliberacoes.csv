@@ -1,0 +1,174 @@
+Deliberação;Data;Canal;Organização;Nome da organização;Valor;Objeto;Proposta por;Proposta pela própria organização;Quem propôs é da organização
+DEL-REP-ENT-01-1;2024-12-10;Patrocínio;ENT-01;Associação de Engenheiros do Estado (demonstrativo);17000;Patrocínio de congresso;Vinícius Costa Campos;0;Não
+DEL-REP-ENT-01-2;2025-03-12;Patrocínio;ENT-01;Associação de Engenheiros do Estado (demonstrativo);45000;Patrocínio de feira técnica;Vitória Barbosa Borges;1;Sim
+DEL-REP-ENT-01-3;2026-03-09;Patrocínio;ENT-01;Associação de Engenheiros do Estado (demonstrativo);116000;Patrocínio de congresso;Wagner Ribeiro Barros;0;Não
+DEL-REP-ENT-02-1;2023-12-14;Patrocínio;ENT-02;Sindicato dos Agrônomos Paulistas (demonstrativo);33000;Patrocínio de congresso;William Nunes Ferraz;0;Não
+DEL-REP-ENT-02-2;2023-03-06;Contrato;ENT-02;Sindicato dos Agrônomos Paulistas (demonstrativo);167000;Produção de conteúdo técnico;Sérgio Ribeiro Araújo;0;Não
+DEL-REP-ENT-02-3;2023-10-14;Patrocínio;ENT-02;Sindicato dos Agrônomos Paulistas (demonstrativo);72000;Patrocínio de premiação;Sérgio Cardoso Dias;1;Sim
+DEL-REP-ENT-02-4;2021-05-10;Convênio;ENT-02;Sindicato dos Agrônomos Paulistas (demonstrativo);212000;Apoio a semanas de engenharia;Diego Siqueira Moreira;0;Não
+DEL-REP-ENT-02-5;2024-12-10;Contrato;ENT-02;Sindicato dos Agrônomos Paulistas (demonstrativo);377000;Produção de conteúdo técnico;Tatiana Freitas Lima;0;Não
+DEL-REP-ENT-02-6;2021-06-09;Convênio;ENT-02;Sindicato dos Agrônomos Paulistas (demonstrativo);159000;Eventos técnicos regionais;Sérgio Cardoso Dias;1;Sim
+DEL-REP-ENT-03-1;2025-05-07;Patrocínio;ENT-03;Federação de Engenharia Elétrica (demonstrativo);55000;Patrocínio de premiação;William Oliveira Ferraz;0;Não
+DEL-REP-ENT-04-1;2022-09-11;Convênio;ENT-04;Sindicato dos Engenharia Mecânica (demonstrativo);159000;Cursos e palestras de atualização profissional;Wagner Costa Campos;1;Sim
+DEL-REP-ENT-04-2;2021-12-12;Convênio;ENT-04;Sindicato dos Engenharia Mecânica (demonstrativo);68000;Programa de orientação a recém-formados;Gustavo Ferraz Pereira;0;Não
+DEL-REP-ENT-04-3;2026-05-10;Patrocínio;ENT-04;Sindicato dos Engenharia Mecânica (demonstrativo);35000;Patrocínio de feira técnica;Marcelo Costa Andrade;0;Não
+DEL-REP-ENT-04-4;2021-11-10;Convênio;ENT-04;Sindicato dos Engenharia Mecânica (demonstrativo);237000;Eventos técnicos regionais;Paulo Teixeira Pereira;0;Não
+DEL-REP-ENT-05-1;2021-07-08;Contrato;ENT-05;Associação de Segurança do Trabalho (demonstrativo);81000;Serviço de inscrição e credenciamento;William Campos Gomes;0;Não
+DEL-REP-ENT-05-2;2025-02-08;Convênio;ENT-05;Associação de Segurança do Trabalho (demonstrativo);24000;Cursos e palestras de atualização profissional;Tatiana Costa Pereira;1;Sim
+DEL-REP-ENT-06-1;2025-08-07;Contrato;ENT-06;Associação de Engenharia Química (demonstrativo);297000;Serviço de inscrição e credenciamento;Vinícius Machado Nunes;1;Sim
+DEL-REP-ENT-06-2;2022-02-11;Patrocínio;ENT-06;Associação de Engenharia Química (demonstrativo);96000;Patrocínio de congresso;William Castro Dias;0;Não
+DEL-REP-ENT-06-3;2021-08-08;Patrocínio;ENT-06;Associação de Engenharia Química (demonstrativo);10000;Patrocínio de congresso;Vitória Barbosa Borges;0;Não
+DEL-REP-ENT-06-4;2023-06-08;Convênio;ENT-06;Associação de Engenharia Química (demonstrativo);31000;Eventos técnicos regionais;Wagner Ramos Borges;0;Não
+DEL-REP-ENT-07-1;2026-04-14;Patrocínio;ENT-07;Sindicato dos Geólogos e Minas (demonstrativo);59000;Patrocínio de feira técnica;Sérgio Mendes Martins;0;Não
+DEL-REP-ENT-07-2;2025-06-09;Contrato;ENT-07;Sindicato dos Geólogos e Minas (demonstrativo);271000;Produção de conteúdo técnico;Sérgio Carvalho Dias;0;Não
+DEL-REP-ENT-07-3;2023-07-14;Contrato;ENT-07;Sindicato dos Geólogos e Minas (demonstrativo);339000;Produção de conteúdo técnico;Marcos Almeida Nogueira;0;Não
+DEL-REP-ENT-08-1;2022-05-13;Patrocínio;ENT-08;Sindicato dos Agrimensura (demonstrativo);91000;Patrocínio de congresso;Vinícius Araújo Nogueira;0;Não
+DEL-REP-ENT-09-1;2025-09-07;Contrato;ENT-09;Associação de Engenharia Civil (demonstrativo);22000;Serviço de inscrição e credenciamento;Vinícius Lopes Pereira;1;Sim
+DEL-REP-ENT-09-2;2025-07-14;Contrato;ENT-09;Associação de Engenharia Civil (demonstrativo);252000;Serviço de inscrição e credenciamento;Vinícius Lopes Pereira;1;Sim
+DEL-REP-ENT-09-3;2022-06-08;Patrocínio;ENT-09;Associação de Engenharia Civil (demonstrativo);112000;Patrocínio de feira técnica;Wagner Cardoso Esteves;1;Sim
+DEL-REP-ENT-09-4;2023-06-08;Patrocínio;ENT-09;Associação de Engenharia Civil (demonstrativo);88000;Patrocínio de feira técnica;Vinícius Lopes Pereira;1;Sim
+DEL-REP-ENT-10-1;2023-08-07;Convênio;ENT-10;Instituto de Técnicos Industriais (demonstrativo);36000;Cursos e palestras de atualização profissional;Wagner Ramos Borges;0;Não
+DEL-REP-ENT-10-2;2022-11-08;Patrocínio;ENT-10;Instituto de Técnicos Industriais (demonstrativo);116000;Patrocínio de congresso;Rafael Alves Nogueira;1;Sim
+DEL-REP-ENT-10-3;2023-12-14;Convênio;ENT-10;Instituto de Técnicos Industriais (demonstrativo);186000;Programa de orientação a recém-formados;Wagner Machado Pereira;0;Não
+DEL-REP-ENT-10-4;2022-08-08;Contrato;ENT-10;Instituto de Técnicos Industriais (demonstrativo);28000;Produção de conteúdo técnico;Rafael Machado Moreira;0;Não
+DEL-REP-ENT-10-5;2022-12-11;Patrocínio;ENT-10;Instituto de Técnicos Industriais (demonstrativo);120000;Patrocínio de premiação;Vitória Pereira Siqueira;0;Não
+DEL-REP-ENT-11-1;2022-11-08;Contrato;ENT-11;Instituto de Tecnólogos (demonstrativo);133000;Locação de auditório para eventos;Otávio Mendes Gomes;1;Sim
+DEL-REP-ENT-11-2;2024-03-14;Patrocínio;ENT-11;Instituto de Tecnólogos (demonstrativo);90000;Patrocínio de premiação;Otávio Mendes Gomes;1;Sim
+DEL-REP-ENT-12-1;2026-03-09;Patrocínio;ENT-12;Instituto de Engenharia de Produção (demonstrativo);53000;Patrocínio de congresso;Vitória Rocha Mendes;1;Sim
+DEL-REP-ENT-12-2;2026-04-14;Convênio;ENT-12;Instituto de Engenharia de Produção (demonstrativo);283000;Programa de orientação a recém-formados;William Dias Campos;0;Não
+DEL-REP-ENT-12-3;2021-09-07;Patrocínio;ENT-12;Instituto de Engenharia de Produção (demonstrativo);26000;Patrocínio de premiação;Vitória Lima Esteves;0;Não
+DEL-REP-ENT-12-4;2024-10-09;Patrocínio;ENT-12;Instituto de Engenharia de Produção (demonstrativo);97000;Patrocínio de premiação;Vitória Barbosa Borges;0;Não
+DEL-REP-ENT-12-5;2025-06-09;Convênio;ENT-12;Instituto de Engenharia de Produção (demonstrativo);307000;Cursos e palestras de atualização profissional;Wagner Dias Batista;0;Não
+DEL-REP-ENT-12-6;2025-10-11;Contrato;ENT-12;Instituto de Engenharia de Produção (demonstrativo);300000;Serviço de inscrição e credenciamento;Paulo Barbosa Lopes;0;Não
+DEL-REP-ENT-13-1;2021-11-10;Contrato;ENT-13;Sindicato dos Engenheiros do Estado · Guarulhos (demonstrativo);106000;Serviço de inscrição e credenciamento;Rodrigo Costa Batista;1;Sim
+DEL-REP-ENT-13-2;2024-12-10;Convênio;ENT-13;Sindicato dos Engenheiros do Estado · Guarulhos (demonstrativo);289000;Cursos e palestras de atualização profissional;Fernando Oliveira Barros;0;Não
+DEL-REP-ENT-13-3;2023-11-09;Patrocínio;ENT-13;Sindicato dos Engenheiros do Estado · Guarulhos (demonstrativo);14000;Patrocínio de premiação;Vinícius Santos Alves;0;Não
+DEL-REP-ENT-13-4;2022-12-11;Convênio;ENT-13;Sindicato dos Engenheiros do Estado · Guarulhos (demonstrativo);251000;Programa de orientação a recém-formados;Paulo Barros Lopes;0;Não
+DEL-REP-ENT-13-5;2025-07-14;Convênio;ENT-13;Sindicato dos Engenheiros do Estado · Guarulhos (demonstrativo);118000;Apoio a semanas de engenharia;William Pinto Dias;0;Não
+DEL-REP-ENT-13-6;2024-05-14;Convênio;ENT-13;Sindicato dos Engenheiros do Estado · Guarulhos (demonstrativo);204000;Eventos técnicos regionais;Vitória Queiroz Pereira;1;Sim
+DEL-REP-ENT-15-1;2022-07-14;Patrocínio;ENT-15;Federação de Engenharia Elétrica · Campinas (demonstrativo);11000;Patrocínio de premiação;William Machado Pereira;0;Não
+DEL-REP-ENT-15-2;2022-09-11;Patrocínio;ENT-15;Federação de Engenharia Elétrica · Campinas (demonstrativo);58000;Patrocínio de feira técnica;Vinícius Mendes Moreira;0;Não
+DEL-REP-ENT-15-3;2024-08-12;Contrato;ENT-15;Federação de Engenharia Elétrica · Campinas (demonstrativo);28000;Produção de conteúdo técnico;William Queiroz Castro;0;Não
+DEL-REP-ENT-16-1;2023-04-12;Contrato;ENT-16;Associação de Engenharia Mecânica · São José do Rio Preto (demonstrativo);166000;Locação de auditório para eventos;Sérgio Cardoso Esteves;0;Não
+DEL-REP-ENT-16-2;2021-04-11;Convênio;ENT-16;Associação de Engenharia Mecânica · São José do Rio Preto (demonstrativo);35000;Cursos e palestras de atualização profissional;Rodrigo Freitas Ribeiro;0;Não
+DEL-REP-ENT-16-3;2024-12-10;Convênio;ENT-16;Associação de Engenharia Mecânica · São José do Rio Preto (demonstrativo);377000;Cursos e palestras de atualização profissional;Sérgio Siqueira Santos;1;Sim
+DEL-REP-ENT-16-4;2023-10-14;Convênio;ENT-16;Associação de Engenharia Mecânica · São José do Rio Preto (demonstrativo);201000;Eventos técnicos regionais;William Oliveira Esteves;1;Sim
+DEL-REP-ENT-17-1;2024-12-10;Convênio;ENT-17;Instituto de Segurança do Trabalho · Jundiaí (demonstrativo);10000;Apoio a semanas de engenharia;Wagner Campos Ferraz;0;Não
+DEL-REP-ENT-17-2;2022-10-13;Contrato;ENT-17;Instituto de Segurança do Trabalho · Jundiaí (demonstrativo);143000;Serviço de inscrição e credenciamento;William Teixeira Santos;0;Não
+DEL-REP-ENT-17-3;2022-11-08;Contrato;ENT-17;Instituto de Segurança do Trabalho · Jundiaí (demonstrativo);387000;Produção de conteúdo técnico;Vitória Alves Esteves;0;Não
+DEL-REP-ENT-17-4;2023-05-08;Patrocínio;ENT-17;Instituto de Segurança do Trabalho · Jundiaí (demonstrativo);88000;Patrocínio de feira técnica;Wagner Rocha Araújo;0;Não
+DEL-REP-ENT-17-5;2023-04-12;Patrocínio;ENT-17;Instituto de Segurança do Trabalho · Jundiaí (demonstrativo);66000;Patrocínio de congresso;Vitória Nunes Teixeira;0;Não
+DEL-REP-ENT-17-6;2021-10-06;Convênio;ENT-17;Instituto de Segurança do Trabalho · Jundiaí (demonstrativo);139000;Programa de orientação a recém-formados;Vitória Moreira Araújo;0;Não
+DEL-REP-ENT-17-7;2025-07-14;Convênio;ENT-17;Instituto de Segurança do Trabalho · Jundiaí (demonstrativo);161000;Programa de orientação a recém-formados;Paulo Lopes Nunes;0;Não
+DEL-REP-ENT-18-1;2022-10-13;Convênio;ENT-18;Associação de Engenharia Química · Barueri (demonstrativo);150000;Cursos e palestras de atualização profissional;Wagner Ramos Borges;0;Não
+DEL-REP-ENT-19-1;2021-05-10;Convênio;ENT-19;Associação de Geólogos e Minas · São Paulo (demonstrativo);314000;Eventos técnicos regionais;Vitória Moreira Araújo;0;Não
+DEL-REP-ENT-19-2;2024-08-12;Contrato;ENT-19;Associação de Geólogos e Minas · São Paulo (demonstrativo);396000;Produção de conteúdo técnico;Ricardo Pereira Cardoso;0;Não
+DEL-REP-ENT-19-3;2022-12-11;Convênio;ENT-19;Associação de Geólogos e Minas · São Paulo (demonstrativo);352000;Eventos técnicos regionais;Ricardo Alves Oliveira;0;Não
+DEL-REP-ENT-19-4;2021-05-10;Patrocínio;ENT-19;Associação de Geólogos e Minas · São Paulo (demonstrativo);72000;Patrocínio de premiação;Paulo Farias Souza;0;Não
+DEL-REP-ENT-20-1;2024-11-11;Patrocínio;ENT-20;Associação de Agrimensura · Mogi Guaçu (demonstrativo);72000;Patrocínio de feira técnica;Wagner Lima Ribeiro;0;Não
+DEL-REP-ENT-21-1;2022-09-11;Convênio;ENT-21;Associação de Engenharia Civil · Limeira (demonstrativo);209000;Eventos técnicos regionais;William Barbosa Nogueira;0;Não
+DEL-REP-ENT-21-2;2022-12-11;Convênio;ENT-21;Associação de Engenharia Civil · Limeira (demonstrativo);112000;Cursos e palestras de atualização profissional;Wagner Cardoso Esteves;0;Não
+DEL-REP-ENT-21-3;2023-08-07;Convênio;ENT-21;Associação de Engenharia Civil · Limeira (demonstrativo);11000;Programa de orientação a recém-formados;Otávio Nunes Dias;0;Não
+DEL-REP-ENT-22-1;2026-03-09;Convênio;ENT-22;Associação de Técnicos Industriais · Araçatuba (demonstrativo);139000;Cursos e palestras de atualização profissional;William Duarte Batista;0;Não
+DEL-REP-ENT-22-2;2020-12-13;Contrato;ENT-22;Associação de Técnicos Industriais · Araçatuba (demonstrativo);111000;Locação de auditório para eventos;Ricardo Carvalho Castro;0;Não
+DEL-REP-ENT-23-1;2021-10-06;Patrocínio;ENT-23;Federação de Tecnólogos · Bauru (demonstrativo);67000;Patrocínio de feira técnica;Vinícius Costa Campos;0;Não
+DEL-REP-ENT-23-2;2023-07-14;Convênio;ENT-23;Federação de Tecnólogos · Bauru (demonstrativo);397000;Cursos e palestras de atualização profissional;Vinícius Farias Almeida;0;Não
+DEL-REP-ENT-23-3;2021-04-11;Convênio;ENT-23;Federação de Tecnólogos · Bauru (demonstrativo);116000;Eventos técnicos regionais;Paulo Andrade Moraes;1;Sim
+DEL-REP-ENT-23-4;2021-07-08;Convênio;ENT-23;Federação de Tecnólogos · Bauru (demonstrativo);399000;Programa de orientação a recém-formados;Wagner Santos Alves;0;Não
+DEL-REP-ENT-24-1;2021-03-10;Convênio;ENT-24;Instituto de Engenharia de Produção · Osasco (demonstrativo);267000;Cursos e palestras de atualização profissional;Thiago Nogueira Ferraz;0;Não
+DEL-REP-ENT-24-2;2022-12-11;Convênio;ENT-24;Instituto de Engenharia de Produção · Osasco (demonstrativo);353000;Cursos e palestras de atualização profissional;Thiago Lopes Pereira;1;Sim
+DEL-REP-ENT-24-3;2022-03-06;Convênio;ENT-24;Instituto de Engenharia de Produção · Osasco (demonstrativo);201000;Apoio a semanas de engenharia;Thiago Pinto Cardoso;0;Não
+DEL-REP-ENT-24-4;2022-12-11;Convênio;ENT-24;Instituto de Engenharia de Produção · Osasco (demonstrativo);153000;Programa de orientação a recém-formados;Sérgio Oliveira Dias;0;Não
+DEL-REP-ENT-24-5;2023-05-08;Contrato;ENT-24;Instituto de Engenharia de Produção · Osasco (demonstrativo);89000;Locação de auditório para eventos;William Almeida Rocha;0;Não
+DEL-REP-ENT-24-6;2025-06-09;Convênio;ENT-24;Instituto de Engenharia de Produção · Osasco (demonstrativo);38000;Eventos técnicos regionais;Ricardo Machado Nunes;0;Não
+DEL-REP-ENT-24-7;2021-12-12;Convênio;ENT-24;Instituto de Engenharia de Produção · Osasco (demonstrativo);215000;Apoio a semanas de engenharia;Thiago Lopes Pereira;1;Sim
+DEL-REP-IES-02-1;2023-07-14;Convênio;IES-02;Centro universitário Particular de Santos (demonstrativo);132000;Apoio a semanas de engenharia;Diego Siqueira Moreira;0;Não
+DEL-REP-IES-02-2;2025-03-12;Convênio;IES-02;Centro universitário Particular de Santos (demonstrativo);287000;Cursos e palestras de atualização profissional;William Nunes Ferraz;0;Não
+DEL-REP-IES-03-1;2021-12-12;Convênio;IES-03;Faculdade Particular de Mogi Guaçu (demonstrativo);238000;Eventos técnicos regionais;Rodrigo Lima Queiroz;0;Não
+DEL-REP-IES-04-1;2024-08-12;Convênio;IES-04;Centro universitário Particular de Taubaté (demonstrativo);369000;Cursos e palestras de atualização profissional;William Pinto Dias;0;Não
+DEL-REP-IES-04-2;2023-04-12;Convênio;IES-04;Centro universitário Particular de Taubaté (demonstrativo);173000;Eventos técnicos regionais;Vitória Duarte Nunes;0;Não
+DEL-REP-IES-05-1;2025-02-08;Convênio;IES-05;Universidade Estadual de Franca (demonstrativo);125000;Programa de orientação a recém-formados;Wagner Souza Santos;0;Não
+DEL-REP-IES-05-2;2026-03-09;Convênio;IES-05;Universidade Estadual de Franca (demonstrativo);366000;Programa de orientação a recém-formados;William Teixeira Santos;0;Não
+DEL-REP-IES-06-1;2024-08-12;Convênio;IES-06;Faculdade Particular de Campinas (demonstrativo);238000;Cursos e palestras de atualização profissional;Otávio Nunes Dias;0;Não
+DEL-REP-IES-07-1;2024-04-08;Convênio;IES-07;Faculdade Particular de Santos (demonstrativo);280000;Cursos e palestras de atualização profissional;William Pereira Dias;0;Não
+DEL-REP-IES-07-2;2021-08-08;Convênio;IES-07;Faculdade Particular de Santos (demonstrativo);175000;Apoio a semanas de engenharia;William Santos Araújo;0;Não
+DEL-REP-IES-07-3;2026-03-09;Contrato;IES-07;Faculdade Particular de Santos (demonstrativo);245000;Produção de conteúdo técnico;Wagner Campos Ferraz;0;Não
+DEL-REP-IES-07-4;2023-06-08;Convênio;IES-07;Faculdade Particular de Santos (demonstrativo);193000;Eventos técnicos regionais;Otávio Gomes Pereira;0;Não
+DEL-REP-IES-08-1;2023-06-08;Convênio;IES-08;Centro universitário Particular de Mogi Guaçu (demonstrativo);358000;Cursos e palestras de atualização profissional;Vinícius Santos Alves;1;Sim
+DEL-REP-IES-08-2;2024-03-14;Contrato;IES-08;Centro universitário Particular de Mogi Guaçu (demonstrativo);309000;Serviço de inscrição e credenciamento;William Dias Campos;1;Sim
+DEL-REP-IES-09-1;2023-08-07;Convênio;IES-09;Universidade Estadual de Taubaté (demonstrativo);195000;Programa de orientação a recém-formados;Otávio Ferraz Santos;0;Não
+DEL-REP-IES-10-1;2021-02-09;Convênio;IES-10;Faculdade Particular de Franca (demonstrativo);297000;Programa de orientação a recém-formados;Vitória Moreira Araújo;0;Não
+DEL-REP-IES-11-1;2026-04-14;Convênio;IES-11;Faculdade Particular de Campinas (demonstrativo);372000;Apoio a semanas de engenharia;Wagner Almeida Ramos;0;Não
+DEL-REP-IES-12-1;2021-12-12;Contrato;IES-12;Faculdade Particular de Santos (demonstrativo);301000;Serviço de inscrição e credenciamento;Thiago Moreira Lopes;0;Não
+DEL-REP-IES-12-2;2025-03-12;Convênio;IES-12;Faculdade Particular de Santos (demonstrativo);275000;Eventos técnicos regionais;William Queiroz Castro;0;Não
+DEL-REP-IES-12-3;2025-12-14;Contrato;IES-12;Faculdade Particular de Santos (demonstrativo);214000;Produção de conteúdo técnico;William Duarte Batista;0;Não
+DEL-REP-IES-12-4;2025-09-07;Contrato;IES-12;Faculdade Particular de Santos (demonstrativo);179000;Serviço de inscrição e credenciamento;Vitória Santos Machado;0;Não
+DEL-REP-IES-13-1;2025-06-09;Convênio;IES-13;Universidade Estadual de Mogi Guaçu (demonstrativo);303000;Programa de orientação a recém-formados;Vinícius Ribeiro Barros;1;Sim
+DEL-REP-IES-13-2;2021-06-09;Contrato;IES-13;Universidade Estadual de Mogi Guaçu (demonstrativo);72000;Locação de auditório para eventos;Vinícius Farias Andrade;0;Não
+DEL-REP-IES-14-1;2021-08-08;Convênio;IES-14;Universidade Particular de Taubaté (demonstrativo);143000;Cursos e palestras de atualização profissional;Thiago Moraes Lopes;0;Não
+DEL-REP-IES-14-2;2023-12-14;Convênio;IES-14;Universidade Particular de Taubaté (demonstrativo);90000;Eventos técnicos regionais;Wagner Campos Ferraz;0;Não
+DEL-REP-IES-15-1;2026-05-10;Convênio;IES-15;Centro universitário Particular de Franca (demonstrativo);130000;Eventos técnicos regionais;Rafael Andrade Moraes;0;Não
+DEL-REP-IES-15-2;2024-12-10;Convênio;IES-15;Centro universitário Particular de Franca (demonstrativo);319000;Eventos técnicos regionais;Vitória Queiroz Pereira;0;Não
+DEL-REP-IES-15-3;2024-12-10;Convênio;IES-15;Centro universitário Particular de Franca (demonstrativo);200000;Programa de orientação a recém-formados;Wagner Esteves Barbosa;0;Não
+DEL-REP-IES-15-4;2024-08-12;Contrato;IES-15;Centro universitário Particular de Franca (demonstrativo);166000;Serviço de inscrição e credenciamento;Sérgio Siqueira Teixeira;0;Não
+DEL-REP-IES-15-5;2022-12-11;Convênio;IES-15;Centro universitário Particular de Franca (demonstrativo);25000;Eventos técnicos regionais;William Campos Gomes;1;Sim
+DEL-REP-IES-15-6;2024-12-10;Convênio;IES-15;Centro universitário Particular de Franca (demonstrativo);256000;Eventos técnicos regionais;Rafael Dias Barbosa;1;Sim
+DEL-REP-IES-15-7;2024-12-10;Convênio;IES-15;Centro universitário Particular de Franca (demonstrativo);213000;Eventos técnicos regionais;Wagner Lima Ribeiro;1;Sim
+DEL-REP-IES-16-1;2024-09-07;Convênio;IES-16;Faculdade Particular de Campinas (demonstrativo);315000;Eventos técnicos regionais;Sérgio Dias Batista;1;Sim
+DEL-REP-IES-16-2;2023-12-14;Convênio;IES-16;Faculdade Particular de Campinas (demonstrativo);91000;Eventos técnicos regionais;Thiago Alves Pinto;1;Sim
+DEL-REP-IES-16-3;2022-09-11;Convênio;IES-16;Faculdade Particular de Campinas (demonstrativo);94000;Eventos técnicos regionais;Sérgio Oliveira Dias;0;Não
+DEL-REP-IES-17-1;2023-11-09;Patrocínio;IES-17;Universidade Estadual de Santos (demonstrativo);38000;Patrocínio de feira técnica;William Barbosa Nogueira;1;Sim
+DEL-REP-IES-17-2;2025-08-07;Convênio;IES-17;Universidade Estadual de Santos (demonstrativo);83000;Cursos e palestras de atualização profissional;Wagner Alves Pinto;0;Não
+DEL-REP-IES-19-1;2025-12-14;Contrato;IES-19;Faculdade Particular de Taubaté (demonstrativo);40000;Serviço de inscrição e credenciamento;Vitória Barbosa Borges;0;Não
+DEL-REP-IES-19-2;2023-10-14;Patrocínio;IES-19;Faculdade Particular de Taubaté (demonstrativo);29000;Patrocínio de feira técnica;Thiago Lopes Pereira;0;Não
+DEL-REP-IES-20-1;2023-03-06;Contrato;IES-20;Faculdade Particular de Franca (demonstrativo);218000;Produção de conteúdo técnico;Wagner Machado Pereira;0;Não
+DEL-REP-IES-21-1;2025-06-09;Contrato;IES-21;Universidade Estadual de Campinas (demonstrativo);361000;Produção de conteúdo técnico;Marcos Castro Barbosa;0;Não
+DEL-REP-IES-21-2;2023-12-14;Contrato;IES-21;Universidade Estadual de Campinas (demonstrativo);344000;Locação de auditório para eventos;Rafael Teixeira Pereira;0;Não
+DEL-REP-IES-21-3;2022-03-06;Contrato;IES-21;Universidade Estadual de Campinas (demonstrativo);397000;Locação de auditório para eventos;Vinícius Santos Alves;0;Não
+DEL-REP-IES-23-1;2022-12-11;Convênio;IES-23;Centro universitário Particular de Mogi Guaçu (demonstrativo);286000;Apoio a semanas de engenharia;Vitória Campos Almeida;0;Não
+DEL-REP-IES-23-2;2024-04-08;Contrato;IES-23;Centro universitário Particular de Mogi Guaçu (demonstrativo);273000;Locação de auditório para eventos;Vinícius Mendes Martins;0;Não
+DEL-REP-IES-23-3;2025-05-07;Contrato;IES-23;Centro universitário Particular de Mogi Guaçu (demonstrativo);53000;Serviço de inscrição e credenciamento;Rodrigo Cardoso Esteves;0;Não
+DEL-REP-IES-23-4;2023-03-06;Convênio;IES-23;Centro universitário Particular de Mogi Guaçu (demonstrativo);217000;Apoio a semanas de engenharia;Vitória Queiroz Pereira;0;Não
+DEL-REP-IES-23-5;2023-06-08;Convênio;IES-23;Centro universitário Particular de Mogi Guaçu (demonstrativo);136000;Cursos e palestras de atualização profissional;William Almeida Rocha;1;Sim
+DEL-REP-IES-23-6;2021-12-12;Patrocínio;IES-23;Centro universitário Particular de Mogi Guaçu (demonstrativo);38000;Patrocínio de feira técnica;Vitória Teixeira Freitas;0;Não
+DEL-REP-IES-23-7;2023-12-14;Convênio;IES-23;Centro universitário Particular de Mogi Guaçu (demonstrativo);312000;Cursos e palestras de atualização profissional;William Almeida Rocha;1;Sim
+DEL-REP-IES-23-8;2025-03-12;Convênio;IES-23;Centro universitário Particular de Mogi Guaçu (demonstrativo);231000;Programa de orientação a recém-formados;Vinícius Moraes Martins;1;Sim
+DEL-REP-IES-23-9;2022-08-08;Convênio;IES-23;Centro universitário Particular de Mogi Guaçu (demonstrativo);228000;Cursos e palestras de atualização profissional;Vitória Alves Esteves;1;Sim
+DEL-REP-IES-25-1;2025-10-11;Patrocínio;IES-25;Universidade Estadual de Franca II (demonstrativo);11000;Patrocínio de premiação;Hugo Ramos Teixeira;0;Não
+DEL-REP-IES-25-2;2025-04-06;Convênio;IES-25;Universidade Estadual de Franca II (demonstrativo);393000;Eventos técnicos regionais;Vitória Pinto Rocha;0;Não
+DEL-REP-IES-25-3;2022-11-08;Convênio;IES-25;Universidade Estadual de Franca II (demonstrativo);57000;Cursos e palestras de atualização profissional;William Castro Dias;0;Não
+DEL-REP-IES-25-4;2025-04-06;Contrato;IES-25;Universidade Estadual de Franca II (demonstrativo);325000;Serviço de inscrição e credenciamento;Thiago Campos Ferraz;0;Não
+DEL-REP-IES-26-1;2021-08-08;Convênio;IES-26;Faculdade Particular de Campinas II (demonstrativo);357000;Programa de orientação a recém-formados;Wagner Cardoso Esteves;0;Não
+DEL-REP-IES-27-1;2025-04-06;Contrato;IES-27;Centro universitário Particular de Santos II (demonstrativo);300000;Serviço de inscrição e credenciamento;Paulo Barbosa Lopes;0;Não
+DEL-REP-IES-27-2;2025-12-14;Convênio;IES-27;Centro universitário Particular de Santos II (demonstrativo);249000;Cursos e palestras de atualização profissional;Sérgio Pereira Castro;0;Não
+DEL-REP-IES-27-3;2025-06-09;Convênio;IES-27;Centro universitário Particular de Santos II (demonstrativo);173000;Cursos e palestras de atualização profissional;Wagner Borges Lopes;1;Sim
+DEL-REP-IES-27-4;2025-06-09;Convênio;IES-27;Centro universitário Particular de Santos II (demonstrativo);356000;Eventos técnicos regionais;Vinícius Moraes Martins;0;Não
+DEL-REP-IES-27-5;2022-10-13;Convênio;IES-27;Centro universitário Particular de Santos II (demonstrativo);198000;Apoio a semanas de engenharia;Wagner Borges Lopes;1;Sim
+DEL-REP-IES-28-1;2022-12-11;Contrato;IES-28;Faculdade Particular de Mogi Guaçu II (demonstrativo);113000;Produção de conteúdo técnico;Diego Siqueira Moreira;0;Não
+DEL-REP-IES-28-2;2024-07-06;Convênio;IES-28;Faculdade Particular de Mogi Guaçu II (demonstrativo);153000;Eventos técnicos regionais;Rafael Machado Moreira;0;Não
+DEL-REP-IES-28-3;2025-12-14;Convênio;IES-28;Faculdade Particular de Mogi Guaçu II (demonstrativo);391000;Cursos e palestras de atualização profissional;William Queiroz Castro;1;Sim
+DEL-REP-IES-28-4;2022-10-13;Convênio;IES-28;Faculdade Particular de Mogi Guaçu II (demonstrativo);186000;Apoio a semanas de engenharia;Rafael Queiroz Barros;0;Não
+DEL-REP-IES-28-5;2026-04-14;Patrocínio;IES-28;Faculdade Particular de Mogi Guaçu II (demonstrativo);39000;Patrocínio de congresso;Otávio Castro Batista;0;Não
+DEL-REP-IES-28-6;2025-12-14;Contrato;IES-28;Faculdade Particular de Mogi Guaçu II (demonstrativo);191000;Produção de conteúdo técnico;William Queiroz Castro;1;Sim
+DEL-REP-IES-29-1;2022-04-08;Convênio;IES-29;Universidade Estadual de Taubaté II (demonstrativo);42000;Apoio a semanas de engenharia;Vitória Queiroz Ramos;1;Sim
+DEL-REP-IES-30-1;2024-07-06;Patrocínio;IES-30;Faculdade Particular de Franca II (demonstrativo);33000;Patrocínio de feira técnica;Wagner Ribeiro Barros;0;Não
+DEL-REP-IES-30-2;2022-12-11;Convênio;IES-30;Faculdade Particular de Franca II (demonstrativo);41000;Apoio a semanas de engenharia;Thiago Nogueira Gomes;1;Sim
+DEL-REP-IES-30-3;2023-03-06;Patrocínio;IES-30;Faculdade Particular de Franca II (demonstrativo);95000;Patrocínio de congresso;Ricardo Pereira Cardoso;0;Não
+DEL-REP-IES-30-4;2022-07-14;Contrato;IES-30;Faculdade Particular de Franca II (demonstrativo);154000;Locação de auditório para eventos;Thiago Nogueira Gomes;1;Sim
+DEL-REP-IES-31-1;2022-02-11;Convênio;IES-31;Centro universitário Particular de Campinas II (demonstrativo);263000;Programa de orientação a recém-formados;Wagner Dias Batista;0;Não
+DEL-REP-IES-31-2;2021-08-08;Contrato;IES-31;Centro universitário Particular de Campinas II (demonstrativo);288000;Serviço de inscrição e credenciamento;Sérgio Ribeiro Araújo;0;Não
+DEL-REP-IES-31-3;2024-05-14;Contrato;IES-31;Centro universitário Particular de Campinas II (demonstrativo);96000;Locação de auditório para eventos;Vitória Pinto Rocha;0;Não
+DEL-REP-IES-32-1;2024-02-09;Patrocínio;IES-32;Universidade Particular de Santos II (demonstrativo);106000;Patrocínio de premiação;Otávio Ferraz Santos;1;Sim
+DEL-REP-IES-32-2;2024-07-06;Convênio;IES-32;Universidade Particular de Santos II (demonstrativo);144000;Cursos e palestras de atualização profissional;Otávio Ferraz Santos;1;Sim
+DEL-REP-IES-32-3;2024-06-09;Convênio;IES-32;Universidade Particular de Santos II (demonstrativo);170000;Apoio a semanas de engenharia;Sérgio Siqueira Teixeira;1;Sim
+DEL-REP-IES-32-4;2024-04-08;Contrato;IES-32;Universidade Particular de Santos II (demonstrativo);314000;Locação de auditório para eventos;Vitória Siqueira Lima;0;Não
+DEL-REP-IES-32-5;2024-06-09;Convênio;IES-32;Universidade Particular de Santos II (demonstrativo);278000;Cursos e palestras de atualização profissional;Rodrigo Alves Oliveira;0;Não
+DEL-REP-IES-32-6;2024-04-08;Contrato;IES-32;Universidade Particular de Santos II (demonstrativo);55000;Locação de auditório para eventos;Sérgio Pinto Cardoso;0;Não
+DEL-REP-IES-34-1;2021-12-12;Contrato;IES-34;Faculdade Particular de Taubaté II (demonstrativo);367000;Locação de auditório para eventos;William Barbosa Nogueira;0;Não
+DEL-REP-IES-34-2;2026-06-08;Contrato;IES-34;Faculdade Particular de Taubaté II (demonstrativo);41000;Locação de auditório para eventos;Sérgio Carvalho Dias;0;Não
+DEL-REP-IES-34-3;2021-09-07;Convênio;IES-34;Faculdade Particular de Taubaté II (demonstrativo);392000;Apoio a semanas de engenharia;Gustavo Ferraz Pereira;1;Sim
+DEL-REP-IES-34-4;2025-05-07;Patrocínio;IES-34;Faculdade Particular de Taubaté II (demonstrativo);44000;Patrocínio de premiação;Otávio Ferraz Santos;0;Não
+DEL-REP-IES-34-5;2021-09-07;Convênio;IES-34;Faculdade Particular de Taubaté II (demonstrativo);357000;Eventos técnicos regionais;Thiago Souza Santos;0;Não
+DEL-REP-IES-34-6;2021-07-08;Convênio;IES-34;Faculdade Particular de Taubaté II (demonstrativo);282000;Apoio a semanas de engenharia;Vitória Costa Queiroz;0;Não
+DEL-REP-IES-34-7;2024-10-09;Convênio;IES-34;Faculdade Particular de Taubaté II (demonstrativo);47000;Apoio a semanas de engenharia;Fernando Oliveira Barros;1;Sim
+DEL-REP-IES-36-1;2025-09-07;Contrato;IES-36;Centro universitário Particular de Campinas II (demonstrativo);331000;Produção de conteúdo técnico;William Duarte Batista;0;Não

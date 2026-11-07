@@ -1,4 +1,4 @@
-/// Tem os 645 municípios de SP, a GRE de cada um pela tabela oficial e a unidade de atendimento mais próxima, com a distância em linha reta.
+/// Tem os 645 municípios de SP e a GRE de cada um pela tabela oficial. A regional e o município recortam só os processos (e os autos, que são processos), pelo lugar do processo.
 table 'Municípios'
 	lineageTag: 8c7ac691-40b4-500b-a920-83c9c5cb29e6
 
@@ -20,25 +20,12 @@ table 'Municípios'
 		sourceColumn: GRE
 		lineageTag: 6bbdf242-f287-5794-b1bf-5dfae0a15489
 
-	column 'Unidade mais próxima'
-		dataType: string
-		summarizeBy: none
-		sourceColumn: Unidade mais próxima
-		lineageTag: 3bda8d44-2ea7-5752-99d1-ec5c02fdf88d
-
-	column 'Distância até a unidade (km)'
-		dataType: int64
-		formatString: #,##0
-		summarizeBy: none
-		sourceColumn: Distância até a unidade (km)
-		lineageTag: 330eff3b-3782-5409-b57b-4783b09fc77e
-
 	partition 'Municípios' = m
 		mode: import
 		source =
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "municipios.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Código IBGE", type text}, {"Município", type text}, {"GRE", type text}, {"Unidade mais próxima", type text}, {"Distância até a unidade (km)", Int64.Type}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Código IBGE", type text}, {"Município", type text}, {"GRE", type text}}, "pt-BR")
 				in
 				    Tipos

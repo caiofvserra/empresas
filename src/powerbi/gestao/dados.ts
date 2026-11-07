@@ -2,11 +2,10 @@ import type { Dataset } from '../../domain/types';
 import { datasReferencia, datasetAt } from '../../domain/tempo';
 import { municipiosSp } from '../../domain/municipios';
 import { buildConselho, funcaoFim } from '../../domain/conselho';
-import { buildEntidades, grupoOrganizacao } from '../../domain/entidades';
+import { buildEntidades } from '../../domain/entidades';
 import { buildProfissionais, situacaoEm } from '../../domain/profissionais';
 import { buildInstitutionalModel } from '../../domain/institutional';
-import { camarasConselho, buildCarteira, buildProcessos, canalDe, distanciaUnidade, faixaDistancia, faixaIdadeDivida, faixaIdadeProcesso, faixasDistancia, faixasIdadeDivida, faixasIdadeProcesso, faixasPrescricao,
-  faseEm, mesesAtePrescrever, municipioDoSolicitante, pisoExecucao, plenario, recursoPendente, vencidoEm } from '../../domain/gestao';
+import { buildCarteira, canalDe, distanciaUnidade, faixaDistancia, faixaIdadeDivida, faixasDistancia, faixasIdadeDivida, municipioDoSolicitante, pisoExecucao, vencidoEm } from '../../domain/gestao';
 import { conselheiros, diariasPorPessoa, servidores } from '../../domain/pessoas-conselho';
 import { mainEstablishments } from '../../gestao-v14/metrics';
 import type { Celula } from '../csv';
@@ -14,33 +13,34 @@ import type { Celula } from '../csv';
 /** Uma tabela de dados do pacote: o nome do CSV, o cabeçalho e as linhas. */
 export interface Dados { arquivo: string; cabecalho: string[]; linhas: Celula[][] }
 
-const nomesMes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-const primeiroDia = (mes: string) => `${mes.slice(0, 7)}-01`;
-const fimDoMes = (mes: string) => new Date(Date.UTC(Number(mes.slice(0, 4)), Number(mes.slice(5, 7)), 0)).toISOString().slice(0, 10);
+export const nomesMes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+export const primeiroDia = (mes: string) => `${mes.slice(0, 7)}-01`;
+export const fimDoMes = (mes: string) => new Date(Date.UTC(Number(mes.slice(0, 4)), Number(mes.slice(5, 7)), 0)).toISOString().slice(0, 10);
 const DIA = 86400000;
-const diasEntre = (de: string, ate: string) => Math.round((Date.parse(`${ate}T00:00:00Z`) - Date.parse(`${de}T00:00:00Z`)) / DIA);
+export const diasEntre = (de: string, ate: string) => Math.round((Date.parse(`${ate}T00:00:00Z`) - Date.parse(`${de}T00:00:00Z`)) / DIA);
 /** Meses de `inicio` (aaaa-mm) a `fim` (aaaa-mm), inclusive. */
-function meses(inicio: string, fim: string): string[] {
+export function meses(inicio: string, fim: string): string[] {
   const out: string[] = [], d = new Date(`${inicio}-01T00:00:00Z`);
   while (d.toISOString().slice(0, 7) <= fim) { out.push(d.toISOString().slice(0, 7)); d.setUTCMonth(d.getUTCMonth() + 1); }
   return out;
 }
-/** Primeiro mês do calendário: os processos começam em 2020. O calendário vai até 12 meses depois de hoje, para os contratos que terminam. */
+/** Primeiro mês do calendário: a base começa em 2020. O calendário vai até 12 meses depois de hoje, para os contratos que terminam. */
 export const PRIMEIRO_MES = '2020-01';
 /** Primeira foto: os gráficos mês a mês mostram 24 meses antes da primeira data de referência, e as variações, 12 meses antes. */
 export const PRIMEIRA_FOTO = '2022-01';
 /** Valor do mês com duas casas, para o CSV. */
-const centavos = (valor: number) => Math.round(valor * 100) / 100;
+export const centavos = (valor: number) => Math.round(valor * 100) / 100;
 
 /**
- * Tabelas do cenário de demonstração para os pacotes Power BI dos painéis Financeiro, Atendimento e Gestão do Conselho (cada um leva só as suas), em esquema estrela (ADR 0001 e 0002).
- * Dimensões: regionais, municípios (com a unidade de atendimento mais próxima), câmaras, calendário e datas.
- * Fotos de cada fim de mês (estoques resolvidos pelas funções do protótipo): dívida de anuidade por devedor e idade, processos em
- * julgamento e recursos, composição do plenário e profissionais ativos por município.
+ * Tabelas do cenário de demonstração para os pacotes Power BI dos painéis Financeiro e Atendimento (cada um leva só as suas), em
+ * esquema estrela (ADR 0001 e 0002). O painel de Gestão do Conselho tem o seu modelo em `src/powerbi/conselho/` desde 07/11/2026.
+ * Dimensões: regionais, municípios (com a unidade de atendimento mais próxima), calendário e datas.
+ * Fotos de cada fim de mês (estoques resolvidos pelas funções do protótipo): dívida de anuidade por devedor e idade e profissionais
+ * ativos por município.
  * Fatos com data (somados no período em DAX): receita, despesa, diárias por pessoa, empenhos, contratos, títulos de anuidade,
- * processos, repasses às entidades, solicitações de atendimento e uso dos coworkings.
+ * solicitações de atendimento e uso dos coworkings.
  */
-/** As tabelas, uma vez por base: os três pacotes partem delas. */
+/** As tabelas, uma vez por base: os dois pacotes partem delas. */
 const porBase = new WeakMap<Dataset, Dados[]>();
 export function dadosGestao(dataset: Dataset): Dados[] {
   let tabelas = porBase.get(dataset);
@@ -55,7 +55,7 @@ function montar(dataset: Dataset): Dados[] {
   const distancia = distanciaUnidade(dataset);
   const contas = buildConselho(dataset), entidades = buildEntidades(dataset), profissionais = buildProfissionais(dataset);
   const equipe = servidores(contas, dataset), plenarioNomes = conselheiros(entidades);
-  const processos = buildProcessos(dataset), carteira = buildCarteira(dataset, profissionais), matriz = mainEstablishments(dataset);
+  const carteira = buildCarteira(dataset, profissionais), matriz = mainEstablishments(dataset);
   const institucional = buildInstitutionalModel(dataset), origem = municipioDoSolicitante(dataset);
   const fornecedorDe = new Map(contas.fornecedores.map(row => [row.id, row.nome]));
 
@@ -76,25 +76,12 @@ function montar(dataset: Dataset): Dados[] {
     }
   }
 
-  /* ---------- Processos: o fato de cada processo e a foto dos que estão em julgamento ou com recurso esperando ---------- */
-  const fotoProcessos: Celula[][] = [];
-  for (const data of fotos) for (const row of processos) {
-    if (row.entrada > data) continue;
-    const fase = faseEm(row, data), recurso = recursoPendente(row, data);
-    if (!fase && !recurso) continue;
-    const idade = fase ? faixaIdadeProcesso(diasEntre(row.entrada, data)) : null, m = fase ? mesesAtePrescrever(row, data) : null;
-    const prescricao = m === null ? null : m >= 0 && m <= 3 ? 0 : m > 3 && m <= 6 ? 1 : m > 6 && m <= 12 ? 2 : null;
-    fotoProcessos.push([data, row.id, fase ?? '', idade === null ? '' : faixasIdadeProcesso[idade], idade === null ? null : idade + 1, prescricao === null ? '' : faixasPrescricao[prescricao], prescricao === null ? null : prescricao + 1, prescricao !== null, recurso]);
-  }
-
-  /* ---------- Plenário e profissionais ativos em cada fim de mês ---------- */
-  const fotoPlenario: Celula[][] = [], ativos: Celula[][] = [];
+  /* ---------- Profissionais ativos em cada fim de mês, pelo município onde moram ---------- */
+  const ativos: Celula[][] = [];
   for (const data of fotos) {
-    // Como o painel: o cadastro de profissionais e as entidades lidos na própria data (a base em D), não na de hoje.
-    const view = datasetAt(dataset, data), naData = buildProfissionais(view);
-    for (const row of plenario(buildEntidades(view), naData, data)) fotoPlenario.push([data, row.camara, row.cadeiras, row.profissionais]);
+    // Como o painel: o cadastro de profissionais lido na própria data (a base em D), não na de hoje.
     const porCidade = new Map<string, number>();
-    for (const p of naData.profissionais) if (situacaoEm(p, data) === 'Ativo') porCidade.set(p.cityId, (porCidade.get(p.cityId) ?? 0) + 1);
+    for (const p of buildProfissionais(datasetAt(dataset, data)).profissionais) if (situacaoEm(p, data) === 'Ativo') porCidade.set(p.cityId, (porCidade.get(p.cityId) ?? 0) + 1);
     for (const [cityId, n] of porCidade) ativos.push([data, cityId, n]);
   }
 
@@ -113,7 +100,6 @@ function montar(dataset: Dataset): Dados[] {
     { arquivo: 'regionais.csv', cabecalho: ['GRE', 'Ordem'], linhas: dataset.gres.map((row, i) => [row.name, i + 1]) },
     { arquivo: 'municipios.csv', cabecalho: ['Código IBGE', 'Município', 'GRE', 'Unidade mais próxima', 'Distância até a unidade (km)'],
       linhas: municipios.map(row => [row.id, row.nome, gre(row.greId), distancia.get(row.id)?.unidade ?? '', distancia.get(row.id)?.km ?? null]) },
-    { arquivo: 'camaras.csv', cabecalho: ['Câmara', 'Ordem'], linhas: camarasConselho.map((camara, i) => [camara, i + 1]) },
     { arquivo: 'calendario.csv', cabecalho: ['Mês', 'Rótulo', 'Ano', 'Mês do ano', 'Nome do mês', 'Ordem'],
       linhas: calendario.map((mes, i) => [primeiroDia(mes), `${nomesMes[Number(mes.slice(5, 7)) - 1]}/${mes.slice(2, 4)}`, Number(mes.slice(0, 4)), Number(mes.slice(5, 7)), nomesMes[Number(mes.slice(5, 7)) - 1], i + 1]) },
     { arquivo: 'datas-referencia.csv', cabecalho: ['Data', 'Rótulo'], linhas: escolhiveis.map(data => [data, `${data.slice(8, 10)}/${data.slice(5, 7)}/${data.slice(0, 4)}${data === hoje ? ' (hoje)' : ''}`]) },
@@ -139,21 +125,7 @@ function montar(dataset: Dataset): Dados[] {
         return [t.id, `${t.devedor}:${t.pessoaId}`, t.devedor, t.cityId, t.vencimento, t.valor, pago, pago ? diasEntre(t.vencimento, pago) : null]; }) },
     { arquivo: 'foto-divida.csv', cabecalho: ['Data', 'Devedor', 'Tipo de devedor', 'Código IBGE', 'Idade da anuidade', 'Ordem da idade', 'Valor', 'Acima do piso', 'Perto de prescrever', 'Situação do CNPJ'], linhas: fotoDivida },
 
-    // Câmaras e plenário.
-    { arquivo: 'processos.csv', cabecalho: ['Processo', 'Câmara', 'Tipo', 'Código IBGE', 'Entrada', 'Mês de entrada', 'Julgado em', 'Mês do julgamento', 'Dias até o julgamento', 'Decisão', 'Multa', 'Prescreve em'],
-      linhas: processos.filter(row => row.entrada <= hoje).map(row => { const julgado = row.julgadoEm <= hoje;
-        return [row.id, row.camara, row.tipo, row.cityId, row.entrada, primeiroDia(row.entrada), julgado ? row.julgadoEm : null, julgado ? primeiroDia(row.julgadoEm) : null, julgado ? diasEntre(row.entrada, row.julgadoEm) : null, julgado ? row.decisao : '', row.multa ?? null, row.prescreveEm ?? null]; }) },
-    { arquivo: 'foto-processos.csv', cabecalho: ['Data', 'Processo', 'Fase', 'Tempo em julgamento', 'Ordem do tempo', 'Prazo da prescrição', 'Ordem do prazo', 'Prescreve em até 12 meses', 'Recurso esperando o plenário'], linhas: fotoProcessos },
-    { arquivo: 'foto-plenario.csv', cabecalho: ['Data', 'Câmara', 'Cadeiras', 'Profissionais ativos'], linhas: fotoPlenario },
     { arquivo: 'profissionais-ativos.csv', cabecalho: ['Data', 'Código IBGE', 'Ativos'], linhas: ativos },
-
-    // Entidades e escolas.
-    { arquivo: 'organizacoes.csv', cabecalho: ['Organização', 'Sigla', 'Nome', 'Natureza', 'Tipo', 'Código IBGE', 'GRE', 'Registrada em', 'Cadeiras', 'Ensino a distância'],
-      linhas: entidades.organizacoes.map(org => [org.id, org.sigla, org.nome, grupoOrganizacao(org), org.tipo, org.cityId, gre(org.greId), org.registradaEm, org.cadeiras, org.ead === null ? null : centavos(org.ead / 100)]) },
-    { arquivo: 'repasses.csv', cabecalho: ['Repasse', 'Organização', 'Canal', 'Objeto', 'Início', 'Fim', 'Valor'],
-      linhas: entidades.repasses.map(row => [row.id, row.orgId, row.canal, row.objeto, row.inicio, row.fim, row.valor]) },
-    { arquivo: 'pagamentos-repasses.csv', cabecalho: ['Repasse', 'Organização', 'Data', 'Mês', 'Valor'],
-      linhas: entidades.repasses.flatMap(row => row.pagamentos.filter(pay => pay.data <= hoje).map(pay => [row.id, row.orgId, pay.data, primeiroDia(pay.data), pay.valor])) },
 
     // Atendimento.
     { arquivo: 'solicitacoes.csv', cabecalho: ['Solicitação', 'Código IBGE', 'GRE', 'Município do solicitante', 'Aberta em', 'Mês', 'Prazo', 'Resolvida em', 'Dias até resolver', 'Assunto', 'Solicitante', 'Canal', 'Distância do solicitante', 'Ordem da distância'],

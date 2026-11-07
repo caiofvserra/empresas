@@ -1,33 +1,42 @@
-/// Guarda cada pagamento de um repasse, com a data.
+/// Guarda cada pagamento de convênio, contrato ou patrocínio às organizações, com o canal e o início do instrumento.
 table 'Pagamentos dos repasses'
-	isHidden
 	lineageTag: e79cfcf0-9fe7-503e-93c3-7a18c907db79
 
 	column Repasse
 		dataType: string
+		isHidden
 		summarizeBy: none
 		sourceColumn: Repasse
 		lineageTag: 59583a38-42d3-5162-841d-3d408e2c3701
 
 	column 'Organização'
 		dataType: string
+		isHidden
 		summarizeBy: none
 		sourceColumn: Organização
 		lineageTag: 14d002a3-d4c3-50b9-84ae-b85baf9bdb42
 
+	column Canal
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Canal
+		lineageTag: 21236564-8b1e-5a0a-a0b5-04ccd2b29fb1
+
+	column 'Início do repasse'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Início do repasse
+		lineageTag: fde25a38-d1a2-585a-89f9-9f40d25635d5
+
 	column Data
 		dataType: dateTime
 		formatString: dd/mm/yyyy
+		isHidden
 		summarizeBy: none
 		sourceColumn: Data
 		lineageTag: efe2d421-9e2f-565b-a6ec-7079a9522f66
-
-	column 'Mês'
-		dataType: dateTime
-		formatString: dd/mm/yyyy
-		summarizeBy: none
-		sourceColumn: Mês
-		lineageTag: 8bf789ab-f63a-57d9-9bfd-e5332b52a356
 
 	column Valor
 		dataType: double
@@ -43,6 +52,6 @@ table 'Pagamentos dos repasses'
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "pagamentos-repasses.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Repasse", type text}, {"Organização", type text}, {"Data", type date}, {"Mês", type date}, {"Valor", type number}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Repasse", type text}, {"Organização", type text}, {"Canal", type text}, {"Início do repasse", type date}, {"Data", type date}, {"Valor", type number}}, "pt-BR")
 				in
 				    Tipos

@@ -3,12 +3,12 @@ import { Chart, proporcaoSp, useSpMap } from '../painel/chart';
 import { rotulosGre, territorioGre } from '../painel/territorio';
 import { municipioPorId, municipiosSp } from '../domain/municipios';
 import { faixasPorQuantil } from '../empresas/municipios';
-import { brl, int, pct } from '../painel/ui';
+import { brl, int, mes, money, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
 import type { Gestao } from '../cockpit/contexto';
-import type { DevedorLinha, Processo } from '../domain/gestao';
-import { faseEm, mesesAtePrescrever } from '../domain/gestao';
+import type { DevedorLinha } from '../domain/gestao';
 import { nomeEmpresa } from '../cockpit/ui';
+import type { Beneficiario } from '../domain/pessoas-conselho';
 
 /**
  * Peças comuns do painel de Gestão do Conselho (06/11/2026): as mesmas regras dos outros painéis. Clicar num item abre a lista
@@ -22,17 +22,13 @@ export const legenda = (tokens: CockpitCtx['tokens']) => ({ top: 0, left: 0, ite
 export const eixoCategoria = (tokens: CockpitCtx['tokens'], data: string[], extra: Record<string, unknown> = {}) => ({ type: 'category', data, axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 10 }, ...extra });
 export const eixoValor = (tokens: CockpitCtx['tokens'], extra: Record<string, unknown> = {}) => ({ type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 10, formatter: compacto }, ...extra });
 const dataBr = (value: string) => value.split('-').reverse().join('/');
-const dias = (de: string, ate: string) => Math.round((Date.parse(`${ate}T00:00:00Z`) - Date.parse(`${de}T00:00:00Z`)) / 86400000);
 
-/** Lista de processos no painel lateral: tipo e câmara, município e entrada, situação na data e, nos autos, o prazo de prescrição. */
-export function abrirProcessos(ctx: CockpitCtx, title: string, rows: Processo[], what: string, use?: string) {
-  if (!rows.length) return;
-  const cidades = municipioPorId(ctx.dataset), anchor = ctx.anchor;
-  ctx.open({ kind: 'linhas', title, what, use, listTitle: 'Processos, mais antigos primeiro', summary: [['Processos', int(rows.length)], ['Autos de infração', int(rows.filter(row => row.tipo === 'Auto de infração').length)], ['Multas em jogo', brl(rows.reduce((total, row) => total + (row.multa ?? 0), 0))]],
-    rows: rows.map(row => { const fase = faseEm(row, anchor), meses = mesesAtePrescrever(row, anchor), julgado = row.julgadoEm <= anchor;
-      return { key: row.id, ...(row.companyId ? { companyId: row.companyId } : {}), title: `${row.tipo} · câmara ${row.camara}`, subtitle: `${row.companyId ? `${nomeEmpresa(ctx, row.companyId)} · ` : ''}${cidades.get(row.cityId)?.nome ?? ''} · entrou em ${dataBr(row.entrada)}`,
-        value: julgado ? `${row.decisao.toLowerCase()} em ${int(dias(row.entrada, row.julgadoEm))} dias` : `${fase?.toLowerCase()} há ${int(dias(row.entrada, anchor))} dias`,
-        note: row.prescreveEm && !julgado ? (meses! < 0 ? 'prescrito' : `prescreve em ${dataBr(row.prescreveEm)}${row.multa ? ` · multa de ${brl(row.multa)}` : ''}`) : row.id, sortValue: Date.parse(row.entrada) }; }) });
+/** As diárias de uma pessoa, mês a mês, no painel lateral (Financeiro e Conselho). */
+export function abrirPessoaDiarias(ctx: CockpitCtx, p: Beneficiario) {
+  const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name]));
+  ctx.open({ kind: 'linhas', title: p.nome, eyebrow: p.categoria, what: `${p.cargo}, ${p.greId ? `lotação na ${nomeGre.get(p.greId) ?? p.greId}` : 'na sede'}. Diárias recebidas em cada mês dos 12 meses até a data de referência.`, use: 'Diária paga não é irregularidade: compare com a função da pessoa e com as outras da mesma categoria.',
+    listTitle: 'Meses com diária', summary: [['Diárias', int(p.quantidade)], ['Valor', brl(p.valor)], ['Quilômetros', p.km ? int(p.km) : '—']],
+    rows: p.lancamentos.map(l => ({ key: l.month, title: mes(l.month), subtitle: `${int(l.quantidade)} ${l.quantidade === 1 ? 'diária' : 'diárias'}${l.km ? ` em ${int(l.km)} km` : ''}`, value: money(l.valor), note: '', sortValue: -Number(l.month.replace('-', '')) })) });
 }
 
 /** Lista de devedores no painel lateral: empresas com ficha, profissionais sem ficha de empresa. */

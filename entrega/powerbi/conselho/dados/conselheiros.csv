@@ -1,0 +1,405 @@
+Mandato;Pessoa;Nome;Gênero;Câmara;Organização;Sigla;Natureza;Terço;Início;Fim;Organização registrada em
+CONS-ENT-01-1-2017:2017-01-01;CONS-ENT-01-1-2017;Vitória Barbosa Borges;Feminino;Civil;ENT-01;SEE;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;2008-08-01
+CONS-ENT-01-1-2017:2020-01-01;CONS-ENT-01-1-2017;Vitória Barbosa Borges;Feminino;Civil;ENT-01;SEE;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;2008-08-01
+CONS-ENT-01-1-2017:2023-01-01;CONS-ENT-01-1-2017;Vitória Barbosa Borges;Feminino;Civil;ENT-01;SEE;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;2008-08-01
+CONS-ENT-01-1-2026:2026-01-01;CONS-ENT-01-1-2026;William Araújo Nogueira;Masculino;Civil;ENT-01;SEE;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;2008-08-01
+CONS-ENT-01-2-2016:2016-01-01;CONS-ENT-01-2-2016;Vitória Araújo Cardoso;Feminino;Civil;ENT-01;SEE;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2008-08-01
+CONS-ENT-01-2-2019:2019-01-01;CONS-ENT-01-2-2019;Tatiana Esteves Mendes;Feminino;Civil;ENT-01;SEE;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2008-08-01
+CONS-ENT-01-2-2022:2022-01-01;CONS-ENT-01-2-2022;Sofia Nogueira Teixeira;Feminino;Civil;ENT-01;SEE;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2008-08-01
+CONS-ENT-01-2-2025:2025-01-01;CONS-ENT-01-2-2025;William Andrade Oliveira;Masculino;Civil;ENT-01;SEE;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2008-08-01
+CONS-ENT-02-1-2016:2016-01-01;CONS-ENT-02-1-2016;William Alves Pinto;Masculino;Elétrica;ENT-02;AAP;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2012-03-11
+CONS-ENT-02-1-2016:2019-01-01;CONS-ENT-02-1-2016;William Alves Pinto;Masculino;Elétrica;ENT-02;AAP;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2012-03-11
+CONS-ENT-02-1-2022:2022-01-01;CONS-ENT-02-1-2022;Wagner Dias Batista;Masculino;Elétrica;ENT-02;AAP;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2012-03-11
+CONS-ENT-02-1-2022:2025-01-01;CONS-ENT-02-1-2022;Wagner Dias Batista;Masculino;Elétrica;ENT-02;AAP;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2012-03-11
+CONS-ENT-02-2-2015:2015-01-01;CONS-ENT-02-2-2015;Thiago Siqueira Santos;Masculino;Ambiental e Sanitária;ENT-02;AAP;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;2012-03-11
+CONS-ENT-02-2-2015:2018-01-01;CONS-ENT-02-2-2015;Thiago Siqueira Santos;Masculino;Ambiental e Sanitária;ENT-02;AAP;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;2012-03-11
+CONS-ENT-02-2-2021:2021-01-01;CONS-ENT-02-2-2021;Sérgio Cardoso Dias;Masculino;Ambiental e Sanitária;ENT-02;AAP;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;2012-03-11
+CONS-ENT-02-2-2024:2024-01-01;CONS-ENT-02-2-2024;Vitória Alves Dias;Feminino;Ambiental e Sanitária;ENT-02;AAP;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;2012-03-11
+CONS-ENT-04-1-2015:2015-01-01;CONS-ENT-04-1-2015;William Almeida Ramos;Masculino;Química;ENT-04;AEM;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;1990-10-12
+CONS-ENT-04-1-2015:2018-01-01;CONS-ENT-04-1-2015;William Almeida Ramos;Masculino;Química;ENT-04;AEM;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;1990-10-12
+CONS-ENT-04-1-2021:2021-01-01;CONS-ENT-04-1-2021;Wagner Costa Campos;Masculino;Química;ENT-04;AEM;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;1990-10-12
+CONS-ENT-04-1-2024:2024-01-01;CONS-ENT-04-1-2024;Vinícius Mendes Martins;Masculino;Química;ENT-04;AEM;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;1990-10-12
+CONS-ENT-05-1-2016:2016-01-01;CONS-ENT-05-1-2016;Vitória Almeida Esteves;Feminino;Civil;ENT-05;AEST;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;1998-06-12
+CONS-ENT-05-1-2019:2019-01-01;CONS-ENT-05-1-2019;Tatiana Costa Pereira;Feminino;Civil;ENT-05;AEST;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;1998-06-12
+CONS-ENT-05-1-2019:2022-01-01;CONS-ENT-05-1-2019;Tatiana Costa Pereira;Feminino;Civil;ENT-05;AEST;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;1998-06-12
+CONS-ENT-05-1-2019:2025-01-01;CONS-ENT-05-1-2019;Tatiana Costa Pereira;Feminino;Civil;ENT-05;AEST;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;1998-06-12
+CONS-ENT-05-2-2015:2015-01-01;CONS-ENT-05-2-2015;Wagner Castro Carvalho;Masculino;Agronomia;ENT-05;AEST;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;1998-06-12
+CONS-ENT-05-2-2018:2018-01-01;CONS-ENT-05-2-2018;Vinícius Martins Moreira;Masculino;Agronomia;ENT-05;AEST;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;1998-06-12
+CONS-ENT-05-2-2018:2021-01-01;CONS-ENT-05-2-2018;Vinícius Martins Moreira;Masculino;Agronomia;ENT-05;AEST;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;1998-06-12
+CONS-ENT-05-2-2024:2024-01-01;CONS-ENT-05-2-2024;Thiago Rocha Alves;Masculino;Agronomia;ENT-05;AEST;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;1998-06-12
+CONS-ENT-05-3-2015:2015-01-01;CONS-ENT-05-3-2015;Rodrigo Gomes Queiroz;Masculino;Civil;ENT-05;AEST;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;1998-06-12
+CONS-ENT-05-3-2018:2018-01-01;CONS-ENT-05-3-2018;Ricardo Pinto Borges;Masculino;Civil;ENT-05;AEST;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;1998-06-12
+CONS-ENT-05-3-2021:2021-01-01;CONS-ENT-05-3-2021;Rafael Araújo Martins;Masculino;Civil;ENT-05;AEST;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;1998-06-12
+CONS-ENT-05-3-2024:2024-01-01;CONS-ENT-05-3-2024;Paulo Esteves Souza;Masculino;Civil;ENT-05;AEST;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;1998-06-12
+CONS-ENT-06-1-2017:2017-01-01;CONS-ENT-06-1-2017;Otávio Nogueira Dias;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;2002-08-25
+CONS-ENT-06-1-2020:2020-01-01;CONS-ENT-06-1-2020;Mateus Teixeira Nunes;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;2002-08-25
+CONS-ENT-06-1-2023:2023-01-01;CONS-ENT-06-1-2023;Marcos Castro Barbosa;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;2002-08-25
+CONS-ENT-06-1-2026:2026-01-01;CONS-ENT-06-1-2026;Marcelo Martins Gomes;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;2002-08-25
+CONS-ENT-06-2-2016:2016-01-01;CONS-ENT-06-2-2016;Vitória Teixeira Farias;Feminino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2002-08-25
+CONS-ENT-06-2-2019:2019-01-01;CONS-ENT-06-2-2019;William Souza Santos;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2002-08-25
+CONS-ENT-06-2-2022:2022-01-01;CONS-ENT-06-2-2022;Wagner Carvalho Dias;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2002-08-25
+CONS-ENT-06-2-2025:2025-01-01;CONS-ENT-06-2-2025;Vinícius Machado Nunes;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2002-08-25
+CONS-ENT-06-3-2017:2017-01-01;CONS-ENT-06-3-2017;Sérgio Batista Gomes;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;2002-08-25
+CONS-ENT-06-3-2020:2020-01-01;CONS-ENT-06-3-2020;Rodrigo Freitas Ribeiro;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;2002-08-25
+CONS-ENT-06-3-2023:2023-01-01;CONS-ENT-06-3-2023;Ricardo Pereira Cardoso;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;2002-08-25
+CONS-ENT-06-3-2026:2026-01-01;CONS-ENT-06-3-2026;Rafael Andrade Moraes;Masculino;Geologia e Minas;ENT-06;AEQ;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;2002-08-25
+CONS-ENT-07-1-2017:2017-01-01;CONS-ENT-07-1-2017;Otávio Moreira Esteves;Masculino;Agrimensura;ENT-07;AGM;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;2020-08-18
+CONS-ENT-07-1-2020:2020-01-01;CONS-ENT-07-1-2020;Mateus Souza Pereira;Masculino;Agrimensura;ENT-07;AGM;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;2020-08-18
+CONS-ENT-07-1-2020:2023-01-01;CONS-ENT-07-1-2020;Mateus Souza Pereira;Masculino;Agrimensura;ENT-07;AGM;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;2020-08-18
+CONS-ENT-07-1-2026:2026-01-01;CONS-ENT-07-1-2026;Vitória Souza Freitas;Feminino;Agrimensura;ENT-07;AGM;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;2020-08-18
+CONS-ENT-09-1-2017:2017-01-01;CONS-ENT-09-1-2017;William Siqueira Teixeira;Masculino;Civil;ENT-09;AEC;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;2017-01-04
+CONS-ENT-09-1-2020:2020-01-01;CONS-ENT-09-1-2020;Wagner Cardoso Esteves;Masculino;Civil;ENT-09;AEC;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;2017-01-04
+CONS-ENT-09-1-2023:2023-01-01;CONS-ENT-09-1-2023;Vinícius Lopes Pereira;Masculino;Civil;ENT-09;AEC;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;2017-01-04
+CONS-ENT-09-1-2026:2026-01-01;CONS-ENT-09-1-2026;Thiago Ramos Barros;Masculino;Civil;ENT-09;AEC;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;2017-01-04
+CONS-ENT-10-1-2015:2015-01-01;CONS-ENT-10-1-2015;Rodrigo Ferraz Santos;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;2007-12-24
+CONS-ENT-10-1-2018:2018-01-01;CONS-ENT-10-1-2018;Ricardo Oliveira Castro;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;2007-12-24
+CONS-ENT-10-1-2021:2021-01-01;CONS-ENT-10-1-2021;Rafael Alves Nogueira;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;2007-12-24
+CONS-ENT-10-1-2024:2024-01-01;CONS-ENT-10-1-2024;Vitória Siqueira Lima;Feminino;Elétrica;ENT-10;ATI;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;2007-12-24
+CONS-ENT-10-2-2015:2015-01-01;CONS-ENT-10-2-2015;William Santos Alves;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;2007-12-24
+CONS-ENT-10-2-2018:2018-01-01;CONS-ENT-10-2-2018;Wagner Campos Ferraz;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;2007-12-24
+CONS-ENT-10-2-2018:2021-01-01;CONS-ENT-10-2-2018;Wagner Campos Ferraz;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;2007-12-24
+CONS-ENT-10-2-2018:2024-01-01;CONS-ENT-10-2-2018;Wagner Campos Ferraz;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;2007-12-24
+CONS-ENT-10-3-2016:2016-01-01;CONS-ENT-10-3-2016;Thiago Queiroz Borges;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2007-12-24
+CONS-ENT-10-3-2019:2019-01-01;CONS-ENT-10-3-2019;Sérgio Barbosa Martins;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2007-12-24
+CONS-ENT-10-3-2022:2022-01-01;CONS-ENT-10-3-2022;Rodrigo Farias Souza;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2007-12-24
+CONS-ENT-10-3-2025:2025-01-01;CONS-ENT-10-3-2025;Ricardo Nunes Dias;Masculino;Elétrica;ENT-10;ATI;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2007-12-24
+CONS-ENT-11-1-2016:2016-01-01;CONS-ENT-11-1-2016;Paulo Costa Barbosa;Masculino;Mecânica e Metalúrgica;ENT-11;ATE;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2010-08-23
+CONS-ENT-11-1-2016:2019-01-01;CONS-ENT-11-1-2016;Paulo Costa Barbosa;Masculino;Mecânica e Metalúrgica;ENT-11;ATE;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2010-08-23
+CONS-ENT-11-1-2022:2022-01-01;CONS-ENT-11-1-2022;Otávio Mendes Gomes;Masculino;Mecânica e Metalúrgica;ENT-11;ATE;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2010-08-23
+CONS-ENT-11-1-2025:2025-01-01;CONS-ENT-11-1-2025;Vitória Santos Machado;Feminino;Mecânica e Metalúrgica;ENT-11;ATE;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2010-08-23
+CONS-ENT-12-1-2016:2016-01-01;CONS-ENT-12-1-2016;Wagner Borges Gomes;Masculino;Segurança do Trabalho;ENT-12;AEP;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;1990-01-25
+CONS-ENT-12-1-2019:2019-01-01;CONS-ENT-12-1-2019;Vinícius Gomes Ribeiro;Masculino;Segurança do Trabalho;ENT-12;AEP;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;1990-01-25
+CONS-ENT-12-1-2022:2022-01-01;CONS-ENT-12-1-2022;Thiago Pinto Cardoso;Masculino;Segurança do Trabalho;ENT-12;AEP;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;1990-01-25
+CONS-ENT-12-1-2022:2025-01-01;CONS-ENT-12-1-2022;Thiago Pinto Cardoso;Masculino;Segurança do Trabalho;ENT-12;AEP;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;1990-01-25
+CONS-ENT-12-2-2017:2017-01-01;CONS-ENT-12-2-2017;Rodrigo Esteves Almeida;Masculino;Química;ENT-12;AEP;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;1990-01-25
+CONS-ENT-12-2-2020:2020-01-01;CONS-ENT-12-2-2020;Ricardo Nogueira Esteves;Masculino;Química;ENT-12;AEP;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;1990-01-25
+CONS-ENT-12-2-2023:2023-01-01;CONS-ENT-12-2-2023;Rafael Teixeira Pereira;Masculino;Química;ENT-12;AEP;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;1990-01-25
+CONS-ENT-12-2-2026:2026-01-01;CONS-ENT-12-2-2026;Vitória Rocha Mendes;Feminino;Química;ENT-12;AEP;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;1990-01-25
+CONS-ENT-12-3-2015:2015-01-01;CONS-ENT-12-3-2015;Wagner Batista Lopes;Masculino;Segurança do Trabalho;ENT-12;AEP;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;1990-01-25
+CONS-ENT-12-3-2018:2018-01-01;CONS-ENT-12-3-2018;Vitória Ribeiro Moreira;Feminino;Segurança do Trabalho;ENT-12;AEP;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;1990-01-25
+CONS-ENT-12-3-2021:2021-01-01;CONS-ENT-12-3-2021;William Ramos Borges;Masculino;Segurança do Trabalho;ENT-12;AEP;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;1990-01-25
+CONS-ENT-12-3-2024:2024-01-01;CONS-ENT-12-3-2024;Vitória Ramos Nunes;Feminino;Segurança do Trabalho;ENT-12;AEP;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;1990-01-25
+CONS-ENT-12-4-2017:2017-01-01;CONS-ENT-12-4-2017;William Queiroz Cardoso;Masculino;Ambiental e Sanitária;ENT-12;AEP;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;1990-01-25
+CONS-ENT-12-4-2020:2020-01-01;CONS-ENT-12-4-2020;Wagner Barbosa Moraes;Masculino;Ambiental e Sanitária;ENT-12;AEP;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;1990-01-25
+CONS-ENT-12-4-2023:2023-01-01;CONS-ENT-12-4-2023;Vinícius Farias Almeida;Masculino;Ambiental e Sanitária;ENT-12;AEP;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;1990-01-25
+CONS-ENT-12-4-2026:2026-01-01;CONS-ENT-12-4-2026;Thiago Nunes Esteves;Masculino;Ambiental e Sanitária;ENT-12;AEP;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;1990-01-25
+CONS-ENT-13-1-2016:2016-01-01;CONS-ENT-13-1-2016;Sérgio Almeida Pinto;Masculino;Agronomia;ENT-13;SEE-GUA;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2011-07-19
+CONS-ENT-13-1-2019:2019-01-01;CONS-ENT-13-1-2019;Rodrigo Costa Batista;Masculino;Agronomia;ENT-13;SEE-GUA;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2011-07-19
+CONS-ENT-13-1-2022:2022-01-01;CONS-ENT-13-1-2022;Vitória Queiroz Pereira;Feminino;Agronomia;ENT-13;SEE-GUA;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2011-07-19
+CONS-ENT-13-1-2025:2025-01-01;CONS-ENT-13-1-2025;William Pinto Castro;Masculino;Agronomia;ENT-13;SEE-GUA;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2011-07-19
+CONS-ENT-14-1-2016:2016-01-01;CONS-ENT-14-1-2016;Vinícius Esteves Andrade;Masculino;Geologia e Minas;ENT-14;AAP-PRE;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;1994-06-08
+CONS-ENT-14-1-2019:2019-01-01;CONS-ENT-14-1-2019;Thiago Nogueira Ferraz;Masculino;Geologia e Minas;ENT-14;AAP-PRE;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;1994-06-08
+CONS-ENT-14-1-2019:2022-01-01;CONS-ENT-14-1-2019;Thiago Nogueira Ferraz;Masculino;Geologia e Minas;ENT-14;AAP-PRE;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;1994-06-08
+CONS-ENT-14-1-2019:2025-01-01;CONS-ENT-14-1-2019;Thiago Nogueira Ferraz;Masculino;Geologia e Minas;ENT-14;AAP-PRE;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;1994-06-08
+CONS-ENT-14-2-2017:2017-01-01;CONS-ENT-14-2-2017;Rodrigo Castro Campos;Masculino;Geologia e Minas;ENT-14;AAP-PRE;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;1994-06-08
+CONS-ENT-14-2-2017:2020-01-01;CONS-ENT-14-2-2017;Rodrigo Castro Campos;Masculino;Geologia e Minas;ENT-14;AAP-PRE;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;1994-06-08
+CONS-ENT-14-2-2023:2023-01-01;CONS-ENT-14-2-2023;Ricardo Martins Mendes;Masculino;Geologia e Minas;ENT-14;AAP-PRE;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;1994-06-08
+CONS-ENT-14-2-2026:2026-01-01;CONS-ENT-14-2-2026;Rafael Rocha Teixeira;Masculino;Geologia e Minas;ENT-14;AAP-PRE;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;1994-06-08
+CONS-ENT-14-3-2016:2016-01-01;CONS-ENT-14-3-2016;Paulo Borges Esteves;Masculino;Ambiental e Sanitária;ENT-14;AAP-PRE;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;1994-06-08
+CONS-ENT-14-3-2019:2019-01-01;CONS-ENT-14-3-2019;Otávio Gomes Pereira;Masculino;Ambiental e Sanitária;ENT-14;AAP-PRE;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;1994-06-08
+CONS-ENT-14-3-2019:2022-01-01;CONS-ENT-14-3-2019;Otávio Gomes Pereira;Masculino;Ambiental e Sanitária;ENT-14;AAP-PRE;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;1994-06-08
+CONS-ENT-14-3-2019:2025-01-01;CONS-ENT-14-3-2019;Otávio Gomes Pereira;Masculino;Ambiental e Sanitária;ENT-14;AAP-PRE;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;1994-06-08
+CONS-ENT-16-1-2016:2016-01-01;CONS-ENT-16-1-2016;Vitória Pinto Ramos;Feminino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;1996-03-13
+CONS-ENT-16-1-2016:2019-01-01;CONS-ENT-16-1-2016;Vitória Pinto Ramos;Feminino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;1996-03-13
+CONS-ENT-16-1-2022:2022-01-01;CONS-ENT-16-1-2022;William Pereira Dias;Masculino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;1996-03-13
+CONS-ENT-16-1-2025:2025-01-01;CONS-ENT-16-1-2025;Wagner Andrade Oliveira;Masculino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;1996-03-13
+CONS-ENT-16-2-2015:2015-01-01;CONS-ENT-16-2-2015;Vitória Pereira Rocha;Feminino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;1996-03-13
+CONS-ENT-16-2-2018:2018-01-01;CONS-ENT-16-2-2018;William Oliveira Esteves;Masculino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;1996-03-13
+CONS-ENT-16-2-2018:2021-01-01;CONS-ENT-16-2-2018;William Oliveira Esteves;Masculino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;1996-03-13
+CONS-ENT-16-2-2024:2024-01-01;CONS-ENT-16-2-2024;Wagner Alves Pinto;Masculino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;1996-03-13
+CONS-ENT-16-3-2016:2016-01-01;CONS-ENT-16-3-2016;Vinícius Dias Batista;Masculino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;1996-03-13
+CONS-ENT-16-3-2019:2019-01-01;CONS-ENT-16-3-2019;Thiago Moraes Lopes;Masculino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;1996-03-13
+CONS-ENT-16-3-2022:2022-01-01;CONS-ENT-16-3-2022;Sérgio Siqueira Santos;Masculino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;1996-03-13
+CONS-ENT-16-3-2022:2025-01-01;CONS-ENT-16-3-2022;Sérgio Siqueira Santos;Masculino;Segurança do Trabalho;ENT-16;AEM-SÃO;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;1996-03-13
+CONS-ENT-16-4-2017:2017-01-01;CONS-ENT-16-4-2017;Vitória Oliveira Siqueira;Feminino;Ambiental e Sanitária;ENT-16;AEM-SÃO;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;1996-03-13
+CONS-ENT-16-4-2020:2020-01-01;CONS-ENT-16-4-2020;William Nunes Ferraz;Masculino;Ambiental e Sanitária;ENT-16;AEM-SÃO;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;1996-03-13
+CONS-ENT-16-4-2020:2023-01-01;CONS-ENT-16-4-2020;William Nunes Ferraz;Masculino;Ambiental e Sanitária;ENT-16;AEM-SÃO;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;1996-03-13
+CONS-ENT-16-4-2026:2026-01-01;CONS-ENT-16-4-2026;Wagner Almeida Ramos;Masculino;Ambiental e Sanitária;ENT-16;AEM-SÃO;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;1996-03-13
+CONS-ENT-17-1-2016:2016-01-01;CONS-ENT-17-1-2016;Vinícius Costa Campos;Masculino;Civil;ENT-17;AEST-JUN;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2015-04-20
+CONS-ENT-17-1-2016:2019-01-01;CONS-ENT-17-1-2016;Vinícius Costa Campos;Masculino;Civil;ENT-17;AEST-JUN;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2015-04-20
+CONS-ENT-17-1-2016:2022-01-01;CONS-ENT-17-1-2016;Vinícius Costa Campos;Masculino;Civil;ENT-17;AEST-JUN;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2015-04-20
+CONS-ENT-17-1-2025:2025-01-01;CONS-ENT-17-1-2025;Thiago Mendes Martins;Masculino;Civil;ENT-17;AEST-JUN;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2015-04-20
+CONS-ENT-17-2-2015:2015-01-01;CONS-ENT-17-2-2015;Rodrigo Campos Esteves;Masculino;Civil;ENT-17;AEST-JUN;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;2015-04-20
+CONS-ENT-17-2-2018:2018-01-01;CONS-ENT-17-2-2018;Ricardo Lima Pereira;Masculino;Civil;ENT-17;AEST-JUN;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;2015-04-20
+CONS-ENT-17-2-2021:2021-01-01;CONS-ENT-17-2-2021;Rafael Queiroz Barros;Masculino;Civil;ENT-17;AEST-JUN;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;2015-04-20
+CONS-ENT-17-2-2024:2024-01-01;CONS-ENT-17-2-2024;Paulo Barbosa Lopes;Masculino;Civil;ENT-17;AEST-JUN;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;2015-04-20
+CONS-ENT-17-3-2016:2016-01-01;CONS-ENT-17-3-2016;Mateus Nunes Castro;Masculino;Ambiental e Sanitária;ENT-17;AEST-JUN;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2015-04-20
+CONS-ENT-17-3-2019:2019-01-01;CONS-ENT-17-3-2019;Marcos Almeida Nogueira;Masculino;Ambiental e Sanitária;ENT-17;AEST-JUN;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2015-04-20
+CONS-ENT-17-3-2019:2022-01-01;CONS-ENT-17-3-2019;Marcos Almeida Nogueira;Masculino;Ambiental e Sanitária;ENT-17;AEST-JUN;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2015-04-20
+CONS-ENT-17-3-2025:2025-01-01;CONS-ENT-17-3-2025;Marcelo Costa Andrade;Masculino;Ambiental e Sanitária;ENT-17;AEST-JUN;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2015-04-20
+CONS-ENT-19-1-2016:2016-01-01;CONS-ENT-19-1-2016;Leonardo Santos Queiroz;Masculino;Mecânica e Metalúrgica;ENT-19;AGM-SÃO;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;1994-08-29
+CONS-ENT-19-1-2019:2019-01-01;CONS-ENT-19-1-2019;José Campos Cardoso;Masculino;Mecânica e Metalúrgica;ENT-19;AGM-SÃO;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;1994-08-29
+CONS-ENT-19-1-2022:2022-01-01;CONS-ENT-19-1-2022;Vitória Nunes Teixeira;Feminino;Mecânica e Metalúrgica;ENT-19;AGM-SÃO;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;1994-08-29
+CONS-ENT-19-1-2025:2025-01-01;CONS-ENT-19-1-2025;William Nogueira Gomes;Masculino;Mecânica e Metalúrgica;ENT-19;AGM-SÃO;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;1994-08-29
+CONS-ENT-23-1-2015:2015-01-01;CONS-ENT-23-1-2015;Tatiana Teixeira Farias;Feminino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;2018-11-21
+CONS-ENT-23-1-2018:2018-01-01;CONS-ENT-23-1-2018;William Moreira Lopes;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;2018-11-21
+CONS-ENT-23-1-2018:2021-01-01;CONS-ENT-23-1-2018;William Moreira Lopes;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;2018-11-21
+CONS-ENT-23-1-2024:2024-01-01;CONS-ENT-23-1-2024;Wagner Souza Santos;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;2018-11-21
+CONS-ENT-23-2-2015:2015-01-01;CONS-ENT-23-2-2015;Vinícius Carvalho Dias;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;2018-11-21
+CONS-ENT-23-2-2018:2018-01-01;CONS-ENT-23-2-2018;Thiago Machado Nunes;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;2018-11-21
+CONS-ENT-23-2-2021:2021-01-01;CONS-ENT-23-2-2021;Sérgio Ribeiro Araújo;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;2018-11-21
+CONS-ENT-23-2-2024:2024-01-01;CONS-ENT-23-2-2024;Rodrigo Batista Gomes;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;2018-11-21
+CONS-ENT-23-3-2015:2015-01-01;CONS-ENT-23-3-2015;Rafael Pereira Cardoso;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;2018-11-21
+CONS-ENT-23-3-2015:2018-01-01;CONS-ENT-23-3-2015;Rafael Pereira Cardoso;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;2018-11-21
+CONS-ENT-23-3-2021:2021-01-01;CONS-ENT-23-3-2021;Paulo Andrade Moraes;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;2018-11-21
+CONS-ENT-23-3-2024:2024-01-01;CONS-ENT-23-3-2024;Otávio Duarte Almeida;Masculino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;2018-11-21
+CONS-ENT-23-4-2016:2016-01-01;CONS-ENT-23-4-2016;Vitória Moreira Araújo;Feminino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2018-11-21
+CONS-ENT-23-4-2016:2019-01-01;CONS-ENT-23-4-2016;Vitória Moreira Araújo;Feminino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2018-11-21
+CONS-ENT-23-4-2016:2022-01-01;CONS-ENT-23-4-2016;Vitória Moreira Araújo;Feminino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2018-11-21
+CONS-ENT-23-4-2016:2025-01-01;CONS-ENT-23-4-2016;Vitória Moreira Araújo;Feminino;Agrimensura;ENT-23;ATE-BAU;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2018-11-21
+CONS-ENT-24-1-2015:2015-01-01;CONS-ENT-24-1-2015;Wagner Siqueira Teixeira;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2015 a 2017;2015-01-01;2017-12-31;2019-06-01
+CONS-ENT-24-1-2018:2018-01-01;CONS-ENT-24-1-2018;Vinícius Cardoso Esteves;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2018 a 2020;2018-01-01;2020-12-31;2019-06-01
+CONS-ENT-24-1-2021:2021-01-01;CONS-ENT-24-1-2021;Thiago Lopes Pereira;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2021 a 2023;2021-01-01;2023-12-31;2019-06-01
+CONS-ENT-24-1-2021:2024-01-01;CONS-ENT-24-1-2021;Thiago Lopes Pereira;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2024 a 2026;2024-01-01;2026-12-31;2019-06-01
+CONS-ENT-24-2-2016:2016-01-01;CONS-ENT-24-2-2016;William Mendes Moreira;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2016 a 2018;2016-01-01;2018-12-31;2019-06-01
+CONS-ENT-24-2-2019:2019-01-01;CONS-ENT-24-2-2019;Wagner Santos Alves;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2019 a 2021;2019-01-01;2021-12-31;2019-06-01
+CONS-ENT-24-2-2022:2022-01-01;CONS-ENT-24-2-2022;Vinícius Campos Ferraz;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2022 a 2024;2022-01-01;2024-12-31;2019-06-01
+CONS-ENT-24-2-2025:2025-01-01;CONS-ENT-24-2-2025;Vitória Mendes Borges;Feminino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2025 a 2027;2025-01-01;2027-12-31;2019-06-01
+CONS-ENT-24-3-2017:2017-01-01;CONS-ENT-24-3-2017;Sofia Campos Souza;Feminino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2017 a 2019;2017-01-01;2019-12-31;2019-06-01
+CONS-ENT-24-3-2020:2020-01-01;CONS-ENT-24-3-2020;William Martins Nunes;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2020 a 2022;2020-01-01;2022-12-31;2019-06-01
+CONS-ENT-24-3-2023:2023-01-01;CONS-ENT-24-3-2023;Wagner Rocha Araújo;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2023 a 2025;2023-01-01;2025-12-31;2019-06-01
+CONS-ENT-24-3-2026:2026-01-01;CONS-ENT-24-3-2026;Vinícius Borges Gomes;Masculino;Segurança do Trabalho;ENT-24;AEP-OSA;Entidade de classe;2026 a 2028;2026-01-01;2028-12-31;2019-06-01
+CONS-IES-01-1-2015:2015-01-01;CONS-IES-01-1-2015;Sérgio Pinto Cardoso;Masculino;Agrimensura;IES-01;UE-CAM;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;2012-01-27
+CONS-IES-01-1-2015:2018-01-01;CONS-IES-01-1-2015;Sérgio Pinto Cardoso;Masculino;Agrimensura;IES-01;UE-CAM;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;2012-01-27
+CONS-IES-01-1-2015:2021-01-01;CONS-IES-01-1-2015;Sérgio Pinto Cardoso;Masculino;Agrimensura;IES-01;UE-CAM;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;2012-01-27
+CONS-IES-01-1-2015:2024-01-01;CONS-IES-01-1-2015;Sérgio Pinto Cardoso;Masculino;Agrimensura;IES-01;UE-CAM;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;2012-01-27
+CONS-IES-01-2-2015:2015-01-01;CONS-IES-01-2-2015;Ricardo Esteves Almeida;Masculino;Ambiental e Sanitária;IES-01;UE-CAM;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;2012-01-27
+CONS-IES-01-2-2018:2018-01-01;CONS-IES-01-2-2018;Rafael Nogueira Esteves;Masculino;Ambiental e Sanitária;IES-01;UE-CAM;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;2012-01-27
+CONS-IES-01-2-2021:2021-01-01;CONS-IES-01-2-2021;Paulo Teixeira Pereira;Masculino;Ambiental e Sanitária;IES-01;UE-CAM;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;2012-01-27
+CONS-IES-01-2-2024:2024-01-01;CONS-IES-01-2-2024;Otávio Castro Batista;Masculino;Ambiental e Sanitária;IES-01;UE-CAM;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;2012-01-27
+CONS-IES-03-1-2017:2017-01-01;CONS-IES-03-1-2017;Vitória Martins Cardoso;Feminino;Civil;IES-03;FP-MOG;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2016-02-01
+CONS-IES-03-1-2020:2020-01-01;CONS-IES-03-1-2020;William Machado Pereira;Masculino;Civil;IES-03;FP-MOG;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2016-02-01
+CONS-IES-03-1-2023:2023-01-01;CONS-IES-03-1-2023;Wagner Ribeiro Barros;Masculino;Civil;IES-03;FP-MOG;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2016-02-01
+CONS-IES-03-1-2023:2026-01-01;CONS-IES-03-1-2023;Wagner Ribeiro Barros;Masculino;Civil;IES-03;FP-MOG;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2016-02-01
+CONS-IES-03-2-2015:2015-01-01;CONS-IES-03-2-2015;Vinícius Batista Lopes;Masculino;Elétrica;IES-03;FP-MOG;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;2016-02-01
+CONS-IES-03-2-2015:2018-01-01;CONS-IES-03-2-2015;Vinícius Batista Lopes;Masculino;Elétrica;IES-03;FP-MOG;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;2016-02-01
+CONS-IES-03-2-2021:2021-01-01;CONS-IES-03-2-2021;Thiago Freitas Santos;Masculino;Elétrica;IES-03;FP-MOG;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;2016-02-01
+CONS-IES-03-2-2024:2024-01-01;CONS-IES-03-2-2024;Sérgio Pereira Castro;Masculino;Elétrica;IES-03;FP-MOG;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;2016-02-01
+CONS-IES-03-3-2016:2016-01-01;CONS-IES-03-3-2016;William Lopes Queiroz;Masculino;Ambiental e Sanitária;IES-03;FP-MOG;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;2016-02-01
+CONS-IES-03-3-2016:2019-01-01;CONS-IES-03-3-2016;William Lopes Queiroz;Masculino;Ambiental e Sanitária;IES-03;FP-MOG;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;2016-02-01
+CONS-IES-03-3-2022:2022-01-01;CONS-IES-03-3-2022;Wagner Ramos Borges;Masculino;Ambiental e Sanitária;IES-03;FP-MOG;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;2016-02-01
+CONS-IES-03-3-2025:2025-01-01;CONS-IES-03-3-2025;Vinícius Barros Martins;Masculino;Ambiental e Sanitária;IES-03;FP-MOG;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;2016-02-01
+CONS-IES-05-1-2017:2017-01-01;CONS-IES-05-1-2017;Thiago Ferraz Souza;Masculino;Geologia e Minas;IES-05;UE-FRA;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1995-06-11
+CONS-IES-05-1-2020:2020-01-01;CONS-IES-05-1-2020;Sérgio Oliveira Dias;Masculino;Geologia e Minas;IES-05;UE-FRA;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1995-06-11
+CONS-IES-05-1-2023:2023-01-01;CONS-IES-05-1-2023;Rodrigo Alves Oliveira;Masculino;Geologia e Minas;IES-05;UE-FRA;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1995-06-11
+CONS-IES-05-1-2026:2026-01-01;CONS-IES-05-1-2026;Vitória Lopes Dias;Feminino;Geologia e Minas;IES-05;UE-FRA;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1995-06-11
+CONS-IES-06-1-2015:2015-01-01;CONS-IES-06-1-2015;Wagner Queiroz Cardoso;Masculino;Segurança do Trabalho;IES-06;FP-CAM;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1985-11-13
+CONS-IES-06-1-2018:2018-01-01;CONS-IES-06-1-2018;Vinícius Barbosa Moraes;Masculino;Segurança do Trabalho;IES-06;FP-CAM;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1985-11-13
+CONS-IES-06-1-2021:2021-01-01;CONS-IES-06-1-2021;Vitória Lima Esteves;Feminino;Segurança do Trabalho;IES-06;FP-CAM;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1985-11-13
+CONS-IES-06-1-2024:2024-01-01;CONS-IES-06-1-2024;Tatiana Queiroz Pereira;Feminino;Segurança do Trabalho;IES-06;FP-CAM;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1985-11-13
+CONS-IES-06-2-2015:2015-01-01;CONS-IES-06-2-2015;Wagner Pinto Castro;Masculino;Civil;IES-06;FP-CAM;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1985-11-13
+CONS-IES-06-2-2015:2018-01-01;CONS-IES-06-2-2015;Wagner Pinto Castro;Masculino;Civil;IES-06;FP-CAM;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1985-11-13
+CONS-IES-06-2-2021:2021-01-01;CONS-IES-06-2-2021;Vinícius Araújo Nogueira;Masculino;Civil;IES-06;FP-CAM;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1985-11-13
+CONS-IES-06-2-2021:2024-01-01;CONS-IES-06-2-2021;Vinícius Araújo Nogueira;Masculino;Civil;IES-06;FP-CAM;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1985-11-13
+CONS-IES-06-3-2016:2016-01-01;CONS-IES-06-3-2016;Vitória Gomes Ferraz;Feminino;Química;IES-06;FP-CAM;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1985-11-13
+CONS-IES-06-3-2016:2019-01-01;CONS-IES-06-3-2016;Vitória Gomes Ferraz;Feminino;Química;IES-06;FP-CAM;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1985-11-13
+CONS-IES-06-3-2016:2022-01-01;CONS-IES-06-3-2016;Vitória Gomes Ferraz;Feminino;Química;IES-06;FP-CAM;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1985-11-13
+CONS-IES-06-3-2025:2025-01-01;CONS-IES-06-3-2025;William Freitas Souza;Masculino;Química;IES-06;FP-CAM;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1985-11-13
+CONS-IES-06-4-2015:2015-01-01;CONS-IES-06-4-2015;Wagner Pereira Dias;Masculino;Ambiental e Sanitária;IES-06;FP-CAM;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1985-11-13
+CONS-IES-06-4-2018:2018-01-01;CONS-IES-06-4-2018;Vinícius Andrade Oliveira;Masculino;Ambiental e Sanitária;IES-06;FP-CAM;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1985-11-13
+CONS-IES-06-4-2021:2021-01-01;CONS-IES-06-4-2021;Thiago Duarte Barbosa;Masculino;Ambiental e Sanitária;IES-06;FP-CAM;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1985-11-13
+CONS-IES-06-4-2021:2024-01-01;CONS-IES-06-4-2021;Thiago Duarte Barbosa;Masculino;Ambiental e Sanitária;IES-06;FP-CAM;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1985-11-13
+CONS-IES-07-1-2016:2016-01-01;CONS-IES-07-1-2016;Rodrigo Souza Ribeiro;Masculino;Elétrica;IES-07;FP-SAN;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1994-11-16
+CONS-IES-07-1-2019:2019-01-01;CONS-IES-07-1-2019;Ricardo Carvalho Castro;Masculino;Elétrica;IES-07;FP-SAN;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1994-11-16
+CONS-IES-07-1-2022:2022-01-01;CONS-IES-07-1-2022;Rafael Machado Moreira;Masculino;Elétrica;IES-07;FP-SAN;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1994-11-16
+CONS-IES-07-1-2025:2025-01-01;CONS-IES-07-1-2025;Paulo Ribeiro Alves;Masculino;Elétrica;IES-07;FP-SAN;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1994-11-16
+CONS-IES-07-2-2017:2017-01-01;CONS-IES-07-2-2017;William Ferraz Almeida;Masculino;Mecânica e Metalúrgica;IES-07;FP-SAN;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1994-11-16
+CONS-IES-07-2-2017:2020-01-01;CONS-IES-07-2-2017;William Ferraz Almeida;Masculino;Mecânica e Metalúrgica;IES-07;FP-SAN;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1994-11-16
+CONS-IES-07-2-2023:2023-01-01;CONS-IES-07-2-2023;Vitória Ferraz Machado;Feminino;Mecânica e Metalúrgica;IES-07;FP-SAN;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1994-11-16
+CONS-IES-07-2-2026:2026-01-01;CONS-IES-07-2-2026;William Farias Andrade;Masculino;Mecânica e Metalúrgica;IES-07;FP-SAN;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1994-11-16
+CONS-IES-07-3-2016:2016-01-01;CONS-IES-07-3-2016;Wagner Nunes Ferraz;Masculino;Química;IES-07;FP-SAN;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1994-11-16
+CONS-IES-07-3-2019:2019-01-01;CONS-IES-07-3-2019;Vinícius Almeida Ramos;Masculino;Química;IES-07;FP-SAN;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1994-11-16
+CONS-IES-07-3-2022:2022-01-01;CONS-IES-07-3-2022;Thiago Costa Campos;Masculino;Química;IES-07;FP-SAN;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1994-11-16
+CONS-IES-07-3-2025:2025-01-01;CONS-IES-07-3-2025;Sérgio Mendes Martins;Masculino;Química;IES-07;FP-SAN;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1994-11-16
+CONS-IES-07-4-2016:2016-01-01;CONS-IES-07-4-2016;William Esteves Barbosa;Masculino;Agronomia;IES-07;FP-SAN;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1994-11-16
+CONS-IES-07-4-2019:2019-01-01;CONS-IES-07-4-2019;Vitória Esteves Moreira;Feminino;Agronomia;IES-07;FP-SAN;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1994-11-16
+CONS-IES-07-4-2022:2022-01-01;CONS-IES-07-4-2022;Tatiana Nogueira Alves;Feminino;Agronomia;IES-07;FP-SAN;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1994-11-16
+CONS-IES-07-4-2025:2025-01-01;CONS-IES-07-4-2025;William Duarte Batista;Masculino;Agronomia;IES-07;FP-SAN;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1994-11-16
+CONS-IES-08-1-2015:2015-01-01;CONS-IES-08-1-2015;Wagner Moreira Lopes;Masculino;Geologia e Minas;IES-08;CUP-MOG;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1992-03-04
+CONS-IES-08-1-2018:2018-01-01;CONS-IES-08-1-2018;Vitória Duarte Nunes;Feminino;Geologia e Minas;IES-08;CUP-MOG;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1992-03-04
+CONS-IES-08-1-2018:2021-01-01;CONS-IES-08-1-2018;Vitória Duarte Nunes;Feminino;Geologia e Minas;IES-08;CUP-MOG;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1992-03-04
+CONS-IES-08-1-2024:2024-01-01;CONS-IES-08-1-2024;William Dias Campos;Masculino;Geologia e Minas;IES-08;CUP-MOG;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1992-03-04
+CONS-IES-08-2-2016:2016-01-01;CONS-IES-08-2-2016;William Costa Carvalho;Masculino;Ambiental e Sanitária;IES-08;CUP-MOG;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1992-03-04
+CONS-IES-08-2-2019:2019-01-01;CONS-IES-08-2-2019;Wagner Mendes Moreira;Masculino;Ambiental e Sanitária;IES-08;CUP-MOG;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1992-03-04
+CONS-IES-08-2-2022:2022-01-01;CONS-IES-08-2-2022;Vinícius Santos Alves;Masculino;Ambiental e Sanitária;IES-08;CUP-MOG;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1992-03-04
+CONS-IES-08-2-2025:2025-01-01;CONS-IES-08-2-2025;Thiago Campos Ferraz;Masculino;Ambiental e Sanitária;IES-08;CUP-MOG;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1992-03-04
+CONS-IES-09-1-2016:2016-01-01;CONS-IES-09-1-2016;Rodrigo Queiroz Borges;Masculino;Mecânica e Metalúrgica;IES-09;UE-TAU;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1986-11-27
+CONS-IES-09-1-2019:2019-01-01;CONS-IES-09-1-2019;Ricardo Barbosa Martins;Masculino;Mecânica e Metalúrgica;IES-09;UE-TAU;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1986-11-27
+CONS-IES-09-1-2019:2022-01-01;CONS-IES-09-1-2019;Ricardo Barbosa Martins;Masculino;Mecânica e Metalúrgica;IES-09;UE-TAU;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1986-11-27
+CONS-IES-09-1-2025:2025-01-01;CONS-IES-09-1-2025;Rafael Farias Souza;Masculino;Mecânica e Metalúrgica;IES-09;UE-TAU;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1986-11-27
+CONS-IES-12-1-2016:2016-01-01;CONS-IES-12-1-2016;Paulo Nunes Dias;Masculino;Geologia e Minas;IES-12;FP-SAN;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1999-07-08
+CONS-IES-12-1-2019:2019-01-01;CONS-IES-12-1-2019;Vitória Costa Queiroz;Feminino;Geologia e Minas;IES-12;FP-SAN;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1999-07-08
+CONS-IES-12-1-2022:2022-01-01;CONS-IES-12-1-2022;William Castro Dias;Masculino;Geologia e Minas;IES-12;FP-SAN;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1999-07-08
+CONS-IES-12-1-2022:2025-01-01;CONS-IES-12-1-2022;William Castro Dias;Masculino;Geologia e Minas;IES-12;FP-SAN;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1999-07-08
+CONS-IES-13-1-2016:2016-01-01;CONS-IES-13-1-2016;Vinícius Rocha Araújo;Masculino;Química;IES-13;UE-MOG;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;2014-11-23
+CONS-IES-13-1-2019:2019-01-01;CONS-IES-13-1-2019;Thiago Borges Gomes;Masculino;Química;IES-13;UE-MOG;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;2014-11-23
+CONS-IES-13-1-2022:2022-01-01;CONS-IES-13-1-2022;Sérgio Gomes Ribeiro;Masculino;Química;IES-13;UE-MOG;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;2014-11-23
+CONS-IES-13-1-2022:2025-01-01;CONS-IES-13-1-2022;Sérgio Gomes Ribeiro;Masculino;Química;IES-13;UE-MOG;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;2014-11-23
+CONS-IES-13-2-2015:2015-01-01;CONS-IES-13-2-2015;William Carvalho Esteves;Masculino;Agronomia;IES-13;UE-MOG;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;2014-11-23
+CONS-IES-13-2-2015:2018-01-01;CONS-IES-13-2-2015;William Carvalho Esteves;Masculino;Agronomia;IES-13;UE-MOG;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;2014-11-23
+CONS-IES-13-2-2021:2021-01-01;CONS-IES-13-2-2021;Wagner Machado Pereira;Masculino;Agronomia;IES-13;UE-MOG;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;2014-11-23
+CONS-IES-13-2-2024:2024-01-01;CONS-IES-13-2-2024;Vinícius Ribeiro Barros;Masculino;Agronomia;IES-13;UE-MOG;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;2014-11-23
+CONS-IES-13-3-2015:2015-01-01;CONS-IES-13-3-2015;Sérgio Freitas Santos;Masculino;Ambiental e Sanitária;IES-13;UE-MOG;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;2014-11-23
+CONS-IES-13-3-2018:2018-01-01;CONS-IES-13-3-2018;Rodrigo Pereira Castro;Masculino;Ambiental e Sanitária;IES-13;UE-MOG;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;2014-11-23
+CONS-IES-13-3-2018:2021-01-01;CONS-IES-13-3-2018;Rodrigo Pereira Castro;Masculino;Ambiental e Sanitária;IES-13;UE-MOG;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;2014-11-23
+CONS-IES-13-3-2024:2024-01-01;CONS-IES-13-3-2024;Vitória Carvalho Santos;Feminino;Ambiental e Sanitária;IES-13;UE-MOG;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;2014-11-23
+CONS-IES-14-1-2016:2016-01-01;CONS-IES-14-1-2016;Wagner Lopes Queiroz;Masculino;Química;IES-14;UP-TAU;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1999-05-24
+CONS-IES-14-1-2019:2019-01-01;CONS-IES-14-1-2019;Vinícius Ramos Borges;Masculino;Química;IES-14;UP-TAU;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1999-05-24
+CONS-IES-14-1-2022:2022-01-01;CONS-IES-14-1-2022;Thiago Barros Martins;Masculino;Química;IES-14;UP-TAU;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1999-05-24
+CONS-IES-14-1-2025:2025-01-01;CONS-IES-14-1-2025;Sérgio Ferraz Souza;Masculino;Química;IES-14;UP-TAU;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1999-05-24
+CONS-IES-15-1-2017:2017-01-01;CONS-IES-15-1-2017;Rodrigo Oliveira Dias;Masculino;Agronomia;IES-15;CUP-FRA;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1987-08-14
+CONS-IES-15-1-2020:2020-01-01;CONS-IES-15-1-2020;Ricardo Alves Oliveira;Masculino;Agronomia;IES-15;CUP-FRA;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1987-08-14
+CONS-IES-15-1-2023:2023-01-01;CONS-IES-15-1-2023;Rafael Dias Barbosa;Masculino;Agronomia;IES-15;CUP-FRA;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1987-08-14
+CONS-IES-15-1-2026:2026-01-01;CONS-IES-15-1-2026;Paulo Moraes Gomes;Masculino;Agronomia;IES-15;CUP-FRA;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1987-08-14
+CONS-IES-15-2-2017:2017-01-01;CONS-IES-15-2-2017;Vitória Cardoso Souza;Feminino;Civil;IES-15;CUP-FRA;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1987-08-14
+CONS-IES-15-2-2020:2020-01-01;CONS-IES-15-2-2020;William Campos Gomes;Masculino;Civil;IES-15;CUP-FRA;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1987-08-14
+CONS-IES-15-2-2023:2023-01-01;CONS-IES-15-2-2023;Wagner Lima Ribeiro;Masculino;Civil;IES-15;CUP-FRA;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1987-08-14
+CONS-IES-15-2-2026:2026-01-01;CONS-IES-15-2-2026;Vinícius Queiroz Cardoso;Masculino;Civil;IES-15;CUP-FRA;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1987-08-14
+CONS-IES-15-3-2017:2017-01-01;CONS-IES-15-3-2017;Sérgio Farias Almeida;Masculino;Mecânica e Metalúrgica;IES-15;CUP-FRA;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1987-08-14
+CONS-IES-15-3-2020:2020-01-01;CONS-IES-15-3-2020;Vitória Campos Almeida;Feminino;Mecânica e Metalúrgica;IES-15;CUP-FRA;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1987-08-14
+CONS-IES-15-3-2023:2023-01-01;CONS-IES-15-3-2023;William Borges Lopes;Masculino;Mecânica e Metalúrgica;IES-15;CUP-FRA;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1987-08-14
+CONS-IES-15-3-2026:2026-01-01;CONS-IES-15-3-2026;Vitória Borges Andrade;Feminino;Mecânica e Metalúrgica;IES-15;CUP-FRA;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1987-08-14
+CONS-IES-15-4-2016:2016-01-01;CONS-IES-15-4-2016;Tatiana Gomes Ferraz;Feminino;Agronomia;IES-15;CUP-FRA;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1987-08-14
+CONS-IES-15-4-2019:2019-01-01;CONS-IES-15-4-2019;William Batista Martins;Masculino;Agronomia;IES-15;CUP-FRA;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1987-08-14
+CONS-IES-15-4-2022:2022-01-01;CONS-IES-15-4-2022;Wagner Freitas Souza;Masculino;Agronomia;IES-15;CUP-FRA;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1987-08-14
+CONS-IES-15-4-2025:2025-01-01;CONS-IES-15-4-2025;Vinícius Pereira Dias;Masculino;Agronomia;IES-15;CUP-FRA;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1987-08-14
+CONS-IES-16-1-2016:2016-01-01;CONS-IES-16-1-2016;Sérgio Duarte Barbosa;Masculino;Civil;IES-16;FP-CAM;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1992-10-12
+CONS-IES-16-1-2019:2019-01-01;CONS-IES-16-1-2019;Vitória Batista Barbosa;Feminino;Civil;IES-16;FP-CAM;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1992-10-12
+CONS-IES-16-1-2022:2022-01-01;CONS-IES-16-1-2022;Tatiana Freitas Lima;Feminino;Civil;IES-16;FP-CAM;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1992-10-12
+CONS-IES-16-1-2025:2025-01-01;CONS-IES-16-1-2025;Sofia Pereira Rocha;Feminino;Civil;IES-16;FP-CAM;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1992-10-12
+CONS-IES-16-2-2015:2015-01-01;CONS-IES-16-2-2015;Wagner Ferraz Almeida;Masculino;Agronomia;IES-16;FP-CAM;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1992-10-12
+CONS-IES-16-2-2018:2018-01-01;CONS-IES-16-2-2018;Vinícius Oliveira Esteves;Masculino;Agronomia;IES-16;FP-CAM;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1992-10-12
+CONS-IES-16-2-2021:2021-01-01;CONS-IES-16-2-2021;Thiago Alves Pinto;Masculino;Agronomia;IES-16;FP-CAM;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1992-10-12
+CONS-IES-16-2-2024:2024-01-01;CONS-IES-16-2-2024;Sérgio Dias Batista;Masculino;Agronomia;IES-16;FP-CAM;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1992-10-12
+CONS-IES-17-1-2015:2015-01-01;CONS-IES-17-1-2015;Ricardo Siqueira Santos;Masculino;Segurança do Trabalho;IES-17;UE-SAN;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1985-04-11
+CONS-IES-17-1-2018:2018-01-01;CONS-IES-17-1-2018;Rafael Cardoso Dias;Masculino;Segurança do Trabalho;IES-17;UE-SAN;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1985-04-11
+CONS-IES-17-1-2018:2021-01-01;CONS-IES-17-1-2018;Rafael Cardoso Dias;Masculino;Segurança do Trabalho;IES-17;UE-SAN;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1985-04-11
+CONS-IES-17-1-2024:2024-01-01;CONS-IES-17-1-2024;Paulo Lopes Nunes;Masculino;Segurança do Trabalho;IES-17;UE-SAN;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1985-04-11
+CONS-IES-17-2-2017:2017-01-01;CONS-IES-17-2-2017;Vitória Barros Borges;Feminino;Civil;IES-17;UE-SAN;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1985-04-11
+CONS-IES-17-2-2020:2020-01-01;CONS-IES-17-2-2020;William Barbosa Nogueira;Masculino;Civil;IES-17;UE-SAN;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1985-04-11
+CONS-IES-17-2-2020:2023-01-01;CONS-IES-17-2-2020;William Barbosa Nogueira;Masculino;Civil;IES-17;UE-SAN;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1985-04-11
+CONS-IES-17-2-2026:2026-01-01;CONS-IES-17-2-2026;Vitória Barbosa Cardoso;Feminino;Civil;IES-17;UE-SAN;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1985-04-11
+CONS-IES-18-1-2015:2015-01-01;CONS-IES-18-1-2015;William Araújo Oliveira;Masculino;Elétrica;IES-18;UP-MOG;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;2018-11-06
+CONS-IES-18-1-2018:2018-01-01;CONS-IES-18-1-2018;Wagner Esteves Barbosa;Masculino;Elétrica;IES-18;UP-MOG;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;2018-11-06
+CONS-IES-18-1-2018:2021-01-01;CONS-IES-18-1-2018;Wagner Esteves Barbosa;Masculino;Elétrica;IES-18;UP-MOG;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;2018-11-06
+CONS-IES-18-1-2018:2024-01-01;CONS-IES-18-1-2018;Wagner Esteves Barbosa;Masculino;Elétrica;IES-18;UP-MOG;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;2018-11-06
+CONS-IES-21-1-2015:2015-01-01;CONS-IES-21-1-2015;Vitória Araújo Castro;Feminino;Elétrica;IES-21;UE-CAM;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;2014-01-25
+CONS-IES-21-1-2015:2018-01-01;CONS-IES-21-1-2015;Vitória Araújo Castro;Feminino;Elétrica;IES-21;UE-CAM;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;2014-01-25
+CONS-IES-21-1-2021:2021-01-01;CONS-IES-21-1-2021;William Andrade Pinto;Masculino;Elétrica;IES-21;UE-CAM;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;2014-01-25
+CONS-IES-21-1-2024:2024-01-01;CONS-IES-21-1-2024;Wagner Duarte Batista;Masculino;Elétrica;IES-21;UE-CAM;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;2014-01-25
+CONS-IES-21-2-2016:2016-01-01;CONS-IES-21-2-2016;Vinícius Moreira Lopes;Masculino;Mecânica e Metalúrgica;IES-21;UE-CAM;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;2014-01-25
+CONS-IES-21-2-2019:2019-01-01;CONS-IES-21-2-2019;Thiago Souza Santos;Masculino;Mecânica e Metalúrgica;IES-21;UE-CAM;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;2014-01-25
+CONS-IES-21-2-2022:2022-01-01;CONS-IES-21-2-2022;Sérgio Carvalho Dias;Masculino;Mecânica e Metalúrgica;IES-21;UE-CAM;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;2014-01-25
+CONS-IES-21-2-2022:2025-01-01;CONS-IES-21-2-2022;Sérgio Carvalho Dias;Masculino;Mecânica e Metalúrgica;IES-21;UE-CAM;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;2014-01-25
+CONS-IES-23-1-2016:2016-01-01;CONS-IES-23-1-2016;Vitória Andrade Dias;Feminino;Civil;IES-23;CUP-MOG;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;2003-12-02
+CONS-IES-23-1-2019:2019-01-01;CONS-IES-23-1-2019;William Alves Ramos;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;2003-12-02
+CONS-IES-23-1-2022:2022-01-01;CONS-IES-23-1-2022;Wagner Dias Campos;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;2003-12-02
+CONS-IES-23-1-2025:2025-01-01;CONS-IES-23-1-2025;Vinícius Moraes Martins;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;2003-12-02
+CONS-IES-23-2-2017:2017-01-01;CONS-IES-23-2-2017;Sérgio Cardoso Esteves;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2003-12-02
+CONS-IES-23-2-2017:2020-01-01;CONS-IES-23-2-2017;Sérgio Cardoso Esteves;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2003-12-02
+CONS-IES-23-2-2017:2023-01-01;CONS-IES-23-2-2017;Sérgio Cardoso Esteves;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2003-12-02
+CONS-IES-23-2-2017:2026-01-01;CONS-IES-23-2-2017;Sérgio Cardoso Esteves;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2003-12-02
+CONS-IES-23-3-2017:2017-01-01;CONS-IES-23-3-2017;Ricardo Ramos Barros;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2003-12-02
+CONS-IES-23-3-2020:2020-01-01;CONS-IES-23-3-2020;Vitória Alves Esteves;Feminino;Civil;IES-23;CUP-MOG;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2003-12-02
+CONS-IES-23-3-2023:2023-01-01;CONS-IES-23-3-2023;William Almeida Rocha;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2003-12-02
+CONS-IES-23-3-2023:2026-01-01;CONS-IES-23-3-2023;William Almeida Rocha;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2003-12-02
+CONS-IES-23-4-2017:2017-01-01;CONS-IES-23-4-2017;Wagner Costa Carvalho;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2003-12-02
+CONS-IES-23-4-2020:2020-01-01;CONS-IES-23-4-2020;Vinícius Mendes Moreira;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2003-12-02
+CONS-IES-23-4-2023:2023-01-01;CONS-IES-23-4-2023;Thiago Santos Alves;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2003-12-02
+CONS-IES-23-4-2023:2026-01-01;CONS-IES-23-4-2023;Thiago Santos Alves;Masculino;Civil;IES-23;CUP-MOG;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2003-12-02
+CONS-IES-25-1-2016:2016-01-01;CONS-IES-25-1-2016;Rodrigo Lima Queiroz;Masculino;Mecânica e Metalúrgica;IES-25;UE-FRA2;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1996-07-16
+CONS-IES-25-1-2016:2019-01-01;CONS-IES-25-1-2016;Rodrigo Lima Queiroz;Masculino;Mecânica e Metalúrgica;IES-25;UE-FRA2;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1996-07-16
+CONS-IES-25-1-2016:2022-01-01;CONS-IES-25-1-2016;Rodrigo Lima Queiroz;Masculino;Mecânica e Metalúrgica;IES-25;UE-FRA2;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1996-07-16
+CONS-IES-25-1-2025:2025-01-01;CONS-IES-25-1-2025;Ricardo Queiroz Borges;Masculino;Mecânica e Metalúrgica;IES-25;UE-FRA2;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1996-07-16
+CONS-IES-25-2-2017:2017-01-01;CONS-IES-25-2-2017;Paulo Farias Souza;Masculino;Agronomia;IES-25;UE-FRA2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1996-07-16
+CONS-IES-25-2-2017:2020-01-01;CONS-IES-25-2-2017;Paulo Farias Souza;Masculino;Agronomia;IES-25;UE-FRA2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1996-07-16
+CONS-IES-25-2-2023:2023-01-01;CONS-IES-25-2-2023;Otávio Nunes Dias;Masculino;Agronomia;IES-25;UE-FRA2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1996-07-16
+CONS-IES-25-2-2026:2026-01-01;CONS-IES-25-2-2026;Mateus Almeida Oliveira;Masculino;Agronomia;IES-25;UE-FRA2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1996-07-16
+CONS-IES-26-1-2015:2015-01-01;CONS-IES-26-1-2015;Vitória Almeida Ferraz;Feminino;Civil;IES-26;FP-CAM2;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1990-10-07
+CONS-IES-26-1-2018:2018-01-01;CONS-IES-26-1-2018;William Teixeira Santos;Masculino;Civil;IES-26;FP-CAM2;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1990-10-07
+CONS-IES-26-1-2018:2021-01-01;CONS-IES-26-1-2018;William Teixeira Santos;Masculino;Civil;IES-26;FP-CAM2;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1990-10-07
+CONS-IES-26-1-2018:2024-01-01;CONS-IES-26-1-2018;William Teixeira Santos;Masculino;Civil;IES-26;FP-CAM2;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1990-10-07
+CONS-IES-26-2-2017:2017-01-01;CONS-IES-26-2-2017;Vitória Teixeira Freitas;Feminino;Mecânica e Metalúrgica;IES-26;FP-CAM2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1990-10-07
+CONS-IES-26-2-2017:2020-01-01;CONS-IES-26-2-2017;Vitória Teixeira Freitas;Feminino;Mecânica e Metalúrgica;IES-26;FP-CAM2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1990-10-07
+CONS-IES-26-2-2017:2023-01-01;CONS-IES-26-2-2017;Vitória Teixeira Freitas;Feminino;Mecânica e Metalúrgica;IES-26;FP-CAM2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1990-10-07
+CONS-IES-26-2-2026:2026-01-01;CONS-IES-26-2-2026;William Souza Teixeira;Masculino;Mecânica e Metalúrgica;IES-26;FP-CAM2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1990-10-07
+CONS-IES-26-3-2016:2016-01-01;CONS-IES-26-3-2016;Wagner Carvalho Esteves;Masculino;Química;IES-26;FP-CAM2;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1990-10-07
+CONS-IES-26-3-2019:2019-01-01;CONS-IES-26-3-2019;Vinícius Machado Pereira;Masculino;Química;IES-26;FP-CAM2;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1990-10-07
+CONS-IES-26-3-2022:2022-01-01;CONS-IES-26-3-2022;Vitória Souza Lima;Feminino;Química;IES-26;FP-CAM2;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1990-10-07
+CONS-IES-26-3-2025:2025-01-01;CONS-IES-26-3-2025;William Siqueira Alves;Masculino;Química;IES-26;FP-CAM2;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1990-10-07
+CONS-IES-26-4-2017:2017-01-01;CONS-IES-26-4-2017;Vitória Siqueira Machado;Feminino;Geologia e Minas;IES-26;FP-CAM2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1990-10-07
+CONS-IES-26-4-2020:2020-01-01;CONS-IES-26-4-2020;William Santos Araújo;Masculino;Geologia e Minas;IES-26;FP-CAM2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1990-10-07
+CONS-IES-26-4-2023:2023-01-01;CONS-IES-26-4-2023;Wagner Campos Gomes;Masculino;Geologia e Minas;IES-26;FP-CAM2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1990-10-07
+CONS-IES-26-4-2023:2026-01-01;CONS-IES-26-4-2023;Wagner Campos Gomes;Masculino;Geologia e Minas;IES-26;FP-CAM2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1990-10-07
+CONS-IES-27-1-2016:2016-01-01;CONS-IES-27-1-2016;Tatiana Campos Almeida;Feminino;Geologia e Minas;IES-27;CUP-SAN2;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1989-10-15
+CONS-IES-27-1-2019:2019-01-01;CONS-IES-27-1-2019;William Rocha Barros;Masculino;Geologia e Minas;IES-27;CUP-SAN2;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1989-10-15
+CONS-IES-27-1-2022:2022-01-01;CONS-IES-27-1-2022;Wagner Borges Lopes;Masculino;Geologia e Minas;IES-27;CUP-SAN2;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1989-10-15
+CONS-IES-27-1-2022:2025-01-01;CONS-IES-27-1-2022;Wagner Borges Lopes;Masculino;Geologia e Minas;IES-27;CUP-SAN2;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1989-10-15
+CONS-IES-27-2-2016:2016-01-01;CONS-IES-27-2-2016;Vinícius Gomes Santos;Masculino;Agrimensura;IES-27;CUP-SAN2;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1989-10-15
+CONS-IES-27-2-2019:2019-01-01;CONS-IES-27-2-2019;Thiago Pinto Castro;Masculino;Agrimensura;IES-27;CUP-SAN2;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1989-10-15
+CONS-IES-27-2-2022:2022-01-01;CONS-IES-27-2-2022;Sérgio Araújo Nogueira;Masculino;Agrimensura;IES-27;CUP-SAN2;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1989-10-15
+CONS-IES-27-2-2025:2025-01-01;CONS-IES-27-2-2025;Rodrigo Esteves Andrade;Masculino;Agrimensura;IES-27;CUP-SAN2;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1989-10-15
+CONS-IES-28-1-2015:2015-01-01;CONS-IES-28-1-2015;Rafael Teixeira Queiroz;Masculino;Segurança do Trabalho;IES-28;FP-MOG2;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;2014-07-24
+CONS-IES-28-1-2018:2018-01-01;CONS-IES-28-1-2018;Vitória Rocha Moreira;Feminino;Segurança do Trabalho;IES-28;FP-MOG2;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;2014-07-24
+CONS-IES-28-1-2021:2021-01-01;CONS-IES-28-1-2021;William Ribeiro Borges;Masculino;Segurança do Trabalho;IES-28;FP-MOG2;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;2014-07-24
+CONS-IES-28-1-2024:2024-01-01;CONS-IES-28-1-2024;Wagner Batista Martins;Masculino;Segurança do Trabalho;IES-28;FP-MOG2;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;2014-07-24
+CONS-IES-28-2-2017:2017-01-01;CONS-IES-28-2-2017;William Ramos Cardoso;Masculino;Civil;IES-28;FP-MOG2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2014-07-24
+CONS-IES-28-2-2020:2020-01-01;CONS-IES-28-2-2020;Vitória Ramos Pereira;Feminino;Civil;IES-28;FP-MOG2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2014-07-24
+CONS-IES-28-2-2023:2023-01-01;CONS-IES-28-2-2023;William Queiroz Castro;Masculino;Civil;IES-28;FP-MOG2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2014-07-24
+CONS-IES-28-2-2023:2026-01-01;CONS-IES-28-2-2023;William Queiroz Castro;Masculino;Civil;IES-28;FP-MOG2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2014-07-24
+CONS-IES-28-3-2015:2015-01-01;CONS-IES-28-3-2015;Wagner Barbosa Nogueira;Masculino;Mecânica e Metalúrgica;IES-28;FP-MOG2;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;2014-07-24
+CONS-IES-28-3-2015:2018-01-01;CONS-IES-28-3-2015;Wagner Barbosa Nogueira;Masculino;Mecânica e Metalúrgica;IES-28;FP-MOG2;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;2014-07-24
+CONS-IES-28-3-2021:2021-01-01;CONS-IES-28-3-2021;Vinícius Farias Andrade;Masculino;Mecânica e Metalúrgica;IES-28;FP-MOG2;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;2014-07-24
+CONS-IES-28-3-2024:2024-01-01;CONS-IES-28-3-2024;Thiago Nunes Ferraz;Masculino;Mecânica e Metalúrgica;IES-28;FP-MOG2;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;2014-07-24
+CONS-IES-28-4-2016:2016-01-01;CONS-IES-28-4-2016;Rodrigo Costa Campos;Masculino;Agronomia;IES-28;FP-MOG2;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;2014-07-24
+CONS-IES-28-4-2019:2019-01-01;CONS-IES-28-4-2019;Ricardo Mendes Martins;Masculino;Agronomia;IES-28;FP-MOG2;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;2014-07-24
+CONS-IES-28-4-2019:2022-01-01;CONS-IES-28-4-2019;Ricardo Mendes Martins;Masculino;Agronomia;IES-28;FP-MOG2;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;2014-07-24
+CONS-IES-28-4-2025:2025-01-01;CONS-IES-28-4-2025;Rafael Santos Teixeira;Masculino;Agronomia;IES-28;FP-MOG2;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;2014-07-24
+CONS-IES-29-1-2017:2017-01-01;CONS-IES-29-1-2017;Vitória Queiroz Ramos;Feminino;Elétrica;IES-29;UE-TAU2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2006-07-16
+CONS-IES-29-1-2017:2020-01-01;CONS-IES-29-1-2017;Vitória Queiroz Ramos;Feminino;Elétrica;IES-29;UE-TAU2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2006-07-16
+CONS-IES-29-1-2023:2023-01-01;CONS-IES-29-1-2023;William Pinto Dias;Masculino;Elétrica;IES-29;UE-TAU2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2006-07-16
+CONS-IES-29-1-2023:2026-01-01;CONS-IES-29-1-2023;William Pinto Dias;Masculino;Elétrica;IES-29;UE-TAU2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2006-07-16
+CONS-IES-30-1-2015:2015-01-01;CONS-IES-30-1-2015;Vinícius Esteves Barbosa;Masculino;Segurança do Trabalho;IES-30;FP-FRA2;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1987-04-24
+CONS-IES-30-1-2015:2018-01-01;CONS-IES-30-1-2015;Vinícius Esteves Barbosa;Masculino;Segurança do Trabalho;IES-30;FP-FRA2;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1987-04-24
+CONS-IES-30-1-2021:2021-01-01;CONS-IES-30-1-2021;Thiago Nogueira Gomes;Masculino;Segurança do Trabalho;IES-30;FP-FRA2;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1987-04-24
+CONS-IES-30-1-2024:2024-01-01;CONS-IES-30-1-2024;Vitória Pinto Rocha;Feminino;Segurança do Trabalho;IES-30;FP-FRA2;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1987-04-24
+CONS-IES-30-2-2015:2015-01-01;CONS-IES-30-2-2015;Wagner Andrade Pinto;Masculino;Civil;IES-30;FP-FRA2;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1987-04-24
+CONS-IES-30-2-2018:2018-01-01;CONS-IES-30-2-2018;Vinícius Duarte Batista;Masculino;Civil;IES-30;FP-FRA2;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1987-04-24
+CONS-IES-30-2-2021:2021-01-01;CONS-IES-30-2-2021;Thiago Moreira Lopes;Masculino;Civil;IES-30;FP-FRA2;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1987-04-24
+CONS-IES-30-2-2021:2024-01-01;CONS-IES-30-2-2021;Thiago Moreira Lopes;Masculino;Civil;IES-30;FP-FRA2;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1987-04-24
+CONS-IES-30-3-2015:2015-01-01;CONS-IES-30-3-2015;Rodrigo Carvalho Dias;Masculino;Mecânica e Metalúrgica;IES-30;FP-FRA2;Instituição de ensino;2015 a 2017;2015-01-01;2017-12-31;1987-04-24
+CONS-IES-30-3-2018:2018-01-01;CONS-IES-30-3-2018;Ricardo Machado Nunes;Masculino;Mecânica e Metalúrgica;IES-30;FP-FRA2;Instituição de ensino;2018 a 2020;2018-01-01;2020-12-31;1987-04-24
+CONS-IES-30-3-2018:2021-01-01;CONS-IES-30-3-2018;Ricardo Machado Nunes;Masculino;Mecânica e Metalúrgica;IES-30;FP-FRA2;Instituição de ensino;2021 a 2023;2021-01-01;2023-12-31;1987-04-24
+CONS-IES-30-3-2018:2024-01-01;CONS-IES-30-3-2018;Ricardo Machado Nunes;Masculino;Mecânica e Metalúrgica;IES-30;FP-FRA2;Instituição de ensino;2024 a 2026;2024-01-01;2026-12-31;1987-04-24
+CONS-IES-31-1-2017:2017-01-01;CONS-IES-31-1-2017;Vitória Pereira Siqueira;Feminino;Elétrica;IES-31;CUP-CAM2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;1986-07-18
+CONS-IES-31-1-2017:2020-01-01;CONS-IES-31-1-2017;Vitória Pereira Siqueira;Feminino;Elétrica;IES-31;CUP-CAM2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;1986-07-18
+CONS-IES-31-1-2023:2023-01-01;CONS-IES-31-1-2023;William Oliveira Ferraz;Masculino;Elétrica;IES-31;CUP-CAM2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;1986-07-18
+CONS-IES-31-1-2026:2026-01-01;CONS-IES-31-1-2026;Wagner Alves Ramos;Masculino;Elétrica;IES-31;CUP-CAM2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;1986-07-18
+CONS-IES-32-1-2016:2016-01-01;CONS-IES-32-1-2016;Thiago Moraes Martins;Masculino;Civil;IES-32;UP-SAN2;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;2011-05-13
+CONS-IES-32-1-2016:2019-01-01;CONS-IES-32-1-2016;Thiago Moraes Martins;Masculino;Civil;IES-32;UP-SAN2;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;2011-05-13
+CONS-IES-32-1-2022:2022-01-01;CONS-IES-32-1-2022;Sérgio Siqueira Teixeira;Masculino;Civil;IES-32;UP-SAN2;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;2011-05-13
+CONS-IES-32-1-2025:2025-01-01;CONS-IES-32-1-2025;Rodrigo Cardoso Esteves;Masculino;Civil;IES-32;UP-SAN2;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;2011-05-13
+CONS-IES-32-2-2017:2017-01-01;CONS-IES-32-2-2017;Rafael Ramos Barros;Masculino;Geologia e Minas;IES-32;UP-SAN2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2011-05-13
+CONS-IES-32-2-2020:2020-01-01;CONS-IES-32-2-2020;Paulo Barros Lopes;Masculino;Geologia e Minas;IES-32;UP-SAN2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2011-05-13
+CONS-IES-32-2-2023:2023-01-01;CONS-IES-32-2-2023;Otávio Ferraz Santos;Masculino;Geologia e Minas;IES-32;UP-SAN2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2011-05-13
+CONS-IES-32-2-2023:2026-01-01;CONS-IES-32-2-2023;Otávio Ferraz Santos;Masculino;Geologia e Minas;IES-32;UP-SAN2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2011-05-13
+CONS-IES-33-1-2016:2016-01-01;CONS-IES-33-1-2016;Marcos Alves Nogueira;Masculino;Agrimensura;IES-33;UE-MOG2;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;2003-12-09
+CONS-IES-33-1-2016:2019-01-01;CONS-IES-33-1-2016;Marcos Alves Nogueira;Masculino;Agrimensura;IES-33;UE-MOG2;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;2003-12-09
+CONS-IES-33-1-2022:2022-01-01;CONS-IES-33-1-2022;Marcelo Dias Andrade;Masculino;Agrimensura;IES-33;UE-MOG2;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;2003-12-09
+CONS-IES-33-1-2025:2025-01-01;CONS-IES-33-1-2025;Lucas Moraes Ferraz;Masculino;Agrimensura;IES-33;UE-MOG2;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;2003-12-09
+CONS-IES-34-1-2017:2017-01-01;CONS-IES-34-1-2017;José Cardoso Campos;Masculino;Mecânica e Metalúrgica;IES-34;FP-TAU2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2000-03-27
+CONS-IES-34-1-2020:2020-01-01;CONS-IES-34-1-2020;João Lopes Mendes;Masculino;Mecânica e Metalúrgica;IES-34;FP-TAU2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2000-03-27
+CONS-IES-34-1-2023:2023-01-01;CONS-IES-34-1-2023;Hugo Ramos Teixeira;Masculino;Mecânica e Metalúrgica;IES-34;FP-TAU2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2000-03-27
+CONS-IES-34-1-2023:2026-01-01;CONS-IES-34-1-2023;Hugo Ramos Teixeira;Masculino;Mecânica e Metalúrgica;IES-34;FP-TAU2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2000-03-27
+CONS-IES-34-2-2017:2017-01-01;CONS-IES-34-2-2017;Henrique Barros Esteves;Masculino;Geologia e Minas;IES-34;FP-TAU2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2000-03-27
+CONS-IES-34-2-2020:2020-01-01;CONS-IES-34-2-2020;Gustavo Ferraz Pereira;Masculino;Geologia e Minas;IES-34;FP-TAU2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2000-03-27
+CONS-IES-34-2-2023:2023-01-01;CONS-IES-34-2-2023;Fernando Oliveira Barros;Masculino;Geologia e Minas;IES-34;FP-TAU2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2000-03-27
+CONS-IES-34-2-2026:2026-01-01;CONS-IES-34-2-2026;Felipe Alves Lopes;Masculino;Geologia e Minas;IES-34;FP-TAU2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2000-03-27
+CONS-IES-34-3-2017:2017-01-01;CONS-IES-34-3-2017;Eduardo Moraes Castro;Masculino;Agrimensura;IES-34;FP-TAU2;Instituição de ensino;2017 a 2019;2017-01-01;2019-12-31;2000-03-27
+CONS-IES-34-3-2020:2020-01-01;CONS-IES-34-3-2020;Diego Siqueira Moreira;Masculino;Agrimensura;IES-34;FP-TAU2;Instituição de ensino;2020 a 2022;2020-01-01;2022-12-31;2000-03-27
+CONS-IES-34-3-2020:2023-01-01;CONS-IES-34-3-2020;Diego Siqueira Moreira;Masculino;Agrimensura;IES-34;FP-TAU2;Instituição de ensino;2023 a 2025;2023-01-01;2025-12-31;2000-03-27
+CONS-IES-34-3-2026:2026-01-01;CONS-IES-34-3-2026;Daniel Cardoso Andrade;Masculino;Agrimensura;IES-34;FP-TAU2;Instituição de ensino;2026 a 2028;2026-01-01;2028-12-31;2000-03-27
+CONS-IES-35-1-2016:2016-01-01;CONS-IES-35-1-2016;Bruno Ramos Queiroz;Masculino;Segurança do Trabalho;IES-35;FP-FRA2;Instituição de ensino;2016 a 2018;2016-01-01;2018-12-31;1988-08-11
+CONS-IES-35-1-2016:2019-01-01;CONS-IES-35-1-2016;Bruno Ramos Queiroz;Masculino;Segurança do Trabalho;IES-35;FP-FRA2;Instituição de ensino;2019 a 2021;2019-01-01;2021-12-31;1988-08-11
+CONS-IES-35-1-2022:2022-01-01;CONS-IES-35-1-2022;Antônio Barros Cardoso;Masculino;Segurança do Trabalho;IES-35;FP-FRA2;Instituição de ensino;2022 a 2024;2022-01-01;2024-12-31;1988-08-11
+CONS-IES-35-1-2025:2025-01-01;CONS-IES-35-1-2025;Vitória Oliveira Teixeira;Feminino;Segurança do Trabalho;IES-35;FP-FRA2;Instituição de ensino;2025 a 2027;2025-01-01;2027-12-31;1988-08-11

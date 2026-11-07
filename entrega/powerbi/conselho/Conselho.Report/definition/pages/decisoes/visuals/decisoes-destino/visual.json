@@ -1,0 +1,160 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "decisoes-destino",
+  "position": {
+    "x": 644,
+    "y": 436,
+    "z": 14000,
+    "width": 620,
+    "height": 268,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "columnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Autos"
+                    }
+                  },
+                  "Property": "Ano da decisão"
+                }
+              },
+              "queryRef": "Autos.Ano da decisão",
+              "nativeQueryRef": "Ano da decisão",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Multa paga"
+                }
+              },
+              "queryRef": "Medidas.Multa paga",
+              "nativeQueryRef": "Multa paga",
+              "displayName": "Paga"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Multa em cobrança"
+                }
+              },
+              "queryRef": "Medidas.Multa em cobrança",
+              "nativeQueryRef": "Multa em cobrança",
+              "displayName": "Em cobrança"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Multa em recurso"
+                }
+              },
+              "queryRef": "Medidas.Multa em recurso",
+              "nativeQueryRef": "Multa em recurso",
+              "displayName": "Em recurso"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Multa anulada no recurso"
+                }
+              },
+              "queryRef": "Medidas.Multa anulada no recurso",
+              "nativeQueryRef": "Multa anulada no recurso",
+              "displayName": "Anulada no recurso"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'O que aconteceu com as multas'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

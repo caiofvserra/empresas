@@ -4,20 +4,17 @@ import { MES, cabecalho as cabecalhoComum, campoColuna, campoMedida, cartoes as 
 import type { Filtro } from '../layout';
 
 /*
- * As cinco páginas do antigo painel de Gestão do Conselho no relatório PBIR, na grade comum de `layout.ts`. Delas saem os pacotes
- * Financeiro (Receita e Orçamento), Atendimento e Conselho (Câmaras e Entidades). Os mapas por município, que não têm visual
- * nativo, viram caixas "A montar" com o passo a passo. Ficam só no painel em HTML: as curvas de recebimento por safra, a despesa
- * publicada por profissional ativo (dados reais de outro arquivo) e as escolas pelo Censo da Educação Superior.
+ * As três páginas dos painéis Financeiro (Receita e Orçamento) e Atendimento no relatório PBIR, na grade comum de `layout.ts`. Os
+ * mapas por município, que não têm visual nativo, viram caixas "A montar" com o passo a passo. Ficam só no painel em HTML: as
+ * curvas de recebimento por safra e a despesa publicada por profissional ativo (dados reais de outro arquivo).
  */
 const FILTROS: Filtro[] = [
-  { nome: 'Regional', campo: campoColuna('Regionais', 'GRE') }, { nome: 'Município', campo: campoColuna('Municípios', 'Município') }, { nome: 'Câmara', campo: campoColuna('Câmaras', 'Câmara') },
+  { nome: 'Regional', campo: campoColuna('Regionais', 'GRE') }, { nome: 'Município', campo: campoColuna('Municípios', 'Município') },
   { nome: 'Data de referência', campo: campoColuna('Datas de referência', 'Rótulo'), unica: true }, { nome: 'Período (meses)', campo: campoColuna('Período', 'Meses'), modo: 'Single' },
 ];
-/** O filtro de câmara só vale no Conselho; no Financeiro e no Atendimento ele não tem efeito e sai do alto da página. */
-const cabecalho = (pagina: string, titulo: string, comCamara = false): Visual[] => cabecalhoComum(pagina, titulo, comCamara ? FILTROS : FILTROS.filter(filtro => filtro.nome !== 'Câmara'));
+const cabecalho = (pagina: string, titulo: string): Visual[] => cabecalhoComum(pagina, titulo, FILTROS);
 const cartoes = (pagina: keyof typeof CARTOES): Visual[] => cartoesComuns(pagina, CARTOES[pagina]);
 const NOME_DO_MES = campoColuna('Calendário', 'Nome do mês');
-const CAMARA = campoColuna('Câmaras', 'Câmara');
 const aMontar = (id: string, l: ReturnType<typeof lugar>, titulo: string, texto: string): Visual => ({ id, tipo: 'textbox', ...caixa(l), titulo, texto: `A montar no Power BI Desktop. ${texto} O passo a passo está no LEIA-ME.` });
 
 export const paginasGestao: Pagina[] = [
@@ -59,32 +56,6 @@ export const paginasGestao: Pagina[] = [
     // Cada função abre (+) na lista dos servidores dela, pelo nome, como o detalhe do painel.
     { id: 'orcamento-pessoal', tipo: 'pivotTable', ...caixa(lugar(10, 1, 2)), titulo: 'Pessoal por função',
       papeis: { Rows: [campoColuna('Pessoas', 'Função'), campoColuna('Pessoas', 'Nome')], Values: [campoMedida('Servidores efetivos', 'Efetivos'), campoMedida('Servidores comissionados', 'Comissionados'), campoMedida('Custo mensal do pessoal', 'Custo por mês')] } },
-  ] },
-  { id: 'camaras', nome: 'Câmaras e plenário', visuais: [
-    ...cabecalho('camaras', 'Câmaras e plenário', true),
-    ...cartoes('camaras'),
-    { id: 'camaras-estoque', tipo: 'barChart', ...caixa(lugar(0, 0, 4)), titulo: 'Em julgamento em cada câmara',
-      papeis: { Category: [CAMARA], Series: [campoColuna('Foto dos processos', 'Fase')], Y: [campoMedida('Processos em julgamento', 'Processos')] } },
-    { id: 'camaras-ritmo', tipo: 'lineClusteredColumnComboChart', ...caixa(lugar(4, 0, 5)), titulo: 'Entraram e foram julgados por mês',
-      papeis: { Category: [MES], Y: [campoMedida('Entraram no mês', 'Entraram'), campoMedida('Julgados no mês', 'Julgados')], Y2: [campoMedida('Em julgamento no fim do mês', 'Em julgamento')] } },
-    { id: 'camaras-plenario', tipo: 'clusteredBarChart', ...caixa(lugar(9, 0, 3)), titulo: 'Plenário e profissionais de cada câmara',
-      papeis: { Category: [CAMARA], Y: [campoMedida('Parte das cadeiras', 'Cadeiras no plenário'), campoMedida('Parte dos profissionais ativos', 'Profissionais ativos')] } },
-    { id: 'camaras-idade', tipo: 'pivotTable', ...caixa(lugar(0, 1, 4)), titulo: 'Há quanto tempo esperam julgamento',
-      papeis: { Rows: [CAMARA], Columns: [campoColuna('Foto dos processos', 'Tempo em julgamento')], Values: [campoMedida('Processos em julgamento', 'Processos')] } },
-    { id: 'camaras-prescricao', tipo: 'barChart', ...caixa(lugar(4, 1, 4)), titulo: 'Autos que prescrevem em 12 meses',
-      papeis: { Category: [CAMARA], Series: [campoColuna('Foto dos processos', 'Prazo da prescrição')], Y: [campoMedida('Autos perto da prescrição', 'Autos')] } },
-    { id: 'camaras-decisoes', tipo: 'hundredPercentStackedBarChart', ...caixa(lugar(8, 1, 4)), titulo: 'O que as câmaras decidiram nos autos',
-      papeis: { Category: [CAMARA], Series: [campoColuna('Processos', 'Decisão')], Y: [campoMedida('Autos julgados no período', 'Autos')] } },
-  ] },
-  { id: 'entidades', nome: 'Entidades e escolas', visuais: [
-    ...cabecalho('entidades', 'Entidades e escolas', true),
-    ...cartoes('entidades'),
-    { id: 'entidades-cadeiras', tipo: 'clusteredBarChart', ...caixa(lugar(0, 0, 4)), titulo: 'Cadeiras do plenário por natureza',
-      papeis: { Category: [campoColuna('Organizações', 'Natureza')], Y: [campoMedida('Cadeiras no plenário', 'Cadeiras')] } },
-    { id: 'entidades-repasses', tipo: 'columnChart', ...caixa(lugar(4, 0, 8)), titulo: 'Repasses por ano',
-      papeis: { Category: [campoColuna('Calendário', 'Ano')], Series: [campoColuna('Repasses', 'Canal')], Y: [campoMedida('Repassado no ano', 'Repassado')] } },
-    { id: 'entidades-tabela', tipo: 'tableEx', ...caixa(lugar(0, 1, 12)), titulo: 'Cada organização', papeis: { Values: [campoColuna('Organizações', 'Sigla'), campoColuna('Organizações', 'Nome'), campoColuna('Organizações', 'Natureza'),
-      campoMedida('Cadeiras no plenário', 'Cadeiras'), campoMedida('Instrumentos vigentes', 'Instrumentos vigentes'), campoMedida('Repasses em 12 meses', 'Repasses em 12 meses'), campoMedida('Repassado até a data', 'Repassado no total')] } },
   ] },
   { id: 'atendimento', nome: 'Atendimento', visuais: [
     ...cabecalho('atendimento', 'Atendimento'),

@@ -1,0 +1,46 @@
+/// Guarda cada ida à pauta e cada desvio do Votenet (pedido de vista, impedimento, diligência), com a data e a pessoa.
+table Eventos
+	isHidden
+	lineageTag: e5c7c22b-ea8e-5a79-8bad-b973ffd87b22
+
+	column 'Tramitação'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tramitação
+		lineageTag: 1c6451a1-0f04-5523-af36-e2693098d7c6
+
+	column Status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Status
+		lineageTag: 9cd6deac-b9e6-50f6-a3db-2804ca43a03b
+
+	column Desde
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Desde
+		lineageTag: 30c92925-b092-59f7-8944-c74ddb2a60fc
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 15cacff2-7af9-5fd8-a485-0cbaed82e603
+
+	column Pessoa
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Pessoa
+		lineageTag: 500f9f3b-728b-52b9-8802-6a8367ad419c
+
+	partition Eventos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "eventos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Tramitação", type text}, {"Status", type text}, {"Desde", type date}, {"Mês", type date}, {"Pessoa", type text}}, "pt-BR")
+				in
+				    Tipos

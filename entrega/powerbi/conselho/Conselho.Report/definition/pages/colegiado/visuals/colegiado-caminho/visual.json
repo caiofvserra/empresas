@@ -1,0 +1,186 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "colegiado-caminho",
+  "position": {
+    "x": 958,
+    "y": 436,
+    "z": 16000,
+    "width": 306,
+    "height": 268,
+    "tabOrder": 16000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Caminho: recebidos nas câmaras"
+                }
+              },
+              "queryRef": "Medidas.Caminho: recebidos nas câmaras",
+              "nativeQueryRef": "Caminho: recebidos nas câmaras",
+              "displayName": "Recebidos nas câmaras"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Caminho: votados nas câmaras"
+                }
+              },
+              "queryRef": "Medidas.Caminho: votados nas câmaras",
+              "nativeQueryRef": "Caminho: votados nas câmaras",
+              "displayName": "Votados nas câmaras"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Caminho: recursos ao Plenário"
+                }
+              },
+              "queryRef": "Medidas.Caminho: recursos ao Plenário",
+              "nativeQueryRef": "Caminho: recursos ao Plenário",
+              "displayName": "Recursos ao Plenário"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Caminho: votados no Plenário"
+                }
+              },
+              "queryRef": "Medidas.Caminho: votados no Plenário",
+              "nativeQueryRef": "Caminho: votados no Plenário",
+              "displayName": "Votados no Plenário"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Caminho: recursos ao Confea"
+                }
+              },
+              "queryRef": "Medidas.Caminho: recursos ao Confea",
+              "nativeQueryRef": "Caminho: recursos ao Confea",
+              "displayName": "Recursos ao Confea"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Caminho: transitados em julgado"
+                }
+              },
+              "queryRef": "Medidas.Caminho: transitados em julgado",
+              "nativeQueryRef": "Caminho: transitados em julgado",
+              "displayName": "Transitados em julgado"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Caminho: multas pagas"
+                }
+              },
+              "queryRef": "Medidas.Caminho: multas pagas",
+              "nativeQueryRef": "Caminho: multas pagas",
+              "displayName": "Multas pagas"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'O caminho do processo no período'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

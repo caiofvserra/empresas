@@ -1,0 +1,106 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "conselheiros-carga",
+  "position": {
+    "x": 16,
+    "y": 160,
+    "z": 11000,
+    "width": 515,
+    "height": 544,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pessoas"
+                    }
+                  },
+                  "Property": "Nome"
+                }
+              },
+              "queryRef": "Pessoas.Nome",
+              "nativeQueryRef": "Nome",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pessoas"
+                    }
+                  },
+                  "Property": "Detalhe"
+                }
+              },
+              "queryRef": "Pessoas.Detalhe",
+              "nativeQueryRef": "Detalhe",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Processos com o conselheiro"
+                }
+              },
+              "queryRef": "Medidas.Processos com o conselheiro",
+              "nativeQueryRef": "Processos com o conselheiro",
+              "displayName": "Processos com ele"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Presença nas sessões"
+                }
+              },
+              "queryRef": "Medidas.Presença nas sessões",
+              "nativeQueryRef": "Presença nas sessões",
+              "displayName": "Presença"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Carga e presença de cada conselheiro'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
