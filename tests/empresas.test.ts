@@ -87,11 +87,13 @@ test('painel de Empresas: clicar detalha o item clicado, nunca abre o resumo gen
   }
 });
 
-test('painel geral: Presidência e Método continuam no menu, e Empresas, Profissionais, Fiscalização e Gestão do Conselho viraram painéis à parte', () => {
+test('painel da Presidência: substitui o painel geral com quatro páginas, e o Método virou documento (07/11/2026)', () => {
   const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8');
-  const geral = src.slice(src.indexOf('const paginasGeral'), src.indexOf('const paginasEmpresas'));
-  for (const id of ['presidencia', 'metodo']) assert.ok(geral.includes(`id: '${id}'`), `aba ${id} no painel geral`);
-  for (const id of ['cadastro', 'profissionais', 'formacao', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento']) assert.ok(!geral.includes(`id: '${id}'`), `aba ${id} saiu do painel geral`);
+  const presidencia = src.slice(src.indexOf('const paginasPresidencia'), src.indexOf('const paginasEmpresas'));
+  for (const id of ['resumo', 'regionais', 'riscos', 'pais']) assert.ok(presidencia.includes(`id: '${id}'`), `página ${id} na Presidência`);
+  for (const id of ['metodo', 'presidencia', 'cadastro', 'profissionais', 'formacao', 'fiscalizacao', 'malha', 'receita', 'entidades', 'controle', 'atendimento']) assert.ok(!presidencia.includes(`id: '${id}'`), `página ${id} fora da Presidência`);
+  assert.ok(!src.includes('paginasGeral') && !src.includes('PaginaMetodo'), 'não há mais painel geral nem aba Método');
+  assert.ok(readFileSync(join(import.meta.dirname, '..', 'docs', 'METODO.md'), 'utf8').startsWith('# Método da Inteligência Estratégica Crea-SP'), 'o Método é o documento docs/METODO.md');
 });
 
 test('as nove câmaras do Crea-SP aparecem no painel, com empresas em todas e a civil na frente (03/11/2026)', () => {
@@ -104,11 +106,11 @@ test('as nove câmaras do Crea-SP aparecem no painel, com empresas em todas e a 
   for (const code of dataset.companies.map(row => dataset.establishments.find(place => place.companyId === row.id)!.cnaeMain)) assert.ok(camaraPorCnae[code], `CNAE ${code} sem câmara`);
 });
 
-test('os painéis de Empresas e de Profissionais não têm atalho para o painel geral (pedido de 03/11/2026)', () => {
+test('os painéis temáticos não têm atalho para o painel da Presidência (pedido de 03/11/2026)', () => {
   const src = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'Cockpit.tsx'), 'utf8');
-  assert.ok(src.includes("{painel.id === 'geral' && <div className=\"ck-rail-paineis\">"), 'só o painel geral mostra atalhos para os outros painéis');
+  assert.ok(src.includes('{dePresidencia && <div className="ck-rail-paineis">'), 'só o painel da Presidência mostra atalhos para os outros painéis');
   const atalhos = src.slice(src.indexOf('const atalhos'), src.indexOf('];', src.indexOf('const atalhos')));
-  assert.ok(!atalhos.includes("id: 'geral'"), 'nenhum atalho leva de volta ao painel geral');
+  assert.ok(!atalhos.includes("id: 'presidencia'"), 'nenhum atalho leva de volta à Presidência');
 });
 
 test('mapa e município: regionais e municípios somam o mesmo mercado, e o filtro de município reduz o recorte', () => {
@@ -182,9 +184,9 @@ test('ARTs por modalidade em proporção aos profissionais ativos da mesma modal
 
 test('plano B: toda parceria tem um caminho se o acordo não sair, e a ficha e o Método mostram', () => {
   for (const row of parcerias) assert.ok(row.planoB && row.planoB.length > 40, `plano B de ${row.id}`);
-  const ui = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'ui.tsx'), 'utf8'), metodo = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'PaginaMetodo.tsx'), 'utf8');
+  const ui = readFileSync(join(import.meta.dirname, '..', 'src', 'cockpit', 'ui.tsx'), 'utf8'), metodo = readFileSync(join(import.meta.dirname, '..', 'docs', 'METODO.md'), 'utf8');
   assert.ok(ui.includes('Se o acordo não sair') && ui.includes('.planoB'), 'a ficha precisa mostrar o plano B');
-  assert.ok(metodo.includes('row.planoB'), 'o Método precisa listar o plano B');
+  assert.ok(metodo.includes('| Se o acordo não sair |') && parcerias.every(row => metodo.includes(row.parceiro)), 'o Método precisa listar o plano B de cada parceria');
 });
 
 test('painel de Empresas: sem mapa de bolhas, sem rede de sócias e sem quadrado colorido que pareça uma segunda legenda', () => {

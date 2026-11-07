@@ -1,0 +1,21 @@
+/// Tem todas as datas com foto, 12 meses antes da primeira data de referência. As medidas de variação e as séries a usam para ler o indicador em outra data.
+table 'Datas das fotos'
+	isHidden
+	lineageTag: 8ee5f8ef-f4d1-523d-93f8-d4c75c914170
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 7fb832ea-feaa-5d74-9824-9a32245a5d3f
+
+	partition 'Datas das fotos' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "datas-das-fotos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}}, "pt-BR")
+				in
+				    Tipos

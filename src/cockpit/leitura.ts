@@ -10,31 +10,32 @@ import type { ResultadoFt } from '../painel/forcas';
 
 /** V20 · leitura do período: frases curtas com o destaque de cada assunto, recalculadas a cada filtro e data de referência. */
 /**
- * Abas do painel geral e páginas dos painéis separados: Empresas (01/11/2026), Profissionais (03/11/2026), Fiscalização (03/11/2026)
+ * Páginas do painel da Presidência (que substituiu o painel geral em 07/11/2026) e dos painéis separados: Empresas (01/11/2026), Profissionais (03/11/2026), Fiscalização (03/11/2026)
  * e Gestão do Conselho (06/11/2026). Em 07/11/2026 o Conselho ficou só com o colegiado: Receita e Orçamento foram para o painel
  * Financeiro, e Atendimento ganhou painel próprio.
  */
-export type PaginaGeral = 'presidencia' | 'metodo';
+/** Painel da Presidência (07/11/2026): substitui o painel geral, com o resumo dos outros painéis. O Método virou documento (docs/METODO.md). */
+export type PaginaPresidencia = 'resumo' | 'regionais' | 'riscos' | 'pais';
 export type PaginaEmpresas = 'mercado' | 'evolucao' | 'rt' | 'vinculos';
 export type PaginaProfissionais = 'profissionais' | 'fluxo' | 'atuacao' | 'formacao' | 'trabalho';
 export type PaginaFiscalizacao = 'fiscalizacao' | 'resultado' | 'malha' | 'contratos' | 'obras';
 export type PaginaFinanceiro = 'arrecadacao' | 'receita' | 'divida' | 'orcamento';
 export type PaginaAtendimento = 'protocolos' | 'equipe' | 'demanda';
 export type PaginaConselho = 'colegiado' | 'processos' | 'conselheiros' | 'decisoes' | 'representacao';
-export type PageId = PaginaGeral | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaFinanceiro | PaginaAtendimento | PaginaConselho;
-export const pageIdsGeral: PaginaGeral[] = ['presidencia', 'metodo'];
+export type PageId = PaginaPresidencia | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaFinanceiro | PaginaAtendimento | PaginaConselho;
+export const pageIdsPresidencia: PaginaPresidencia[] = ['resumo', 'regionais', 'riscos', 'pais'];
 export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos'];
 export const pageIdsProfissionais: PaginaProfissionais[] = ['profissionais', 'fluxo', 'atuacao', 'formacao', 'trabalho'];
 export const pageIdsFiscalizacao: PaginaFiscalizacao[] = ['fiscalizacao', 'resultado', 'malha', 'contratos', 'obras'];
 export const pageIdsFinanceiro: PaginaFinanceiro[] = ['arrecadacao', 'receita', 'divida', 'orcamento'];
 export const pageIdsAtendimento: PaginaAtendimento[] = ['protocolos', 'equipe', 'demanda'];
 export const pageIdsConselho: PaginaConselho[] = ['colegiado', 'processos', 'conselheiros', 'decisoes', 'representacao'];
-export const pageIds: PageId[] = [...pageIdsGeral, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao, ...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho];
+export const pageIds: PageId[] = [...pageIdsPresidencia, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao, ...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho];
 /** Painel em que cada página está: um destaque de outro painel abre aquele painel. */
-export type PainelDaPagina = 'geral' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho';
-const paginasDosPaineis: [Exclude<PainelDaPagina, 'geral'>, PageId[]][] = [['empresas', pageIdsEmpresas], ['profissionais', pageIdsProfissionais], ['fiscalizacao', pageIdsFiscalizacao],
+export type PainelDaPagina = 'presidencia' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho';
+const paginasDosPaineis: [Exclude<PainelDaPagina, 'presidencia'>, PageId[]][] = [['empresas', pageIdsEmpresas], ['profissionais', pageIdsProfissionais], ['fiscalizacao', pageIdsFiscalizacao],
   ['financeiro', pageIdsFinanceiro], ['atendimento', pageIdsAtendimento], ['conselho', pageIdsConselho]];
-export const painelDaPagina = (page: PageId): PainelDaPagina => paginasDosPaineis.find(([, paginas]) => paginas.includes(page))?.[0] ?? 'geral';
+export const painelDaPagina = (page: PageId): PainelDaPagina => paginasDosPaineis.find(([, paginas]) => paginas.includes(page))?.[0] ?? 'presidencia';
 export interface Metas { cobertura: number; rt: number; adimplencia: number; recuperacao: number; regularizacao: number; atendimento: number }
 /** Meta de RT em 95% (05/11/2026): o responsável técnico é condição do registro (Lei 5.194/66, art. 8º), então 40% fazia 78% parecer vitória. */
 export const metasPadrao: Metas = { cobertura: 65, rt: 95, adimplencia: 60, recuperacao: 30, regularizacao: 50, atendimento: 80 };
@@ -64,7 +65,7 @@ export function leitura(input: LeituraInput): Insight[] {
   if (input.inadimplencia !== null) out.push({ tone: input.inadimplencia > 100 - metas.adimplencia ? 'bad' : 'good', strong: brl(input.saldo), text: `estão vencidos, e ${pct(input.inadimplencia)} das empresas cobradas estão em atraso. A meta é ter ${metas.adimplencia}% em dia.`, page: 'receita' });
   if (input.cobertura !== null) out.push({ tone: input.cobertura >= metas.cobertura ? 'good' : 'bad', strong: pct(input.cobertura), text: `dos estabelecimentos com atividade de engenharia na Receita têm registro ou visto no Crea-SP, ${Math.abs(input.cobertura - metas.cobertura).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos ${input.cobertura >= metas.cobertura ? 'acima' : 'abaixo'} da meta de ${metas.cobertura}%.`, page: 'mercado' });
   const lacuna = [...input.linhas].sort((a, b) => b.semRegistro - a.semRegistro)[0];
-  if (lacuna?.semRegistro) out.push({ tone: 'neutral', strong: lacuna.curto, text: `é a regional com mais estabelecimentos de engenharia sem registro encontrado: ${int(lacuna.semRegistro)}. Não estar no cadastro não quer dizer que a empresa esteja irregular.`, page: 'presidencia' });
+  if (lacuna?.semRegistro) out.push({ tone: 'neutral', strong: lacuna.curto, text: `é a regional com mais estabelecimentos de engenharia sem registro encontrado: ${int(lacuna.semRegistro)}. Não estar no cadastro não quer dizer que a empresa esteja irregular.`, page: 'regionais' });
   if (input.conversao?.taxa != null) out.push({ tone: input.conversao.taxa >= metas.regularizacao ? 'good' : 'bad', strong: pct(input.conversao.taxa), text: `das ações de ${input.conversao.trimestre.replace('-', ' ')} terminaram em regularização em até 180 dias. A ação pode não ter sido a causa.`, page: 'resultado' });
   if (input.tempo?.mediana != null) out.push({ tone: 'neutral', strong: `${int(input.tempo.mediana)} dias`, text: `é o tempo típico entre o indício aparecer e a primeira ação, e ${int(input.tempo.abertos)} indícios do período ainda não tiveram ação.`, page: 'resultado' });
   const ft = input.forcas?.filter(row => row.fechada && row.diferenca !== null).at(-1);

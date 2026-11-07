@@ -1,0 +1,903 @@
+/// Guarda as medidas do painel, em pastas por página.
+table Medidas
+	lineageTag: 80e17cca-ec4a-582c-b471-c762d957dd69
+
+	/// Devolve a data de referência escolhida; sem escolha, hoje. As medidas de variação e as séries trocam a data pela de outro mês.
+	measure 'Data escolhida' = IF(ISFILTERED('Datas das fotos'[Data]), MAX('Datas das fotos'[Data]), MAX('Datas de referência'[Data]))
+		formatString: dd/mm/yyyy
+		displayFolder: Apoio
+		lineageTag: 81289237-1126-510d-93d7-0defe27ac106
+
+	/// Soma o numerador da foto no recorte, com o jeito de ler de cada indicador (coluna Leitura) e a câmara só onde o indicador divide.
+	measure Numerador = ```
+			VAR d = [Data escolhida]
+			VAR cidade = ISFILTERED('Municípios')
+			VAR gre = IF(cidade, SELECTEDVALUE('Municípios'[GRE]), SELECTEDVALUE('Regionais'[GRE]))
+			VAR camara = SELECTEDVALUE('Câmaras'[Câmara])
+			RETURN SUMX(VALUES('Indicadores'[Indicador]),
+			  VAR forma = LOOKUPVALUE('Indicadores'[Leitura], 'Indicadores'[Indicador], 'Indicadores'[Indicador])
+			  VAR divide = LOOKUPVALUE('Indicadores'[Divide por câmara], 'Indicadores'[Indicador], 'Indicadores'[Indicador])
+			  VAR nivel = SWITCH(forma, "Município", "Município", "Regional", "Regional", "Estado e regional", IF(ISBLANK(gre), "Estado", "Regional"), "Estado")
+			  RETURN IF(nivel = "Município",
+			    CALCULATE(SUM('Foto'[N]), 'Foto'[Data] = d, 'Foto'[Nível] = "Município", KEEPFILTERS(divide = 0 || ISBLANK(camara) || 'Foto'[Câmara] = camara)),
+			    CALCULATE(SUM('Foto'[N]), 'Foto'[Data] = d, 'Foto'[Nível] = nivel, REMOVEFILTERS('Municípios'), REMOVEFILTERS('Regionais'),
+			      KEEPFILTERS(nivel = "Estado" || ISBLANK(gre) || 'Foto'[GRE] = gre), KEEPFILTERS(divide = 0 || ISBLANK(camara) || 'Foto'[Câmara] = camara))))
+			```
+		formatString: #,##0.##
+		displayFolder: Apoio
+		lineageTag: de4200f0-813f-51c6-9bd3-c5e8243d8313
+
+	/// Soma o denominador da foto no recorte, com a mesma regra do numerador. Só as taxas têm denominador.
+	measure Denominador = ```
+			VAR d = [Data escolhida]
+			VAR cidade = ISFILTERED('Municípios')
+			VAR gre = IF(cidade, SELECTEDVALUE('Municípios'[GRE]), SELECTEDVALUE('Regionais'[GRE]))
+			VAR camara = SELECTEDVALUE('Câmaras'[Câmara])
+			RETURN SUMX(VALUES('Indicadores'[Indicador]),
+			  VAR forma = LOOKUPVALUE('Indicadores'[Leitura], 'Indicadores'[Indicador], 'Indicadores'[Indicador])
+			  VAR divide = LOOKUPVALUE('Indicadores'[Divide por câmara], 'Indicadores'[Indicador], 'Indicadores'[Indicador])
+			  VAR nivel = SWITCH(forma, "Município", "Município", "Regional", "Regional", "Estado e regional", IF(ISBLANK(gre), "Estado", "Regional"), "Estado")
+			  RETURN IF(nivel = "Município",
+			    CALCULATE(SUM('Foto'[D]), 'Foto'[Data] = d, 'Foto'[Nível] = "Município", KEEPFILTERS(divide = 0 || ISBLANK(camara) || 'Foto'[Câmara] = camara)),
+			    CALCULATE(SUM('Foto'[D]), 'Foto'[Data] = d, 'Foto'[Nível] = nivel, REMOVEFILTERS('Municípios'), REMOVEFILTERS('Regionais'),
+			      KEEPFILTERS(nivel = "Estado" || ISBLANK(gre) || 'Foto'[GRE] = gre), KEEPFILTERS(divide = 0 || ISBLANK(camara) || 'Foto'[Câmara] = camara))))
+			```
+		formatString: #,##0.##
+		displayFolder: Apoio
+		lineageTag: d36c630f-2359-5009-826a-4bd702146124
+
+	/// Mostra o número do indicador do contexto: a taxa é o numerador sobre o denominador; a contagem e o valor são o numerador.
+	measure 'Valor do indicador' = ```
+			VAR u = SELECTEDVALUE('Indicadores'[Unidade])
+			RETURN IF(u = "taxa", DIVIDE([Numerador], [Denominador]), [Numerador])
+			```
+		formatString: #,##0.##
+		displayFolder: Apoio
+		lineageTag: 6f773c4b-e7f2-520d-9308-25b3f6505712
+
+	/// Escreve o número do indicador com o formato da unidade, para as tabelas que misturam indicadores.
+	measure 'Número' = ```
+			VAR u = SELECTEDVALUE('Indicadores'[Unidade])
+			VAR v = [Valor do indicador]
+			RETURN IF(ISBLANK(v), BLANK(), SWITCH(u, "taxa", FORMAT(v, "0.0%"), "reais", FORMAT(v, "R$ #,##0"), FORMAT(v, "#,##0")))
+			```
+		displayFolder: Apoio
+		lineageTag: 54554068-a012-5752-8239-4b20c5c0c205
+
+	/// Escreve a variação contra o fim do mesmo mês um ano antes: em pontos percentuais nas taxas e em porcentagem nas contagens e nos valores.
+	measure 'Em um ano' = ```
+			VAR u = SELECTEDVALUE('Indicadores'[Unidade])
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Valor do indicador]
+			VAR antes = CALCULATE([Valor do indicador], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(ISBLANK(agora) || ISBLANK(antes), BLANK(), IF(u = "taxa", FORMAT((agora - antes) * 100, "+0.0;-0.0;0.0") & " p.p.", IF(antes = 0, BLANK(), FORMAT(DIVIDE(agora - antes, antes), "+0%;-0%;0%"))))
+			```
+		displayFolder: Apoio
+		lineageTag: 401f5e17-8d06-5b85-93ea-841f9cf35c44
+
+	/// Escreve a meta padrão do painel, nos indicadores que têm meta.
+	measure 'Meta do painel' = ```
+			VAR m = SELECTEDVALUE('Indicadores'[Meta])
+			RETURN IF(ISBLANK(m), BLANK(), FORMAT(m, "0%"))
+			```
+		displayFolder: Apoio
+		lineageTag: 75b4faa2-89a7-59ac-a09e-23ca95636487
+
+	/// Mostra a taxa (numerador sobre denominador) do indicador "Parte do mercado registrada" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Parte do mercado registrada' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "mercado")
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: cd1479c3-b083-598d-ad18-7c6b2d73dc4c
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Parte do mercado registrada no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Parte do mercado registrada], 'Datas das fotos'[Data] = m))
+			```
+		formatString: 0.0%
+		displayFolder: Séries de 13 meses
+		lineageTag: deee984a-d52e-5410-8d23-e9229bcf4843
+
+	/// Mostra a contagem do indicador "Empresas registradas" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Empresas registradas' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "empresas")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: 05400124-473a-575e-bf41-411cab4f6de1
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Empresas registradas no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Empresas registradas], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: e6c0088b-460c-51c1-9e19-1453ce4ca6f4
+
+	/// Mostra a taxa (numerador sobre denominador) do indicador "Empresas com responsável técnico" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Empresas com responsável técnico' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "rt")
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: ce3a0471-09fb-5737-8ab1-2de9ba52af2c
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Empresas com responsável técnico no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Empresas com responsável técnico], 'Datas das fotos'[Data] = m))
+			```
+		formatString: 0.0%
+		displayFolder: Séries de 13 meses
+		lineageTag: 9ff89bc4-dd35-50fe-acb0-d4ac2bccd723
+
+	/// Mostra a contagem do indicador "ARTs de empresas" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'ARTs de empresas' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "artsEmpresas")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: aba6f2ee-9e29-5f34-a099-15f65848b427
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'ARTs de empresas no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([ARTs de empresas], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: b512af51-4c4a-569b-b67c-a5a942dbadae
+
+	/// Mostra a contagem do indicador "Profissionais com registro ativo" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Profissionais com registro ativo' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "profissionais")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: 2a224fab-6708-58b9-aef1-3063a3f8e37a
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Profissionais com registro ativo no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Profissionais com registro ativo], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: ecb62862-dd96-57bc-93c7-ae6a81a9bfdd
+
+	/// Mostra a contagem do indicador "Registros novos" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Registros novos' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "novos")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: ae68e354-5bfc-5156-a5e2-0aecdb974b6b
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Registros novos no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Registros novos], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: a2a7b43b-7f75-5f09-bd5c-6de370dcde22
+
+	/// Mostra a taxa (numerador sobre denominador) do indicador "Profissionais com a anuidade em dia" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Profissionais com a anuidade em dia' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "anuidadePf")
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 03ae7893-69ff-5305-89b4-077b9c534e50
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Profissionais com a anuidade em dia no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Profissionais com a anuidade em dia], 'Datas das fotos'[Data] = m))
+			```
+		formatString: 0.0%
+		displayFolder: Séries de 13 meses
+		lineageTag: 63863c1a-e909-5158-a297-30326bc40e87
+
+	/// Mostra a contagem do indicador "ARTs de profissionais" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'ARTs de profissionais' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "artsProfissionais")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: a8444a4f-f53c-5a4d-9416-d9b7d8b6b7a8
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'ARTs de profissionais no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([ARTs de profissionais], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: dbf6e686-8095-53d0-a760-cd7e02fdb30f
+
+	/// Mostra a taxa (numerador sobre denominador) do indicador "Ações que terminaram em regularização" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Ações que terminaram em regularização' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "regularizacao")
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 3dc4d326-e8d3-5904-b0bd-fc9e6270ef09
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Ações que terminaram em regularização no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Ações que terminaram em regularização], 'Datas das fotos'[Data] = m))
+			```
+		formatString: 0.0%
+		displayFolder: Séries de 13 meses
+		lineageTag: 99f650d9-ee88-596b-858c-5d01255e61cc
+
+	/// Mostra a contagem do indicador "Ações de fiscalização" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Ações de fiscalização' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "acoes")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: d738078a-2cba-5424-b39c-d4e276dc9361
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Ações de fiscalização no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Ações de fiscalização], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: b46fb1ad-21f2-598b-9c2b-c9359124d474
+
+	/// Mostra a contagem do indicador "Autos de infração" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Autos de infração' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "autos")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: 5a6a7b3f-76c4-57b5-a6d6-91e7a4558a8c
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Autos de infração no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Autos de infração], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: ebf900b6-35cd-5a88-bcae-3c6e5505f583
+
+	/// Mostra o valor em reais do indicador "Multas aplicadas" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Multas aplicadas' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "multas")
+		formatString: R$ #,##0
+		displayFolder: Indicadores
+		lineageTag: 62f738a5-0063-5133-b8a0-957db0390318
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Multas aplicadas no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Multas aplicadas], 'Datas das fotos'[Data] = m))
+			```
+		formatString: R$ #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: 7d4b0178-a3df-51ba-a990-cb40ac6854bf
+
+	/// Mostra o valor em reais do indicador "Receita do Conselho" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Receita do Conselho' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "receita")
+		formatString: R$ #,##0
+		displayFolder: Indicadores
+		lineageTag: c2196e92-2947-5498-af1c-65eac83fda21
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Receita do Conselho no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Receita do Conselho], 'Datas das fotos'[Data] = m))
+			```
+		formatString: R$ #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: 795b5ae5-8fc1-543f-a004-9e0d4fa31f34
+
+	/// Mostra o valor em reais do indicador "Anuidades vencidas" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Anuidades vencidas' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "divida")
+		formatString: R$ #,##0
+		displayFolder: Indicadores
+		lineageTag: c895e8f4-f447-5c56-970f-974c5f72f3c5
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Anuidades vencidas no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Anuidades vencidas], 'Datas das fotos'[Data] = m))
+			```
+		formatString: R$ #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: 2636b75b-6bb0-5809-b5b3-a1430cc0a518
+
+	/// Mostra o valor em reais do indicador "Dívida perto de prescrever" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Dívida perto de prescrever' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "perto")
+		formatString: R$ #,##0
+		displayFolder: Indicadores
+		lineageTag: b89eb59c-24b9-5cf2-9615-c424e94dbc51
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Dívida perto de prescrever no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Dívida perto de prescrever], 'Datas das fotos'[Data] = m))
+			```
+		formatString: R$ #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: a392b6d3-81da-5f45-b96a-398b2effd524
+
+	/// Mostra a taxa (numerador sobre denominador) do indicador "Orçamento de despesa executado no ano" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Orçamento de despesa executado no ano' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "execucao")
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 3ff0f2f8-e7b4-5e6a-b1bd-f54033e49e0f
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Orçamento de despesa executado no ano no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Orçamento de despesa executado no ano], 'Datas das fotos'[Data] = m))
+			```
+		formatString: 0.0%
+		displayFolder: Séries de 13 meses
+		lineageTag: 04a94b9f-bdde-5c8d-9ae6-0b37a4f9c946
+
+	/// Mostra a taxa (numerador sobre denominador) do indicador "Protocolos fechados no prazo" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Protocolos fechados no prazo' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "atendimento")
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 8044d8b5-c916-56b7-b093-8ddd9a6800b8
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Protocolos fechados no prazo no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Protocolos fechados no prazo], 'Datas das fotos'[Data] = m))
+			```
+		formatString: 0.0%
+		displayFolder: Séries de 13 meses
+		lineageTag: 8a284588-19fc-5c7e-8f55-a3a0a057ae5f
+
+	/// Mostra a contagem do indicador "Protocolos abertos" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Protocolos abertos' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "solicitacoes")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: 4d5c8049-172e-5f2f-ab4b-89416460c9a8
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Protocolos abertos no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Protocolos abertos], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: 90daa00c-5cfb-5466-adec-fed40b35590f
+
+	/// Mostra a contagem do indicador "Protocolos na fila e fora do prazo" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Protocolos na fila e fora do prazo' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "atrasadas")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: 02d4e708-7388-5aa2-9e84-8e20ad3b0f8d
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Protocolos na fila e fora do prazo no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Protocolos na fila e fora do prazo], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: 4ded7f6f-8e85-5ff5-9242-b517b9775610
+
+	/// Mostra a contagem do indicador "Processos esperando voto" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Processos esperando voto' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "pendentes")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: d8c47c39-431e-500b-a442-9d311414a928
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Processos esperando voto no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Processos esperando voto], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: c85aef3c-a000-5a42-bf03-258427e9128f
+
+	/// Mostra a contagem do indicador "Processos em alerta vermelho" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Processos em alerta vermelho' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "vermelho")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: e26a4925-54ff-5bfb-9af3-a2fdcdd9a0c8
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Processos em alerta vermelho no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Processos em alerta vermelho], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: 450fc5f8-6d2c-52b2-a7d3-70c0a04d122f
+
+	/// Mostra a contagem do indicador "Autos perto da prescrição" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Autos perto da prescrição' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "prescricao")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: 5864bf6d-bd19-51b7-91ec-4515c3c95f12
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Autos perto da prescrição no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Autos perto da prescrição], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: b48c41f0-c669-557e-89d4-67e838449165
+
+	/// Mostra a contagem do indicador "Processos votados" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Processos votados' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "votados")
+		formatString: #,##0
+		displayFolder: Indicadores
+		lineageTag: 634dc63e-cd2e-5ed0-916e-5866026c848d
+
+	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
+	measure 'Processos votados no mês' = ```
+			VAR m = MAX('Meses da série'[Data])
+			VAR d = [Data escolhida]
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Processos votados], 'Datas das fotos'[Data] = m))
+			```
+		formatString: #,##0
+		displayFolder: Séries de 13 meses
+		lineageTag: dd1b5c21-318f-5307-ae0f-6e19e0010d10
+
+	/// Conta os profissionais ativos no Crea-SP pelo SIC do Confea.
+	measure 'Profissionais ativos no Crea-SP' = CALCULATE(MAX('UFs'[Profissionais ativos]), 'UFs'[UF] = "SP")
+		formatString: #,##0
+		displayFolder: No país
+		lineageTag: 9c02567c-aff3-5db2-a2e1-63546bbf5df7
+
+	/// Divide os ativos do Crea-SP pela população de SP (IBGE), vezes 100 mil.
+	measure 'Profissionais por 100 mil habitantes no Crea-SP' = CALCULATE(MAX('UFs'[Por 100 mil habitantes]), 'UFs'[UF] = "SP")
+		formatString: #,##0
+		displayFolder: No país
+		lineageTag: bc01effd-daa6-5a33-8e45-2b4549eb5376
+
+	/// Mostra a parte de mulheres entre os profissionais ativos do Crea-SP, pelo SIC.
+	measure 'Mulheres entre os profissionais do Crea-SP' = CALCULATE(MAX('UFs'[Mulheres (%)]), 'UFs'[UF] = "SP") / 100
+		formatString: 0.0%
+		displayFolder: No país
+		lineageTag: 78c34881-34ba-5c03-8454-71292fea92d8
+
+	/// Divide os ativos de cada unidade da federação do eixo pela população, vezes 100 mil.
+	measure 'Profissionais por 100 mil habitantes' = DIVIDE(SUM('UFs'[Profissionais ativos]), SUM('UFs'[População])) * 100000
+		formatString: #,##0
+		displayFolder: No país
+		lineageTag: 086375d1-0531-586f-a16b-1739186717e8
+
+	/// Soma a receita realizada do último exercício encerrado, pelo Portal da Transparência.
+	measure 'Receita do último exercício fechado' = ```
+			VAR ano = CALCULATE(MAX('Exercícios'[Ano]), 'Exercícios'[Encerrado] = 1)
+			RETURN CALCULATE(SUM('Exercícios'[Receita realizada]), 'Exercícios'[Ano] = ano)
+			```
+		formatString: R$ #,##0
+		displayFolder: No país
+		lineageTag: 6f4e1389-a052-5167-89ed-7961d0969982
+
+	/// Compara a receita do último exercício encerrado com a do anterior.
+	measure 'Variação da receita contra o exercício anterior' = ```
+			VAR ano = CALCULATE(MAX('Exercícios'[Ano]), 'Exercícios'[Encerrado] = 1)
+			VAR agora = CALCULATE(SUM('Exercícios'[Receita realizada]), 'Exercícios'[Ano] = ano)
+			VAR antes = CALCULATE(SUM('Exercícios'[Receita realizada]), 'Exercícios'[Ano] = ano - 1)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: No país
+		lineageTag: 6d23b834-afe1-5cca-b7a8-c5cca688b327
+
+	/// Mostra a parte da receita de 2013 a hoje que veio da conta de ART, a maior.
+	measure 'Receita que vem da ART' = CALCULATE(MAX('Contas de receita'[Parte (%)]), 'Contas de receita'[Ordem] = 1) / 100
+		formatString: 0.0%
+		displayFolder: No país
+		lineageTag: 1ccd6b01-013e-5fcb-902d-dfb94843914c
+
+	/// Divide a despesa paga pela dotação do último exercício encerrado.
+	measure 'Despesa paga sobre a dotação' = ```
+			VAR ano = CALCULATE(MAX('Exercícios'[Ano]), 'Exercícios'[Encerrado] = 1)
+			RETURN DIVIDE(CALCULATE(SUM('Exercícios'[Despesa paga]), 'Exercícios'[Ano] = ano), CALCULATE(SUM('Exercícios'[Dotação]), 'Exercícios'[Ano] = ano))
+			```
+		formatString: 0.0%
+		displayFolder: No país
+		lineageTag: 62bdb620-0e77-54c6-87ed-b468dbbe4385
+
+	/// Soma a receita realizada de cada exercício do eixo.
+	measure 'Receita realizada no exercício' = SUM('Exercícios'[Receita realizada])
+		formatString: R$ #,##0
+		displayFolder: No país
+		lineageTag: f21f083b-d6a2-5945-a3bc-fff32c31bfa6
+
+	/// Soma a despesa paga de cada exercício do eixo.
+	measure 'Despesa paga no exercício' = SUM('Exercícios'[Despesa paga])
+		formatString: R$ #,##0
+		displayFolder: No país
+		lineageTag: 482a2531-0739-5a43-91ba-ac794d9f4896
+
+	/// Soma a dotação do orçamento de cada exercício do eixo.
+	measure 'Dotação do exercício' = SUM('Exercícios'[Dotação])
+		formatString: R$ #,##0
+		displayFolder: No país
+		lineageTag: bc970c20-9608-5abe-b037-21e843fab359
+
+	/// Soma a receita de cada conta do eixo, de 2013 a hoje.
+	measure 'Valor da conta de receita' = SUM('Contas de receita'[Valor])
+		formatString: R$ #,##0
+		displayFolder: No país
+		lineageTag: bf89a7ed-d67c-56d3-8573-85c58ee16e1e
+
+	/// Soma os registros profissionais novos no país em cada ano do eixo.
+	measure 'Registros novos no país' = SUM('Registros por ano'[No país])
+		formatString: #,##0
+		displayFolder: No país
+		lineageTag: e6a4d666-4b54-58b4-bf8e-8bceb8091051
+
+	/// Soma os registros profissionais novos no Crea-SP em cada ano do eixo.
+	measure 'Registros novos no Crea-SP' = SUM('Registros por ano'[No Crea-SP])
+		formatString: #,##0
+		displayFolder: No país
+		lineageTag: 261ec28a-f90e-542c-bb1c-f2c23c9d2187
+
+	/// Divide os registros novos do Crea-SP pelos do país.
+	measure 'Parte do Crea-SP nos registros novos' = DIVIDE([Registros novos no Crea-SP], [Registros novos no país])
+		formatString: 0.0%
+		displayFolder: No país
+		lineageTag: 193b9676-dd7e-5ed4-aed0-bbbe5e77327b
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Parte do mercado registrada' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Parte do mercado registrada]
+			VAR antes = CALCULATE([Parte do mercado registrada], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Resumo
+		lineageTag: 1b178453-0aae-5cfd-894e-e3cb564d2e10
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Parte do mercado registrada' = ```
+			VAR v = [Variação em um ano: Parte do mercado registrada]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
+			```
+		displayFolder: Resumo
+		lineageTag: b1bbb50b-d929-5ea1-a66e-52b316effc40
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Parte do mercado registrada' = "meta de " & FORMAT(CALCULATE(MAX('Indicadores'[Meta]), REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "mercado"), "0%")
+		displayFolder: Resumo
+		lineageTag: 173a2c86-16c5-54f8-aa8e-d10ec74a4273
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Profissionais com registro ativo' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Profissionais com registro ativo]
+			VAR antes = CALCULATE([Profissionais com registro ativo], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Resumo
+		lineageTag: 6fae36fb-7aa2-5ae9-ba3a-62c3d9139d2e
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Profissionais com registro ativo' = ```
+			VAR v = [Variação em um ano: Profissionais com registro ativo]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Resumo
+		lineageTag: 696f8403-57ef-558d-a999-075b5b43f89e
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Profissionais com registro ativo' = FORMAT([Registros novos], "#,##0") & " registros novos em 12 meses"
+		displayFolder: Resumo
+		lineageTag: 6505d590-841b-5b26-a568-dfe894b2b21b
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Ações que terminaram em regularização' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Ações que terminaram em regularização]
+			VAR antes = CALCULATE([Ações que terminaram em regularização], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Resumo
+		lineageTag: b684e696-56ec-5754-81e2-33fe88e00cbd
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Ações que terminaram em regularização' = ```
+			VAR v = [Variação em um ano: Ações que terminaram em regularização]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
+			```
+		displayFolder: Resumo
+		lineageTag: 1a7cc6be-4e24-5648-a587-aaf65671cecd
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Ações que terminaram em regularização' = "meta de " & FORMAT(CALCULATE(MAX('Indicadores'[Meta]), REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "regularizacao"), "0%")
+		displayFolder: Resumo
+		lineageTag: 8498375f-43f4-5115-a735-c297656dd036
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Receita do Conselho' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Receita do Conselho]
+			VAR antes = CALCULATE([Receita do Conselho], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Resumo
+		lineageTag: d7ed0302-dda1-5fe8-a815-a98af89dacf5
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Receita do Conselho' = ```
+			VAR v = [Variação em um ano: Receita do Conselho]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Resumo
+		lineageTag: 62f8b34a-8248-5abc-918f-dc224195cc45
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Receita do Conselho' = "nos 12 meses até a data; não muda com regional nem câmara"
+		displayFolder: Resumo
+		lineageTag: 57aacd97-8ff5-5b4d-aabe-776f976e8162
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Protocolos fechados no prazo' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Protocolos fechados no prazo]
+			VAR antes = CALCULATE([Protocolos fechados no prazo], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Resumo
+		lineageTag: 477e0fa5-87b7-5987-84c6-1d3d2238982c
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Protocolos fechados no prazo' = ```
+			VAR v = [Variação em um ano: Protocolos fechados no prazo]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
+			```
+		displayFolder: Resumo
+		lineageTag: c46ba67d-cbe7-557b-8081-8405fc2658bc
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Protocolos fechados no prazo' = "meta de " & FORMAT(CALCULATE(MAX('Indicadores'[Meta]), REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "atendimento"), "0%")
+		displayFolder: Resumo
+		lineageTag: a4a782e2-9bc3-5bb4-b30e-d1eaa2e6cfc5
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Processos esperando voto' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Processos esperando voto]
+			VAR antes = CALCULATE([Processos esperando voto], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Resumo
+		lineageTag: c5fb32e9-bd5c-561b-8ddf-f611456f7fe4
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Processos esperando voto' = ```
+			VAR v = [Variação em um ano: Processos esperando voto]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Resumo
+		lineageTag: f29c92d1-53d9-5a77-9c6c-6a493397d674
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Processos esperando voto' = FORMAT([Processos em alerta vermelho], "#,##0") & " em alerta vermelho"
+		displayFolder: Resumo
+		lineageTag: 76e1a4a2-d0a9-551c-9b0d-77faaee34b89
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Dívida perto de prescrever' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Dívida perto de prescrever]
+			VAR antes = CALCULATE([Dívida perto de prescrever], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Riscos
+		lineageTag: abf6850c-401d-5b82-84bb-e80440adb9f5
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Dívida perto de prescrever' = ```
+			VAR v = [Variação em um ano: Dívida perto de prescrever]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Riscos
+		lineageTag: 629bc544-20ca-5886-a3c4-9cec99a9a685
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Dívida perto de prescrever' = "de " & FORMAT([Anuidades vencidas], "R$ #,##0") & " de anuidades vencidas"
+		displayFolder: Riscos
+		lineageTag: 12f783d7-c665-5c9d-a149-c25f406f83ac
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Autos perto da prescrição' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Autos perto da prescrição]
+			VAR antes = CALCULATE([Autos perto da prescrição], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Riscos
+		lineageTag: efa260bd-4c8c-53e7-93f8-0ef5a9ae3936
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Autos perto da prescrição' = ```
+			VAR v = [Variação em um ano: Autos perto da prescrição]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Riscos
+		lineageTag: 4b1bd535-7811-5fdb-82ab-a41de2d716a6
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Autos perto da prescrição' = "prescrevem em até um ano sem voto"
+		displayFolder: Riscos
+		lineageTag: 25e30b04-a8b2-50be-8f5d-d50cd43472dd
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Processos em alerta vermelho' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Processos em alerta vermelho]
+			VAR antes = CALCULATE([Processos em alerta vermelho], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Riscos
+		lineageTag: 3760a8b5-6790-502b-b168-98dd24350414
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Processos em alerta vermelho' = ```
+			VAR v = [Variação em um ano: Processos em alerta vermelho]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Riscos
+		lineageTag: 75955b1d-e415-5527-9667-a895835c6a44
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Processos em alerta vermelho' = "mais de 120 dias no mesmo status do Votenet"
+		displayFolder: Riscos
+		lineageTag: 41e4662e-a617-586c-aa20-cd666cd5ef55
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Protocolos na fila e fora do prazo' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Protocolos na fila e fora do prazo]
+			VAR antes = CALCULATE([Protocolos na fila e fora do prazo], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Riscos
+		lineageTag: 5c41e878-ce7e-5432-8f80-d60005f1e881
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Protocolos na fila e fora do prazo' = ```
+			VAR v = [Variação em um ano: Protocolos na fila e fora do prazo]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Riscos
+		lineageTag: 0230d9c0-c240-5076-b458-6cd8270d3011
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Protocolos na fila e fora do prazo' = "de " & FORMAT([Protocolos abertos], "#,##0") & " protocolos abertos em 12 meses"
+		displayFolder: Riscos
+		lineageTag: 68ee6517-fb83-5859-a6fa-47cf5d525218
+
+	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Orçamento de despesa executado no ano' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Orçamento de despesa executado no ano]
+			VAR antes = CALCULATE([Orçamento de despesa executado no ano], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Riscos
+		lineageTag: 645fa708-7dfd-5e5a-866e-85201b005053
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Orçamento de despesa executado no ano' = ```
+			VAR v = [Variação em um ano: Orçamento de despesa executado no ano]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
+			```
+		displayFolder: Riscos
+		lineageTag: 96072860-6c3f-5cee-a8d0-5ae82d9eea83
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Orçamento de despesa executado no ano' = "despesa realizada sobre a prevista até o mês"
+		displayFolder: Riscos
+		lineageTag: 2e78a9a9-6c2b-5d3b-a07b-d331f831fda8
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Anuidades vencidas' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Anuidades vencidas]
+			VAR antes = CALCULATE([Anuidades vencidas], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Riscos
+		lineageTag: ceb245a4-ac8c-5fe6-afb8-4bac739a2699
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Anuidades vencidas' = ```
+			VAR v = [Variação em um ano: Anuidades vencidas]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Riscos
+		lineageTag: 341434ec-d1f2-531a-abbc-53044aeff8a9
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Anuidades vencidas' = "de profissionais e empresas, na data"
+		displayFolder: Riscos
+		lineageTag: 7ddae047-2149-5051-9ca2-3dff6ab776c4
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Profissionais ativos no Crea-SP' = FORMAT(DIVIDE([Profissionais ativos no Crea-SP], SUM('País'[Profissionais ativos])), "0.0%") & " dos " & FORMAT(SUM('País'[Profissionais ativos]), "#,##0") & " do país"
+		displayFolder: No país
+		lineageTag: c962b905-ea21-5ddb-ba6c-a0bdb1bfd98c
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Profissionais por 100 mil habitantes no Crea-SP' = ```
+			VAR v = [Profissionais por 100 mil habitantes no Crea-SP]
+			RETURN COUNTROWS(FILTER(ALL('UFs'), 'UFs'[Por 100 mil habitantes] > v)) + 1 & "º entre as 27 unidades da federação; no país, " & FORMAT(DIVIDE(SUM('País'[Profissionais ativos]), SUM('País'[População])) * 100000, "#,##0")
+			```
+		displayFolder: No país
+		lineageTag: b9b997f4-6f9b-5eda-9039-ef7ce304a52d
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Mulheres entre os profissionais do Crea-SP' = "no país, " & FORMAT(MAX('País'[Mulheres (%)]) / 100, "0.0%")
+		displayFolder: No país
+		lineageTag: 73596d7a-1552-545c-b79c-75c2b956dad1
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Receita do último exercício fechado' = ```
+			VAR v = [Variação da receita contra o exercício anterior]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação ao exercício anterior")
+			```
+		displayFolder: No país
+		lineageTag: c345be01-129e-5283-9303-d6799cbbec2e
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Receita do último exercício fechado' = ```
+			VAR ano = CALCULATE(MAX('Exercícios'[Ano]), 'Exercícios'[Encerrado] = 1)
+			RETURN "em " & ano & "; despesa paga de " & FORMAT(CALCULATE(SUM('Exercícios'[Despesa paga]), 'Exercícios'[Ano] = ano), "R$ #,##0")
+			```
+		displayFolder: No país
+		lineageTag: d3477ff8-ea13-5256-b68e-b1b0f328b7b9
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Receita que vem da ART' = FORMAT(CALCULATE(MAX('Contas de receita'[Valor]), 'Contas de receita'[Ordem] = 1), "R$ #,##0") & " de 2013 a hoje, a maior conta de receita"
+		displayFolder: No país
+		lineageTag: a584f0be-d186-5990-96cb-2b96c6e75eb1
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Despesa paga sobre a dotação' = ```
+			VAR ano = CALCULATE(MAX('Exercícios'[Ano]), 'Exercícios'[Encerrado] = 1)
+			RETURN "em " & ano & "; dotação de " & FORMAT(CALCULATE(SUM('Exercícios'[Dotação]), 'Exercícios'[Ano] = ano), "R$ #,##0")
+			```
+		displayFolder: No país
+		lineageTag: 320c6d5b-2ebd-5b21-9f1c-3fa31168dcd0
+
+	column Medidas
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Medidas
+		lineageTag: b2528792-6b24-50d0-881f-3b8a2119a895
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = #table(type table [#"Medidas" = type text], {})
+				in
+				    Fonte

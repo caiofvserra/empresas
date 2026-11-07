@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "riscos-cartao-4",
+  "position": {
+    "x": 644,
+    "y": 68,
+    "z": 8000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Protocolos na fila e fora do prazo"
+                }
+              },
+              "queryRef": "Medidas.Protocolos na fila e fora do prazo",
+              "nativeQueryRef": "Protocolos na fila e fora do prazo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Protocolos na fila e fora do prazo"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Protocolos na fila e fora do prazo",
+              "nativeQueryRef": "Comparação: Protocolos na fila e fora do prazo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Protocolos na fila e fora do prazo"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Protocolos na fila e fora do prazo",
+              "nativeQueryRef": "Detalhe: Protocolos na fila e fora do prazo"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Protocolos na fila e fora do prazo'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

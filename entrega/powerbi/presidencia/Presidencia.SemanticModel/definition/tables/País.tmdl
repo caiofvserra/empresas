@@ -1,0 +1,34 @@
+/// Tem o total do país: profissionais ativos, população e a parte de mulheres. Dado real.
+table 'País'
+	isHidden
+	lineageTag: 2c8fa04c-20f2-5252-ab94-00a4304ed159
+
+	column 'Profissionais ativos'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Profissionais ativos
+		lineageTag: dbc54458-e29d-553e-8b55-ae402f3127d3
+
+	column 'População'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: População
+		lineageTag: 37b33efd-47d6-50bb-9e0e-d0058020975c
+
+	column 'Mulheres (%)'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: Mulheres (%)
+		lineageTag: d0f16798-2fe5-5faa-b0dc-d9d0f209423b
+
+	partition 'País' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "pais.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Profissionais ativos", Int64.Type}, {"População", Int64.Type}, {"Mulheres (%)", type number}}, "pt-BR")
+				in
+				    Tipos

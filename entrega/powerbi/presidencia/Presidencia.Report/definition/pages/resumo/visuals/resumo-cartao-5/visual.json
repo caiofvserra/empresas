@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "resumo-cartao-5",
+  "position": {
+    "x": 853,
+    "y": 68,
+    "z": 9000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Protocolos fechados no prazo"
+                }
+              },
+              "queryRef": "Medidas.Protocolos fechados no prazo",
+              "nativeQueryRef": "Protocolos fechados no prazo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Protocolos fechados no prazo"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Protocolos fechados no prazo",
+              "nativeQueryRef": "Comparação: Protocolos fechados no prazo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Protocolos fechados no prazo"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Protocolos fechados no prazo",
+              "nativeQueryRef": "Detalhe: Protocolos fechados no prazo"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Protocolos fechados no prazo'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,52 @@
+/// Tem a receita realizada, a despesa paga e a dotação de cada exercício desde 2013, do Portal da Transparência. O último exercício estava aberto na coleta. Dado real.
+table 'Exercícios'
+	lineageTag: 4b90e58f-5aeb-5735-b0f7-ba37dad13302
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 73965338-ba45-5666-942b-c5a08f6bcd31
+
+	column 'Receita realizada'
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Receita realizada
+		lineageTag: 5f6de68a-b981-5500-9aa4-fe72c67506ff
+
+	column 'Despesa paga'
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Despesa paga
+		lineageTag: d142a652-7583-5898-8c08-044ac642c511
+
+	column 'Dotação'
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Dotação
+		lineageTag: d9861aa1-a1aa-5217-a562-b0894c1ccecc
+
+	column Encerrado
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Encerrado
+		lineageTag: 9863b76f-17f3-53d9-a5bf-d597e27fcaf6
+
+	partition 'Exercícios' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "exercicios.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Receita realizada", type number}, {"Despesa paga", type number}, {"Dotação", type number}, {"Encerrado", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

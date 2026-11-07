@@ -1,0 +1,11 @@
+relationship 815c3dbc-c8b1-5486-ad1e-af8471029f87
+	fromColumn: 'Municípios'.GRE
+	toColumn: Regionais.GRE
+
+relationship a9065753-786d-5c99-b016-618b0011b94e
+	fromColumn: Foto.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship 520f9e66-801a-591c-bac1-a6ce73c7a555
+	fromColumn: Foto.Indicador
+	toColumn: Indicadores.Indicador

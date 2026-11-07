@@ -1,0 +1,3 @@
+/// Pasta onde estão os CSV do pacote (termina com \). Troque em Transformar dados > Editar parâmetros e clique em Atualizar.
+expression 'Pasta dos dados' = "C:\CREA-SP\powerbi\presidencia\dados\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: bc5b1315-b3c0-55f3-a6a6-7bedfab51554

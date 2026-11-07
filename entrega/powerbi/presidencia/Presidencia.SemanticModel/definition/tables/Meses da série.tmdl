@@ -1,0 +1,36 @@
+/// Tem um fim de mês por linha, para o eixo das séries de 13 meses. Não se liga às outras tabelas: as medidas leem o mês do eixo.
+table 'Meses da série'
+	lineageTag: fe7f3815-d749-5d77-b3b8-8d2d7acf15e8
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: d3aeafae-f903-5f44-a94d-d4f6d27238a1
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		sortByColumn: Ordem
+		lineageTag: c623c61f-f7d4-5c09-a886-24c7d9b34098
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: e9f745a7-7975-5b19-a166-d0df738e400a
+
+	partition 'Meses da série' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "meses-da-serie.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Rótulo", type text}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

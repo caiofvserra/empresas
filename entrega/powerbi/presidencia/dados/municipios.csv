@@ -1,0 +1,646 @@
+Código IBGE;Município;GRE
+3500105;Adamantina;GRE 15
+3500204;Adolfo;GRE 9
+3500303;Aguaí;GRE 12
+3500402;Águas da Prata;GRE 12
+3500501;Águas de Lindóia;GRE 12
+3500550;Águas de Santa Bárbara;GRE 8
+3500600;Águas de São Pedro;GRE 4
+3500709;Agudos;GRE 8
+3500758;Alambari;GRE 11
+3500808;Alfredo Marcondes;GRE 15
+3500907;Altair;GRE 3
+3501004;Altinópolis;GRE 3
+3501103;Alto Alegre;GRE 1
+3501152;Alumínio;GRE 11
+3501202;Álvares Florence;GRE 9
+3501301;Álvares Machado;GRE 15
+3501400;Álvaro de Carvalho;GRE 16
+3501509;Alvinlândia;GRE 16
+3501608;Americana;GRE 4
+3501707;Américo Brasiliense;GRE 10
+3501806;Américo de Campos;GRE 9
+3501905;Amparo;GRE 12
+3502002;Analândia;GRE 4
+3502101;Andradina;GRE 1
+3502200;Angatuba;GRE 11
+3502309;Anhembi;GRE 8
+3502408;Anhumas;GRE 15
+3502507;Aparecida;GRE 6
+3502606;Aparecida d'Oeste;GRE 9
+3502705;Apiaí;GRE 11
+3502754;Araçariguama;GRE 11
+3502804;Araçatuba;GRE 1
+3502903;Araçoiaba da Serra;GRE 11
+3503000;Aramina;GRE 3
+3503109;Arandu;GRE 8
+3503158;Arapeí;GRE 6
+3503208;Araraquara;GRE 10
+3503307;Araras;GRE 4
+3503356;Arco-Íris;GRE 15
+3503406;Arealva;GRE 8
+3503505;Areias;GRE 6
+3503604;Areiópolis;GRE 8
+3503703;Ariranha;GRE 9
+3503802;Artur Nogueira;GRE 12
+3503901;Arujá;GRE 13
+3503950;Aspásia;GRE 9
+3504008;Assis;GRE 16
+3504107;Atibaia;GRE 13
+3504206;Auriflama;GRE 1
+3504305;Avaí;GRE 16
+3504404;Avanhandava;GRE 1
+3504503;Avaré;GRE 8
+3504602;Bady Bassitt;GRE 9
+3504701;Balbinos;GRE 16
+3504800;Bálsamo;GRE 9
+3504909;Bananal;GRE 6
+3505005;Barão de Antonina;GRE 8
+3505104;Barbosa;GRE 1
+3505203;Bariri;GRE 10
+3505302;Barra Bonita;GRE 8
+3505351;Barra do Chapéu;GRE 11
+3505401;Barra do Turvo;GRE 7
+3505500;Barretos;GRE 3
+3505609;Barrinha;GRE 3
+3505708;Barueri;GRE 5
+3505807;Bastos;GRE 15
+3505906;Batatais;GRE 3
+3506003;Bauru;GRE 8
+3506102;Bebedouro;GRE 3
+3506201;Bento de Abreu;GRE 1
+3506300;Bernardino de Campos;GRE 8
+3506359;Bertioga;GRE 7
+3506409;Bilac;GRE 1
+3506508;Birigui;GRE 1
+3506607;Biritiba Mirim;GRE 13
+3506706;Boa Esperança do Sul;GRE 10
+3506805;Bocaina;GRE 10
+3506904;Bofete;GRE 8
+3507001;Boituva;GRE 11
+3507100;Bom Jesus dos Perdões;GRE 13
+3507159;Bom Sucesso de Itararé;GRE 11
+3507209;Borá;GRE 16
+3507308;Boracéia;GRE 8
+3507407;Borborema;GRE 10
+3507456;Borebi;GRE 8
+3507506;Botucatu;GRE 8
+3507605;Bragança Paulista;GRE 13
+3507704;Braúna;GRE 1
+3507753;Brejo Alegre;GRE 1
+3507803;Brodowski;GRE 3
+3507902;Brotas;GRE 4
+3508009;Buri;GRE 11
+3508108;Buritama;GRE 1
+3508207;Buritizal;GRE 3
+3508306;Cabrália Paulista;GRE 8
+3508405;Cabreúva;GRE 2
+3508504;Caçapava;GRE 6
+3508603;Cachoeira Paulista;GRE 6
+3508702;Caconde;GRE 12
+3508801;Cafelândia;GRE 16
+3508900;Caiabu;GRE 15
+3509007;Caieiras;GRE 5
+3509106;Caiuá;GRE 15
+3509205;Cajamar;GRE 5
+3509254;Cajati;GRE 7
+3509304;Cajobi;GRE 3
+3509403;Cajuru;GRE 3
+3509452;Campina do Monte Alegre;GRE 11
+3509502;Campinas;GRE 2
+3509601;Campo Limpo Paulista;GRE 2
+3509700;Campos do Jordão;GRE 6
+3509809;Campos Novos Paulista;GRE 16
+3509908;Cananéia;GRE 7
+3509957;Canas;GRE 6
+3510005;Cândido Mota;GRE 16
+3510104;Cândido Rodrigues;GRE 10
+3510153;Canitar;GRE 8
+3510203;Capão Bonito;GRE 11
+3510302;Capela do Alto;GRE 11
+3510401;Capivari;GRE 4
+3510500;Caraguatatuba;GRE 6
+3510609;Carapicuíba;GRE 5
+3510708;Cardoso;GRE 9
+3510807;Casa Branca;GRE 12
+3510906;Cássia dos Coqueiros;GRE 3
+3511003;Castilho;GRE 1
+3511102;Catanduva;GRE 9
+3511201;Catiguá;GRE 9
+3511300;Cedral;GRE 9
+3511409;Cerqueira César;GRE 8
+3511508;Cerquilho;GRE 4
+3511607;Cesário Lange;GRE 4
+3511706;Charqueada;GRE 4
+3511904;Clementina;GRE 1
+3512001;Colina;GRE 3
+3512100;Colômbia;GRE 3
+3512209;Conchal;GRE 12
+3512308;Conchas;GRE 4
+3512407;Cordeirópolis;GRE 4
+3512506;Coroados;GRE 1
+3512605;Coronel Macedo;GRE 8
+3512704;Corumbataí;GRE 4
+3512803;Cosmópolis;GRE 2
+3512902;Cosmorama;GRE 9
+3513009;Cotia;GRE 5
+3513108;Cravinhos;GRE 3
+3513207;Cristais Paulista;GRE 3
+3513306;Cruzália;GRE 16
+3513405;Cruzeiro;GRE 6
+3513504;Cubatão;GRE 7
+3513603;Cunha;GRE 6
+3513702;Descalvado;GRE 10
+3513801;Diadema;GRE 14
+3513850;Dirce Reis;GRE 9
+3513900;Divinolândia;GRE 12
+3514007;Dobrada;GRE 10
+3514106;Dois Córregos;GRE 4
+3514205;Dolcinópolis;GRE 9
+3514304;Dourado;GRE 10
+3514403;Dracena;GRE 15
+3514502;Duartina;GRE 16
+3514601;Dumont;GRE 3
+3514700;Echaporã;GRE 16
+3514809;Eldorado;GRE 7
+3514908;Elias Fausto;GRE 2
+3514924;Elisiário;GRE 9
+3514957;Embaúba;GRE 9
+3515004;Embu das Artes;GRE 5
+3515103;Embu-Guaçu;GRE 5
+3515129;Emilianópolis;GRE 15
+3515152;Engenheiro Coelho;GRE 12
+3515186;Espírito Santo do Pinhal;GRE 12
+3515194;Espírito Santo do Turvo;GRE 8
+3515202;Estrela d'Oeste;GRE 9
+3515301;Estrela do Norte;GRE 15
+3515350;Euclides da Cunha Paulista;GRE 15
+3515400;Fartura;GRE 8
+3515509;Fernandópolis;GRE 9
+3515608;Fernando Prestes;GRE 10
+3515657;Fernão;GRE 16
+3515707;Ferraz de Vasconcelos;GRE 13
+3515806;Flora Rica;GRE 15
+3515905;Floreal;GRE 9
+3516002;Flórida Paulista;GRE 15
+3516101;Florínea;GRE 16
+3516200;Franca;GRE 3
+3516309;Francisco Morato;GRE 5
+3516408;Franco da Rocha;GRE 5
+3516507;Gabriel Monteiro;GRE 1
+3516606;Gália;GRE 16
+3516705;Garça;GRE 16
+3516804;Gastão Vidigal;GRE 9
+3516853;Gavião Peixoto;GRE 10
+3516903;General Salgado;GRE 9
+3517000;Getulina;GRE 16
+3517109;Glicério;GRE 1
+3517208;Guaiçara;GRE 16
+3517307;Guaimbê;GRE 16
+3517406;Guaíra;GRE 3
+3517505;Guapiaçu;GRE 9
+3517604;Guapiara;GRE 11
+3517703;Guará;GRE 3
+3517802;Guaraçaí;GRE 1
+3517901;Guaraci;GRE 3
+3518008;Guarani d'Oeste;GRE 9
+3518107;Guarantã;GRE 16
+3518206;Guararapes;GRE 1
+3518305;Guararema;GRE 13
+3518404;Guaratinguetá;GRE 6
+3518503;Guareí;GRE 11
+3518602;Guariba;GRE 10
+3518701;Guarujá;GRE 7
+3518800;Guarulhos;GRE 13
+3518859;Guatapará;GRE 3
+3518909;Guzolândia;GRE 1
+3519006;Herculândia;GRE 16
+3519055;Holambra;GRE 12
+3519071;Hortolândia;GRE 2
+3519105;Iacanga;GRE 16
+3519204;Iacri;GRE 15
+3519253;Iaras;GRE 8
+3519303;Ibaté;GRE 10
+3519402;Ibirá;GRE 9
+3519501;Ibirarema;GRE 16
+3519600;Ibitinga;GRE 10
+3519709;Ibiúna;GRE 11
+3519808;Icém;GRE 9
+3519907;Iepê;GRE 15
+3520004;Igaraçu do Tietê;GRE 8
+3520103;Igarapava;GRE 3
+3520202;Igaratá;GRE 13
+3520301;Iguape;GRE 7
+3520400;Ilhabela;GRE 6
+3520426;Ilha Comprida;GRE 7
+3520442;Ilha Solteira;GRE 1
+3520509;Indaiatuba;GRE 2
+3520608;Indiana;GRE 15
+3520707;Indiaporã;GRE 9
+3520806;Inúbia Paulista;GRE 15
+3520905;Ipaussu;GRE 8
+3521002;Iperó;GRE 11
+3521101;Ipeúna;GRE 4
+3521150;Ipiguá;GRE 9
+3521200;Iporanga;GRE 11
+3521309;Ipuã;GRE 3
+3521408;Iracemápolis;GRE 4
+3521507;Irapuã;GRE 9
+3521606;Irapuru;GRE 15
+3521705;Itaberá;GRE 11
+3521804;Itaí;GRE 8
+3521903;Itajobi;GRE 9
+3522000;Itaju;GRE 10
+3522109;Itanhaém;GRE 7
+3522158;Itaoca;GRE 11
+3522208;Itapecerica da Serra;GRE 5
+3522307;Itapetininga;GRE 11
+3522406;Itapeva;GRE 11
+3522505;Itapevi;GRE 5
+3522604;Itapira;GRE 12
+3522653;Itapirapuã Paulista;GRE 11
+3522703;Itápolis;GRE 10
+3522802;Itaporanga;GRE 8
+3522901;Itapuí;GRE 8
+3523008;Itapura;GRE 1
+3523107;Itaquaquecetuba;GRE 13
+3523206;Itararé;GRE 11
+3523305;Itariri;GRE 7
+3523404;Itatiba;GRE 2
+3523503;Itatinga;GRE 8
+3523602;Itirapina;GRE 4
+3523701;Itirapuã;GRE 3
+3523800;Itobi;GRE 12
+3523909;Itu;GRE 2
+3524006;Itupeva;GRE 2
+3524105;Ituverava;GRE 3
+3524204;Jaborandi;GRE 3
+3524303;Jaboticabal;GRE 10
+3524402;Jacareí;GRE 6
+3524501;Jaci;GRE 9
+3524600;Jacupiranga;GRE 7
+3524709;Jaguariúna;GRE 12
+3524808;Jales;GRE 9
+3524907;Jambeiro;GRE 6
+3525003;Jandira;GRE 5
+3525102;Jardinópolis;GRE 3
+3525201;Jarinu;GRE 2
+3525300;Jaú;GRE 8
+3525409;Jeriquara;GRE 3
+3525508;Joanópolis;GRE 13
+3525607;João Ramalho;GRE 15
+3525706;José Bonifácio;GRE 9
+3525805;Júlio Mesquita;GRE 16
+3525854;Jumirim;GRE 4
+3525904;Jundiaí;GRE 2
+3526001;Junqueirópolis;GRE 15
+3526100;Juquiá;GRE 7
+3526209;Juquitiba;GRE 5
+3526308;Lagoinha;GRE 6
+3526407;Laranjal Paulista;GRE 4
+3526506;Lavínia;GRE 1
+3526605;Lavrinhas;GRE 6
+3526704;Leme;GRE 12
+3526803;Lençóis Paulista;GRE 8
+3526902;Limeira;GRE 4
+3527009;Lindóia;GRE 12
+3527108;Lins;GRE 16
+3527207;Lorena;GRE 6
+3527256;Lourdes;GRE 1
+3527306;Louveira;GRE 2
+3527405;Lucélia;GRE 15
+3527504;Lucianópolis;GRE 16
+3527603;Luís Antônio;GRE 3
+3527702;Luiziânia;GRE 1
+3527801;Lupércio;GRE 16
+3527900;Lutécia;GRE 16
+3528007;Macatuba;GRE 8
+3528106;Macaubal;GRE 9
+3528205;Macedônia;GRE 9
+3528304;Magda;GRE 9
+3528403;Mairinque;GRE 11
+3528502;Mairiporã;GRE 13
+3528601;Manduri;GRE 8
+3528700;Marabá Paulista;GRE 15
+3528809;Maracaí;GRE 16
+3528858;Marapoama;GRE 9
+3528908;Mariápolis;GRE 15
+3529005;Marília;GRE 16
+3529104;Marinópolis;GRE 9
+3529203;Martinópolis;GRE 15
+3529302;Matão;GRE 10
+3529401;Mauá;GRE 14
+3529500;Mendonça;GRE 9
+3529609;Meridiano;GRE 9
+3529658;Mesópolis;GRE 9
+3529708;Miguelópolis;GRE 3
+3529807;Mineiros do Tietê;GRE 8
+3529906;Miracatu;GRE 7
+3530003;Mira Estrela;GRE 9
+3530102;Mirandópolis;GRE 1
+3530201;Mirante do Paranapanema;GRE 15
+3530300;Mirassol;GRE 9
+3530409;Mirassolândia;GRE 9
+3530508;Mococa;GRE 12
+3530607;Mogi das Cruzes;GRE 13
+3530706;Mogi Guaçu;GRE 12
+3530805;Mogi Mirim;GRE 12
+3530904;Mombuca;GRE 4
+3531001;Monções;GRE 9
+3531100;Mongaguá;GRE 7
+3531209;Monte Alegre do Sul;GRE 12
+3531308;Monte Alto;GRE 10
+3531407;Monte Aprazível;GRE 9
+3531506;Monte Azul Paulista;GRE 3
+3531605;Monte Castelo;GRE 15
+3531704;Monteiro Lobato;GRE 6
+3531803;Monte Mor;GRE 2
+3531902;Morro Agudo;GRE 3
+3532009;Morungaba;GRE 2
+3532058;Motuca;GRE 10
+3532108;Murutinga do Sul;GRE 1
+3532157;Nantes;GRE 15
+3532207;Narandiba;GRE 15
+3532306;Natividade da Serra;GRE 6
+3532405;Nazaré Paulista;GRE 13
+3532504;Neves Paulista;GRE 9
+3532603;Nhandeara;GRE 9
+3532702;Nipoã;GRE 9
+3532801;Nova Aliança;GRE 9
+3532827;Nova Campina;GRE 11
+3532843;Nova Canaã Paulista;GRE 9
+3532868;Nova Castilho;GRE 9
+3532900;Nova Europa;GRE 10
+3533007;Nova Granada;GRE 9
+3533106;Nova Guataporanga;GRE 15
+3533205;Nova Independência;GRE 1
+3533254;Novais;GRE 9
+3533304;Nova Luzitânia;GRE 9
+3533403;Nova Odessa;GRE 4
+3533502;Novo Horizonte;GRE 9
+3533601;Nuporanga;GRE 3
+3533700;Ocauçu;GRE 16
+3533809;Óleo;GRE 8
+3533908;Olímpia;GRE 3
+3534005;Onda Verde;GRE 9
+3534104;Oriente;GRE 16
+3534203;Orindiúva;GRE 9
+3534302;Orlândia;GRE 3
+3534401;Osasco;GRE 5
+3534500;Oscar Bressane;GRE 16
+3534609;Osvaldo Cruz;GRE 15
+3534708;Ourinhos;GRE 16
+3534757;Ouroeste;GRE 9
+3534807;Ouro Verde;GRE 15
+3534906;Pacaembu;GRE 15
+3535002;Palestina;GRE 9
+3535101;Palmares Paulista;GRE 9
+3535200;Palmeira d'Oeste;GRE 9
+3535309;Palmital;GRE 16
+3535408;Panorama;GRE 15
+3535507;Paraguaçu Paulista;GRE 16
+3535606;Paraibuna;GRE 6
+3535705;Paraíso;GRE 9
+3535804;Paranapanema;GRE 11
+3535903;Paranapuã;GRE 9
+3536000;Parapuã;GRE 15
+3536109;Pardinho;GRE 8
+3536208;Pariquera-Açu;GRE 7
+3536257;Parisi;GRE 9
+3536307;Patrocínio Paulista;GRE 3
+3536406;Paulicéia;GRE 15
+3536505;Paulínia;GRE 2
+3536570;Paulistânia;GRE 8
+3536604;Paulo de Faria;GRE 9
+3536703;Pederneiras;GRE 8
+3536802;Pedra Bela;GRE 13
+3536901;Pedranópolis;GRE 9
+3537008;Pedregulho;GRE 3
+3537107;Pedreira;GRE 12
+3537156;Pedrinhas Paulista;GRE 16
+3537206;Pedro de Toledo;GRE 7
+3537305;Penápolis;GRE 1
+3537404;Pereira Barreto;GRE 1
+3537503;Pereiras;GRE 4
+3537602;Peruíbe;GRE 7
+3537701;Piacatu;GRE 1
+3537800;Piedade;GRE 11
+3537909;Pilar do Sul;GRE 11
+3538006;Pindamonhangaba;GRE 6
+3538105;Pindorama;GRE 9
+3538204;Pinhalzinho;GRE 13
+3538303;Piquerobi;GRE 15
+3538501;Piquete;GRE 6
+3538600;Piracaia;GRE 13
+3538709;Piracicaba;GRE 4
+3538808;Piraju;GRE 8
+3538907;Pirajuí;GRE 16
+3539004;Pirangi;GRE 10
+3539103;Pirapora do Bom Jesus;GRE 5
+3539202;Pirapozinho;GRE 15
+3539301;Pirassununga;GRE 12
+3539400;Piratininga;GRE 8
+3539509;Pitangueiras;GRE 3
+3539608;Planalto;GRE 9
+3539707;Platina;GRE 16
+3539806;Poá;GRE 13
+3539905;Poloni;GRE 9
+3540002;Pompéia;GRE 16
+3540101;Pongaí;GRE 16
+3540200;Pontal;GRE 3
+3540259;Pontalinda;GRE 9
+3540309;Pontes Gestal;GRE 9
+3540408;Populina;GRE 9
+3540507;Porangaba;GRE 11
+3540606;Porto Feliz;GRE 2
+3540705;Porto Ferreira;GRE 12
+3540754;Potim;GRE 6
+3540804;Potirendaba;GRE 9
+3540853;Pracinha;GRE 15
+3540903;Pradópolis;GRE 3
+3541000;Praia Grande;GRE 7
+3541059;Pratânia;GRE 8
+3541109;Presidente Alves;GRE 16
+3541208;Presidente Bernardes;GRE 15
+3541307;Presidente Epitácio;GRE 15
+3541406;Presidente Prudente;GRE 15
+3541505;Presidente Venceslau;GRE 15
+3541604;Promissão;GRE 16
+3541653;Quadra;GRE 11
+3541703;Quatá;GRE 15
+3541802;Queiroz;GRE 16
+3541901;Queluz;GRE 6
+3542008;Quintana;GRE 16
+3542107;Rafard;GRE 4
+3542206;Rancharia;GRE 15
+3542305;Redenção da Serra;GRE 6
+3542404;Regente Feijó;GRE 15
+3542503;Reginópolis;GRE 16
+3542602;Registro;GRE 7
+3542701;Restinga;GRE 3
+3542800;Ribeira;GRE 11
+3542909;Ribeirão Bonito;GRE 10
+3543006;Ribeirão Branco;GRE 11
+3543105;Ribeirão Corrente;GRE 3
+3543204;Ribeirão do Sul;GRE 16
+3543238;Ribeirão dos Índios;GRE 15
+3543253;Ribeirão Grande;GRE 11
+3543303;Ribeirão Pires;GRE 14
+3543402;Ribeirão Preto;GRE 3
+3543501;Riversul;GRE 11
+3543600;Rifaina;GRE 3
+3543709;Rincão;GRE 10
+3543808;Rinópolis;GRE 15
+3543907;Rio Claro;GRE 4
+3544004;Rio das Pedras;GRE 4
+3544103;Rio Grande da Serra;GRE 14
+3544202;Riolândia;GRE 9
+3544251;Rosana;GRE 15
+3544301;Roseira;GRE 6
+3544400;Rubiácea;GRE 1
+3544509;Rubinéia;GRE 9
+3544608;Sabino;GRE 16
+3544707;Sagres;GRE 15
+3544806;Sales;GRE 9
+3544905;Sales Oliveira;GRE 3
+3545001;Salesópolis;GRE 13
+3545100;Salmourão;GRE 15
+3545159;Saltinho;GRE 4
+3545209;Salto;GRE 2
+3545308;Salto de Pirapora;GRE 11
+3545407;Salto Grande;GRE 16
+3545506;Sandovalina;GRE 15
+3545605;Santa Adélia;GRE 9
+3545704;Santa Albertina;GRE 9
+3545803;Santa Bárbara d'Oeste;GRE 4
+3546009;Santa Branca;GRE 6
+3546108;Santa Clara d'Oeste;GRE 9
+3546207;Santa Cruz da Conceição;GRE 12
+3546256;Santa Cruz da Esperança;GRE 3
+3546306;Santa Cruz das Palmeiras;GRE 12
+3546405;Santa Cruz do Rio Pardo;GRE 8
+3546504;Santa Ernestina;GRE 10
+3546603;Santa Fé do Sul;GRE 9
+3546702;Santa Gertrudes;GRE 4
+3546801;Santa Isabel;GRE 13
+3546900;Santa Lúcia;GRE 10
+3547007;Santa Maria da Serra;GRE 4
+3547106;Santa Mercedes;GRE 15
+3547205;Santana da Ponte Pensa;GRE 9
+3547304;Santana de Parnaíba;GRE 5
+3547403;Santa Rita d'Oeste;GRE 9
+3547502;Santa Rita do Passa Quatro;GRE 12
+3547601;Santa Rosa de Viterbo;GRE 3
+3547650;Santa Salete;GRE 9
+3547700;Santo Anastácio;GRE 15
+3547809;Santo André;GRE 14
+3547908;Santo Antônio da Alegria;GRE 3
+3548005;Santo Antônio de Posse;GRE 12
+3548054;Santo Antônio do Aracanguá;GRE 1
+3548104;Santo Antônio do Jardim;GRE 12
+3548203;Santo Antônio do Pinhal;GRE 6
+3548302;Santo Expedito;GRE 15
+3548401;Santópolis do Aguapeí;GRE 1
+3548500;Santos;GRE 7
+3548609;São Bento do Sapucaí;GRE 6
+3548708;São Bernardo do Campo;GRE 14
+3548807;São Caetano do Sul;GRE 14
+3548906;São Carlos;GRE 10
+3549003;São Francisco;GRE 9
+3549102;São João da Boa Vista;GRE 12
+3549201;São João das Duas Pontes;GRE 9
+3549250;São João de Iracema;GRE 9
+3549300;São João do Pau d'Alho;GRE 15
+3549409;São Joaquim da Barra;GRE 3
+3549508;São José da Bela Vista;GRE 3
+3549607;São José do Barreiro;GRE 6
+3549706;São José do Rio Pardo;GRE 12
+3549805;São José do Rio Preto;GRE 9
+3549904;São José dos Campos;GRE 6
+3549953;São Lourenço da Serra;GRE 5
+3550001;São Luiz do Paraitinga;GRE 6
+3550100;São Manuel;GRE 8
+3550209;São Miguel Arcanjo;GRE 11
+3550308;São Paulo;GRE 5
+3550407;São Pedro;GRE 4
+3550506;São Pedro do Turvo;GRE 16
+3550605;São Roque;GRE 11
+3550704;São Sebastião;GRE 6
+3550803;São Sebastião da Grama;GRE 12
+3550902;São Simão;GRE 3
+3551009;São Vicente;GRE 7
+3551108;Sarapuí;GRE 11
+3551207;Sarutaiá;GRE 8
+3551306;Sebastianópolis do Sul;GRE 9
+3551405;Serra Azul;GRE 3
+3551504;Serrana;GRE 3
+3551603;Serra Negra;GRE 12
+3551702;Sertãozinho;GRE 3
+3551801;Sete Barras;GRE 7
+3551900;Severínia;GRE 3
+3552007;Silveiras;GRE 6
+3552106;Socorro;GRE 12
+3552205;Sorocaba;GRE 11
+3552304;Sud Mennucci;GRE 1
+3552403;Sumaré;GRE 2
+3552502;Suzano;GRE 13
+3552551;Suzanápolis;GRE 1
+3552601;Tabapuã;GRE 9
+3552700;Tabatinga;GRE 10
+3552809;Taboão da Serra;GRE 5
+3552908;Taciba;GRE 15
+3553005;Taguaí;GRE 8
+3553104;Taiaçu;GRE 10
+3553203;Taiúva;GRE 10
+3553302;Tambaú;GRE 12
+3553401;Tanabi;GRE 9
+3553500;Tapiraí;GRE 11
+3553609;Tapiratiba;GRE 12
+3553658;Taquaral;GRE 10
+3553708;Taquaritinga;GRE 10
+3553807;Taquarituba;GRE 8
+3553856;Taquarivaí;GRE 11
+3553906;Tarabai;GRE 15
+3553955;Tarumã;GRE 16
+3554003;Tatuí;GRE 11
+3554102;Taubaté;GRE 6
+3554201;Tejupá;GRE 8
+3554300;Teodoro Sampaio;GRE 15
+3554409;Terra Roxa;GRE 3
+3554508;Tietê;GRE 4
+3554607;Timburi;GRE 8
+3554656;Torre de Pedra;GRE 11
+3554706;Torrinha;GRE 4
+3554755;Trabiju;GRE 10
+3554805;Tremembé;GRE 6
+3554904;Três Fronteiras;GRE 9
+3554953;Tuiuti;GRE 13
+3555000;Tupã;GRE 15
+3555109;Tupi Paulista;GRE 15
+3555208;Turiúba;GRE 1
+3555307;Turmalina;GRE 9
+3555356;Ubarana;GRE 9
+3555406;Ubatuba;GRE 6
+3555505;Ubirajara;GRE 16
+3555604;Uchoa;GRE 9
+3555703;União Paulista;GRE 9
+3555802;Urânia;GRE 9
+3555901;Uru;GRE 16
+3556008;Urupês;GRE 9
+3556107;Valentim Gentil;GRE 9
+3556206;Valinhos;GRE 2
+3556305;Valparaíso;GRE 1
+3556354;Vargem;GRE 13
+3556404;Vargem Grande do Sul;GRE 12
+3556453;Vargem Grande Paulista;GRE 5
+3556503;Várzea Paulista;GRE 2
+3556602;Vera Cruz;GRE 16
+3556701;Vinhedo;GRE 2
+3556800;Viradouro;GRE 3
+3556909;Vista Alegre do Alto;GRE 10
+3556958;Vitória Brasil;GRE 9
+3557006;Votorantim;GRE 11
+3557105;Votuporanga;GRE 9
+3557154;Zacarias;GRE 1
+3557204;Chavantes;GRE 8
+3557303;Estiva Gerbi;GRE 12

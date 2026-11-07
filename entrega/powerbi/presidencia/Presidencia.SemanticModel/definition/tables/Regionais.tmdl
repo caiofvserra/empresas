@@ -1,0 +1,28 @@
+/// Tem uma linha para cada uma das 16 gerências regionais do Crea-SP.
+table Regionais
+	lineageTag: 4dc523ea-f485-576c-8f61-6a62aa872185
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		sortByColumn: Ordem
+		lineageTag: fd52b8f1-0216-5643-9900-6a29da796c7a
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: 80d6e13c-0670-5e7e-b68e-ead4226c2e47
+
+	partition Regionais = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "regionais.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"GRE", type text}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

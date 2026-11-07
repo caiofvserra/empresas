@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { dataset } from '../src/domain/dataset.ts';
+import { paineisResumo } from '../src/domain/presidencia.ts';
 import { defaultFilters } from '../src/domain/types.ts';
 import { datasReferencia, datasetAt, fiscalizacaoAt } from '../src/domain/tempo.ts';
 import { buildProfissionais, buildEmpregoCbo, remuneracaoPorCbo, resumoProfissionais, situacaoEm } from '../src/domain/profissionais.ts';
@@ -48,12 +49,12 @@ test('data de referência: a base lida em D só tem o que existia em D e nada é
 
 test('ficha (i): todo bloco e cartão de todo painel tem ficha registrada, e toda ficha registrada é usada', () => {
   const raiz = join(import.meta.dirname, '..', 'src');
-  const paginaDe: Record<string, string> = { 'cockpit/PaginaPresidencia': 'presidencia', 'cockpit/PaginaMetodo': 'metodo',
+  const paginaDe: Record<string, string> = { 'presidencia/PaginaResumo': 'resumo', 'presidencia/PaginaRegionais': 'regionais', 'presidencia/PaginaRiscos': 'riscos', 'presidencia/PaginaPais': 'pais',
     'financeiro/PaginaArrecadacao': 'arrecadacao', 'financeiro/PaginaReceita': 'receita', 'financeiro/PaginaDivida': 'divida', 'financeiro/PaginaOrcamento': 'orcamento', 'atendimento/PaginaProtocolos': 'protocolos', 'atendimento/PaginaEquipe': 'equipe', 'atendimento/PaginaDemanda': 'demanda', 'conselho/PaginaColegiado': 'colegiado', 'conselho/PaginaProcessos': 'processos', 'conselho/PaginaConselheiros': 'conselheiros', 'conselho/PaginaDecisoes': 'decisoes', 'conselho/PaginaRepresentacao': 'representacao',
     'empresas/PaginaMercado': 'mercado', 'empresas/PaginaEvolucao': 'evolucao', 'empresas/PaginaRt': 'rt', 'empresas/PaginaVinculos': 'vinculos',
     'profissionais/PaginaProfissionais': 'profissionais', 'profissionais/PaginaFluxo': 'fluxo', 'profissionais/PaginaAtuacao': 'atuacao', 'profissionais/PaginaFormacao': 'formacao', 'profissionais/PaginaTrabalho': 'trabalho',
     'fiscalizacao/PaginaAcoes': 'fiscalizacao', 'fiscalizacao/PaginaResultado': 'resultado', 'fiscalizacao/PaginaMalha': 'malha', 'fiscalizacao/PaginaContratos': 'contratos', 'fiscalizacao/PaginaObras': 'obras' };
-  const arquivos = ['cockpit', 'empresas', 'profissionais', 'fiscalizacao', 'financeiro', 'atendimento', 'conselho'].flatMap(dir => readdirSync(join(raiz, dir)).filter(name => /^Pagina\w+\.tsx$/.test(name)).map(name => `${dir}/${name.replace('.tsx', '')}`));
+  const arquivos = ['presidencia', 'empresas', 'profissionais', 'fiscalizacao', 'financeiro', 'atendimento', 'conselho'].flatMap(dir => readdirSync(join(raiz, dir)).filter(name => /^Pagina\w+\.tsx$/.test(name)).map(name => `${dir}/${name.replace('.tsx', '')}`));
   assert.deepEqual(arquivos.map(name => paginaDe[name]).sort(), [...pageIds].sort(), 'uma página por aba, sem páginas sobrando');
   const usadas = new Set<string>();
   for (const name of arquivos) {
@@ -62,7 +63,9 @@ test('ficha (i): todo bloco e cartão de todo painel tem ficha registrada, e tod
     const cards = [...src.matchAll(/\sficha="([a-z0-9-]+)"/g)].map(match => match[1]);
     const soltas = [...src.matchAll(/fichaDe\('(\w+)',\s*'([a-z0-9-]+)'\)/g)].map(match => `${match[1]}.${match[2]}`);
     const norte = [...src.matchAll(/<Norte\b[^>]*?\sarea="(n\d)"/g)].map(match => match[1]);
-    const todos = [...ids, ...cards, ...norte].map(id => `${page}.${id}`).concat(soltas);
+    // O Resumo da Presidência repete um bloco por painel, com o id p-<painel>.
+    const porPainel = /id=\{`p-\$\{ind\.painel\}`\}/.test(src) ? paineisResumo.map(painel => `p-${painel}`) : [];
+    const todos = [...ids, ...porPainel, ...cards, ...norte].map(id => `${page}.${id}`).concat(soltas);
     assert.ok(todos.length > 0, `${name} tem blocos ou cartões`);
     for (const key of todos) { assert.ok(fichas[key], `ficha ausente: ${key} (${name})`); usadas.add(key); }
   }

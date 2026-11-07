@@ -1,0 +1,1852 @@
+{
+  "meta": {
+    "dataset": "orgao-maquina",
+    "titulo": "Despesa e receita do Crea-SP publicadas no Portal da Transparência",
+    "unidade": "reais",
+    "fonteId": "crea-sp-transparencia",
+    "notas": [
+      "Esta página é um anexo de dados: reproduz agregados da API pública do Portal da Transparência do Crea-SP, sem classificação, ranqueamento de mérito ou leitura interpretativa acrescentada.",
+      "Só entram valores que o portal publica e somas sobre campos dele. Nenhuma categoria foi criada para esta página.",
+      "Os nomes de contas e de centros de custo são reproduzidos exatamente como a API os devolve, sem correção de grafia, de acentuação ou de prefixo.",
+      "Cada bloco declara de qual endpoint veio. Agregados de endpoints diferentes não são a mesma medida e não devem ser somados nem comparados entre si.",
+      "A base é acumulada de coletas sucessivas; a última foi em 08/09/2026. O exercício de 2026 não estava encerrado nessa data.",
+      "Onde o plano de contas do portal separa quem recebe — diárias e locomoção de funcionários, conselheiros, colaboradores e inspetores —, a página reproduz essa separação com os nomes das contas. Onde ele não separa, isso está dito no bloco final."
+    ],
+    "atualizadoEm": "2026-09-13"
+  },
+  "data": {
+    "periodo": "2013–2026",
+    "blocos": [
+      {
+        "id": "cobertura-da-base",
+        "titulo": "O que a base traz",
+        "linhaFina": "Registros acumulados de coletas sucessivas à API do portal. A última, em 08/09/2026, pediu a cada endpoint a janela de janeiro a setembro de 2026 e acrescentou-a ao que já havia; os exercícios anteriores vieram de coletas anteriores ao mesmo endpoint.",
+        "grafico": null,
+        "unidade": "registros",
+        "itens": [
+          {
+            "id": "pagamentos",
+            "rotulo": "Pagamentos",
+            "valor": 528871,
+            "valorTexto": "528.871 registros",
+            "pct": null,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Endpoint Pagamentos.",
+            "medidas": []
+          },
+          {
+            "id": "empenhos",
+            "rotulo": "Empenhos",
+            "valor": 130485,
+            "valorTexto": "130.485 registros",
+            "pct": null,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Endpoint Empenhos.",
+            "medidas": []
+          },
+          {
+            "id": "despesas-centro-custo",
+            "rotulo": "Despesa por centro de custo",
+            "valor": 11175,
+            "valorTexto": "11.175 registros",
+            "pct": null,
+            "ano": "2021–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Endpoint DespesasCentroCusto, disponível a partir do exercício de 2021.",
+            "medidas": []
+          },
+          {
+            "id": "comparativo-despesa",
+            "rotulo": "Comparativo de despesa",
+            "valor": 5048,
+            "valorTexto": "5.048 registros",
+            "pct": null,
+            "ano": "2011–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Endpoint ComparativoDespesa.",
+            "medidas": []
+          },
+          {
+            "id": "comparativo-receita",
+            "rotulo": "Comparativo de receita",
+            "valor": 3323,
+            "valorTexto": "3.323 registros",
+            "pct": null,
+            "ano": "2011–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Endpoint ComparativoReceita.",
+            "medidas": []
+          },
+          {
+            "id": "balanco-orcamentario",
+            "rotulo": "Balanço orçamentário",
+            "valor": 939,
+            "valorTexto": "939 registros",
+            "pct": null,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Endpoint BalancoOrcamentario.",
+            "medidas": []
+          },
+          {
+            "id": "plano-contas",
+            "rotulo": "Contas do plano de contas",
+            "valor": 26819,
+            "valorTexto": "26.819 registros",
+            "pct": null,
+            "ano": "2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Árvore de contas do portal, arquivo da coleta de 03/09/2026. É uma fotografia da estrutura vigente, não uma série por exercício: todas as 26.819 contas vêm marcadas com o exercício de 2026.",
+            "medidas": []
+          }
+        ]
+      },
+      {
+        "id": "execucao-orcamentaria",
+        "titulo": "Execução do orçamento por exercício",
+        "linhaFina": "Endpoint BalancoOrcamentario. São os quatro valores da linha que o próprio balanço chama de “SUB-TOTAL DAS DESPESAS” — nada é somado aqui. O gráfico mostra as duas pontas, dotação e pago; a tabela traz as quatro etapas.",
+        "grafico": "colunas",
+        "unidade": "reais",
+        "itens": [
+          {
+            "id": "exec-2013",
+            "rotulo": "2013",
+            "valor": 165752333.87,
+            "valorTexto": "R$ 165.752.333,87",
+            "pct": null,
+            "ano": "2013",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 236796764.7,
+                "valorTexto": "R$ 236.796.764,70"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 179013174.14,
+                "valorTexto": "R$ 179.013.174,14"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 179013174.14,
+                "valorTexto": "R$ 179.013.174,14"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 165752333.87,
+                "valorTexto": "R$ 165.752.333,87"
+              }
+            ]
+          },
+          {
+            "id": "exec-2014",
+            "rotulo": "2014",
+            "valor": 205951836.74,
+            "valorTexto": "R$ 205.951.836,74",
+            "pct": null,
+            "ano": "2014",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 249008000.0,
+                "valorTexto": "R$ 249.008.000,00"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 228498789.85,
+                "valorTexto": "R$ 228.498.789,85"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 227271604.85,
+                "valorTexto": "R$ 227.271.604,85"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 205951836.74,
+                "valorTexto": "R$ 205.951.836,74"
+              }
+            ]
+          },
+          {
+            "id": "exec-2015",
+            "rotulo": "2015",
+            "valor": 211643082.77,
+            "valorTexto": "R$ 211.643.082,77",
+            "pct": null,
+            "ano": "2015",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 253907000.0,
+                "valorTexto": "R$ 253.907.000,00"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 231651324.5,
+                "valorTexto": "R$ 231.651.324,50"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 219133960.62,
+                "valorTexto": "R$ 219.133.960,62"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 211643082.77,
+                "valorTexto": "R$ 211.643.082,77"
+              }
+            ]
+          },
+          {
+            "id": "exec-2016",
+            "rotulo": "2016",
+            "valor": 226467981.98,
+            "valorTexto": "R$ 226.467.981,98",
+            "pct": null,
+            "ano": "2016",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 280000000.0,
+                "valorTexto": "R$ 280.000.000,00"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 247915373.93,
+                "valorTexto": "R$ 247.915.373,93"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 233454117.96,
+                "valorTexto": "R$ 233.454.117,96"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 226467981.98,
+                "valorTexto": "R$ 226.467.981,98"
+              }
+            ]
+          },
+          {
+            "id": "exec-2017",
+            "rotulo": "2017",
+            "valor": 244010772.42,
+            "valorTexto": "R$ 244.010.772,42",
+            "pct": null,
+            "ano": "2017",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 304682000.0,
+                "valorTexto": "R$ 304.682.000,00"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 250867112.56,
+                "valorTexto": "R$ 250.867.112,56"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 250858471.56,
+                "valorTexto": "R$ 250.858.471,56"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 244010772.42,
+                "valorTexto": "R$ 244.010.772,42"
+              }
+            ]
+          },
+          {
+            "id": "exec-2018",
+            "rotulo": "2018",
+            "valor": 254830722.53,
+            "valorTexto": "R$ 254.830.722,53",
+            "pct": null,
+            "ano": "2018",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 350291000.0,
+                "valorTexto": "R$ 350.291.000,00"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 270283031.31,
+                "valorTexto": "R$ 270.283.031,31"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 269992178.63,
+                "valorTexto": "R$ 269.992.178,63"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 254830722.53,
+                "valorTexto": "R$ 254.830.722,53"
+              }
+            ]
+          },
+          {
+            "id": "exec-2019",
+            "rotulo": "2019",
+            "valor": 315706468.04,
+            "valorTexto": "R$ 315.706.468,04",
+            "pct": null,
+            "ano": "2019",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 384239490.7,
+                "valorTexto": "R$ 384.239.490,70"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 344110156.99,
+                "valorTexto": "R$ 344.110.156,99"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 334053518.78,
+                "valorTexto": "R$ 334.053.518,78"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 315706468.04,
+                "valorTexto": "R$ 315.706.468,04"
+              }
+            ]
+          },
+          {
+            "id": "exec-2020",
+            "rotulo": "2020",
+            "valor": 281731123.86,
+            "valorTexto": "R$ 281.731.123,86",
+            "pct": null,
+            "ano": "2020",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 358430000.0,
+                "valorTexto": "R$ 358.430.000,00"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 315486724.56,
+                "valorTexto": "R$ 315.486.724,56"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 312083651.33,
+                "valorTexto": "R$ 312.083.651,33"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 281731123.86,
+                "valorTexto": "R$ 281.731.123,86"
+              }
+            ]
+          },
+          {
+            "id": "exec-2021",
+            "rotulo": "2021",
+            "valor": 324400731.28,
+            "valorTexto": "R$ 324.400.731,28",
+            "pct": null,
+            "ano": "2021",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 364539933.0,
+                "valorTexto": "R$ 364.539.933,00"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 355314445.39,
+                "valorTexto": "R$ 355.314.445,39"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 354630779.45,
+                "valorTexto": "R$ 354.630.779,45"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 324400731.28,
+                "valorTexto": "R$ 324.400.731,28"
+              }
+            ]
+          },
+          {
+            "id": "exec-2022",
+            "rotulo": "2022",
+            "valor": 421620447.64,
+            "valorTexto": "R$ 421.620.447,64",
+            "pct": null,
+            "ano": "2022",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 482851428.66,
+                "valorTexto": "R$ 482.851.428,66"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 451701454.61,
+                "valorTexto": "R$ 451.701.454,61"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 440450031.08,
+                "valorTexto": "R$ 440.450.031,08"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 421620447.64,
+                "valorTexto": "R$ 421.620.447,64"
+              }
+            ]
+          },
+          {
+            "id": "exec-2023",
+            "rotulo": "2023",
+            "valor": 445977248.72,
+            "valorTexto": "R$ 445.977.248,72",
+            "pct": null,
+            "ano": "2023",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 523851713.35,
+                "valorTexto": "R$ 523.851.713,35"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 477848198.32,
+                "valorTexto": "R$ 477.848.198,32"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 465912949.56,
+                "valorTexto": "R$ 465.912.949,56"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 445977248.72,
+                "valorTexto": "R$ 445.977.248,72"
+              }
+            ]
+          },
+          {
+            "id": "exec-2024",
+            "rotulo": "2024",
+            "valor": 474310205.34,
+            "valorTexto": "R$ 474.310.205,34",
+            "pct": null,
+            "ano": "2024",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 518877731.41,
+                "valorTexto": "R$ 518.877.731,41"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 511651861.87,
+                "valorTexto": "R$ 511.651.861,87"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 494520044.46,
+                "valorTexto": "R$ 494.520.044,46"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 474310205.34,
+                "valorTexto": "R$ 474.310.205,34"
+              }
+            ]
+          },
+          {
+            "id": "exec-2025",
+            "rotulo": "2025",
+            "valor": 465454771.48,
+            "valorTexto": "R$ 465.454.771,48",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 540731983.27,
+                "valorTexto": "R$ 540.731.983,27"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 515601488.31,
+                "valorTexto": "R$ 515.601.488,31"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 485595391.64,
+                "valorTexto": "R$ 485.595.391,64"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 465454771.48,
+                "valorTexto": "R$ 465.454.771,48"
+              }
+            ]
+          },
+          {
+            "id": "exec-2026",
+            "rotulo": "2026",
+            "valor": 346713656.53,
+            "valorTexto": "R$ 346.713.656,53",
+            "pct": null,
+            "ano": "2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS DESPESAS” do balanço do exercício. Exercício não encerrado na data da coleta.",
+            "medidas": [
+              {
+                "id": "dotacao",
+                "rotulo": "Dotação atualizada",
+                "valor": 630732515.35,
+                "valorTexto": "R$ 630.732.515,35"
+              },
+              {
+                "id": "empenhada",
+                "rotulo": "Empenhada",
+                "valor": 519307305.34,
+                "valorTexto": "R$ 519.307.305,34"
+              },
+              {
+                "id": "liquidada",
+                "rotulo": "Liquidada",
+                "valor": 348894621.87,
+                "valorTexto": "R$ 348.894.621,87"
+              },
+              {
+                "id": "paga",
+                "rotulo": "Paga",
+                "valor": 346713656.53,
+                "valorTexto": "R$ 346.713.656,53"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "receita-por-exercicio",
+        "titulo": "Receita realizada por exercício",
+        "linhaFina": "Endpoint BalancoOrcamentario, linha “SUB-TOTAL DAS RECEITAS” de cada exercício.",
+        "grafico": "colunas",
+        "unidade": "reais",
+        "itens": [
+          {
+            "id": "rec-2013",
+            "rotulo": "2013",
+            "valor": 183641810.18,
+            "valorTexto": "R$ 183.641.810,18",
+            "pct": null,
+            "ano": "2013",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2014",
+            "rotulo": "2014",
+            "valor": 221062117.94,
+            "valorTexto": "R$ 221.062.117,94",
+            "pct": null,
+            "ano": "2014",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2015",
+            "rotulo": "2015",
+            "valor": 228637520.0,
+            "valorTexto": "R$ 228.637.520,00",
+            "pct": null,
+            "ano": "2015",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2016",
+            "rotulo": "2016",
+            "valor": 248871380.5,
+            "valorTexto": "R$ 248.871.380,50",
+            "pct": null,
+            "ano": "2016",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2017",
+            "rotulo": "2017",
+            "valor": 270922834.43,
+            "valorTexto": "R$ 270.922.834,43",
+            "pct": null,
+            "ano": "2017",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2018",
+            "rotulo": "2018",
+            "valor": 286419474.22,
+            "valorTexto": "R$ 286.419.474,22",
+            "pct": null,
+            "ano": "2018",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2019",
+            "rotulo": "2019",
+            "valor": 301562533.56,
+            "valorTexto": "R$ 301.562.533,56",
+            "pct": null,
+            "ano": "2019",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2020",
+            "rotulo": "2020",
+            "valor": 293531730.11,
+            "valorTexto": "R$ 293.531.730,11",
+            "pct": null,
+            "ano": "2020",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2021",
+            "rotulo": "2021",
+            "valor": 338639436.17,
+            "valorTexto": "R$ 338.639.436,17",
+            "pct": null,
+            "ano": "2021",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2022",
+            "rotulo": "2022",
+            "valor": 457266135.39,
+            "valorTexto": "R$ 457.266.135,39",
+            "pct": null,
+            "ano": "2022",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2023",
+            "rotulo": "2023",
+            "valor": 460233207.4,
+            "valorTexto": "R$ 460.233.207,40",
+            "pct": null,
+            "ano": "2023",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2024",
+            "rotulo": "2024",
+            "valor": 506710883.88,
+            "valorTexto": "R$ 506.710.883,88",
+            "pct": null,
+            "ano": "2024",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2025",
+            "rotulo": "2025",
+            "valor": 578596442.78,
+            "valorTexto": "R$ 578.596.442,78",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício.",
+            "medidas": []
+          },
+          {
+            "id": "rec-2026",
+            "rotulo": "2026",
+            "valor": 431583047.91,
+            "valorTexto": "R$ 431.583.047,91",
+            "pct": null,
+            "ano": "2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Linha “SUB-TOTAL DAS RECEITAS” do balanço do exercício. Exercício não encerrado na data da coleta.",
+            "medidas": []
+          }
+        ]
+      },
+      {
+        "id": "contas-de-receita",
+        "titulo": "Maiores contas de receita",
+        "linhaFina": "Endpoint ComparativoReceita. As oito maiores contas analíticas por valor realizado, com o código e o nome do próprio plano de contas. O percentual é a participação em R$ 4.807.678.554,47, soma de todas as 199 contas analíticas do período.",
+        "grafico": "barras",
+        "unidade": "reais",
+        "itens": [
+          {
+            "id": "rec-conta-1",
+            "rotulo": "6.2.1.2.1.01.01.01.001 Anotação de Responsabilidade Técnica",
+            "valor": 1673448024.32,
+            "valorTexto": "R$ 1.673.448.024,32",
+            "pct": 34.81,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no total realizado do período.",
+            "medidas": []
+          },
+          {
+            "id": "rec-conta-2",
+            "rotulo": "6.2.1.2.1.02.01.01.001 Nível Superior - Atual",
+            "valor": 1051382443.29,
+            "valorTexto": "R$ 1.051.382.443,29",
+            "pct": 21.87,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no total realizado do período.",
+            "medidas": []
+          },
+          {
+            "id": "rec-conta-3",
+            "rotulo": "6.2.1.2.1.08.01.13 Dívida Ativa decorrente de anuidade PF",
+            "valor": 290004080.36,
+            "valorTexto": "R$ 290.004.080,36",
+            "pct": 6.03,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no total realizado do período.",
+            "medidas": []
+          },
+          {
+            "id": "rec-conta-4",
+            "rotulo": "6.2.1.2.1.02.01.01.004 Anuidade Pessoas Físicas do Exercício",
+            "valor": 216464114.95,
+            "valorTexto": "R$ 216.464.114,95",
+            "pct": 4.5,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no total realizado do período.",
+            "medidas": []
+          },
+          {
+            "id": "rec-conta-5",
+            "rotulo": "6.2.1.2.1.08.01.14 Dívida Ativa decorrente de anuidade PJ",
+            "valor": 156636197.67,
+            "valorTexto": "R$ 156.636.197,67",
+            "pct": 3.26,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no total realizado do período.",
+            "medidas": []
+          },
+          {
+            "id": "rec-conta-6",
+            "rotulo": "6.2.1.2.1.02.02.01.001 Faixa 1 - Atual",
+            "valor": 124304066.57,
+            "valorTexto": "R$ 124.304.066,57",
+            "pct": 2.59,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no total realizado do período.",
+            "medidas": []
+          },
+          {
+            "id": "rec-conta-7",
+            "rotulo": "6.2.1.2.1.02.02.01.002 Faixa 2 - Atual",
+            "valor": 109593110.23,
+            "valorTexto": "R$ 109.593.110,23",
+            "pct": 2.28,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no total realizado do período.",
+            "medidas": []
+          },
+          {
+            "id": "rec-conta-8",
+            "rotulo": "6.2.1.2.1.02.02.01.007 Faixa 7 - Atual",
+            "valor": 102485577.41,
+            "valorTexto": "R$ 102.485.577,41",
+            "pct": 2.13,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no total realizado do período.",
+            "medidas": []
+          }
+        ]
+      },
+      {
+        "id": "plano-de-contas",
+        "titulo": "Maiores subgrupos de despesa",
+        "linhaFina": "Endpoints Empenhos e Pagamentos, agrupados pelo nó do plano de contas a que cada lançamento pertence. O percentual é a participação em R$ 4.685.124.618,83, soma dos 32 subgrupos com lançamento no período.",
+        "grafico": "barras",
+        "unidade": "reais",
+        "itens": [
+          {
+            "id": "subgrupo-1",
+            "rotulo": "6.2.2.1.1.01.04.09 SERVICOS TERCEIROS - PESSOAS JURÍDICAS",
+            "valor": 1235348949.17,
+            "valorTexto": "R$ 1.235.348.949,17",
+            "pct": 26.37,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "78.898 lançamentos, em 46 contas e 14 exercícios. Grupo: 6.2.2.1.1.01.04 OUTRAS DESPESAS CORRENTES.",
+            "medidas": []
+          },
+          {
+            "id": "subgrupo-2",
+            "rotulo": "6.2.2.1.1.01.01.01 REMUNERAÇÃO PESSOAL",
+            "valor": 1045352873.77,
+            "valorTexto": "R$ 1.045.352.873,77",
+            "pct": 22.31,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "2.490 lançamentos, em 17 contas e 14 exercícios. Grupo: 6.2.2.1.1.01.01 PESSOAL E ENCARGOS SOCIAIS.",
+            "medidas": []
+          },
+          {
+            "id": "subgrupo-3",
+            "rotulo": "6.2.2.1.1.01.05.02 CONTRIBUIÇÕES",
+            "valor": 955320498.25,
+            "valorTexto": "R$ 955.320.498,25",
+            "pct": 20.39,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "563 lançamentos, em 3 contas e 14 exercícios. Grupo: 6.2.2.1.1.01.05 TRIBUTÁRIAS E CONTRIBUTIVAS.",
+            "medidas": []
+          },
+          {
+            "id": "subgrupo-4",
+            "rotulo": "6.2.2.1.1.01.01.02 ENCARGOS PATRONAIS",
+            "valor": 310855136.4,
+            "valorTexto": "R$ 310.855.136,40",
+            "pct": 6.63,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "1.116 lançamentos, em 3 contas e 14 exercícios. Grupo: 6.2.2.1.1.01.01 PESSOAL E ENCARGOS SOCIAIS.",
+            "medidas": []
+          },
+          {
+            "id": "subgrupo-5",
+            "rotulo": "6.2.2.1.1.01.04.01 BENEFÍCIOS A PESSOAL",
+            "valor": 268282984.82,
+            "valorTexto": "R$ 268.282.984,82",
+            "pct": 5.73,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "1.782 lançamentos, em 4 contas e 14 exercícios. Grupo: 6.2.2.1.1.01.04 OUTRAS DESPESAS CORRENTES.",
+            "medidas": []
+          },
+          {
+            "id": "subgrupo-6",
+            "rotulo": "6.2.2.1.1.01.08.05 Parcerias e Convênios - Lei 13019/2014",
+            "valor": 163919729.93,
+            "valorTexto": "R$ 163.919.729,93",
+            "pct": 3.5,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "13.915 lançamentos, em 3 contas e 8 exercícios. Grupo: 6.2.2.1.1.01.08 TRANSFERÊNCIAS CORRENTES.",
+            "medidas": []
+          },
+          {
+            "id": "subgrupo-7",
+            "rotulo": "6.2.2.1.1.01.04.05 DIÁRIAS",
+            "valor": 160362325.0,
+            "valorTexto": "R$ 160.362.325,00",
+            "pct": 3.42,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "230.687 lançamentos, em 5 contas e 14 exercícios. Grupo: 6.2.2.1.1.01.04 OUTRAS DESPESAS CORRENTES.",
+            "medidas": []
+          },
+          {
+            "id": "subgrupo-8",
+            "rotulo": "6.2.2.1.1.01.04.08 DESPESA COM LOCOMOÇÃO",
+            "valor": 95975132.54,
+            "valorTexto": "R$ 95.975.132,54",
+            "pct": 2.05,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "169.977 lançamentos, em 6 contas e 14 exercícios. Grupo: 6.2.2.1.1.01.04 OUTRAS DESPESAS CORRENTES.",
+            "medidas": []
+          }
+        ]
+      },
+      {
+        "id": "remuneracao-por-conta",
+        "titulo": "Remuneração de pessoal, conta a conta",
+        "linhaFina": "Endpoint ComparativoDespesa. O subgrupo 6.2.2.1.1.01.01.01 REMUNERAÇÃO PESSOAL aberto nas contas analíticas do próprio plano de contas, que somam R$ 1.031.477.664,56 — o mesmo valor que o portal registra no nó do subgrupo. A figura traz as dez contas de maior valor realizado; ficaram de fora 8 contas analíticas, que somam R$ 4.799.732,19.",
+        "grafico": "barras",
+        "unidade": "reais",
+        "itens": [
+          {
+            "id": "rem-001",
+            "rotulo": "6.2.2.1.1.01.01.01.001 Salários",
+            "valor": 700509403.37,
+            "valorTexto": "R$ 700.509.403,37",
+            "pct": 67.91,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          },
+          {
+            "id": "rem-013",
+            "rotulo": "6.2.2.1.1.01.01.01.013 Ferias",
+            "valor": 90801564.93,
+            "valorTexto": "R$ 90.801.564,93",
+            "pct": 8.8,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          },
+          {
+            "id": "rem-006",
+            "rotulo": "6.2.2.1.1.01.01.01.006 Gratificação de Natal  13º Salário",
+            "valor": 68183265.06,
+            "valorTexto": "R$ 68.183.265,06",
+            "pct": 6.61,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          },
+          {
+            "id": "rem-004",
+            "rotulo": "6.2.2.1.1.01.01.01.004 Gratificação de Função",
+            "valor": 55195157.54,
+            "valorTexto": "R$ 55.195.157,54",
+            "pct": 5.35,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          },
+          {
+            "id": "rem-002",
+            "rotulo": "6.2.2.1.1.01.01.01.002 Gratificação por Tempo de Serviço",
+            "valor": 34991428.98,
+            "valorTexto": "R$ 34.991.428,98",
+            "pct": 3.39,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          },
+          {
+            "id": "rem-017",
+            "rotulo": "6.2.2.1.1.01.01.01.017 PDV - Programa de Demissão Voluntária",
+            "valor": 34585202.18,
+            "valorTexto": "R$ 34.585.202,18",
+            "pct": 3.35,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          },
+          {
+            "id": "rem-005",
+            "rotulo": "6.2.2.1.1.01.01.01.005 Outras Gratificações",
+            "valor": 29193390.14,
+            "valorTexto": "R$ 29.193.390,14",
+            "pct": 2.83,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          },
+          {
+            "id": "rem-009",
+            "rotulo": "6.2.2.1.1.01.01.01.009 Horas Extras",
+            "valor": 7075657.78,
+            "valorTexto": "R$ 7.075.657,78",
+            "pct": 0.69,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          },
+          {
+            "id": "rem-008",
+            "rotulo": "6.2.2.1.1.01.01.01.008 1/3 de Férias - CF/88",
+            "valor": 3588299.56,
+            "valorTexto": "R$ 3.588.299,56",
+            "pct": 0.35,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          },
+          {
+            "id": "rem-018",
+            "rotulo": "6.2.2.1.1.01.01.01.018 Gratificação por participação em comissões especiais",
+            "valor": 2554562.83,
+            "valorTexto": "R$ 2.554.562,83",
+            "pct": 0.25,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo REMUNERAÇÃO PESSOAL.",
+            "medidas": []
+          }
+        ]
+      },
+      {
+        "id": "diarias-e-locomocao",
+        "titulo": "Diárias e locomoção, conta a conta",
+        "linhaFina": "Endpoint ComparativoDespesa. Os subgrupos 6.2.2.1.1.01.04.05 DIÁRIAS e 6.2.2.1.1.01.04.08 DESPESA COM LOCOMOÇÃO abertos nas contas analíticas do plano de contas, que separam por quem recebe. O percentual é a participação na soma dos dois subgrupos, R$ 251.645.087,92. Ficaram de fora 5 contas do subgrupo de locomoção, cujo valor somado no período é R$ 2.463,70; elas permanecem no denominador.",
+        "grafico": "barras",
+        "unidade": "reais",
+        "itens": [
+          {
+            "id": "viag-6-2-2-1-1-01-04-05-002",
+            "rotulo": "6.2.2.1.1.01.04.05.002 Diarias com Conselheiros",
+            "valor": 73055508.16,
+            "valorTexto": "R$ 73.055.508,16",
+            "pct": 29.03,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Subgrupo DIÁRIAS.",
+            "medidas": []
+          },
+          {
+            "id": "viag-6-2-2-1-1-01-04-08-002",
+            "rotulo": "6.2.2.1.1.01.04.08.002 Locomoção de Conselheiros",
+            "valor": 58236390.04,
+            "valorTexto": "R$ 58.236.390,04",
+            "pct": 23.14,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Subgrupo DESPESA COM LOCOMOÇÃO.",
+            "medidas": []
+          },
+          {
+            "id": "viag-6-2-2-1-1-01-04-05-001",
+            "rotulo": "6.2.2.1.1.01.04.05.001 Diarias com Funcionários",
+            "valor": 35440171.84,
+            "valorTexto": "R$ 35.440.171,84",
+            "pct": 14.08,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Subgrupo DIÁRIAS.",
+            "medidas": []
+          },
+          {
+            "id": "viag-6-2-2-1-1-01-04-05-004",
+            "rotulo": "6.2.2.1.1.01.04.05.004 Diarias com Inspetores",
+            "valor": 30424173.15,
+            "valorTexto": "R$ 30.424.173,15",
+            "pct": 12.09,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Subgrupo DIÁRIAS.",
+            "medidas": []
+          },
+          {
+            "id": "viag-6-2-2-1-1-01-04-08-008",
+            "rotulo": "6.2.2.1.1.01.04.08.008 Locomoção de Inspetores",
+            "valor": 20245050.26,
+            "valorTexto": "R$ 20.245.050,26",
+            "pct": 8.05,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Subgrupo DESPESA COM LOCOMOÇÃO.",
+            "medidas": []
+          },
+          {
+            "id": "viag-6-2-2-1-1-01-04-05-005",
+            "rotulo": "6.2.2.1.1.01.04.05.005 Pagamento de Jeton",
+            "valor": 10332296.49,
+            "valorTexto": "R$ 10.332.296,49",
+            "pct": 4.11,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Subgrupo DIÁRIAS.",
+            "medidas": []
+          },
+          {
+            "id": "viag-6-2-2-1-1-01-04-08-001",
+            "rotulo": "6.2.2.1.1.01.04.08.001 Locomoção de Funcionários",
+            "valor": 8904071.57,
+            "valorTexto": "R$ 8.904.071,57",
+            "pct": 3.54,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Subgrupo DESPESA COM LOCOMOÇÃO.",
+            "medidas": []
+          },
+          {
+            "id": "viag-6-2-2-1-1-01-04-05-003",
+            "rotulo": "6.2.2.1.1.01.04.05.003 Diarias com Colaboradores",
+            "valor": 8312736.18,
+            "valorTexto": "R$ 8.312.736,18",
+            "pct": 3.3,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Subgrupo DIÁRIAS.",
+            "medidas": []
+          },
+          {
+            "id": "viag-6-2-2-1-1-01-04-08-003",
+            "rotulo": "6.2.2.1.1.01.04.08.003 Locomoção de Colaboradores",
+            "valor": 6692226.53,
+            "valorTexto": "R$ 6.692.226,53",
+            "pct": 2.66,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Subgrupo DESPESA COM LOCOMOÇÃO.",
+            "medidas": []
+          }
+        ]
+      },
+      {
+        "id": "servicos-de-terceiros",
+        "titulo": "Serviços de terceiros, conta a conta",
+        "linhaFina": "Endpoint ComparativoDespesa. O maior subgrupo de despesa, 6.2.2.1.1.01.04.09 SERVICOS TERCEIROS - PESSOAS JURÍDICAS, aberto nas contas analíticas do plano de contas, que somam R$ 1.062.952.068,66. A figura traz as dez de maior valor realizado; ficaram de fora 50 contas analíticas, que somam R$ 161.850.666,12.",
+        "grafico": "barras",
+        "unidade": "reais",
+        "itens": [
+          {
+            "id": "serv-056",
+            "rotulo": "6.2.2.1.1.01.04.09.056 Demais Serviços de Terceiros",
+            "valor": 241042207.01,
+            "valorTexto": "R$ 241.042.207,01",
+            "pct": 22.68,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          },
+          {
+            "id": "serv-005",
+            "rotulo": "6.2.2.1.1.01.04.09.005 Serviços de Informática",
+            "valor": 220830744.29,
+            "valorTexto": "R$ 220.830.744,29",
+            "pct": 20.78,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          },
+          {
+            "id": "serv-055",
+            "rotulo": "6.2.2.1.1.01.04.09.055 Convênio c/Associações - Uso e Espaço",
+            "valor": 102132223.43,
+            "valorTexto": "R$ 102.132.223,43",
+            "pct": 9.61,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          },
+          {
+            "id": "serv-026",
+            "rotulo": "6.2.2.1.1.01.04.09.026 Locação de Bens Móveis, Máquinas e Equipamentos",
+            "valor": 86626568.75,
+            "valorTexto": "R$ 86.626.568,75",
+            "pct": 8.15,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          },
+          {
+            "id": "serv-018",
+            "rotulo": "6.2.2.1.1.01.04.09.018 Serviço de Divulgação Institucional",
+            "valor": 64717431.52,
+            "valorTexto": "R$ 64.717.431,52",
+            "pct": 6.09,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          },
+          {
+            "id": "serv-059",
+            "rotulo": "6.2.2.1.1.01.04.09.059 Termo de Colaboração - Instalação e Funcionamento",
+            "valor": 56800333.24,
+            "valorTexto": "R$ 56.800.333,24",
+            "pct": 5.34,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          },
+          {
+            "id": "serv-022",
+            "rotulo": "6.2.2.1.1.01.04.09.022 Demais Serviços Profissionais",
+            "valor": 47510053.66,
+            "valorTexto": "R$ 47.510.053,66",
+            "pct": 4.47,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          },
+          {
+            "id": "serv-009",
+            "rotulo": "6.2.2.1.1.01.04.09.009 Serviços de Segurança Predial e Preventiva",
+            "valor": 38107297.22,
+            "valorTexto": "R$ 38.107.297,22",
+            "pct": 3.59,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          },
+          {
+            "id": "serv-036",
+            "rotulo": "6.2.2.1.1.01.04.09.036 Serviços de Telecomunicações",
+            "valor": 27104615.65,
+            "valorTexto": "R$ 27.104.615,65",
+            "pct": 2.55,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          },
+          {
+            "id": "serv-052",
+            "rotulo": "6.2.2.1.1.01.04.09.052 Festividades, Congressos e Exposições",
+            "valor": 16229927.77,
+            "valorTexto": "R$ 16.229.927,77",
+            "pct": 1.53,
+            "ano": "2013–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Participação no subgrupo SERVICOS TERCEIROS - PESSOAS JURÍDICAS.",
+            "medidas": []
+          }
+        ]
+      },
+      {
+        "id": "empenhos-e-anulacoes",
+        "titulo": "Empenhos e anulações por exercício",
+        "linhaFina": "Endpoint Empenhos. Os campos VALOR e VALOR_ANULADO de cada registro, somados por exercício. É outro agregado, de outro endpoint, e não se compara com o balanço acima.",
+        "grafico": "colunas",
+        "unidade": "reais",
+        "itens": [
+          {
+            "id": "anul-2013",
+            "rotulo": "2013",
+            "valor": 285046105.05,
+            "valorTexto": "R$ 285.046.105,05",
+            "pct": null,
+            "ano": "2013",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 285.046.105,05. Soma do campo VALOR_ANULADO: R$ 106.032.930,91.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 285046105.05,
+                "valorTexto": "R$ 285.046.105,05"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 106032930.91,
+                "valorTexto": "R$ 106.032.930,91"
+              }
+            ]
+          },
+          {
+            "id": "anul-2014",
+            "rotulo": "2014",
+            "valor": 321810526.43,
+            "valorTexto": "R$ 321.810.526,43",
+            "pct": null,
+            "ano": "2014",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 321.810.526,43. Soma do campo VALOR_ANULADO: R$ 93.311.736,58.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 321810526.43,
+                "valorTexto": "R$ 321.810.526,43"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 93311736.58,
+                "valorTexto": "R$ 93.311.736,58"
+              }
+            ]
+          },
+          {
+            "id": "anul-2015",
+            "rotulo": "2015",
+            "valor": 269128370.56,
+            "valorTexto": "R$ 269.128.370,56",
+            "pct": null,
+            "ano": "2015",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 269.128.370,56. Soma do campo VALOR_ANULADO: R$ 37.477.046,06.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 269128370.56,
+                "valorTexto": "R$ 269.128.370,56"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 37477046.06,
+                "valorTexto": "R$ 37.477.046,06"
+              }
+            ]
+          },
+          {
+            "id": "anul-2016",
+            "rotulo": "2016",
+            "valor": 316205479.78,
+            "valorTexto": "R$ 316.205.479,78",
+            "pct": null,
+            "ano": "2016",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 316.205.479,78. Soma do campo VALOR_ANULADO: R$ 68.290.105,85.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 316205479.78,
+                "valorTexto": "R$ 316.205.479,78"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 68290105.85,
+                "valorTexto": "R$ 68.290.105,85"
+              }
+            ]
+          },
+          {
+            "id": "anul-2017",
+            "rotulo": "2017",
+            "valor": 267485926.81,
+            "valorTexto": "R$ 267.485.926,81",
+            "pct": null,
+            "ano": "2017",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 267.485.926,81. Soma do campo VALOR_ANULADO: R$ 16.618.814,25.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 267485926.81,
+                "valorTexto": "R$ 267.485.926,81"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 16618814.25,
+                "valorTexto": "R$ 16.618.814,25"
+              }
+            ]
+          },
+          {
+            "id": "anul-2018",
+            "rotulo": "2018",
+            "valor": 292013664.2,
+            "valorTexto": "R$ 292.013.664,20",
+            "pct": null,
+            "ano": "2018",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 292.013.664,20. Soma do campo VALOR_ANULADO: R$ 21.730.632,89.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 292013664.2,
+                "valorTexto": "R$ 292.013.664,20"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 21730632.89,
+                "valorTexto": "R$ 21.730.632,89"
+              }
+            ]
+          },
+          {
+            "id": "anul-2019",
+            "rotulo": "2019",
+            "valor": 397585901.86,
+            "valorTexto": "R$ 397.585.901,86",
+            "pct": null,
+            "ano": "2019",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 397.585.901,86. Soma do campo VALOR_ANULADO: R$ 53.475.744,87.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 397585901.86,
+                "valorTexto": "R$ 397.585.901,86"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 53475744.87,
+                "valorTexto": "R$ 53.475.744,87"
+              }
+            ]
+          },
+          {
+            "id": "anul-2020",
+            "rotulo": "2020",
+            "valor": 374424274.84,
+            "valorTexto": "R$ 374.424.274,84",
+            "pct": null,
+            "ano": "2020",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 374.424.274,84. Soma do campo VALOR_ANULADO: R$ 58.937.550,28.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 374424274.84,
+                "valorTexto": "R$ 374.424.274,84"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 58937550.28,
+                "valorTexto": "R$ 58.937.550,28"
+              }
+            ]
+          },
+          {
+            "id": "anul-2021",
+            "rotulo": "2021",
+            "valor": 543034483.64,
+            "valorTexto": "R$ 543.034.483,64",
+            "pct": null,
+            "ano": "2021",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 543.034.483,64. Soma do campo VALOR_ANULADO: R$ 187.720.038,25.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 543034483.64,
+                "valorTexto": "R$ 543.034.483,64"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 187720038.25,
+                "valorTexto": "R$ 187.720.038,25"
+              }
+            ]
+          },
+          {
+            "id": "anul-2022",
+            "rotulo": "2022",
+            "valor": 656799084.75,
+            "valorTexto": "R$ 656.799.084,75",
+            "pct": null,
+            "ano": "2022",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 656.799.084,75. Soma do campo VALOR_ANULADO: R$ 205.097.630,14.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 656799084.75,
+                "valorTexto": "R$ 656.799.084,75"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 205097630.14,
+                "valorTexto": "R$ 205.097.630,14"
+              }
+            ]
+          },
+          {
+            "id": "anul-2023",
+            "rotulo": "2023",
+            "valor": 600747764.91,
+            "valorTexto": "R$ 600.747.764,91",
+            "pct": null,
+            "ano": "2023",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 600.747.764,91. Soma do campo VALOR_ANULADO: R$ 122.899.566,59.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 600747764.91,
+                "valorTexto": "R$ 600.747.764,91"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 122899566.59,
+                "valorTexto": "R$ 122.899.566,59"
+              }
+            ]
+          },
+          {
+            "id": "anul-2024",
+            "rotulo": "2024",
+            "valor": 614805137.84,
+            "valorTexto": "R$ 614.805.137,84",
+            "pct": null,
+            "ano": "2024",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 614.805.137,84. Soma do campo VALOR_ANULADO: R$ 103.153.275,97.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 614805137.84,
+                "valorTexto": "R$ 614.805.137,84"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 103153275.97,
+                "valorTexto": "R$ 103.153.275,97"
+              }
+            ]
+          },
+          {
+            "id": "anul-2025",
+            "rotulo": "2025",
+            "valor": 761964077.03,
+            "valorTexto": "R$ 761.964.077,03",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 761.964.077,03. Soma do campo VALOR_ANULADO: R$ 246.362.588,72.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 761964077.03,
+                "valorTexto": "R$ 761.964.077,03"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 246362588.72,
+                "valorTexto": "R$ 246.362.588,72"
+              }
+            ]
+          },
+          {
+            "id": "anul-2026",
+            "rotulo": "2026",
+            "valor": 618440557.34,
+            "valorTexto": "R$ 618.440.557,34",
+            "pct": null,
+            "ano": "2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "Soma do campo VALOR: R$ 618.440.557,34. Soma do campo VALOR_ANULADO: R$ 99.133.252,00. Exercício não encerrado na data da coleta.",
+            "medidas": [
+              {
+                "id": "empenhado",
+                "rotulo": "Valor empenhado",
+                "valor": 618440557.34,
+                "valorTexto": "R$ 618.440.557,34"
+              },
+              {
+                "id": "anulado",
+                "rotulo": "Valor anulado",
+                "valor": 99133252.0,
+                "valorTexto": "R$ 99.133.252,00"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "centros-de-custo-2025",
+        "titulo": "Maiores centros de custo do exercício de 2025",
+        "linhaFina": "Endpoint DespesasCentroCusto. Os dez maiores centros de custo do último exercício encerrado, com o nome grafado como a API o devolve. Sem percentual: o portal não publica o total do exercício por centro de custo, e emprestar denominador de outro endpoint daria uma participação que não existe na origem.",
+        "grafico": "barras",
+        "unidade": "reais",
+        "itens": [
+          {
+            "id": "cc-2025-1",
+            "rotulo": "Não utilizar - UNIDADE FINANCEIRA E CONTABIL - UFC",
+            "valor": 208597589.61,
+            "valorTexto": "R$ 208.597.589,61",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "23 operações no exercício.",
+            "medidas": []
+          },
+          {
+            "id": "cc-2025-2",
+            "rotulo": "GERENCIA DE GESTAO DE PESSOAS - GGP",
+            "valor": 85866559.74,
+            "valorTexto": "R$ 85.866.559,74",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "35 operações no exercício.",
+            "medidas": []
+          },
+          {
+            "id": "cc-2025-3",
+            "rotulo": "GERENCIA EXECUTIVA - GEX",
+            "valor": 46189983.36,
+            "valorTexto": "R$ 46.189.983,36",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "17 operações no exercício.",
+            "medidas": []
+          },
+          {
+            "id": "cc-2025-4",
+            "rotulo": "GERENCIA DE DESENVOLVIMENTO E EXECUÇAO DE PROJETOS - GDEP",
+            "valor": 45350583.93,
+            "valorTexto": "R$ 45.350.583,93",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "18 operações no exercício.",
+            "medidas": []
+          },
+          {
+            "id": "cc-2025-5",
+            "rotulo": "Não utilizar - UNIDADE DE ANALISE E CONTROLE DE PARCERIAS - UAP",
+            "valor": 33500129.95,
+            "valorTexto": "R$ 33.500.129,95",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "18 operações no exercício.",
+            "medidas": []
+          },
+          {
+            "id": "cc-2025-6",
+            "rotulo": "SECRETARIA EXECUTIVA - SECEX",
+            "valor": 28117609.51,
+            "valorTexto": "R$ 28.117.609,51",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "25 operações no exercício.",
+            "medidas": []
+          },
+          {
+            "id": "cc-2025-7",
+            "rotulo": "Não utilizar - GERENCIA DE EXPERIENCIA E JORNADA - GEJ",
+            "valor": 26289733.88,
+            "valorTexto": "R$ 26.289.733,88",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "18 operações no exercício.",
+            "medidas": []
+          },
+          {
+            "id": "cc-2025-8",
+            "rotulo": "GERENCIA DE ENGENHARIA - GENG",
+            "valor": 25357129.68,
+            "valorTexto": "R$ 25.357.129,68",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "22 operações no exercício.",
+            "medidas": []
+          },
+          {
+            "id": "cc-2025-9",
+            "rotulo": "UNIDADE DE SERVIÇOS E MANUTENÇÃO - USM",
+            "valor": 24521932.61,
+            "valorTexto": "R$ 24.521.932,61",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "36 operações no exercício.",
+            "medidas": []
+          },
+          {
+            "id": "cc-2025-10",
+            "rotulo": "Não utilizar - GERENCIA DE EVENTOS - GEV",
+            "valor": 20608028.97,
+            "valorTexto": "R$ 20.608.028,97",
+            "pct": null,
+            "ano": "2025",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "20 operações no exercício.",
+            "medidas": []
+          }
+        ]
+      },
+      {
+        "id": "nao-apurado",
+        "titulo": "O que não foi possível apurar nesta base",
+        "linhaFina": "Em cada linha está a consulta feita e o que a API devolveu nela.",
+        "grafico": null,
+        "unidade": "registros",
+        "itens": [
+          {
+            "id": "lacuna-comissao",
+            "rotulo": "Conta 6.2.2.1.1.01.01.01.003 Cargo em Comissão",
+            "valor": 0.0,
+            "valorTexto": "R$ 0,00 realizado nos 16 exercícios",
+            "pct": null,
+            "ano": "2011–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "A conta consta do plano de contas e aparece no Comparativo de Despesa nos 16 exercícios de 2011 a 2026, com valor realizado devolvido de R$ 0,00 em todos eles; o valor orçado devolvido é R$ 0,00 em quinze deles e R$ 27,22 no exercício de 2013. As demais contas de remuneração são devolvidas pelo tipo de verba, e o vínculo de quem recebe não é um campo devolvido pela API: com os campos disponíveis, não foi possível apurar aqui a separação entre quadro efetivo e cargo comissionado.",
+            "medidas": []
+          },
+          {
+            "id": "lacuna-passagens",
+            "rotulo": "Subgrupo 6.2.2.1.1.01.04.06 PASSAGENS",
+            "valor": 0.0,
+            "valorTexto": "R$ 0,00 em 45 registros",
+            "pct": null,
+            "ano": "2012–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "O subgrupo consta com as contas Passagens de Funcionários, de Conselheiros e de Colaboradores, que aparecem nos 15 exercícios de 2012 a 2026, e o valor realizado devolvido é R$ 0,00 em todos eles. Não foi possível apurar aqui um valor gasto com passagens.",
+            "medidas": []
+          },
+          {
+            "id": "lacuna-hospedagem",
+            "rotulo": "Subgrupo 6.2.2.1.1.01.04.07 HOSPEDAGENS E ALIMENTAÇÃO",
+            "valor": 0.0,
+            "valorTexto": "R$ 0,00 em 45 registros",
+            "pct": null,
+            "ano": "2012–2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "O subgrupo consta com as contas de Funcionários, de Conselheiros e de Colaboradores, que aparecem nos 15 exercícios de 2012 a 2026, e o valor realizado devolvido é R$ 0,00 em todos eles. Não foi possível apurar aqui um valor gasto com hospedagem e alimentação.",
+            "medidas": []
+          },
+          {
+            "id": "lacuna-quadro",
+            "rotulo": "Endpoint QuadrosPessoas",
+            "valor": null,
+            "valorTexto": "Lista sem registros",
+            "pct": null,
+            "ano": "2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "A consulta ao endpoint devolveu uma lista sem registros na coleta de 08/09/2026. Sem esse dado, não foi possível relacionar aqui a despesa de pessoal a uma quantidade de pessoas.",
+            "medidas": []
+          },
+          {
+            "id": "lacuna-conselheiros",
+            "rotulo": "Endpoint Conselheiros",
+            "valor": null,
+            "valorTexto": "Lista sem registros",
+            "pct": null,
+            "ano": "2026",
+            "fonteId": "crea-sp-transparencia",
+            "detalhe": "A consulta ao endpoint devolveu uma lista sem registros na coleta de 08/09/2026. Sem esse dado, não foi possível relacionar aqui as diárias e a locomoção de conselheiros a uma quantidade de pessoas.",
+            "medidas": []
+          }
+        ]
+      }
+    ]
+  }
+}

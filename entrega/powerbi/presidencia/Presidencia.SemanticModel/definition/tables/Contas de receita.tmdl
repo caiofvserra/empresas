@@ -1,0 +1,44 @@
+/// Tem as oito maiores contas de receita de 2013 a hoje, com o valor e a parte de cada uma. Dado real.
+table 'Contas de receita'
+	lineageTag: 5a7e6465-f6fe-5c53-95c1-22cddc4c3c32
+
+	column Conta
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Conta
+		sortByColumn: Ordem
+		lineageTag: 28819183-9c00-5bdd-83f2-fb6b972c4a90
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: c7981396-0dac-5578-993a-12debca49c4d
+
+	column 'Parte (%)'
+		dataType: double
+		formatString: 0.0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Parte (%)
+		lineageTag: b277ae5a-60ec-5cec-8367-ab828537bf6d
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: fc02ea95-83fa-57f3-8af6-e61d2d0389fa
+
+	partition 'Contas de receita' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "contas-de-receita.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Conta", type text}, {"Valor", type number}, {"Parte (%)", type number}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos
