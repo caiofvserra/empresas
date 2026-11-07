@@ -120,6 +120,33 @@ As outras fontes são:
 
 A API de transparência ainda não publica conselheiros nem atas. Até lá, o jeton pago serve de aproximação da presença.
 
+### Cópia diária do relatório do GovAdm (07/11/2026)
+
+O Relatório de Processos do GovAdm mostra só a fase de hoje. Para saber há quantos dias cada processo está na fase, é preciso guardar uma cópia por dia e ver quando a fase mudou. Isso é feito em dois passos, todos os dias, na máquina que já roda o extracao-govadm:
+
+```bat
+.venv\Scripts\python main.py diario
+node --import tsx C:\caminho\empresas\scripts\govadm-diario.ts --pasta C:\caminho\extracao-govadm\saida
+```
+
+O primeiro passo baixa o relatório das nove câmaras e grava `saida\relatorio_processos_AAAAMMDD_HHMM_limpo.csv`. O segundo lê as cópias de dias que ainda não entraram no histórico e grava em `var/govadm`, fora do Git:
+
+- `historico.json`: os períodos de cada processo em cada fase e lotação, com o início e o fim de cada um, e as lotações que vieram em cada cópia;
+- `dias-na-fase.csv`: cada processo na fase atual, com os dias, o responsável e o cargo, para a base interna e o Power BI;
+- `fases-AAAA-MM-DD.csv`: o quadro do dia por câmara e fase, com o número de processos, a mediana de dias, quantos passam de 90 dias e quantos têm início desconhecido. Só números.
+
+Regras (`scripts/integrations/govadm.ts`, com teste):
+
+- O período começa no dia da cópia em que a fase ou a lotação mudou. Trocar só o responsável não reinicia a contagem.
+- Na primeira cópia, ninguém sabe desde quando o processo está na fase: os dias contam a partir dela e o período fica marcado como "início desconhecido", o que quer dizer "pelo menos esses dias". A marca some à medida que os processos mudam de fase.
+- Processo que sai do relatório (arquivado ou fora das câmaras) fecha o período no dia da cópia. Se a câmara dele faltou na extração, nada fecha: o processo segue na fase, e o script avisa quais câmaras faltaram. Processo que some numa cópia e volta igual na seguinte não perde os dias.
+- Os arquivados ficam de fora, como no extracao-govadm.
+- Cada dia entra uma vez, com o último arquivo do dia. Cópia de um dia anterior à última registrada é ignorada, com aviso: o histórico só anda para a frente. Sem cópia num dia (feriado, falha), a mudança entra no dia seguinte, com um dia de imprecisão.
+- O histórico é gravado a cada dia lido, e um arquivo com problema não desfaz os dias anteriores.
+- As 17 fases do GovAdm ficam como vêm. Juntar em quatro fatias (Manifestação, Pauta, Em Posse, P/ Análise) é decisão da SUPCOL, pendente no `config.toml` do extracao-govadm.
+
+O painel ainda não tem bloco de dias na fase: o cenário demonstrativo do Conselho só tem o status do Votenet. O bloco entra quando a base interna receber `dias-na-fase.csv`, depois de duas conferências: se o número do processo no GovAdm é o mesmo do SEI, e as siglas das câmaras nas duas fontes (CEEAS e CAGE aparecem de jeitos diferentes).
+
 ## O que foi conferido no cenário
 
 | Ponto | O que havia | O que foi feito |

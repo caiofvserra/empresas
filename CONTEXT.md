@@ -124,6 +124,14 @@ _Avoid_: andamento, fase (quando se fala do colegiado inteiro)
 Onde a tramitação está: aguardando distribuição, distribuído ao relator, em revisão, assinado, pautado, pedido de vista, impedimento, diligência ou votado. Cada status está com uma pessoa: o relator, o conselheiro que pediu vista ou um funcionário da assessoria.
 _Avoid_: fase do GovAdm (são listas diferentes), etapa
 
+**Fase do GovAdm**:
+Onde o processo está no GovAdm, como aparece no Relatório de Processos: são 17 fases (manifestação, emissão de parecer, relato, análise, designação e outras), que cobrem também o que acontece antes do Votenet e depois do voto. Não é o status do Votenet.
+_Avoid_: status (quando se fala do GovAdm), etapa
+
+**Cópia diária do GovAdm**:
+O Relatório de Processos do GovAdm guardado uma vez por dia, para ver quando cada processo mudou de fase. Dela sai o período na fase: de quando o processo entrou na fase atual até hoje.
+_Avoid_: foto (a foto é mensal e das empresas), snapshot
+
 **Processo esperando voto**:
 O processo que entrou num colegiado e ainda não foi votado na data. Juntos, formam a fila do colegiado, do mais parado ao menos. É estoque, nunca tem acumulado do ano.
 _Avoid_: estoque de processos, passivo, backlog, processo em julgamento
