@@ -1,0 +1,35 @@
+/// Guarda a receita de cada dia útil por tipo. O total de cada mês é o real; a divisão pelos dias é demonstrativa (em produção, a baixa dos boletos no CreaNet).
+table 'Arrecadação'
+	isHidden
+	lineageTag: c5feff04-b529-57fe-8413-ccfca76cb8a9
+
+	column Dia
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Dia
+		lineageTag: acf7a8eb-7cb6-5cbd-a747-af53a5d0c31e
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		lineageTag: 03d22b95-3550-529f-9c30-2c5de2d1cc3a
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: 3d3f873b-da82-5ea1-8c58-5253cef5168a
+
+	partition 'Arrecadação' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "arrecadacao.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Dia", type date}, {"Tipo", type text}, {"Valor", type number}}, "pt-BR")
+				in
+				    Tipos

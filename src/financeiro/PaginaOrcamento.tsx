@@ -4,38 +4,46 @@ import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco, Indicador, Selo } from '../cockpit/ui';
 import type { Evolucao } from '../painel/evolucao';
 import { despesaPublicada } from '../cockpit/publico';
-import { change, g } from '../gestao/comum';
-import { DespesaPorAtivo, Diarias, ExecucaoAno, FimMeio, Fornecedores, Naturezas, Pessoal, SedeTerritorio, Vencimentos, exportarDiarias, exportarExecucao, exportarFimMeio, exportarFornecedores, exportarNaturezas, exportarPessoal, exportarSede, exportarVencimentos } from './blocos-orcamento';
+import { execucaoDoAno } from '../domain/financeiro';
+import { Contratos, DespesaPorAtivo, Diarias, ExecucaoAno, Fornecedores, Grupos, Resultado, abrirCategoria, abrirContratos, exportarContratos, exportarDiarias, exportarExecucao, exportarFornecedores, exportarGrupos, exportarResultado } from './blocos-orcamento';
+import { contratosQueTerminam, despesaDoMes, diariasNoPeriodo, fin, fonteReal, mesDaData, mesesAte, nomesMesLongo, receitaDoMes } from './dados';
+import './financeiro.css';
 
-/** Painel de Gestão do Conselho, página 2: como o orçamento do ano está sendo executado e em que o Conselho gasta. */
+/**
+ * Painel Financeiro, página 4 (07/11/2026): como o orçamento do ano está sendo executado, em que o Conselho gasta, o resultado de
+ * cada ano, quem recebe diárias, os maiores fornecedores e os contratos que terminam. Tudo REAL, da Transparência do Crea-SP, do
+ * estado inteiro: a regional e o município do alto da tela não mudam esta página.
+ */
 export default function PaginaOrcamento({ ctx }: { ctx: CockpitCtx }) {
-  const c = ctx.conselho, gest = g(ctx), { tokens } = ctx;
-  // Mesma conta da série do cartão: com uma regional escolhida, só a despesa lançada nela (sem a sede).
-  const despesa = gest.despesaMensal.slice(-12).reduce((sum, value) => sum + value, 0), despesaAntes = gest.despesaMensal.slice(-24, -12).reduce((sum, value) => sum + value, 0);
-  const diarias = c.diarias.reduce((sum, row) => sum + row.valor, 0), diariasAntes = c.diarias.reduce((sum, row) => sum + row.antes, 0);
-  const ano = gest.despesaAcumulada.filter(row => row.realizado !== null).at(-1), execucao = ano?.previsto ? ano.realizado! / ano.previsto * 100 : null;
-  const series = useMemo(() => {
-    const mil = (value: number) => (value / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
-    return { despesa: { tipo: 'fluxo', meses: gest.meses, valores: gest.despesaMensal, fmt: brl, curto: mil, unidade: 'em R$ milhões', goodUp: false } as Evolucao,
-      diarias: { tipo: 'fluxo', meses: gest.meses, valores: gest.diariasMensais, fmt: brl, curto: (value: number) => (value / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 0 }), unidade: 'em R$ mil', goodUp: false } as Evolucao };
-  }, [gest]);
-  return <div className="ck-grid ck-grid-cs-orcamento">
+  const { tokens, period } = ctx, mes = mesDaData(ctx.anchor), meses = useMemo(() => mesesAte(mes, period), [mes, period]), antes = meses.map(m => `${Number(m.slice(0, 4)) - 1}${m.slice(4)}`);
+  const somaD = (lista: string[], grupo?: string) => lista.reduce((s, m) => s + despesaDoMes(m, grupo), 0), somaR = (lista: string[]) => lista.reduce((s, m) => s + receitaDoMes(m), 0);
+  const variacao = (a: number, b: number) => b ? (a / b - 1) * 100 : null;
+  const despesa = somaD(meses), despesaAntes = somaD(antes), receita = somaR(meses), resultado = receita - despesa, resultadoAntes = somaR(antes) - despesaAntes;
+  const deslocamento = somaD(meses, 'Diárias e deslocamento'), deslocamentoAntes = somaD(antes, 'Diárias e deslocamento');
+  const pessoas = useMemo(() => diariasNoPeriodo(fin, meses), [meses]), conselheiros = pessoas.filter(p => p.categoria === 'Conselheiros' || p.categoria === 'Jetons').reduce((s, p) => s + p.valor, 0);
+  const e = execucaoDoAno(fin, 'despesa', mes), ate = Number(mes.slice(5, 7));
+  const vigentes = fin.contratos.filter(row => row.inicio <= ctx.anchor && row.fim > ctx.anchor), em90 = contratosQueTerminam(fin, ctx.anchor, 3);
+  const series = useMemo(() => { const lista = mesesAte(mes, 36), mi = (value: number) => (value / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+    return { despesa: { tipo: 'fluxo', meses: lista, valores: lista.map(m => despesaDoMes(m)), fmt: brl, curto: mi, unidade: 'em R$ milhões', goodUp: false } as Evolucao,
+      resultado: { tipo: 'fluxo', meses: lista, valores: lista.map(m => receitaDoMes(m) - despesaDoMes(m)), fmt: brl, curto: mi, unidade: 'em R$ milhões' } as Evolucao,
+      deslocamento: { tipo: 'fluxo', meses: lista, valores: lista.map(m => despesaDoMes(m, 'Diárias e deslocamento')), fmt: brl, curto: (value: number) => (value / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 0 }), unidade: 'em R$ mil', goodUp: false } as Evolucao }; }, [mes]);
+  const selo = <Selo data={fonteReal.data} />;
+  return <div className="ck-grid fin-grid-orcamento">
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores de orçamento e despesa">
-      <Indicador destaque ficha="k-despesa" ctx={ctx} label="Despesa em 12 meses" serie={series.despesa} value={brl(despesa)} variacao={{ value: change(despesa, despesaAntes), goodUp: false, label: 'em relação aos 12 meses anteriores' }} spark={gest.despesaMensal.slice(-12)} cor={tokens.accent} sub={ctx.greId ? 'só a despesa lançada na regional escolhida' : 'sede e regionais'} />
-      <Indicador ficha="k-execucao" ctx={ctx} label={`Execução do orçamento de ${ctx.anchor.slice(0, 4)}`} value={execucao === null ? '—' : pct(execucao)} sub={ano ? `${brl(ano.realizado!)} realizados de ${brl(ano.previsto!)} orçados até o mês da data` : ''} />
-      <Indicador ficha="k-fim" ctx={ctx} label="Em atividades-fim" value={c.fimMeioAtual.taxaFim === null ? '—' : pct(c.fimMeioAtual.taxaFim)} sub={`${brl(c.fimMeioAtual.fim)} em fiscalização, atendimento e ações institucionais`} />
-      <Indicador ficha="k-diarias" ctx={ctx} label="Diárias e passagens" serie={series.diarias} value={brl(diarias)} variacao={{ value: change(diarias, diariasAntes), goodUp: false, label: 'em relação aos 12 meses anteriores' }} spark={gest.diariasMensais.slice(-12)} cor={tokens.blue} sub={`${int(c.diarias.reduce((sum, row) => sum + row.quantidade, 0))} diárias em 12 meses`} />
-      <Indicador ficha="k-contratos" ctx={ctx} label="Contratos vigentes" value={int(c.contratos.vigentes)} sub={`${brl(c.contratos.valorVigente)}; ${int(c.contratos.vencem90)} terminam em 90 dias`} />
+      <Indicador destaque ficha="k-despesa" ctx={ctx} label={`Despesa em ${period} meses`} serie={series.despesa} value={brl(despesa)} variacao={{ value: variacao(despesa, despesaAntes), goodUp: false, label: 'em relação aos mesmos meses um ano antes' }} spark={series.despesa.valores.slice(-12) as number[]} cor={tokens.accent} sub="empenhada, dado real do estado inteiro" />
+      <Indicador ficha="k-execucao" ctx={ctx} label={`Execução do orçamento de ${mes.slice(0, 4)}`} value={e.orcado ? pct(e.realizado / e.orcado * 100) : '—'} sub={`${brl(e.realizado)} de ${brl(e.orcado)}; até ${nomesMesLongo[ate - 1]} passaram ${pct(ate / 12 * 100)} do ano`} />
+      <Indicador ficha="k-resultado" ctx={ctx} label={`Receita menos despesa em ${period} meses`} serie={series.resultado} value={brl(resultado)} variacao={{ value: resultadoAntes ? (resultado - resultadoAntes) / Math.abs(resultadoAntes) * 100 : null, label: 'em relação aos mesmos meses um ano antes' }} sub={`${brl(receita)} de receita e ${brl(despesa)} de despesa`} />
+      <Indicador ficha="k-diarias" ctx={ctx} label="Diárias e deslocamento" serie={series.deslocamento} value={brl(deslocamento)} variacao={{ value: variacao(deslocamento, deslocamentoAntes), goodUp: false, label: 'em relação aos mesmos meses um ano antes' }}
+        sub={`${int(pessoas.length)} pessoas com diária; ${brl(conselheiros)} a conselheiros`} onOpen={() => abrirCategoria(ctx, pessoas, null)} />
+      <Indicador ficha="k-contratos" ctx={ctx} label="Contratos vigentes" value={int(vigentes.length)} sub={`${brl(vigentes.reduce((s, row) => s + row.valor, 0))}; ${int(em90.length)} terminam em 90 dias`} onOpen={() => abrirContratos(ctx, 'Contratos que terminam em 90 dias', em90)} />
     </section>
-    <Bloco ctx={ctx} id="ex" area="ex" title="Execução do orçamento no ano" exportar={exportarExecucao(ctx)}><ExecucaoAno ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="fm" area="fm" title="Atividade-fim e atividade-meio" exportar={exportarFimMeio(ctx)}><FimMeio ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="na" area="na" title="Despesa por natureza" exportar={exportarNaturezas(ctx)}><Naturezas ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="st" area="st" title="Sede, regionais e fiscalização por GRE" exportar={exportarSede(ctx)}><SedeTerritorio ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="dr" area="dr" title="Diárias por beneficiário" exportar={exportarDiarias(ctx)}><Diarias ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="vc" area="vc" title="Contratos que terminam nos próximos 12 meses" exportar={exportarVencimentos(ctx)}><Vencimentos ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="fo" area="fo" title="Maiores fornecedores" exportar={exportarFornecedores(ctx)}><Fornecedores ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="pe" area="pe" title="Pessoal por função" exportar={exportarPessoal(ctx)}><Pessoal ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="bc" area="bc" title="Despesa por profissional ativo" badge={<Selo data={despesaPublicada.fonte.data} />}
+    <Bloco ctx={ctx} id="ex" area="ex" title={`Execução do orçamento em ${mes.slice(0, 4)}`} badge={selo} exportar={exportarExecucao(mes)}><ExecucaoAno ctx={ctx} mes={mes} /></Bloco>
+    <Bloco ctx={ctx} id="gr" area="gr" title="Em que o Conselho gasta" badge={selo} exportar={exportarGrupos(mes)}><Grupos ctx={ctx} mes={mes} /></Bloco>
+    <Bloco ctx={ctx} id="rd" area="rd" title="Receita, despesa e resultado desde 2013" badge={selo} exportar={exportarResultado(mes)}><Resultado ctx={ctx} mes={mes} /></Bloco>
+    <Bloco ctx={ctx} id="dr" area="dr" title="Quem recebe diárias" badge={selo} exportar={exportarDiarias(meses)}><Diarias ctx={ctx} meses={meses} /></Bloco>
+    <Bloco ctx={ctx} id="fo" area="fo" title="Maiores fornecedores" badge={selo} exportar={exportarFornecedores(meses)}><Fornecedores ctx={ctx} meses={meses} /></Bloco>
+    <Bloco ctx={ctx} id="vc" area="vc" title="Contratos a vencer" badge={selo} exportar={exportarContratos(ctx.anchor)}><Contratos ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="bc" area="bc" title="Por profissional ativo" badge={<Selo data={despesaPublicada.fonte.data} />}
       exportar={{ cabecalho: ['Exercício', 'Despesa publicada (R$)'], linhas: () => despesaPublicada.exercicios.map(row => [row.ano, Math.round(row.valor)]) }}><DespesaPorAtivo ctx={ctx} /></Bloco>
   </div>;
 }

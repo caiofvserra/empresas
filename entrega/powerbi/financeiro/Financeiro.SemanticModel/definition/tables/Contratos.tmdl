@@ -1,4 +1,4 @@
-/// Tem os contratos do Conselho, com a vigência, o valor e os aditivos.
+/// Tem os contratos do Crea-SP publicados na Transparência, com a contratada, o CNPJ, o valor e a vigência.
 table Contratos
 	lineageTag: da106401-fb1b-5c5b-a5a0-4c9992bce384
 
@@ -8,30 +8,25 @@ table Contratos
 		sourceColumn: Contrato
 		lineageTag: bfee64c6-13e5-58b8-8df5-b4bea3897a0d
 
-	column Fornecedor
+	column Contratada
 		dataType: string
+		summarizeBy: none
+		sourceColumn: Contratada
+		lineageTag: c140e3d3-ecb2-5d19-bea3-addb0101750c
+
+	column CNPJ
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CNPJ
+		lineageTag: d37bb679-1a9c-59c3-9b79-b4a15967d4d2
+
+	column Valor
+		dataType: double
+		formatString: R$ #,##0
 		isHidden
 		summarizeBy: none
-		sourceColumn: Fornecedor
-		lineageTag: 8ad62131-deef-51d3-92ea-2dc9938ae3ca
-
-	column 'Nome do fornecedor'
-		dataType: string
-		summarizeBy: none
-		sourceColumn: Nome do fornecedor
-		lineageTag: e5d4c253-0cba-5ae9-91f0-88ab2060b484
-
-	column Objeto
-		dataType: string
-		summarizeBy: none
-		sourceColumn: Objeto
-		lineageTag: 48510237-0d30-53f5-a6e7-816f11ce049c
-
-	column Modalidade
-		dataType: string
-		summarizeBy: none
-		sourceColumn: Modalidade
-		lineageTag: 81114d8e-637f-5068-8d92-b9360554cad9
+		sourceColumn: Valor
+		lineageTag: 5ca47e0c-eef5-5282-be31-13244c1906e1
 
 	column 'Início'
 		dataType: dateTime
@@ -47,28 +42,12 @@ table Contratos
 		sourceColumn: Fim
 		lineageTag: e2bfe872-e4b6-53a8-8742-2d4a8ceded67
 
-	column Valor
-		dataType: double
-		formatString: R$ #,##0
-		isHidden
-		summarizeBy: none
-		sourceColumn: Valor
-		lineageTag: 5ca47e0c-eef5-5282-be31-13244c1906e1
-
-	column Aditivos
-		dataType: int64
-		formatString: 0
-		isHidden
-		summarizeBy: none
-		sourceColumn: Aditivos
-		lineageTag: 89327e93-3032-5b9d-9cf5-894b56b3b148
-
 	partition Contratos = m
 		mode: import
 		source =
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "contratos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Contrato", type text}, {"Fornecedor", type text}, {"Nome do fornecedor", type text}, {"Objeto", type text}, {"Modalidade", type text}, {"Início", type date}, {"Fim", type date}, {"Valor", type number}, {"Aditivos", Int64.Type}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Contrato", type text}, {"Contratada", type text}, {"CNPJ", type text}, {"Valor", type number}, {"Início", type date}, {"Fim", type date}}, "pt-BR")
 				in
 				    Tipos

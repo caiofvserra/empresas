@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Diárias e passagens"
+                  "Property": "Diárias e deslocamento no período"
                 }
               },
-              "queryRef": "Medidas.Diárias e passagens",
-              "nativeQueryRef": "Diárias e passagens"
+              "queryRef": "Medidas.Diárias e deslocamento no período",
+              "nativeQueryRef": "Diárias e deslocamento no período"
             },
             {
               "field": {
@@ -37,11 +37,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Comparação: Diárias e passagens"
+                  "Property": "Comparação: Diárias e deslocamento no período"
                 }
               },
-              "queryRef": "Medidas.Comparação: Diárias e passagens",
-              "nativeQueryRef": "Comparação: Diárias e passagens"
+              "queryRef": "Medidas.Comparação: Diárias e deslocamento no período",
+              "nativeQueryRef": "Comparação: Diárias e deslocamento no período"
             },
             {
               "field": {
@@ -51,11 +51,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Diárias e passagens"
+                  "Property": "Detalhe: Diárias e deslocamento no período"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Diárias e passagens",
-              "nativeQueryRef": "Detalhe: Diárias e passagens"
+              "queryRef": "Medidas.Detalhe: Diárias e deslocamento no período",
+              "nativeQueryRef": "Detalhe: Diárias e deslocamento no período"
             }
           ]
         }
@@ -90,7 +90,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Diárias e passagens'"
+                  "Value": "'Diárias e deslocamento no período'"
                 }
               }
             }

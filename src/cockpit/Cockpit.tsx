@@ -58,7 +58,9 @@ import PaginaMalha from '../fiscalizacao/PaginaMalha';
 import PaginaContratos from '../fiscalizacao/PaginaContratos';
 import PaginaObras from '../fiscalizacao/PaginaObras';
 import { obrasDoRecorte } from '../fiscalizacao/blocos';
+import PaginaArrecadacao from '../financeiro/PaginaArrecadacao';
 import PaginaReceita from '../financeiro/PaginaReceita';
+import PaginaDivida from '../financeiro/PaginaDivida';
 import PaginaOrcamento from '../financeiro/PaginaOrcamento';
 import PaginaColegiado from '../conselho/PaginaColegiado';
 import PaginaProcessos from '../conselho/PaginaProcessos';
@@ -116,10 +118,17 @@ const paginasFiscalizacao: PaginaDef[] = [
  * Painéis que vieram do antigo painel de Gestão do Conselho (06/11/2026). Em 07/11/2026 o Caio separou os temas: o Conselho fica só
  * com o colegiado (câmaras, plenário e entidades), Receita e Orçamento vão para o painel Financeiro e Atendimento ganha painel próprio.
  */
-const paginaReceita: PaginaDef = { id: 'receita', label: 'Receita', title: 'Receita e dívida', subtitle: 'Quanto o Conselho arrecada, de onde vem o dinheiro, quanto está vencido com profissionais e empresas, o que pode ser cobrado na Justiça e o que está perto de prescrever', icon: Wallet, Page: PaginaReceita };
-const paginaOrcamento: PaginaDef = { id: 'orcamento', label: 'Orçamento', title: 'Orçamento e despesa', subtitle: 'Como o orçamento do ano está sendo executado, em que o Conselho gasta, na sede e nas regionais, com diárias, fornecedores, contratos e pessoal', icon: ChartPie, Page: PaginaOrcamento };
+/**
+ * Painel Financeiro, refeito em 07/11/2026 com a receita e a despesa reais da Transparência do Crea-SP (API do Implanta): a
+ * arrecadação do mês contra a meta, como o painel de arrecadação em uso; a receita desde 2013; a dívida e a cobrança; o orçamento e a despesa.
+ */
+const paginasFinanceiro: PaginaDef[] = [
+  { id: 'arrecadacao', label: 'Arrecadação', title: 'Arrecadação e meta', subtitle: 'Quanto entrou no mês até o dia escolhido, quanto falta para a meta, a média por dia útil que fecha a meta e cada tipo de receita contra o ano anterior', icon: Target, Page: PaginaArrecadacao },
+  { id: 'receita', label: 'Receita', title: 'De onde vem a receita', subtitle: 'A receita real do Conselho desde 2013, por origem, mês a mês e contra o orçado, publicada na Transparência do Crea-SP. Do estado inteiro', icon: Wallet, Page: PaginaReceita },
+  { id: 'divida', label: 'Dívida', title: 'Dívida e cobrança', subtitle: 'Quanto está vencido com profissionais e empresas, o que pode ir à Justiça, o que vai a protesto, o que está perto de prescrever e quem está em dia', icon: Landmark, Page: PaginaDivida },
+  { id: 'orcamento', label: 'Orçamento', title: 'Orçamento e despesa', subtitle: 'Como o orçamento do ano está sendo executado, em que o Conselho gasta, quem recebe diárias, os maiores fornecedores e os contratos que terminam. Dado real, do estado inteiro', icon: ChartPie, Page: PaginaOrcamento },
+];
 const paginaAtendimento: PaginaDef = { id: 'atendimento', label: 'Atendimento', title: 'Atendimento e estrutura', subtitle: 'Se as solicitações são resolvidas no prazo, por que canal chegam, a que distância cada município está de uma unidade e como os coworkings são usados', icon: Headset, Page: PaginaAtendimento };
-const paginasFinanceiro: PaginaDef[] = [paginaReceita, paginaOrcamento];
 const paginasAtendimento: PaginaDef[] = [paginaAtendimento];
 /**
  * Painel de Gestão do Conselho, refeito em 07/11/2026 só com o colegiado: conselheiros, câmaras, Plenário e processos. O caminho do

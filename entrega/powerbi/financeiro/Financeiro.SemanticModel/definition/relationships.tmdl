@@ -7,36 +7,44 @@ relationship b276b892-11b3-52f4-81ef-698ad13f339d
 	fromColumn: Receitas.'Mês'
 	toColumn: 'Calendário'.'Mês'
 
+relationship e52a605f-55cd-57e9-b840-5427e1980ad4
+	fromColumn: Receitas.Tipo
+	toColumn: 'Tipos de receita'.Tipo
+
 relationship 7bee995a-9643-59f4-b945-f602fbffc789
 	fromColumn: Despesas.'Mês'
 	toColumn: 'Calendário'.'Mês'
 
-relationship 850cf69b-398f-5445-82c9-51d3f43c953a
-	fromColumn: Despesas.GRE
-	toColumn: Regionais.GRE
+relationship 733223f2-64a2-59b0-b6f8-227acdd02763
+	fromColumn: Despesas.Grupo
+	toColumn: 'Grupos de despesa'.Grupo
 
-relationship 8b2d0ed7-ff20-5af9-a818-630fdfeecca2
-	fromColumn: 'Diárias'.'Mês'
-	toColumn: 'Calendário'.'Mês'
+relationship d901c4c1-0e70-5bef-9e8f-6e397f6a2784
+	fromColumn: Metas.Tipo
+	toColumn: 'Tipos de receita'.Tipo
 
-relationship 2a7aac70-32cf-5aea-9c29-2bf883a34d73
-	fromColumn: 'Diárias'.GRE
-	toColumn: Regionais.GRE
+relationship 171c8e6b-1086-5b29-8351-09e38d7c7d52
+	fromColumn: 'Arrecadação'.Dia
+	toColumn: Dias.Dia
+
+relationship 4eda9ccb-51ea-574d-b41f-f4a3f2a2a44e
+	fromColumn: 'Arrecadação'.Tipo
+	toColumn: 'Tipos de receita'.Tipo
+
+relationship 0b650e88-de6f-579e-9371-9b7093374139
+	fromColumn: Pesos.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship 0d2f3d15-0764-549b-ba4b-0a6d69b48d94
+	fromColumn: Pesos.Tipo
+	toColumn: 'Tipos de receita'.Tipo
 
 relationship 23f6674f-5200-5a95-a5a9-4207d552681c
 	fromColumn: 'Diárias'.Pessoa
 	toColumn: Pessoas.Pessoa
 
-relationship 985dae1a-0d79-59cc-8820-f432e1ffda99
-	fromColumn: Empenhos.Fornecedor
-	toColumn: Fornecedores.Fornecedor
-
-relationship f7737b81-b305-50eb-bb4c-8d49b67cecbe
-	fromColumn: Empenhos.'Mês'
-	toColumn: 'Calendário'.'Mês'
-
-relationship 61cea1c2-ae20-5e84-a028-c79a5557151f
-	fromColumn: Contratos.Fornecedor
+relationship 6002dc3a-aba0-5fd0-abb1-3962edf810e5
+	fromColumn: Pagamentos.Fornecedor
 	toColumn: Fornecedores.Fornecedor
 
 relationship 6cab6938-f4f9-5bda-ac3b-b48070b2a16d
@@ -45,4 +53,8 @@ relationship 6cab6938-f4f9-5bda-ac3b-b48070b2a16d
 
 relationship 796b4b70-ebf8-588e-8ebf-ccd850b59363
 	fromColumn: 'Foto da dívida'.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship 73ce8957-43f3-5049-a09e-ff2fa00c8356
+	fromColumn: 'Foto da adimplência'.'Código IBGE'
 	toColumn: 'Municípios'.'Código IBGE'

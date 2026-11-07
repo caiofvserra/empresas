@@ -9,7 +9,7 @@ Protótipo dos painéis do programa **Inteligência Estratégica Crea-SP**, cond
 | `src/empresas/` | Painel de Empresas: Registro, Evolução, RT e ART, Vínculos. Abre em `/empresas.html` |
 | `src/profissionais/` | Painel de Profissionais: Registro, Evolução, ART e RT, Formação, Trabalho. Abre em `/profissionais.html` |
 | `src/fiscalizacao/` | Painel de Fiscalização e malha fina: Ações, Resultado, Malha fina, Contratos, Obras. Abre em `/fiscalizacao.html` |
-| `src/financeiro/` | Painel Financeiro: Receita e dívida, Orçamento e despesa. Abre em `/financeiro.html` |
+| `src/financeiro/` | Painel Financeiro: Arrecadação, Receita, Dívida e cobrança, Orçamento e despesa, com a receita, a despesa e os gastos reais da Transparência. Abre em `/financeiro.html` |
 | `src/atendimento/` | Painel de Atendimento: prazos, canais, distância até a unidade e coworkings. Abre em `/atendimento.html` |
 | `src/conselho/` | Painel de Gestão do Conselho, só do colegiado: Câmaras e plenário, Entidades e escolas (em reconstrução). Abre em `/conselho.html` |
 | `src/gestao/` | Peças comuns aos painéis Financeiro, Atendimento e Conselho (mapa por município, listas ao clicar, estilo) |

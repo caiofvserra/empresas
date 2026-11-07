@@ -1,0 +1,106 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "divida-em-dia",
+  "position": {
+    "x": 749,
+    "y": 436,
+    "z": 14000,
+    "width": 201,
+    "height": 268,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Profissionais ativos"
+                }
+              },
+              "queryRef": "Medidas.Profissionais ativos",
+              "nativeQueryRef": "Profissionais ativos",
+              "displayName": "Ativos"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Profissionais em atraso"
+                }
+              },
+              "queryRef": "Medidas.Profissionais em atraso",
+              "nativeQueryRef": "Profissionais em atraso",
+              "displayName": "Em atraso"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Profissionais em dia"
+                }
+              },
+              "queryRef": "Medidas.Profissionais em dia",
+              "nativeQueryRef": "Profissionais em dia",
+              "displayName": "Em dia"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Profissionais em dia'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

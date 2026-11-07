@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Em atividades-fim"
+                  "Property": "Receita menos despesa no período"
                 }
               },
-              "queryRef": "Medidas.Em atividades-fim",
-              "nativeQueryRef": "Em atividades-fim"
+              "queryRef": "Medidas.Receita menos despesa no período",
+              "nativeQueryRef": "Receita menos despesa no período"
             },
             {
               "field": {
@@ -37,11 +37,25 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Em atividades-fim"
+                  "Property": "Comparação: Receita menos despesa no período"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Em atividades-fim",
-              "nativeQueryRef": "Detalhe: Em atividades-fim"
+              "queryRef": "Medidas.Comparação: Receita menos despesa no período",
+              "nativeQueryRef": "Comparação: Receita menos despesa no período"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Receita menos despesa no período"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Receita menos despesa no período",
+              "nativeQueryRef": "Detalhe: Receita menos despesa no período"
             }
           ]
         }
@@ -76,7 +90,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Em atividades-fim'"
+                  "Value": "'Receita menos despesa no período'"
                 }
               }
             }

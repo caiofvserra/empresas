@@ -1,0 +1,41 @@
+/// Conta, no último dia de cada mês, os profissionais ativos e os com anuidade em atraso, por município onde moram.
+table 'Foto da adimplência'
+	isHidden
+	lineageTag: 029548b7-8357-5399-818d-68ff34d5fa0a
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: f3ed6308-2910-5b5e-ae4a-fd00f14b930f
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 7a6ea91a-b1ac-59bc-9eb9-77327645602f
+
+	column Ativos
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ativos
+		lineageTag: e0ac1238-40a8-5eaa-94f3-05708565bbc7
+
+	column 'Em atraso'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Em atraso
+		lineageTag: 331844cc-bb70-53c2-aab8-efd4dea47899
+
+	partition 'Foto da adimplência' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "foto-adimplencia.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Código IBGE", type text}, {"Ativos", Int64.Type}, {"Em atraso", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

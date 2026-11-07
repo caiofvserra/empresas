@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Receita do Conselho"
+                  "Property": "Receita no período"
                 }
               },
-              "queryRef": "Medidas.Receita do Conselho",
-              "nativeQueryRef": "Receita do Conselho"
+              "queryRef": "Medidas.Receita no período",
+              "nativeQueryRef": "Receita no período"
             },
             {
               "field": {
@@ -37,11 +37,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Comparação: Receita do Conselho"
+                  "Property": "Comparação: Receita no período"
                 }
               },
-              "queryRef": "Medidas.Comparação: Receita do Conselho",
-              "nativeQueryRef": "Comparação: Receita do Conselho"
+              "queryRef": "Medidas.Comparação: Receita no período",
+              "nativeQueryRef": "Comparação: Receita no período"
             },
             {
               "field": {
@@ -51,11 +51,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Receita do Conselho"
+                  "Property": "Detalhe: Receita no período"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Receita do Conselho",
-              "nativeQueryRef": "Detalhe: Receita do Conselho"
+              "queryRef": "Medidas.Detalhe: Receita no período",
+              "nativeQueryRef": "Detalhe: Receita no período"
             }
           ]
         }
@@ -90,7 +90,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Receita do Conselho'"
+                  "Value": "'Receita no período'"
                 }
               }
             }

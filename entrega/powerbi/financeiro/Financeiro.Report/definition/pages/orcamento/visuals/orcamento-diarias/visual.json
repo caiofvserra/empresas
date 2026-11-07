@@ -4,10 +4,10 @@
   "position": {
     "x": 16,
     "y": 436,
-    "z": 14000,
+    "z": 13000,
     "width": 411,
     "height": 268,
-    "tabOrder": 14000
+    "tabOrder": 13000
   },
   "visual": {
     "visualType": "tableEx",
@@ -35,44 +35,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Diárias"
+                      "Entity": "Pessoas"
                     }
                   },
                   "Property": "Categoria"
                 }
               },
-              "queryRef": "Diárias.Categoria",
+              "queryRef": "Pessoas.Categoria",
               "nativeQueryRef": "Categoria",
-              "active": true
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Pessoas"
-                    }
-                  },
-                  "Property": "Cargo"
-                }
-              },
-              "queryRef": "Pessoas.Cargo",
-              "nativeQueryRef": "Cargo",
-              "active": true
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Pessoas"
-                    }
-                  },
-                  "Property": "Lotação"
-                }
-              },
-              "queryRef": "Pessoas.Lotação",
-              "nativeQueryRef": "Lotação",
               "active": true
             },
             {
@@ -83,11 +53,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Diárias e passagens"
+                  "Property": "Diárias no período"
                 }
               },
-              "queryRef": "Medidas.Diárias e passagens",
-              "nativeQueryRef": "Diárias e passagens",
+              "queryRef": "Medidas.Diárias no período",
+              "nativeQueryRef": "Diárias no período",
               "displayName": "Valor"
             },
             {
@@ -98,12 +68,12 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Diárias pagas em 12 meses"
+                  "Property": "Pagamentos de diária no período"
                 }
               },
-              "queryRef": "Medidas.Diárias pagas em 12 meses",
-              "nativeQueryRef": "Diárias pagas em 12 meses",
-              "displayName": "Diárias"
+              "queryRef": "Medidas.Pagamentos de diária no período",
+              "nativeQueryRef": "Pagamentos de diária no período",
+              "displayName": "Pagamentos"
             },
             {
               "field": {
@@ -119,21 +89,6 @@
               "queryRef": "Medidas.Meses com diária",
               "nativeQueryRef": "Meses com diária",
               "displayName": "Meses"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Medidas"
-                    }
-                  },
-                  "Property": "Quilômetros em 12 meses"
-                }
-              },
-              "queryRef": "Medidas.Quilômetros em 12 meses",
-              "nativeQueryRef": "Quilômetros em 12 meses",
-              "displayName": "Quilômetros"
             }
           ]
         }
@@ -153,7 +108,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Diárias por beneficiário'"
+                  "Value": "'Quem recebe diárias'"
                 }
               }
             }
