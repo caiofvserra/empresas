@@ -1,28 +1,31 @@
 /**
- * Relatório de Processos do GovAdm, uma foto por dia (07/11/2026): o que o painel de Gestão do Conselho precisa para contar os
- * dias que cada processo está na fase atual. O relatório só mostra a fase de hoje; guardando a foto de cada dia, a mudança de fase
- * aparece de um dia para o outro, e a passagem pela fase ganha data de início.
+ * Relatório de Processos do GovAdm, uma cópia por dia (07/11/2026): o que o painel de Gestão do Conselho precisa para contar os
+ * dias que cada processo está na fase atual do GovAdm. O relatório só mostra a fase de hoje; guardando a cópia de cada dia, a
+ * mudança de fase aparece de um dia para o outro, e o período na fase ganha data de início.
  *
- * A foto vem do repositório extracao-govadm (`python main.py diario`), que baixa o relatório das nove câmaras e grava
+ * A cópia vem do repositório extracao-govadm (`python main.py diario`), que baixa o relatório das nove câmaras e grava
  * `saida/relatorio_processos_AAAAMMDD_HHMM_limpo.csv`. Funções puras: a leitura dos arquivos fica em scripts/govadm-diario.ts.
  * O histórico tem o nome do responsável e fica fora do Git; o quadro por câmara e fase só tem números.
  */
 
-export interface LinhaGovadm { processo: string; categoria: string; assunto: string; lotacao: string; responsavel: string; cargo: string; fase: string; data: string | null }
-/** Uma passagem de um processo por uma fase numa lotação. `ate` vazio é a passagem atual. */
-export interface Passagem { fase: string; lotacao: string; responsavel: string; cargo: string; desde: string; ate: string | null; desdeConhecido: boolean }
-export interface HistoricoGovadm { fotos: string[]; processos: Record<string, Passagem[]> }
+/** O que o histórico guarda de cada processo numa cópia: onde está, em que fase e com quem. */
+export interface SituacaoGovadm { lotacao: string; fase: string; responsavel: string; cargo: string }
+export interface LinhaGovadm extends SituacaoGovadm { processo: string }
+/** Um período de um processo numa fase e numa lotação. `ate` vazio é o período atual; `saiu` marca o fim por sumiço do relatório. */
+export interface PeriodoNaFase extends SituacaoGovadm { desde: string; ate: string | null; desdeConhecido: boolean; saiu?: boolean }
+/** As cópias registradas (data e lotações que vieram em cada uma) e os períodos de cada processo. */
+export interface HistoricoGovadm { copias: { data: string; lotacoes: string[] }[]; processos: Record<string, PeriodoNaFase[]> }
 
-const normalizar = (texto: string) => texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
-/** Nomes que o GovAdm já usou para cada coluna, como no extracao-govadm (extracao/metricas.py). */
-const colunas = {
-  processo: ['Nº do Processo', 'N° do Processo', 'Numero do Processo'], categoria: ['Categoria'], assunto: ['Assunto'], lotacao: ['Lotação Atual'],
-  responsavel: ['Responsável', 'Responsável Atual'], cargo: ['Cargo'], fase: ['Fase', 'Fase Atual'], data: ['Data'],
-} as const;
-/** Fase de processo arquivado: sai da contagem, como no extracao-govadm. */
-const ARQUIVADO = 'arquivado';
+/** Igual ao `normalizar` do extracao-govadm (NFKD, sem acento, minúsculo): "Nº" vira "no". */
+const normalizar = (texto: string) => texto.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+/** Nomes que o GovAdm já usou para cada coluna, como no extracao-govadm (extracao/metricas.py). O cargo pode faltar. */
+const colunas = { processo: ['Nº do Processo', 'N° do Processo', 'Numero do Processo'], lotacao: ['Lotação Atual'], responsavel: ['Responsável', 'Responsável Atual'], fase: ['Fase', 'Fase Atual'], cargo: ['Cargo'] } as const;
+const obrigatorias: (keyof typeof colunas)[] = ['processo', 'lotacao', 'responsavel', 'fase'];
+/** Fase de processo arquivado: sai da contagem, como no extracao-govadm. "Desarquivado" não é arquivado. */
+const arquivado = (fase: string) => /(^|[^a-z])arquivad[oa]s?($|[^a-z])/.test(normalizar(fase));
+/** Dias acima dos quais o processo conta como parado no quadro por câmara e fase. */
+export const DIAS_PARADO = 90;
 
-const dataIso = (valor: string) => { const m = valor.match(/^(\d{2})\/(\d{2})\/(\d{4})/); return m ? `${m[3]}-${m[2]}-${m[1]}` : /^\d{4}-\d{2}-\d{2}/.test(valor) ? valor.slice(0, 10) : null; };
 /** Registros de um CSV com ";": campo entre aspas pode ter ponto e vírgula, aspas dobradas e quebra de linha (como grava o csv do Python). */
 function registros(texto: string): string[][] {
   const saida: string[][] = []; let campos: string[] = [], atual = '', aspas = false;
@@ -40,48 +43,69 @@ function registros(texto: string): string[][] {
 
 /** Lê o CSV limpo (";", com ou sem BOM) pelo nome das colunas. Linha sem número de processo e processo arquivado ficam de fora. */
 export function lerRelatorio(texto: string): LinhaGovadm[] {
-  const [primeira = [], ...linhas] = registros(texto.replace(/^\uFEFF/, '')), cabecalho = primeira.map(normalizar);
+  const [primeira = [], ...linhas] = registros(texto.replace(/^﻿/, '')), cabecalho = primeira.map(normalizar);
   const indice = Object.fromEntries(Object.entries(colunas).map(([campo, nomes]) => [campo, cabecalho.findIndex(c => nomes.some(n => normalizar(n) === c))])) as Record<keyof typeof colunas, number>;
-  const faltam = Object.entries(indice).filter(([, i]) => i < 0).map(([campo]) => colunas[campo as keyof typeof colunas][0]);
+  const faltam = obrigatorias.filter(campo => indice[campo] < 0).map(campo => colunas[campo][0]);
   if (faltam.length) throw new Error(`O relatório do GovAdm não tem as colunas ${faltam.join(', ')}. Cabeçalho lido: ${primeira.join(';')}`);
   const saida: LinhaGovadm[] = [];
-  for (const c of linhas) {
-    const v = (campo: keyof typeof colunas) => (c[indice[campo]] ?? '').trim();
-    if (!v('processo') || normalizar(v('fase')).includes(ARQUIVADO)) continue;
-    saida.push({ processo: v('processo'), categoria: v('categoria'), assunto: v('assunto'), lotacao: v('lotacao'), responsavel: v('responsavel'), cargo: v('cargo'), fase: v('fase'), data: dataIso(v('data')) });
+  for (const campos of linhas) {
+    const valor = (campo: keyof typeof colunas) => (indice[campo] < 0 ? '' : campos[indice[campo]] ?? '').trim();
+    if (!valor('processo') || arquivado(valor('fase'))) continue;
+    saida.push({ processo: valor('processo'), lotacao: valor('lotacao'), fase: valor('fase'), responsavel: valor('responsavel'), cargo: valor('cargo') });
   }
   return saida;
 }
 
-/** A data da foto, pelo nome do arquivo do extracao-govadm (relatorio_processos_AAAAMMDD_HHMM_limpo.csv). */
-export const dataDoArquivo = (nome: string) => { const m = nome.match(/(\d{4})(\d{2})(\d{2})_\d{4}/); return m ? `${m[1]}-${m[2]}-${m[3]}` : null; };
+/** A data da cópia, pelo nome do arquivo do extracao-govadm (relatorio_processos_AAAAMMDD_HHMM_limpo.csv), ou null se não for uma data. */
+export function dataDoArquivo(nome: string): string | null {
+  const m = nome.match(/(\d{4})(\d{2})(\d{2})_\d{4}/);
+  if (!m) return null;
+  const data = `${m[1]}-${m[2]}-${m[3]}`, d = new Date(`${data}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === data ? data : null;
+}
 
-export const historicoVazio = (): HistoricoGovadm => ({ fotos: [], processos: {} });
+export const historicoVazio = (): HistoricoGovadm => ({ copias: [], processos: {} });
+const mesmaFase = (a: SituacaoGovadm, b: SituacaoGovadm) => a.fase === b.fase && a.lotacao === b.lotacao;
 
 /**
- * Soma a foto de um dia ao histórico e devolve um histórico novo.
- * - Processo novo, ou que mudou de fase ou de lotação: abre uma passagem que começa no dia da foto. Na primeira foto, a data de
- *   início é desconhecida (o processo já estava na fase antes de a cópia diária começar), e a passagem fica marcada.
- * - Troca só do responsável, na mesma fase: a passagem continua, com o responsável novo. A contagem de dias não reinicia.
- * - Processo que sumiu do relatório (arquivado, ou saiu das câmaras): a passagem fecha no dia da foto.
- * Foto do mesmo dia da última é ignorada (o agendador pode rodar duas vezes); foto mais antiga é recusada.
+ * Soma a cópia de um dia ao histórico e devolve um histórico novo.
+ * - Processo novo, ou que mudou de fase ou de lotação: abre um período que começa no dia da cópia. Na primeira cópia, a data de
+ *   início é desconhecida (o processo já estava na fase antes de a cópia diária começar), e o período fica marcado.
+ * - Troca só do responsável, na mesma fase: o período continua, com o responsável novo. A contagem de dias não reinicia.
+ * - Processo que sumiu do relatório (arquivado, ou saiu das câmaras): o período fecha no dia da cópia, mas só se a lotação dele
+ *   veio na cópia. Câmara que faltou na extração não fecha nada: o processo segue na fase até a próxima cópia completa.
+ * - Processo que volta na cópia seguinte à do sumiço, na mesma fase e lotação: o período reabre, sem perder os dias.
+ * - Processo repetido na mesma cópia: vale a linha igual ao período atual, se houver; senão, a primeira em ordem de lotação e fase.
+ * Cópia do mesmo dia da última é ignorada (o agendador pode rodar duas vezes); cópia mais antiga é recusada.
  */
-export function registrarFoto(historico: HistoricoGovadm, data: string, linhas: LinhaGovadm[]): HistoricoGovadm {
-  const ultima = historico.fotos.at(-1);
+export function registrarCopia(historico: HistoricoGovadm, data: string, linhas: LinhaGovadm[]): HistoricoGovadm {
+  const ultima = historico.copias.at(-1)?.data;
   if (ultima === data) return historico;
-  if (ultima && data < ultima) throw new Error(`A foto de ${data} é mais antiga que a última registrada (${ultima}).`);
-  const primeira = historico.fotos.length === 0, processos: Record<string, Passagem[]> = {}, vistos = new Set<string>();
-  for (const [id, passagens] of Object.entries(historico.processos)) processos[id] = passagens.map(p => ({ ...p }));
-  for (const l of linhas) {
-    if (vistos.has(l.processo)) continue;
-    vistos.add(l.processo);
-    const lista = processos[l.processo] ??= [], atual = lista.at(-1);
-    if (atual && atual.ate === null && atual.fase === l.fase && atual.lotacao === l.lotacao) { atual.responsavel = l.responsavel; atual.cargo = l.cargo; continue; }
+  if (ultima && data < ultima) throw new Error(`A cópia de ${data} é mais antiga que a última registrada (${ultima}).`);
+  const primeira = historico.copias.length === 0, lotacoes = new Set(linhas.map(l => l.lotacao)), processos: Record<string, PeriodoNaFase[]> = {};
+  for (const [id, periodos] of Object.entries(historico.processos)) processos[id] = periodos.map(p => ({ ...p }));
+  const porProcesso = new Map<string, LinhaGovadm[]>();
+  for (const l of linhas) porProcesso.set(l.processo, [...(porProcesso.get(l.processo) ?? []), l]);
+  for (const [processo, repetidas] of porProcesso) {
+    const lista = processos[processo] ??= [], atual = lista.at(-1);
+    const ordenadas = [...repetidas].sort((a, b) => a.lotacao.localeCompare(b.lotacao) || a.fase.localeCompare(b.fase));
+    const l = (atual && ordenadas.find(r => mesmaFase(r, atual))) ?? ordenadas[0];
+    const situacao: SituacaoGovadm = { lotacao: l.lotacao, fase: l.fase, responsavel: l.responsavel, cargo: l.cargo };
+    if (atual && mesmaFase(atual, l) && (atual.ate === null || (atual.saiu && atual.ate === ultima))) { Object.assign(atual, { responsavel: l.responsavel, cargo: l.cargo, ate: null }); delete atual.saiu; continue; }
     if (atual && atual.ate === null) atual.ate = data;
-    lista.push({ fase: l.fase, lotacao: l.lotacao, responsavel: l.responsavel, cargo: l.cargo, desde: data, ate: null, desdeConhecido: !primeira });
+    lista.push({ ...situacao, desde: data, ate: null, desdeConhecido: !primeira });
   }
-  for (const [id, lista] of Object.entries(processos)) { const atual = lista.at(-1); if (!vistos.has(id) && atual && atual.ate === null) atual.ate = data; }
-  return { fotos: [...historico.fotos, data], processos };
+  for (const [id, lista] of Object.entries(processos)) {
+    const atual = lista.at(-1);
+    if (!porProcesso.has(id) && atual && atual.ate === null && lotacoes.has(atual.lotacao)) { atual.ate = data; atual.saiu = true; }
+  }
+  return { copias: [...historico.copias, { data, lotacoes: [...lotacoes].sort() }], processos };
+}
+
+/** Lotações que vieram na cópia anterior e faltaram nesta: sinal de extração incompleta. */
+export function lotacoesQueFaltaram(historico: HistoricoGovadm, linhas: LinhaGovadm[]): string[] {
+  const antes = historico.copias.at(-1)?.lotacoes ?? [], agora = new Set(linhas.map(l => l.lotacao));
+  return antes.filter(l => !agora.has(l));
 }
 
 const dias = (de: string, ate: string) => Math.round((Date.parse(`${ate}T00:00:00Z`) - Date.parse(`${de}T00:00:00Z`)) / 86_400_000);
@@ -95,10 +119,10 @@ export function diasNaFase(historico: HistoricoGovadm, data: string) {
 }
 
 const mediana = (valores: number[]) => { const v = [...valores].sort((a, b) => a - b), m = v.length >> 1; return v.length % 2 ? v[m] : Math.round((v[m - 1] + v[m]) / 2); };
-/** Por lotação (câmara) e fase: quantos processos, a mediana de dias na fase, quantos passam de 90 dias e quantos têm início desconhecido. */
-export function quadroFases(historico: HistoricoGovadm, data: string, limite = 90) {
+/** Por lotação (câmara) e fase: quantos processos, a mediana de dias na fase, quantos passam de DIAS_PARADO e quantos têm início desconhecido. */
+export function quadroFases(historico: HistoricoGovadm, data: string) {
   const grupos = new Map<string, ReturnType<typeof diasNaFase>>();
-  for (const row of diasNaFase(historico, data)) { const chave = `${row.lotacao}\u0000${row.fase}`; grupos.set(chave, [...(grupos.get(chave) ?? []), row]); }
-  return [...grupos.values()].map(rows => ({ lotacao: rows[0].lotacao, fase: rows[0].fase, processos: rows.length, medianaDias: mediana(rows.map(r => r.dias)),
-    acima90: rows.filter(r => r.dias > limite).length, desdeDesconhecido: rows.filter(r => !r.desdeConhecido).length }));
+  for (const linha of diasNaFase(historico, data)) { const chave = `${linha.lotacao}\u0000${linha.fase}`; grupos.set(chave, [...(grupos.get(chave) ?? []), linha]); }
+  return [...grupos.values()].map(linhas => ({ lotacao: linhas[0].lotacao, fase: linhas[0].fase, processos: linhas.length, medianaDias: mediana(linhas.map(l => l.dias)),
+    parados: linhas.filter(l => l.dias > DIAS_PARADO).length, desdeDesconhecido: linhas.filter(l => !l.desdeConhecido).length }));
 }

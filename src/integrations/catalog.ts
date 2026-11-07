@@ -54,13 +54,13 @@ export const automatedSourceCatalog: AutomatedSource[] = [
     limitations: ['Não há ingestão oficial ativa nesta entrega.', 'Emprego agregado não deve ser ligado diretamente a um CNPJ ou a profissionais individualizados.', 'Saldo CAGED não equivale ao estoque total de profissionais.'],
   },
   {
-    id: 'govadm-diario', title: 'GovAdm — Relatório de Processos, uma foto por dia', access: 'staged-database',
+    id: 'govadm-diario', title: 'GovAdm — Relatório de Processos, uma cópia por dia', access: 'staged-database',
     status: 'available-unconfigured', schedule: 'Diária, logo depois da extração do relatório das nove câmaras',
-    // 07/11/2026: extracao-govadm (main.py diario) grava o CSV limpo; scripts/govadm-diario.ts guarda a foto do dia e calcula os dias na fase.
+    // 07/11/2026: extracao-govadm (main.py diario) grava o CSV limpo; scripts/govadm-diario.ts guarda a cópia do dia e calcula os dias na fase.
     endpoint: 'extracao-govadm (Playwright, rede do Crea-SP) → saida/*_limpo.csv → scripts/govadm-diario.ts → var/govadm → staging → gateway', fixture: false,
     factTables: ['passagem-por-fase', 'quadro-fases-diario'],
-    missingRequirements: ['Agendador diário na máquina da rede interna', 'Carga de dias-na-fase.csv no staging', 'Mapeamento das 17 fases nas quatro fatias do painel, pela SUPCOL'],
-    limitations: ['Os dias na fase começam na primeira foto: antes dela, o início é desconhecido.', 'Dia sem foto atrasa a mudança de fase em um dia.', 'O relatório traz nome de interessado e de responsável: o histórico fica fora do Git.'],
+    missingRequirements: ['Agendador diário na máquina da rede interna', 'Carga de dias-na-fase.csv no staging', 'Mapeamento das 17 fases nas quatro fatias do painel, pela SUPCOL', 'Confirmar se o número do processo no GovAdm é o mesmo do SEI', 'Unificar as siglas das câmaras entre GovAdm e Votenet (CEEAS, CAGE)', 'Bloco de dias na fase no painel de Gestão do Conselho'],
+    limitations: ['Os dias na fase começam na primeira cópia: antes dela, o início é desconhecido.', 'Dia sem cópia atrasa a mudança de fase em um dia.', 'O relatório traz nome de interessado e de responsável: o histórico fica fora do Git.'],
   },
   {
     id: 'rfb-cnpj', title: 'Receita Federal — CNPJ e QSA em staging', access: 'staged-database',
