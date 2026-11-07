@@ -1,20 +1,20 @@
 /// Tem o Plenário e as nove câmaras especializadas, com os nomes do sistema do Conselho. Escolha um por vez.
 table Colegiados
-	lineageTag: bfbd8d01-013c-55af-82d7-a9d945619ff2
+	lineageTag: edbd7a5e-53ed-5b14-a252-ffa6957f2851
 
 	column Colegiado
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Colegiado
-		lineageTag: 0b7af5db-5e7a-5631-8c07-587379346508
+		lineageTag: 60287b0c-e2b6-5d8a-b5cb-ba3435f9512b
 
 	column Nome
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Nome
 		sortByColumn: Ordem
-		lineageTag: 5978c61b-47db-57bd-ae6e-11d369a0bcae
+		lineageTag: ce80a00a-b2ce-5d0c-8def-ccb24f60e8cb
 
 	column Ordem
 		dataType: int64
@@ -22,7 +22,7 @@ table Colegiados
 		isHidden
 		summarizeBy: none
 		sourceColumn: Ordem
-		lineageTag: bc97152b-b7ab-5a51-a6f0-f7839365ddc8
+		lineageTag: 37ee575c-9d63-56fa-b009-03a4b084465b
 
 	partition Colegiados = m
 		mode: import

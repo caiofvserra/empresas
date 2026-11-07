@@ -1,58 +1,58 @@
 /// Guarda cada passagem de um processo por um colegiado: a câmara (1ª instância) ou o Plenário, no recurso. Tem as datas do GovAdm (abertura, recebimento, recurso) e do Votenet (relato, voto), o relator e o tempo até o cadastro no Votenet.
 table 'Tramitações'
-	lineageTag: 57de34ad-d882-541f-ab4f-93b5c453366c
+	lineageTag: 3cc610a0-3530-5852-956d-1f189f405e9d
 
 	column 'Tramitação'
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Tramitação
-		lineageTag: c56e907f-7c0e-5ac5-9340-9907ac179aa0
+		lineageTag: abcaa43c-2c2c-5eda-9129-b014b84ba62f
 
 	column Processo
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Processo
-		lineageTag: 9fc5a5b6-a4b1-5f64-a66d-acced9c0451d
+		lineageTag: a8a9bb19-9fcb-585f-9899-7781cd6fc186
 
 	column Colegiado
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Colegiado
-		lineageTag: aa69adb5-e92d-5dc7-b835-c7dd6f359aa0
+		lineageTag: c6567bac-f744-5b56-82b8-37e4e69c9e65
 
 	column 'Instância'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Instância
-		lineageTag: 1e5015ab-ad95-5869-9bb4-e5b3d3202586
+		lineageTag: 7405ea2a-8a98-58e8-a838-66821869ce1b
 
 	column 'Câmara de origem'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Câmara de origem
-		lineageTag: 1e4a8fc0-6d44-542e-b5dd-71d8640a218f
+		lineageTag: 75b2489b-7b04-54c9-8d4d-e8a34363dbd0
 
 	column Tipo
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Tipo
-		lineageTag: eabc65c6-125d-54a0-829b-dcbeafd8fa21
+		lineageTag: 28bcbea5-5a14-538f-b4e5-994d10d25096
 
 	column 'Código IBGE'
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Código IBGE
-		lineageTag: d371709a-fcb9-52cc-aa59-8872797b9693
+		lineageTag: 4d5cee67-13c5-53e1-8dda-398f1480872a
 
 	column Entrada
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Entrada
-		lineageTag: 9485669b-89f9-569d-8d69-75534b147a0e
+		lineageTag: 353150ca-0a95-5594-921b-9132814e390b
 
 	column 'Mês de entrada'
 		dataType: dateTime
@@ -60,7 +60,7 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Mês de entrada
-		lineageTag: 689af35c-28bf-51d2-9fda-ee04274d5dcb
+		lineageTag: 184dc977-5a50-5fdd-9714-c78f3f39db0c
 
 	column 'Entrada do processo'
 		dataType: dateTime
@@ -68,7 +68,7 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Entrada do processo
-		lineageTag: aeda55c6-3194-5dbc-9807-d24e61f70157
+		lineageTag: 3c6e1d1b-88be-5419-9203-99130e32d7f6
 
 	column 'Julgado na câmara em'
 		dataType: dateTime
@@ -76,7 +76,7 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Julgado na câmara em
-		lineageTag: a1ddcbfb-bf70-55c5-aa07-ca33f0746f7c
+		lineageTag: bba56208-4880-564a-93ad-0470698dd2cb
 
 	column 'Recurso em'
 		dataType: dateTime
@@ -84,7 +84,7 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Recurso em
-		lineageTag: 58bafefb-2aa2-5305-a2cc-dab39ea2c084
+		lineageTag: 0a511ce0-384c-5e92-ae07-4f68cebaec8b
 
 	column 'Plenário em'
 		dataType: dateTime
@@ -92,14 +92,14 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Plenário em
-		lineageTag: 089ace0a-774f-5a18-b0a0-b58224b37353
+		lineageTag: 91179dcf-aa00-57b5-a3c5-3997b05cb43a
 
 	column 'Votado em'
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Votado em
-		lineageTag: 9a1326cd-29e3-5d63-946d-1e252dfd7144
+		lineageTag: cf8b66f8-fc30-550e-922c-63e03cbf92bd
 
 	column 'Mês do voto'
 		dataType: dateTime
@@ -107,13 +107,13 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Mês do voto
-		lineageTag: 340a589d-796c-55af-882b-7df540d53620
+		lineageTag: e9b67794-e46c-5906-8580-dafc03e0b26d
 
 	column Relator
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Relator
-		lineageTag: 534e1817-2939-597d-a121-6c1f98e752ae
+		lineageTag: de4166da-6127-5c78-9ebe-7f520ce117a7
 
 	column 'Dias da abertura ao voto'
 		dataType: int64
@@ -121,7 +121,7 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Dias da abertura ao voto
-		lineageTag: 7b12d916-0367-5e4c-baef-5e4e98130091
+		lineageTag: d24ca9a5-409b-5a5b-a47c-e72d213c4e86
 
 	column 'Assinado em'
 		dataType: dateTime
@@ -129,7 +129,7 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Assinado em
-		lineageTag: 1a983256-4ed9-5eb8-8089-a95ebb7d6ac3
+		lineageTag: 3d40e8e7-e9d1-5b39-9d05-c43f664679c6
 
 	column 'Dias de relato'
 		dataType: int64
@@ -137,7 +137,7 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Dias de relato
-		lineageTag: 9cc6fff9-66d4-553b-a457-be219ad1e102
+		lineageTag: dcc5515e-ae6b-5350-a5b4-9176fffdd9a9
 
 	column 'Relato com IA'
 		dataType: int64
@@ -145,7 +145,7 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Relato com IA
-		lineageTag: d33be4f0-b095-5112-84b9-9ee8fb7ee819
+		lineageTag: 3202aa85-fcfc-5b97-b09d-46cde71656a0
 
 	column 'Distribuído depois da IA'
 		dataType: int64
@@ -153,13 +153,13 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Distribuído depois da IA
-		lineageTag: 085f7143-1513-5ff9-a0e6-2e2bdd92fee8
+		lineageTag: f735730c-04ac-54ea-93fc-0304d5697013
 
 	column 'Trimestre do relato'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Trimestre do relato
-		lineageTag: 01324ccd-70be-5daf-8070-f5253dcf9778
+		lineageTag: f943d4fc-c039-58d6-9ddb-3c2416b6f11d
 
 	column 'Dias até o Votenet'
 		dataType: int64
@@ -167,14 +167,14 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Dias até o Votenet
-		lineageTag: 9b0cdad9-c729-581b-9f05-40419fcd05ca
+		lineageTag: 5541d97e-0a5c-5fc8-b49b-d476bac6e3c9
 
 	column 'Tempo até o Votenet'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Tempo até o Votenet
 		sortByColumn: 'Ordem do tempo até o Votenet'
-		lineageTag: 784f24c9-653d-5aef-b722-2f313b4a5d2c
+		lineageTag: b3e95a00-0039-58ae-aede-cff886cb5639
 
 	column 'Ordem do tempo até o Votenet'
 		dataType: int64
@@ -182,13 +182,13 @@ table 'Tramitações'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Ordem do tempo até o Votenet
-		lineageTag: ad13d04f-d9ee-5aa5-89b2-e917f4970a5c
+		lineageTag: 7997fd08-c932-5f6e-a696-b9207d401fbf
 
 	column 'Decisão do Plenário'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Decisão do Plenário
-		lineageTag: a29c12f5-ec58-56e7-b3f4-100d4573e91c
+		lineageTag: e2f41540-1910-56ba-a122-08e841d40a45
 
 	partition 'Tramitações' = m
 		mode: import

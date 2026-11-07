@@ -1,39 +1,39 @@
 /// Guarda cada ida à pauta e cada desvio do Votenet (pedido de vista, impedimento, diligência), com a data e a pessoa.
 table Eventos
 	isHidden
-	lineageTag: e5c7c22b-ea8e-5a79-8bad-b973ffd87b22
+	lineageTag: ddd62976-dcba-597c-8e63-05ae5db6509b
 
 	column 'Tramitação'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Tramitação
-		lineageTag: 1c6451a1-0f04-5523-af36-e2693098d7c6
+		lineageTag: d65b78b2-922e-52dc-90b7-c32a0e603d51
 
 	column Status
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Status
-		lineageTag: 9cd6deac-b9e6-50f6-a3db-2804ca43a03b
+		lineageTag: d630d747-d662-5289-b211-4d6fe5eefcdc
 
 	column Desde
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Desde
-		lineageTag: 30c92925-b092-59f7-8944-c74ddb2a60fc
+		lineageTag: 82bc46c8-d260-56ca-ae48-fa409afe4f75
 
 	column 'Mês'
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Mês
-		lineageTag: 15cacff2-7af9-5fd8-a485-0cbaed82e603
+		lineageTag: 69eb2067-0be4-51a5-84ca-f13f3d9bfc42
 
 	column Pessoa
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Pessoa
-		lineageTag: 500f9f3b-728b-52b9-8802-6a8367ad419c
+		lineageTag: 087e53d0-ab14-5e6e-8004-c028c8cb0a6b
 
 	partition Eventos = m
 		mode: import

@@ -1,6 +1,6 @@
 /// Guarda, no último dia de cada mês, cada processo esperando voto: o status do Votenet, com quem está, há quantos dias, o alerta (amarelo de 90 a 120 dias no status, vermelho acima de 120) e, nos autos de infração, se prescreve em até 12 meses.
 table 'Foto da fila'
-	lineageTag: cf2c510e-0835-5e08-bbf4-29c6bf79774d
+	lineageTag: 5d36be61-f5ef-5943-93f9-9769578c029e
 
 	column Data
 		dataType: dateTime
@@ -8,21 +8,21 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Data
-		lineageTag: bc46f415-faa4-5c4b-afdd-da7d4fd57b3c
+		lineageTag: 170d74c0-9d25-560e-b120-66f855a823e5
 
 	column 'Tramitação'
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Tramitação
-		lineageTag: c4204d1a-08bd-5e08-ad98-6232ae47453b
+		lineageTag: bc077507-02d8-5a85-af30-e6ef9b1eddea
 
 	column Status
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Status
 		sortByColumn: 'Ordem do status'
-		lineageTag: 3b3345df-23dd-5ad5-b858-eac7e72c51fe
+		lineageTag: 9188789a-7481-5210-8260-d19250378d2f
 
 	column 'Ordem do status'
 		dataType: int64
@@ -30,14 +30,14 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Ordem do status
-		lineageTag: 6388c31f-5d73-5da5-8902-c3671dd4bf74
+		lineageTag: ef787c28-0c1a-5666-baa9-2aa0bd4d0bef
 
 	column Pessoa
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Pessoa
-		lineageTag: 68b46c98-79b1-50b2-aaa6-6750cea1d271
+		lineageTag: bc6fd9f5-72fb-5197-8c40-ad7d9933b1e8
 
 	column 'Dias no status'
 		dataType: int64
@@ -45,14 +45,14 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Dias no status
-		lineageTag: 5465e6b1-6c02-5713-9f35-69a926e9f0f0
+		lineageTag: bae483a4-cbe3-578e-ad41-9c2c80b13021
 
 	column 'Tempo no status'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Tempo no status
 		sortByColumn: 'Ordem do tempo'
-		lineageTag: 1a4d07df-c562-5ced-9894-a6174646deb0
+		lineageTag: 23aedff4-9c90-5182-b18e-927c7229680f
 
 	column 'Ordem do tempo'
 		dataType: int64
@@ -60,14 +60,14 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Ordem do tempo
-		lineageTag: 133b58e8-886f-59be-a96e-70408c8ef0cd
+		lineageTag: b065e721-de71-5b9f-8925-878980f35178
 
 	column Alerta
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Alerta
 		sortByColumn: 'Ordem do alerta'
-		lineageTag: 5322be18-b350-5012-8e70-13f0e3d9b449
+		lineageTag: 075f0295-fbae-5167-a8d5-db1d76708c88
 
 	column 'Ordem do alerta'
 		dataType: int64
@@ -75,7 +75,7 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Ordem do alerta
-		lineageTag: 6b004858-5063-56c2-8b58-fd90d593b85b
+		lineageTag: 1ab6e8cf-79e1-5801-9aca-f417e3860b48
 
 	column 'Dias desde a entrada'
 		dataType: int64
@@ -83,7 +83,7 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Dias desde a entrada
-		lineageTag: c5b7c841-8cb4-5de7-b4e4-5d291506e7e0
+		lineageTag: 7f62dacc-2456-552a-be82-40c455463631
 
 	column 'Mais de um ano'
 		dataType: int64
@@ -91,7 +91,7 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Mais de um ano
-		lineageTag: 4f1a9ebc-e9b5-514e-b186-ccd49665b649
+		lineageTag: 2b5805d5-ea2c-5d37-9fec-6c9d8b37216c
 
 	column 'De exercício anterior'
 		dataType: int64
@@ -99,7 +99,7 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: De exercício anterior
-		lineageTag: bef388db-1f1e-5ed5-a876-56e3ee1a001c
+		lineageTag: 3f1e6d88-ce79-5292-8d22-a0a00a2071cb
 
 	column 'Perto da prescrição'
 		dataType: int64
@@ -107,14 +107,14 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Perto da prescrição
-		lineageTag: 0c1a89e9-6a60-5f67-9ca7-9ed12e912c6e
+		lineageTag: a4b566b2-2d57-5240-ab8f-908a2e383399
 
 	column 'Prazo da prescrição'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Prazo da prescrição
 		sortByColumn: 'Ordem do prazo'
-		lineageTag: a276f411-f1f6-5c93-ba37-17299c9663f2
+		lineageTag: 772b2de6-12e7-5f78-a5cc-496ec7e05101
 
 	column 'Ordem do prazo'
 		dataType: int64
@@ -122,7 +122,7 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Ordem do prazo
-		lineageTag: 35398325-43be-5e83-a550-6cfd43e5bc60
+		lineageTag: 5468b37c-c213-53e2-a71d-834427dac395
 
 	column 'Pela intercorrente'
 		dataType: int64
@@ -130,7 +130,7 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Pela intercorrente
-		lineageTag: 2fdfe051-b004-5ae3-b0d2-1709881b25d4
+		lineageTag: db7a6e48-c8c4-5dba-aef5-549001640a41
 
 	column 'Parado há mais de dois anos'
 		dataType: int64
@@ -138,7 +138,7 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Parado há mais de dois anos
-		lineageTag: c200d6ae-f0fb-56a0-a8c3-8366a4435fb9
+		lineageTag: 37419eed-c2ae-573f-8796-a515b578d7de
 
 	column Multa
 		dataType: double
@@ -146,7 +146,7 @@ table 'Foto da fila'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Multa
-		lineageTag: 84bcfdfa-7851-584c-84d7-a75289c94449
+		lineageTag: 79cfd355-eb9e-5adf-a7b4-ca5d26ab7a8a
 
 	partition 'Foto da fila' = m
 		mode: import

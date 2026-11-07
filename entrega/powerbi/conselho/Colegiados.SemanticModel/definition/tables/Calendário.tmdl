@@ -1,27 +1,27 @@
 /// Tem um mês por linha, de 2020 até 12 meses depois de hoje, para o gráfico mês a mês. Não se liga às outras tabelas: as medidas leem o mês do eixo.
 table 'Calendário'
-	lineageTag: 81191f55-3f12-5037-95f6-008d517e15a6
+	lineageTag: bc8bfbaa-accc-50b4-8539-c5b272c604a5
 
 	column 'Mês'
 		dataType: dateTime
 		formatString: mmm/yy
 		summarizeBy: none
 		sourceColumn: Mês
-		lineageTag: ad21c4b6-51f7-53e0-8ae3-caee3fdf9bf9
+		lineageTag: 59ba4d6d-6116-5137-beb5-88b53e627aa6
 
 	column 'Rótulo'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Rótulo
 		sortByColumn: 'Mês'
-		lineageTag: 39a980b7-2b17-5851-8748-c51f7c6aa49e
+		lineageTag: 51c4e032-1a25-5434-9b23-80ca9fd89267
 
 	column Ano
 		dataType: int64
 		formatString: 0
 		summarizeBy: none
 		sourceColumn: Ano
-		lineageTag: 157d079a-9877-5f24-910b-f3d221cad505
+		lineageTag: 87d56651-7f3f-5fe3-8f44-9f7984e285ea
 
 	column 'Mês do ano'
 		dataType: int64
@@ -29,14 +29,14 @@ table 'Calendário'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Mês do ano
-		lineageTag: c0b087ab-28e7-56dd-a578-788353e0005e
+		lineageTag: 84e22b4a-97c3-509c-a1e5-9612e3e72e7b
 
 	column 'Nome do mês'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Nome do mês
 		sortByColumn: 'Mês do ano'
-		lineageTag: 59f287b8-da88-5bb6-9ca1-9cf0b6c1e5a7
+		lineageTag: 0b041c3b-d904-5c19-8eee-c583812c8728
 
 	column Ordem
 		dataType: int64
@@ -44,7 +44,7 @@ table 'Calendário'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Ordem
-		lineageTag: afd5e98f-5691-5c71-9319-aaa7ad8dead8
+		lineageTag: 5d90e7e4-630f-5d6e-b77f-976cd72825ff
 
 	partition 'Calendário' = m
 		mode: import

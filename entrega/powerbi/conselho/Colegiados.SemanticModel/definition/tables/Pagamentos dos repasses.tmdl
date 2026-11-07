@@ -1,26 +1,26 @@
 /// Guarda cada pagamento de convênio, contrato ou patrocínio às organizações, com o canal e o início do instrumento.
 table 'Pagamentos dos repasses'
-	lineageTag: e79cfcf0-9fe7-503e-93c3-7a18c907db79
+	lineageTag: 0101a7fd-ce35-50a3-baab-6dd50d66aba0
 
 	column Repasse
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Repasse
-		lineageTag: 59583a38-42d3-5162-841d-3d408e2c3701
+		lineageTag: e8d0528d-5a5a-5047-b8f3-c9258a5444e8
 
 	column 'Organização'
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Organização
-		lineageTag: 14d002a3-d4c3-50b9-84ae-b85baf9bdb42
+		lineageTag: 8826e946-a0e6-5dcc-a5ea-81ce88b25dd3
 
 	column Canal
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Canal
-		lineageTag: 21236564-8b1e-5a0a-a0b5-04ccd2b29fb1
+		lineageTag: db01447d-7375-5a0b-ba80-3a55097eb3d4
 
 	column 'Início do repasse'
 		dataType: dateTime
@@ -28,7 +28,7 @@ table 'Pagamentos dos repasses'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Início do repasse
-		lineageTag: fde25a38-d1a2-585a-89f9-9f40d25635d5
+		lineageTag: 06ffd309-8b81-5663-9376-e4418a37ea68
 
 	column Data
 		dataType: dateTime
@@ -36,7 +36,7 @@ table 'Pagamentos dos repasses'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Data
-		lineageTag: efe2d421-9e2f-565b-a6ec-7079a9522f66
+		lineageTag: 5f7f405a-1bc9-55ac-9046-0ca2d4ff3351
 
 	column Valor
 		dataType: double
@@ -44,7 +44,7 @@ table 'Pagamentos dos repasses'
 		isHidden
 		summarizeBy: none
 		sourceColumn: Valor
-		lineageTag: e1f50e7d-0ec9-5d5f-869d-800514c7e26c
+		lineageTag: fa7a84b0-2131-528a-a7ae-796843054e6d
 
 	partition 'Pagamentos dos repasses' = m
 		mode: import

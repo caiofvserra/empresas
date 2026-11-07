@@ -1,77 +1,77 @@
 /// Guarda cada mandato de cada cadeira: três anos, de janeiro a dezembro, com um terço renovado por ano. O reeleito aparece num mandato novo com a mesma pessoa. Está em exercício quem tem mandato em curso, de organização já registrada.
 table Conselheiros
-	lineageTag: 16aa89a5-7161-58ab-bafb-ea3dcf220a46
+	lineageTag: 8c84ce12-1139-5020-951c-c99a2e29f2f5
 
 	column Mandato
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Mandato
-		lineageTag: 93280dd8-6e22-5f4e-886b-9740cdb3066f
+		lineageTag: 4efab50b-9f43-5009-96d5-87a36e74c1c8
 
 	column Pessoa
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Pessoa
-		lineageTag: 091f7187-965c-53fd-a6a6-b53fd11e253e
+		lineageTag: 4630e8ca-5aa6-5a98-a0de-aeb2006c5a57
 
 	column Nome
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Nome
-		lineageTag: 2f308dbf-de0d-59f9-bf9b-ca17e8bcc27a
+		lineageTag: 06f0f786-4c55-5f40-a15e-e46e7428beef
 
 	column 'Gênero'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Gênero
-		lineageTag: b580efd9-0a00-5e47-abbb-63918dea5990
+		lineageTag: f6a38d1c-1064-55a2-8faf-ce648fc01229
 
 	column 'Câmara'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Câmara
-		lineageTag: 01df5c4c-3f72-5f72-986c-6b64a66e61f9
+		lineageTag: d42dd0dd-3c64-5103-afe8-898564c2b59c
 
 	column 'Organização'
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Organização
-		lineageTag: adc0f2da-be36-5a38-a2af-5d2249613c35
+		lineageTag: aa24eaf1-9004-50d7-9f59-07e9a978606a
 
 	column Sigla
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Sigla
-		lineageTag: 782f5fb0-92c9-5eae-b3d7-d428da02fdff
+		lineageTag: a99b5503-d90d-5941-b4f1-250bda3f5560
 
 	column Natureza
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Natureza
-		lineageTag: 30311918-3e65-5f6e-aaac-f9a0e9e46ed9
+		lineageTag: fd6e0d65-8525-5fb3-9e30-8d5df728fb08
 
 	column 'Terço'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Terço
-		lineageTag: c121d6ff-4405-5e41-8998-f187ab4f7fb8
+		lineageTag: cd8e621c-79dc-54ae-bbee-4db400a606cf
 
 	column 'Início'
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Início
-		lineageTag: 30d9ecf1-81f4-5277-9f0e-2b693c6b3834
+		lineageTag: 33089148-7efa-529e-bf32-9ef07016a6e1
 
 	column Fim
 		dataType: dateTime
 		formatString: dd/mm/yyyy
 		summarizeBy: none
 		sourceColumn: Fim
-		lineageTag: edd1945a-027e-5454-8ae8-98b21cb555f1
+		lineageTag: 341a7d75-00e5-5177-bf79-0e7d4705886a
 
 	column 'Organização registrada em'
 		dataType: dateTime
@@ -79,7 +79,7 @@ table Conselheiros
 		isHidden
 		summarizeBy: none
 		sourceColumn: Organização registrada em
-		lineageTag: c5c09a38-e124-568e-9ad9-aea0f06f8307
+		lineageTag: be462623-41fe-5749-8d67-78db73537188
 
 	partition Conselheiros = m
 		mode: import

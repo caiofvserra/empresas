@@ -1,11 +1,11 @@
-# Pacote Power BI do painel de Gestão do Conselho
+# Pacote Power BI do painel de Colegiados
 
 Gerado a partir do protótipo em HTML (repositório caiofvserra/empresas, `npm run build:powerbi`), com o cenário de demonstração até 30/09/2026. Os números são fictícios e servem para conferir o modelo e as telas, não o Crea-SP.
 
 ## Como abrir
 
 1. Copie a pasta inteira para o computador com o Power BI Desktop (versão de 2026 ou mais nova).
-2. Abra `Conselho.pbip`. O relatório abre sem dados.
+2. Abra `Colegiados.pbip`. O relatório abre sem dados.
 3. Em Página Inicial > Transformar dados > Editar parâmetros, troque "Pasta dos dados" pelo caminho da pasta `dados` deste pacote, terminando com \\ (por exemplo `C:\\CREA-SP\\powerbi\\conselho\\dados\\`).
 4. Clique em Atualizar.
 

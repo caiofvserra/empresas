@@ -1,31 +1,31 @@
 /// Tem quem pode estar com um processo: os conselheiros (com a câmara e a organização que indicou) e os funcionários da assessoria de cada colegiado. Os nomes do cenário são fictícios.
 table Pessoas
-	lineageTag: c48ab5f3-c1e9-53a1-a663-9f2b953fe2da
+	lineageTag: 156380ee-50b7-5c44-a3e8-e93657682203
 
 	column Pessoa
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Pessoa
-		lineageTag: 5f38d9e3-b12a-5791-ad6c-4f5bf5a1e704
+		lineageTag: 153a7668-8046-5e06-b4e4-54f08e8481f3
 
 	column Nome
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Nome
-		lineageTag: b07e3f4b-9e35-582d-9d73-65036553293c
+		lineageTag: 6bdcec30-197c-5fe2-a80a-1a181b2a587b
 
 	column Papel
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Papel
-		lineageTag: 720a851e-f014-5484-a3e6-986602aef05b
+		lineageTag: 5d1b02e7-d321-56ad-8af0-ad1f0bc4ecee
 
 	column Detalhe
 		dataType: string
 		summarizeBy: none
 		sourceColumn: Detalhe
-		lineageTag: 8a6c4abd-ad7a-5eb3-913b-99b5db7bcccc
+		lineageTag: c0923640-0b09-5fce-a60d-07e8ce5eb92d
 
 	partition Pessoas = m
 		mode: import

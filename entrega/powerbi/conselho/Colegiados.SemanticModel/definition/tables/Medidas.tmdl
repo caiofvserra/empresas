@@ -1,18 +1,18 @@
 /// Guarda as medidas do painel, em pastas por página.
 table Medidas
-	lineageTag: c84979f2-3c69-5cdc-a34b-651ad696a977
+	lineageTag: 0ed2f05b-834f-5bbd-b381-6933bdecf962
 
 	/// Devolve a data de referência escolhida; sem escolha, a mais recente. As medidas de variação trocam a data pela de um ano antes.
 	measure 'Data escolhida' = IF(ISFILTERED('Datas das fotos'[Data]), MAX('Datas das fotos'[Data]), MAX('Datas de referência'[Data]))
 		formatString: dd/mm/yyyy
 		displayFolder: Apoio
-		lineageTag: c11bd1bf-549f-587d-85e0-a447c84979f8
+		lineageTag: 66b5b50c-e8d9-5ada-a6c5-82e43e13d3ef
 
 	/// Devolve o período escolhido, em meses; sem escolha, 12.
 	measure 'Meses do período' = SELECTEDVALUE('Período'[Meses], 12)
 		formatString: 0
 		displayFolder: Apoio
-		lineageTag: bc947c67-db06-5759-8e01-167f28638c6c
+		lineageTag: 238df560-c7a0-5eaa-be36-6e6886d4e2d7
 
 	/// Devolve o primeiro dia do primeiro mês do período: o período termina na data escolhida e começa no primeiro dia do mês, como no painel.
 	measure 'Início do período' = ```
@@ -21,7 +21,7 @@ table Medidas
 			```
 		formatString: dd/mm/yyyy
 		displayFolder: Apoio
-		lineageTag: 5d427e01-5534-5783-80c3-7f69e9c6259c
+		lineageTag: 4eea38c8-ff18-5baa-8d38-faa038ffec91
 
 	/// Conta os conselheiros em exercício na data escolhida (mandato em curso, de organização já registrada), do colegiado escolhido; no Plenário, todos. Sem o + 0, para o gráfico dos terços mostrar só os terços em curso.
 	measure 'Conselheiros no terço' = ```
@@ -31,13 +31,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 15b66e7f-fb1f-5e65-ab9f-98e732227ed2
+		lineageTag: 4ed4ef2e-8bd0-5fd4-8df7-a2063bd45c6f
 
 	/// Conta os conselheiros em exercício na data escolhida, do colegiado escolhido; no Plenário, todos. O conselheiro representa uma modalidade, e não uma regional: a regional e o município não mudam este número.
 	measure 'Conselheiros em exercício' = [Conselheiros no terço] + 0
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 746a59b4-19d0-5ef6-82e9-f7fc90b1aa59
+		lineageTag: 71fcdd95-632a-5a8f-be49-614d6470f6a4
 
 	/// Conta as entidades de classe que indicaram os conselheiros em exercício.
 	measure 'Entidades com cadeira' = ```
@@ -47,7 +47,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 379cae68-ec7f-5ffe-84e1-2a7026d2302d
+		lineageTag: 37db21f9-fb20-5237-b50a-d5f15cdc2d18
 
 	/// Conta as instituições de ensino que indicaram os conselheiros em exercício.
 	measure 'Escolas com cadeira' = ```
@@ -57,7 +57,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 976e4b8f-d1bf-52f5-aa5b-c41754773d8a
+		lineageTag: 81a826de-9327-5aa4-9227-41d67c954b7f
 
 	/// Conta os processos esperando voto na data escolhida, para os gráficos (sem o + 0, a pessoa ou o status sem processo some do gráfico).
 	measure 'Processos na fila' = ```
@@ -66,13 +66,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 82bd2e01-3439-5deb-bfb8-cc492aa080ec
+		lineageTag: 1be89158-68e8-5b4a-afb7-81307b603ab1
 
 	/// Conta os processos que já entraram no colegiado e ainda não foram votados na data escolhida, em qualquer status do Votenet. É um estoque: não tem acumulado do ano.
 	measure 'Processos esperando voto' = [Processos na fila] + 0
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 837a8301-6447-56bb-80cb-f6c96f900d4e
+		lineageTag: 66a1c292-38fe-5c5c-a579-968a83bc9331
 
 	/// Conta os processos esperando voto que ainda não foram distribuídos a um relator.
 	measure 'Aguardando distribuição' = ```
@@ -81,13 +81,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: a3d407d3-2981-5269-9cab-fb2b3c260562
+		lineageTag: d767bb76-9664-5054-9de0-c31eb3ff27e3
 
 	/// Divide os processos esperando voto que estão com um conselheiro (relator ou pedido de vista) pelos conselheiros em exercício. Os que estão com a assessoria ficam de fora.
 	measure 'Processos por conselheiro' = DIVIDE(CALCULATE([Processos esperando voto], 'Pessoas'[Papel] = "Conselheiro"), [Conselheiros em exercício])
 		formatString: 0.0
 		displayFolder: Colegiado
-		lineageTag: 284187d0-861f-57a2-9600-d95852188491
+		lineageTag: 6a05309d-7a23-5a2f-aefd-e7b5a0b2aa40
 
 	/// Conta os processos votados no período, nas câmaras e no Plenário. Um processo que foi ao Plenário conta duas vezes: uma em cada colegiado.
 	measure 'Votados no período' = ```
@@ -97,7 +97,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: f09f6592-b0c8-5aa8-956e-058a75ed1d11
+		lineageTag: c60cfda5-c851-53bb-bc80-5dad65450e62
 
 	/// Conta os recursos votados pelo Plenário no período.
 	measure 'Votados no Plenário no período' = ```
@@ -107,7 +107,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 265bf95d-9741-5b37-a93e-4cd59c7486fa
+		lineageTag: 626c9fde-eb23-5478-a4a9-1f06b954eb6d
 
 	/// Mostra o tempo típico (a mediana), em dias, da abertura no GovAdm ao voto da câmara, nos processos votados nas câmaras no período. É o marco do Confea para a 1ª instância.
 	measure 'Da abertura à decisão' = ```
@@ -117,7 +117,7 @@ table Medidas
 			```
 		formatString: #,##0" dias"
 		displayFolder: Colegiado
-		lineageTag: 50df4c2a-bf51-5d3c-b6e9-18628b06c9ef
+		lineageTag: 786b3663-ddf3-5d0d-96f8-784b93fea45a
 
 	/// Conta os processos esperando voto que entraram no colegiado antes de 1º de janeiro do ano da data escolhida: os pendentes de exercícios anteriores, marco do Confea.
 	measure 'De exercícios anteriores' = ```
@@ -126,7 +126,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: d9e79686-71b3-58e8-85b4-4e5e6eca1e0d
+		lineageTag: 7a3cf379-ecf3-5d53-8b4c-8ae106d2d296
 
 	/// Conta as idas à pauta em cada mês, nos meses do gráfico. Um processo pautado de novo depois de uma vista conta outra vez.
 	measure 'Pautados no mês' = ```
@@ -138,7 +138,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 6c3303d3-1477-59b9-9b79-d77b12e5dfc2
+		lineageTag: 316eda86-3e88-5b74-a9c1-7abecf991b43
 
 	/// Conta os processos votados em cada mês, nos meses do gráfico.
 	measure 'Votados no mês' = ```
@@ -150,7 +150,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 9a7573d0-fd9c-588a-85bf-ba98a3c796db
+		lineageTag: cf8e400f-d747-51e9-8944-a787b37b8580
 
 	/// Conta os processos votados no mesmo mês um ano antes, para comparar.
 	measure 'Votados no mesmo mês do ano anterior' = ```
@@ -162,7 +162,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 4733f044-25e7-52aa-82c9-327c2257453b
+		lineageTag: 2c6f4e2f-c51a-5545-8044-42d7256222b4
 
 	/// Conta os processos recebidos nas câmaras no período (o recebimento no GovAdm).
 	measure 'Caminho: recebidos nas câmaras' = ```
@@ -172,7 +172,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: de23ca5b-ce56-5bf1-a96e-8663c42aef68
+		lineageTag: 952620d4-1719-54d2-964f-a00c71e3ea8b
 
 	/// Conta os processos votados pelas câmaras no período.
 	measure 'Caminho: votados nas câmaras' = ```
@@ -182,7 +182,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: c9c4d5db-288a-5cfd-8cca-57e39804fba8
+		lineageTag: d72590bc-f3e9-55c6-8be7-7b34771e4aeb
 
 	/// Conta os recursos ao Plenário apresentados no período.
 	measure 'Caminho: recursos ao Plenário' = ```
@@ -192,7 +192,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 453ae804-a5f2-573a-aebd-33bc29c3d735
+		lineageTag: 1a7be1b9-835d-5a6f-b755-30212ede6d94
 
 	/// Conta os recursos votados pelo Plenário no período.
 	measure 'Caminho: votados no Plenário' = ```
@@ -202,7 +202,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 057282ff-a1c1-5d8d-8034-a627c89bbac8
+		lineageTag: bc19456c-84b6-5fd2-8fd3-a164d9e9786f
 
 	/// Conta os autos com recurso ao Confea no período.
 	measure 'Caminho: recursos ao Confea' = ```
@@ -213,7 +213,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 05edcc30-397f-5052-8e0f-2de8bab1fee1
+		lineageTag: 03140165-fe28-5c47-90b1-868d7dba38c0
 
 	/// Conta os autos que transitaram em julgado no período: a multa passa a ser cobrada.
 	measure 'Caminho: transitados em julgado' = ```
@@ -224,7 +224,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: 7ed463e0-894f-577e-b6e6-c30863adbeb1
+		lineageTag: 789ce935-25c7-5d33-ad06-e56d213f8150
 
 	/// Conta os autos com a multa paga no período.
 	measure 'Caminho: multas pagas' = ```
@@ -235,7 +235,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Colegiado
-		lineageTag: ce7f9de2-5ec1-5bc4-8f03-203a37055ddb
+		lineageTag: d98bd237-d7e8-51a9-8734-19df0b69c6b2
 
 	/// Conta os processos há mais de 120 dias no mesmo status do Votenet na data escolhida (decisão do Caio, 07/11/2026).
 	measure 'Em alerta vermelho' = ```
@@ -244,7 +244,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: 67305388-86d6-58aa-9c70-f330a1e238b7
+		lineageTag: 229e6de3-24ae-514d-bbce-6f7b7b4b1878
 
 	/// Conta os processos de 90 a 120 dias no mesmo status do Votenet.
 	measure 'Em alerta amarelo' = ```
@@ -253,7 +253,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: 1b5608e9-1487-52f3-91d5-14b1b36ed7bc
+		lineageTag: 1e009e90-ac23-594a-9f9f-0a28e1cc6719
 
 	/// Conta os processos esperando voto que entraram no colegiado há mais de um ano.
 	measure 'Há mais de 1 ano no colegiado' = ```
@@ -262,7 +262,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: f1c4522a-6a34-590c-b06e-05d24e22ee7b
+		lineageTag: 93d2a31f-cfa5-5961-a30b-2d170332a0ba
 
 	/// Conta os autos perto da prescrição, para o gráfico por relator.
 	measure 'Perto da prescrição' = ```
@@ -271,13 +271,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: c9d835e5-f73f-5be7-abcd-f3edc6274efc
+		lineageTag: 63e9ed60-87f3-5e2a-a18f-88b8c4075a55
 
 	/// Conta os autos de infração esperando voto que prescrevem em até 12 meses: cinco anos do fato (Lei 9.873/1999, art. 1º) ou três anos parados no mesmo status (a intercorrente, art. 1º, § 1º), o que vier primeiro. No Plenário, só corre a intercorrente.
 	measure 'Autos perto da prescrição' = [Perto da prescrição] + 0
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: 36ae8705-7106-5387-9be8-1d9d62662ea8
+		lineageTag: f64ab154-aa44-557e-bc93-953c9eea8715
 
 	/// Soma as multas dos autos que prescrevem em até 12 meses.
 	measure 'Multas dos autos perto da prescrição' = ```
@@ -286,7 +286,7 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Processos
-		lineageTag: cebd094b-bd49-542d-9b9b-f38370a95c58
+		lineageTag: f6647bcc-2fc6-5e8e-a3a0-16b4dbbaa6fb
 
 	/// Conta os autos que prescrevem em até 12 meses por estarem parados há quase três anos no mesmo status.
 	measure 'Perto da prescrição pela intercorrente' = ```
@@ -295,7 +295,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: 2c798eaf-b09e-5401-b75c-1397c6b922d4
+		lineageTag: 1d0c8240-1e51-5dea-bba8-f2f8d0d2877f
 
 	/// Conta os processos há mais de dois anos no mesmo status: com três, o auto prescreve pela intercorrente.
 	measure 'Parados há mais de 2 anos' = ```
@@ -304,7 +304,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: 2cfdddb6-a7f2-532c-aa08-bc4e618301ef
+		lineageTag: d1c96223-7741-5d79-b8f9-f4ab3d7d6fc6
 
 	/// Mostra há quantos dias o processo está no status do Votenet, na data escolhida.
 	measure 'Dias no status' = ```
@@ -313,7 +313,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: ae117dad-16c2-5693-9938-4e05402cc5da
+		lineageTag: 5b08a0ae-3c37-574c-a5bd-c376c5805bdd
 
 	/// Mostra há quantos dias o processo entrou no colegiado, na data escolhida.
 	measure 'Dias desde a entrada' = ```
@@ -322,7 +322,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: 44c84785-15f7-5167-943b-4fadbd533a5e
+		lineageTag: 2013b4ca-8b16-5ee4-a83e-82a22f21e3b5
 
 	/// Conta os processos recebidos nas câmaras no período, que a assessoria cadastra à mão no Votenet.
 	measure 'Cadastrados no Votenet' = ```
@@ -332,7 +332,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: 38749cfe-3cd3-5ad0-a500-72b6a953411d
+		lineageTag: 488495d9-627b-56fb-9794-a50107fb0c4e
 
 	/// Conta os recebidos no período que levaram mais de 15 dias até o cadastro no Votenet.
 	measure 'Cadastrados no Votenet depois de 15 dias' = ```
@@ -342,7 +342,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Processos
-		lineageTag: d7f9f862-cbd7-5fa8-b0a3-d16af45f4bad
+		lineageTag: 3d5bd941-3a0b-5d7f-8865-1499823c5452
 
 	/// Mostra o tempo típico (a mediana), em dias, entre o recebimento na câmara pelo GovAdm e o cadastro no Votenet, nos processos recebidos no período.
 	measure 'Do GovAdm ao Votenet' = ```
@@ -352,7 +352,7 @@ table Medidas
 			```
 		formatString: #,##0" dias"
 		displayFolder: Processos
-		lineageTag: 670696bb-a921-5fad-8d8b-e22395b175a0
+		lineageTag: b73b48ac-5688-580e-8734-fec49100f8ab
 
 	/// Conta as sessões ordinárias do colegiado escolhido no período.
 	measure 'Sessões no período' = ```
@@ -362,7 +362,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Conselheiros
-		lineageTag: 0f577e63-8a41-5cf1-8afe-187b80ea1594
+		lineageTag: faceac48-a69e-501e-9309-1cd02b9a5c73
 
 	/// Divide as presenças pelos lugares nas sessões ordinárias do período (cada conselheiro do colegiado em cada sessão), pela ata. Na base real, até a API de transparência publicar as atas, o jeton pago aproxima a presença.
 	measure 'Presença nas sessões' = ```
@@ -374,7 +374,7 @@ table Medidas
 			```
 		formatString: 0.0%
 		displayFolder: Conselheiros
-		lineageTag: 80fd0ccf-6dc5-5709-b3c0-8397b9ff0d2c
+		lineageTag: 4c6d12b0-56a7-53e2-b58b-91e8d766655f
 
 	/// Mostra o tempo típico (a mediana), em dias, da distribuição ao relator ao relato assinado, nos relatos assinados no período antes do voto.
 	measure 'Tempo de relato' = ```
@@ -384,7 +384,7 @@ table Medidas
 			```
 		formatString: #,##0" dias"
 		displayFolder: Conselheiros
-		lineageTag: bdd684b2-0109-5b94-b8bb-284a905dc57b
+		lineageTag: 28cd3a67-bcf4-5ff9-a1a6-456fc733e902
 
 	/// Mostra o tempo típico de relato dos relatos feitos com a IA no período.
 	measure 'Relato com IA' = ```
@@ -394,7 +394,7 @@ table Medidas
 			```
 		formatString: #,##0" dias"
 		displayFolder: Conselheiros
-		lineageTag: d0c7aecb-0109-5271-8c5c-9c336b3e4536
+		lineageTag: 8e0a0972-cb04-5400-9b74-478a0d70ef1b
 
 	/// Mostra o tempo típico de relato dos relatos sem IA, só dos processos distribuídos depois que a IA chegou (julho de 2025), para comparar.
 	measure 'Relato sem IA' = ```
@@ -404,7 +404,7 @@ table Medidas
 			```
 		formatString: #,##0" dias"
 		displayFolder: Conselheiros
-		lineageTag: d8caf971-f906-57cb-8b8b-88e9053656f8
+		lineageTag: e6666454-9723-534e-ae80-06bcae87a8a1
 
 	/// Conta os relatos feitos com a IA no período.
 	measure 'Relatos com IA' = ```
@@ -414,7 +414,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Conselheiros
-		lineageTag: 69423740-bc8e-5fa6-b196-2a980739e1a3
+		lineageTag: 4a65d167-787c-5f6d-bd0b-73cf607a0510
 
 	/// Conta os relatos sem IA no período, dos processos distribuídos depois que a IA chegou.
 	measure 'Relatos sem IA' = ```
@@ -424,7 +424,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Conselheiros
-		lineageTag: 61a0678e-b72b-5b88-98db-4d56ae5aadf9
+		lineageTag: 6b0060dd-6bd3-5fd7-bd85-efb51338c7fe
 
 	/// Mostra o tempo típico de relato com IA em cada trimestre do eixo, até a data escolhida.
 	measure 'Relato com IA no trimestre' = ```
@@ -433,7 +433,7 @@ table Medidas
 			```
 		formatString: #,##0" dias"
 		displayFolder: Conselheiros
-		lineageTag: f74ba1ff-3312-5c2d-bae6-16d7fb1a9968
+		lineageTag: 423be1c4-ac26-5bda-95b0-b48ce572580f
 
 	/// Mostra o tempo típico de relato sem IA em cada trimestre do eixo, dos processos distribuídos depois que a IA chegou.
 	measure 'Relato sem IA no trimestre' = ```
@@ -442,7 +442,7 @@ table Medidas
 			```
 		formatString: #,##0" dias"
 		displayFolder: Conselheiros
-		lineageTag: 3365612d-f6f8-5cff-b2b3-ec9597ae1062
+		lineageTag: ea04ca9e-16f1-5f50-ab97-acf601bcbadd
 
 	/// Conta os processos com pedido de vista no período: saíram da pauta para outro conselheiro ler.
 	measure 'Pedidos de vista' = ```
@@ -452,7 +452,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Conselheiros
-		lineageTag: c50dcd5d-979d-5017-ab44-62d50b7b04ea
+		lineageTag: ed5908de-3eb6-5f70-b55a-7326e388b3ad
 
 	/// Conta os processos em que o relator se declarou impedido no período: o processo volta à distribuição.
 	measure Impedimentos = ```
@@ -462,7 +462,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Conselheiros
-		lineageTag: 9b4b925d-49f1-50ab-b91a-3a454d998fe2
+		lineageTag: 3af83086-0241-5224-a451-569e010a9ced
 
 	/// Conta os processos que saíram em diligência no período, para buscar informação antes do voto.
 	measure 'Diligências' = ```
@@ -472,13 +472,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Conselheiros
-		lineageTag: 0d93ae62-ebc7-5574-9602-e23a2b702647
+		lineageTag: 648d6df3-0f15-500d-b11e-7a5b8254a092
 
 	/// Conta os processos esperando voto que estão com cada conselheiro na data escolhida, como relator ou no pedido de vista.
 	measure 'Processos com o conselheiro' = CALCULATE([Processos na fila], 'Pessoas'[Papel] = "Conselheiro")
 		formatString: #,##0
 		displayFolder: Conselheiros
-		lineageTag: a67c9f39-d780-5b4f-8df2-eac1347a9c00
+		lineageTag: 2c343aec-1e10-55ba-97da-c224894524a9
 
 	/// Soma as diárias pagas nos 12 meses até a data a cada conselheiro em exercício nela, do colegiado escolhido.
 	measure 'Valor das diárias de conselheiros' = ```
@@ -489,13 +489,13 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Conselheiros
-		lineageTag: 60220251-45f1-5f03-a2ce-0ec994d5f57c
+		lineageTag: e1ee77a0-9111-5b12-b5ba-2d887f593a21
 
 	/// Soma as diárias pagas nos 12 meses até a data aos conselheiros em exercício nela, do colegiado escolhido. Quem recebeu aparece pelo nome na tabela.
 	measure 'Diárias dos conselheiros' = [Valor das diárias de conselheiros] + 0
 		formatString: R$ #,##0
 		displayFolder: Conselheiros
-		lineageTag: 4e43e3dc-14ec-574a-9f82-867400ca2ddf
+		lineageTag: c19a064b-98c1-5ba9-8d8e-d5535968f90c
 
 	/// Conta as diárias pagas a cada conselheiro nos 12 meses.
 	measure 'Diárias de conselheiros em 12 meses' = ```
@@ -506,7 +506,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Conselheiros
-		lineageTag: b828daf1-5c18-5597-ab99-6b09fd4887d8
+		lineageTag: 3b8a72b4-e8cb-52f2-9f36-2fbcf20c2861
 
 	/// Conta os meses dos 12 em que o conselheiro recebeu diária.
 	measure 'Meses com diária de conselheiro' = ```
@@ -517,7 +517,7 @@ table Medidas
 			```
 		formatString: 0
 		displayFolder: Conselheiros
-		lineageTag: d0e988a1-a219-5bbb-bd5a-79098fa2a7b4
+		lineageTag: 9984f5e0-6207-5cd2-bc8a-07581a7ab751
 
 	/// Conta os conselheiros em exercício que receberam diária nos 12 meses.
 	measure 'Conselheiros com diária' = ```
@@ -528,7 +528,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Conselheiros
-		lineageTag: 8eef2b2c-02fd-500a-8433-4a8442545e71
+		lineageTag: c3dc33c5-6a1c-522b-8ee4-238d69208c7c
 
 	/// Conta os autos de infração votados pelas câmaras no período, para os gráficos.
 	measure 'Autos votados' = ```
@@ -539,13 +539,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Decisões
-		lineageTag: 0603606d-1441-5f23-8dce-77f5313e1800
+		lineageTag: c5c3a77c-b17c-579a-be3b-4fb4f8a9887d
 
 	/// Conta os autos de infração votados pelas câmaras no período. Com o Plenário escolhido, só os autos que chegaram a ele em recurso.
 	measure 'Autos votados nas câmaras' = [Autos votados] + 0
 		formatString: #,##0
 		displayFolder: Decisões
-		lineageTag: b1022e00-c854-56d6-8910-d9c84e74bf51
+		lineageTag: 8043062d-e321-5ee3-ac02-dc45fb3da470
 
 	/// Conta os autos votados de empresas ou profissionais que já tinham multa antes: a multa vem em dobro (Lei 5.194/66, art. 73, parágrafo único).
 	measure 'Autos de reincidentes' = ```
@@ -556,7 +556,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Decisões
-		lineageTag: f5753421-cad7-5783-8f14-a889cd625258
+		lineageTag: 2d7030d4-e8ef-555e-9462-d3ac0896aa31
 
 	/// Soma as multas da decisão das câmaras no período, antes do recurso. É um fluxo.
 	measure 'Multas aplicadas' = ```
@@ -567,7 +567,7 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Decisões
-		lineageTag: f68e826d-5ba3-5843-9473-db95a838a4d2
+		lineageTag: 854c1e96-e0ca-58dc-a445-58cecde9cb7d
 
 	/// Conta os autos arquivados porque prescreveram.
 	measure 'Autos arquivados pela prescrição' = ```
@@ -578,7 +578,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Decisões
-		lineageTag: 1e45598d-d28c-5043-adc8-a7f55f1c3eca
+		lineageTag: a7c936ee-b5d6-5d54-8785-7066becb3b9d
 
 	/// Conta os autos votados no período que a câmara arquivou, inclusive pela prescrição.
 	measure 'Autos arquivados no período' = ```
@@ -589,13 +589,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Decisões
-		lineageTag: 278d28a9-7f64-5333-9399-3b4185a6e0cc
+		lineageTag: 01782088-9d14-5e1a-b020-75702bb3ceb9
 
 	/// Mostra a parte dos autos votados no período que a câmara arquivou, inclusive pela prescrição.
 	measure 'Autos arquivados' = DIVIDE([Autos arquivados no período], [Autos votados])
 		formatString: 0.0%
 		displayFolder: Decisões
-		lineageTag: 76d16fec-7226-5b8e-b809-5d4492c227f7
+		lineageTag: 43548d63-ce33-5ff5-beaf-73ab5734625c
 
 	/// Conta os recursos que já chegaram ao Plenário e ainda não foram votados na data escolhida. É um estoque.
 	measure 'Recursos esperando o Plenário' = ```
@@ -604,7 +604,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Decisões
-		lineageTag: 5f45a8c3-a8e5-5b81-82ed-555b5f8b636e
+		lineageTag: 98058022-3891-5810-84d9-c3ea8e7516d3
 
 	/// Conta os recursos votados pelo Plenário no período. Com uma câmara escolhida, conta os que vieram dela.
 	measure 'Recursos votados pelo Plenário' = ```
@@ -615,7 +615,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Decisões
-		lineageTag: 85b1f4f1-b4be-506b-8e90-6c89cb5d5cde
+		lineageTag: 3d613c1a-844e-551c-9014-28c28111ac81
 
 	/// Conta os recursos votados pelo Plenário no período em que ele reformou a decisão da câmara. Com uma câmara escolhida, conta os que vieram dela.
 	measure 'Recursos reformados pelo Plenário' = ```
@@ -626,13 +626,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Decisões
-		lineageTag: 1fbf6de9-9316-56b7-a9d7-6481d09b662c
+		lineageTag: 150f2e68-62a7-5486-b0f6-b8f09694a519
 
 	/// Mostra a parte dos recursos votados pelo Plenário no período em que ele reformou a decisão da câmara.
 	measure 'Reformadas pelo Plenário' = DIVIDE([Recursos reformados pelo Plenário], [Recursos votados pelo Plenário])
 		formatString: 0.0%
 		displayFolder: Decisões
-		lineageTag: 47f05da9-41ca-5a27-9eb0-46f152f018ce
+		lineageTag: 61bdb652-fd9a-5e50-a1e1-12aab2995299
 
 	/// Conta os recursos votados pelo Plenário no período, pela câmara de onde vieram. Com uma câmara escolhida, só os dela.
 	measure 'Recursos votados no Plenário por câmara' = ```
@@ -643,7 +643,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Decisões
-		lineageTag: 3036c823-2073-5619-8f9a-026b0523d972
+		lineageTag: cb7cf07e-222b-5d1c-88cc-ce3648ea9453
 
 	/// Soma, pelo ano da decisão da câmara (os quatro últimos), as multas já pagas na data escolhida.
 	measure 'Multa paga' = ```
@@ -653,7 +653,7 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Decisões
-		lineageTag: d7ddc97d-79f2-5113-ae58-f5852576b44e
+		lineageTag: 0d00e60a-81ef-5d60-acc9-67e2344e190d
 
 	/// Soma, pelo ano da decisão, as multas que transitaram em julgado e ainda não foram pagas.
 	measure 'Multa em cobrança' = ```
@@ -663,7 +663,7 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Decisões
-		lineageTag: 74a39919-c8fa-5f77-ab8e-d3613809c20c
+		lineageTag: 60131de0-beb3-5ace-99a6-3ff8144a7189
 
 	/// Soma, pelo ano da decisão, as multas ainda em recurso (no Plenário ou no Confea).
 	measure 'Multa em recurso' = ```
@@ -673,7 +673,7 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Decisões
-		lineageTag: 89cc40d3-8050-5829-acaa-1ddbd8ee49a0
+		lineageTag: 23d2434c-aaff-5c62-bce8-dd2434dbf603
 
 	/// Soma, pelo ano da decisão, as multas que o Plenário anulou ao reformar a decisão da câmara.
 	measure 'Multa anulada no recurso' = ```
@@ -683,13 +683,13 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Decisões
-		lineageTag: 5fd5acf4-1d6a-5cd6-95e3-766cf9be30e7
+		lineageTag: eb645503-0606-5fc5-bd0c-78cbaf50e044
 
 	/// Conta as cadeiras com conselheiro em exercício na data escolhida, do colegiado escolhido.
 	measure 'Cadeiras ocupadas' = [Conselheiros em exercício]
 		formatString: #,##0
 		displayFolder: Representação
-		lineageTag: 44b4be1d-51e1-5273-8547-96558b935350
+		lineageTag: cf0e6544-1566-5222-be49-380cae2a2a0d
 
 	/// Conta as organizações que indicaram os conselheiros em exercício.
 	measure 'Organizações com cadeira' = ```
@@ -699,7 +699,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Representação
-		lineageTag: e8569fca-c213-50e0-b05d-8d422fd5abe1
+		lineageTag: a3f99d75-4323-575b-9535-4bbd2bfb7d1a
 
 	/// Conta as mulheres entre os conselheiros em exercício.
 	measure 'Conselheiras em exercício' = ```
@@ -709,13 +709,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Representação
-		lineageTag: 34dd867e-004e-5d7c-b4e9-eb764841f4df
+		lineageTag: c697f993-db8e-5dc9-aca0-b2fbf87bbf6e
 
 	/// Mostra a parte de mulheres entre os conselheiros em exercício.
 	measure Conselheiras = DIVIDE([Conselheiras em exercício], [Conselheiros em exercício])
 		formatString: 0.0%
 		displayFolder: Representação
-		lineageTag: 007f7acd-5017-589f-a3f7-0c0567b8e246
+		lineageTag: f0937662-db6e-5414-a84d-f7aacbd3421d
 
 	/// Mostra a parte de mulheres entre os conselheiros em exercício de cada câmara do eixo.
 	measure 'Mulheres entre os conselheiros' = ```
@@ -724,7 +724,7 @@ table Medidas
 			```
 		formatString: 0.0%
 		displayFolder: Representação
-		lineageTag: 0549d548-8477-5d36-a68e-adc05e761cff
+		lineageTag: 77918843-7202-5ba1-849c-14abcaf933d8
 
 	/// Conta os profissionais ativos da modalidade que cada câmara julga, na data escolhida; com uma câmara escolhida, só os dela.
 	measure 'Profissionais ativos da câmara' = ```
@@ -734,7 +734,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Representação
-		lineageTag: 5d321cc5-2e87-5e4f-a8f2-139d66c2b5aa
+		lineageTag: 94d329a6-cb2c-5098-8743-152e8a0da155
 
 	/// Conta as mulheres entre os profissionais ativos da modalidade que cada câmara julga.
 	measure 'Profissionais ativas da câmara' = ```
@@ -744,13 +744,13 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Representação
-		lineageTag: 3b94821f-12b9-5375-bd9c-76275286c868
+		lineageTag: 11a5b1dc-0c42-5b9a-a57f-d634af360baf
 
 	/// Mostra a parte de mulheres entre os profissionais ativos das modalidades que as câmaras do recorte julgam, na data escolhida. A Ambiental e Sanitária não tem modalidade própria no cenário.
 	measure 'Mulheres no registro' = DIVIDE([Profissionais ativas da câmara], [Profissionais ativos da câmara])
 		formatString: 0.0%
 		displayFolder: Representação
-		lineageTag: 014b71bc-1083-5482-b7d5-e6748b28a4b7
+		lineageTag: 29853413-c877-57e1-97a5-f19b17f8e78c
 
 	/// Conta as cadeiras de cada câmara no Plenário na data escolhida, pelas modalidades das entidades e escolas que as indicam.
 	measure 'Cadeiras da câmara' = ```
@@ -760,7 +760,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Representação
-		lineageTag: 4d21c41e-49f5-50b8-a6e6-f2c66084d2d1
+		lineageTag: 7cd857a5-804d-5df7-b097-10bdc6b3e92e
 
 	/// Mostra a parte das cadeiras do Plenário que é de cada câmara.
 	measure 'Parte das cadeiras' = ```
@@ -769,7 +769,7 @@ table Medidas
 			```
 		formatString: 0.0%
 		displayFolder: Representação
-		lineageTag: d4d2bc7d-2b1f-55eb-9867-e3354236220e
+		lineageTag: b561b05a-2641-5728-97cc-3f022e1ba6ad
 
 	/// Mostra a parte dos profissionais ativos que é da modalidade que cada câmara julga.
 	measure 'Parte dos profissionais ativos' = ```
@@ -778,7 +778,7 @@ table Medidas
 			```
 		formatString: 0.0%
 		displayFolder: Representação
-		lineageTag: 28405f70-819e-5b0a-b918-d2a8c516d037
+		lineageTag: a9268363-31c0-5d7d-8534-c8abb9b78a60
 
 	/// Soma os pagamentos dos 365 dias até a data às organizações com cadeira no colegiado escolhido, por convênio, contrato ou patrocínio.
 	measure 'Repassado em 12 meses a quem tem cadeira' = ```
@@ -789,13 +789,13 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Representação
-		lineageTag: e5851949-9bd5-508f-806b-59f118deb4ea
+		lineageTag: 33fb49fe-4536-521c-a61d-dd9665cb5339
 
 	/// Soma o que as organizações com cadeira no colegiado escolhido receberam do Conselho nos 365 dias até a data.
 	measure 'Repasses a quem tem cadeira' = [Repassado em 12 meses a quem tem cadeira] + 0
 		formatString: R$ #,##0
 		displayFolder: Representação
-		lineageTag: a0b3e543-c8ef-58d1-8499-3d6b764252fa
+		lineageTag: 46957e96-c963-5fec-a0a4-fd2e40302af3
 
 	/// Conta as organizações com cadeira que receberam algum pagamento nos 365 dias.
 	measure 'Organizações com cadeira que receberam' = ```
@@ -806,7 +806,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Representação
-		lineageTag: ffb8b813-0f16-58f1-98a5-d01b3ec16240
+		lineageTag: 6087e924-30f5-57c2-b461-f2dc35ce6fa3
 
 	/// Soma o valor das deliberações de repasse aprovadas pelo Plenário no período; na tabela, o valor de cada uma.
 	measure 'Valor das deliberações' = ```
@@ -818,7 +818,7 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Representação
-		lineageTag: 70c8053f-725b-5d89-8f3e-b6a755fe44c4
+		lineageTag: ec88bab0-f334-5162-961c-eac8bfcbfeef
 
 	/// Conta as deliberações de repasse aprovadas pelo Plenário no período, pelas atas. Com uma câmara escolhida, as de organizações com cadeira nela.
 	measure 'Deliberações de repasse' = ```
@@ -830,7 +830,7 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Representação
-		lineageTag: 709d8e5f-278d-56f9-b47e-7397cf6f94ba
+		lineageTag: eb70cf1e-3a29-56c0-ad98-d406b006e1cf
 
 	/// Conta as deliberações em que quem propôs o repasse é conselheiro indicado pela organização que recebe.
 	measure 'Propostos pela própria organização' = ```
@@ -842,12 +842,12 @@ table Medidas
 			```
 		formatString: #,##0
 		displayFolder: Representação
-		lineageTag: e351ca2f-e56b-5465-8455-3c9714175978
+		lineageTag: 6e92a484-f393-536a-990e-2adc779c2e1f
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Conselheiros em exercício' = "indicados por " & FORMAT([Entidades com cadeira], "#,##0") & " entidades de classe e " & FORMAT([Escolas com cadeira], "#,##0") & " escolas"
 		displayFolder: Colegiado
-		lineageTag: 3a7126ad-082b-5c5f-83c6-74d56aba6b7a
+		lineageTag: 514a3996-a4ef-55d8-a63a-fc2ed90fd5bd
 
 	/// Compara o cartão com o fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Processos esperando voto' = ```
@@ -858,7 +858,7 @@ table Medidas
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Colegiado
-		lineageTag: 1e1450a1-f3eb-5b4b-b59b-c0f9751eea02
+		lineageTag: ea82bf3e-3a1d-5360-8d79-7c461d04cc11
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Processos esperando voto' = ```
@@ -866,12 +866,12 @@ table Medidas
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Colegiado
-		lineageTag: bf9c0239-e59d-5ec7-8bae-0981657f84c6
+		lineageTag: 1252986a-3e7f-5748-ae81-d00286648049
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Processos esperando voto' = FORMAT([Aguardando distribuição], "#,##0") & " ainda aguardam distribuição"
 		displayFolder: Colegiado
-		lineageTag: 6bb0ba6a-151e-5cec-bb10-9fd200e903e7
+		lineageTag: b613195b-aa5d-541d-b367-65b3e451f9fa
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Processos por conselheiro' = ```
@@ -879,7 +879,7 @@ table Medidas
 			RETURN IF(MAXX(t, [N]) > 0, "o maior: " & MAXX(t, 'Pessoas'[Nome]) & ", com " & FORMAT(MAXX(t, [N]), "#,##0"), "nenhum processo com conselheiro")
 			```
 		displayFolder: Colegiado
-		lineageTag: 8dccfb15-f4ec-5b3f-989a-78ddbf1eb056
+		lineageTag: a3822ac2-217f-5724-8d20-be5a476953a5
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Votados no período' = ```
@@ -890,7 +890,7 @@ table Medidas
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Colegiado
-		lineageTag: fde9d8b2-6a72-58d8-8a0b-f05a773a9d35
+		lineageTag: 710fc961-1700-58ff-85ee-14f94edb6742
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Votados no período' = ```
@@ -898,12 +898,12 @@ table Medidas
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Colegiado
-		lineageTag: 9ee37d9a-38d6-5254-8f3a-af12f2c47079
+		lineageTag: 1932d08d-f6ab-5ad7-bdca-333517252a0a
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Votados no período' = FORMAT([Votados no Plenário no período], "#,##0") & " deles no Plenário, em recurso"
 		displayFolder: Colegiado
-		lineageTag: ae7e828d-7408-57ab-856e-b6e5997b4874
+		lineageTag: 62b75248-4d61-5cbe-9458-eb90ec69b2fd
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Da abertura à decisão' = ```
@@ -914,7 +914,7 @@ table Medidas
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Colegiado
-		lineageTag: 4bc9394a-8f0b-5f0c-af4a-0692f63aadd3
+		lineageTag: 48beff1f-88d8-5841-ad88-13f7a1d9873a
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Da abertura à decisão' = ```
@@ -922,12 +922,12 @@ table Medidas
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Colegiado
-		lineageTag: 1386bb52-8f1f-5ad8-afe3-f3aaf1710177
+		lineageTag: 2ab8f52b-8a5c-5239-8c2d-9fd32cb9cee2
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Da abertura à decisão' = "mediana dos votados na câmara, da abertura no GovAdm"
 		displayFolder: Colegiado
-		lineageTag: c15c1b2b-b15c-5f1d-989f-da23b48a9bf8
+		lineageTag: c7ed645c-6909-5336-9062-98641a057f7b
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: De exercícios anteriores' = ```
@@ -935,32 +935,32 @@ table Medidas
 			RETURN IF([Processos esperando voto] > 0, FORMAT(DIVIDE([De exercícios anteriores], [Processos esperando voto]), "0.0%"), "—") & " dos pendentes entraram antes de " & YEAR(d)
 			```
 		displayFolder: Colegiado
-		lineageTag: a1ce65c1-0e06-5fc3-983d-1eb97bd1466c
+		lineageTag: 632dff88-12da-5d5a-83c4-45f0c3417d31
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Em alerta vermelho' = "mais de 120 dias no mesmo status, e " & FORMAT([Em alerta amarelo], "#,##0") & " em amarelo (90 a 120)"
 		displayFolder: Processos
-		lineageTag: bf85825b-0ddb-59dd-94a2-592336e018ae
+		lineageTag: 928b2cca-86ff-507c-8996-82a253527beb
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Há mais de 1 ano no colegiado' = IF([Processos esperando voto] > 0, FORMAT(DIVIDE([Há mais de 1 ano no colegiado], [Processos esperando voto]), "0.0%"), "—") & " dos que esperam voto"
 		displayFolder: Processos
-		lineageTag: 9c8c60f7-c55b-5a11-9342-eddf1bd1ca88
+		lineageTag: f93a01ac-401d-5e06-8b3e-f96473685227
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Autos perto da prescrição' = FORMAT([Multas dos autos perto da prescrição], "R$ #,##0") & " em multas; " & FORMAT([Perto da prescrição pela intercorrente], "#,##0") & " por três anos parados"
 		displayFolder: Processos
-		lineageTag: 130d6e1c-a692-5b2e-a5c6-65149bd579ab
+		lineageTag: 6ce3c1a7-c18e-5219-ab7f-d48fa6367b0c
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Parados há mais de 2 anos' = "no mesmo status; com 3 anos, o auto prescreve"
 		displayFolder: Processos
-		lineageTag: 867ab40b-5104-5a69-a2a5-c1631b1ce9d8
+		lineageTag: f6bea5cc-c382-54e2-9548-52b4a1efdafb
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Do GovAdm ao Votenet' = "mediana; " & IF([Cadastrados no Votenet] > 0, FORMAT(DIVIDE([Cadastrados no Votenet depois de 15 dias], [Cadastrados no Votenet]), "0.0%"), "—") & " levaram mais de 15 dias"
 		displayFolder: Processos
-		lineageTag: 9ac518e4-80dd-5b9e-bc3f-ba6c2936af01
+		lineageTag: 24a7258d-5553-5b7f-956f-10057a0a1eb4
 
 	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Presença nas sessões' = ```
@@ -971,7 +971,7 @@ table Medidas
 			```
 		formatString: +0.0;-0.0;0.0
 		displayFolder: Conselheiros
-		lineageTag: 1ad0ddef-45e0-57f9-bca7-d2e75e6e7340
+		lineageTag: 56d15c7c-a9a8-5406-b900-17846295f93f
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Presença nas sessões' = ```
@@ -979,12 +979,12 @@ table Medidas
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
 			```
 		displayFolder: Conselheiros
-		lineageTag: 101d6527-f445-5375-ac02-5d4fc4d3ca04
+		lineageTag: 40ba57c8-d881-5e2e-a8ce-f9401ae64317
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Presença nas sessões' = FORMAT([Sessões no período], "#,##0") & " sessões ordinárias no período"
 		displayFolder: Conselheiros
-		lineageTag: f39a59c8-287b-5952-a769-a5f01d440a95
+		lineageTag: e4d69129-9d6b-50db-8cf0-942182da6df8
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Tempo de relato' = ```
@@ -995,7 +995,7 @@ table Medidas
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Conselheiros
-		lineageTag: f6858dd2-0c7f-50c4-bfef-87dadea0ee77
+		lineageTag: 65da2ccb-cf8c-5c55-9e81-49637fc3efe2
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Tempo de relato' = ```
@@ -1003,17 +1003,17 @@ table Medidas
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Conselheiros
-		lineageTag: 410c8c1a-9807-5de8-a3f2-843276d13ee3
+		lineageTag: d5f920cf-5d01-50ad-a77b-f077e626d8ca
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Tempo de relato' = "mediana, da distribuição ao relato assinado"
 		displayFolder: Conselheiros
-		lineageTag: ba5af6cf-f7b6-5d69-b982-65a7fc549c08
+		lineageTag: c294e634-809f-5016-bcdc-80dc55b7777f
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Relato com IA' = "sem IA: " & IF(ISBLANK([Relato sem IA]), "—", FORMAT([Relato sem IA], "#,##0") & " dias") & "; " & IF([Relatos com IA] + [Relatos sem IA] > 0, FORMAT(DIVIDE([Relatos com IA], [Relatos com IA] + [Relatos sem IA]), "0.0%"), "—") & " dos relatos usaram IA"
 		displayFolder: Conselheiros
-		lineageTag: 17502c6a-91f6-56b0-92e7-e5b22d5efbe5
+		lineageTag: acc9eb11-a6e8-52ef-94d4-a2e943a1d9da
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Pedidos de vista' = ```
@@ -1024,7 +1024,7 @@ table Medidas
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Conselheiros
-		lineageTag: cadf017d-46a7-5c07-a8fc-f065bd9210ae
+		lineageTag: ead78cba-c451-5164-b74a-e1924f9b440d
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Pedidos de vista' = ```
@@ -1032,12 +1032,12 @@ table Medidas
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Conselheiros
-		lineageTag: 654570a5-7565-55f3-8321-03ddfd2a5a12
+		lineageTag: 9404c906-cb5a-5c9c-ae56-36aeabcb3c55
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Pedidos de vista' = "processos que saíram da pauta para outro conselheiro ler"
 		displayFolder: Conselheiros
-		lineageTag: 1a08ab06-4fa4-5f20-b020-bd1ef049e613
+		lineageTag: a05ec3b7-cc8f-5749-bff5-a51f7f6aa076
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Diárias dos conselheiros' = ```
@@ -1045,12 +1045,12 @@ table Medidas
 			RETURN FORMAT(k, "#,##0") & IF(k = 1, " conselheiro recebeu", " conselheiros receberam") & " em 12 meses"
 			```
 		displayFolder: Conselheiros
-		lineageTag: 3b289733-5f67-5979-870a-6a8b8ebbaf5e
+		lineageTag: 752444ea-f343-5c40-b776-905248a75f83
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Autos votados nas câmaras' = FORMAT([Autos de reincidentes], "#,##0") & " de reincidentes, com a multa em dobro"
 		displayFolder: Decisões
-		lineageTag: 32ee07a5-ba46-57b3-a59e-88eda5d588fa
+		lineageTag: e4fd39f6-2ae3-5334-aca2-bc0e9b7aafb5
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Multas aplicadas' = ```
@@ -1061,7 +1061,7 @@ table Medidas
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Decisões
-		lineageTag: 82fbc50d-e654-55f3-98a8-e1e50899fe26
+		lineageTag: cdf8e762-260c-5c30-a3d5-a24a6a2d355d
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Multas aplicadas' = ```
@@ -1069,17 +1069,17 @@ table Medidas
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Decisões
-		lineageTag: e5bbfea5-ce2a-567f-b4a1-b8ed69b51aca
+		lineageTag: d921ffae-e556-5638-b95e-242614fab515
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Multas aplicadas' = "na decisão da câmara, antes do recurso"
 		displayFolder: Decisões
-		lineageTag: 5f25e1ae-bbea-5dcc-938a-6d5630a77f9f
+		lineageTag: 201f9363-2aba-5299-9b98-a79b74ae41de
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Autos arquivados' = "dos votados; " & FORMAT([Autos arquivados pela prescrição], "#,##0") & " pela prescrição"
 		displayFolder: Decisões
-		lineageTag: b4d5bc0b-776d-5f45-a17c-ac23063dc122
+		lineageTag: 2dd047ae-4c32-5c80-8435-1d763de1589b
 
 	/// Compara o cartão com o fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Recursos esperando o Plenário' = ```
@@ -1090,7 +1090,7 @@ table Medidas
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Decisões
-		lineageTag: c0488323-ba3b-57b1-b1c9-57eb56176df2
+		lineageTag: d9c1ffbe-ff79-5dd4-a92f-f476633a0cf3
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Recursos esperando o Plenário' = ```
@@ -1098,32 +1098,32 @@ table Medidas
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Decisões
-		lineageTag: 56954bab-1eed-556d-ba13-8b4319e2fef6
+		lineageTag: cf570f8a-75c9-55ac-8436-9ff2f2ffa2db
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Recursos esperando o Plenário' = "decisões das câmaras levadas ao Plenário"
 		displayFolder: Decisões
-		lineageTag: 2b78f58a-dbe0-5480-83c1-dbe255be29cd
+		lineageTag: 217c7ce1-a006-553f-8c1b-90e9db5eed3a
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Reformadas pelo Plenário' = "dos " & FORMAT([Recursos votados pelo Plenário], "#,##0") & " recursos votados no período"
 		displayFolder: Decisões
-		lineageTag: 81da104a-94bb-5620-99a9-6e927c2c1c03
+		lineageTag: 469b4787-ab65-5e25-a24e-291fbeadc0da
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Cadeiras ocupadas' = "por " & FORMAT([Organizações com cadeira], "#,##0") & " organizações: " & FORMAT([Entidades com cadeira], "#,##0") & " entidades e " & FORMAT([Escolas com cadeira], "#,##0") & " escolas"
 		displayFolder: Representação
-		lineageTag: 58cdfd6c-fa09-5972-a672-42047e980faf
+		lineageTag: 3b7d2493-fc05-5ed9-84e6-fb1bd536c8bc
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Conselheiras' = FORMAT([Conselheiras em exercício], "#,##0") & " mulheres; no registro, elas são " & FORMAT([Mulheres no registro], "0.0%")
 		displayFolder: Representação
-		lineageTag: fdbd340a-a304-5b04-bdc2-9ea2d03a4733
+		lineageTag: 59b7a13f-8465-5f51-8634-89674cb4337a
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Repasses a quem tem cadeira' = "em 12 meses, a " & FORMAT([Organizações com cadeira que receberam], "#,##0") & " das " & FORMAT([Organizações com cadeira], "#,##0") & " organizações"
 		displayFolder: Representação
-		lineageTag: 6a23f50e-2ef8-50fc-a060-18d681c35af5
+		lineageTag: 2ada31f1-fb32-5a67-9de2-a4095a25541e
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Deliberações de repasse' = ```
@@ -1134,7 +1134,7 @@ table Medidas
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Representação
-		lineageTag: c551c17f-0d43-5b49-9fa2-ddc7f8e2094e
+		lineageTag: 4afa62aa-7a1c-5834-8d84-92c2d2a8d82f
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Deliberações de repasse' = ```
@@ -1142,24 +1142,24 @@ table Medidas
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Representação
-		lineageTag: c540b907-e20d-5c75-a3c6-bbdf50ee4442
+		lineageTag: c3121266-7987-50ac-a4db-4b4e3c9c7217
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Deliberações de repasse' = FORMAT([Valor das deliberações], "R$ #,##0") & " aprovados pelo Plenário no período"
 		displayFolder: Representação
-		lineageTag: 9818a866-519b-5bd0-8819-145ecfc2b215
+		lineageTag: 425ec019-f563-56db-a438-a8e16762bbf6
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Propostos pela própria organização' = "o conselheiro propôs repasse à organização que o indicou"
 		displayFolder: Representação
-		lineageTag: bc4df5bc-7c41-50ba-886c-e044a7cade29
+		lineageTag: 93378085-24c0-5693-a37c-da1db5d9b94c
 
 	column Medidas
 		dataType: string
 		isHidden
 		summarizeBy: none
 		sourceColumn: Medidas
-		lineageTag: 913b333a-3385-57e0-aa7b-ea82f4bb9aff
+		lineageTag: e97b0a9b-7a95-53e1-b130-fb33ea8ead8a
 
 	partition Medidas = m
 		mode: import
