@@ -1,6 +1,7 @@
 import type { Medida, Modelo, Tabela } from '../modelo';
 import { COM_DATA, COM_PERIODO, FORMATO, MESES_NA_BASE, PASTA_PARAMETRO, cartao, data, filtrosExtras, inicioDe, inteiro, medida, medidasDeApoio, medidasDosCartoes, n, noMes, parte, reais, sinal, texto } from '../comum';
 import type { Cartao } from '../comum';
+import { CARTOES_ATENDIMENTO, PASTA_ATENDIMENTO, medidasAtendimento, relacoesAtendimento, tabelasAtendimento } from './atendimento';
 
 /*
  * Modelo comum dos painéis Financeiro e Atendimento no Power BI: as tabelas de `dados.ts`, as relações do esquema estrela e as
@@ -8,7 +9,7 @@ import type { Cartao } from '../comum';
  * ativos) leem a foto da data escolhida; fluxos (receita, despesa, diárias, solicitações) somam os fatos do período (ADR 0002).
  * `tests/powerbi-gestao.test.ts` reproduz estas regras sobre os CSV e confere com os números do protótipo.
  */
-const PASTA = { apoio: 'Apoio', receita: 'Receita', orcamento: 'Orçamento e despesa', atendimento: 'Atendimento' } as const;
+const PASTA = { apoio: 'Apoio', receita: 'Receita', orcamento: 'Orçamento e despesa', equipe: PASTA_ATENDIMENTO.equipe } as const;
 
 const tabelas: Tabela[] = [
   // Dimensões.
@@ -44,10 +45,8 @@ const tabelas: Tabela[] = [
 
   { nome: 'Profissionais ativos', arquivo: 'profissionais-ativos.csv', oculta: true, descricao: 'Conta os profissionais com registro ativo no último dia de cada mês, por município onde moram.', colunas: [data('Data'), texto('Código IBGE'), inteiro('Ativos')] },
 
-  // Atendimento.
-  { nome: 'Solicitações', arquivo: 'solicitacoes.csv', descricao: 'Guarda cada solicitação de atendimento: a unidade que atendeu (pelo município), o município de quem pediu, o prazo, a resolução, o assunto, o canal e a distância de quem pediu até a unidade mais próxima. Os filtros chegam pela GRE da unidade, como no painel.',
-    colunas: [texto('Solicitação', { oculta: true }), texto('Código IBGE', { oculta: true }), texto('GRE', { oculta: true }), texto('Município do solicitante', { oculta: true }), data('Aberta em'), data('Mês', { oculta: true }), data('Prazo'), data('Resolvida em'), inteiro('Dias até resolver', { oculta: true }),
-      texto('Assunto'), texto('Solicitante'), texto('Canal'), texto('Distância do solicitante', { ordenarPor: 'Ordem da distância' }), inteiro('Ordem da distância', { oculta: true })] },
+  // Atendimento: os protocolos (em atendimento.ts) e os coworkings.
+  ...tabelasAtendimento,
   { nome: 'Coworkings', arquivo: 'coworkings.csv', descricao: 'Tem as unidades de coworking do Crea-SP, pelo município, com o número de mesas. Os filtros chegam pela GRE, como no painel.', colunas: [texto('Unidade'), texto('Código IBGE', { oculta: true }), texto('GRE', { oculta: true }), inteiro('Mesas', { oculta: true })] },
   { nome: 'Meses dos coworkings', arquivo: 'coworkings-meses.csv', oculta: true, descricao: 'Guarda, por unidade e mês, as horas de mesa disponíveis, as usadas e o custo.', colunas: [texto('Unidade'), data('Mês'), inteiro('Horas disponíveis'), inteiro('Horas usadas'), reais('Custo')] },
   { nome: 'Usuários dos coworkings', arquivo: 'coworkings-usuarios.csv', oculta: true, descricao: 'Guarda os profissionais que usaram cada unidade em cada mês.', colunas: [texto('Unidade'), data('Mês'), texto('Profissional')] },
@@ -77,15 +76,12 @@ const DIVIDA = (...extra: string[]) => naFoto('Foto da dívida', "SUM('Foto da d
 /** Título vencido e não pago num dia `x`, ainda não prescrito (`vencidoEm`): venceu antes de `x`, há até 1.826 dias, e não foi pago até `x`. */
 const vencidosEm = (x: string) => `CALCULATE(SUM('Títulos'[Valor]), 'Títulos'[Vencimento] < ${x}, 'Títulos'[Vencimento] >= ${x} - 1826, ISBLANK('Títulos'[Pago em]) || 'Títulos'[Pago em] > ${x}) + 0`;
 
-/* ---------- Atendimento: a situação de cada solicitação na data (`situacaoPedido`) ---------- */
-const RESOLVIDA = "NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d";
-const situacao = (condicao: string) => `${COM_PERIODO}\nRETURN COUNTROWS(FILTER(CALCULATETABLE('Solicitações', REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d), ${condicao})) + 0`;
 
 /* ---------- Pessoal: a lotação é o nome da GRE ou "Sede"; com regional escolhida, conta só quem está lotado nela ---------- */
 const doPessoal = (expressao: string, ...extra: string[]) => `IF(ISCROSSFILTERED('Regionais'), CALCULATE(${expressao}, 'Pessoas'[Tipo] = "Servidor"${filtros(extra)}, TREATAS(VALUES('Regionais'[GRE]), 'Pessoas'[Lotação])), CALCULATE(${expressao}, 'Pessoas'[Tipo] = "Servidor"${filtros(extra)}))`;
 
 /* ---------- Cartões ---------- */
-const [naReceita, noOrcamento, noAtendimento] = [cartao(PASTA.receita), cartao(PASTA.orcamento), cartao(PASTA.atendimento)];
+const [naReceita, noOrcamento] = [cartao(PASTA.receita), cartao(PASTA.orcamento)];
 const DOZE_ANTERIORES = '" em relação aos 12 meses anteriores"';
 /** Os cartões de cada página, com a comparação e a linha de apoio do painel. `paginas.ts` monta os cartões daqui. */
 export const CARTOES = {
@@ -103,13 +99,7 @@ export const CARTOES = {
     noOrcamento('Diárias e passagens', { serie: 'fluxo', frase: DOZE_ANTERIORES }, `${n('[Diárias pagas em 12 meses]')} & " diárias em 12 meses"`),
     noOrcamento('Contratos vigentes', undefined, `${rs('[Valor dos contratos vigentes]')} & "; " & ${n('[Contratos que terminam em 90 dias]')} & " terminam em 90 dias"`),
   ],
-  atendimento: [
-    noAtendimento('Solicitações resolvidas no prazo', { serie: 'taxa' }, '"em até 14 dias; a meta é " & FORMAT([Meta de resolução no prazo], "0%")'),
-    noAtendimento('Solicitações de atendimento', { serie: 'fluxo' }, `${parte('DIVIDE([Solicitações de empresas], [Solicitações de atendimento])')} & " vindas de empresas"`),
-    noAtendimento('Tempo de resolução', undefined, `"tempo típico (mediana); " & ${n('[Abertas com prazo vencido]')} & " pedidos abertos já passaram do prazo"`),
-    noAtendimento('Moram a mais de 50 km de uma unidade', undefined, `${n('[Ativos a mais de 50 km]')} & " dos " & ${n('[Profissionais ativos]')} & " profissionais ativos do recorte, em linha reta"`),
-    noAtendimento('Ocupação dos coworkings', { serie: 'taxa' }, `${n('[Unidades de coworking]')} & " unidades com " & ${n('[Usuários dos coworkings]')} & " usuários, a " & FORMAT(DIVIDE([Custo dos coworkings no período], [Horas usadas no período]), "R$ #,##0.00") & " por hora usada"`),
-  ],
+  ...CARTOES_ATENDIMENTO,
 } satisfies Record<string, Cartao[]>;
 
 /* ---------- Medidas ---------- */
@@ -119,7 +109,6 @@ const medidas: Medida[] = [
   ...medidasDeApoio(PASTA.apoio),
   medida(PASTA.apoio, 'Piso de execução', `${COM_DATA}\nRETURN 5 * ROUND(520 * POWER(1.055, MAX(0, YEAR(d) - 2020)), 0)`, FORMATO.reais,
     'Calcula cinco vezes a anuidade de pessoa física do ano da data escolhida (Lei 12.514/2011, art. 8º, com a redação da Lei 14.195/2021). Abaixo dele, o Conselho não pode executar a dívida na Justiça. A anuidade do cenário é demonstrativa.'),
-  medida(PASTA.apoio, 'Meta de resolução no prazo', '0.8', FORMATO.parte, 'Guarda a meta padrão de solicitações resolvidas no prazo, 80%, a mesma do painel.'),
 
   // Receita.
   medida(PASTA.receita, 'Receita do Conselho', `${noPeriodo('Receitas', 'Mês', "SUM('Receitas'[Realizada])")} + 0`, FORMATO.reais, 'Soma a receita realizada no período, de anuidades, ARTs, multas e outras origens.'),
@@ -175,26 +164,17 @@ const medidas: Medida[] = [
   medida(PASTA.orcamento, 'Servidores comissionados', doPessoal("COUNTROWS('Pessoas')", "'Pessoas'[Vínculo] = \"Comissionado\""), FORMATO.inteiro, 'Conta os servidores comissionados. Com uma regional escolhida, só os lotados nela.'),
   medida(PASTA.orcamento, 'Custo mensal do pessoal', doPessoal("SUM('Pessoas'[Custo mensal])"), FORMATO.reais, 'Soma o custo mensal dos servidores (salário e encargos). Com uma regional escolhida, só os lotados nela.'),
 
-  // Atendimento.
-  medida(PASTA.atendimento, 'Solicitações de atendimento', `${noPeriodo('Solicitações', 'Aberta em', "COUNTROWS('Solicitações')")} + 0`, FORMATO.inteiro, 'Conta as solicitações abertas no período.'),
-  medida(PASTA.atendimento, 'Solicitações de empresas', "CALCULATE([Solicitações de atendimento], KEEPFILTERS('Solicitações'[Solicitante] = \"Empresa\"))", FORMATO.inteiro, 'Conta as solicitações do período feitas por empresas.'),
-  medida(PASTA.atendimento, 'Resolvidas no prazo', situacao(`${RESOLVIDA} && 'Solicitações'[Resolvida em] <= 'Solicitações'[Prazo]`), FORMATO.inteiro, 'Conta as solicitações do período resolvidas até a data escolhida, dentro do prazo.'),
-  medida(PASTA.atendimento, 'Resolvidas com atraso', situacao(`${RESOLVIDA} && 'Solicitações'[Resolvida em] > 'Solicitações'[Prazo]`), FORMATO.inteiro, 'Conta as solicitações do período resolvidas depois do prazo.'),
-  medida(PASTA.atendimento, 'Abertas com prazo vencido', situacao(`NOT (${RESOLVIDA}) && 'Solicitações'[Prazo] < d`), FORMATO.inteiro, 'Conta as solicitações do período ainda abertas na data escolhida, com o prazo já vencido.'),
-  medida(PASTA.atendimento, 'Abertas no prazo', situacao(`NOT (${RESOLVIDA}) && 'Solicitações'[Prazo] >= d`), FORMATO.inteiro, 'Conta as solicitações do período ainda abertas, dentro do prazo.'),
-  medida(PASTA.atendimento, 'Solicitações resolvidas no prazo', 'DIVIDE([Resolvidas no prazo], [Resolvidas no prazo] + [Resolvidas com atraso] + [Abertas com prazo vencido])', FORMATO.parte,
-    'Mostra a parte das solicitações do período resolvidas no prazo, entre as resolvidas e as que já passaram do prazo. As abertas ainda no prazo ficam de fora.'),
-  medida(PASTA.atendimento, 'Tempo de resolução', noPeriodo('Solicitações', 'Aberta em', "MEDIAN('Solicitações'[Dias até resolver])", RESOLVIDA), dias, 'Mostra o tempo típico (a mediana), em dias, da abertura à resolução das solicitações do período resolvidas até a data escolhida.'),
-  medida(PASTA.atendimento, 'Solicitações no mês', noMes("COUNTROWS('Solicitações') + 0"), FORMATO.inteiro, 'Conta as solicitações abertas em cada mês, nos meses do gráfico.'),
-  medida(PASTA.atendimento, 'Profissionais ativos', naFoto('Profissionais ativos', "SUM('Profissionais ativos'[Ativos])"), FORMATO.inteiro, 'Conta os profissionais com registro ativo na data escolhida, pelo município onde moram.'),
-  medida(PASTA.atendimento, 'Ativos a mais de 50 km', "CALCULATE([Profissionais ativos], 'Municípios'[Distância até a unidade (km)] > 50)", FORMATO.inteiro, 'Conta os profissionais ativos que moram a mais de 50 km, em linha reta, da unidade de atendimento mais próxima.'),
-  medida(PASTA.atendimento, 'Moram a mais de 50 km de uma unidade', 'DIVIDE([Ativos a mais de 50 km], [Profissionais ativos])', FORMATO.parte, 'Mostra a parte dos profissionais ativos que moram a mais de 50 km, em linha reta, da unidade mais próxima. Pela estrada, a distância costuma ser de 20% a 40% maior.'),
-  medida(PASTA.atendimento, 'Horas disponíveis no período', `${noPeriodo('Meses dos coworkings', 'Mês', "SUM('Meses dos coworkings'[Horas disponíveis])")} + 0`, FORMATO.inteiro, 'Soma as horas de mesa disponíveis nos coworkings no período.'),
-  medida(PASTA.atendimento, 'Horas usadas no período', `${noPeriodo('Meses dos coworkings', 'Mês', "SUM('Meses dos coworkings'[Horas usadas])")} + 0`, FORMATO.inteiro, 'Soma as horas de mesa usadas nos coworkings no período.'),
-  medida(PASTA.atendimento, 'Custo dos coworkings no período', `${noPeriodo('Meses dos coworkings', 'Mês', "SUM('Meses dos coworkings'[Custo])")} + 0`, FORMATO.reais, 'Soma o custo dos coworkings no período.'),
-  medida(PASTA.atendimento, 'Ocupação dos coworkings', 'DIVIDE([Horas usadas no período], [Horas disponíveis no período])', FORMATO.parte, 'Mostra a parte das horas de mesa disponíveis no período que foi usada.'),
-  medida(PASTA.atendimento, 'Usuários dos coworkings', `${noPeriodo('Usuários dos coworkings', 'Mês', "DISTINCTCOUNT('Usuários dos coworkings'[Profissional])")} + 0`, FORMATO.inteiro, 'Conta os profissionais que usaram os coworkings no período.'),
-  medida(PASTA.atendimento, 'Unidades de coworking', "COUNTROWS('Coworkings') + 0", FORMATO.inteiro, 'Conta as unidades de coworking no recorte.'),
+  // Atendimento: os protocolos (em atendimento.ts), os profissionais longe de uma unidade e os coworkings.
+  ...medidasAtendimento(PASTA.apoio),
+  medida(PASTA.equipe, 'Profissionais ativos', naFoto('Profissionais ativos', "SUM('Profissionais ativos'[Ativos])"), FORMATO.inteiro, 'Conta os profissionais com registro ativo na data escolhida, pelo município onde moram.'),
+  medida(PASTA.equipe, 'Ativos a mais de 50 km', "CALCULATE([Profissionais ativos], 'Municípios'[Distância até a unidade (km)] > 50)", FORMATO.inteiro, 'Conta os profissionais ativos que moram a mais de 50 km, em linha reta, da unidade de atendimento mais próxima.'),
+  medida(PASTA.equipe, 'A mais de 50 km da unidade', 'DIVIDE([Ativos a mais de 50 km], [Profissionais ativos])', FORMATO.parte, 'Mostra a parte dos profissionais ativos que moram a mais de 50 km, em linha reta, da unidade mais próxima. Pela estrada, a distância costuma ser de 20% a 40% maior.'),
+  medida(PASTA.equipe, 'Horas disponíveis no período', `${noPeriodo('Meses dos coworkings', 'Mês', "SUM('Meses dos coworkings'[Horas disponíveis])")} + 0`, FORMATO.inteiro, 'Soma as horas de mesa disponíveis nos coworkings no período.'),
+  medida(PASTA.equipe, 'Horas usadas no período', `${noPeriodo('Meses dos coworkings', 'Mês', "SUM('Meses dos coworkings'[Horas usadas])")} + 0`, FORMATO.inteiro, 'Soma as horas de mesa usadas nos coworkings no período.'),
+  medida(PASTA.equipe, 'Custo dos coworkings no período', `${noPeriodo('Meses dos coworkings', 'Mês', "SUM('Meses dos coworkings'[Custo])")} + 0`, FORMATO.reais, 'Soma o custo dos coworkings no período.'),
+  medida(PASTA.equipe, 'Ocupação dos coworkings', 'DIVIDE([Horas usadas no período], [Horas disponíveis no período])', FORMATO.parte, 'Mostra a parte das horas de mesa disponíveis no período que foi usada.'),
+  medida(PASTA.equipe, 'Usuários dos coworkings', `${noPeriodo('Usuários dos coworkings', 'Mês', "DISTINCTCOUNT('Usuários dos coworkings'[Profissional])")} + 0`, FORMATO.inteiro, 'Conta os profissionais que usaram os coworkings no período.'),
+  medida(PASTA.equipe, 'Unidades de coworking', "COUNTROWS('Coworkings') + 0", FORMATO.inteiro, 'Conta as unidades de coworking no recorte.'),
 
   ...medidasDosCartoes(CARTOES),
 ];
@@ -219,9 +199,8 @@ export const modeloGestao: Modelo = {
     { de: ['Títulos', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] },
     { de: ['Foto da dívida', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] },
     { de: ['Profissionais ativos', 'Código IBGE'], para: ['Municípios', 'Código IBGE'] },
-    // Solicitações e coworkings seguem a GRE, como no painel: o município escolhido leva à regional dele.
-    { de: ['Solicitações', 'GRE'], para: ['Regionais', 'GRE'] },
-    { de: ['Solicitações', 'Mês'], para: ['Calendário', 'Mês'] },
+    ...relacoesAtendimento,
+    // Os coworkings seguem a GRE, como no painel: o município escolhido leva à regional dele.
     { de: ['Coworkings', 'GRE'], para: ['Regionais', 'GRE'] },
     { de: ['Meses dos coworkings', 'Unidade'], para: ['Coworkings', 'Unidade'] },
     { de: ['Meses dos coworkings', 'Mês'], para: ['Calendário', 'Mês'] },

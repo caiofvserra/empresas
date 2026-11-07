@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "demanda-cartao-4",
+  "position": {
+    "x": 770,
+    "y": 68,
+    "z": 10000,
+    "width": 243,
+    "height": 84,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Protocolos de ART por 1.000 ARTs"
+                }
+              },
+              "queryRef": "Medidas.Protocolos de ART por 1.000 ARTs",
+              "nativeQueryRef": "Protocolos de ART por 1.000 ARTs"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Protocolos de ART por 1.000 ARTs"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Protocolos de ART por 1.000 ARTs",
+              "nativeQueryRef": "Comparação: Protocolos de ART por 1.000 ARTs"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Protocolos de ART por 1.000 ARTs"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Protocolos de ART por 1.000 ARTs",
+              "nativeQueryRef": "Detalhe: Protocolos de ART por 1.000 ARTs"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Protocolos de ART por 1.000 ARTs'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

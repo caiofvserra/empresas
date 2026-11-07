@@ -1,0 +1,37 @@
+/*
+ * Painel de Atendimento (07/11/2026): três páginas, cada uma numa tela de computador sem rolagem, com as mesmas regras dos outros
+ * painéis temáticos. As linhas da grade dividem a altura da tela; só abaixo de 700 px de altura, ou em telas estreitas, a página rola.
+ */
+.ck-grid-at-protocolos { grid-template-rows: auto minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "sp sp sp sp mm mm mm mm mm mm mm mm"
+  "sp sp sp sp su su su su su su su su"
+  "mo mo mo mo su su su su su su su su"; }
+.ck-grid-at-equipe { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "co co co co mp mp mp mp ca ca ca ca"
+  "co co co co mp mp mp mp ca ca ca ca"
+  "co co co co cd cd cd cd cw cw cw cw"; }
+.ck-grid-at-demanda { grid-template-rows: auto repeat(3, minmax(0, 1fr)); grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "pv pv pv pv pv pv ab ab ab ab ab ab"
+  "pv pv pv pv pv pv fo fo fo fo fo fo"
+  "ar ar ar ar ar ar la la la la la la"; }
+.ck-grid-at-protocolos, .ck-grid-at-equipe, .ck-grid-at-demanda { align-content: stretch; }
+@media (max-height: 699px) and (min-width: 1101px) {
+  .ck-grid-at-protocolos, .ck-grid-at-equipe, .ck-grid-at-demanda { grid-template-rows: auto repeat(3, 230px); }
+}
+@media (max-width: 1100px) {
+  .ck-grid-at-protocolos, .ck-grid-at-equipe, .ck-grid-at-demanda { grid-template-rows: auto; grid-auto-rows: 340px; }
+}
+
+/* Tabela dos serviços: a linha abre os protocolos; abaixo da meta ou acima do prazo, o número fica vermelho. */
+.at-servicos tr.is-clicavel { cursor: pointer; }
+.at-servicos tr.is-clicavel:hover td, .at-servicos tr.is-clicavel:focus-visible td { background: var(--soft); }
+.at-servicos tr.is-clicavel:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.at-servicos td.at-nome { max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.at-abaixo { color: var(--bad); font-weight: 700; }
+@media (max-width: 1500px) {
+  .at-servicos td.at-nome { max-width: 190px; }
+  .at-servicos th { white-space: normal; }
+}

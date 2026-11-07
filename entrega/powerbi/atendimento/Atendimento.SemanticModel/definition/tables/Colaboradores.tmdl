@@ -1,0 +1,53 @@
+/// Tem o quadro de atendimento, com o cargo e a lotação (quem está na sede atende pela capital, na GRE 5), e a linha "Sem atribuição" (chave sem-atribuicao) para o protocolo que ninguém pegou. Os nomes do cenário são fictícios.
+table Colaboradores
+	lineageTag: cb1fca8a-1ebd-5a74-86af-3ae2b4c49c69
+
+	column Pessoa
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Pessoa
+		lineageTag: 57715068-674f-5c22-b1d8-02202ec28e9d
+
+	column Nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome
+		lineageTag: 587db630-0524-587e-8d26-e5a81e4bdb99
+
+	column Cargo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Cargo
+		lineageTag: 06ad86e7-f45b-5359-a551-cccf340265fc
+
+	column 'Lotação'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Lotação
+		lineageTag: 85253c3e-93c9-5e00-8bb1-73460a979fa9
+
+	column GRE
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 3df6f23b-ef6f-5e3d-9466-04931667c2e0
+
+	column 'No quadro'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: No quadro
+		lineageTag: a6836416-d807-5998-94d0-32de6d16ce49
+
+	partition Colaboradores = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "colaboradores.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Pessoa", type text}, {"Nome", type text}, {"Cargo", type text}, {"Lotação", type text}, {"GRE", type text}, {"No quadro", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

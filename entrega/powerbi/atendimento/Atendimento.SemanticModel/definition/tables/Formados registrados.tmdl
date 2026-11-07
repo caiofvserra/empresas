@@ -1,0 +1,40 @@
+/// Guarda os profissionais registrados no Crea-SP com o ano em que concluíram o curso, pelo município da instituição de ensino declarada.
+table 'Formados registrados'
+	isHidden
+	lineageTag: 35bcc4f8-6915-565a-a350-aeb08a4c6ad5
+
+	column Profissional
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Profissional
+		lineageTag: 792859d2-8203-5154-b8ec-16fab8de3da1
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 662ec67d-c36a-55c7-9ae0-83a5c188baa8
+
+	column 'Ano de conclusão'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano de conclusão
+		lineageTag: 0508e1eb-04c2-587d-8c7c-1b73677d8384
+
+	column 'Registro em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Registro em
+		lineageTag: 2db9d8e6-5f3d-58f4-b15a-012e72e602a7
+
+	partition 'Formados registrados' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "formados-registrados.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Profissional", type text}, {"Código IBGE", type text}, {"Ano de conclusão", Int64.Type}, {"Registro em", type date}}, "pt-BR")
+				in
+				    Tipos

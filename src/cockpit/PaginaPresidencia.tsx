@@ -48,7 +48,7 @@ export default function PaginaPresidencia({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ficha="k-malha" ctx={ctx} aspecto="Malha fina" label="Empresas com indício confirmado" value={int(malha.confirmadas.length)}
         sub={<><Segments parts={[{ label: 'Com ação fiscal', value: malha.comAcao.length, color: tokens.good }, { label: 'Sem ação fiscal', value: malha.empresas.length - malha.comAcao.length, color: tokens.warn }]} />{int(malha.empresas.length)} empresas com algum indício; {pct(malha.comAcao.length / Math.max(1, malha.empresas.length) * 100)} já tiveram ação</>} onOpen={() => ctx.go('malha')} />
       <Indicador ficha="k-atendimento" ctx={ctx} aspecto="Atendimento" label="Solicitações resolvidas no prazo" value={taxa === null ? '…' : pct(taxa)} variacao={{ value: taxa === null || taxaAntes === null ? null : taxa - taxaAntes, kind: 'pp' }} meta={{ atual: taxa, alvo: metas.atendimento }}
-        sub={estrutura?.atendimento.medianaDias == null ? 'calculando…' : `resolvidas em ${int(estrutura.atendimento.medianaDias)} dias no caso típico`} onOpen={() => ctx.go('atendimento')} />
+        sub={estrutura?.atendimento.medianaDias == null ? 'calculando…' : `resolvidas em ${int(estrutura.atendimento.medianaDias)} dias no caso típico`} onOpen={() => ctx.go('protocolos')} />
     </section>
     <MapaRegional ctx={ctx} />
     <Bloco ctx={ctx} id="sc" area="sc" title="As regionais em todos os assuntos" question="Cada regional numa linha, com todos os assuntos do painel. As setas comparam com as metas e as cores marcam as maiores diferenças. Clique numa linha para ver o resumo da regional."><Quadro ctx={ctx} /></Bloco>

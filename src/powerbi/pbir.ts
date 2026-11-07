@@ -8,9 +8,9 @@
 export type Campo = ({ medida: string } | { coluna: [string, string] }) & { rotulo?: string };
 
 export type TipoVisual = 'card' | 'multiRowCard' | 'slicer' | 'textbox' | 'barChart' | 'clusteredBarChart' | 'hundredPercentStackedBarChart' | 'clusteredColumnChart' | 'columnChart' | 'lineChart'
-  | 'lineClusteredColumnComboChart' | 'donutChart' | 'treemap' | 'pivotTable' | 'tableEx';
+  | 'lineClusteredColumnComboChart' | 'lineStackedColumnComboChart' | 'donutChart' | 'treemap' | 'pivotTable' | 'tableEx';
 /** Gráficos: saem com rótulos de dados e legenda no alto, porque todo gráfico do painel se lê sem passar o mouse. */
-const GRAFICOS = new Set<TipoVisual>(['barChart', 'clusteredBarChart', 'hundredPercentStackedBarChart', 'clusteredColumnChart', 'columnChart', 'lineChart', 'lineClusteredColumnComboChart', 'donutChart', 'treemap']);
+const GRAFICOS = new Set<TipoVisual>(['barChart', 'clusteredBarChart', 'hundredPercentStackedBarChart', 'clusteredColumnChart', 'columnChart', 'lineChart', 'lineClusteredColumnComboChart', 'lineStackedColumnComboChart', 'donutChart', 'treemap']);
 
 export interface Visual {
   /** Nome da pasta do visual: só [A-Za-z0-9_-], até 50 caracteres. */

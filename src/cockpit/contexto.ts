@@ -20,6 +20,7 @@ import type { Historico } from '../observatorio/historico';
 import type { Aberturas, Concentracao, Permanencia, QuadroDemanda } from '../domain/mercado';
 import type { Acumulado, Carteira, QuadroDivida, ReceitaMensal } from '../domain/gestao';
 import type { QuadroColegiado } from '../domain/colegiado';
+import type { BaseAtendimento, MesAtendimento, QuadroAtendimento, QuadroDemandaAtendimento } from '../domain/atendimento';
 import type { Profissional } from '../domain/profissionais';
 import type { InstitutionalServiceRequest } from '../domain/institutional';
 import type { QuadroCno, QuadroCoorteNominal, QuadroCredenciamentos, QuadroDenominacao, QuadroJucesp, QuadroLicencas, QuadroPericias, QuadroSociosPf, QuadroTce, QuadroVinculos } from '../domain/parcerias';
@@ -71,6 +72,8 @@ export interface Gestao {
   /** Gastos com nome: servidores do quadro, conselheiros do plenário e diárias de 12 meses pessoa a pessoa (no recorte de GRE). */
   equipe: Servidor[]; conselheiros: Conselheiro[]; diariasPessoas: Beneficiario[];
   distancia: Map<string, { km: number; unidade: string }>; origem: (row: InstitutionalServiceRequest) => string;
+  /** Painel de Atendimento (07/11/2026): os protocolos lidos na data, no período e no recorte, e a demanda. Nulo nos outros painéis. */
+  atendimento: { base: BaseAtendimento; q: QuadroAtendimento; d: QuadroDemandaAtendimento; serie: MesAtendimento[]; servidores: number } | null;
   /** Painel de Gestão do Conselho (07/11/2026): o colegiado lido na data, no período e no recorte (colegiado, regional e município). Nulo no Financeiro e no Atendimento. */
   colegiado: QuadroColegiado | null;
 }

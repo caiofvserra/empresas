@@ -1,0 +1,128 @@
+/// Guarda, no último dia de cada mês, cada protocolo aberto nos 36 meses até ele, lido nesse dia: o status, a situação (as cinco do painel antigo), se está dentro ou fora do prazo, com quem está, os dias úteis com o Crea-SP, os dias corridos com o solicitante e o dia em que fechou.
+table 'Foto dos protocolos'
+	lineageTag: a2a52ab8-fe4c-57f2-81d0-5d30b78b5bdb
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 1647aaab-847b-5391-9482-1553f4898d3a
+
+	column Protocolo
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Protocolo
+		lineageTag: 66fc3f78-72fd-50d2-8299-94808c19e09f
+
+	column Status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Status
+		sortByColumn: 'Ordem do status'
+		lineageTag: 7f7c0e35-2ccf-5f23-86bb-fbbdc2c0f994
+
+	column 'Ordem do status'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do status
+		lineageTag: f80aad05-00fa-587b-ab9c-2c6d1201cb82
+
+	column 'Situação'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Situação
+		sortByColumn: 'Ordem da situação'
+		lineageTag: 6550c3ae-242e-5a94-bd2e-bdf679e10a9f
+
+	column 'Ordem da situação'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem da situação
+		lineageTag: eb51a990-d8ce-5032-b74e-f028286af8b3
+
+	column Prazo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Prazo
+		sortByColumn: 'Ordem do prazo'
+		lineageTag: 2a79d4f3-9f7c-5621-9665-e08b2f693400
+
+	column 'Ordem do prazo'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do prazo
+		lineageTag: d5845e63-76e8-5549-9701-c61b9a15ce26
+
+	column Pessoa
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Pessoa
+		lineageTag: d7cb1012-56f2-5854-81de-9daaea04c393
+
+	column 'Atribuído'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Atribuído
+		lineageTag: 4883b850-76aa-57de-af11-a398642c9f93
+
+	column 'Dias com o Crea-SP'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Dias com o Crea-SP
+		lineageTag: ae468609-6fcd-5b03-b513-612196f2fa28
+
+	column 'Dias com o solicitante'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Dias com o solicitante
+		lineageTag: 0a042457-473f-536d-bbcc-832f3549e3e6
+
+	column 'Fechado em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Fechado em
+		lineageTag: 0d0d1fb1-1169-5f03-915f-36490dc2fd58
+
+	column 'Dias úteis no status'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Dias úteis no status
+		lineageTag: d5bfb766-ebb1-5168-9ba3-6cbe57b3ae47
+
+	column 'Já teve exigência'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Já teve exigência
+		lineageTag: c96625c4-857f-50f6-bced-70fc0b5b53f7
+
+	partition 'Foto dos protocolos' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "foto-protocolos.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Protocolo", type text}, {"Status", type text}, {"Ordem do status", Int64.Type}, {"Situação", type text}, {"Ordem da situação", Int64.Type}, {"Prazo", type text}, {"Ordem do prazo", Int64.Type}, {"Pessoa", type text}, {"Atribuído", Int64.Type}, {"Dias com o Crea-SP", Int64.Type}, {"Dias com o solicitante", Int64.Type}, {"Fechado em", type date}, {"Dias úteis no status", Int64.Type}, {"Já teve exigência", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

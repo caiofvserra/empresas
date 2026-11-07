@@ -1,0 +1,40 @@
+/// Conta os concluintes de engenharia, agronomia e geociências de cada instituição de ensino em cada ano (Censo da Educação Superior, INEP), pelo município da instituição.
+table Concluintes
+	isHidden
+	lineageTag: a6b286bd-0d3e-51bf-ba2d-992586b1e4ae
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 39a66d5e-91ce-5068-a84e-2346be1aadc5
+
+	column 'Instituição'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Instituição
+		lineageTag: 12f092b8-2091-5da6-8a12-9810fe33d8eb
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: f99d5830-282d-530a-b642-4f289c0a89bb
+
+	column Concluintes
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Concluintes
+		lineageTag: 8f566919-b178-5543-8b87-7d1115bf963a
+
+	partition Concluintes = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "concluintes.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Instituição", type text}, {"Código IBGE", type text}, {"Concluintes", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

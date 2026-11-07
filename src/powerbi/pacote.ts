@@ -38,7 +38,7 @@ function daGestao(titulo: string, nome: string, pasta: string, ids: string[], le
 const PAINEIS = {
   empresas: { titulo: 'painel de Empresas', modelo: modeloEmpresas, paginas: paginasEmpresas, dados: dadosEmpresas, leiaMe: LEIA_ME_EMPRESAS },
   financeiro: daGestao('painel Financeiro', 'Financeiro', 'financeiro', ['receita', 'orcamento'], LEIA_ME_FINANCEIRO),
-  atendimento: daGestao('painel de Atendimento', 'Atendimento', 'atendimento', ['atendimento'], LEIA_ME_ATENDIMENTO),
+  atendimento: daGestao('painel de Atendimento', 'Atendimento', 'atendimento', ['protocolos', 'equipe', 'demanda'], LEIA_ME_ATENDIMENTO),
   conselho: { titulo: 'painel de Gestão do Conselho', modelo: modeloConselho, paginas: paginasConselho, dados: dadosConselho, leiaMe: LEIA_ME_CONSELHO },
 } satisfies Record<string, PainelComPacote>;
 export type PainelPowerBi = keyof typeof PAINEIS;
