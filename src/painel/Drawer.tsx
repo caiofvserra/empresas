@@ -58,7 +58,7 @@ export default function Drawer({ ctx, detail, onClose }: { ctx: Ctx; detail: Det
         {content.summary.length > 0 && <dl className="summary">{content.summary.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>}
         {!semLista && <>
         <div className="list-head"><h3>{content.listTitle}<span>{int(content.rows.length)}</span></h3>
-          <div className="list-tools"><label className="search"><Search size={14} /><input id="busca-detalhe" placeholder="Buscar nesta lista" value={query} onChange={event => setQuery(event.target.value)} /></label><button className="ghost" onClick={copy} disabled={!visible.length}><Copy size={14} />Copiar lista</button><button className="ghost" onClick={baixar} disabled={!visible.length}><Download size={14} />Baixar CSV</button></div>
+          <div className="list-tools"><label className="search"><Search size={14} /><input id="busca-detalhe" placeholder="Buscar nesta lista" aria-label="Buscar nesta lista por nome, título ou situação" value={query} onChange={event => setQuery(event.target.value)} /></label><button className="ghost" onClick={copy} disabled={!visible.length}><Copy size={14} />Copiar lista</button><button className="ghost" onClick={baixar} disabled={!visible.length}><Download size={14} />Baixar CSV</button></div>
           {copied && <p className="copied" role="status">{copied}</p>}
         </div>
         <ol className="list">{visible.slice(0, limit).map(row => <li key={row.key} className={open === row.key ? 'is-open' : ''}>

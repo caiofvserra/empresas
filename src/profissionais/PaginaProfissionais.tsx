@@ -3,8 +3,8 @@ import { noRecorte, situacaoEm } from '../domain/profissionais';
 import { ChevronDown } from 'lucide-react';
 import { int, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { avisoVazio, Bloco, Indicador } from '../cockpit/ui';
-import { ArvoreModalidade, IdadeModalidade, MapaProfissionais, Piramide, SituacaoAnuidade, abrirProfissionais, filtroDe, metricasMapa, porIds } from './blocos';
+import { Bloco, Indicador } from '../cockpit/ui';
+import { ArvoreModalidade, IdadeModalidade, MapaProfissionais, Piramide, SituacaoAnuidade, abrirProfissionais, profissionaisVazio, filtroDe, metricasMapa, porIds } from './blocos';
 import type { MetricaMapa } from './blocos';
 import { useSeriesProfissionais } from './series';
 
@@ -12,7 +12,7 @@ const change = (now: number, before: number) => before > 0 ? (now - before) / be
 
 /** Painel de Profissionais, página 1: quantos têm registro ativo, onde moram, em que modalidade e nível, quem são e se pagam a anuidade. */
 export default function PaginaProfissionais({ ctx }: { ctx: CockpitCtx }) {
-  const vazio = avisoVazio(!ctx.profissionais.resumo.registrados.length, 'Nenhum profissional');
+  const vazio = profissionaisVazio(ctx);
   const { metas } = ctx, p = ctx.profissionais.resumo, antes = p.porNivel.reduce((sum, row) => sum + row.antes, 0);
   const sessenta = porIds(ctx, p.porIdade.at(-1)?.ids ?? []), mulheres = porIds(ctx, p.porGenero.find(row => row.nome === 'Feminino')?.ids ?? []);
   const [metrica, setMetrica] = useState<MetricaMapa>('ativos'), series = useSeriesProfissionais(ctx);

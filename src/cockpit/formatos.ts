@@ -16,7 +16,7 @@ const luminancia = (cor: string) => {
   const [r, g, b] = canais.map(c => { const v = c / 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 };
-const ESCURO = '#1A202C';
+export const ESCURO = '#1A202C';
 /**
  * Cor do rótulo escrito dentro de uma barra, célula ou fatia (07/11/2026): branco ou quase preto, o que der mais contraste com o
  * fundo. Branco fixo sobre azul-claro ou verde-menta ficava abaixo de 2:1.

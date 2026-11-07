@@ -15,6 +15,8 @@ import { avisoVazio, Bloco, Indicador, linhasProfissionais } from '../cockpit/ui
  * (Novo CAGED e RAIS, sem identificar pessoas ou empresas), e as perícias judiciais, que dependem de acordo com o Tribunal de Justiça.
  * Com uma modalidade escolhida, ficam só as ocupações daquela modalidade; com um município, a série é a da regional dele.
  */
+/** Nome da ocupação na tela: sem o apelido entre parênteses e sem o "·" do catálogo (07/11/2026). */
+const nomeOcupacao = (row: { label: string }) => row.label.split('(')[0].replace('Eng. civil · ', 'Eng. de ').trim();
 const ocupacoes = (ctx: CockpitCtx) => ctx.profissionais.cbo.filter(row => !ctx.modalidade || row.modalidade === ctx.modalidade);
 const regionalDoRecorte = (ctx: CockpitCtx) => ctx.greId ?? (ctx.cidadeId ? municipioPorId(ctx.dataset).get(ctx.cidadeId)?.greId ?? null : null);
 
@@ -29,7 +31,7 @@ export default function PaginaTrabalho({ ctx }: { ctx: CockpitCtx }) {
       <Indicador destaque ficha="k-emprego" ctx={ctx} label="Empregos com carteira em engenharia" serie={serie.length > 1 ? { tipo: 'estoque', meses: serie.map(row => row.month), valores: serie.map(row => row.estoque), fmt: int } : undefined} value={int(estoque)} spark={serie.slice(-12).map(row => row.estoque)} cor={tokens.blue} sub={eng[0] ? `em ${mes(eng[0].mes)}, último mês disponível` : 'sem dado no recorte'} />
       <Indicador ficha="k-saldo" ctx={ctx} label="Saldo de contratações em 12 meses" value={`${saldo >= 0 ? '+' : ''}${int(saldo)}`} variacao={{ value: estoque - saldo > 0 ? saldo / (estoque - saldo) * 100 : null, label: 'do estoque de um ano antes' }} sub="admissões menos desligamentos" />
       <Indicador ficha="k-salario" ctx={ctx} label="Salário típico em engenharia" value={salario === null ? '—' : money(salario)} variacao={{ value: salario === null ? null : (salario - piso.exigivel8h) / piso.exigivel8h * 100, label: 'em relação ao piso exigível' }} sub="o do meio da distribuição, ponderado pelos empregos" />
-      <Indicador ficha="k-piso" ctx={ctx} label="Ocupações com salário típico abaixo do piso" value={`${int(abaixo.length)} de ${int(eng.filter(row => row.piso).length)}`} sub={abaixo.length ? abaixo.map(row => row.label.split('(')[0].replace('Eng. civil · ', 'Eng. de ').trim()).join(' e ') : 'nenhuma ocupação de engenharia abaixo do piso'} />
+      <Indicador ficha="k-piso" ctx={ctx} label="Ocupações com salário típico abaixo do piso" value={`${int(abaixo.length)} de ${int(eng.filter(row => row.piso).length)}`} sub={abaixo.length ? abaixo.map(row => nomeOcupacao(row)).join(' e ') : 'nenhuma ocupação de engenharia abaixo do piso'} />
       <Indicador ficha="k-pericias" ctx={ctx} label="Nomeações de peritos em 24 meses" value={int(q.nomeacoes.length)} spark={q.mensal.map(row => row.n)} cor={tokens.accent} sub={`em ${int(q.processos)} processos de ${int(q.comarcas)} comarcas`} />
     </section>
     <Bloco ctx={ctx} vazio={vazioEmprego} id="ev" area="ev" title="Emprego com carteira mês a mês" question="Nas ocupações de engenharia, as admissões para cima e os desligamentos para baixo em cada mês, com a linha do total de empregos com carteira (eixo da direita)." help="Os números são totais do Novo CAGED e da RAIS, por ocupação e regional, e não identificam pessoas nem empresas. Com um município escolhido, a série é a da regional dele."><EmpregoMes ctx={ctx} serie={serie} /></Bloco>
@@ -44,7 +46,7 @@ export default function PaginaTrabalho({ ctx }: { ctx: CockpitCtx }) {
 function EmpregoMes({ ctx, serie }: { ctx: CockpitCtx; serie: ReturnType<typeof empregoMensal> }) {
   const { tokens } = ctx, rows = serie.slice(-24);
   const option = useMemo(() => ({
-    grid: { top: 26, right: 44, bottom: 2, left: 4, containLabel: true }, legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, itemGap: 10, textStyle: { color: tokens.muted, fontSize: 11 } },
+    grid: { top: 26, right: 6, bottom: 2, left: 4, containLabel: true }, legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, itemGap: 10, textStyle: { color: tokens.muted, fontSize: 11 } },
     tooltip: { trigger: 'axis', formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>Admissões: ${int(row.admissoes)} · desligamentos: ${int(row.desligamentos)}<br/>Saldo: <b>${row.saldo >= 0 ? '+' : ''}${int(row.saldo)}</b><br/>Empregos com carteira: ${int(row.estoque)}`; } },
     xAxis: { type: 'category', data: rows.map(row => mes(row.month)), axisTick: { show: false }, axisLine: { lineStyle: { color: tokens.line } }, axisLabel: { color: tokens.muted, fontSize: 11, interval: 2 } },
     yAxis: [{ type: 'value', splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, formatter: (value: number) => int(Math.abs(value)) } }, { type: 'value', scale: true, minInterval: 100, splitLine: { show: false }, axisLabel: { color: tokens.muted, formatter: (value: number) => value >= 1000 ? `${(value / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mil` : int(value) } }],
@@ -53,7 +55,7 @@ function EmpregoMes({ ctx, serie }: { ctx: CockpitCtx; serie: ReturnType<typeof 
       { name: 'Desligamentos', type: 'bar', stack: 'e', data: rows.map(row => -row.desligamentos), itemStyle: { color: tokens.bad, borderRadius: [0, 0, 3, 3] } },
       { name: 'Empregos com carteira', type: 'line', yAxisIndex: 1, data: rows.map(row => row.estoque), smooth: 0.3, symbol: 'none', lineStyle: { color: tokens.ink, width: 2 }, itemStyle: { color: tokens.ink },
         // O número do último mês na ponta da linha (07/11/2026), para a série se ler sem passar o mouse.
-        endLabel: { show: true, color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => int(item.value) } },
+        endLabel: { show: true, align: 'right', offset: [-2, -12], color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (item: any) => int(item.value) } },
     ],
   }), [rows, tokens]);
   return <Chart option={option} tokens={tokens} label="Admissões, desligamentos e empregos com carteira nas ocupações de engenharia" />;
@@ -67,7 +69,7 @@ function Emprego({ ctx }: { ctx: CockpitCtx }) {
     grid: { top: 22, right: 78, bottom: 2, left: 2, containLabel: true },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.label}</b> · CBO ${row.cbo}<br/>Empregos em ${mes(row.mes)}: ${int(row.estoque)}<br/>Saldo em 12 meses: ${row.saldo >= 0 ? '+' : ''}${int(row.saldo)}${row.rotuloAnalista ? '<br/><span style="opacity:.75">cargo com nome de “analista” que a CBO lista como sinônimo</span>' : ''}`; } },
     xAxis: { type: 'value', show: false },
-    yAxis: { type: 'category', inverse: true, data: rows.map(row => row.label.split('(')[0].replace('Eng. civil · ', 'Eng. de ').trim()), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 150, overflow: 'truncate' } },
+    yAxis: { type: 'category', inverse: true, data: rows.map(row => nomeOcupacao(row)), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 150, overflow: 'truncate' } },
     series: [{ type: 'bar', barWidth: '58%', data: rows.map(row => ({ value: row.estoque, itemStyle: { color: row.engenharia ? tokens.blue : tokens.line, borderRadius: [0, 3, 3, 0] } })),
       label: { show: true, position: 'right', fontSize: 11, formatter: (params: any) => { const row = rows[params.dataIndex]; return `{n|${int(row.estoque)}} {${row.saldo >= 0 ? 'g' : 'r'}|${row.saldo >= 0 ? '+' : ''}${int(row.saldo)}}`; }, rich: { n: { color: tokens.ink, fontWeight: 700 }, g: { color: tokens.good, fontWeight: 700 }, r: { color: tokens.bad, fontWeight: 700 } } } }],
   }), [rows, tokens]);
@@ -87,8 +89,8 @@ function Remuneracao({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { trigger: 'item', formatter: (item: any) => { const row = rows[item.dataIndex]; if (!row) return ''; const f = row.faixa, a = abaixo(row);
       return `<b>${row.label}</b> · CBO ${row.cbo}<br/>Metade dos empregos ganha entre <b>${money(f.p25)}</b> e <b>${money(f.p75)}</b><br/>Mediana: <b>${money(f.p50)}</b> · 10% ganham menos de ${money(f.p10)} e 10% mais de ${money(f.p90)}<br/>${row.piso ? `Abaixo do piso exigível: <b>${a === null ? '—' : pct(a)}</b> dos empregos` : 'Ocupação sem piso da Lei 4.950-A'}<br/><span style="opacity:.75">${int(row.estoque)} empregos em ${mes(row.mes)}</span>`; } },
     xAxis: { type: 'value', min: (value: { min: number }) => Math.floor(value.min / 2000) * 2000, max: (value: { max: number }) => Math.max(value.max, piso.confea8h) * 1.04, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 11, formatter: (value: number) => `${int(value / 1000)} mil` } },
-    yAxis: { type: 'category', inverse: true, data: rows.map(row => row.label.split('(')[0].replace('Eng. civil · ', 'Eng. de ').trim()), axisTick: { show: false }, axisLine: { show: false },
-      axisLabel: { color: tokens.ink, fontSize: 11, width: 200, overflow: 'truncate', formatter: (value: string, index: number) => { const row = rows[index], a = row ? abaixo(row) : null; const mediana = row ? `mediana ${milReais(row.faixa.p50)}` : ''; return row?.piso && a !== null ? `${value}\n{a|${mediana} · ${pct(a)} abaixo do piso}` : `${value}\n{s|${mediana} · sem piso legal}`; },
+    yAxis: { type: 'category', inverse: true, data: rows.map(row => nomeOcupacao(row)), axisTick: { show: false }, axisLine: { show: false },
+      axisLabel: { color: tokens.ink, fontSize: 11, width: 200, overflow: 'truncate', formatter: (value: string, index: number) => { const row = rows[index], a = row ? abaixo(row) : null; const mediana = row ? `mediana ${milReais(row.faixa.p50)}` : ''; return row?.piso && a !== null ? `${value}\n{a|${mediana}, ${pct(a)} abaixo do piso}` : `${value}\n{s|${mediana}, sem piso legal}`; },
         rich: { a: { color: tokens.muted, fontSize: 11, align: 'right' }, s: { color: tokens.muted, fontSize: 11, align: 'right' } } } },
     series: [{ type: 'boxplot', boxWidth: [10, 20], data: rows.map(row => ({ value: [row.faixa.p10, row.faixa.p25, row.faixa.p50, row.faixa.p75, row.faixa.p90], itemStyle: { color: `${cor(row)}33`, borderColor: cor(row), borderWidth: 1.5 } })),
       markLine: { symbol: 'none', silent: true, label: { show: false }, data: [
@@ -143,7 +145,7 @@ function Rastreabilidade({ ctx }: { ctx: CockpitCtx }) {
   const etapas = [{ name: 'Nomeações', rows: q.nomeacoes, color: tokens.heat[1] }, { name: 'Com dados para procurar a ART', rows: comDados, color: tokens.blue }, { name: 'ART encontrada', rows: confirmadas, color: tokens.good }];
   const option = useMemo(() => ({
     tooltip: { trigger: 'item', formatter: (item: any) => `<b>${item.name}</b><br/>${int(item.value)} nomeações · ${pct(item.value / Math.max(1, q.nomeacoes.length) * 100)} do total<br/><span style="opacity:.75">clique para ver</span>` },
-    series: [{ type: 'funnel', left: 4, right: 4, top: 4, bottom: 4, minSize: '28%', sort: 'none', gap: 3, label: { show: true, position: 'inside', color: '#FFFFFF', fontSize: 11, fontWeight: 700, formatter: (item: any) => `${item.name}\n${int(item.value)}` },
+    series: [{ type: 'funnel', left: 4, right: 4, top: 4, bottom: 4, minSize: '28%', sort: 'none', gap: 3, label: { show: true, position: 'inside', color: '#FFFFFF', fontSize: 11, fontWeight: 700, width: 130, overflow: 'break', formatter: (item: any) => `${item.name}\n${int(item.value)}` },
       itemStyle: { borderColor: tokens.surface, borderWidth: 1 }, data: etapas.map(etapa => ({ name: etapa.name, value: etapa.rows.length, itemStyle: { color: etapa.color }, label: { color: corDoTexto(etapa.color) } })) }],
   }), [etapas.map(e => e.rows.length).join(), tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   const peritos = () => q.peritosSemRegistroAtivo.length && ctx.open({ kind: 'linhas', eyebrow: 'Indício a confirmar, que depende de acordo com o Tribunal de Justiça', title: 'Peritos nomeados sem registro ativo', what: 'Profissionais nomeados peritos nos últimos 24 meses com o registro cancelado ou interrompido na data escolhida.', use: 'Conferir a situação e a especialidade antes de qualquer contato com o juízo; a nomeação é ato do tribunal.', listTitle: 'Profissionais',

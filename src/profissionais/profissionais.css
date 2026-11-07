@@ -23,7 +23,7 @@
 .ck-grid-pf-trabalho { grid-template-rows: auto repeat(2, minmax(0, 1fr)); grid-template-areas:
   "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
   "ev ev ev ev ev pe pe pe pe ps ps ps"
-  "eh eh eh eh pp pp pp pp pp pr pr pr"; }
+  "eh eh eh eh pp pp pp pp pr pr pr pr"; }
 .ck-grid-pf-registro, .ck-grid-pf-fluxo, .ck-grid-pf-atuacao, .ck-grid-pf-formacao, .ck-grid-pf-trabalho { align-content: stretch; }
 @media (max-height: 699px) and (min-width: 1101px) {
   .ck-grid-pf-registro { grid-template-rows: auto repeat(3, 230px); }
@@ -36,7 +36,7 @@
 /* Lista ao lado de um gráfico: número grande e uma linha de texto sem botão. */
 .side-list .side-big { display: flex; flex-direction: column; padding: 0 6px 4px; }
 .side-list .side-big b { font-size: 22px; font-weight: 800; color: var(--ink); line-height: 1.1; }
-.side-list .side-big small { font-size: 10.5px; color: var(--muted); }
+.side-list .side-big small { font-size: 11px; color: var(--muted); }
 .side-serie.is-texto { grid-template-columns: minmax(0, 1fr) auto; font-size: 11px; color: var(--muted); }
 .side-serie.is-texto b { color: var(--ink); }
 /* Vários painéis no menu lateral: um atalho para cada outro painel. */
@@ -47,7 +47,7 @@
 
 /* Mapa de árvore com os títulos profissionais (04/11/2026): o botão de voltar fica na linha da legenda, à esquerda. */
 .arvore-titulos { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
-.arvore-volta { position: absolute; top: -2px; left: 0; z-index: 2; display: flex; align-items: center; gap: 8px; font-size: 10.5px; color: var(--ink); }
+.arvore-volta { position: absolute; top: -2px; left: 0; z-index: 2; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ink); }
 .arvore-volta button { border: 1px solid var(--line); background: var(--surface); color: var(--blue); border-radius: 6px; padding: 1px 7px; font: inherit; font-weight: 700; cursor: pointer; }
 .arvore-volta button:hover, .arvore-volta button:focus-visible { border-color: var(--blue); }
 

@@ -1,4 +1,4 @@
-import { corDoTexto } from '../cockpit/formatos';
+import { corDoTexto, ESCURO } from '../cockpit/formatos';
 import { useMemo, useState } from 'react';
 import { Chart, useSpMap, proporcaoSp } from '../painel/chart';
 import { int, mes, pct } from '../painel/ui';
@@ -9,7 +9,7 @@ import type { Profissional } from '../domain/profissionais';
 import { artPorIdade, artsMensaisPorModalidade, ativosNoInicio, fluxoMensal, modalidadeNivel, novosPorModalidade, permanenciaPorAno, regionaisProfissionais, transicoes } from '../domain/painel-profissionais';
 import type { CelulaNivel, MedidasProfissionais } from '../domain/painel-profissionais';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { linhasProfissionais } from '../cockpit/ui';
+import { avisoVazio, linhasProfissionais } from '../cockpit/ui';
 
 /**
  * Blocos do painel de Profissionais (03/11/2026), com as mesmas regras do painel de Empresas: clicar num item abre os profissionais
@@ -104,9 +104,9 @@ export function MapaProfissionais({ ctx, metrica }: { ctx: CockpitCtx; metrica: 
 }
 
 /** Cor da variação em um ano: vermelho para queda, cinza perto de zero, azul para alta. */
-// Tecnólogo em âmbar escuro, para o texto branco continuar legível (o amarelo da marca não dá contraste).
 /** Rótulo de célula do mapa de árvore escrito na cor que mais contrasta com o fundo (07/11/2026). */
 const rotuloSobre = (fundo: string) => { const color = corDoTexto(fundo); return { color, rich: { n: { fontSize: 12.5, fontWeight: 800, color }, v: { fontSize: 11, color } } }; };
+// Tecnólogo em âmbar escuro, e não no amarelo da marca, que some sobre o fundo claro.
 const corNivel = (nivel: string, tokens: CockpitCtx['tokens']) => nivel === 'Engenheiro' ? tokens.blue : nivel === 'Técnico' ? tokens.good : '#B7791F';
 /**
  * Mapa de árvore: cada retângulo grande é uma modalidade, e os de dentro são os níveis (uma cor por nível). Tamanho = ativos.
@@ -236,7 +236,7 @@ export function IdadeModalidade({ ctx }: { ctx: CockpitCtx }) {
     xAxis: { type: 'category', position: 'bottom', data: faixasIdade.map(faixa => `${faixa} anos`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 11, interval: 0 } },
     yAxis: { type: 'category', inverse: true, data: m.linhas, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     visualMap: { show: false, min: 0, max: 40, inRange: { color: dark ? ['#13233F', '#2F548C', '#7FB0E6'] : ['#EAF1FA', '#7FB0E6', '#082D74'] } },
-    series: [{ type: 'heatmap', data: m.celulas.map(cel => ({ value: [cel.x, cel.y, cel.parte], label: { color: dark ? (cel.parte > 30 ? '#1A202C' : tokens.ink) : cel.parte > 30 ? '#FFFFFF' : tokens.ink } })), itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 4 },
+    series: [{ type: 'heatmap', data: m.celulas.map(cel => ({ value: [cel.x, cel.y, cel.parte], label: { color: dark ? (cel.parte > 30 ? ESCURO : tokens.ink) : cel.parte > 30 ? '#FFFFFF' : tokens.ink } })), // acima de 30%, a célula fica escura no claro e clara no escuro, itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 4 },
       label: { show: true, fontSize: 11, fontWeight: 700, formatter: (item: any) => item.value[2] ? pct(item.value[2]) : '' } }],
   }), [m, tokens, dark]);
   return <Chart option={option} tokens={tokens} label="Profissionais ativos por modalidade e faixa de idade" onPick={params => { const cel = m.celulas[params.dataIndex]; if (cel) abrirProfissionais(ctx, `${cel.modalidade}, ${cel.faixa} anos`, cel.rows, 'Profissionais ativos desta modalidade nesta faixa de idade.'); }} />;
@@ -419,8 +419,11 @@ export function ArtIdade({ ctx }: { ctx: CockpitCtx }) {
     xAxis: { type: 'category', position: 'top', data: faixasIdade.map(faixa => `${faixa} anos`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 11, interval: 0 } },
     yAxis: { type: 'category', inverse: true, data: a.linhas, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     visualMap: { show: false, min: 0, max: 80, inRange: { color: dark ? ['#13233F', '#7A5A10', '#FABD07'] : ['#FFF8E6', '#F6AD55', '#C05621'] } },
-    series: [{ type: 'heatmap', data: a.celulas.map((cel, index) => ({ value: [cel.faixa, a.linhas.indexOf(cel.modalidade), cel.parte ?? 0], index, label: { color: dark ? ((cel.parte ?? 0) > 50 ? '#1A202C' : tokens.ink) : (cel.parte ?? 0) > 68 ? '#FFFFFF' : '#1A202C' } })), itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 4 },
+    series: [{ type: 'heatmap', data: a.celulas.map((cel, index) => ({ value: [cel.faixa, a.linhas.indexOf(cel.modalidade), cel.parte ?? 0], index, label: { color: dark ? ((cel.parte ?? 0) > 50 ? ESCURO : tokens.ink) : (cel.parte ?? 0) > 76 ? '#FFFFFF' : ESCURO } })), // o laranja só escurece o bastante para o branco perto do máximo (80%), itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 4 },
       label: { show: true, fontSize: 11, fontWeight: 700, formatter: (item: any) => a.celulas[item.dataIndex].parte === null ? '' : pct(item.value[2]) } }],
   }), [a, tokens, dark]);
   return <Chart option={option} tokens={tokens} label="Parte dos ativos que registrou ART, por modalidade e faixa de idade" onPick={params => { const cel = a.celulas[params.dataIndex]; if (cel) abrirProfissionais(ctx, `${cel.modalidade}, ${faixasIdade[cel.faixa]} anos: registraram ART`, cel.comArt, 'Profissionais ativos desta modalidade e faixa de idade que registraram ao menos uma ART no período.'); }} />;
 }
+
+/** Aviso das páginas que leem os profissionais registrados no recorte. */
+export const profissionaisVazio = (ctx: CockpitCtx) => avisoVazio(!ctx.profissionais.resumo.registrados.length, 'Nenhum profissional');

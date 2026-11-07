@@ -1,15 +1,15 @@
 import { int } from '../painel/ui';
 import { ativosNoInicio } from '../domain/painel-profissionais';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { avisoVazio, Bloco, Indicador } from '../cockpit/ui';
+import { Bloco, Indicador } from '../cockpit/ui';
 import { useSeriesProfissionais } from './series';
-import { EntradasSaidasMes, NovosModalidade, PermanenciaAno, PonteAtivos, abrirProfissionais, filtroDe, porIds, useFluxo } from './blocos';
+import { EntradasSaidasMes, NovosModalidade, PermanenciaAno, PonteAtivos, abrirProfissionais, profissionaisVazio, filtroDe, porIds, useFluxo } from './blocos';
 
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 
 /** Painel de Profissionais, página 2: quem entra, interrompe, volta e cancela o registro, e quantos de cada ano continuam ativos. */
 export default function PaginaFluxo({ ctx }: { ctx: CockpitCtx }) {
-  const vazio = avisoVazio(!ctx.profissionais.resumo.registrados.length, 'Nenhum profissional');
+  const vazio = profissionaisVazio(ctx);
   const { tokens, janela } = ctx, p = ctx.profissionais.resumo, meses = useFluxo(ctx), series = useSeriesProfissionais(ctx);
   const doPeriodo = meses.filter(row => row.month >= janela.start.slice(0, 7) && row.month <= janela.end.slice(0, 7));
   const junta = (campo: 'novos' | 'cancelamentos' | 'interrupcoes' | 'reativacoes') => doPeriodo.flatMap(row => row[campo]);

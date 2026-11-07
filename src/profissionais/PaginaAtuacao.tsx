@@ -1,14 +1,14 @@
 import { int, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { avisoVazio, Bloco, Indicador } from '../cockpit/ui';
+import { Bloco, Indicador } from '../cockpit/ui';
 import { useSeriesProfissionais } from './series';
-import { ArtIdade, ArtsMes, ArtsModalidade, CargaRt, Concentracao, abrirProfissionais, porIds } from './blocos';
+import { ArtIdade, ArtsMes, ArtsModalidade, CargaRt, Concentracao, abrirProfissionais, profissionaisVazio, porIds } from './blocos';
 
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 
 /** Painel de Profissionais, página 3: quem registra ART, em que modalidade e idade, e quantas empresas cada responsável técnico assume. */
 export default function PaginaAtuacao({ ctx }: { ctx: CockpitCtx }) {
-  const vazio = avisoVazio(!ctx.profissionais.resumo.registrados.length, 'Nenhum profissional');
+  const vazio = profissionaisVazio(ctx);
   const { tokens } = ctx, series = useSeriesProfissionais(ctx), p = ctx.profissionais.resumo, autores = new Set(p.arts.map(art => ctx.profissionais.modelo.autoria.get(art.id)));
   const comArt = p.ativos.filter(row => autores.has(row.id)), semArt = p.ativos.filter(row => !autores.has(row.id)), quatro = p.cargaRt[3]?.ids ?? [];
   return <div className="ck-grid ck-grid-pf-atuacao">

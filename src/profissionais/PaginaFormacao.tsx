@@ -11,7 +11,7 @@ import { avisoVazio, Bloco, Indicador, linhasProfissionais, proporcao } from '..
  * até 24 meses, atividade (ART nos 12 meses antes da data escolhida) e permanência (ativo e em dia dois anos depois do registro).
  */
 /** Nome da instituição sem a marca de demonstração (07/11/2026): a sigla inventada ("UE-TAU2") parecia um código. */
-const DEMO = ' (demonstrativo)';
+const nomeIes = (ies: { nome: string }) => ies.nome.replace(' (demonstrativo)', '');
 
 export default function PaginaFormacao({ ctx }: { ctx: CockpitCtx }) {
   const vazio = avisoVazio(!ctx.formacao.porModalidade.some(row => row.concluintes), 'Nenhum formado');
@@ -39,7 +39,7 @@ function abrirCoorte(ctx: CockpitCtx, coorte: Coorte, chave: 'registradosEm24' |
   const rows = coorte[chave]; if (!rows.length) return;
   ctx.open({ kind: 'linhas', eyebrow: `Formados em ${coorte.ano}`, title: `Formados em ${coorte.ano} ${titulos[chave]}`, what: 'Profissionais com este ano de formatura informado no registro, na situação escolhida. Sem a lista nominal das instituições, a comparação é feita em totais por instituição e ano.', listTitle: 'Profissionais, registro mais recente primeiro',
     summary: [['Formados', int(coorte.concluintes)], ['Registrados em 24 meses', int(coorte.registradosEm24.length)], ['Com ART no último ano', int(coorte.comAtividade.length)]],
-    rows: linhasProfissionais(ctx, rows, row => ({ value: `registro em ${row.registroEm.split('-').reverse().join('/')}`, note: `${ctx.formacao.porIes.find(item => item.ies.id === row.iesId)?.ies.nome.replace(DEMO, '') ?? row.iesId} · ${row.nivel}`, sort: -Date.parse(row.registroEm) })) });
+    rows: linhasProfissionais(ctx, rows, row => ({ value: `registro em ${row.registroEm.split('-').reverse().join('/')}`, note: `${(() => { const ies = ctx.formacao.porIes.find(item => item.ies.id === row.iesId)?.ies; return ies ? nomeIes(ies) : row.iesId; })()}, ${row.nivel.toLowerCase()}`, sort: -Date.parse(row.registroEm) })) });
 }
 
 function Coortes({ ctx }: { ctx: CockpitCtx }) {
@@ -70,16 +70,16 @@ function Instituicoes({ ctx }: { ctx: CockpitCtx }) {
   const option = useMemo(() => ({
     grid: { top: 26, right: 14, bottom: 22, left: 4, containLabel: true },
     title: { text: '{a|●} pública   {b|●} privada', right: 6, top: 0, textStyle: { fontSize: 11, fontWeight: 400, color: tokens.muted, rich: { a: { color: tokens.blue, fontSize: 11 }, b: { color: tokens.accent, fontSize: 11 } } } },
-    tooltip: { trigger: 'item', formatter: (item: any) => { const row = rows[item.dataIndex]; return `<b>${row.ies.nome}</b><br/>${row.ies.natureza} · ${int(row.concluintes)} formados · ${int(row.registrados)} registrados em 24 meses<br/>Registro: <b>${pct(row.taxa!, 1)}</b>${row.ead ? ` · ${pct(row.ead)} a distância` : ''}<br/><span style="opacity:.75">clique para ver os registrados</span>`; } },
+    tooltip: { trigger: 'item', formatter: (item: any) => { const row = rows[item.dataIndex]; return `<b>${nomeIes(row.ies)}</b><br/>${row.ies.natureza} · ${int(row.concluintes)} formados · ${int(row.registrados)} registrados em 24 meses<br/>Registro: <b>${pct(row.taxa!, 1)}</b>${row.ead ? ` · ${pct(row.ead)} a distância` : ''}<br/><span style="opacity:.75">clique para ver os registrados</span>`; } },
     xAxis: { type: 'value', name: 'formados', nameLocation: 'middle', nameGap: 18, nameTextStyle: { color: tokens.muted, fontSize: 11 }, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 11 } },
     yAxis: { type: 'value', min: 0, name: 'registrados em 24 meses', nameTextStyle: { color: tokens.muted, fontSize: 11, align: 'left' }, nameGap: 6, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 11, formatter: '{value}%' } },
     series: [{ type: 'scatter', symbolSize: 10, data: rows.map(row => ({ value: [row.concluintes, row.taxa], label: { position: row.concluintes > maiorIes * 0.6 ? 'left' : 'right' }, itemStyle: { color: row.ies.natureza === 'Pública' ? tokens.blue : tokens.accent, opacity: 0.85, borderColor: tokens.surface, borderWidth: 1 } })),
-      label: { show: true, position: 'right', fontSize: 11, color: tokens.muted, formatter: (item: any) => { const row = rows[item.dataIndex]; return destaques.has(row) ? row.ies.nome.replace(DEMO, '') : ''; } },
+      label: { show: true, position: 'right', fontSize: 11, color: tokens.muted, formatter: (item: any) => { const row = rows[item.dataIndex]; return destaques.has(row) ? nomeIes(row.ies) : ''; } },
       markLine: media === null ? undefined : { silent: true, symbol: 'none', lineStyle: { color: tokens.ink, type: 'dashed', width: 1 }, label: { position: 'insideStartTop', color: tokens.muted, fontSize: 11, formatter: `média ${pct(media, 1)}` }, data: [{ yAxis: media }] } }],
   }), [rows, media, tokens, destaques]);
   return <Chart option={option} tokens={tokens} label="Instituições de ensino por formados e parte registrada" onPick={params => { const row = rows[params.dataIndex]; if (!row) return;
     const ids = new Set(ctx.formacao.coortes.filter(c => c.fechada24).flatMap(c => c.registradosEm24.filter(p => p.iesId === row.ies.id)));
-    ctx.open({ kind: 'linhas', eyebrow: row.ies.nome, title: `${row.ies.nome.replace(DEMO, '')}: formados que se registraram em até 24 meses`, what: 'Profissionais que informaram esta instituição no registro e se registraram em até 24 meses depois da formatura, nos anos já acompanhados por inteiro.', listTitle: 'Profissionais',
+    ctx.open({ kind: 'linhas', eyebrow: `${nomeIes(row.ies)} (demonstrativo)`, title: `${nomeIes(row.ies)}: formados que se registraram em até 24 meses`, what: 'Profissionais que informaram esta instituição no registro e se registraram em até 24 meses depois da formatura, nos anos já acompanhados por inteiro.', listTitle: 'Profissionais',
       summary: [['Formados', int(row.concluintes)], ['Registrados', int(row.registrados)], ['Cadeiras no plenário', int(row.cadeiras)]],
       rows: linhasProfissionais(ctx, [...ids], p => ({ value: `formado em ${p.anoConclusao}`, note: `registro em ${p.registroEm.split('-').reverse().join('/')}`, sort: -Date.parse(p.registroEm) })) }); }} />;
 }
@@ -87,7 +87,7 @@ function Instituicoes({ ctx }: { ctx: CockpitCtx }) {
 function Modalidades({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = useMemo(() => [...ctx.formacao.porModalidade].sort((a, b) => b.concluintes - a.concluintes), [ctx.formacao]);
   const option = useMemo(() => ({
-    grid: { top: 24, right: 110, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, data: ['Formados', 'Registrados em 24 meses'], textStyle: { color: tokens.muted, fontSize: 11 } },
+    grid: { top: 24, right: 150, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, data: ['Formados', 'Registrados em 24 meses'], textStyle: { color: tokens.muted, fontSize: 11 } },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.modalidade}</b><br/>${int(row.concluintes)} formados · ${int(row.registrados)} registrados em 24 meses<br/>Registro: <b>${row.taxa === null ? '—' : pct(row.taxa, 1)}</b>`; } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.modalidade), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 110, overflow: 'truncate' } },
     series: [
@@ -95,7 +95,7 @@ function Modalidades({ ctx }: { ctx: CockpitCtx }) {
       { name: 'Registrados em 24 meses', type: 'bar', barWidth: '56%', barGap: '-100%', data: rows.map(row => row.registrados), itemStyle: { color: tokens.blue, borderRadius: [0, 4, 4, 0] },
       },
       { type: 'bar', barWidth: '56%', barGap: '-100%', data: rows.map(row => row.concluintes), itemStyle: { color: 'transparent' }, silent: true, // A parte registrada vai à direita da barra, em tinta (07/11/2026): dentro da barra azul curta, o branco caía sobre o azul-claro.
-        label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, formatter: (params: any) => { const row = rows[params.dataIndex]; return `${int(params.value)} · {b|${row.taxa === null ? '—' : pct(row.taxa)} registrados}`; }, rich: { b: { color: tokens.ink, fontSize: 11, fontWeight: 700 } } } },
+        label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, formatter: (params: any) => { const row = rows[params.dataIndex]; return `${int(params.value)} formados, {b|${row.taxa === null ? '—' : pct(row.taxa)} registrados}`; }, rich: { b: { color: tokens.ink, fontSize: 11, fontWeight: 700 } } } },
     ],
   }), [rows, tokens]);
   return <Chart option={option} tokens={tokens} label="Formados e parte registrada por modalidade" />;
@@ -133,7 +133,7 @@ function CanalNatureza({ ctx }: { ctx: CockpitCtx }) {
     yAxis: { type: 'value', min: 0, max: (value: { max: number }) => Math.ceil(value.max * 1.3 / 5) * 5, splitLine: { lineStyle: { color: tokens.line, type: 'dashed' } }, axisLabel: { color: tokens.muted, fontSize: 11, formatter: '{value}%' } },
     series: canais.map((canal, index) => ({ name: canal.nome, type: 'bar', barWidth: '30%', barGap: '12%', itemStyle: { color: canal.cor, borderRadius: [4, 4, 0, 0] },
       data: naturezas.map(natureza => taxaDe(natureza, canal.id) ?? { value: 0, poucos: true, itemStyle: { color: 'transparent' } }),
-      label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, fontWeight: 800, lineHeight: 13, formatter: (item: any) => { const c = celula(naturezas[item.dataIndex], canal.id); if (!c) return ''; return c.concluintes < MINIMO ? `{n|${canal.nome.toLowerCase()}:\npoucos formados}` : c.taxa === null ? '' : `${pct(c.taxa, 1)}\n{n|${int(c.concluintes)} formados}`; }, rich: { n: { fontSize: 11, fontWeight: 400, color: tokens.muted } } } })),
+      label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, fontWeight: 800, lineHeight: 13, formatter: (item: any) => { const c = celula(naturezas[item.dataIndex], canal.id); if (!c) return ''; return c.concluintes < MINIMO ? `{n|${canal.nome.toLowerCase()}:\npoucos formados}` : c.taxa === null ? '' : `${pct(c.taxa, 1)}\n{n|de ${int(c.concluintes)}}`; }, rich: { n: { fontSize: 11, fontWeight: 400, color: tokens.muted } } } })),
   }), [q, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <Chart option={option} tokens={tokens} label="Parte registrada em até 24 meses por natureza da instituição e canal de ensino" />;
 }
