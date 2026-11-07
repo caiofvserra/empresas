@@ -29,8 +29,8 @@ export default function PaginaReceita({ ctx }: { ctx: CockpitCtx }) {
     <section className="ck-cards is-five" style={{ gridArea: 'kpi' }} aria-label="Indicadores de receita e dívida">
       <Indicador destaque ficha="k-arrecadacao" ctx={ctx} label="Receita do Conselho" serie={series.arrecadacao} value={brl(arrecadado)} variacao={{ value: antes ? (arrecadado - antes) / antes * 100 : null }} spark={gest.receitaMensal.slice(-12).map(row => row.total)} cor={tokens.accent}
         sub={`em ${period} meses, de anuidades, ARTs, multas e outras origens`} />
-      <Indicador ficha="k-divida" ctx={ctx} label="Anuidades vencidas" serie={series.divida} value={brl(d.total)} spark={d.mensal.slice(-12).map(row => row.valor)} cor={tokens.bad}
-        sub={`${brl(d.pf)} de profissionais e ${brl(d.pj)} de empresas · ${int(d.devedores.length)} devedores`} onOpen={() => abrirLocal('Devedores de anuidade', () => true)} />
+      <Indicador ficha="k-divida" ctx={ctx} label="Anuidades vencidas" serie={series.divida} value={brl(d.total)} variacao={{ value: d.totalAntes ? (d.total - d.totalAntes) / d.totalAntes * 100 : null, goodUp: false, label: 'em relação ao mesmo mês do ano anterior' }} spark={d.mensal.slice(-12).map(row => row.valor)} cor={tokens.bad}
+        sub={`${int(d.devedores.length)} devedores: ${brl(d.pf)} de profissionais e ${brl(d.pj)} de empresas`} onOpen={() => abrirLocal('Devedores de anuidade', () => true)} />
       <Indicador ficha="k-piso" ctx={ctx} label="Abaixo do piso de execução" value={d.total ? pct(d.abaixoDoPiso / d.total * 100) : '—'}
         sub={`${brl(d.abaixoDoPiso)} de devedores que somam menos de ${brl(d.piso)}, cobrados só fora da Justiça`} onOpen={() => abrirLocal('Devedores abaixo do piso de execução', row => !row.acimaDoPiso)} />
       <Indicador ficha="k-prescricao" ctx={ctx} label="Perto de prescrever" value={brl(d.pertoDePrescrever)} sub={`anuidades vencidas há mais de quatro anos, de ${int(perto.length)} devedores`}
@@ -46,7 +46,7 @@ export default function PaginaReceita({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="mp" area="mp" title="Dívida de anuidade por município"
       exportar={{ cabecalho: ['Município', 'GRE', medida.label], linhas: () => [...medida.cidade].map(([id, value]) => [cidades.get(id)?.nome ?? id, nomeGre.get(cidades.get(id)?.greId ?? '') ?? '', value === null ? null : Math.round(value * 10) / 10]) }}
       actions={<label className="ck-select is-compact"><span className="sr-only">Indicador do mapa</span><select value={metrica} onChange={event => setMetrica(event.target.value as MetricaReceita)}>{(Object.keys(metricasReceita) as MetricaReceita[]).map(id => <option key={id} value={id}>{metricasReceita[id]}</option>)}</select><ChevronDown size={14} /></label>}>
-      <MapaMunicipios ctx={ctx} medida={medida} onCidade={cityId => ctx.filtrar({ cidade: cityId })} onGre={greId => ctx.filtrar({ gre: greId })} />
+      <MapaMunicipios ctx={ctx} medida={medida} onCidade={cityId => abrirLocal(`Devedores de ${cidades.get(cityId)?.nome ?? cityId}`, row => row.cityId === cityId)} onGre={greId => abrirLocal(`Devedores da ${nomeGre.get(greId) ?? greId}`, row => cidades.get(row.cityId)?.greId === greId)} />
     </Bloco>
   </div>;
 }

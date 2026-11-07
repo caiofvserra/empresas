@@ -10,7 +10,8 @@ import { DespesaPorAtivo, Diarias, ExecucaoAno, FimMeio, Fornecedores, Naturezas
 /** Painel de Gestão do Conselho, página 2: como o orçamento do ano está sendo executado e em que o Conselho gasta. */
 export default function PaginaOrcamento({ ctx }: { ctx: CockpitCtx }) {
   const c = ctx.conselho, gest = g(ctx), { tokens } = ctx;
-  const despesa = c.porNatureza.reduce((sum, row) => sum + row.realizado, 0), despesaAntes = c.porNatureza.reduce((sum, row) => sum + row.antes, 0);
+  // Mesma conta da série do cartão: com uma regional escolhida, só a despesa lançada nela (sem a sede).
+  const despesa = gest.despesaMensal.slice(-12).reduce((sum, value) => sum + value, 0), despesaAntes = gest.despesaMensal.slice(-24, -12).reduce((sum, value) => sum + value, 0);
   const diarias = c.diarias.reduce((sum, row) => sum + row.valor, 0), diariasAntes = c.diarias.reduce((sum, row) => sum + row.antes, 0);
   const ano = gest.despesaAcumulada.filter(row => row.realizado !== null).at(-1), execucao = ano?.previsto ? ano.realizado! / ano.previsto * 100 : null;
   const series = useMemo(() => {

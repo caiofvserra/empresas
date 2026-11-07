@@ -17,6 +17,21 @@ import type { Medida } from './comum';
  * Painel de Gestão do Conselho, página 5 (veio do painel geral em 06/11/2026): prazos do atendimento, o canal por onde cada pedido
  * chega, a distância de cada um dos 645 municípios até a unidade de atendimento mais próxima e o uso dos coworkings.
  */
+/** Clique num município do mapa: os profissionais ativos que moram nele, com a unidade mais próxima e a distância. */
+function abrirMoradores(ctx: CockpitCtx, cityId: string) {
+  const gest = g(ctx), cidade = municipioPorId(ctx.dataset).get(cityId), dist = gest.distancia.get(cityId), ativos = gest.adimplencia.get(cityId)?.ativos ?? [];
+  if (!ativos.length) return;
+  ctx.open({ kind: 'linhas', title: `Profissionais de ${cidade?.nome ?? cityId}`, what: dist ? (dist.km ? `Profissionais ativos que moram no município, a ${int(dist.km)} km em linha reta da unidade de ${dist.unidade}.` : `Profissionais ativos que moram no município, que tem unidade de atendimento (${dist.unidade}).`) : 'Profissionais ativos que moram no município.',
+    use: 'A distância é em linha reta; pela estrada costuma ser de 20% a 40% maior.', listTitle: 'Profissionais, em ordem alfabética', summary: [['Ativos', int(ativos.length)], ['Distância', dist ? `${int(dist.km)} km` : '—'], ['Unidade', dist?.unidade ?? '—']],
+    rows: ativos.map(p => ({ key: p.id, title: p.nome, subtitle: `${p.modalidade}, registrado em ${p.registroEm.split('-').reverse().join('/')}`, value: dist ? `${int(dist.km)} km` : '—', note: '', sortValue: 0 })).sort((a, b) => a.title.localeCompare(b.title)) });
+}
+/** Clique numa GRE da lista do mapa: os municípios dela com a distância até a unidade e quantos profissionais moram em cada um. */
+function abrirMunicipiosGre(ctx: CockpitCtx, greId: string) {
+  const gest = g(ctx), cidades = [...municipioPorId(ctx.dataset).values()].filter(row => row.greId === greId), nome = ctx.dataset.gres.find(row => row.id === greId)?.name ?? greId;
+  ctx.open({ kind: 'linhas', title: `Municípios da ${nome}`, what: 'Cada município da regional, com a unidade de atendimento mais próxima, a distância em linha reta e os profissionais ativos que moram nele.', listTitle: 'Municípios, mais distantes primeiro',
+    summary: [['Municípios', int(cidades.length)], ['Ativos', int(cidades.reduce((n, row) => n + (gest.adimplencia.get(row.id)?.ativos.length ?? 0), 0))], ['A mais de 50 km', int(cidades.filter(row => (gest.distancia.get(row.id)?.km ?? 0) > 50).length)]],
+    rows: cidades.map(row => { const dist = gest.distancia.get(row.id); return { key: row.id, title: row.nome, subtitle: dist ? `unidade de ${dist.unidade}` : '', value: dist ? `${int(dist.km)} km` : '—', note: `${int(gest.adimplencia.get(row.id)?.ativos.length ?? 0)} profissionais ativos`, sortValue: dist?.km ?? 0 }; }) });
+}
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 
 export default function PaginaAtendimento({ ctx }: { ctx: CockpitCtx }) {
@@ -35,12 +50,12 @@ export default function PaginaAtendimento({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ficha="k-tempo" ctx={ctx} label="Tempo de resolução" value={atendimento.medianaDias === null ? '—' : `${int(atendimento.medianaDias)} dias`} sub={`tempo típico (mediana); ${int(atendimento.partes['Em aberto, prazo vencido'].length)} pedidos abertos já passaram do prazo`} />
       <Indicador ficha="k-distancia" ctx={ctx} label="Moram a mais de 50 km de uma unidade" value={longe.ativos ? pct(longe.longe.length / longe.ativos * 100) : '—'} sub={`${int(longe.longe.length)} dos ${int(longe.ativos)} profissionais ativos do recorte, em linha reta`} />
       <Indicador ficha="k-coworking" ctx={ctx} label="Ocupação dos coworkings" value={coworking.ocupacao === null ? '—' : pct(coworking.ocupacao)} variacao={{ value: coworking.ocupacao === null || coworking.ocupacaoAntes === null ? null : coworking.ocupacao - coworking.ocupacaoAntes, kind: 'pp' }}
-        sub={coworking.unidades.length ? `${int(coworking.unidades.length)} unidades · ${int(coworking.usuarios)} usuários · ${coworking.usadas ? money(coworking.custo / coworking.usadas) : '—'} por hora usada` : 'sem unidade nesta regional'} />
+        sub={coworking.unidades.length ? `${int(coworking.unidades.length)} unidades com ${int(coworking.usuarios)} usuários${coworking.usadas ? `, a ${money(coworking.custo / coworking.usadas)} por hora usada` : ''}` : 'sem unidade nesta regional'} />
     </section>
     <Bloco ctx={ctx} id="mp" area="mp" title="Distância até a unidade mais próxima"
       exportar={{ cabecalho: ['Município', 'GRE', 'Unidade mais próxima', 'Distância em linha reta (km)', 'Profissionais ativos'], linhas: () => [...g(ctx).distancia].map(([id, row]) => [cidades.get(id)?.nome ?? id, nomeGre.get(cidades.get(id)?.greId ?? '') ?? '', row.unidade, row.km, g(ctx).adimplencia.get(id)?.ativos.length ?? 0]) }}
       actions={<label className="ck-select is-compact"><span className="sr-only">Indicador do mapa</span><select value={metrica} onChange={event => setMetrica(event.target.value as MetricaDistancia)}>{(Object.keys(metricasDistancia) as MetricaDistancia[]).map(id => <option key={id} value={id}>{metricasDistancia[id]}</option>)}</select><ChevronDown size={14} /></label>}>
-      <MapaMunicipios ctx={ctx} medida={medida} onCidade={cityId => ctx.filtrar({ cidade: cityId })} onGre={greId => ctx.filtrar({ gre: greId })} /></Bloco>
+      <MapaMunicipios ctx={ctx} medida={medida} onCidade={cityId => abrirMoradores(ctx, cityId)} onGre={greId => abrirMunicipiosGre(ctx, greId)} /></Bloco>
     <Bloco ctx={ctx} id="as" area="as" title="Solicitações por assunto e situação" exportar={{ cabecalho: ['Assunto', ...situacoesPedido, 'Total'], linhas: () => atendimento.porAssunto.map(row => [row.assunto, ...situacoesPedido.map(item => row.partes[item].length), row.total]) }}><Assuntos ctx={ctx} estrutura={estrutura} /></Bloco>
     <Bloco ctx={ctx} id="cd" area="cd" title="Canal do atendimento pela distância" exportar={exportarCanal(ctx, estrutura)}><CanalDistancia ctx={ctx} estrutura={estrutura} /></Bloco>
     <Bloco ctx={ctx} id="mm" area="mm" title="Solicitações por mês"><Mensal ctx={ctx} estrutura={estrutura} /></Bloco>

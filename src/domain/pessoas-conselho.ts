@@ -15,7 +15,9 @@ export interface Servidor { id: string; nome: string; funcao: Funcao; vinculo: '
   /** Custo mensal do posto (salário e encargos), na mesma base do quadro de pessoal. */
   remuneracao: number }
 export interface Conselheiro { id: string; nome: string; sigla: string; organizacao: string }
-export interface Beneficiario { id: string; nome: string; categoria: Categoria; cargo: string; greId: string | null; quantidade: number; valor: number; km: number; meses: number }
+export interface Beneficiario { id: string; nome: string; categoria: Categoria; cargo: string; greId: string | null; quantidade: number; valor: number; km: number; meses: number;
+  /** As diárias da pessoa em cada mês, na ordem dos meses. */
+  lancamentos: { month: string; quantidade: number; valor: number; km: number }[] }
 
 const femininos = ['Adriana', 'Aline', 'Ana', 'Beatriz', 'Bianca', 'Camila', 'Carla', 'Carolina', 'Cláudia', 'Daniela', 'Débora', 'Elisa', 'Fernanda', 'Gabriela', 'Helena', 'Isabela', 'Juliana', 'Larissa', 'Letícia', 'Luciana', 'Mariana', 'Marina', 'Natália', 'Patrícia', 'Paula', 'Priscila', 'Renata', 'Sofia', 'Tatiana', 'Vitória'];
 const masculinos = ['André', 'Antônio', 'Bruno', 'Carlos', 'Daniel', 'Diego', 'Eduardo', 'Fábio', 'Felipe', 'Fernando', 'Gustavo', 'Henrique', 'Hugo', 'João', 'José', 'Leonardo', 'Lucas', 'Marcelo', 'Marcos', 'Mateus', 'Otávio', 'Paulo', 'Rafael', 'Ricardo', 'Rodrigo', 'Sérgio', 'Thiago', 'Vinícius', 'Wagner', 'William'];
@@ -104,10 +106,12 @@ export function diariasPorPessoa(conselho: Conselho, equipe: Servidor[], plenari
     let acumulado = 0, valorAcumulado = 0;
     escolhidos.forEach((p, index) => {
       acumulado += unidades[index]; const ate = Math.round(row.valor * acumulado / row.quantidade), valor = ate - valorAcumulado; valorAcumulado = ate;
-      const id = `${row.categoria}:${p.id}`, atual = total.get(id) ?? { id: p.id, nome: p.nome, categoria: row.categoria, cargo: p.cargo, greId: p.greId, quantidade: 0, valor: 0, km: 0, meses: 0 };
-      atual.quantidade += unidades[index]; atual.valor += valor; atual.km += Math.round(row.km * unidades[index] / row.quantidade); total.set(id, atual);
+      const id = `${row.categoria}:${p.id}`, atual = total.get(id) ?? { id: p.id, nome: p.nome, categoria: row.categoria, cargo: p.cargo, greId: p.greId, quantidade: 0, valor: 0, km: 0, meses: 0, lancamentos: [] };
+      const km = Math.round(row.km * unidades[index] / row.quantidade), doMes = atual.lancamentos.find(l => l.month === row.month);
+      if (doMes) { doMes.quantidade += unidades[index]; doMes.valor += valor; doMes.km += km; } else atual.lancamentos.push({ month: row.month, quantidade: unidades[index], valor, km });
+      atual.quantidade += unidades[index]; atual.valor += valor; atual.km += km; total.set(id, atual);
       mesesDe.set(id, (mesesDe.get(id) ?? new Set()).add(row.month));
     });
   }
-  return [...total.entries()].map(([id, row]) => ({ ...row, meses: mesesDe.get(id)?.size ?? 0 })).filter(row => row.valor > 0).sort((a, b) => b.valor - a.valor || a.nome.localeCompare(b.nome));
+  return [...total.entries()].map(([id, row]) => ({ ...row, meses: mesesDe.get(id)?.size ?? 0, lancamentos: [...row.lancamentos].sort((a, b) => a.month.localeCompare(b.month)) })).filter(row => row.valor > 0).sort((a, b) => b.valor - a.valor || a.nome.localeCompare(b.nome));
 }

@@ -72,7 +72,7 @@ export function buildConselho(dataset: Dataset): Conselho {
     for (const fonte of fontesReceita) { const prevista = Math.round(receitaTotal * pesos[fonte] / 100), realizada = Math.round(prevista * (0.84 + chance(`rec:${month}:${fonte}`) * 0.3)); receitas.push({ month, fonte, prevista, realizada }); }
   }
   const fornecedores: Fornecedor[] = Array.from({ length: 60 }, (_, index) => { const objeto = objetosFornecedor[index % objetosFornecedor.length];
-    return { id: `FORN-${String(index + 1).padStart(3, '0')}`, nome: `${prefixosFornecedor[Math.floor(index / objetosFornecedor.length)]} ${ramoFornecedor[objeto]} ${index % 4 === 3 ? 'S.A.' : 'Ltda.'}`, objeto, natureza: objeto === 'Material de escritório' ? 'Material de consumo' : index % 9 === 0 ? 'Investimentos' : 'Serviços de terceiros' }; });
+    return { id: `FORN-${String(index + 1).padStart(3, '0')}`, nome: `${prefixosFornecedor[Math.floor(index / objetosFornecedor.length)]} ${ramoFornecedor[objeto]} ${index % 4 === 3 ? 'S.A.' : 'Ltda.'} (demonstrativo)`, objeto, natureza: objeto === 'Material de escritório' ? 'Material de consumo' : index % 9 === 0 ? 'Investimentos' : 'Serviços de terceiros' }; });
   const contratos: ContratoConselho[] = Array.from({ length: 90 }, (_, index) => {
     const key = `ctr:${index}`, fornecedor = fornecedores[Math.floor(Math.pow(chance(key), 1.8) * fornecedores.length)];
     const inicio = `${2021 + between(`${key}:ano`, 0, 5)}-${String(between(`${key}:mes`, 1, 12)).padStart(2, '0')}-01`, duracao = between(`${key}:dur`, 12, 60);

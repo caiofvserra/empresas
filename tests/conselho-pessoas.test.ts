@@ -48,5 +48,5 @@ test('diárias por pessoa: fecham com o total de cada categoria, no estado e num
 test('fornecedores com nome próprio, sem repetir, e não mais "Fornecedor demonstrativo NN"', () => {
   const nomes = contas.fornecedores.map(row => row.nome);
   assert.equal(new Set(nomes).size, nomes.length);
-  assert.ok(nomes.every(nome => !/Fornecedor demonstrativo/.test(nome) && !nome.includes(' · ')));
+  assert.ok(nomes.every(nome => !/Fornecedor demonstrativo/.test(nome) && !nome.includes(' · ') && nome.endsWith('(demonstrativo)')), 'marcado como demonstrativo, como as entidades');
 });

@@ -23,9 +23,9 @@ export default function PaginaEntidades({ ctx }: { ctx: CockpitCtx }) {
   const porGrupo = (grupo: string) => e.linhas.filter(row => grupoOrganizacao(row) === grupo).length;
   return <div className="ck-grid ck-grid-cs-entidades">
     <section className="ck-cards is-four" style={{ gridArea: 'kpi' }} aria-label="Indicadores de entidades e IES">
-      <Indicador destaque ficha="k-organizacoes" ctx={ctx} label="Organizações registradas" value={int(e.linhas.length)} sub={grupos.map(grupo => `${int(porGrupo(grupo))} ${grupo.toLowerCase().replace('ies', 'IES')}`).join(' · ')} />
-      <Indicador ficha="k-cadeiras" ctx={ctx} label="Cadeiras no plenário" value={int(e.cadeiras)} sub={e.cadeirasPorNatureza.map(row => `${int(row.cadeiras)} ${row.grupo.toLowerCase().replace('ies', 'IES')}`).join(' · ')} />
-      <Indicador ficha="k-repasses" ctx={ctx} label="Repasses em 12 meses" value={brl(e.total)} variacao={{ value: change(e.total, e.totalAntes), label: 'em relação aos 12 meses anteriores' }} sub={canais.map(canal => `${brl(e.repassePorAno.filter(row => row.canal === canal && row.ano === e.anos.at(-1)).reduce((sum, row) => sum + row.valor, 0))} ${canal.toLowerCase()}s no ano corrente`).join(' · ')} />
+      <Indicador destaque ficha="k-organizacoes" ctx={ctx} label="Organizações registradas" value={int(e.linhas.length)} sub={grupos.map(grupo => `${int(porGrupo(grupo))} ${grupo.toLowerCase().replace('ies', 'IES')}`).join(', ')} />
+      <Indicador ficha="k-cadeiras" ctx={ctx} label="Cadeiras no plenário" value={int(e.cadeiras)} sub={`${e.cadeirasPorNatureza.map(row => `${int(row.cadeiras)} de ${row.grupo.toLowerCase().replace('ies', 'IES')}`).join(', ')}`} />
+      <Indicador ficha="k-repasses" ctx={ctx} label="Repasses em 12 meses" value={brl(e.total)} variacao={{ value: change(e.total, e.totalAntes), label: 'em relação aos 12 meses anteriores' }} sub={`${canais.map(canal => `${brl(e.repassePorAno.filter(row => row.canal === canal && row.ano === e.anos.at(-1)).reduce((sum, row) => sum + row.valor, 0))} ${canal.toLowerCase()}s`).join(', ')} no ano corrente`} />
       <Indicador ficha="k-vigentes" ctx={ctx} label="Instrumentos vigentes" value={int(vigentes)} sub={`convênios, contratos e patrocínios em vigor, com ${int(e.linhas.filter(row => row.vigentes).length)} organizações`} />
     </section>
     <Bloco ctx={ctx} id="ec" area="ec" title="Cadeiras do plenário por natureza" exportar={{ cabecalho: ['Natureza', 'Cadeiras', 'Organizações', 'Repassado no total (R$)'], linhas: () => ctx.entidades.cadeirasPorNatureza.map(row => [row.grupo, row.cadeiras, row.organizacoes, Math.round(row.repassado)]) }}><Cadeiras ctx={ctx} /></Bloco>
@@ -40,11 +40,11 @@ const corGrupo = (tokens: CockpitCtx['tokens']): Record<string, string> => ({ 'E
 function Cadeiras({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = ctx.entidades.cadeirasPorNatureza, cores = corGrupo(tokens);
   const option = useMemo(() => ({
-    grid: { top: 8, right: 90, bottom: 2, left: 2, containLabel: true },
+    grid: { top: 8, right: 118, bottom: 2, left: 2, containLabel: true },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.grupo}</b><br/>${int(row.cadeiras)} cadeiras · ${int(row.organizacoes)} organizações<br/>${brl(row.repassado)} repassados no total`; } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.grupo), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     series: [{ type: 'bar', barWidth: 18, data: rows.map(row => ({ value: row.cadeiras, itemStyle: { color: cores[row.grupo], borderRadius: [0, 4, 4, 0] } })), showBackground: true, backgroundStyle: { color: tokens.soft, borderRadius: 4 },
-      label: { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, formatter: (params: any) => `${int(params.value)} · ${int(rows[params.dataIndex].organizacoes)} org.` } }],
+      label: { show: true, position: 'right', color: tokens.ink, fontSize: 10.5, formatter: (params: any) => `{v|${int(params.value)} cadeiras}\n{o|de ${int(rows[params.dataIndex].organizacoes)} organizações}`, rich: { v: { color: tokens.ink, fontSize: 10.5, fontWeight: 700 }, o: { color: tokens.muted, fontSize: 9.5, lineHeight: 13 } } } }],
   }), [rows, tokens, cores]); // eslint-disable-line react-hooks/exhaustive-deps
   return <Chart option={option} tokens={tokens} label="Cadeiras no plenário por natureza da organização" />;
 }

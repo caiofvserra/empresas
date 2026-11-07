@@ -141,5 +141,5 @@ A despesa com fiscalização, atendimento e ações institucionais. O resto (dir
 _Avoid_: finalística, área de negócio
 
 **Unidade de atendimento**:
-A sede de uma UGI ou a sede do Crea-SP na capital, onde o profissional e a empresa são atendidos pessoalmente.
+A sede de uma regional (GRE) ou a sede do Crea-SP na capital, onde o profissional e a empresa são atendidos pessoalmente.
 _Avoid_: posto, agência, inspetoria

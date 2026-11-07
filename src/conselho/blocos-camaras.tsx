@@ -30,6 +30,8 @@ export function EstoqueFase({ ctx }: { ctx: CockpitCtx }) {
 
 /* ---------- Entradas e julgamentos por mês, com o estoque ---------- */
 export const exportarRitmo = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Mês', 'Entraram', 'Julgados', 'Em julgamento no fim do mês', 'Recursos esperando o plenário'], linhas: () => g(ctx).camaras.mensal.map(row => [mes(row.month), row.entradas, row.julgados, row.estoque, row.recursos]) });
+/** Número em cima das barras dos mesmos meses que o eixo nomeia (um a cada três), para ler sem passar o mouse e sem amontoar. */
+const rotuloMes = (color: string) => ({ show: true, position: 'top' as const, color, fontSize: 8.5, formatter: (params: any) => params.dataIndex % 3 === 0 ? int(params.value) : '' });
 export function Ritmo({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = g(ctx).camaras.mensal.slice(-24), inicio = ctx.janela.start.slice(0, 7);
   const option = useMemo(() => ({
@@ -38,8 +40,8 @@ export function Ritmo({ ctx }: { ctx: CockpitCtx }) {
     xAxis: eixoCategoria(tokens, rows.map(row => mes(row.month)), { axisLabel: { color: tokens.muted, fontSize: 10, interval: 2 } }),
     yAxis: [eixoValor(tokens), eixoValor(tokens, { splitLine: { show: false } })],
     series: [
-      { name: 'Entraram', type: 'bar', barWidth: '32%', data: rows.map(row => row.entradas), itemStyle: { color: tokens.heat[1], borderRadius: [2, 2, 0, 0] }, markArea: { silent: true, itemStyle: { color: tokens.soft, opacity: 0.6 }, data: [[{ xAxis: mes(rows.find(row => row.month >= inicio)?.month ?? rows[0].month) }, { xAxis: mes(rows.at(-1)!.month) }]] } },
-      { name: 'Julgados', type: 'bar', barWidth: '32%', data: rows.map(row => row.julgados), itemStyle: { color: tokens.brand, borderRadius: [2, 2, 0, 0] } },
+      { name: 'Entraram', type: 'bar', barWidth: '32%', data: rows.map(row => row.entradas), itemStyle: { color: tokens.heat[1], borderRadius: [2, 2, 0, 0] }, label: rotuloMes(tokens.muted), markArea: { silent: true, itemStyle: { color: tokens.soft, opacity: 0.6 }, data: [[{ xAxis: mes(rows.find(row => row.month >= inicio)?.month ?? rows[0].month) }, { xAxis: mes(rows.at(-1)!.month) }]] } },
+      { name: 'Julgados', type: 'bar', barWidth: '32%', data: rows.map(row => row.julgados), itemStyle: { color: tokens.brand, borderRadius: [2, 2, 0, 0] }, label: rotuloMes(tokens.ink) },
       { name: 'Em julgamento', type: 'line', yAxisIndex: 1, data: rows.map(row => row.estoque), symbol: 'none', smooth: 0.3, lineStyle: { color: tokens.accent, width: 2.4 },
         endLabel: { show: true, color: tokens.accent, fontWeight: 700, fontSize: 10, formatter: (params: any) => int(params.value) } },
     ],

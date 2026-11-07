@@ -105,6 +105,12 @@ export function abrirDiarias(ctx: CockpitCtx, categoria: string | null) {
     rows: pessoas.map(row => ({ key: `${row.categoria}:${row.id}`, title: row.nome, subtitle: `${row.cargo} · ${row.greId ? nomeGre.get(row.greId) ?? row.greId : 'sede'}${categoria ? '' : ` · ${row.categoria}`}`, value: money(row.valor),
       note: `${int(row.quantidade)} diárias em ${int(row.meses)} ${row.meses === 1 ? 'mês' : 'meses'}${row.km ? ` · ${int(row.km)} km` : ''}`, sortValue: row.valor })) });
 }
+function abrirPessoaDiarias(ctx: CockpitCtx, p: (ReturnType<typeof g>)['diariasPessoas'][number]) {
+  const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name]));
+  ctx.open({ kind: 'linhas', title: p.nome, eyebrow: p.categoria, what: `${p.cargo}, ${p.greId ? `lotação na ${nomeGre.get(p.greId) ?? p.greId}` : 'na sede'}. Diárias recebidas em cada mês dos 12 meses até a data de referência.`, use: 'Diária paga não é irregularidade: compare com a função da pessoa e com as outras da mesma categoria.',
+    listTitle: 'Meses com diária', summary: [['Diárias', int(p.quantidade)], ['Valor', brl(p.valor)], ['Quilômetros', p.km ? int(p.km) : '—']],
+    rows: p.lancamentos.map(l => ({ key: l.month, title: mes(l.month), subtitle: `${int(l.quantidade)} ${l.quantidade === 1 ? 'diária' : 'diárias'}${l.km ? ` em ${int(l.km)} km` : ''}`, value: money(l.valor), note: '', sortValue: -Number(l.month.replace('-', '')) })) });
+}
 export const exportarDiarias = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Nome', 'Categoria', 'Cargo', 'Lotação', 'Diárias em 12 meses', 'Meses com diária', 'Valor (R$)', 'Quilômetros'],
   linhas: () => { const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name])); return g(ctx).diariasPessoas.map(row => [row.nome, row.categoria, row.cargo, row.greId ? nomeGre.get(row.greId) ?? row.greId : 'sede', row.quantidade, row.meses, Math.round(row.valor), row.km]); } });
 export function Diarias({ ctx }: { ctx: CockpitCtx }) {
@@ -115,10 +121,10 @@ export function Diarias({ ctx }: { ctx: CockpitCtx }) {
     const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name]));
     return {
       grid: { top: 2, right: 64, bottom: 0, left: 2, containLabel: true },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const p = top[items[0].dataIndex]; return p ? `<b>${p.nome}</b><br/>${p.categoria} · ${p.cargo} · ${p.greId ? nomeGre.get(p.greId) ?? p.greId : 'sede'}<br/>${money(p.valor)} · ${int(p.quantidade)} diárias em ${int(p.meses)} meses${p.km ? ` · ${int(p.km)} km` : ''}<br/><span style="opacity:.7">clique para ver todos de ${p.categoria.toLowerCase()}</span>` : ''; } },
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const p = top[items[0].dataIndex]; return p ? `<b>${p.nome}</b><br/>${p.categoria} · ${p.cargo} · ${p.greId ? nomeGre.get(p.greId) ?? p.greId : 'sede'}<br/>${money(p.valor)} · ${int(p.quantidade)} diárias em ${int(p.meses)} meses${p.km ? ` · ${int(p.km)} km` : ''}<br/><span style="opacity:.7">clique para ver as diárias mês a mês</span>` : ''; } },
       xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: top.map(p => nomeCurto(p.nome)), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10, width: 130, overflow: 'truncate' } },
       series: [{ type: 'bar', barWidth: 9, data: top.map(p => ({ value: p.valor, itemStyle: { color: corDe(p.categoria), borderRadius: 3 } })),
-        label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5, formatter: (params: any) => `${brl(params.value)} · ${int(top[params.dataIndex].quantidade)} d` } }],
+        label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5, formatter: (params: any) => `${brl(params.value)} em ${int(top[params.dataIndex].quantidade)} diárias` } }],
     };
   }, [top, tokens, rows, ctx.dataset]); // eslint-disable-line react-hooks/exhaustive-deps
   return <div className="cs-sede">
@@ -126,7 +132,7 @@ export function Diarias({ ctx }: { ctx: CockpitCtx }) {
       {rows.map(row => <button type="button" key={row.categoria} style={{ flex: row.valor, background: corDe(row.categoria) }} title={`${row.categoria}: ${brl(row.valor)} em ${int(row.quantidade)} diárias. Clique para ver a lista.`} onClick={() => abrirDiarias(ctx, row.categoria)}>
         <b>{row.valor / Math.max(1, total) >= 0.14 ? row.categoria.replace(' e agentes de campo', ' e agentes') : ''}</b><small>{row.valor / Math.max(1, total) >= 0.08 ? brl(row.valor) : ''}</small></button>)}
     </div>
-    <Chart option={option} tokens={tokens} label="As dez pessoas que mais receberam diárias em 12 meses" onPick={params => { const p = top[params.dataIndex]; if (p) abrirDiarias(ctx, p.categoria); }} />
+    <Chart option={option} tokens={tokens} label="As dez pessoas que mais receberam diárias em 12 meses" onPick={params => { const p = top[params.dataIndex]; if (p) abrirPessoaDiarias(ctx, p); }} />
   </div>;
 }
 
@@ -162,9 +168,9 @@ export function Fornecedores({ ctx }: { ctx: CockpitCtx }) {
   const option = useMemo(() => ({
     grid: { top: 24, right: 92, bottom: 2, left: 2, containLabel: true }, legend: legenda(tokens),
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.fornecedor.nome}</b><br/>${row.fornecedor.objeto} · ${row.fornecedor.natureza.toLowerCase()}<br/>Empenhado: ${money(row.empenhado)} (${pct(row.empenhado / Math.max(1, total) * 100)}) · Pago: ${money(row.pago)}<br/>${int(row.contratos)} contrato${row.contratos === 1 ? '' : 's'} vigente${row.contratos === 1 ? '' : 's'}<br/><span style="opacity:.7">clique para ver os empenhos</span>`; } },
-    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.fornecedor.nome), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10, width: 170, overflow: 'truncate' } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.fornecedor.nome.replace(' (demonstrativo)', '')), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10, width: 170, overflow: 'truncate' } },
     series: [
-      { name: 'Empenhado', type: 'bar', barWidth: 12, barGap: '-100%', data: rows.map(row => row.empenhado), itemStyle: { color: tokens.soft, borderColor: tokens.heat[1], borderWidth: 1, borderRadius: 3 }, z: 1, label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5, formatter: (params: any) => `${brl(params.value)} · ${pct(params.value / Math.max(1, total) * 100)}` } },
+      { name: 'Empenhado', type: 'bar', barWidth: 12, barGap: '-100%', data: rows.map(row => row.empenhado), itemStyle: { color: tokens.soft, borderColor: tokens.heat[1], borderWidth: 1, borderRadius: 3 }, z: 1, label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5, formatter: (params: any) => `${brl(params.value)} (${pct(params.value / Math.max(1, total) * 100)})` } },
       { name: 'Pago', type: 'bar', barWidth: 6, data: rows.map(row => row.pago), itemStyle: { color: tokens.brand, borderRadius: 3 }, z: 2 },
     ],
   }), [rows, tokens, total]);
@@ -183,9 +189,12 @@ function abrirPessoal(ctx: CockpitCtx, funcao: string | null) {
     rows: rows.map(s => ({ key: s.id, title: s.nome, subtitle: `${s.cargo} · ${s.vinculo.toLowerCase()} · ${s.greId ? nomeGre.get(s.greId) ?? s.greId : 'sede'}${funcao ? '' : ` · ${s.funcao}`}`, value: `${money(s.remuneracao)}/mês`, note: s.id, sortValue: s.remuneracao })) });
 }
 export const exportarPessoal = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Nome', 'Função', 'Cargo', 'Vínculo', 'Lotação', 'Custo mensal (R$)'],
-  linhas: () => { const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name])); return g(ctx).equipe.map(s => [s.nome, s.funcao, s.cargo, s.vinculo, s.greId ? nomeGre.get(s.greId) ?? s.greId : 'sede', s.remuneracao]); } });
+  linhas: () => { const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name])); return g(ctx).equipe.filter(s => !ctx.greId || s.greId === ctx.greId).map(s => [s.nome, s.funcao, s.cargo, s.vinculo, s.greId ? nomeGre.get(s.greId) ?? s.greId : 'sede', s.remuneracao]); } });
 export function Pessoal({ ctx }: { ctx: CockpitCtx }) {
-  const rows = ctx.conselho.pessoal, total = rows.reduce((sum, row) => sum + row.efetivos + row.comissionados, 0), custo = rows.reduce((sum, row) => sum + row.custoMes, 0), maior = Math.max(...rows.map(row => row.efetivos + row.comissionados), 1);
+  // Com uma regional escolhida, conta só quem está lotado nela, como a lista que abre ao clicar.
+  const equipe = g(ctx).equipe.filter(s => !ctx.greId || s.greId === ctx.greId);
+  const rows = ctx.conselho.pessoal.map(row => { const da = equipe.filter(s => s.funcao === row.funcao); return { funcao: row.funcao, efetivos: da.filter(s => s.vinculo === 'Efetivo').length, comissionados: da.filter(s => s.vinculo === 'Comissionado').length, custoMes: da.reduce((n, s) => n + s.remuneracao, 0) }; });
+  const total = rows.reduce((sum, row) => sum + row.efetivos + row.comissionados, 0), custo = rows.reduce((sum, row) => sum + row.custoMes, 0), maior = Math.max(...rows.map(row => row.efetivos + row.comissionados), 1);
   const tecla = (funcao: string | null) => (event: React.KeyboardEvent) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); abrirPessoal(ctx, funcao); } };
   return <ul className="cs-pessoal" aria-label="Pessoal por função">
     {rows.map(row => { const n = row.efetivos + row.comissionados; return <li key={row.funcao} role="button" tabIndex={0} title={`Ver os servidores de ${row.funcao.toLowerCase()}`} onClick={() => abrirPessoal(ctx, row.funcao)} onKeyDown={tecla(row.funcao)}><span>{row.funcao}</span><b>{int(n)}</b><i aria-hidden="true"><em style={{ width: `${row.efetivos / maior * 100}%` }} /><em className="is-comissionado" style={{ width: `${row.comissionados / maior * 100}%` }} /></i><small>{brl(row.custoMes)}/mês</small></li>; })}
