@@ -27,10 +27,10 @@ export function abrirPendentes(ctx: CockpitCtx, title: string, rows: Pendente[],
   ctx.open({ kind: 'linhas', title, what, use, listTitle: 'Processos, há mais tempo no status primeiro',
     summary: [['Processos', int(rows.length)], ['Em alerta vermelho', int(rows.filter(row => alertaNoStatus(row.diasNoStatus) === 'vermelho').length)], ['Há mais de 1 ano no total', int(rows.filter(row => row.diasTotais > 365).length)]],
     rows: rows.map(row => { const p = row.t.processo, alerta = alertaNoStatus(row.diasNoStatus), prescricao = prescricaoDe(row), pessoa = q(ctx).pessoas.get(row.evento.com);
-      return { key: row.t.id, ...(p.companyId ? { companyId: p.companyId } : {}), title: `${p.tipo} · ${nomeColegiado(row.t.colegiado)}`,
-        subtitle: `${row.evento.status} com ${pessoa?.nome ?? row.evento.com} (${pessoa?.papel === 'Funcionário' ? 'funcionário' : 'conselheiro'}) · ${p.companyId ? `${nomeEmpresa(ctx, p.companyId)} · ` : ''}${cidades.get(p.cityId)?.nome ?? ''}`,
-        value: `${int(row.diasNoStatus)} dias no status${alerta ? ` · ${alertaTexto[alerta]}` : ''}`,
-        note: `${int(row.diasTotais)} dias desde a entrada${row.diasTotais > 365 ? ' (mais de 1 ano)' : ''}${prescricao && dias(anchor, prescricao.em) <= 365 ? ` · prescreve em ${data(prescricao.em)} (${prescricao.motivo})` : ''} · ${row.t.id}`, sortValue: -row.diasNoStatus }; }) });
+      return { key: row.t.id, ...(p.companyId ? { companyId: p.companyId } : {}), title: `${p.tipo}, ${nomeColegiado(row.t.colegiado)}`,
+        subtitle: `${row.evento.status} com ${pessoa?.nome ?? row.evento.com} (${pessoa?.papel === 'Funcionário' ? 'funcionário' : 'conselheiro'}), ${p.companyId ? `${nomeEmpresa(ctx, p.companyId)}, ` : ''}${cidades.get(p.cityId)?.nome ?? ''}`,
+        value: `${int(row.diasNoStatus)} dias no status${alerta ? `, ${alertaTexto[alerta]}` : ''}`,
+        note: `${int(row.diasTotais)} dias desde a entrada${row.diasTotais > 365 ? ' (mais de 1 ano)' : ''}${prescricao && dias(anchor, prescricao.em) <= 365 ? `; prescreve em ${data(prescricao.em)} (${prescricao.motivo})` : ''}; processo ${row.t.id}`, sortValue: -row.diasNoStatus }; }) });
 }
 
 /** Lista de processos votados ou recebidos: colegiado, relator, quando entrou e quando foi votado. */
@@ -39,16 +39,16 @@ export function abrirTramitacoes(ctx: CockpitCtx, title: string, rows: Tramitaca
   const cidades = municipioPorId(ctx.dataset), anchor = ctx.anchor;
   ctx.open({ kind: 'linhas', title, what, use, listTitle: 'Processos, mais recentes primeiro', summary: [['Processos', int(rows.length)], ['Autos de infração', int(rows.filter(t => t.processo.tipo === 'Auto de infração').length)], ['Relatados com IA', int(rows.filter(t => t.ia).length)]],
     rows: rows.map(t => { const p = t.processo, votado = t.votadoEm <= anchor;
-      return { key: t.id, ...(p.companyId ? { companyId: p.companyId } : {}), title: `${p.tipo} · ${nomeColegiado(t.colegiado)}`, subtitle: `relator ${nomeDe(ctx, t.relator)} · ${p.companyId ? `${nomeEmpresa(ctx, p.companyId)} · ` : ''}${cidades.get(p.cityId)?.nome ?? ''}`,
+      return { key: t.id, ...(p.companyId ? { companyId: p.companyId } : {}), title: `${p.tipo}, ${nomeColegiado(t.colegiado)}`, subtitle: `relator ${nomeDe(ctx, t.relator)}, ${p.companyId ? `${nomeEmpresa(ctx, p.companyId)}, ` : ''}${cidades.get(p.cityId)?.nome ?? ''}`,
         value: votado ? `votado em ${data(t.votadoEm)}, ${int(dias(t.entrada, t.votadoEm))} dias depois da entrada` : `entrou em ${data(t.entrada)}`,
-        note: `relato em ${int(dias(t.distribuidoEm, t.assinadoEm))} dias${t.ia ? ' com IA' : ''} · ${t.id}`, sortValue: -Date.parse(votado ? t.votadoEm : t.entrada) }; }) });
+        note: `relato em ${int(dias(t.distribuidoEm, t.assinadoEm))} dias${t.ia ? ' com IA' : ''}; processo ${t.id}`, sortValue: -Date.parse(votado ? t.votadoEm : t.entrada) }; }) });
 }
 
 /** Lista de conselheiros: câmara, organização que indicou, terço do mandato e o número escolhido para a lista. */
 export function abrirMembros(ctx: CockpitCtx, title: string, rows: Membro[], what: string, valor?: (m: Membro) => { value: string; sortValue: number }) {
   if (!rows.length) return;
   ctx.open({ kind: 'linhas', title, what, listTitle: 'Conselheiros', summary: [['Conselheiros', int(rows.length)], ['Conselheiras', int(rows.filter(m => m.genero === 'Feminino').length)], ['Organizações', int(new Set(rows.map(m => m.orgId)).size)]],
-    rows: rows.map(m => { const v = valor?.(m); return { key: m.id, title: m.nome, subtitle: `${nomeColegiado(m.camara)} · indicado por ${m.sigla} (${m.natureza.toLowerCase()})`, value: v?.value ?? `mandato de ${m.terco}`, note: `${m.organizacao} · mandato de ${data(m.inicio)} a ${data(m.fim)}`, sortValue: v?.sortValue ?? 0 }; }) });
+    rows: rows.map(m => { const v = valor?.(m); return { key: m.id, title: m.nome, subtitle: `${nomeColegiado(m.camara)}, indicado por ${m.sigla} (${m.natureza.toLowerCase()})`, value: v?.value ?? `mandato de ${m.terco}`, note: `${m.organizacao}, mandato de ${data(m.inicio)} a ${data(m.fim)}`, sortValue: v?.sortValue ?? 0 }; }) });
 }
 
 /** Lista de autos de infração depois da câmara: penalidade, alínea, multa e o que aconteceu com ela. */
@@ -56,16 +56,16 @@ export function abrirAutos(ctx: CockpitCtx, title: string, rows: Desdobramento[]
   if (!rows.length) return;
   const anchor = ctx.anchor;
   ctx.open({ kind: 'linhas', title, what, use, listTitle: 'Autos, maior multa primeiro', summary: [['Autos', int(rows.length)], ['Multas da câmara', brl(rows.reduce((n, d) => n + d.multaCamara, 0))], ['Reincidentes', int(rows.filter(d => d.reincidente).length)]],
-    rows: rows.map(d => { const p = d.processo, tramitacao = `${p.decisaoPlenario && p.plenarioEm && p.plenarioEm <= anchor ? ` · Plenário: ${p.decisaoPlenario.toLowerCase()}` : ''}${d.confeaEm && d.confeaEm <= anchor ? ' · recurso ao Confea' : ''}`;
-      return { key: p.id, ...(p.companyId ? { companyId: p.companyId } : {}), title: p.companyId ? nomeEmpresa(ctx, p.companyId) : `Auto de infração ${p.id}`, subtitle: `${d.desfecho} · alínea ${d.alinea} do art. 73 · câmara ${p.camara}${tramitacao}`,
-        value: d.multaCamara ? brl(d.multaCamara) : 'sem multa', note: `${d.pagoEm && d.pagoEm <= anchor ? `paga em ${data(d.pagoEm)}` : d.transitoEm && d.transitoEm <= anchor ? `transitou em julgado em ${data(d.transitoEm)}` : 'em recurso ou no prazo'} · ${p.id}`, sortValue: -d.multaCamara }; }) });
+    rows: rows.map(d => { const p = d.processo, tramitacao = `${p.decisaoPlenario && p.plenarioEm && p.plenarioEm <= anchor ? `; no Plenário, ${p.decisaoPlenario.toLowerCase()}` : ''}${d.confeaEm && d.confeaEm <= anchor ? '; recurso ao Confea' : ''}`;
+      return { key: p.id, ...(p.companyId ? { companyId: p.companyId } : {}), title: p.companyId ? nomeEmpresa(ctx, p.companyId) : `Auto de infração ${p.id}`, subtitle: `${d.desfecho}, alínea ${d.alinea} do art. 73, câmara ${p.camara}${tramitacao}`,
+        value: d.multaCamara ? brl(d.multaCamara) : 'sem multa', note: `${d.pagoEm && d.pagoEm <= anchor ? `paga em ${data(d.pagoEm)}` : d.transitoEm && d.transitoEm <= anchor ? `transitou em julgado em ${data(d.transitoEm)}` : 'em recurso ou no prazo'}; processo ${p.id}`, sortValue: -d.multaCamara }; }) });
 }
 
 /** Lista de deliberações das atas do Plenário: organização, canal, valor, quem propôs e se é da mesma organização. */
 export function abrirDeliberacoes(ctx: CockpitCtx, title: string, rows: Deliberacao[], what: string, use?: string) {
   if (!rows.length) return;
   ctx.open({ kind: 'linhas', title, what, use, listTitle: 'Deliberações, mais recentes primeiro', summary: [['Deliberações', int(rows.length)], ['Valor aprovado', brl(rows.reduce((n, d) => n + d.valor, 0))], ['Propostas pela própria organização', int(rows.filter(d => d.conflito).length)]],
-    rows: rows.map(d => ({ key: d.id, title: d.organizacao, subtitle: `${d.canal} · ${d.objeto} · proposto por ${nomeDe(ctx, d.proponente)}${d.conflito ? ', conselheiro da mesma organização' : ''}`, value: brl(d.valor), note: `sessão plenária de ${data(d.data)}`, sortValue: -Date.parse(d.data) })) });
+    rows: rows.map(d => ({ key: d.id, title: d.organizacao, subtitle: `${d.canal}, ${d.objeto}, proposto por ${nomeDe(ctx, d.proponente)}${d.conflito ? ', conselheiro da mesma organização' : ''}`, value: brl(d.valor), note: `sessão plenária de ${data(d.data)}`, sortValue: -Date.parse(d.data) })) });
 }
 
 /** Parte com uma casa, ou "—". */

@@ -606,21 +606,23 @@ table Medidas
 		displayFolder: Decisões
 		lineageTag: 5f45a8c3-a8e5-5b81-82ed-555b5f8b636e
 
-	/// Conta os recursos votados pelo Plenário no período.
+	/// Conta os recursos votados pelo Plenário no período. Com uma câmara escolhida, conta os que vieram dela.
 	measure 'Recursos votados pelo Plenário' = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]
-			RETURN CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS('Tramitações'[Instância] = "Plenário")) + 0
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Tramitações'), REMOVEFILTERS('Colegiados'), 'Tramitações'[Instância] = "Plenário", 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Tramitações'[Câmara de origem] = c)) + 0
 			```
 		formatString: #,##0
 		displayFolder: Decisões
 		lineageTag: 85b1f4f1-b4be-506b-8e90-6c89cb5d5cde
 
-	/// Conta os recursos votados pelo Plenário no período em que ele reformou a decisão da câmara.
+	/// Conta os recursos votados pelo Plenário no período em que ele reformou a decisão da câmara. Com uma câmara escolhida, conta os que vieram dela.
 	measure 'Recursos reformados pelo Plenário' = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]
-			RETURN CALCULATE(COUNTROWS('Tramitações'), 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS('Tramitações'[Instância] = "Plenário"), KEEPFILTERS('Tramitações'[Decisão do Plenário] = "Decisão reformada")) + 0
+			VAR c = SELECTEDVALUE('Colegiados'[Colegiado])
+			RETURN CALCULATE(COUNTROWS('Tramitações'), REMOVEFILTERS('Colegiados'), 'Tramitações'[Instância] = "Plenário", 'Tramitações'[Votado em] >= inicio, 'Tramitações'[Votado em] <= d, KEEPFILTERS(ISBLANK(c) || c = "Plenário" || 'Tramitações'[Câmara de origem] = c), KEEPFILTERS('Tramitações'[Decisão do Plenário] = "Decisão reformada")) + 0
 			```
 		formatString: #,##0
 		displayFolder: Decisões

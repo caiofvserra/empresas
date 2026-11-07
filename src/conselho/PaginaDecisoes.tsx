@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { Chart } from '../painel/chart';
 import { brl, int, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
-import { Bloco, Indicador } from '../cockpit/ui';
+import { Bloco, Indicador, avisoVazio } from '../cockpit/ui';
+import { corDoTexto } from '../cockpit/formatos';
 import type { Exportavel } from '../cockpit/ui';
 import { desfechos, destinosMulta, infracaoDaAlinea } from '../domain/colegiado';
 import type { Desdobramento } from '../domain/colegiado';
@@ -29,10 +30,10 @@ export default function PaginaDecisoes({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ficha="k-reformadas" ctx={ctx} label="Reformadas pelo Plenário" value={parte(c.reformadas)} sub={`dos ${int(c.votadosPlenario.length)} recursos votados no período`}
         onOpen={() => abrirTramitacoes(ctx, 'Recursos votados pelo Plenário', c.votadosPlenario, 'Recursos votados pelo Plenário no período, com a decisão mantida ou reformada.')} />
     </section>
-    <Bloco ctx={ctx} id="de" area="de" title="O que as câmaras decidiram nos autos" exportar={exportarDesfechos(ctx)}><Desfechos ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="al" area="al" title="Multas por infração do art. 73" exportar={exportarAlineas(ctx)}><Alineas ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="pl" area="pl" title="O Plenário mantém ou reforma" exportar={exportarPlenario(ctx)}><Plenario ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="mu" area="mu" title="O que aconteceu com as multas" exportar={exportarDestino(ctx)}><Destino ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="de" vazio={avisoVazio(!comAutos(ctx).length, 'Nenhum auto de infração votado no período')} area="de" title="O que as câmaras decidiram nos autos" exportar={exportarDesfechos(ctx)}><Desfechos ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="al" vazio={avisoVazio(!q(ctx).porAlinea.some(row => row.valor), 'Nenhuma multa aplicada no período')} area="al" title="Multas por infração do art. 73" exportar={exportarAlineas(ctx)}><Alineas ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="pl" vazio={avisoVazio(!comRecurso(ctx).length, 'Nenhum recurso votado pelo Plenário no período')} area="pl" title="O Plenário mantém ou reforma" exportar={exportarPlenario(ctx)}><Plenario ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="mu" vazio={avisoVazio(!q(ctx).multasPorAno.some(row => destinosMulta.some(d => row.valor[d])), 'Nenhuma multa decidida')} area="mu" title="O que aconteceu com as multas" exportar={exportarDestino(ctx)}><Destino ctx={ctx} /></Bloco>
   </div>;
 }
 
@@ -41,17 +42,16 @@ const comAutos = (ctx: CockpitCtx) => q(ctx).desfechoPorCamara.filter(row => des
 const totalDe = (row: { porDesfecho: Record<string, Desdobramento[]> }) => Object.values(row.porDesfecho).reduce((n, rows) => n + rows.length, 0);
 const exportarDesfechos = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Câmara', ...desfechos], linhas: () => comAutos(ctx).map(row => [row.camara, ...desfechos.map(d => row.porDesfecho[d].length)]) });
 function Desfechos({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = comAutos(ctx), cores = [tokens.brand, tokens.blue, tokens.bad, '#6B46C1', tokens.heat[1], tokens.muted];
+  const { tokens } = ctx, rows = comAutos(ctx), cores = [tokens.brand, tokens.blue, tokens.bad, tokens.cat[2], tokens.heat[1], tokens.muted];
   const option = useMemo(() => ({
     grid: { top: 40, right: 34, bottom: 2, left: 2, containLabel: true }, legend: { ...legenda(tokens), data: desfechos },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex], n = totalDe(row); return `<b>Câmara ${row.camara}</b> · ${int(n)} autos votados<br/>${desfechos.map(d => `${d}: ${int(row.porDesfecho[d].length)} (${pct(row.porDesfecho[d].length / Math.max(1, n) * 100)})`).join('<br/>')}`; } },
-    xAxis: { type: 'value', show: false, max: 101 }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.camara), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
-    series: desfechos.map((d, index) => ({ name: d, type: 'bar', stack: 'd', barWidth: 13, data: rows.map(row => row.porDesfecho[d].length / Math.max(1, totalDe(row)) * 100), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
-      label: { show: true, position: 'inside', color: index === 4 ? '#1A202C' : '#FFFFFF', fontSize: 9, fontWeight: 700, formatter: (p: any) => p.value >= 9 ? pct(p.value) : '' } }))
-      .concat([{ name: 'total', type: 'bar', stack: 'd', barWidth: 13, data: rows.map(() => 0), itemStyle: { color: 'transparent' }, label: { show: true, position: 'right', color: tokens.muted, fontSize: 9.5, formatter: (p: any) => int(totalDe(rows[p.dataIndex])) } } as any]),
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex], n = totalDe(row); return `<b>Câmara ${row.camara}</b>, ${int(n)} autos votados<br/>${desfechos.map(d => `${d}: ${int(row.porDesfecho[d].length)} (${pct(row.porDesfecho[d].length / Math.max(1, n) * 100)})`).join('<br/>')}`; } },
+    xAxis: { type: 'value', show: false, max: 101 }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.camara), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
+    series: desfechos.map((d, index) => ({ name: d, type: 'bar', stack: 'd', barMaxWidth: 13, data: rows.map(row => row.porDesfecho[d].length / Math.max(1, totalDe(row)) * 100), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
+      label: { show: true, position: 'inside', color: corDoTexto(cores[index]), fontSize: 11, fontWeight: 700, formatter: (p: any) => p.value >= 9 ? pct(p.value) : '' } }))
+      .concat([{ name: 'total', type: 'bar', stack: 'd', barMaxWidth: 13, data: rows.map(() => 0), itemStyle: { color: 'transparent' }, label: { show: true, position: 'right', color: tokens.muted, fontSize: 11, formatter: (p: any) => int(totalDe(rows[p.dataIndex])) } } as any]),
   }), [rows, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
-  if (!rows.length) return <div className="empty-note">Nenhum auto de infração votado no período neste recorte.</div>;
-  return <Chart option={option} tokens={tokens} label="Desfecho dos autos de infração votados no período, por câmara" onPick={params => { const row = rows[params.dataIndex], d = desfechos[params.seriesIndex]; if (row && d) abrirAutos(ctx, `Câmara ${row.camara} · ${d.toLowerCase()}`, row.porDesfecho[d], 'Autos de infração votados pela câmara no período, com este desfecho.'); }} />;
+  return <Chart option={option} tokens={tokens} label="Desfecho dos autos de infração votados no período, por câmara" onPick={params => { const row = rows[params.dataIndex], d = desfechos[params.seriesIndex]; if (row && d) abrirAutos(ctx, `${d} na câmara ${row.camara}`, row.porDesfecho[d], 'Autos de infração votados pela câmara no período, com este desfecho.'); }} />;
 }
 
 /* ---------- Multas por alínea ---------- */
@@ -61,9 +61,9 @@ function Alineas({ ctx }: { ctx: CockpitCtx }) {
   const option = useMemo(() => ({
     grid: { top: 4, right: 104, bottom: 2, left: 2, containLabel: true },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${infracaoDaAlinea[row.alinea]}</b><br/>${int(row.autos.length)} autos com multa: <b>${brl(row.valor)}</b>`; } },
-    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => infracaoDaAlinea[row.alinea]), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10 } },
-    series: [{ type: 'bar', barWidth: 13, data: rows.map(row => row.valor), itemStyle: { color: tokens.accent, borderRadius: [0, 3, 3, 0] },
-      label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, formatter: (p: any) => `{v|${brl(p.value)}} {n|${int(rows[p.dataIndex].autos.length)} autos}`, rich: { v: { fontWeight: 800, fontSize: 10.5, color: tokens.ink }, n: { color: tokens.muted, fontSize: 9.5 } } } }],
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => infracaoDaAlinea[row.alinea]), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
+    series: [{ type: 'bar', barMaxWidth: 13, data: rows.map(row => row.valor), itemStyle: { color: tokens.accent, borderRadius: [0, 3, 3, 0] },
+      label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, formatter: (p: any) => `{v|${brl(p.value)}} {n|${int(rows[p.dataIndex].autos.length)} autos}`, rich: { v: { fontWeight: 800, fontSize: 11, color: tokens.ink }, n: { color: tokens.muted, fontSize: 11 } } } }],
   }), [rows, tokens]);
   return <Chart option={option} tokens={tokens} label="Valor das multas aplicadas no período por alínea do art. 73 da Lei 5.194/66" onPick={params => { const row = rows[params.dataIndex]; if (row) abrirAutos(ctx, infracaoDaAlinea[row.alinea], row.autos, `Autos votados no período com multa pela ${infracaoDaAlinea[row.alinea].toLowerCase()}.`); }} />;
 }
@@ -75,28 +75,29 @@ function Plenario({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = comRecurso(ctx);
   const option = useMemo(() => ({
     grid: { top: 24, right: 24, bottom: 2, left: 24, containLabel: true }, legend: { ...legenda(tokens), data: ['Reformadas', 'Mantidas'] },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex], n = row.mantidas.length + row.reformadas.length; return `<b>Câmara ${row.camara}</b> · ${int(n)} recursos votados<br/>Mantidas: ${int(row.mantidas.length)} · reformadas: ${int(row.reformadas.length)} (${pct(row.reformadas.length / n * 100)})`; } },
-    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.camara), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5 } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex], n = row.mantidas.length + row.reformadas.length; return `<b>Câmara ${row.camara}</b>, ${int(n)} recursos votados<br/>Mantidas: ${int(row.mantidas.length)}; reformadas: ${int(row.reformadas.length)} (${pct(row.reformadas.length / n * 100)})`; } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.camara), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
     series: [
-      { name: 'Reformadas', type: 'bar', stack: 'p', barWidth: 13, data: rows.map(row => -row.reformadas.length), itemStyle: { color: tokens.bad, borderRadius: [3, 0, 0, 3] }, label: { show: true, position: 'left', color: tokens.bad, fontSize: 10, fontWeight: 700, formatter: (p: any) => p.value ? int(-p.value) : '' } },
-      { name: 'Mantidas', type: 'bar', stack: 'p', barWidth: 13, data: rows.map(row => row.mantidas.length), itemStyle: { color: tokens.brand, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 10, fontWeight: 700, formatter: (p: any) => p.value ? int(p.value) : '' } },
+      { name: 'Reformadas', type: 'bar', stack: 'p', barMaxWidth: 13, data: rows.map(row => -row.reformadas.length), itemStyle: { color: tokens.bad, borderRadius: [3, 0, 0, 3] }, label: { show: true, position: 'left', color: tokens.bad, fontSize: 11, fontWeight: 700, formatter: (p: any) => p.value ? int(-p.value) : '' } },
+      { name: 'Mantidas', type: 'bar', stack: 'p', barMaxWidth: 13, data: rows.map(row => row.mantidas.length), itemStyle: { color: tokens.brand, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (p: any) => p.value ? int(p.value) : '' } },
     ],
   }), [rows, tokens]);
-  if (!rows.length) return <div className="empty-note">Nenhum recurso votado pelo Plenário no período neste recorte.</div>;
   return <Chart option={option} tokens={tokens} label="Recursos votados pelo Plenário no período: decisões mantidas e reformadas, pela câmara de origem" onPick={params => { const row = rows[params.dataIndex]; if (!row) return; const lista = params.seriesIndex === 0 ? row.reformadas : row.mantidas;
-    abrirTramitacoes(ctx, `Câmara ${row.camara} · decisões ${params.seriesIndex === 0 ? 'reformadas' : 'mantidas'} pelo Plenário`, lista, 'Recursos votados pelo Plenário no período, vindos desta câmara.'); }} />;
+    abrirTramitacoes(ctx, `Câmara ${row.camara}: decisões ${params.seriesIndex === 0 ? 'reformadas' : 'mantidas'} pelo Plenário`, lista, 'Recursos votados pelo Plenário no período, vindos desta câmara.'); }} />;
 }
 
 /* ---------- Destino das multas, pelo ano da decisão ---------- */
+/** Valor curto para caber dentro da coluna: o eixo já diz que é em reais. */
+const milhar = (valor: number) => valor >= 1e6 ? `${(valor / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mi` : `${int(Math.round(valor / 1000))} mil`;
 const exportarDestino = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Ano da decisão', ...destinosMulta.map(d => `${d} (autos)`), ...destinosMulta.map(d => `${d} (R$)`)], linhas: () => q(ctx).multasPorAno.map(row => [row.ano, ...destinosMulta.map(d => row.porDestino[d].length), ...destinosMulta.map(d => row.valor[d])]) });
 function Destino({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = q(ctx).multasPorAno, cores = [tokens.good, tokens.accent, tokens.blue, tokens.muted];
+  const { tokens } = ctx, rows = q(ctx).multasPorAno, cores = [tokens.good, tokens.accent, tokens.blue, tokens.muted], maior = Math.max(1, ...rows.map(row => destinosMulta.reduce((n, d) => n + row.valor[d], 0)));
   const option = useMemo(() => ({
     grid: { top: 26, right: 6, bottom: 2, left: 4, containLabel: true }, legend: { ...legenda(tokens), data: [...destinosMulta] },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>Multas decididas em ${row.ano}</b>${row.ano === ctx.anchor.slice(0, 4) ? ' (até a data)' : ''}<br/>${destinosMulta.map(d => `${d}: ${brl(row.valor[d])} em ${int(row.porDestino[d].length)} autos`).join('<br/>')}`; } },
     xAxis: eixoCategoria(tokens, rows.map(row => row.ano)), yAxis: eixoValor(tokens),
-    series: destinosMulta.map((d, index) => ({ name: d, type: 'bar', stack: 'm', barWidth: '46%', data: rows.map(row => row.valor[d]), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
-      label: { show: true, position: 'inside', color: index === 1 ? '#1A202C' : '#FFFFFF', fontSize: 9, fontWeight: 700, formatter: (p: any) => p.value >= 120000 ? brl(p.value) : '' } })),
-  }), [rows, tokens, ctx.anchor]);
-  return <Chart option={option} tokens={tokens} label="Valor das multas aplicadas pelas câmaras, pelo ano da decisão e pelo que aconteceu depois" onPick={params => { const row = rows[params.dataIndex], d = destinosMulta[params.seriesIndex]; if (row && d) abrirAutos(ctx, `Multas de ${row.ano} · ${d.toLowerCase()}`, row.porDestino[d], `Autos com multa decididos pelas câmaras em ${row.ano}, hoje ${d.toLowerCase()}.`); }} />;
+    series: destinosMulta.map((d, index) => ({ name: d, type: 'bar', barMaxWidth: 64, stack: 'm', barWidth: '62%', data: rows.map(row => row.valor[d]), itemStyle: { color: cores[index], borderColor: tokens.surface, borderWidth: 1 },
+      label: { show: true, position: 'inside', color: corDoTexto(cores[index]), fontSize: 11, fontWeight: 700, formatter: (p: any) => p.value >= maior * 0.2 ? milhar(p.value) : '' } })),
+  }), [rows, tokens, ctx.anchor, maior]);
+  return <Chart option={option} tokens={tokens} label="Valor das multas aplicadas pelas câmaras, pelo ano da decisão e pelo que aconteceu depois" onPick={params => { const row = rows[params.dataIndex], d = destinosMulta[params.seriesIndex]; if (row && d) abrirAutos(ctx, `Multas de ${row.ano}: ${d.toLowerCase()}`, row.porDestino[d], `Autos com multa decididos pelas câmaras em ${row.ano}, hoje ${d.toLowerCase()}.`); }} />;
 }
