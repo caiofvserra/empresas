@@ -3,12 +3,13 @@ import { ativosNoInicio } from '../domain/painel-profissionais';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco, Indicador } from '../cockpit/ui';
 import { useSeriesProfissionais } from './series';
-import { EntradasSaidasMes, NovosModalidade, PermanenciaAno, PonteAtivos, abrirProfissionais, filtroDe, porIds, useFluxo } from './blocos';
+import { EntradasSaidasMes, NovosModalidade, PermanenciaAno, PonteAtivos, abrirProfissionais, profissionaisVazio, filtroDe, porIds, useFluxo } from './blocos';
 
 const change = (now: number, before: number) => before > 0 ? (now - before) / before * 100 : null;
 
 /** Painel de Profissionais, página 2: quem entra, interrompe, volta e cancela o registro, e quantos de cada ano continuam ativos. */
 export default function PaginaFluxo({ ctx }: { ctx: CockpitCtx }) {
+  const vazio = profissionaisVazio(ctx);
   const { tokens, janela } = ctx, p = ctx.profissionais.resumo, meses = useFluxo(ctx), series = useSeriesProfissionais(ctx);
   const doPeriodo = meses.filter(row => row.month >= janela.start.slice(0, 7) && row.month <= janela.end.slice(0, 7));
   const junta = (campo: 'novos' | 'cancelamentos' | 'interrupcoes' | 'reativacoes') => doPeriodo.flatMap(row => row[campo]);
@@ -26,9 +27,9 @@ export default function PaginaFluxo({ ctx }: { ctx: CockpitCtx }) {
         onOpen={() => abrirProfissionais(ctx, 'Cancelaram o registro no período', porIds(ctx, cancelamentos), 'Profissionais com registro cancelado no período.')} />
       <Indicador ficha="k-saldo" ctx={ctx} label="Saldo do período" value={`${saldo >= 0 ? '+' : ''}${int(saldo)}`} sub={`de ${int(inicio.ativos.length)} para ${int(p.ativos.length)} ativos`} />
     </section>
-    <Bloco ctx={ctx} id="me" area="me" title="Entradas e saídas mês a mês" question="Nos últimos 24 meses, para cima os registros novos e os que voltaram de uma interrupção; para baixo os que interromperam e os que cancelaram. A linha é o saldo, e a faixa clara marca o período escolhido." help="Clique numa barra para ver os profissionais daquele mês."><EntradasSaidasMes ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="sk" area="sk" title="Como a base de ativos mudou no período" question="Quantos estavam ativos no começo do período, quantos entraram (registros novos e quem voltou), quantos saíram (interromperam ou cancelaram) e quantos estão ativos na data escolhida." help="Compara a situação de cada pessoa no começo e no fim do período. Quem interrompeu e voltou dentro do período não aparece, por isso “voltaram” e “interromperam” podem ser menores que nos cartões, que contam cada evento. O saldo é o mesmo do cartão. Clique numa barra para ver os profissionais."><PonteAtivos ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="hm" area="hm" title="Registros novos por modalidade" question="Registros novos de cada modalidade no período escolhido (azul) e no mesmo período um ano antes (cinza). O número ao lado é o total do período e a variação."><NovosModalidade ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="pa" area="pa" title="Quantos continuam ativos, por ano do registro" question="Para cada ano de registro, quantos profissionais se registraram e quantos continuam ativos na data escolhida. A linha é a parte que continua ativa." help="É normal a parte ativa cair nos anos mais antigos, com aposentadorias e mudanças de carreira. Uma queda forte num ano recente pede atenção."><PermanenciaAno ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} vazio={vazio} id="me" area="me" title="Entradas e saídas mês a mês" question="Nos últimos 24 meses, para cima os registros novos e os que voltaram de uma interrupção; para baixo os que interromperam e os que cancelaram. A linha é o saldo, e a faixa clara marca o período escolhido." help="Clique numa barra para ver os profissionais daquele mês."><EntradasSaidasMes ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} vazio={vazio} id="sk" area="sk" title="Como a base de ativos mudou no período" question="Quantos estavam ativos no começo do período, quantos entraram (registros novos e quem voltou), quantos saíram (interromperam ou cancelaram) e quantos estão ativos na data escolhida." help="Compara a situação de cada pessoa no começo e no fim do período. Quem interrompeu e voltou dentro do período não aparece, por isso “voltaram” e “interromperam” podem ser menores que nos cartões, que contam cada evento. O saldo é o mesmo do cartão. Clique numa barra para ver os profissionais."><PonteAtivos ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} vazio={vazio} id="hm" area="hm" title="Registros novos por modalidade" question="Registros novos de cada modalidade no período escolhido (azul) e no mesmo período um ano antes (cinza). O número ao lado é o total do período e a variação."><NovosModalidade ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} vazio={vazio} id="pa" area="pa" title="Quantos continuam ativos, por ano do registro" question="Para cada ano de registro, quantos profissionais se registraram e quantos continuam ativos na data escolhida. A linha é a parte que continua ativa." help="É normal a parte ativa cair nos anos mais antigos, com aposentadorias e mudanças de carreira. Uma queda forte num ano recente pede atenção."><PermanenciaAno ctx={ctx} /></Bloco>
   </div>;
 }
