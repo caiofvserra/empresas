@@ -96,6 +96,10 @@ _Avoid_: UGI, regional com nome de cidade
 Uma das nove câmaras especializadas do Crea-SP, com o nome do sistema do Conselho. A câmara de uma empresa é estimada pela atividade principal.
 _Avoid_: modalidade (quando se fala da empresa)
 
+**Empresa sancionada**:
+Empresa com sanção em vigor no CEIS ou no CNEP da CGU, pela raiz do CNPJ. A sanção que impede contratar (impedimento, inidoneidade, suspensão de licitar) tem um alcance: todas as esferas, a esfera do órgão que puniu ou só o órgão.
+_Avoid_: inidônea (quando a sanção é outra), empresa punida, lista suja
+
 ## Dados
 
 **Cenário de demonstração**:

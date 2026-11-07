@@ -63,6 +63,15 @@ export const automatedSourceCatalog: AutomatedSource[] = [
     limitations: ['Os dias na fase começam na primeira cópia: antes dela, o início é desconhecido.', 'Dia sem cópia atrasa a mudança de fase em um dia.', 'O relatório traz nome de interessado e de responsável: o histórico fica fora do Git.'],
   },
   {
+    id: 'cgu-sancoes', title: 'CGU — sanções a empresas (CEIS e CNEP)', access: 'staged-database',
+    status: 'available-unconfigured', schedule: 'Diária, depois que a CGU publica o arquivo do dia, no fim da tarde',
+    // 07/11/2026: scripts/sancoes-cgu.ts baixa o CEIS e o CNEP e grava var/sancoes/sancoes-pj.csv; o cruzamento está em integrations/sql/sancoes-x-cadastro.sql.
+    endpoint: 'https://portaldatransparencia.gov.br/download-de-dados/{ceis|cnep}/AAAAMMDD → scripts/sancoes-cgu.ts → var/sancoes → staging → gateway', fixture: false,
+    factTables: ['sancao-empresa'],
+    missingRequirements: ['Agendador diário do coletor', 'Carga de sancoes-pj.csv em stg.cgu_sancao', 'Views bi.vw_empresa e bi.vw_registro_empresa homologadas', 'Bloco de empresas sancionadas no painel quando o cadastro real chegar'],
+    limitations: ['O arquivo do dia é a situação daquele dia: sanção já encerrada pode ter saído dele.', 'O alcance de impedimento e suspensão é o que o órgão sancionador informou; muitas vêm sem informação.', 'Só pessoa jurídica: sócio sancionado como pessoa física fica de fora.'],
+  },
+  {
     id: 'rfb-cnpj', title: 'Receita Federal — CNPJ e QSA em staging', access: 'staged-database',
     status: 'blocked-unconfigured', schedule: 'Mensal, conforme disponibilização oficial e homologação da carga',
     endpoint: 'https://arquivos.receitafederal.gov.br/public.php/webdav/<AAAA-MM>/ → scripts/receita-cnpj.ts → staging (CSV) → SQL Server/Db2 → gateway', fixture: false,

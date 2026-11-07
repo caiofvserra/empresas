@@ -12,6 +12,8 @@ dist-presidencia/
 var/receita/
 # Histórico diário do GovAdm, com nome de responsável (scripts/govadm-diario.ts).
 var/govadm/
+# Sanções da CGU com nome de empresa e número de processo (scripts/sancoes-cgu.ts).
+var/sancoes/
 staging/
 dist-empresas/
 dist-profissionais/
