@@ -3,7 +3,9 @@
  * (src/cockpit/Cockpit.tsx); o teste tests/menu.test.ts confere que as duas listas não se separam. O painel de Gestão do Conselho
  * aparece como Colegiados, nome escolhido pelo Caio em 07/11/2026.
  */
-export type PainelDoMenu = { id: 'presidencia' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'conselho' | 'financeiro' | 'atendimento'; nome: string; arquivo: string; paginas: string[] };
+import type { PainelId } from '../cockpit/Cockpit';
+
+export type PainelDoMenu = { id: PainelId; nome: string; arquivo: string; paginas: string[] };
 
 export const paineisDoMenu: PainelDoMenu[] = [
   { id: 'presidencia', nome: 'Presidência', arquivo: 'presidencia.html', paginas: ['Resumo', 'Regionais', 'Riscos', 'No país'] },

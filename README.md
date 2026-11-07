@@ -36,7 +36,7 @@ Node.js 20 ou mais novo.
 
 ```bash
 npm ci
-npm run dev            # menu dos painéis em http://localhost:5173/; Presidência em http://localhost:5173/presidencia.html; Empresas em http://localhost:5173/empresas.html de Profissionais em http://localhost:5173/profissionais.html de Fiscalização em http://localhost:5173/fiscalizacao.html; Financeiro, Atendimento e Conselho em financeiro.html, atendimento.html e conselho.html
+npm run dev            # menu dos painéis em http://localhost:5173/; Presidência em http://localhost:5173/presidencia.html; Empresas, Profissionais e Fiscalização em empresas.html, profissionais.html e fiscalizacao.html; Financeiro, Atendimento e Conselho em financeiro.html, atendimento.html e conselho.html
 npm test               # testes de domínio, painéis, fiscalização, V20, V21, V22, Empresas, Profissionais, Fiscalização e coletor
 npm run build          # TypeScript e build do site
 npm run build:painel   # gera os painéis em entrega/

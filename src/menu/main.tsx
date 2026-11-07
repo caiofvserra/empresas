@@ -18,7 +18,7 @@ function Menu() {
     <header className="mn-faixa">
       <div className="mn-marca"><EngineeringEmblem /></div>
       <h1>Inteligência Estratégica Crea-SP</h1>
-      <p className="mn-lead">Os painéis de dados do Conselho num só lugar. Escolha um painel para abrir; o botão Voltar, no alto do menu lateral, traz de volta para cá.</p>
+      <p className="mn-lead">Aqui ficam todos os painéis de dados do Conselho. Escolha um painel para abrir; o botão Voltar, no alto do menu lateral, traz de volta para cá.</p>
       <p className="mn-nota">Os dados internos são demonstrativos. Os dados públicos são reais e mostram a fonte e a data.</p>
       <div className="mn-desenho" aria-hidden="true"><EngineeringBlueprint /></div>
     </header>

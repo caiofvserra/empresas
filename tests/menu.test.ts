@@ -34,9 +34,10 @@ test('a página inicial do site é o menu, e a Presidência abre em presidencia.
   assert.ok(readFileSync(join(raiz, 'presidencia.html'), 'utf8').includes('/src/cockpit/main.tsx'));
 });
 
-test('todo painel do site tem o botão Voltar ao menu; na entrega em arquivo único ele some', () => {
-  assert.match(cockpit, /\{!naEntrega && <a className="ck-voltar" href="index\.html"/);
-  assert.match(cockpit, /const naEntrega = \/painel-\[a-z-\]\+\\\.html\$\/\.test\(window\.location\.pathname\)/);
+test('todo painel do site tem o botão Voltar ao menu; fora do site (entrega em arquivo único) ele some', () => {
+  assert.match(cockpit, /\{noSite && <a className="ck-voltar" href="index\.html"/);
+  assert.match(readFileSync(join(raiz, 'vite.config.ts'), 'utf8'), /define: \{ __SITE__: 'true' \}/, 'só o build do site liga o Voltar');
+  for (const config of ['vite.empresas.config.ts', 'vite.presidencia.config.ts', 'vite.conselho.config.ts']) assert.ok(!readFileSync(join(raiz, config), 'utf8').includes('__SITE__'), `${config} não liga o Voltar`);
 });
 
 test('o site usa endereços relativos, para abrir no GitHub Pages dentro de /empresas/', () => {
