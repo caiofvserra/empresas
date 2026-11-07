@@ -95,7 +95,12 @@ def main():
             lote = json.loads(cache.read_text(encoding='utf-8'))['contratos']
         else:
             print(f'Coletando {de} a {ate}...')
-            lote = buscar_contratos(de, ate)
+            try:
+                lote = buscar_contratos(de, ate)
+            except Exception as erro:  # noqa: BLE001 - os meses já feitos ficam gravados e o resto vai para a próxima execução
+                print(f'A coleta de {de[:7]} falhou ({erro}); os meses que faltam ficam para a próxima execução.')
+                faltou = True
+                break
             gravar(cache, json.dumps({'periodo': [de, ate], 'contratos': lote}, ensure_ascii=False))
         pendentes = [c for c in lote if c['pncp_id'] not in feitos]
         print(f'{de[:7]}: {len(lote)} contratos de serviços em SP, {len(pendentes)} sem triagem.')

@@ -82,6 +82,37 @@ class ColetaParalela(unittest.TestCase):
             self._paginas(falha=2)
 
 
+class LimiteDaApi(unittest.TestCase):
+    """HTTP 429: a API do PNCP pede calma. Todas as threads esperam juntas, pelo Retry-After ou por 30 s, e tentam de novo."""
+
+    def test_429_pausa_todas_as_threads_e_tenta_de_novo(self):
+        import email.message
+        import io
+        import urllib.error
+        from unittest import mock
+        from pncp_triagem import coleta
+        relogio = {'agora': 1000.0}
+        dormiu = []
+
+        def dormir(s):
+            dormiu.append(s)
+            relogio['agora'] += s
+        respostas = [urllib.error.HTTPError('u', 429, 'Too Many Requests', email.message.Message(), io.BytesIO()),
+                     io.BytesIO(b'{"ok": 1}')]
+
+        def abrir(req, timeout):
+            r = respostas.pop(0)
+            if isinstance(r, Exception):
+                raise r
+            return r
+        with mock.patch.object(coleta.urllib.request, 'urlopen', abrir), mock.patch.object(coleta.time, 'sleep', dormir), \
+                mock.patch.object(coleta.time, 'monotonic', lambda: relogio['agora']):
+            self.assertEqual(coleta.pedir_json('https://pncp.gov.br/api/x'), {'ok': 1})
+            self.assertGreaterEqual(sum(dormiu), 30)
+            self.assertGreaterEqual(coleta._pausa['ate'], 1030)  # a pausa vale para as outras threads
+        coleta._pausa['ate'] = 0.0
+
+
 class Rito(unittest.TestCase):
     def test_artigo_de_lei_nao_e_ART(self):
         m = detectar_marcadores('Contratação nos termos do art. 75, II, e do Art. 6º da Lei. ART. 5 trata do prazo.')

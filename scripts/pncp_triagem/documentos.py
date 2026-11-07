@@ -11,7 +11,7 @@ import re
 import urllib.request
 from pathlib import Path
 
-from .coleta import CABECALHO, pedir_json
+from .coleta import CABECALHO, _esperar_vez, _pausar, pedir_json
 from .rito import classificar_rito
 
 API = 'https://pncp.gov.br/api/pncp/v1'
@@ -70,10 +70,13 @@ def _baixar(url, pasta):
     destino = pasta / (re.sub(r'[^0-9A-Za-z]+', '_', url.split('/orgaos/')[-1]) + '.pdf') if pasta else None
     if destino and destino.exists() and destino.stat().st_size:
         return destino.read_bytes()
+    _esperar_vez()
     try:
         with urllib.request.urlopen(urllib.request.Request(url, headers=CABECALHO), timeout=90) as resposta:
             conteudo = resposta.read()
-    except Exception:  # noqa: BLE001 - a triagem segue sem o documento
+    except Exception as erro:  # noqa: BLE001 - a compra fica para a próxima execução
+        if getattr(erro, 'code', None) == 429:
+            _pausar(60)  # as outras threads também esperam antes do próximo pedido
         return None
     if not conteudo.startswith(b'%PDF'):
         return b''  # veio, mas não é PDF (planilha, imagem, página de erro): conta como documento que não se lê
