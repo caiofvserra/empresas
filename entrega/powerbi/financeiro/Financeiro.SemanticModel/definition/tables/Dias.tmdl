@@ -1,0 +1,65 @@
+/// Tem cada dia dos meses com arrecadação diária, com a semana do mês, o dia da semana e se é dia útil (sem fins de semana e feriados nacionais, de SP e móveis).
+table Dias
+	lineageTag: d827641f-9a65-50e9-8d5e-df2710701034
+
+	column Dia
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Dia
+		lineageTag: a116b954-2c56-5676-add7-4f6c61086f5b
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 4fd3d336-2eea-5388-8ec7-9c7e76ea5ac5
+
+	column 'Dia do mês'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Dia do mês
+		lineageTag: 12d5ba45-f968-507f-b83e-3dddcfd41c6c
+
+	column 'Semana do mês'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Semana do mês
+		lineageTag: 59621f82-b7d1-52c8-adb6-4a7a6b8577e5
+
+	column 'Dia da semana'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Dia da semana
+		sortByColumn: 'Ordem do dia da semana'
+		lineageTag: 11eb219e-1cea-5998-86d7-46d696bc8301
+
+	column 'Ordem do dia da semana'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do dia da semana
+		lineageTag: a396d330-3f17-5eea-963b-562894c1f1b9
+
+	column 'Útil'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Útil
+		lineageTag: 84b30065-4fd6-5a37-8823-9c2db26dbaac
+
+	partition Dias = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "dias.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Dia", type date}, {"Mês", type date}, {"Dia do mês", Int64.Type}, {"Semana do mês", Int64.Type}, {"Dia da semana", type text}, {"Ordem do dia da semana", Int64.Type}, {"Útil", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

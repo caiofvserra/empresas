@@ -1,4 +1,4 @@
-/// Tem um mês por linha, de 2020 até 12 meses depois de hoje (para os contratos que terminam), para os gráficos mês a mês e ano a ano.
+/// Tem um mês por linha, de 2013 (o primeiro ano da Transparência) até 12 meses depois de hoje, para os gráficos mês a mês e ano a ano e os contratos que terminam.
 table 'Calendário'
 	lineageTag: 48c00a4a-8921-5f48-a6a0-d1e2832f5d85
 

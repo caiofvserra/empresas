@@ -1,61 +1,151 @@
-Fornecedor;Nome;Objeto;Natureza
-FORN-001;Vértice Sistemas Ltda. (demonstrativo);Tecnologia da informação;Investimentos
-FORN-002;Vértice Serviços Gerais Ltda. (demonstrativo);Limpeza e conservação;Serviços de terceiros
-FORN-003;Vértice Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
-FORN-004;Vértice Locadora de Veículos S.A. (demonstrativo);Locação de veículos;Serviços de terceiros
-FORN-005;Vértice Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
-FORN-006;Vértice Consultoria Ltda. (demonstrativo);Consultoria;Serviços de terceiros
-FORN-007;Vértice Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
-FORN-008;Vértice Manutenção Predial S.A. (demonstrativo);Manutenção predial;Serviços de terceiros
-FORN-009;Vértice Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
-FORN-010;Vértice Papelaria Ltda. (demonstrativo);Material de escritório;Material de consumo
-FORN-011;Alvorada Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
-FORN-012;Alvorada Serviços Gerais S.A. (demonstrativo);Limpeza e conservação;Serviços de terceiros
-FORN-013;Alvorada Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
-FORN-014;Alvorada Locadora de Veículos Ltda. (demonstrativo);Locação de veículos;Serviços de terceiros
-FORN-015;Alvorada Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
-FORN-016;Alvorada Consultoria S.A. (demonstrativo);Consultoria;Serviços de terceiros
-FORN-017;Alvorada Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
-FORN-018;Alvorada Manutenção Predial Ltda. (demonstrativo);Manutenção predial;Serviços de terceiros
-FORN-019;Alvorada Telecom Ltda. (demonstrativo);Telefonia e dados;Investimentos
-FORN-020;Alvorada Papelaria S.A. (demonstrativo);Material de escritório;Material de consumo
-FORN-021;Horizonte Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
-FORN-022;Horizonte Serviços Gerais Ltda. (demonstrativo);Limpeza e conservação;Serviços de terceiros
-FORN-023;Horizonte Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
-FORN-024;Horizonte Locadora de Veículos S.A. (demonstrativo);Locação de veículos;Serviços de terceiros
-FORN-025;Horizonte Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
-FORN-026;Horizonte Consultoria Ltda. (demonstrativo);Consultoria;Serviços de terceiros
-FORN-027;Horizonte Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
-FORN-028;Horizonte Manutenção Predial S.A. (demonstrativo);Manutenção predial;Investimentos
-FORN-029;Horizonte Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
-FORN-030;Horizonte Papelaria Ltda. (demonstrativo);Material de escritório;Material de consumo
-FORN-031;Prisma Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
-FORN-032;Prisma Serviços Gerais S.A. (demonstrativo);Limpeza e conservação;Serviços de terceiros
-FORN-033;Prisma Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
-FORN-034;Prisma Locadora de Veículos Ltda. (demonstrativo);Locação de veículos;Serviços de terceiros
-FORN-035;Prisma Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
-FORN-036;Prisma Consultoria S.A. (demonstrativo);Consultoria;Serviços de terceiros
-FORN-037;Prisma Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Investimentos
-FORN-038;Prisma Manutenção Predial Ltda. (demonstrativo);Manutenção predial;Serviços de terceiros
-FORN-039;Prisma Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
-FORN-040;Prisma Papelaria S.A. (demonstrativo);Material de escritório;Material de consumo
-FORN-041;Centauro Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
-FORN-042;Centauro Serviços Gerais Ltda. (demonstrativo);Limpeza e conservação;Serviços de terceiros
-FORN-043;Centauro Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
-FORN-044;Centauro Locadora de Veículos S.A. (demonstrativo);Locação de veículos;Serviços de terceiros
-FORN-045;Centauro Logística Ltda. (demonstrativo);Correios e logística;Serviços de terceiros
-FORN-046;Centauro Consultoria Ltda. (demonstrativo);Consultoria;Investimentos
-FORN-047;Centauro Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
-FORN-048;Centauro Manutenção Predial S.A. (demonstrativo);Manutenção predial;Serviços de terceiros
-FORN-049;Centauro Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
-FORN-050;Centauro Papelaria Ltda. (demonstrativo);Material de escritório;Material de consumo
-FORN-051;Meridiano Sistemas Ltda. (demonstrativo);Tecnologia da informação;Serviços de terceiros
-FORN-052;Meridiano Serviços Gerais S.A. (demonstrativo);Limpeza e conservação;Serviços de terceiros
-FORN-053;Meridiano Segurança Patrimonial Ltda. (demonstrativo);Vigilância;Serviços de terceiros
-FORN-054;Meridiano Locadora de Veículos Ltda. (demonstrativo);Locação de veículos;Serviços de terceiros
-FORN-055;Meridiano Logística Ltda. (demonstrativo);Correios e logística;Investimentos
-FORN-056;Meridiano Consultoria S.A. (demonstrativo);Consultoria;Serviços de terceiros
-FORN-057;Meridiano Comunicação e Eventos Ltda. (demonstrativo);Eventos e comunicação;Serviços de terceiros
-FORN-058;Meridiano Manutenção Predial Ltda. (demonstrativo);Manutenção predial;Serviços de terceiros
-FORN-059;Meridiano Telecom Ltda. (demonstrativo);Telefonia e dados;Serviços de terceiros
-FORN-060;Meridiano Papelaria S.A. (demonstrativo);Material de escritório;Material de consumo
+Fornecedor;Nome;CNPJ;Objeto
+F0001;UNIMED SEGUROS SAUDE S/A;04487255000181;Plano de Saúde
+F0002;HEPTA TECNOLOGIA E INFORMÁTICA LTDA;37057387000122;Serviços de Informática
+F0003;TEL CENTRO DE CONTATOS LTDA.;73663114000195;Demais Serviços de Terceiros
+F0004;VIVER EVENTOS LTDA;04274005000163;Demais Serviços de Terceiros
+F0005;CIRION TECHNOLOGIES DO BRASIL LTDA;72843212000141;Serviços de Informática
+F0006;NC SERVIÇOS LTDA;01816098000112;Demais Serviços de Terceiros
+F0007;TICKET SERVIÇOS S/A;47866934000174;Vale Refeição e/ou Vale Alimentação
+F0008;CS BRASIL FROTAS S.A;27595780000116;Locação de Bens Móveis, Máquinas e Equipamentos
+F0009;ASSOCIAÇÃO DOS PROCURADORES ADVOGADOS E CONSULTORES JURIDICOS DO CREA-SP;28097358000101;Honorários de Sucumbência - PJ
+F0010;TELEFÔNICA BRASIL S.A.;02558157000162;Serviços de Telecomunicações
+F0011;PERILLO ENGENHARIA E GEOLOGIA - EIRELI;09477765000191;Demais Serviços Profissionais
+F0012;MOBILI BRASIL SERVIÇOS DE TELECOMUNICAÇÕES LTDA.;30320648000106;Serviços de Informática
+F0013;CDI COMUNICAÇÃO CORPORATIVA LTDA.;19028775000101;Demais Serviços de Terceiros
+F0014;TRIBUNAL REGIONAL DO TRABALHO DA 2ª REGIAO;03241738000139;Sentenças Judiciais
+F0015;LINCE - SEGURANÇA ELETRÔNICA LTDA;10565981000178;Demais Serviços de Terceiros
+F0016;MEILOCK COM. DE EQUIP. DE SEGURANÇA E DE INFORMATICA LTDA;09631830000191;Serviços de Informática
+F0017;DEBRITO BRASIL COMUNICAÇÃO LTDA;00000424000156;Serviço de Divulgação Institucional
+F0018;INMOV INTELIGENCIA EM MOVIMENTO LTDA;12230109000102;Serviços de Informática
+F0019;PAS - PROJETO, ASSESSORIA E SISTEMA EIRELI;08593703000182;Demais Serviços de Terceiros
+F0020;BRASOFTWARE INFORMÁTICA LTDA.;57142978000105;Serviços de Informática
+F0021;JUSTIÇA FEDERAL DE SÃO PAULO;05445105000178;Sentenças Judiciais
+F0022;ENGIX CONSTRUÇÕES E SERVIÇOS LTDA;03422281000169;Manutenção e Conservação Dos Bens Imóveis
+F0023;GRAFICA E EDITORA MOVIMENTO LTDA;08220275000142;Impressos Gráficos
+F0024;URUTU SISTEMA DE VIGILANCIA LTDA;01721355000132;Serviços de Segurança Predial e Preventiva
+F0025;SIMPRESS COMERCIO LOCAÇAO E SERVIÇOS S/A;07432517000107;Locação de Bens Móveis, Máquinas e Equipamentos
+F0026;ESCALA COMUNICACAO & MARKETING LTDA;90771544000140;Serviço de Divulgação Institucional
+F0027;BANCO DO BRASIL S/A;00000000000191;Despesas Com Cobrança
+F0028;EMPRESA DE SEGURANÇA INFINITY EIRELI;18714967000109;Serviços de Segurança Predial e Preventiva
+F0029;THOMAS GREG & SONS GRÁF. E SERV. INDÚST. E COMER. IMPORT. E;03514896000115;Demais Serviços de Terceiros
+F0030;TRIBUNAL REGIONAL FEDERAL DA 3ª REGIAO;59949362000176;Sentenças Judiciais
+F0031;ORLEANS VIAGENS E TURISMO LTDA;21331404000138;Serviços Transporte, Taxi, Passagem Aerea e Pedágios
+F0032;SISTEMAS CONVEX LOCAÇÕES DE PRODUTOS DE INFORMATICA LTDA;73147084000164;Locação de Bens Móveis, Máquinas e Equipamentos
+F0033;INTERAXA BRASIL TECNOLOGIA E INFORMATICA LTDA;06928340000163;Serviços de Internet
+F0034;INSTITUTO GOVERNOS & PARCERIAS – GOVPAR;02463742000189;Demais Serviços de Terceiros
+F0035;CONDOMINIO EDIFICIO NEW ENGLAND;08277249000150;Condomínios
+F0036;IEPTB - SP - INSTITUTO DE ESTUDOS DE PROTESTO DE TÍTULOS DO BRASIL;45876117000171;Impostos e Taxas
+F0037;BANCO DO BRASIL S/A;00000000504408;Despesas Com Cobrança
+F0038;EMPRESA BRASILEIRA DE CORREIOS E TELEGRAFOS;34028316003129;Postagem de Correspondência Institucional
+F0039;MOBILIARE ASSENTOS CORPORATIVOS LTDA;28423151000171;Móveis e Utensílios
+F0040;LEMOS JORGE ADVOGADOS ASSOCIADOS;05854860000106;Demais Serviços Profissionais
+F0041;INFINITY LIMPEZA PROFISSIONAL E MULTISERVIÇOS LTDA;20508905000184;Serviços de Segurança Predial e Preventiva
+F0042;CAMP PINHEIROS CENTRO APR MON PROF DR JOAQUIM LORENCO;50246529000168;Remuneração de Menores Aprendizes
+F0043;ÁREA COMUNICAÇÃO PROPAGANDA E MARKETING LTDA;06866550000174;Demais Serviços de Terceiros
+F0044;SERVIX INFORMATICA LTDA;01134191000147;Serviços de Informática
+F0045;SENIOR SISTEMAS S/A;80680093000181;Serviços de Informática
+F0046;HJO EMPREENDIMENTOS E PARTICIPACOES LTDA;07805926000101;Locação de Bens Imóveis
+F0047;ENGINEME CURSOS E CONSULTORIA ONLINE LTDA;38352733000168;Demais Serviços de Terceiros
+F0048;ACLIMED CLINICA MEDICA ACLIMAÇÃO LTDA;03199587000106;Serviços de Medicina do Trabalho
+F0049;FUNDAÇÃO INSTITUTO DE PESQUISAS ECONOMICAS - FIPE;43942358000146;Demais Serviços de Terceiros
+F0050;TRAMPOS.CO TECNOLOGIA LTDA;18605358000103;Demais Serviços de Terceiros
+F0051;SINDICATO DOS ENGENHEIROS NO ESTADO DE SÃO PAULO - SEESP;62637137000109;Termos de Colaboração
+F0052;SECRETARIA DA RECEITA FEDERAL DO BRASIL;00394460005887;Sentenças Judiciais
+F0053;PK9 TECNOLOGIA E SERVICOS LTDA;11139665000105;Demais Serviços de Terceiros
+F0054;ASSOCIAÇÃO DOS ENGENHEIROS E AGRÔNOMOS DO ABC;44192060000129;Termos de Colaboração
+F0055;ELETROPAULO METROPOLITANA ELETRICIDADE DE SAO PAULO;61695227000193;Serviços de Energia Elétrica
+F0056;ALKANSE EQUIPAMENTOS ELETRONICOS LTDA;00716656000105;Serviços de Segurança Predial e Preventiva
+F0057;3CORP TECHNOLOGY S/A;04238297000189;Locação de Bens Móveis, Máquinas e Equipamentos
+F0058;ASSOCIAÇÃO DE ENGENHEIROS E ARQUITETOS DE SÃO JOSÉ DOS CAMPOS;48273361000138;Termos de Colaboração
+F0059;ASSOCIAÇÃO DE ENGENHARIA, ARQUITETURA E AGRONOMIA DE RIBEIRÃO PRETO;46940797000108;Termos de Colaboração
+F0060;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE SÃO JOSÉ DO RIO PRETO;45103496000167;Termos de Colaboração
+F0061;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE PIRACICABA;54407911000167;Termos de Colaboração
+F0062;IMPLANTA INFORMATICA LTDA;37994043000140;Serviços de Informática
+F0063;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DO MUNICÍPIO DE GUARULHOS;51264893000113;Termos de Colaboração
+F0064;INSTITUTO PAULISTA DE ENTIDADES DE ENGENHARIA E AGRONOMIA - IPEEA;28921486000110;Termos de Colaboração
+F0065;INSTITUTO DE SELEÇAO E TECNOLOGIA;24774586000100;Serviços de Seleção, Treinamento e Orientação Profis.
+F0066;ASSOCIAÇÃO DOS ENGENHEIROS DE JUNDIAÍ;44645166000130;Termos de Colaboração
+F0067;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE PRESIDENTE PRUDENTE;44860666000195;Termos de Colaboração
+F0068;SOCIALDOCS FILMES DE IMPACTO SOCIAL LTDA;26510006000100;Serviço de Divulgação Institucional
+F0069;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE OSASCO;48896997000136;Termos de Colaboração
+F0070;LAB OF CODES SOLUCOES DIGITAIS LTDA;39951337000110;Demais Serviços de Terceiros
+F0071;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE SOROCABA;45408986000171;Termos de Colaboração
+F0072;ASSOCIAÇÃO DOS ENGENHEIROS, AGRÔNOMOS E ARQUITETOS DE AMERICANA;51055010000165;Termos de Colaboração
+F0073;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DA ALTA NOROESTE;51105237000178;Termos de Colaboração
+F0074;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE SÃO CARLOS;48020424000144;Termos de Colaboração
+F0075;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE BAURU;45032406000194;Termos de Colaboração
+F0076;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE MOGI DAS CRUZES;47654025000172;Termos de Colaboração
+F0077;TEMER ADVOGADOS ASSOCIADOS;05397402000195;Demais Serviços Profissionais
+F0078;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DA REGIÃO DE MOGI GUAÇU;51870541000101;Termos de Colaboração
+F0079;INSTITUTO DE ENGENHARIA;61647483000105;Termos de Colaboração
+F0080;ASSOCIAÇÃO DE ENGENHARIA, ARQUITETURA E AGRONOMIA DE MOGI MIRIM;61712147000107;Termos de Colaboração
+F0081;APEMEC - ASSOCIAÇÃO DE PEQUENAS E MÉDIAS EMPRESAS DE CONSTRUÇÃO CIVIL DO ESTADO DE SÃO PAULO;04242636000109;Termos de Colaboração
+F0082;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS, AGRÔNOMOS, GEÓLOGOS, TECNÓLOGOS E TÉCNICOS DE 2º GRAU DE BARUERI;03247823000104;Termos de Colaboração
+F0083;CAPGEMINI BRASIL LTDA;65599953000163;Serviços de Informática
+F0084;ASSOCIAÇÃO ARARAQUARENSE DE ENGENHARIA, ARQUITETURA E AGRONOMIA;45272705000104;Termos de Colaboração
+F0085;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRONOMOS DA NOVA ALTA PAULISTA;49842578000184;Termos de Colaboração
+F0086;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE CATANDUVA;49985039000102;Termos de Colaboração
+F0087;TRIBUNAL REGIONAL DO TRABALHO DA 15ª REGIAO;03773524000103;Sentenças Judiciais
+F0088;ASSOCIAÇÃO REGIONAL DOS ENGENHEIROS DE ITAPEVA;50802263000192;Termos de Colaboração
+F0089;SUPRANEW DO BRASIL COMERCIO E SERVICOS LTDA;21951854000123;Manutenção e Conservação Bens Móveis
+F0090;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE ASSIS E REGIÃO;49899321000169;Termos de Colaboração
+F0091;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DA REGIÃO DE VOTUPORANGA;51855021000120;Termos de Colaboração
+F0092;ASSOCIAÇÃO DE ENGENHARIA, ARQUITETURA, AGRONOMIA E GEOLOGIA DE RIO CLARO;46314464000173;Termos de Colaboração
+F0093;ASSOCIAÇÃO BARRETENSE DE ENGENHARIA, ARQUITETURA E AGRONOMIA;50508134000196;Termos de Colaboração
+F0094;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E ENGENHEIROS AGRÔNOMOS DA REGIÃO DE FRANCA;51821288000104;Termos de Colaboração
+F0095;ASSOCIAÇÃO DE ENGENHEIROS AGRÔNOMOS DO ESTADO DE SÃO PAULO - AEASP;62326772000175;Termos de Colaboração
+F0096;BENEFICIOS UPS LTDA EPP;17359884000178;Vale Transporte
+F0097;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE MONTE ALTO;60240546000141;Termos de Colaboração
+F0098;SOLTECH COMÉRCIO E SERVIÇOS ELETRÔNICOS E ELÉTRICOS EIRELI;10745021000190;Manutenção e Conservação Bens Móveis
+F0099;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DA REGIÃO DE OURINHOS - AERO;49891591000123;Termos de Colaboração
+F0100;ASSOCIAÇÃO GUARATINGUETAENSE DE ENGENHEIROS E ARQUITETOS;50447838000104;Termos de Colaboração
+F0101;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE TAUBATÉ - AEAT;50018126000161;Termos de Colaboração
+F0102;ASSOCIAÇÃO DOS PROFISSIONAIS DE ENGENHARIA, ARQUITETURA E AGRONOMIA DE PINDAMONHANGABA - APEAAP;48279673000159;Termos de Colaboração
+F0103;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE INDAIATUBA - AEAI;51282325000145;Termos de Colaboração
+F0104;ASSOCIAÇÃO LESTE DOS PROFISSIONAIS DE ENGENHARIA E AGRONOMIA DA CIDADE DE SÃO PAULO - ALEASP;02659115000118;Termos de Colaboração
+F0105;CONSENSO SOLUÇÕES ADMINISTRATIVAS LTDA;31055374000138;Serviços de Seleção, Treinamento e Orientação Profis.
+F0106;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE MARÍLIA E REGIÃO;45965415000138;Termos de Colaboração
+F0107;ASSOCIAÇÃO DE ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE VALINHOS;58392424000129;Termos de Colaboração
+F0108;ASSOCIAÇÃO DE ENGENHEIROS E ARQUITETOS DE PRAIA GRANDE;71544936000121;Termos de Colaboração
+F0109;CLARO S/A;40432544000147;Telefonia Fixa
+F0110;ASSOCIAÇÃO BRASILEIRA DE ENGENHEIROS CIVIS - DEPARTAMENTO DO ESTADO DE SÃO PAULO - ABENC/SP;44315547000151;Termos de Colaboração
+F0111;ASSOCIAÇÃO DE ENGENHEIROS E ARQUITETOS DE SANTOS;58250903000100;Termos de Colaboração
+F0112;UNIMED SAUDE E ODONTO S.A.;10414182000109;Plano Odontológico
+F0113;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE SÃO CAETANO DO SUL;05398878000140;Termos de Colaboração
+F0114;INSTITUTO BRASILEIRO DE AVALIAÇÕES E PERÍCIAS DE ENGENHARIA DE SÃO PAULO - IBAPE/SP;65714784000165;Termos de Colaboração
+F0115;FRANCINI & BERJON IMÓVEIS LTDA;26033765000111;Locação de Bens Imóveis
+F0116;ASSOCIAÇÃO DE ENGENHEIROS E AGRÔNOMOS DE PAULÍNIA;58999053000148;Termos de Colaboração
+F0117;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE UBATUBA - AEAU;48673198000109;Termos de Colaboração
+F0118;ASSOCIAÇÃO DOS ENGENHEIROS E DAS ENGENHEIRAS DE SÃO BERNARDO DO CAMPO;07379079000152;Termos de Colaboração
+F0119;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE ANDRADINA E REGIÃO - AEAR;55751812000160;Termos de Colaboração
+F0120;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS, AGRÔNOMOS E TÉCNICOS DE ITAPEVI;04057497000135;Termos de Colaboração
+F0121;ASSOCIAÇÃO DE ENGENHARIA E AGRONOMIA DO VALE DO RIO PARDO;49609613000110;Termos de Colaboração
+F0122;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE ATIBAIA E REGIÃO;52346152000144;Termos de Colaboração
+F0123;PARTNERS COMUNICAÇÃO INTEGRADA LTDA.;03958504000107;Serviço de Divulgação Institucional
+F0124;CONFEA - CONS. FEDERAL DE ENGENHARIA E AGRONOMIA;33665647000191;Confea
+F0125;ESYWORLD SISTEMAS E INFORMATICA LTDA;03899222000186;Serviços de Informática
+F0126;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE SÃO ROQUE, MAIRINQUE, IBIÚNA, ALUMÍNIO E ARAÇARIGUAMA;50803998000130;Termos de Colaboração
+F0127;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DO VALE DO RIBEIRA;44302412000151;Termos de Colaboração
+F0128;ASSOCIAÇÃO REGIONAL DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE AVARÉ;51522290000174;Termos de Colaboração
+F0129;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE GUARUJÁ;68011253000102;Termos de Colaboração
+F0130;SANTO REI PRODUTORA AUDIOVISUAL LTDA;53712157000106;Serviço de Divulgação Institucional
+F0131;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE SÃO JOÃO DA BOA VISTA;51899235000106;Termos de Colaboração
+F0132;ASSOCIAÇÃO DE ENGENHEIROS E AGRÔNOMOS DE MAUÁ;21736778000133;Termos de Colaboração
+F0133;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE SUMARÉ;51901049000156;Termos de Colaboração
+F0134;ASSOCIAÇÃO DOS ARQUITETOS, ENGENHEIROS E TÉCNICOS DE COTIA - AETEC;65704629000168;Termos de Colaboração
+F0135;BEZZ MARKETING E PROMOÇÕES LTDA;05296281000195;Serviço de Divulgação Institucional
+F0136;ASSOCIAÇÃO DE ENGENHARIA DE BOTUCATU;45425923000123;Termos de Colaboração
+F0137;ASSOCIAÇÃO BANDEIRANTE DOS ENGENHEIROS, ARQUITETOS E AGRONOMOS - ABEAA;65697641000192;Termos de Colaboração
+F0138;PISONTEC COMERCIO E SERVIÇOS EM TECNOLOGIA DA INFORMAÇÃO EIRELI;12007998000135;Serviços de Informática
+F0139;ASSOCIAÇÃO REGIONAL DE ENGENHARIA, ARQUITETURA E AGRONOMIA DE JABOTICABAL;48009054000144;Termos de Colaboração
+F0140;ASSOCIAÇÃO DOS ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DA REGIÃO ADMINISTRATIVA DE LINS;49889488000149;Termos de Colaboração
+F0141;BONAR REFRIGERACAO LTDA;19246038000177;Máquinas e Equipamentos
+F0142;ASSOCIAÇÃO DE ENGENHARIA, ARQUITETURA E AGRONOMIA DE SERTÃOZINHO;51809416000196;Termos de Colaboração
+F0143;ADVOCACIA MARCOS AMARAL E ASSOCIADOS;96298443000180;Demais Serviços Profissionais
+F0144;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE JAÚ;49860760000168;Termos de Colaboração
+F0145;ASSOCIAÇÃO DOS ENGENHEIROS E ARQUITETOS DE ITATIBA;51308062000104;Termos de Colaboração
+F0146;ASSOCIAÇÃO DOS ENGENHEIROS, AGRÔNOMOS E TECNÓLOGOS DE CARAPICUÍBA;03311005000123;Termos de Colaboração
+F0147;ASSOCIAÇÃO DOS ENGENHEIROS, AGRÔNOMOS, TECNÓLOGOS E TÉCNICOS DE TABOÃO DA SERRA;07609299000125;Termos de Colaboração
+F0148;ASSOCIAÇÃO DE ENGENHEIROS, ARQUITETOS E AGRÔNOMOS DE ITANHAÉM;51669950000144;Termos de Colaboração
+F0149;ASSOCIAÇÃO DOS ENGENHEIROS E AGRÔNOMOS DE MIRASSOL - ASETAM;20627255000196;Termos de Colaboração
+F0150;ASSOCIAÇÃO DE ENGENHEIROS E AGRÔNOMOS DE CAJAMAR - AEAC;15539734000110;Termos de Colaboração

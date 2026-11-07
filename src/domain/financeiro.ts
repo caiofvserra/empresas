@@ -192,3 +192,21 @@ export function parteDoRecorte(pesos: Map<string, number>, cidades: Set<string> 
   let total = 0, dentro = 0; for (const [id, peso] of pesos) { total += peso; if (cidades.has(id)) dentro += peso; }
   return total > 0 ? dentro / total : 0;
 }
+
+/** O que pesa a arrecadação de cada município no cenário, contado em cada um dos 645 (`cidades`). */
+export interface BasesDaArrecadacao { cidades: string[]; ativos: Map<string, number>; estabelecimentos: Map<string, number>; vencido: Map<string, number>; acoes: Map<string, number> }
+/**
+ * Peso de cada município na arrecadação de cada tipo (divisão demonstrativa): anuidades e serviços pelos profissionais ativos, ART
+ * pelos estabelecimentos com atividade de engenharia somados a um terço dos ativos, dívida ativa pelo valor vencido dos devedores
+ * e multas pelas ações de fiscalização. Todo município tem um piso: a ART e a anuidade existem nos 645, ainda que o cenário não
+ * tenha caído em algum. Em produção, a divisão sai da baixa de cada boleto no CreaNet, com o endereço de quem pagou.
+ */
+export function pesosDaArrecadacao(b: BasesDaArrecadacao): Record<TipoReceita, Map<string, number>> {
+  const ativos = new Map<string, number>(), art = new Map<string, number>(), divida = new Map<string, number>(), multas = new Map<string, number>();
+  for (const id of b.cidades) {
+    const n = b.ativos.get(id) ?? 0;
+    ativos.set(id, n + 1); art.set(id, (b.estabelecimentos.get(id) ?? 0) + n / 3 + 1);
+    divida.set(id, (b.vencido.get(id) ?? 0) + 50); multas.set(id, (b.acoes.get(id) ?? 0) + 0.2);
+  }
+  return { Anuidades: ativos, ART: art, 'Dívida ativa': divida, Multas: multas, 'Serviços e outras': ativos };
+}

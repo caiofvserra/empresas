@@ -11,16 +11,25 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 ref table Regionais
 ref table 'Municípios'
 ref table 'Calendário'
+ref table Dias
 ref table 'Datas de referência'
 ref table 'Datas das fotos'
 ref table 'Período'
+ref table 'Tipos de receita'
+ref table 'Grupos de despesa'
 ref table Receitas
 ref table Despesas
+ref table 'Orçamento'
+ref table Metas
 ref table Pessoas
 ref table 'Diárias'
 ref table Fornecedores
-ref table Empenhos
+ref table Pagamentos
 ref table Contratos
+ref table 'Arrecadação'
+ref table Pesos
 ref table 'Títulos'
 ref table 'Foto da dívida'
+ref table 'Categorias de protesto'
+ref table 'Foto da adimplência'
 ref table Medidas

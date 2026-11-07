@@ -3,11 +3,11 @@
   "name": "receita-mensal",
   "position": {
     "x": 16,
-    "y": 160,
-    "z": 10000,
-    "width": 515,
+    "y": 436,
+    "z": 12000,
+    "width": 725,
     "height": 268,
-    "tabOrder": 10000
+    "tabOrder": 12000
   },
   "visual": {
     "visualType": "columnChart",
@@ -39,14 +39,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Receitas"
+                      "Entity": "Tipos de receita"
                     }
                   },
-                  "Property": "Origem"
+                  "Property": "Tipo"
                 }
               },
-              "queryRef": "Receitas.Origem",
-              "nativeQueryRef": "Origem",
+              "queryRef": "Tipos de receita.Tipo",
+              "nativeQueryRef": "Tipo",
               "active": true
             }
           ]
@@ -121,7 +121,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Receita por mês e origem'"
+                  "Value": "'Receita mês a mês'"
                 }
               }
             }

@@ -144,3 +144,14 @@ test('parte do recorte: o peso dos municípios escolhidos sobre o peso do estado
   assert.equal(parteDoRecorte(pesos, new Set(['a', 'b'])), 0.4);
   assert.equal(parteDoRecorte(new Map(), new Set(['a'])), 0);
 });
+
+import { pesosDaArrecadacao } from '../src/domain/financeiro.ts';
+
+test('pesos da arrecadação por município: anuidade pelos ativos, ART pelos estabelecimentos e um terço dos ativos, dívida pelo vencido, multa pelas ações, com piso nos 645', () => {
+  const pesos = pesosDaArrecadacao({ cidades: ['a', 'b'], ativos: new Map([['a', 30]]), estabelecimentos: new Map([['a', 4]]), vencido: new Map([['b', 950]]), acoes: new Map([['a', 2]]) });
+  assert.equal(pesos.Anuidades.get('a'), 31); assert.equal(pesos.Anuidades.get('b'), 1, 'piso de um ativo onde o cenário não caiu');
+  assert.equal(pesos.ART.get('a'), 4 + 10 + 1); assert.equal(pesos.ART.get('b'), 1);
+  assert.equal(pesos['Dívida ativa'].get('a'), 50); assert.equal(pesos['Dívida ativa'].get('b'), 1000);
+  assert.equal(pesos.Multas.get('a'), 2.2); assert.equal(pesos.Multas.get('b'), 0.2);
+  assert.equal(pesos['Serviços e outras'], pesos.Anuidades);
+});

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import bruto from '../../public/data/transparencia/financeiro-crea-sp.json';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { municipiosSp } from '../domain/municipios';
-import { arrecadacaoDoMes, comparativoAnual, contratosQueTerminam, diariasNoPeriodo, execucaoDoAno, fornecedoresNoPeriodo, metaMensal, parteDoRecorte, porGrupoEMes, ritmoDoMes, tiposReceita } from '../domain/financeiro';
+import { arrecadacaoDoMes, comparativoAnual, contratosQueTerminam, diariasNoPeriodo, execucaoDoAno, fornecedoresNoPeriodo, metaMensal, parteDoRecorte, pesosDaArrecadacao, porGrupoEMes, ritmoDoMes, tiposReceita } from '../domain/financeiro';
 import type { Financeiro, TipoReceita } from '../domain/financeiro';
 import { g } from '../gestao/comum';
 
@@ -27,21 +27,14 @@ export const despesaDoMes = (mes: string, grupo?: string) => grupo ? despesaPorG
 export const gruposDespesa = ['Pessoal e encargos', 'Benefícios ao pessoal', 'Serviços e materiais', 'Cota-parte ao Confea e à Mútua', 'Tributos', 'Convênios e parcerias', 'Diárias e deslocamento', 'Sentenças e honorários', 'Investimentos', 'Outras despesas'];
 export const anosReais = [...new Set(fin.receita.map(([mes]) => mes.slice(0, 4)))].sort();
 
-/**
- * Peso de cada município na arrecadação de cada tipo, no cenário: anuidades e serviços pelos profissionais ativos, ART pelos
- * estabelecimentos com atividade de engenharia somados a um terço dos ativos, dívida ativa pelo valor vencido dos devedores
- * e multas pelas ações de fiscalização.
- */
+/** Peso de cada município na arrecadação de cada tipo, no cenário (a regra está em `pesosDaArrecadacao`). */
 function pesosPorTipo(ctx: CockpitCtx): Record<TipoReceita, Map<string, number>> {
-  const gest = g(ctx), ativos = new Map<string, number>(), estab = new Map<string, number>(), divida = new Map<string, number>(), acoes = new Map<string, number>();
+  const gest = g(ctx), ativos = new Map<string, number>(), estabelecimentos = new Map<string, number>(), vencido = new Map<string, number>(), acoes = new Map<string, number>();
   for (const [id, item] of gest.adimplencia) ativos.set(id, item.ativos.length);
-  for (const row of ctx.dataset.establishments) estab.set(row.cityId, (estab.get(row.cityId) ?? 0) + 1);
-  for (const row of gest.carteira.titulos) divida.set(row.cityId, (divida.get(row.cityId) ?? 0) + row.valor);
+  for (const row of ctx.dataset.establishments) estabelecimentos.set(row.cityId, (estabelecimentos.get(row.cityId) ?? 0) + 1);
+  for (const row of gest.carteira.titulos) vencido.set(row.cityId, (vencido.get(row.cityId) ?? 0) + row.valor);
   for (const row of ctx.fEstado.acoes) acoes.set(row.cityId, (acoes.get(row.cityId) ?? 0) + 1);
-  const art = new Map<string, number>(), cidades = municipiosSp(ctx.dataset);
-  // Piso de 1 em todo município: a ART e a anuidade existem nos 645, ainda que o cenário não tenha caído em algum.
-  for (const c of cidades) { art.set(c.id, (estab.get(c.id) ?? 0) + (ativos.get(c.id) ?? 0) / 3 + 1); ativos.set(c.id, (ativos.get(c.id) ?? 0) + 1); divida.set(c.id, (divida.get(c.id) ?? 0) + 50); acoes.set(c.id, (acoes.get(c.id) ?? 0) + 0.2); }
-  return { Anuidades: ativos, ART: art, 'Dívida ativa': divida, Multas: acoes, 'Serviços e outras': ativos };
+  return pesosDaArrecadacao({ cidades: municipiosSp(ctx.dataset).map(c => c.id), ativos, estabelecimentos, vencido, acoes });
 }
 
 export interface QuadroFinanceiro {

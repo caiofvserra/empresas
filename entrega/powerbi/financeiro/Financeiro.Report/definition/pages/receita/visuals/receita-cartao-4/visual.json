@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Perto de prescrever"
+                  "Property": "Dívida ativa recebida no período"
                 }
               },
-              "queryRef": "Medidas.Perto de prescrever",
-              "nativeQueryRef": "Perto de prescrever"
+              "queryRef": "Medidas.Dívida ativa recebida no período",
+              "nativeQueryRef": "Dívida ativa recebida no período"
             },
             {
               "field": {
@@ -37,11 +37,25 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Perto de prescrever"
+                  "Property": "Comparação: Dívida ativa recebida no período"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Perto de prescrever",
-              "nativeQueryRef": "Detalhe: Perto de prescrever"
+              "queryRef": "Medidas.Comparação: Dívida ativa recebida no período",
+              "nativeQueryRef": "Comparação: Dívida ativa recebida no período"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Dívida ativa recebida no período"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Dívida ativa recebida no período",
+              "nativeQueryRef": "Detalhe: Dívida ativa recebida no período"
             }
           ]
         }
@@ -76,7 +90,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Perto de prescrever'"
+                  "Value": "'Dívida ativa recebida no período'"
                 }
               }
             }

@@ -1,0 +1,155 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "arrecadacao-tipos",
+  "position": {
+    "x": 435,
+    "y": 436,
+    "z": 14000,
+    "width": 515,
+    "height": 268,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Tipos de receita"
+                    }
+                  },
+                  "Property": "Tipo"
+                }
+              },
+              "queryRef": "Tipos de receita.Tipo",
+              "nativeQueryRef": "Tipo",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Tipo no mês do ano anterior"
+                }
+              },
+              "queryRef": "Medidas.Tipo no mês do ano anterior",
+              "nativeQueryRef": "Tipo no mês do ano anterior",
+              "displayName": "No mês, um ano antes"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Tipo no mês"
+                }
+              },
+              "queryRef": "Medidas.Tipo no mês",
+              "nativeQueryRef": "Tipo no mês",
+              "displayName": "No mês"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação no mês"
+                }
+              },
+              "queryRef": "Medidas.Variação no mês",
+              "nativeQueryRef": "Variação no mês",
+              "displayName": "Variação"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Tipo no ano anterior"
+                }
+              },
+              "queryRef": "Medidas.Tipo no ano anterior",
+              "nativeQueryRef": "Tipo no ano anterior",
+              "displayName": "No ano, um ano antes"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Tipo no ano"
+                }
+              },
+              "queryRef": "Medidas.Tipo no ano",
+              "nativeQueryRef": "Tipo no ano",
+              "displayName": "No ano"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Variação no ano"
+                }
+              },
+              "queryRef": "Medidas.Variação no ano",
+              "nativeQueryRef": "Variação no ano",
+              "displayName": "Variação no ano"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Cada tipo, este ano e o anterior'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

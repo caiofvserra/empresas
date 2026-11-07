@@ -1,4 +1,4 @@
-/// Guarda a dívida de anuidade no último dia de cada mês: uma linha por devedor e idade da anuidade, com o valor vencido e não pago, se o devedor está acima do piso de execução, a parte perto de prescrever e, nas empresas, a situação do CNPJ na Receita Federal.
+/// Guarda a dívida de anuidade no último dia de cada mês: uma linha por devedor e idade da anuidade, com o valor vencido e não pago, se o devedor está acima do piso de execução, a parte perto de prescrever, a situação do CNPJ das empresas e se o devedor pode ir a protesto.
 table 'Foto da dívida'
 	lineageTag: 96253da2-13e2-5d90-8bd9-d93a38c5d3e5
 
@@ -75,12 +75,20 @@ table 'Foto da dívida'
 		sourceColumn: Situação do CNPJ
 		lineageTag: b012347e-1de5-5ea0-93bc-0c96671bca87
 
+	column 'Protestável'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Protestável
+		lineageTag: beb01790-d67a-52f6-b49b-3248ca0563e7
+
 	partition 'Foto da dívida' = m
 		mode: import
 		source =
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "foto-divida.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Devedor", type text}, {"Tipo de devedor", type text}, {"Código IBGE", type text}, {"Idade da anuidade", type text}, {"Ordem da idade", Int64.Type}, {"Valor", type number}, {"Acima do piso", Int64.Type}, {"Perto de prescrever", type number}, {"Situação do CNPJ", type text}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Devedor", type text}, {"Tipo de devedor", type text}, {"Código IBGE", type text}, {"Idade da anuidade", type text}, {"Ordem da idade", Int64.Type}, {"Valor", type number}, {"Acima do piso", Int64.Type}, {"Perto de prescrever", type number}, {"Situação do CNPJ", type text}, {"Protestável", Int64.Type}}, "pt-BR")
 				in
 				    Tipos

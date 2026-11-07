@@ -1,0 +1,35 @@
+/// Guarda a meta de arrecadação de cada mês por tipo: a receita orçada reformulada do ano dividida no ritmo do ano anterior, até a TI informar a meta oficial.
+table Metas
+	isHidden
+	lineageTag: 7b1a242e-6922-5194-8df0-4ba6e4c550c7
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: c78def2f-1fd6-5f35-89f4-01e784025f2a
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		lineageTag: 522f376f-d92f-52d5-b8e9-25b7ed5c94fc
+
+	column Meta
+		dataType: double
+		formatString: R$ #,##0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Meta
+		lineageTag: bf6c3a68-2f74-5fe2-b750-81806a34fd47
+
+	partition Metas = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "metas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Tipo", type text}, {"Meta", type number}}, "pt-BR")
+				in
+				    Tipos

@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Anuidades vencidas"
+                  "Property": "Parte da ART na receita"
                 }
               },
-              "queryRef": "Medidas.Anuidades vencidas",
-              "nativeQueryRef": "Anuidades vencidas"
+              "queryRef": "Medidas.Parte da ART na receita",
+              "nativeQueryRef": "Parte da ART na receita"
             },
             {
               "field": {
@@ -37,11 +37,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Comparação: Anuidades vencidas"
+                  "Property": "Comparação: Parte da ART na receita"
                 }
               },
-              "queryRef": "Medidas.Comparação: Anuidades vencidas",
-              "nativeQueryRef": "Comparação: Anuidades vencidas"
+              "queryRef": "Medidas.Comparação: Parte da ART na receita",
+              "nativeQueryRef": "Comparação: Parte da ART na receita"
             },
             {
               "field": {
@@ -51,11 +51,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Anuidades vencidas"
+                  "Property": "Detalhe: Parte da ART na receita"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Anuidades vencidas",
-              "nativeQueryRef": "Detalhe: Anuidades vencidas"
+              "queryRef": "Medidas.Detalhe: Parte da ART na receita",
+              "nativeQueryRef": "Detalhe: Parte da ART na receita"
             }
           ]
         }
@@ -90,7 +90,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Anuidades vencidas'"
+                  "Value": "'Parte da ART na receita'"
                 }
               }
             }

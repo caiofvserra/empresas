@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Recebido da dívida"
+                  "Property": "Receita por profissional ativo"
                 }
               },
-              "queryRef": "Medidas.Recebido da dívida",
-              "nativeQueryRef": "Recebido da dívida"
+              "queryRef": "Medidas.Receita por profissional ativo",
+              "nativeQueryRef": "Receita por profissional ativo"
             },
             {
               "field": {
@@ -37,11 +37,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Recebido da dívida"
+                  "Property": "Detalhe: Receita por profissional ativo"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Recebido da dívida",
-              "nativeQueryRef": "Detalhe: Recebido da dívida"
+              "queryRef": "Medidas.Detalhe: Receita por profissional ativo",
+              "nativeQueryRef": "Detalhe: Receita por profissional ativo"
             }
           ]
         }
@@ -76,7 +76,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Recebido da dívida'"
+                  "Value": "'Receita por profissional ativo'"
                 }
               }
             }
