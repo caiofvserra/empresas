@@ -9,7 +9,7 @@ import { int } from '../painel/ui';
 
 /**
  * Dado real da triagem dos contratos de serviços gerais do PNCP com o modelo treinado (07/11/2026), no cartão da página Contratos.
- * Segue a GRE, o município e o período do alto da tela, contado até o último mês da rodada; não se divide por câmara, porque o
+ * Segue a GRE, o município e o período do alto da tela, contado até o último mês com contrato no arquivo; não se divide por câmara, porque o
  * contrato de serviços gerais não tem atividade cadastrada, e não volta no tempo com a data de referência.
  */
 export const triagemPncp = triagemJson as unknown as TriagemPncp;

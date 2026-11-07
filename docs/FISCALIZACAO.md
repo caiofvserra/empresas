@@ -21,10 +21,10 @@ Desde 07/11/2026, o sexto cartão da página Contratos é dado real: os contrato
 Como funciona, em `scripts/pncp-triagem.py` e no pacote `scripts/pncp_triagem/`:
 
 1. Coleta, na API pública de consulta do PNCP, os contratos do período (todas as páginas, porque a API não filtra por UF) e fica com os de unidade paulista, categoria Serviços e objeto de pelo menos 20 caracteres. O valor do contrato não é lido.
-2. Limpa o objeto com os mesmos padrões do treino e calcula a probabilidade de engenharia com o `pacote_reuso.joblib` do estudo (encoder BAAI/bge-m3 e o conjunto de classificadores calibrados). Passa do limiar que o pacote traz, o contrato é suspeito.
+2. Limpa o objeto com os mesmos padrões do treino e calcula a probabilidade de engenharia com o `pacote_reuso.joblib` do estudo (encoder BAAI/bge-m3 e o conjunto de classificadores calibrados). Passa do limiar principal do pacote (o escolhido pelo F1; o `limiar_recall` era um pré-filtro para a revisão pela LLM, que aqui não há), o contrato é suspeito. O texto é o do treino: o objeto e a informação complementar.
 3. Para cada suspeito, do mais provável ao menos provável, lê até três documentos da compra (termo de referência, projeto básico, estudo técnico, edital), com OCR quando o PDF é imagem e o modelo de português do Tesseract está instalado. Os marcadores e a regra vêm do orquestradorfiscaliza: rito presente pede dois marcadores, um deles de engenharia (ART, Crea, engenheiro responsável, obra ou serviço de engenharia, art. 6º, XII ou XXI, da Lei 14.133/2021). A sigla ART só vale em caixa alta, para "art. 75" não contar como ART.
 4. Grava `var/pncp/triagem-sp.csv` (fora do Git, com número de controle, CNPJ e objeto) para a carga de `stg.pncp_triagem`, e `src/domain/pncp-triagem-sp.json`, só com números por município e mês, que o cartão lê.
-5. Na base interna, `integrations/sql/pncp-triagem-x-art.sql` cruza os suspeitos sem rito completo com as ARTs da empresa contratada (30 dias antes a 60 depois da publicação, a ART com o órgão como contratante primeiro) e com o registro no Crea-SP. A view de ART que ele supõe (`bi.vw_art`) ainda precisa ser homologada com a TI.
+5. Na base interna, `integrations/sql/pncp-triagem-x-art.sql` cruza os suspeitos sem rito completo com as ARTs da empresa contratada (30 dias antes a 60 depois da publicação, a ART com o órgão como contratante primeiro) e com o registro no Crea-SP na data da publicação. A view de ART que ele supõe (`bi.vw_art`) ainda precisa ser homologada com a TI.
 
 Para rodar no Colab, onde o pacote já está no Drive e a GPU faz os embeddings em minutos:
 
@@ -36,7 +36,7 @@ from google.colab import drive; drive.mount('/content/drive')
 !python3 empresas/scripts/pncp-triagem.py --pacote /content/drive/MyDrive/PNCP_TCC/resultados_final/pacote_reuso.joblib --de 2025-11-01 --ate 2026-10-31 --destino /content/drive/MyDrive/PNCP_TCC/painel --painel /content/drive/MyDrive/PNCP_TCC/painel/pncp-triagem-sp.json
 ```
 
-O `pncp-triagem-sp.json` que sair vai para `src/domain/` num commit, como o arquivo da Receita. Rodar de novo no mesmo dia retoma de onde parou; `--max-rito N` limita a leitura de documentos aos N suspeitos mais prováveis. Com 12 meses ou mais, a evolução do cartão ganha a comparação com um ano antes.
+O `pncp-triagem-sp.json` que sair vai para `src/domain/` num commit, como o arquivo da Receita. Rodar de novo no mesmo dia retoma de onde parou, e o contrato em que a API falhou é lido de novo; o arquivo do painel junta todas as rodadas, a mais recente de cada contrato, e a rodada do mês seguinte só acrescenta o mês; `--max-rito N` limita a leitura de documentos aos N suspeitos mais prováveis. Com 12 meses ou mais, a evolução do cartão ganha a comparação com um ano antes.
 
 Conferido em 07/11/2026 sem o modelo, que não baixa nesta sessão: a coleta de 01/10/2026 leu as 20 páginas do país em 82 segundos e ficou com 335 contratos de serviços de SP, todos com a compra vinculada; a leitura de documentos levou de 3 a 16 segundos por compra, e metade dos PDFs da amostra era imagem, que só o OCR lê. Os testes ficam em `tests/python` (`npm run test:py`) e em `tests/pncp-triagem.test.ts`.
 

@@ -9,7 +9,6 @@ ARQUIVO_STAGING = 'triagem-sp.csv'
 NAO_ANALISADO = 'Não analisado'
 # Desfechos que não chegaram a ler o texto: a compra não foi achada, não tem documento ou o PDF é imagem sem OCR.
 SEM_LEITURA = ('Sem compra vinculada', 'Sem documento', 'Documento ilegível')
-DESFECHOS = ('Rito presente', 'Rito parcial', 'Sem sinal de rito', *SEM_LEITURA, NAO_ANALISADO)
 
 
 def linha_staging(rodada, contrato, prob, suspeito, rito):
@@ -21,8 +20,15 @@ def linha_staging(rodada, contrato, prob, suspeito, rito):
 
 
 def agregar(linhas, rodada, modelo, periodo=None):
-    """Contagens por município do IBGE e mês de publicação, a partir das linhas do staging (dicionários pelas colunas)."""
-    meses = sorted({l['publicacao'][:7] for l in linhas if l['publicacao']})
+    """Contagens por município do IBGE e mês de publicação, a partir das linhas do staging (dicionários pelas colunas). Os meses
+    são todos os do calendário entre o primeiro e o último, também os sem contrato, para o painel contar a janela em meses."""
+    publicados = sorted({l['publicacao'][:7] for l in linhas if l['publicacao']})
+    meses = []
+    if publicados:
+        ano, mes = map(int, publicados[0].split('-'))
+        while f'{ano:04d}-{mes:02d}' <= publicados[-1]:
+            meses.append(f'{ano:04d}-{mes:02d}')
+            ano, mes = (ano + 1, 1) if mes == 12 else (ano, mes + 1)
     posicao = {m: i for i, m in enumerate(meses)}
     municipios = {}
     for l in linhas:

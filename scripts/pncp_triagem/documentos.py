@@ -76,21 +76,22 @@ def _baixar(url, pasta):
     except Exception:  # noqa: BLE001 - a triagem segue sem o documento
         return None
     if not conteudo.startswith(b'%PDF'):
-        return None
+        return b''  # veio, mas não é PDF (planilha, imagem, página de erro): conta como documento que não se lê
     if destino:
         destino.write_bytes(conteudo)
     return conteudo
 
 
 def analisar_compra(ncp, pasta=None):
-    """{'desfecho', 'marcadores', 'documentos'} para a compra (ou o contrato, se a compra não veio)."""
+    """{'desfecho', 'marcadores', 'documentos'} para a compra (ou o contrato, se a compra não veio), ou None quando a API
+    falhou na listagem ou num download: aí o contrato fica sem linha nesta rodada e é lido de novo na próxima execução."""
     info = decompor(ncp)
     if not info:
         return {'desfecho': 'Sem compra vinculada', 'marcadores': [], 'documentos': 0}
     try:
         lista = pedir_json(_base(info)) or []
-    except Exception:  # noqa: BLE001
-        lista = []
+    except Exception:  # noqa: BLE001 - erro de rede não é "sem documento"
+        return None
     lista = [d for d in (lista if isinstance(lista, list) else lista.get('data') or []) if d.get('statusAtivo', True)]
     if not lista:
         return {'desfecho': 'Sem documento', 'marcadores': [], 'documentos': 0}
@@ -99,13 +100,18 @@ def analisar_compra(ncp, pasta=None):
     pasta = Path(pasta) if pasta else None
     if pasta:
         pasta.mkdir(parents=True, exist_ok=True)
-    textos = []
+    textos, falhou = [], False
     for d in escolhidos:
         seq = d.get('sequencialDocumento') or d.get('sequencial')
         conteudo = _baixar(f'{_base(info)}/{seq}', pasta)
-        texto = _texto_pdf(conteudo) if conteudo else ''
+        if conteudo is None:
+            falhou = True
+            continue
+        texto = _texto_pdf(conteudo)
         if len(texto.strip()) >= TEXTO_MINIMO:
             textos.append(texto)
+    if not textos and falhou:
+        return None
     if not textos:
         return {'desfecho': 'Documento ilegível', 'marcadores': [], 'documentos': 0}
     desfecho, marcadores = classificar_rito('\n\n'.join(textos))

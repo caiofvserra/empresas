@@ -12,7 +12,9 @@ Grava:
     rodada, para a carga de stg.pncp_triagem e o cruzamento de integrations/sql/pncp-triagem-x-art.sql;
   - var/pncp/contratos-AAAA-MM.json, a coleta de cada mês, e var/pncp/documentos/, os PDFs lidos, para retomar sem baixar de novo;
   - src/domain/pncp-triagem-sp.json, só números por município e mês, que o painel de Fiscalização lê.
-Rodar de novo no mesmo dia retoma de onde parou. O valor do contrato não é lido nem gravado.
+Rodar de novo no mesmo dia retoma de onde parou. O arquivo do painel junta todas as rodadas do staging, a mais recente de cada
+contrato. O valor do contrato não é lido nem gravado. A primeira rodada deve cobrir 12 meses ou mais (--de), para a evolução do
+cartão comparar com um ano antes.
 """
 import argparse
 import csv
@@ -80,7 +82,10 @@ def main():
             lote = buscar_contratos(de, ate)
             gravar(cache, json.dumps({'periodo': [de, ate], 'contratos': lote}, ensure_ascii=False))
         contratos += lote
-    feitos = {l['pncp_id'] for l in ler_staging(staging) if l['rodada'] == rodada}
+    desta_rodada = [l for l in ler_staging(staging) if l['rodada'] == rodada]
+    feitos = {l['pncp_id'] for l in desta_rodada}
+    # --max-rito vale para a rodada inteira, somando o que execuções anteriores do mesmo dia já leram.
+    ja_lidas = len({l['ncp_compra'] or l['pncp_id'] for l in desta_rodada if l['desfecho_rito'] != 'Não analisado'})
     pendentes = [c for c in contratos if c['pncp_id'] not in feitos]
     print(f'{len(contratos)} contratos de serviços em SP no período; {len(pendentes)} ainda sem triagem nesta rodada.')
 
@@ -89,7 +94,7 @@ def main():
         probs = modelo.probabilidades([c['objeto'] for c in pendentes])
         ordem = sorted(range(len(pendentes)), key=lambda i: -probs[i])
         novo = not staging.exists()
-        lidas, por_compra = 0, {}
+        lidas, por_compra, adiadas = ja_lidas, {}, 0
         with staging.open('a', encoding='utf-8', newline='') as f:
             w = csv.writer(f, delimiter=';')
             if novo:
@@ -104,18 +109,24 @@ def main():
                         por_compra[ncp] = analisar_compra(ncp, destino / 'documentos')
                         lidas += 1
                     rito = por_compra[ncp]
+                    if rito is None:  # a API falhou: sem linha agora, o contrato é lido de novo na próxima execução
+                        adiadas += 1
+                        continue
                 w.writerow(linha_staging(rodada, c, prob, suspeito, rito))
-                if n % 20 == 0:
+                if n % 100 == 0:
                     f.flush()
-                    if suspeito:
-                        print(f'  {n + 1} de {len(pendentes)} (documentos de {lidas} compras lidos)')
+                    print(f'  {n + 1} de {len(pendentes)} contratos (documentos de {lidas} compras lidos)')
+        if adiadas:
+            print(f'{adiadas} contratos ficaram para a próxima execução: a API do PNCP falhou na leitura dos documentos.')
 
-    # O painel lê a linha mais recente de cada contrato do período pedido.
+    # O painel lê a linha mais recente de cada contrato de todas as rodadas do staging, e não só do período pedido: a rodada do
+    # mês acrescenta um mês ao que já estava, em vez de trocar doze meses por um.
     ultimas = {}
     for l in ler_staging(staging):
-        if a.de <= l['publicacao'] <= a.ate and (l['pncp_id'] not in ultimas or l['rodada'] >= ultimas[l['pncp_id']]['rodada']):
+        if l['publicacao'] and (l['pncp_id'] not in ultimas or l['rodada'] >= ultimas[l['pncp_id']]['rodada']):
             ultimas[l['pncp_id']] = l
-    painel = agregar(list(ultimas.values()), rodada=rodada, modelo=modelo.metadados, periodo={'de': a.de, 'ate': a.ate})
+    datas = sorted(l['publicacao'] for l in ultimas.values())
+    painel = agregar(list(ultimas.values()), rodada=rodada, modelo=modelo.metadados, periodo={'de': datas[0], 'ate': datas[-1]} if datas else None)
     gravar(Path(a.painel), json.dumps(painel, ensure_ascii=False, separators=(',', ':')) + '\n')
     suspeitos = sum(l['suspeito'] == 'Sim' for l in ultimas.values())
     sem_sinal = sum(l['desfecho_rito'] == 'Sem sinal de rito' for l in ultimas.values())

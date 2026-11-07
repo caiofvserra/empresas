@@ -41,14 +41,15 @@ WHERE a.registrada_em >= DATEADD(day, -30, CAST(t.publicacao AS date))
 GROUP BY t.pncp_id;
 
 -- 1. Lista para conferência: serviços gerais com objeto de engenharia sem rito completo nos documentos, com a ART encontrada e o
---    registro do fornecedor. Não encontrar ART é prioridade de verificação, não infração: a ART pode ter outro número ou ter
+--    registro do fornecedor na data da publicação. Não encontrar ART é prioridade de verificação, não infração: a ART pode ter outro número ou ter
 --    sido registrada por um profissional contratado pela empresa.
 SELECT t.pncp_id, t.ncp_compra, t.municipio_ibge, t.publicacao, t.fornecedor_ni, e.legal_name, t.objeto, t.prob_engenharia,
        t.desfecho_rito, t.marcadores,
        CASE a.grau WHEN 2 THEN 'ART com o órgão como contratante'
                    WHEN 1 THEN 'ART da empresa perto da data' ELSE 'Nenhuma ART encontrada' END AS art,
-       CASE WHEN EXISTS (SELECT 1 FROM bi.vw_registro_empresa AS r WHERE LEFT(r.cnpj, 8) = LEFT(t.fornecedor_ni, 8) AND r.status = 'Ativo')
-            THEN 'Registrada' ELSE 'Sem registro ativo' END AS registro
+       CASE WHEN EXISTS (SELECT 1 FROM bi.vw_registro_empresa AS r WHERE LEFT(r.cnpj, 8) = LEFT(t.fornecedor_ni, 8)
+                         AND r.started_at <= CAST(t.publicacao AS date) AND (r.ceased_at IS NULL OR r.ceased_at > CAST(t.publicacao AS date)))
+            THEN 'Registrada na data' ELSE 'Sem registro na data' END AS registro
 FROM #triagem AS t
 LEFT JOIN bi.vw_empresa AS e ON e.cnpj_root = LEFT(t.fornecedor_ni, 8)
 LEFT JOIN #art AS a ON a.pncp_id = t.pncp_id

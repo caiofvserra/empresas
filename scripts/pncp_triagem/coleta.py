@@ -1,7 +1,8 @@
 """Contratos de serviços gerais de órgãos paulistas na API de consulta do PNCP, sem credencial.
 
 A API não filtra por UF nem por categoria: a coleta lê todas as páginas do período e fica com a categoria 8 (Serviços) das
-unidades de SP. O município é o da unidade contratante, não o local do serviço. O valor do contrato não é lido.
+unidades de SP. O texto que vai ao modelo é o mesmo do treino: o objeto com a informação complementar depois de " | ", e só
+entra o que passa de 20 caracteres. O município é o da unidade contratante, não o local do serviço. O valor do contrato não é lido.
 """
 import json
 import time
@@ -11,7 +12,7 @@ import urllib.request
 CONSULTA = 'https://pncp.gov.br/api/consulta/v1/contratos'
 CATEGORIA_SERVICOS = 8
 TAMANHO_PAGINA = 500
-OBJETO_MINIMO = 20
+OBJETO_MINIMO = 20  # o treino ficou com os textos de mais de 20 caracteres
 CABECALHO = {'User-Agent': 'creasp-inteligencia-estrategica/1.0', 'Accept': 'application/json'}
 
 
@@ -30,12 +31,12 @@ def pedir_json(url, tentativas=4, espera=2.0):
 
 
 def ler_pagina(pagina, uf='SP', categoria=CATEGORIA_SERVICOS):
-    """Os contratos da página que entram na triagem: da UF, da categoria e com objeto de pelo menos 20 caracteres."""
+    """Os contratos da página que entram na triagem: da UF, da categoria e com texto de mais de 20 caracteres."""
     saida = []
     for c in (pagina or {}).get('data') or []:
         unidade, cat = c.get('unidadeOrgao') or {}, c.get('categoriaProcesso') or {}
-        objeto = (c.get('objetoContrato') or '').strip()
-        if unidade.get('ufSigla') != uf or cat.get('id') != categoria or len(objeto) < OBJETO_MINIMO:
+        objeto = f"{c.get('objetoContrato') or ''} | {c.get('informacaoComplementar') or ''}".strip(' |')
+        if unidade.get('ufSigla') != uf or cat.get('id') != categoria or len(objeto) <= OBJETO_MINIMO:
             continue
         saida.append({
             'pncp_id': c.get('numeroControlePNCP') or '',
@@ -56,6 +57,8 @@ def buscar_contratos(de, ate, uf='SP', categoria=CATEGORIA_SERVICOS, log=print):
         parametros = {'dataInicial': de.replace('-', ''), 'dataFinal': ate.replace('-', ''), 'pagina': pagina, 'tamanhoPagina': TAMANHO_PAGINA}
         dados = pedir_json(f'{CONSULTA}?{urllib.parse.urlencode(parametros)}')
         if not dados:
+            if pagina > 1:  # a API parou no meio: o mês ficaria pela metade, e o cache o daria como completo
+                raise RuntimeError(f'A API do PNCP não respondeu a página {pagina} de {total}; rode de novo.')
             break
         total = int(dados.get('totalPaginas') or 0)
         for c in ler_pagina(dados, uf, categoria):

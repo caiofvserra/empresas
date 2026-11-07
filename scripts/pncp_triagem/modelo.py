@@ -1,7 +1,8 @@
 """O modelo treinado do estudo do PNCP: carrega o pacote_reuso.joblib e dá a probabilidade de cada objeto ser engenharia ou obra.
 
-O pacote traz o classificador (um ensemble calibrado), o limiar escolhido na validação e o nome do encoder de frases
-(BAAI/bge-m3). O encoder vem do Hugging Face na primeira vez. Precisa de sentence-transformers, scikit-learn e joblib.
+O pacote traz o classificador (um ensemble calibrado), dois limiares e o nome do encoder de frases (BAAI/bge-m3). Vale o
+limiar principal (`limiar`, escolhido pelo F1 na validação), e não o `limiar_recall`: este era um pré-filtro para a revisão pela
+LLM, que aqui não existe. O encoder vem do Hugging Face na primeira vez. Precisa de sentence-transformers, scikit-learn e joblib.
 """
 import sys
 
