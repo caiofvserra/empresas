@@ -25,3 +25,19 @@ export const corDoTexto = (fundo: string): '#FFFFFF' | typeof ESCURO => {
   const l = luminancia(fundo), contra = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   return contra(l, 1) >= contra(l, luminancia(ESCURO)) ? '#FFFFFF' : ESCURO;
 };
+
+/**
+ * Faixa de cor de cada valor num mapa de cinco faixas por posição (07/11/2026). Valores iguais ficam sempre na mesma faixa, pela
+ * primeira posição que ocupam na ordem: antes, regionais empatadas caíam em faixas vizinhas e a legenda mostrava "4 a 8" e "8".
+ */
+export const classesPorPosto = (valores: number[], faixas = 5) => {
+  const ordem = [...valores].sort((a, b) => a - b), primeira = new Map<number, number>();
+  ordem.forEach((valor, index) => { if (!primeira.has(valor)) primeira.set(valor, index); });
+  return valores.map(valor => Math.min(faixas - 1, Math.floor(primeira.get(valor)! / ordem.length * faixas)));
+};
+
+/** CNPJ escrito com a máscara de sempre (07/11/2026): na gaveta, os 14 dígitos corridos eram difíceis de conferir. */
+export const cnpjComMascara = (valor: string) => {
+  const d = valor.replace(/\D/g, '');
+  return d.length === 14 ? `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}` : valor;
+};

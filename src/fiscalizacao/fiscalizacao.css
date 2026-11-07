@@ -41,3 +41,8 @@
 .side-list.is-cheia .is-acao span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 11px; }
 .side-list.is-cheia .is-acao small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .side-list.is-cheia .side-note { font-size: 11px; color: var(--muted); padding: 6px; }
+.side-list.is-cheia { justify-content: flex-start; }
+/* Em telas baixas (1366×768), a lista mostra quatro itens e o "Ver todos", para nenhum item ficar cortado no meio. */
+@media (max-height: 800px) { .side-list.is-cheia li:nth-child(n+5):not(:last-child) { display: none; } }
+/* Em 1366, o bloco de empresa fechada é estreito: o valor vencido fica numa coluna menor, para os nomes das situações aparecerem. */
+@media (max-width: 1600px) { .split.is-wide.is-estreita { grid-template-columns: minmax(0, 1fr) 120px; } .split.is-wide.is-estreita .side-big b { font-size: 17px; } }
