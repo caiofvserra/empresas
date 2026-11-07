@@ -16,7 +16,7 @@ Gerado a partir do protótipo em HTML (repositório caiofvserra/empresas, `npm r
 - As quatro páginas (Resumo, Regionais, Riscos e No país). Os filtros no alto (regional, município, câmara e data de referência) ficam sincronizados entre as páginas, com o tema do Crea-SP. Os gráficos saem com rótulos de dados e legenda, para ler sem passar o mouse.
 - Em cada cartão, como no painel: o número, a comparação com um ano antes e a linha de apoio (a meta, quando o indicador tem).
 
-Como cada número segue o recorte: os indicadores que o painel de origem conhece por município somam os municípios; os que ele só conhece por regional (atendimento e as contagens de empresas) seguem a regional do município escolhido; a receita e o orçamento são do Conselho inteiro. A câmara só vale para os indicadores que o painel de origem divide por câmara; a dívida de anuidades e o atendimento ficam do Conselho inteiro com qualquer câmara.
+Como cada número segue o recorte: os indicadores que o painel de origem conhece por município somam os municípios; as contagens de empresas, que o painel de Empresas só conhece por regional, seguem a regional do município escolhido; a receita e o orçamento são os reais da Transparência, do Conselho inteiro. A câmara só vale para os indicadores que o painel de origem divide por câmara; a dívida de anuidades e os protocolos de atendimento ficam do Conselho inteiro com qualquer câmara.
 
 Os fluxos (ARTs, registros novos, ações, autos, multas, receita, solicitações e processos votados) somam os 12 meses até a data, o período padrão do painel. Na base real, a carga precisa gravar a foto todo fim de mês sem reescrever as anteriores.
 

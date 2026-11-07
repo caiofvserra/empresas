@@ -57,11 +57,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Solicitações resolvidas no prazo"
+                  "Property": "Protocolos fechados no prazo"
                 }
               },
-              "queryRef": "Medidas.Solicitações resolvidas no prazo",
-              "nativeQueryRef": "Solicitações resolvidas no prazo",
+              "queryRef": "Medidas.Protocolos fechados no prazo",
+              "nativeQueryRef": "Protocolos fechados no prazo",
               "displayName": "Atendimento no prazo"
             }
           ]

@@ -1,0 +1,34 @@
+/// Conta as ARTs registradas em cada mês, pelo município da matriz da empresa.
+table 'ARTs por mês'
+	isHidden
+	lineageTag: 0034006d-6791-573b-8d3f-4e85e37649a8
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: 739dfd7c-68d7-5292-91b2-a334153b610d
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: c7fe45ba-5234-5e20-a97a-11a27b311f5f
+
+	column ARTs
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: ARTs
+		lineageTag: af272582-d29a-5ae4-9fee-ceaa800c120d
+
+	partition 'ARTs por mês' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "arts-por-mes.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Mês", type date}, {"Código IBGE", type text}, {"ARTs", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

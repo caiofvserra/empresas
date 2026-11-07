@@ -23,95 +23,481 @@ table Medidas
 		displayFolder: Apoio
 		lineageTag: fd2da6aa-cdac-56d8-9b56-304272795945
 
-	/// Guarda a meta padrão de solicitações resolvidas no prazo, 80%, a mesma do painel.
-	measure 'Meta de resolução no prazo' = 0.8
+	/// Guarda a meta padrão de protocolos fechados dentro do prazo do serviço, 80%, a mesma do painel.
+	measure 'Meta de fechados no prazo' = 0.8
 		formatString: 0.0%
 		displayFolder: Apoio
-		lineageTag: fe1fd7c8-2908-5f1a-a0bc-3cc0e5330d89
+		lineageTag: 32146d2e-2be4-54b4-9d64-c326915fa085
 
-	/// Conta as solicitações abertas no período.
-	measure 'Solicitações de atendimento' = ```
+	/// Conta os protocolos abertos no período, como o painel antigo, cada um com a situação na data escolhida.
+	measure 'Abertos no período' = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]
-			RETURN CALCULATE(COUNTROWS('Solicitações'), REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d) + 0
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d) + 0
 			```
 		formatString: #,##0
-		displayFolder: Atendimento
-		lineageTag: 4fd613bb-2022-5915-bb96-cf73755dfec0
+		displayFolder: Protocolos
+		lineageTag: 525c6aa3-972c-57dd-8ce7-d33bd310fc9a
 
-	/// Conta as solicitações do período feitas por empresas.
-	measure 'Solicitações de empresas' = CALCULATE([Solicitações de atendimento], KEEPFILTERS('Solicitações'[Solicitante] = "Empresa"))
-		formatString: #,##0
-		displayFolder: Atendimento
-		lineageTag: a872ea3b-a761-5ab9-a5b0-d423f9df3cee
-
-	/// Conta as solicitações do período resolvidas até a data escolhida, dentro do prazo.
-	measure 'Resolvidas no prazo' = ```
+	/// Conta os protocolos do período fechados (deferidos, indeferidos ou finalizados) até a data escolhida. O cancelado não entra.
+	measure Fechados = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]
-			RETURN COUNTROWS(FILTER(CALCULATETABLE('Solicitações', REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d), NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d && 'Solicitações'[Resolvida em] <= 'Solicitações'[Prazo])) + 0
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] = "Fechado")) + 0
 			```
 		formatString: #,##0
-		displayFolder: Atendimento
-		lineageTag: 506e2d51-1a9a-5deb-abe2-1f69df4e66c6
+		displayFolder: Protocolos
+		lineageTag: 0ba1f5bd-18e8-5903-bbeb-6155d764c454
 
-	/// Conta as solicitações do período resolvidas depois do prazo.
-	measure 'Resolvidas com atraso' = ```
+	/// Conta os protocolos do período fechados com até o prazo do serviço em dias úteis com o Crea-SP.
+	measure 'Fechados dentro do prazo' = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]
-			RETURN COUNTROWS(FILTER(CALCULATETABLE('Solicitações', REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d), NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d && 'Solicitações'[Resolvida em] > 'Solicitações'[Prazo])) + 0
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] = "Fechado"), KEEPFILTERS('Foto dos protocolos'[Prazo] = "Dentro do prazo")) + 0
 			```
 		formatString: #,##0
-		displayFolder: Atendimento
-		lineageTag: 68415409-1e74-5e13-9c68-a75147dd656e
+		displayFolder: Protocolos
+		lineageTag: 019c3bc0-1356-5612-bea5-33c89ae54855
 
-	/// Conta as solicitações do período ainda abertas na data escolhida, com o prazo já vencido.
-	measure 'Abertas com prazo vencido' = ```
-			VAR d = [Data escolhida]
-			VAR inicio = [Início do período]
-			RETURN COUNTROWS(FILTER(CALCULATETABLE('Solicitações', REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d), NOT (NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d) && 'Solicitações'[Prazo] < d)) + 0
-			```
-		formatString: #,##0
-		displayFolder: Atendimento
-		lineageTag: 00914ecb-f5b6-566d-a10b-d2e370407b14
-
-	/// Conta as solicitações do período ainda abertas, dentro do prazo.
-	measure 'Abertas no prazo' = ```
-			VAR d = [Data escolhida]
-			VAR inicio = [Início do período]
-			RETURN COUNTROWS(FILTER(CALCULATETABLE('Solicitações', REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d), NOT (NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d) && 'Solicitações'[Prazo] >= d)) + 0
-			```
-		formatString: #,##0
-		displayFolder: Atendimento
-		lineageTag: 2a25c169-ceb9-5127-82d3-97814f8567ec
-
-	/// Mostra a parte das solicitações do período resolvidas no prazo, entre as resolvidas e as que já passaram do prazo. As abertas ainda no prazo ficam de fora.
-	measure 'Solicitações resolvidas no prazo' = DIVIDE([Resolvidas no prazo], [Resolvidas no prazo] + [Resolvidas com atraso] + [Abertas com prazo vencido])
+	/// Mostra a parte dos protocolos fechados que fecharam dentro do prazo do serviço, contado em dias úteis só enquanto o protocolo estava com o Crea-SP.
+	measure 'Fechados no prazo' = DIVIDE([Fechados dentro do prazo], [Fechados])
 		formatString: 0.0%
-		displayFolder: Atendimento
-		lineageTag: 02e9d823-ebff-553d-909e-cb6bb4ee028e
+		displayFolder: Protocolos
+		lineageTag: 7466583a-0cf4-5520-8e70-09a2eb8bf061
 
-	/// Mostra o tempo típico (a mediana), em dias, da abertura à resolução das solicitações do período resolvidas até a data escolhida.
-	measure 'Tempo de resolução' = ```
+	/// Mostra a mediana dos dias úteis com o Crea-SP dos protocolos do período fechados até a data escolhida. O tempo com o solicitante, em exigência, não conta.
+	measure 'Tempo típico até fechar' = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]
-			RETURN CALCULATE(MEDIAN('Solicitações'[Dias até resolver]), REMOVEFILTERS('Calendário'), 'Solicitações'[Aberta em] >= inicio, 'Solicitações'[Aberta em] <= d, KEEPFILTERS(NOT ISBLANK('Solicitações'[Resolvida em]) && 'Solicitações'[Resolvida em] <= d))
+			RETURN CALCULATE(MEDIAN('Foto dos protocolos'[Dias com o Crea-SP]), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] = "Fechado"))
+			```
+		formatString: #,##0.#" dias úteis"
+		displayFolder: Protocolos
+		lineageTag: 7d9d8198-a818-5f2a-9d76-ff9024ff33bb
+
+	/// Conta os protocolos do período em aberto ou em exigência na data escolhida.
+	measure 'Em andamento' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] IN {"Aberto", "Exigência"})) + 0
+			```
+		formatString: #,##0
+		displayFolder: Protocolos
+		lineageTag: 57f35a7b-9d61-5245-ab18-ea83cac046ee
+
+	/// Conta os protocolos em andamento que já passaram do prazo: em aberto, pelos dias úteis com o Crea-SP; em exigência, pelos 30 dias para responder.
+	measure 'Em andamento fora do prazo' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] IN {"Aberto", "Exigência"}), KEEPFILTERS('Foto dos protocolos'[Prazo] = "Fora do prazo")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Protocolos
+		lineageTag: 261784ba-f176-5b90-b1ad-26c24189f943
+
+	/// Conta os protocolos do período esperando o solicitante responder a uma exigência.
+	measure 'Em exigência' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] = "Exigência")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Protocolos
+		lineageTag: 8c9f1156-5e1c-51fc-a6b0-ea6e968e50b7
+
+	/// Conta os protocolos em exigência há mais de 30 dias corridos.
+	measure 'Exigências vencidas' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] = "Exigência"), KEEPFILTERS('Foto dos protocolos'[Prazo] = "Fora do prazo")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Protocolos
+		lineageTag: d116d944-1d53-527a-a7ff-409cb28e5e3b
+
+	/// Conta os protocolos do período finalizados porque o solicitante não respondeu à exigência.
+	measure 'Finalizados sem resposta' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Status] = "Finalizada sem resposta à exigência")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Protocolos
+		lineageTag: 8cfe13e2-2394-5f98-8f32-c0fa9f500433
+
+	/// Conta os protocolos do período parados esperando o pagamento da taxa.
+	measure 'Sem pagamento' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] = "Sem pagamento")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Protocolos
+		lineageTag: c017777b-4c76-5255-906c-5b2330f24e3c
+
+	/// Soma as taxas dos protocolos parados sem pagamento.
+	measure 'Taxas sem pagamento' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(SUMX('Foto dos protocolos', RELATED('Protocolos'[Taxa])), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] = "Sem pagamento")) + 0
+			```
+		formatString: R$ #,##0
+		displayFolder: Protocolos
+		lineageTag: 51b5d43a-d9b3-5be8-8103-5892943408d9
+
+	/// Conta os protocolos do período cancelados até a data escolhida.
+	measure Cancelados = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] = "Cancelado")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Protocolos
+		lineageTag: d6b9a229-f72b-5f0b-992c-fcd11975e688
+
+	/// Mostra a média dos dias corridos em exigência, com o solicitante, dos protocolos do período que tiveram exigência.
+	measure 'Dias com o solicitante' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(AVERAGE('Foto dos protocolos'[Dias com o solicitante]), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Dias com o solicitante] > 0), KEEPFILTERS('Protocolos'[Motivo da exigência] <> ""))
 			```
 		formatString: #,##0" dias"
-		displayFolder: Atendimento
-		lineageTag: ce80cea5-0679-5627-a3bd-930d3224faec
+		displayFolder: Protocolos
+		lineageTag: c18b4204-2808-5e5a-ad8c-ec4c42670d79
 
-	/// Conta as solicitações abertas em cada mês, nos meses do gráfico.
-	measure 'Solicitações no mês' = ```
+	/// Conta os protocolos do período que tiveram exigência até a data escolhida, pelo motivo.
+	measure 'Com exigência' = ```
 			VAR d = [Data escolhida]
-			VAR mes = MAX('Calendário'[Mês])
-			VAR inicio = DATE(YEAR(d), MONTH(d) - MAX(24, [Meses do período]) + 1, 1)
-			VAR meses = CALCULATE(COUNTROWS('Calendário'), KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d))
-			RETURN IF(meses > 0, CALCULATE(COUNTROWS('Solicitações') + 0, KEEPFILTERS('Calendário'[Mês] >= inicio && 'Calendário'[Mês] <= d)))
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Já teve exigência] = 1), KEEPFILTERS('Protocolos'[Motivo da exigência] <> "")) + 0
 			```
 		formatString: #,##0
-		displayFolder: Atendimento
-		lineageTag: 547a0d05-818f-5543-8b1d-84ad1077ebfe
+		displayFolder: Protocolos
+		lineageTag: 16bcd2d5-65a2-5d17-a2ff-fe0d3a31d886
+
+	/// Conta os protocolos abertos em cada mês, pela situação na data escolhida, nos meses do gráfico: 12, ou o período quando passa disso, até 24.
+	measure 'Abertos no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MIN(24, MAX(12, [Meses do período])) + 1, 1)
+			RETURN IF(mes >= inicio && mes <= d, CALCULATE(COUNTROWS('Foto dos protocolos'), 'Foto dos protocolos'[Data] = d) + 0)
+			```
+		formatString: #,##0
+		displayFolder: Protocolos
+		lineageTag: e97e1e81-6a42-5217-be71-33691bbc8048
+
+	/// Conta os protocolos abertos no mesmo mês um ano antes, para a linha tracejada do gráfico mês a mês.
+	measure 'Abertos no mesmo mês um ano antes' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MIN(24, MAX(12, [Meses do período])) + 1, 1)
+			RETURN IF(mes >= inicio && mes <= d, CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Calendário'), 'Protocolos'[Mês] = EDATE(mes, -12)) + 0)
+			```
+		formatString: #,##0
+		displayFolder: Protocolos
+		lineageTag: e58b66e1-3d90-51fb-865f-ec09b61562aa
+
+	/// Conta os protocolos do período em andamento que estão com um colaborador.
+	measure 'Na fila' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] IN {"Aberto", "Exigência"}), KEEPFILTERS('Foto dos protocolos'[Atribuído] = 1)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: a2e58861-9637-5eb3-9a5a-dd59fa722fda
+
+	/// Conta os protocolos em andamento com um colaborador que já passaram do prazo.
+	measure 'Na fila e fora do prazo' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] IN {"Aberto", "Exigência"}), KEEPFILTERS('Foto dos protocolos'[Atribuído] = 1), KEEPFILTERS('Foto dos protocolos'[Prazo] = "Fora do prazo")) + 0
+			```
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: c40987df-5629-57e5-95e7-8f573e32e504
+
+	/// Conta os colaboradores com algum protocolo do período no último status.
+	measure 'Colaboradores com protocolos' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(DISTINCTCOUNT('Foto dos protocolos'[Pessoa]), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Atribuído] = 1)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: ebef9df5-533e-57f7-9bfa-cb7df3e67540
+
+	/// Conta o quadro de atendimento do recorte, pela lotação. Quem está na sede conta na GRE 5. O município escolhido leva à regional dele.
+	measure 'Colaboradores no quadro' = IF(ISCROSSFILTERED('Regionais'), CALCULATE(COUNTROWS('Colaboradores'), 'Colaboradores'[No quadro] = 1, TREATAS(VALUES('Regionais'[GRE]), 'Colaboradores'[GRE])), CALCULATE(COUNTROWS('Colaboradores'), 'Colaboradores'[No quadro] = 1)) + 0
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: 9eb7f379-8527-55db-9688-5611b9a3ad22
+
+	/// Conta os protocolos do período com cada pessoa, pela situação. Na linha "Sem atribuição", só os abertos e os sem pagamento, como o painel: o fechado e o cancelado sem ninguém não esperam por ninguém.
+	measure 'Com a pessoa' = ```
+			VAR semNinguem = SELECTEDVALUE('Colaboradores'[Pessoa]) = "sem-atribuicao"
+			RETURN IF(semNinguem && NOT SELECTEDVALUE('Foto dos protocolos'[Situação]) IN {"Aberto", "Sem pagamento"}, BLANK(), [Abertos no período])
+			```
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: ba6dacff-47c9-5309-8ebb-8fe72a601afa
+
+	/// Conta os protocolos do lugar que fecharam nos 12 meses até a data escolhida, abertos em qualquer data (os cancelados não entram).
+	measure 'Fechados nos 12 meses' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Foto dos protocolos'[Data] = d, 'Foto dos protocolos'[Situação] = "Fechado", 'Foto dos protocolos'[Fechado em] >= DATE(YEAR(d), MONTH(d) - 11, 1), 'Foto dos protocolos'[Fechado em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: 855c1967-0eeb-5f59-91f1-bbbfcb52dbd4
+
+	/// Divide os fechados nos 12 meses pelos 12 meses e pelo quadro de atendimento do recorte.
+	measure 'Fechados por colaborador' = DIVIDE([Fechados nos 12 meses], 12 * [Colaboradores no quadro])
+		formatString: #,##0.0" por mês"
+		displayFolder: Equipe e território
+		lineageTag: 7ec21500-fed9-50e2-bb25-a828dbff5669
+
+	/// Conta os protocolos do período em aberto ou sem pagamento que nenhum colaborador pegou.
+	measure 'Sem atribuição' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] IN {"Aberto", "Sem pagamento"}), KEEPFILTERS('Foto dos protocolos'[Atribuído] = 0)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: 176fb36a-0d04-57e8-9426-31a2a40c1663
+
+	/// Conta os protocolos sem atribuição parados no mesmo status há mais de 5 dias úteis.
+	measure 'Sem atribuição há mais de 5 dias úteis' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = [Início do período]
+			RETURN CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, KEEPFILTERS('Foto dos protocolos'[Situação] IN {"Aberto", "Sem pagamento"}), KEEPFILTERS('Foto dos protocolos'[Atribuído] = 0), KEEPFILTERS('Foto dos protocolos'[Dias úteis no status] > 5)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: c08a39cb-ade9-5641-81e4-4283995ddaea
+
+	/// Mostra a maior fila (protocolos em andamento) de um colaborador. O nome está na linha de apoio.
+	measure 'Maior fila de uma pessoa' = IF([Colaboradores com protocolos] > 0, MAXX(VALUES('Colaboradores'[Pessoa]), [Na fila]))
+		formatString: #,##0
+		displayFolder: Equipe e território
+		lineageTag: d72e0859-fdd8-58d7-899d-04c152050594
+
+	/// Mostra a parte dos fechados que fecharam no prazo, pelo trimestre de abertura, nos meses do gráfico mês a mês (12 a 24).
+	measure 'Fechados no prazo nos meses do gráfico' = ```
+			VAR d = [Data escolhida]
+			VAR inicio = DATE(YEAR(d), MONTH(d) - MIN(24, MAX(12, [Meses do período])) + 1, 1)
+			VAR fechados = CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, 'Foto dos protocolos'[Situação] = "Fechado")
+			RETURN DIVIDE(CALCULATE(COUNTROWS('Foto dos protocolos'), REMOVEFILTERS('Calendário'), 'Foto dos protocolos'[Data] = d, 'Protocolos'[Aberto em] >= inicio, 'Protocolos'[Aberto em] <= d, 'Foto dos protocolos'[Situação] = "Fechado", 'Foto dos protocolos'[Prazo] = "Dentro do prazo"), fechados)
+			```
+		formatString: 0.0%
+		displayFolder: Equipe e território
+		lineageTag: 883a08f1-a2b2-5d0f-9d28-a189a2eca11c
+
+	/// Divide os protocolos abertos nos 12 meses até a data pelos dos 12 meses anteriores. Corrige a previsão.
+	measure 'Tendência dos protocolos' = ```
+			VAR d = [Data escolhida]
+			VAR m0 = DATE(YEAR(d), MONTH(d), 1)
+			VAR ultimos = CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, REMOVEFILTERS('Calendário'), 'Protocolos'[Mês] >= EDATE(m0, -11), 'Protocolos'[Mês] <= m0) + 0
+			VAR anteriores = CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, REMOVEFILTERS('Calendário'), 'Protocolos'[Mês] >= EDATE(m0, -23), 'Protocolos'[Mês] <= EDATE(m0, -12)) + 0
+			RETURN IF(anteriores > 0, DIVIDE(ultimos, anteriores), 1)
+			```
+		formatString: 0.00
+		displayFolder: Demanda
+		lineageTag: f5d768ec-e6c3-5556-9d24-0b44d6030059
+
+	/// Soma, nos três meses depois do mês da data, os protocolos abertos no mesmo mês um ano antes, vezes a tendência dos 12 meses.
+	measure 'Previstos nos próximos 3 meses' = ```
+			VAR d = [Data escolhida]
+			VAR m0 = DATE(YEAR(d), MONTH(d), 1)
+			VAR t = [Tendência dos protocolos]
+			VAR mes1 = ROUND((CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, REMOVEFILTERS('Calendário'), 'Protocolos'[Mês] = EDATE(m0, -11)) + 0) * t, 0)
+			VAR mes2 = ROUND((CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, REMOVEFILTERS('Calendário'), 'Protocolos'[Mês] = EDATE(m0, -10)) + 0) * t, 0)
+			VAR mes3 = ROUND((CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, REMOVEFILTERS('Calendário'), 'Protocolos'[Mês] = EDATE(m0, -9)) + 0) * t, 0)
+			RETURN mes1 + mes2 + mes3
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: a8a91690-d133-592a-ad75-1378669101d1
+
+	/// Conta os protocolos abertos em cada mês nos 24 meses até a data, só pelo lugar.
+	measure 'Protocolos por mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 24 + 1, 1)
+			RETURN IF(mes >= inicio && mes <= d, CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d) + 0)
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: eb58f8fb-a6dc-5f95-bbe0-c6b3094ed89a
+
+	/// Prevê os três meses depois do mês da data: o mesmo mês um ano antes, vezes a tendência dos 12 meses.
+	measure 'Previstos por mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR m0 = DATE(YEAR(d), MONTH(d), 1)
+			RETURN IF(mes > m0 && mes <= EDATE(m0, 3), ROUND((CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, REMOVEFILTERS('Calendário'), 'Protocolos'[Mês] = EDATE(mes, -12)) + 0) * [Tendência dos protocolos], 0))
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 6cce5be8-0578-56de-81e8-6b40f606c643
+
+	/// Conta os estabelecimentos com atividade de engenharia abertos na Receita em cada mês. O mês depois do último arquivo da Receita fica vazio.
+	measure 'Aberturas de engenharia na Receita' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 24 + 1, 1)
+			RETURN IF(mes >= inicio && mes <= d, CALCULATE(COUNTROWS('Aberturas na Receita'), 'Aberturas na Receita'[Aberta em] <= d))
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 746aed08-4f40-5862-ab8a-57808717dda1
+
+	/// Conta os pedidos de registro de empresa abertos em cada mês.
+	measure 'Pedidos de registro de empresa' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 24 + 1, 1)
+			RETURN IF(mes >= inicio && mes <= d, CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, 'Protocolos'[Serviço] = "Registro de empresa") + 0)
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 1c218c82-0a1d-58fc-b453-780a6351cabb
+
+	/// Conta as aberturas de engenharia na Receita de 18 a 6 meses antes da data: as que já tiveram 180 dias para pedir registro.
+	measure 'Aberturas da coorte' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Aberturas na Receita'), REMOVEFILTERS('Calendário'), 'Aberturas na Receita'[Aberta em] >= DATE(YEAR(d), MONTH(d) - 17, 1), 'Aberturas na Receita'[Aberta em] < DATE(YEAR(d), MONTH(d) - 5, 1)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: c850bbb6-c1c9-5b90-97b7-6abe916d3be1
+
+	/// Conta as aberturas da coorte cuja empresa pediu registro no Crea-SP entre 30 dias antes e 180 dias depois da abertura, até a data.
+	measure 'Aberturas que pediram registro' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Aberturas na Receita'), REMOVEFILTERS('Calendário'), 'Aberturas na Receita'[Aberta em] >= DATE(YEAR(d), MONTH(d) - 17, 1), 'Aberturas na Receita'[Aberta em] < DATE(YEAR(d), MONTH(d) - 5, 1), NOT ISBLANK('Aberturas na Receita'[Pediu registro em]), 'Aberturas na Receita'[Pediu registro em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 0e0243c7-18db-54d5-a341-c7bf5718b1da
+
+	/// Mostra a parte das aberturas de engenharia na Receita cuja empresa pediu registro em até 180 dias.
+	measure 'Empresas novas que pediram registro' = DIVIDE([Aberturas que pediram registro], [Aberturas da coorte])
+		formatString: 0.0%
+		displayFolder: Demanda
+		lineageTag: 03a54483-9df2-5351-b7dd-fafbc54b09bc
+
+	/// Conta os pedidos de registro de profissional (com diploma ou com atestado) abertos em cada mês.
+	measure 'Pedidos de registro de profissional' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 24 + 1, 1)
+			RETURN IF(mes >= inicio && mes <= d, CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, 'Protocolos'[Pedido de registro de profissional] = 1) + 0)
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 45577ef0-1ab9-5e9a-b1c9-5cd8becaa287
+
+	/// Soma os concluintes do INEP no ano anterior ao da data, pelas instituições do recorte.
+	measure 'Concluintes do ano anterior' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Concluintes'[Concluintes]), 'Concluintes'[Ano] = YEAR(d) - 1) + 0
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 3ab68708-4f04-52ce-aab5-6aa0c0b6d76f
+
+	/// Conta os profissionais que concluíram o curso no ano anterior ao da data e já se registraram até ela.
+	measure 'Formados registrados do ano anterior' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(COUNTROWS('Formados registrados'), 'Formados registrados'[Ano de conclusão] = YEAR(d) - 1, 'Formados registrados'[Registro em] <= d) + 0
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: faf2a369-2688-5b47-9472-e1b164a6bbcc
+
+	/// Mostra a parte dos concluintes do ano anterior que já se registrou no Crea-SP.
+	measure 'Formados do ano anterior já registrados' = DIVIDE([Formados registrados do ano anterior], [Concluintes do ano anterior])
+		formatString: 0.0%
+		displayFolder: Demanda
+		lineageTag: 118bef6c-e485-563a-b0ef-72b47102a4ab
+
+	/// Conta os protocolos de baixa de ART por terceiros, cancelamento e regularização de ART abertos em cada mês.
+	measure 'Protocolos de ART no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 24 + 1, 1)
+			RETURN IF(mes >= inicio && mes <= d, CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, 'Protocolos'[Serviço de ART] = 1) + 0)
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: fb54680b-8bff-5b01-8b5e-cbf321d778f2
+
+	/// Soma as ARTs registradas em cada mês, pelo município da matriz da empresa.
+	measure 'ARTs registradas no mês' = ```
+			VAR d = [Data escolhida]
+			VAR mes = MAX('Calendário'[Mês])
+			VAR inicio = DATE(YEAR(d), MONTH(d) - 24 + 1, 1)
+			RETURN IF(mes >= inicio && mes <= d, SUM('ARTs por mês'[ARTs]) + 0)
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 2364edae-ef48-5304-94ea-f8c6fde5b851
+
+	/// Divide os protocolos de ART pelas ARTs registradas no mês, por 1.000.
+	measure 'Protocolos de ART por 1.000 ARTs no mês' = DIVIDE([Protocolos de ART no mês], [ARTs registradas no mês]) * 1000
+		formatString: #,##0.0
+		displayFolder: Demanda
+		lineageTag: e6b48fc5-141d-573b-89eb-f7bd9072d7a6
+
+	/// Divide os protocolos de ART dos 12 meses até a data pelas ARTs registradas nos mesmos meses, por 1.000.
+	measure 'Protocolos de ART por 1.000 ARTs' = ```
+			VAR d = [Data escolhida]
+			VAR m0 = DATE(YEAR(d), MONTH(d), 1)
+			VAR protocolos = CALCULATE(COUNTROWS('Protocolos'), REMOVEFILTERS('Protocolos'[Tipo], 'Protocolos'[Serviço], 'Protocolos'[Unidade]), 'Protocolos'[Aberto em] <= d, REMOVEFILTERS('Calendário'), 'Protocolos'[Serviço de ART] = 1, 'Protocolos'[Mês] >= EDATE(m0, -11), 'Protocolos'[Mês] <= m0) + 0
+			VAR arts = CALCULATE(SUM('ARTs por mês'[ARTs]), REMOVEFILTERS('Calendário'), 'ARTs por mês'[Mês] >= EDATE(m0, -11), 'ARTs por mês'[Mês] <= m0)
+			RETURN DIVIDE(protocolos, arts) * 1000
+			```
+		formatString: #,##0.0
+		displayFolder: Demanda
+		lineageTag: f73f9172-d7d5-5c54-83be-c5dacd3d8b6f
+
+	/// Conta os pedidos de acesso à informação (LAI) do ano da data até ela. É o Crea-SP inteiro: a regional não muda este número.
+	measure 'Pedidos de informação no ano' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Ouvidoria e informação'[Quantidade]), 'Ouvidoria e informação'[Data] = d, 'Ouvidoria e informação'[Ano] = YEAR(d), 'Ouvidoria e informação'[Tipo] = "Pedido de informação")
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 46c83287-0b39-58b9-8022-f0effd475552
+
+	/// Conta os pedidos de informação do ano respondidos no prazo da lei (20 dias, prorrogáveis por 10).
+	measure 'Pedidos de informação respondidos no prazo' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Ouvidoria e informação'[Respondidos no prazo]), 'Ouvidoria e informação'[Data] = d, 'Ouvidoria e informação'[Ano] = YEAR(d))
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: f28ad483-1109-5059-8479-186b71362fda
+
+	/// Conta os recursos aos pedidos de informação do ano.
+	measure 'Recursos dos pedidos de informação' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Ouvidoria e informação'[Recursos]), 'Ouvidoria e informação'[Data] = d, 'Ouvidoria e informação'[Ano] = YEAR(d)) + 0
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 23ba0966-b1a4-5810-b6f6-aa0e7077db9b
+
+	/// Conta, em cada um dos cinco anos até a data, os pedidos de informação e as manifestações da ouvidoria por tipo.
+	measure 'Manifestações e pedidos' = ```
+			VAR d = [Data escolhida]
+			RETURN CALCULATE(SUM('Ouvidoria e informação'[Quantidade]), 'Ouvidoria e informação'[Data] = d)
+			```
+		formatString: #,##0
+		displayFolder: Demanda
+		lineageTag: 67098095-0e91-56d3-8d1f-39ad5ce073b6
 
 	/// Conta os profissionais com registro ativo na data escolhida, pelo município onde moram.
 	measure 'Profissionais ativos' = ```
@@ -119,20 +505,20 @@ table Medidas
 			RETURN CALCULATE(SUM('Profissionais ativos'[Ativos]), REMOVEFILTERS('Calendário'), 'Profissionais ativos'[Data] = d)
 			```
 		formatString: #,##0
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: 8508b8b7-8901-5999-ad34-aa2f08e66272
 
 	/// Conta os profissionais ativos que moram a mais de 50 km, em linha reta, da unidade de atendimento mais próxima.
 	measure 'Ativos a mais de 50 km' = CALCULATE([Profissionais ativos], 'Municípios'[Distância até a unidade (km)] > 50)
 		formatString: #,##0
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: 2b90453d-99d4-5b1f-bbdb-1a9524700d1c
 
 	/// Mostra a parte dos profissionais ativos que moram a mais de 50 km, em linha reta, da unidade mais próxima. Pela estrada, a distância costuma ser de 20% a 40% maior.
-	measure 'Moram a mais de 50 km de uma unidade' = DIVIDE([Ativos a mais de 50 km], [Profissionais ativos])
+	measure 'A mais de 50 km da unidade' = DIVIDE([Ativos a mais de 50 km], [Profissionais ativos])
 		formatString: 0.0%
-		displayFolder: Atendimento
-		lineageTag: f350eeb3-ce0a-5fed-aa32-06eb989e9bc2
+		displayFolder: Equipe e território
+		lineageTag: 934a75aa-cd9e-57c4-b3bf-17026fd6229f
 
 	/// Soma as horas de mesa disponíveis nos coworkings no período.
 	measure 'Horas disponíveis no período' = ```
@@ -141,7 +527,7 @@ table Medidas
 			RETURN CALCULATE(SUM('Meses dos coworkings'[Horas disponíveis]), REMOVEFILTERS('Calendário'), 'Meses dos coworkings'[Mês] >= inicio, 'Meses dos coworkings'[Mês] <= d) + 0
 			```
 		formatString: #,##0
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: b373b065-b974-55df-8eb7-1add57f608a0
 
 	/// Soma as horas de mesa usadas nos coworkings no período.
@@ -151,7 +537,7 @@ table Medidas
 			RETURN CALCULATE(SUM('Meses dos coworkings'[Horas usadas]), REMOVEFILTERS('Calendário'), 'Meses dos coworkings'[Mês] >= inicio, 'Meses dos coworkings'[Mês] <= d) + 0
 			```
 		formatString: #,##0
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: 202f135b-a5fc-5b9d-89ec-35732f8452dc
 
 	/// Soma o custo dos coworkings no período.
@@ -161,13 +547,13 @@ table Medidas
 			RETURN CALCULATE(SUM('Meses dos coworkings'[Custo]), REMOVEFILTERS('Calendário'), 'Meses dos coworkings'[Mês] >= inicio, 'Meses dos coworkings'[Mês] <= d) + 0
 			```
 		formatString: R$ #,##0
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: 358b63fd-cf25-55fb-87fc-e78535b1128a
 
 	/// Mostra a parte das horas de mesa disponíveis no período que foi usada.
 	measure 'Ocupação dos coworkings' = DIVIDE([Horas usadas no período], [Horas disponíveis no período])
 		formatString: 0.0%
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: 607fc937-c4b7-5449-a6f8-d5ff28457cf0
 
 	/// Conta os profissionais que usaram os coworkings no período.
@@ -177,72 +563,148 @@ table Medidas
 			RETURN CALCULATE(DISTINCTCOUNT('Usuários dos coworkings'[Profissional]), REMOVEFILTERS('Calendário'), 'Usuários dos coworkings'[Mês] >= inicio, 'Usuários dos coworkings'[Mês] <= d) + 0
 			```
 		formatString: #,##0
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: f11b24df-3405-55bd-98fc-a8c7c0992088
 
 	/// Conta as unidades de coworking no recorte.
 	measure 'Unidades de coworking' = COUNTROWS('Coworkings') + 0
 		formatString: #,##0
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: fb3ca617-1162-5c91-8049-008febce22a0
 
 	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Solicitações resolvidas no prazo' = ```
+	measure 'Variação em um ano: Fechados no prazo' = ```
 			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Solicitações resolvidas no prazo]
-			VAR antes = CALCULATE([Solicitações resolvidas no prazo], 'Datas das fotos'[Data] = alvo)
+			VAR agora = [Fechados no prazo]
+			VAR antes = CALCULATE([Fechados no prazo], 'Datas das fotos'[Data] = alvo)
 			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
 			```
 		formatString: +0.0;-0.0;0.0
-		displayFolder: Atendimento
-		lineageTag: 2e6365f7-7bd3-5aa9-be1a-db2f0679f3c6
+		displayFolder: Protocolos
+		lineageTag: ef0fa92e-cd18-598c-9b79-a0a6e85b9fd9
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Solicitações resolvidas no prazo' = ```
-			VAR v = [Variação em um ano: Solicitações resolvidas no prazo]
+	measure 'Comparação: Fechados no prazo' = ```
+			VAR v = [Variação em um ano: Fechados no prazo]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
 			```
-		displayFolder: Atendimento
-		lineageTag: d24a526f-9d7a-5aa5-8450-d03726e28296
+		displayFolder: Protocolos
+		lineageTag: 43ecbb66-dbc2-5428-937e-29ee890fb069
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Solicitações resolvidas no prazo' = "em até 14 dias; a meta é " & FORMAT([Meta de resolução no prazo], "0%")
-		displayFolder: Atendimento
-		lineageTag: 73e2f16e-d7a7-57c8-9fa7-995628f23e51
+	measure 'Detalhe: Fechados no prazo' = FORMAT([Fechados], "#,##0") & " fechados; a meta é " & FORMAT([Meta de fechados no prazo], "0%")
+		displayFolder: Protocolos
+		lineageTag: 9f70d5c1-5c7f-5097-adad-1ea95111b314
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Solicitações de atendimento' = ```
+	measure 'Variação em um ano: Abertos no período' = ```
 			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Solicitações de atendimento]
-			VAR antes = CALCULATE([Solicitações de atendimento], 'Datas das fotos'[Data] = alvo)
+			VAR agora = [Abertos no período]
+			VAR antes = CALCULATE([Abertos no período], 'Datas das fotos'[Data] = alvo)
 			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
 			```
 		formatString: +0.0%;-0.0%;0.0%
-		displayFolder: Atendimento
-		lineageTag: 55b4ee8f-87b9-57b1-9b7d-9b7793a7f288
+		displayFolder: Protocolos
+		lineageTag: f1342d57-293f-5c79-b5a6-8b1faab1b6a2
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Solicitações de atendimento' = ```
-			VAR v = [Variação em um ano: Solicitações de atendimento]
+	measure 'Comparação: Abertos no período' = ```
+			VAR v = [Variação em um ano: Abertos no período]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
-		displayFolder: Atendimento
-		lineageTag: 52c99937-ea5b-52ad-ad44-714f6b516158
+		displayFolder: Protocolos
+		lineageTag: 3df07adf-e7f4-51d5-80af-f01714c1fbf2
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Solicitações de atendimento' = FORMAT(DIVIDE([Solicitações de empresas], [Solicitações de atendimento]), "0.0%") & " vindas de empresas"
-		displayFolder: Atendimento
-		lineageTag: 6df7eea0-903c-5502-8acc-0398df1457c9
+	measure 'Detalhe: Abertos no período' = FORMAT(DIVIDE([Fechados], [Abertos no período]), "0.0%") & " já fechados"
+		displayFolder: Protocolos
+		lineageTag: 25dc97fa-b5c5-5c24-8e81-773295ccbef1
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Tempo típico até fechar' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Tempo típico até fechar]
+			VAR antes = CALCULATE([Tempo típico até fechar], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Protocolos
+		lineageTag: bc0499b4-4dc1-57be-925e-ae9ccfb7f6c3
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Tempo típico até fechar' = ```
+			VAR v = [Variação em um ano: Tempo típico até fechar]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Protocolos
+		lineageTag: 927099dc-2091-5a42-8d37-c0f47ec156d3
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Tempo de resolução' = "tempo típico (mediana); " & FORMAT([Abertas com prazo vencido], "#,##0") & " pedidos abertos já passaram do prazo"
-		displayFolder: Atendimento
-		lineageTag: c4f6884c-962e-583e-989f-8a94df0f42ab
+	measure 'Detalhe: Tempo típico até fechar' = "mediana dos fechados, em dias úteis com o Crea-SP"
+		displayFolder: Protocolos
+		lineageTag: 4375261b-8f5c-527d-a4f4-39931611d8d6
+
+	/// Compara o cartão com o fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Em andamento' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Em andamento]
+			VAR antes = CALCULATE([Em andamento], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Protocolos
+		lineageTag: a834e757-3700-5929-b318-0fcf85d78306
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Em andamento' = ```
+			VAR v = [Variação em um ano: Em andamento]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
+			```
+		displayFolder: Protocolos
+		lineageTag: 89f5810f-0e03-522d-9cd8-049790bd7f56
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Moram a mais de 50 km de uma unidade' = FORMAT([Ativos a mais de 50 km], "#,##0") & " dos " & FORMAT([Profissionais ativos], "#,##0") & " profissionais ativos do recorte, em linha reta"
-		displayFolder: Atendimento
-		lineageTag: 454417a2-4394-516c-b559-8a7a5ef5f2e9
+	measure 'Detalhe: Em andamento' = FORMAT([Em andamento fora do prazo], "#,##0") & " já passaram do prazo"
+		displayFolder: Protocolos
+		lineageTag: 704cd7ce-c613-5918-9fc6-1b16bc545471
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Em exigência' = FORMAT([Exigências vencidas], "#,##0") & " passaram dos 30 dias; " & FORMAT([Finalizados sem resposta], "#,##0") & " finalizados sem resposta"
+		displayFolder: Protocolos
+		lineageTag: 8d6aab97-1b7c-5fa5-a748-1d8f2581f058
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Sem pagamento' = FORMAT([Taxas sem pagamento], "R$ #,##0") & " em taxas; " & FORMAT([Cancelados], "#,##0") & " cancelados"
+		displayFolder: Protocolos
+		lineageTag: de38129c-e3f8-54b6-9192-fb246ba823c1
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Na fila e fora do prazo' = "de " & FORMAT([Na fila], "#,##0") & " na fila de " & FORMAT([Colaboradores com protocolos], "#,##0") & " colaboradores; " & FORMAT([Colaboradores no quadro], "#,##0") & " no quadro"
+		displayFolder: Equipe e território
+		lineageTag: 097299e4-916e-5a02-950a-269c8cb17139
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Fechados por colaborador' = "nos últimos 12 meses"
+		displayFolder: Equipe e território
+		lineageTag: 15b9adc9-0d71-54b3-a6f2-c4d1998d0686
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Sem atribuição' = FORMAT([Sem atribuição há mais de 5 dias úteis], "#,##0") & " esperam há mais de 5 dias úteis"
+		displayFolder: Equipe e território
+		lineageTag: ecd21243-8046-58d1-af19-08bb6822cd6c
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Maior fila de uma pessoa' = ```
+			VAR quem = TOPN(1, VALUES('Colaboradores'[Pessoa]), [Na fila], DESC, [Na fila e fora do prazo], DESC, [Abertos no período], DESC, CALCULATE(MAX('Colaboradores'[Nome])), ASC)
+			RETURN IF(ISBLANK([Maior fila de uma pessoa]), "nenhum protocolo com colaborador", FORMAT(CALCULATE([Na fila e fora do prazo], quem), "#,##0") & " fora do prazo, com " & CALCULATE(MAX('Colaboradores'[Nome]), quem))
+			```
+		displayFolder: Equipe e território
+		lineageTag: b18978f4-a9ae-546a-823f-573c133dad5b
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: A mais de 50 km da unidade' = FORMAT([Ativos a mais de 50 km], "#,##0") & " de " & FORMAT([Profissionais ativos], "#,##0") & " profissionais ativos"
+		displayFolder: Equipe e território
+		lineageTag: dc823d7f-6c83-5e99-882f-54b7b52487c0
 
 	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Ocupação dos coworkings' = ```
@@ -252,7 +714,7 @@ table Medidas
 			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
 			```
 		formatString: +0.0;-0.0;0.0
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: 2593220b-fed5-5ee5-bc5b-2b83791794c8
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
@@ -260,13 +722,61 @@ table Medidas
 			VAR v = [Variação em um ano: Ocupação dos coworkings]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
 			```
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: a5b04e43-823f-5111-ba76-13cb3e4b0558
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Ocupação dos coworkings' = FORMAT([Unidades de coworking], "#,##0") & " unidades com " & FORMAT([Usuários dos coworkings], "#,##0") & " usuários, a " & FORMAT(DIVIDE([Custo dos coworkings no período], [Horas usadas no período]), "R$ #,##0.00") & " por hora usada"
-		displayFolder: Atendimento
+		displayFolder: Equipe e território
 		lineageTag: fa778e50-80c4-5a42-a6be-8098671f460d
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Previstos nos próximos 3 meses' = ```
+			VAR d = [Data escolhida]
+			VAR m0 = DATE(YEAR(d), MONTH(d), 1)
+			RETURN "de " & FORMAT(EDATE(m0, 1), "mmm/yy") & " a " & FORMAT(EDATE(m0, 3), "mmm/yy") & IF([Colaboradores no quadro] > 0, ", cerca de " & FORMAT(DIVIDE([Previstos nos próximos 3 meses], [Colaboradores no quadro]), "#,##0") & " por colaborador", "")
+			```
+		displayFolder: Demanda
+		lineageTag: 5f279131-c06e-5cbb-9723-e69901bc3316
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Empresas novas que pediram registro' = FORMAT([Aberturas que pediram registro], "#,##0") & " das " & FORMAT([Aberturas da coorte], "#,##0") & " aberturas de engenharia na Receita, em até 180 dias"
+		displayFolder: Demanda
+		lineageTag: 3eb9691c-4d96-5612-b9b5-55346326d185
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Formados do ano anterior já registrados' = FORMAT([Formados registrados do ano anterior], "#,##0") & " dos " & FORMAT([Concluintes do ano anterior], "#,##0") & " concluintes de " & (YEAR([Data escolhida]) - 1) & " (INEP) no recorte"
+		displayFolder: Demanda
+		lineageTag: b4708d8b-2e01-56d9-8969-1c7345032016
+
+	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
+	measure 'Variação em um ano: Protocolos de ART por 1.000 ARTs' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Protocolos de ART por 1.000 ARTs]
+			VAR antes = CALCULATE([Protocolos de ART por 1.000 ARTs], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Demanda
+		lineageTag: f8749d66-f49b-5d40-b059-83def88f10a7
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Protocolos de ART por 1.000 ARTs' = ```
+			VAR v = [Variação em um ano: Protocolos de ART por 1.000 ARTs]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação aos 12 meses anteriores")
+			```
+		displayFolder: Demanda
+		lineageTag: a0eaf59e-cc86-517c-97de-9e26770b36b7
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Protocolos de ART por 1.000 ARTs' = "baixa, cancelamento e regularização, em 12 meses"
+		displayFolder: Demanda
+		lineageTag: 94cd52cf-b06e-5211-8cbf-02f7923f6c88
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Pedidos de informação no ano' = FORMAT(DIVIDE([Pedidos de informação respondidos no prazo], [Pedidos de informação no ano]), "0.0%") & " respondidos no prazo; " & FORMAT([Recursos dos pedidos de informação], "#,##0") & " recursos em " & YEAR([Data escolhida])
+		displayFolder: Demanda
+		lineageTag: 383e7db2-9ed3-5eec-8ca3-365a523395ed
 
 	column Medidas
 		dataType: string

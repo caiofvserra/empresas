@@ -102,7 +102,7 @@ export const CARTOES = {
     doIndicador(PASTA.riscos, 'perto', `"de " & ${rs('[Anuidades vencidas]')} & " de anuidades vencidas"`),
     doIndicador(PASTA.riscos, 'prescricao', '"prescrevem em até um ano sem voto"'),
     doIndicador(PASTA.riscos, 'vermelho', '"mais de 120 dias no mesmo status do Votenet"'),
-    doIndicador(PASTA.riscos, 'atrasadas', `"de " & ${n('[Solicitações de atendimento]')} & " solicitações em 12 meses"`),
+    doIndicador(PASTA.riscos, 'atrasadas', `"de " & ${n('[Protocolos abertos]')} & " protocolos abertos em 12 meses"`),
     doIndicador(PASTA.riscos, 'execucao', '"despesa realizada sobre a prevista até o mês"'),
     doIndicador(PASTA.riscos, 'divida', '"de profissionais e empresas, na data"'),
   ],

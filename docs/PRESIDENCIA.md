@@ -18,13 +18,14 @@ Segue as regras de tela dos outros painéis. Cada página cabe numa tela Full HD
 Os filtros do alto são a regional, o município, a câmara, o período e a data de referência.
 
 - Os indicadores que o painel de origem conhece por município somam os municípios do recorte.
-- Os que ele só conhece por regional (o atendimento e as contagens de empresas) seguem a regional do município escolhido.
-- A receita e o orçamento são do Conselho inteiro.
+- As contagens de empresas, que o painel de Empresas só conhece por regional, seguem a regional do município escolhido.
+- Os protocolos de atendimento seguem o município de quem pediu, como no painel de Atendimento.
+- A receita, o orçamento e os contratos são os reais da Transparência, do Conselho inteiro, como no painel Financeiro.
 - A câmara só vale para os indicadores que o painel de origem divide por câmara:
   - nas empresas e na fiscalização, pela câmara da empresa;
   - nos profissionais, pela modalidade;
   - nos processos, pelo colegiado.
-- A dívida de anuidades e o atendimento ficam do Conselho inteiro com qualquer câmara, e o bloco avisa.
+- A dívida de anuidades e os protocolos de atendimento ficam do Conselho inteiro com qualquer câmara, e o bloco avisa.
 
 ## O que cada página tem
 
@@ -41,7 +42,7 @@ Os filtros do alto são a regional, o município, a câmara, o período e a data
   | Profissionais | profissionais com registro ativo | registros novos; anuidade em dia (meta 60%); ARTs de profissionais |
   | Fiscalização | ações que terminaram em regularização (meta 50%) | ações de fiscalização; autos de infração; multas aplicadas |
   | Financeiro | receita do Conselho | anuidades vencidas; dívida perto de prescrever; orçamento de despesa executado no ano |
-  | Atendimento | solicitações resolvidas no prazo (meta 80%) | solicitações; solicitações em aberto com o prazo vencido |
+  | Atendimento | protocolos fechados no prazo (meta 80%) | protocolos abertos; protocolos na fila e fora do prazo |
   | Gestão do Conselho | processos esperando voto | processos em alerta vermelho; autos perto da prescrição; processos votados |
 
   Embaixo, três blocos:
@@ -52,7 +53,7 @@ Os filtros do alto são a regional, o município, a câmara, o período e a data
   - quantas regionais estão na meta de mercado;
   - a regional com mais processos esperando voto;
   - a regional com mais anuidades vencidas;
-  - a regional com menos atendimento no prazo;
+  - a regional com menos protocolos fechados no prazo;
   - a regional com menos regularização;
   - a regional com a maior alta de profissionais.
 
@@ -64,16 +65,16 @@ Os filtros do alto são a regional, o município, a câmara, o período e a data
   - dívida perto de prescrever;
   - autos perto da prescrição;
   - processos em alerta vermelho;
-  - solicitações com prazo vencido;
-  - despesa do orçamento;
-  - contratos que terminam em 90 dias.
+  - protocolos na fila e fora do prazo;
+  - execução do orçamento do ano (real, da Transparência);
+  - contratos que terminam em 90 dias (reais, da Transparência).
 
   Blocos:
   - o que vence em cada um dos próximos 12 meses;
   - os 12 prazos mais próximos, com o nome;
   - a dívida perto de prescrever por regional;
   - a fila de cada colegiado pelo tempo no status;
-  - a receita e a despesa do ano contra o previsto.
+  - a receita e a despesa do ano contra o orçado (reais, da Transparência).
 - **No país.** Só dados públicos reais, com o selo "Real":
   - o Crea-SP ao lado dos outros Creas (Confea e IBGE);
   - a receita e a despesa publicadas desde 2013;

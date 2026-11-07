@@ -14,7 +14,7 @@ import type { Pendente } from '../domain/colegiado';
 import { indicador, porRegionalDaFoto, valorDe } from '../domain/presidencia';
 import { abrirDevedores, compacto, eixoCategoria, eixoValor, g, legenda } from '../gestao/comum';
 import { abrirPendentes, nomeDe } from '../conselho/comum';
-import { misturar, nomeGre, ondeTexto } from './comum';
+import { misturar, nomeGre, ondeTexto, useLeitura } from './comum';
 import { fin, fonteReal, mesDaData, mesesAte } from '../financeiro/dados';
 import { abrirContratos, nomeProprio } from '../financeiro/blocos-orcamento';
 
@@ -45,11 +45,10 @@ function useCalendario(ctx: CockpitCtx) {
 }
 
 export default function PaginaRiscos({ ctx }: { ctx: CockpitCtx }) {
-  const gestao = g(ctx), c = gestao.colegiado!, d = gestao.divida, a = ctx.estrutura?.atendimento ?? null, cal = useCalendario(ctx);
+  const gestao = g(ctx), c = gestao.colegiado!, d = gestao.divida, l = useLeitura(ctx), cal = useCalendario(ctx);
   const perto = d.devedores.filter(row => d.pertoIds.includes(row.pessoaId)), vermelho = c.pendentes.filter(row => alertaNoStatus(row.diasNoStatus) === 'vermelho');
   const mesReal = mesDaData(ctx.anchor), despesa = execucaoDoAno(fin, 'despesa', mesReal), receita = execucaoDoAno(fin, 'receita', mesReal);
   const contratos90 = contratosQueTerminam(fin, ctx.anchor, 3);
-  const vencidas = a?.partes['Em aberto, prazo vencido'] ?? [];
   return <div className="ck-grid ck-grid-pr-riscos">
     <section className="ck-cards is-six" style={{ gridArea: 'kpi' }} aria-label="Os riscos e os prazos">
       <Indicador destaque ctx={ctx} ficha="k-perto" aspecto="Financeiro" label="Dívida perto de prescrever" value={brl(d.pertoDePrescrever)} sub={`com ${int(perto.length)} devedores; prescreve em menos de um ano`}
@@ -58,7 +57,7 @@ export default function PaginaRiscos({ ctx }: { ctx: CockpitCtx }) {
         onOpen={() => abrirPendentes(ctx, 'Autos perto da prescrição', c.pertoDePrescrever, 'Autos de infração esperando voto que prescrevem em até um ano: cinco anos do fato ou três anos parados no mesmo status.')} />
       <Indicador ctx={ctx} ficha="k-vermelho" aspecto="Gestão do Conselho" label="Processos em alerta vermelho" value={int(vermelho.length)} sub={`mais de 120 dias no mesmo status; ${int(vermelho.filter(row => row.diasTotais > 365).length)} há mais de um ano no total`}
         onOpen={() => abrirPendentes(ctx, 'Processos em alerta vermelho', vermelho, 'Processos esperando voto há mais de 120 dias no mesmo status do Votenet.')} />
-      <Indicador ctx={ctx} ficha="k-vencidas" aspecto="Atendimento" label="Solicitações com prazo vencido" value={a ? int(vencidas.length) : '…'} sub={a ? `em aberto, de ${int(a.pedidos.length)} solicitações no período${ctx.cidadeId ? ' (na regional)' : ''}` : 'calculando…'} onOpen={() => ctx.go('atendimento')} />
+      <Indicador ctx={ctx} ficha="k-vencidas" aspecto="Atendimento" label="Protocolos na fila e fora do prazo" value={l.atual ? int(l.valor('atrasadas') ?? 0) : '…'} sub={l.atual ? `de ${int(l.valor('solicitacoes') ?? 0)} protocolos abertos no período, ${ondeTexto(ctx)}` : 'calculando…'} onOpen={() => ctx.go('equipe')} />
       <Indicador ctx={ctx} ficha="k-orcamento" aspecto="Real · Financeiro" label={`Execução do orçamento de ${mesReal.slice(0, 4)}`} value={despesa.orcado ? pct(despesa.realizado / despesa.orcado * 100) : '—'}
         sub={`da despesa orçada, até ${mes(mesReal)}; a receita está em ${receita.orcado ? pct(receita.realizado / receita.orcado * 100) : '—'} da orçada`} onOpen={() => ctx.go('orcamento')} />
       <Indicador ctx={ctx} ficha="k-contratos" aspecto="Real · Financeiro" label="Contratos que terminam em 90 dias" value={int(contratos90.length)} sub={`${brl(contratos90.reduce((n, row) => n + row.valor, 0))} contratados, pela Transparência`}

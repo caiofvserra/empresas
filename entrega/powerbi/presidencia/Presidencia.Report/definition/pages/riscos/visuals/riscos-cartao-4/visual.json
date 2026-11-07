@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Solicitações em aberto com o prazo vencido"
+                  "Property": "Protocolos na fila e fora do prazo"
                 }
               },
-              "queryRef": "Medidas.Solicitações em aberto com o prazo vencido",
-              "nativeQueryRef": "Solicitações em aberto com o prazo vencido"
+              "queryRef": "Medidas.Protocolos na fila e fora do prazo",
+              "nativeQueryRef": "Protocolos na fila e fora do prazo"
             },
             {
               "field": {
@@ -37,11 +37,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Comparação: Solicitações em aberto com o prazo vencido"
+                  "Property": "Comparação: Protocolos na fila e fora do prazo"
                 }
               },
-              "queryRef": "Medidas.Comparação: Solicitações em aberto com o prazo vencido",
-              "nativeQueryRef": "Comparação: Solicitações em aberto com o prazo vencido"
+              "queryRef": "Medidas.Comparação: Protocolos na fila e fora do prazo",
+              "nativeQueryRef": "Comparação: Protocolos na fila e fora do prazo"
             },
             {
               "field": {
@@ -51,11 +51,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Solicitações em aberto com o prazo vencido"
+                  "Property": "Detalhe: Protocolos na fila e fora do prazo"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Solicitações em aberto com o prazo vencido",
-              "nativeQueryRef": "Detalhe: Solicitações em aberto com o prazo vencido"
+              "queryRef": "Medidas.Detalhe: Protocolos na fila e fora do prazo",
+              "nativeQueryRef": "Detalhe: Protocolos na fila e fora do prazo"
             }
           ]
         }
@@ -90,7 +90,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Solicitações em aberto com o prazo vencido'"
+                  "Value": "'Protocolos na fila e fora do prazo'"
                 }
               }
             }

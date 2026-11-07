@@ -1,0 +1,99 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "equipe-calor",
+  "position": {
+    "x": 853,
+    "y": 160,
+    "z": 15000,
+    "width": 411,
+    "height": 268,
+    "tabOrder": 15000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Regionais"
+                    }
+                  },
+                  "Property": "GRE"
+                }
+              },
+              "queryRef": "Regionais.GRE",
+              "nativeQueryRef": "GRE",
+              "active": true
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Protocolos"
+                    }
+                  },
+                  "Property": "Trimestre"
+                }
+              },
+              "queryRef": "Protocolos.Trimestre",
+              "nativeQueryRef": "Trimestre",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Fechados no prazo nos meses do gráfico"
+                }
+              },
+              "queryRef": "Medidas.Fechados no prazo nos meses do gráfico",
+              "nativeQueryRef": "Fechados no prazo nos meses do gráfico",
+              "displayName": "No prazo"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Fechados no prazo, por regional e trimestre'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

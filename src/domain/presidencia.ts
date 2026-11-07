@@ -20,8 +20,8 @@ import { buildFiscalizacao } from '../painel/fiscalizacao';
 import type { Fiscalizacao } from '../painel/fiscalizacao';
 import { camaraDaEmpresa, janela, resumoFiscal } from '../painel/analise';
 import { artsPeriodo } from '../cockpit/medidas';
-import { estruturaDe } from '../cockpit/estrutura';
-import type { Atendimento } from '../cockpit/estrutura';
+import { buildAtendimento, quadroAtendimento } from './atendimento';
+import type { BaseAtendimento, QuadroAtendimento } from './atendimento';
 import type { Metas } from '../cockpit/leitura';
 
 /**
@@ -74,9 +74,9 @@ export const INDICADORES: Indicador[] = [
   def({ id: 'divida', painel: 'financeiro', nome: 'Anuidades vencidas', unidade: 'reais', tipo: 'estoque', sobeBom: false, lugar: 'municipio', camara: false }),
   def({ id: 'perto', painel: 'financeiro', nome: 'Dívida perto de prescrever', unidade: 'reais', tipo: 'estoque', sobeBom: false, lugar: 'municipio', camara: false }),
   def({ id: 'execucao', painel: 'financeiro', nome: 'Orçamento de despesa executado no ano', unidade: 'taxa', tipo: 'fluxo', sobeBom: true, lugar: 'estado' }),
-  def({ id: 'atendimento', painel: 'atendimento', nome: 'Solicitações resolvidas no prazo', unidade: 'taxa', tipo: 'fluxo', sobeBom: true, lugar: 'regional', meta: 'atendimento', principal: true }),
-  def({ id: 'solicitacoes', painel: 'atendimento', nome: 'Solicitações de atendimento', unidade: 'contagem', tipo: 'fluxo', sobeBom: true, lugar: 'regional' }),
-  def({ id: 'atrasadas', painel: 'atendimento', nome: 'Solicitações em aberto com o prazo vencido', unidade: 'contagem', tipo: 'estoque', sobeBom: false, lugar: 'regional' }),
+  def({ id: 'atendimento', painel: 'atendimento', nome: 'Protocolos fechados no prazo', unidade: 'taxa', tipo: 'fluxo', sobeBom: true, lugar: 'municipio', camara: false, meta: 'atendimento', principal: true }),
+  def({ id: 'solicitacoes', painel: 'atendimento', nome: 'Protocolos abertos', unidade: 'contagem', tipo: 'fluxo', sobeBom: true, lugar: 'municipio', camara: false }),
+  def({ id: 'atrasadas', painel: 'atendimento', nome: 'Protocolos na fila e fora do prazo', unidade: 'contagem', tipo: 'estoque', sobeBom: false, lugar: 'municipio', camara: false }),
   def({ id: 'pendentes', painel: 'conselho', nome: 'Processos esperando voto', unidade: 'contagem', tipo: 'estoque', sobeBom: false, lugar: 'municipio', principal: true }),
   def({ id: 'vermelho', painel: 'conselho', nome: 'Processos em alerta vermelho', unidade: 'contagem', tipo: 'estoque', sobeBom: false, lugar: 'municipio' }),
   def({ id: 'prescricao', painel: 'conselho', nome: 'Autos perto da prescrição', unidade: 'contagem', tipo: 'estoque', sobeBom: false, lugar: 'municipio' }),
@@ -102,24 +102,25 @@ export function variacao(ind: Indicador, agora: Parcela, antes: Parcela): number
 /** As bases que a foto lê numa data: as mesmas que os painéis de cada assunto montam. */
 export interface InsumosPresidencia {
   view: Dataset; periodo: number; modelo: EnterpriseModel; profissionais: ModeloProfissionais; f: Fiscalizacao;
-  conselho: Conselho; carteira: Carteira; colegiado: BaseColegiado; atendimento: Map<string, Atendimento>;
+  conselho: Conselho; carteira: Carteira; colegiado: BaseColegiado; atendimento: QuadroAtendimento;
   /** O recorte e o modelo de empresas do estado ("SP") e de cada regional, como o painel de Empresas monta com o filtro de regional. */
   empresas: Map<string, { scope: Scope; modelo: EnterpriseModel }>;
   /** A câmara de cada empresa, pela atividade da matriz (a mesma do filtro de câmara dos painéis). */
   camaraDe: Map<string, string>;
 }
-const porBase = new WeakMap<Dataset, { carteira: Carteira; colegiado: BaseColegiado; fiscalizacao: Fiscalizacao; profissionais: ModeloProfissionais; camaraDe: Map<string, string> }>();
-/** O que não depende da data (a carteira de títulos, as tramitações, a fiscalização inteira e a câmara das empresas), montado uma vez por base. */
+const porBase = new WeakMap<Dataset, { carteira: Carteira; colegiado: BaseColegiado; fiscalizacao: Fiscalizacao; profissionais: ModeloProfissionais; camaraDe: Map<string, string>; atendimento: BaseAtendimento }>();
+/** O que não depende da data (a carteira de títulos, as tramitações, a fiscalização inteira, a câmara das empresas e os protocolos), montado uma vez por base. */
 function daBase(dataset: Dataset) {
   let value = porBase.get(dataset);
-  if (!value) { const profissionais = buildProfissionais(dataset); value = { profissionais, carteira: buildCarteira(dataset, profissionais), colegiado: buildColegiado(dataset), fiscalizacao: buildFiscalizacao(dataset), camaraDe: camaraDaEmpresa(dataset) }; porBase.set(dataset, value); }
+  if (!value) { const profissionais = buildProfissionais(dataset); value = { profissionais, carteira: buildCarteira(dataset, profissionais), colegiado: buildColegiado(dataset), fiscalizacao: buildFiscalizacao(dataset), camaraDe: camaraDaEmpresa(dataset), atendimento: buildAtendimento(dataset) }; porBase.set(dataset, value); }
   return value;
 }
 /** Monta as bases da foto na data (a base lida como estava nela) e no período. Leva cerca de dois segundos. */
 export function insumosPresidencia(dataset: Dataset, anchor: string, periodo: number): InsumosPresidencia {
   const view = datasetAt(dataset, anchor), base = daBase(dataset);
   const empresas = new Map([ESTADO, ...dataset.gres.map(gre => gre.id)].map(lugar => { const scope = selectEnterpriseScope(view, { ...defaultFilters, period: periodo, greIds: lugar === ESTADO ? [] : [lugar] }); return [lugar, { scope, modelo: buildEnterpriseModel(scope) }]; }));
-  const atendimento = new Map(dataset.gres.map(gre => [gre.id, estruturaDe(view, gre.id, periodo).atendimento]));
+  // Os protocolos saem da base inteira e são lidos na data, como no painel de Atendimento.
+  const atendimento = quadroAtendimento(base.atendimento, { anchor, period: periodo, recorte: { greId: null, cityId: null, tipo: null, unidade: null } });
   return { view, periodo, modelo: empresas.get(ESTADO)!.modelo, profissionais: buildProfissionais(view), f: fiscalizacaoAt(base.fiscalizacao, anchor), conselho: buildConselho(view), carteira: base.carteira, colegiado: base.colegiado, atendimento, empresas, camaraDe: base.camaraDe };
 }
 
@@ -177,10 +178,12 @@ export function fotoPresidencia(ins: InsumosPresidencia): FotoPresidencia {
     if (pertoIds.has(devedor.pessoaId) && (Date.parse(anchor) - Date.parse(t.vencimento)) / 86400000 > 1461) somar('perto', t.cityId, '', t.valor);
   }
 
-  // Atendimento: o painel conhece a regional, e não o município nem a câmara.
-  for (const [greId, a] of ins.atendimento) {
-    const ok = a.partes['Resolvido no prazo'].length, fora = a.partes['Resolvido com atraso'].length + a.partes['Em aberto, prazo vencido'].length;
-    somar('atendimento', greId, '', ok, ok + fora); somar('solicitacoes', greId, '', a.pedidos.length); somar('atrasadas', greId, '', a.partes['Em aberto, prazo vencido'].length);
+  // Atendimento: os protocolos abertos no período, pelo município de quem pediu, sem câmara. Fechados no prazo entre os fechados (o
+  // cancelado não entra), como na página Protocolos; na fila e fora do prazo, como na página Equipe.
+  for (const l of ins.atendimento.linhas) {
+    somar('solicitacoes', l.p.cityId, '', 1);
+    if (l.situacao === 'Fechado') somar('atendimento', l.p.cityId, '', l.prazo === 'Dentro do prazo' ? 1 : 0, 1);
+    if (l.com && (l.situacao === 'Aberto' || l.situacao === 'Exigência') && l.prazo === 'Fora do prazo') somar('atrasadas', l.p.cityId, '', 1);
   }
 
   // Conselho: a fila do colegiado inteiro, pelo lugar do processo e pelo colegiado onde ele está (a câmara ou o Plenário).

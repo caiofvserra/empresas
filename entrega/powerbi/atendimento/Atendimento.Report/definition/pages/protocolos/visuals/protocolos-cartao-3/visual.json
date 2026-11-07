@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "protocolos-cartao-3",
+  "position": {
+    "x": 435,
+    "y": 68,
+    "z": 9000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Tempo típico até fechar"
+                }
+              },
+              "queryRef": "Medidas.Tempo típico até fechar",
+              "nativeQueryRef": "Tempo típico até fechar"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Tempo típico até fechar"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Tempo típico até fechar",
+              "nativeQueryRef": "Comparação: Tempo típico até fechar"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Tempo típico até fechar"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Tempo típico até fechar",
+              "nativeQueryRef": "Detalhe: Tempo típico até fechar"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tempo típico até fechar'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -20,7 +20,7 @@ export type PaginaEmpresas = 'mercado' | 'evolucao' | 'rt' | 'vinculos';
 export type PaginaProfissionais = 'profissionais' | 'fluxo' | 'atuacao' | 'formacao' | 'trabalho';
 export type PaginaFiscalizacao = 'fiscalizacao' | 'resultado' | 'malha' | 'contratos' | 'obras';
 export type PaginaFinanceiro = 'arrecadacao' | 'receita' | 'divida' | 'orcamento';
-export type PaginaAtendimento = 'atendimento';
+export type PaginaAtendimento = 'protocolos' | 'equipe' | 'demanda';
 export type PaginaConselho = 'colegiado' | 'processos' | 'conselheiros' | 'decisoes' | 'representacao';
 export type PageId = PaginaPresidencia | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaFinanceiro | PaginaAtendimento | PaginaConselho;
 export const pageIdsPresidencia: PaginaPresidencia[] = ['resumo', 'regionais', 'riscos', 'pais'];
@@ -28,7 +28,7 @@ export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', '
 export const pageIdsProfissionais: PaginaProfissionais[] = ['profissionais', 'fluxo', 'atuacao', 'formacao', 'trabalho'];
 export const pageIdsFiscalizacao: PaginaFiscalizacao[] = ['fiscalizacao', 'resultado', 'malha', 'contratos', 'obras'];
 export const pageIdsFinanceiro: PaginaFinanceiro[] = ['arrecadacao', 'receita', 'divida', 'orcamento'];
-export const pageIdsAtendimento: PaginaAtendimento[] = ['atendimento'];
+export const pageIdsAtendimento: PaginaAtendimento[] = ['protocolos', 'equipe', 'demanda'];
 export const pageIdsConselho: PaginaConselho[] = ['colegiado', 'processos', 'conselheiros', 'decisoes', 'representacao'];
 export const pageIds: PageId[] = [...pageIdsPresidencia, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao, ...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho];
 /** Painel em que cada página está: um destaque de outro painel abre aquele painel. */
@@ -86,6 +86,6 @@ export function leitura(input: LeituraInput): Insight[] {
   const c = input.conselho;
   if (c?.fimMeioAtual.taxaFim != null) out.push({ tone: 'neutral', strong: pct(c.fimMeioAtual.taxaFim), text: `da despesa dos últimos 12 meses foi com fiscalização, atendimento e ações institucionais, e ${brl(c.fimMeioAtual.meio)} foram para administração.`, page: 'orcamento' });
   const taxa = estrutura?.atendimento.taxaNoPrazo ?? null;
-  if (taxa !== null) out.push({ tone: taxa >= metas.atendimento ? 'good' : 'bad', strong: pct(taxa), text: `das solicitações de atendimento foram resolvidas em até 14 dias. A meta é ${metas.atendimento}%.`, page: 'atendimento' });
+  if (taxa !== null) out.push({ tone: taxa >= metas.atendimento ? 'good' : 'bad', strong: pct(taxa), text: `das solicitações de atendimento foram resolvidas em até 14 dias. A meta é ${metas.atendimento}%.`, page: 'protocolos' });
   return out;
 }

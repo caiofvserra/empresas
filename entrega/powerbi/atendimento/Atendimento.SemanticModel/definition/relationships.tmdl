@@ -7,13 +7,45 @@ relationship 4a211559-d61e-5b13-abd1-69b1c32baf58
 	fromColumn: 'Profissionais ativos'.'Código IBGE'
 	toColumn: 'Municípios'.'Código IBGE'
 
-relationship af622c8b-cbde-532d-a227-e1337f2b8414
-	fromColumn: 'Solicitações'.GRE
-	toColumn: Regionais.GRE
+relationship acd4b7d6-2ba1-51e8-85a5-495efb993c17
+	fromColumn: Protocolos.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
 
-relationship 5aebe58a-5bc6-528c-9c70-bc6221eb8adb
-	fromColumn: 'Solicitações'.'Mês'
+relationship 358e3876-a540-51b0-9ee2-a5fef1765203
+	fromColumn: Protocolos.'Mês'
 	toColumn: 'Calendário'.'Mês'
+
+relationship ff336e70-242b-53be-a1ae-4748640dd76f
+	fromColumn: 'Foto dos protocolos'.Protocolo
+	toColumn: Protocolos.Protocolo
+
+relationship 9c49d042-cbb5-5898-83e2-647a7618d387
+	fromColumn: 'Foto dos protocolos'.Pessoa
+	toColumn: Colaboradores.Pessoa
+
+relationship 9c0ea4c1-cf10-510b-857c-eab9e3639320
+	fromColumn: 'Aberturas na Receita'.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship 7863e125-8786-57f7-a5c5-dbdd76c1cb28
+	fromColumn: 'Aberturas na Receita'.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship 9d56dfb5-1935-5b93-9eee-4d1dfe491f34
+	fromColumn: 'ARTs por mês'.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship 25c4fc99-e835-56bf-aa12-c1c1c3bdd3cc
+	fromColumn: 'ARTs por mês'.'Mês'
+	toColumn: 'Calendário'.'Mês'
+
+relationship c69215c5-2df0-5c0f-b6f3-7cfd1a8ca682
+	fromColumn: Concluintes.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship dcb0066e-f80e-5270-bff4-7c769278576f
+	fromColumn: 'Formados registrados'.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
 
 relationship c5eeb117-c9f8-5951-8ee3-7defb8431d54
 	fromColumn: Coworkings.GRE

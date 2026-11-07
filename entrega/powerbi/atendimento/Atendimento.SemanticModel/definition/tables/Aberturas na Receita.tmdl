@@ -1,0 +1,47 @@
+/// Guarda cada estabelecimento com atividade de engenharia aberto na Receita Federal, com o primeiro pedido de registro da empresa no Crea-SP entre 30 dias antes e 180 dias depois da abertura.
+table 'Aberturas na Receita'
+	isHidden
+	lineageTag: 9fa0fbf9-3984-5a43-89e6-2e61f444b8b8
+
+	column Estabelecimento
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Estabelecimento
+		lineageTag: eb11244a-07e9-5950-a9fc-10e21ad63d97
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 1343ef8a-93fc-5f9c-8b7e-c1c23c0941b7
+
+	column 'Aberta em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Aberta em
+		lineageTag: be92ae07-4474-5731-8279-611f5cd21456
+
+	column 'Mês'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Mês
+		lineageTag: f5374bcc-739a-579e-9bcc-e0d44f352855
+
+	column 'Pediu registro em'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Pediu registro em
+		lineageTag: d0fbbdc2-15a7-5128-9d80-cd6a06fea61f
+
+	partition 'Aberturas na Receita' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "aberturas-receita.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Estabelecimento", type text}, {"Código IBGE", type text}, {"Aberta em", type date}, {"Mês", type date}, {"Pediu registro em", type date}}, "pt-BR")
+				in
+				    Tipos

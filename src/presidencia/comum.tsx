@@ -18,7 +18,7 @@ export const destino: Record<IndicadorId, PageId> = {
   profissionais: 'profissionais', novos: 'fluxo', anuidadePf: 'profissionais', artsProfissionais: 'atuacao',
   regularizacao: 'resultado', acoes: 'fiscalizacao', autos: 'fiscalizacao', multas: 'fiscalizacao',
   receita: 'receita', divida: 'receita', perto: 'receita', execucao: 'orcamento',
-  atendimento: 'atendimento', solicitacoes: 'atendimento', atrasadas: 'atendimento',
+  atendimento: 'protocolos', solicitacoes: 'protocolos', atrasadas: 'equipe',
   pendentes: 'colegiado', vermelho: 'processos', prescricao: 'processos', votados: 'colegiado',
 };
 /** O número no formato do indicador: taxa com uma casa, contagem inteira, reais compactos. */
@@ -75,8 +75,8 @@ export function misturar(a: string, b: string, t: number) {
 /** Valor de taxa com poucos casos fica de fora do mapa: abaixo deste denominador, o município aparece como "poucos dados". */
 export const MINIMO_TAXA = 5;
 /**
- * Por que o número não segue todo o recorte: o atendimento e as contagens de empresas não descem ao município, a receita e o
- * orçamento são do Conselho inteiro, e a dívida e o atendimento não têm câmara. Nulo quando o número segue o recorte inteiro.
+ * Por que o número não segue todo o recorte: as contagens de empresas não descem ao município, a receita e o orçamento são do
+ * Conselho inteiro, e a dívida e os protocolos de atendimento não têm câmara. Nulo quando o número segue o recorte inteiro.
  */
 export function ressalva(ctx: CockpitCtx, ind: Indicador) {
   if (ind.lugar === 'estado' && (ctx.greId || ctx.cidadeId || ctx.camara)) return 'do Conselho inteiro';

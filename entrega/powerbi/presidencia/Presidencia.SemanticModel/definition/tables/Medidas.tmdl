@@ -339,53 +339,53 @@ table Medidas
 		displayFolder: Séries de 13 meses
 		lineageTag: 04a94b9f-bdde-5c8d-9ae6-0b37a4f9c946
 
-	/// Mostra a taxa (numerador sobre denominador) do indicador "Solicitações resolvidas no prazo" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
-	measure 'Solicitações resolvidas no prazo' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "atendimento")
+	/// Mostra a taxa (numerador sobre denominador) do indicador "Protocolos fechados no prazo" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Protocolos fechados no prazo' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "atendimento")
 		formatString: 0.0%
 		displayFolder: Indicadores
-		lineageTag: 8420a1ba-0136-53e8-97e9-0a422dae8acf
+		lineageTag: 8044d8b5-c916-56b7-b093-8ddd9a6800b8
 
 	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
-	measure 'Solicitações resolvidas no prazo no mês' = ```
+	measure 'Protocolos fechados no prazo no mês' = ```
 			VAR m = MAX('Meses da série'[Data])
 			VAR d = [Data escolhida]
-			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Solicitações resolvidas no prazo], 'Datas das fotos'[Data] = m))
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Protocolos fechados no prazo], 'Datas das fotos'[Data] = m))
 			```
 		formatString: 0.0%
 		displayFolder: Séries de 13 meses
-		lineageTag: d703d51d-3d56-554f-a913-ad95474c8d06
+		lineageTag: 8a284588-19fc-5c7e-8f55-a3a0a057ae5f
 
-	/// Mostra a contagem do indicador "Solicitações de atendimento" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
-	measure 'Solicitações de atendimento' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "solicitacoes")
+	/// Mostra a contagem do indicador "Protocolos abertos" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Protocolos abertos' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "solicitacoes")
 		formatString: #,##0
 		displayFolder: Indicadores
-		lineageTag: 58d7804c-55d5-53a2-8409-5f643b7b5917
+		lineageTag: 4d5c8049-172e-5f2f-ab4b-89416460c9a8
 
 	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
-	measure 'Solicitações de atendimento no mês' = ```
+	measure 'Protocolos abertos no mês' = ```
 			VAR m = MAX('Meses da série'[Data])
 			VAR d = [Data escolhida]
-			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Solicitações de atendimento], 'Datas das fotos'[Data] = m))
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Protocolos abertos], 'Datas das fotos'[Data] = m))
 			```
 		formatString: #,##0
 		displayFolder: Séries de 13 meses
-		lineageTag: 69711443-7666-52f5-a8c3-c6cb8992f45e
+		lineageTag: 90daa00c-5cfb-5466-adec-fed40b35590f
 
-	/// Mostra a contagem do indicador "Solicitações em aberto com o prazo vencido" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
-	measure 'Solicitações em aberto com o prazo vencido' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "atrasadas")
+	/// Mostra a contagem do indicador "Protocolos na fila e fora do prazo" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
+	measure 'Protocolos na fila e fora do prazo' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "atrasadas")
 		formatString: #,##0
 		displayFolder: Indicadores
-		lineageTag: a4353b7a-9a04-5ab4-b887-3cf2d6dc32f7
+		lineageTag: 02d4e708-7388-5aa2-9e84-8e20ad3b0f8d
 
 	/// Lê o indicador no fim de cada mês do eixo, nos 13 meses até a data escolhida.
-	measure 'Solicitações em aberto com o prazo vencido no mês' = ```
+	measure 'Protocolos na fila e fora do prazo no mês' = ```
 			VAR m = MAX('Meses da série'[Data])
 			VAR d = [Data escolhida]
-			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Solicitações em aberto com o prazo vencido], 'Datas das fotos'[Data] = m))
+			RETURN IF(m <= d && m > EOMONTH(d, -13), CALCULATE([Protocolos na fila e fora do prazo], 'Datas das fotos'[Data] = m))
 			```
 		formatString: #,##0
 		displayFolder: Séries de 13 meses
-		lineageTag: a47407dd-1349-541b-9d96-1f4547f5dbbe
+		lineageTag: 4ded7f6f-8e85-5ff5-9242-b517b9775610
 
 	/// Mostra a contagem do indicador "Processos esperando voto" do painel de origem, no recorte e na data escolhidos, com a mesma regra do painel.
 	measure 'Processos esperando voto' = CALCULATE([Valor do indicador], REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "pendentes")
@@ -649,28 +649,28 @@ table Medidas
 		lineageTag: 57aacd97-8ff5-5b4d-aabe-776f976e8162
 
 	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Solicitações resolvidas no prazo' = ```
+	measure 'Variação em um ano: Protocolos fechados no prazo' = ```
 			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Solicitações resolvidas no prazo]
-			VAR antes = CALCULATE([Solicitações resolvidas no prazo], 'Datas das fotos'[Data] = alvo)
+			VAR agora = [Protocolos fechados no prazo]
+			VAR antes = CALCULATE([Protocolos fechados no prazo], 'Datas das fotos'[Data] = alvo)
 			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
 			```
 		formatString: +0.0;-0.0;0.0
 		displayFolder: Resumo
-		lineageTag: 23a6cb4a-c831-5718-aa0b-91a2d896463b
+		lineageTag: 477e0fa5-87b7-5987-84c6-1d3d2238982c
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Solicitações resolvidas no prazo' = ```
-			VAR v = [Variação em um ano: Solicitações resolvidas no prazo]
+	measure 'Comparação: Protocolos fechados no prazo' = ```
+			VAR v = [Variação em um ano: Protocolos fechados no prazo]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação a um ano antes")
 			```
 		displayFolder: Resumo
-		lineageTag: 9e3e83e2-7482-5484-8ecc-9daac5d70dab
+		lineageTag: c46ba67d-cbe7-557b-8081-8405fc2658bc
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Solicitações resolvidas no prazo' = "meta de " & FORMAT(CALCULATE(MAX('Indicadores'[Meta]), REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "atendimento"), "0%")
+	measure 'Detalhe: Protocolos fechados no prazo' = "meta de " & FORMAT(CALCULATE(MAX('Indicadores'[Meta]), REMOVEFILTERS('Indicadores'), 'Indicadores'[Indicador] = "atendimento"), "0%")
 		displayFolder: Resumo
-		lineageTag: 47ab0d1d-7e09-5963-83f6-d7a521df5a6a
+		lineageTag: a4a782e2-9bc3-5bb4-b30e-d1eaa2e6cfc5
 
 	/// Compara o cartão com o fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Processos esperando voto' = ```
@@ -769,28 +769,28 @@ table Medidas
 		lineageTag: 41e4662e-a617-586c-aa20-cd666cd5ef55
 
 	/// Compara o cartão com o fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Solicitações em aberto com o prazo vencido' = ```
+	measure 'Variação em um ano: Protocolos na fila e fora do prazo' = ```
 			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Solicitações em aberto com o prazo vencido]
-			VAR antes = CALCULATE([Solicitações em aberto com o prazo vencido], 'Datas das fotos'[Data] = alvo)
+			VAR agora = [Protocolos na fila e fora do prazo]
+			VAR antes = CALCULATE([Protocolos na fila e fora do prazo], 'Datas das fotos'[Data] = alvo)
 			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Riscos
-		lineageTag: 43a51cea-82a8-5944-ab7e-5ed25a697df3
+		lineageTag: 5c41e878-ce7e-5432-8f80-d60005f1e881
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Solicitações em aberto com o prazo vencido' = ```
-			VAR v = [Variação em um ano: Solicitações em aberto com o prazo vencido]
+	measure 'Comparação: Protocolos na fila e fora do prazo' = ```
+			VAR v = [Variação em um ano: Protocolos na fila e fora do prazo]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Riscos
-		lineageTag: 11e8aa92-34e0-55b0-8559-0d4abc332083
+		lineageTag: 0230d9c0-c240-5076-b458-6cd8270d3011
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Solicitações em aberto com o prazo vencido' = "de " & FORMAT([Solicitações de atendimento], "#,##0") & " solicitações em 12 meses"
+	measure 'Detalhe: Protocolos na fila e fora do prazo' = "de " & FORMAT([Protocolos abertos], "#,##0") & " protocolos abertos em 12 meses"
 		displayFolder: Riscos
-		lineageTag: 2da5a091-7de9-5b4b-aad6-9009171bbd8a
+		lineageTag: 68ee6517-fb83-5859-a6fa-47cf5d525218
 
 	/// Mostra, em pontos percentuais, quanto o cartão mudou desde o fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Orçamento de despesa executado no ano' = ```

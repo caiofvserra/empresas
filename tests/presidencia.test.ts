@@ -14,7 +14,7 @@ import { cobertura, contagens } from '../src/observatorio/norte.ts';
 import { artsPeriodo } from '../src/cockpit/medidas.ts';
 import { buildFiscalizacao } from '../src/painel/fiscalizacao.ts';
 import { camaraDaEmpresa, janela, porRegional, resumoFiscal } from '../src/painel/analise.ts';
-import { estruturaDe } from '../src/cockpit/estrutura.ts';
+import { buildAtendimento, quadroAtendimento } from '../src/domain/atendimento.ts';
 import { execucaoDoAno } from '../src/domain/financeiro.ts';
 import { fin, mesDaData, mesesAte, receitaDoMes } from '../src/financeiro/dados.ts';
 import { INDICADORES, fotoPresidencia, insumosPresidencia, porRegionalDaFoto, recortar, valorDe, variacao } from '../src/domain/presidencia.ts';
@@ -31,7 +31,7 @@ const profissionais = buildProfissionais(view), f = fiscalizacaoAt(buildFiscaliz
 const v = (valores: ReturnType<typeof recortar>, id: IndicadorId) => valorDe(INDICADORES.find(row => row.id === id)!, valores[id]);
 const perto = (a: number | null, b: number | null, msg: string) => { assert.ok(a !== null && b !== null, `${msg}: ${a} contra ${b}`); assert.ok(Math.abs(a! - b!) < 1e-6, `${msg}: ${a} contra ${b}`); };
 
-const camaraDe = camaraDaEmpresa(dataset);
+const camaraDe = camaraDaEmpresa(dataset), atendimento = buildAtendimento(dataset);
 /** Os números dos cartões de cada painel, com a regional, o município e a câmara escolhidos no alto da tela (cada painel aplica a câmara do seu jeito). */
 function dosPaineis(greId: string | null, cityId: string | null, camara: CamaraConselho | null = null) {
   const subset = camara ? view.companies.filter(row => camaraDe.get(row.id) === camara).map(row => row.id) : undefined;
@@ -41,7 +41,7 @@ function dosPaineis(greId: string | null, cityId: string | null, camara: CamaraC
   const fr = cityId ? { ...fc, acoes: fc.acoes.filter(row => row.cityId === cityId), alvos: fc.alvos.filter(row => row.cityId === cityId) } : fc, rf = resumoFiscal(fr, greId, periodo);
   const d = quadroDivida(carteira, hoje, { greId, cityId, camara: null }, w.start, w.prevEnd, []);
   const c = quadroColegiado(colegiado, profissionais, hoje, w.start, w.prevStart, w.prevEnd, { colegiado: camara, greId, cityId });
-  const a = estruturaDe(view, greId, periodo).atendimento, conselho = buildConselho(view);
+  const a = quadroAtendimento(atendimento, { anchor: hoje, period: periodo, recorte: { greId, cityId, tipo: null, unidade: null } }), conselho = buildConselho(view);
   // A receita e o orçamento são os reais da Transparência, como nas páginas Receita e Orçamento do painel Financeiro.
   const mesReal = mesDaData(hoje), receita = mesesAte(mesReal, periodo).reduce((n, m) => n + receitaDoMes(m), 0), ano = execucaoDoAno(fin, 'despesa', mesReal);
   return {
@@ -49,12 +49,13 @@ function dosPaineis(greId: string | null, cityId: string | null, camara: CamaraC
     profissionais: p.ativos.length, novos: p.novos.length, anuidadePf: p.taxaAdimplencia, artsProfissionais: p.arts.length,
     acoes: rf.acoes.length, autos: rf.autos.length, multas: rf.aplicada,
     receita, divida: d.total, perto: d.pertoDePrescrever, execucao: ano.realizado / ano.orcado * 100,
-    atendimento: a.taxaNoPrazo, solicitacoes: a.pedidos.length, atrasadas: a.partes['Em aberto, prazo vencido'].length,
+    // O Atendimento como nas páginas Protocolos (fechados no prazo, abertos no período) e Equipe (na fila e fora do prazo).
+    atendimento: a.noPrazo, solicitacoes: a.linhas.length, atrasadas: a.colaboradores.reduce((n, c) => n + c.filaFora.length, 0),
     pendentes: c.pendentes.length, vermelho: c.pendentes.filter(row => alertaNoStatus(row.diasNoStatus) === 'vermelho').length, prescricao: c.pertoDePrescrever.length, votados: c.votados.length,
   } satisfies Partial<Record<IndicadorId, number | null>>;
 }
 const semCamara = ['receita', 'divida', 'perto', 'execucao', 'atendimento', 'solicitacoes', 'atrasadas'] as const;
-const daRegional = ['empresas', 'rt', 'artsEmpresas', 'atendimento', 'solicitacoes', 'atrasadas'] as const;
+const daRegional = ['empresas', 'rt', 'artsEmpresas'] as const;
 
 test('presidência: no estado, cada indicador é o número do cartão do painel do assunto', () => {
   const estado = recortar(foto, dataset, { greId: null, cityId: null, camara: null }), paineis = dosPaineis(null, null);
@@ -70,8 +71,7 @@ test('presidência: numa regional e num município, os números são os do paine
   const regional = recortar(foto, dataset, { greId: gre, cityId: null, camara: null }), paineis = dosPaineis(gre, null);
   for (const [id, esperado] of Object.entries(paineis)) perto(v(regional, id as IndicadorId), esperado, `${gre}: ${id}`);
   const municipio = recortar(foto, dataset, { greId: gre, cityId: cidade, camara: null }), daCidade = dosPaineis(gre, cidade);
-  // O atendimento não tem município no painel dele, e as contagens de empresas não se somam entre municípios (a empresa com filiais
-  // conta em cada um): seguem a regional. A receita e o orçamento do Conselho não têm lugar: são os do estado.
+  // As contagens de empresas não se somam entre municípios (a empresa com filiais conta em cada um): seguem a regional. A receita e o orçamento do Conselho não têm lugar: são os do estado.
   for (const [id, esperado] of Object.entries(daCidade)) if (!(daRegional as readonly string[]).includes(id)) perto(v(municipio, id as IndicadorId), esperado, `${cidade}: ${id}`);
   for (const id of daRegional) perto(v(municipio, id), paineis[id], `${cidade}: ${id} segue a regional`);
 });
