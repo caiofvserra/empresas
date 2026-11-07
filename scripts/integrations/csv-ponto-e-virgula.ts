@@ -1,4 +1,4 @@
-/** Registros de um CSV com ";": campo entre aspas pode ter ponto e vírgula, aspas dobradas e quebra de linha (como gravam o csv do Python e a CGU). */
+/** Registros de um CSV com ";": campo entre aspas pode ter ponto e vírgula, aspas dobradas e quebra de linha. */
 export function registros(texto: string): string[][] {
   const saida: string[][] = []; let campos: string[] = [], atual = '', aspas = false;
   for (let i = 0; i < texto.length; i++) {
@@ -13,5 +13,5 @@ export function registros(texto: string): string[][] {
   return saida;
 }
 
-/** Sem acento, minúsculo e com espaços simples, para achar coluna pelo nome, como o `normalizar` do extracao-govadm: "Nº" vira "no". */
+/** Sem acento, minúsculo e com espaços simples, para achar coluna pelo nome: "Nº" vira "no" e "Órgão" vira "orgao". */
 export const normalizar = (texto: string) => texto.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();

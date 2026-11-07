@@ -15,26 +15,30 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { csv } from '../src/powerbi/csv.ts';
 import { colunasStagingSancoes, lerSancoes, linhaStaging, vigentes } from './integrations/sancoes.ts';
-import type { SancaoPj } from './integrations/sancoes.ts';
+import type { CadastroCgu, SancaoPj } from './integrations/sancoes.ts';
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const PORTAL_CGU = 'https://portaldatransparencia.gov.br/download-de-dados';
 const RECUO_DIAS = 10;
 const compacta = (dia: string) => dia.replaceAll('-', '');
+/** Grava num arquivo temporário e troca de nome: uma queda no meio não deixa arquivo pela metade. */
+const gravar = (arquivo: string, conteudo: string | Buffer) => { writeFileSync(`${arquivo}.tmp`, conteudo); renameSync(`${arquivo}.tmp`, arquivo); };
+/** Hoje no horário de Brasília: depois das 21h, o dia em UTC já é o seguinte. */
+const hojeEmBrasilia = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
 const diaAntes = (dia: string) => new Date(Date.parse(`${dia}T00:00:00Z`) - 86_400_000).toISOString().slice(0, 10);
 
 /** O ZIP mais recente do cadastro até a data. O portal responde 403 ou uma página quando o arquivo do dia ainda não saiu. */
-async function baixar(cadastro: 'ceis' | 'cnep', data: string, destino: string): Promise<{ dia: string; zip: string }> {
+async function baixar(cadastro: CadastroCgu, data: string, destino: string): Promise<{ dia: string; zip: string }> {
   for (let dia = data, recuo = 0; recuo <= RECUO_DIAS; recuo++, dia = diaAntes(dia)) {
-    const zip = join(destino, `${compacta(dia)}_${cadastro.toUpperCase()}.zip`);
+    const zip = join(destino, `${compacta(dia)}_${cadastro}.zip`);
     if (existsSync(zip)) return { dia, zip };
-    const resposta = await fetch(`${PORTAL_CGU}/${cadastro}/${compacta(dia)}`);
+    const resposta = await fetch(`${PORTAL_CGU}/${cadastro.toLowerCase()}/${compacta(dia)}`);
     const corpo = resposta.ok ? Buffer.from(await resposta.arrayBuffer()) : null;
     if (!corpo || corpo.subarray(0, 2).toString('latin1') !== 'PK') continue;
-    writeFileSync(`${zip}.tmp`, corpo); renameSync(`${zip}.tmp`, zip);
+    gravar(zip, corpo);
     return { dia, zip };
   }
-  throw new Error(`O Portal da Transparência não tem ${cadastro.toUpperCase()} em ${data} nem nos ${RECUO_DIAS} dias anteriores.`);
+  throw new Error(`O Portal da Transparência não tem ${cadastro} em ${data} nem nos ${RECUO_DIAS} dias anteriores.`);
 }
 
 /** O CSV de dentro do ZIP, em Latin-1, como a CGU publica. */
@@ -47,15 +51,15 @@ function lerZip(zip: string) {
 export async function coletar({ data, destino }: { data: string; destino: string }) {
   mkdirSync(destino, { recursive: true });
   const linhas: string[][] = [], todas: SancaoPj[] = [], arquivos: Record<string, string> = {};
-  for (const cadastro of ['ceis', 'cnep'] as const) {
+  for (const cadastro of ['CEIS', 'CNEP'] as const) {
     const { dia, zip } = await baixar(cadastro, data, destino), sancoes = lerSancoes(lerZip(zip));
-    if (!sancoes.length) throw new Error(`O ${cadastro.toUpperCase()} de ${dia} veio sem nenhuma sanção contra empresa: arquivo incompleto ou cabeçalho novo.`);
+    if (!sancoes.length) throw new Error(`O ${cadastro} de ${dia} veio sem nenhuma sanção contra empresa: arquivo incompleto ou cabeçalho novo.`);
     arquivos[cadastro] = dia; todas.push(...sancoes);
     for (const s of sancoes) linhas.push(linhaStaging(dia, s));
-    console.log(`${cadastro.toUpperCase()} de ${dia}: ${sancoes.length} sanções contra empresas`);
+    console.log(`${cadastro} de ${dia}: ${sancoes.length} sanções contra empresas`);
   }
   const arquivo = join(destino, colunasStagingSancoes.arquivo);
-  writeFileSync(`${arquivo}.tmp`, csv([...colunasStagingSancoes.colunas], linhas)); renameSync(`${arquivo}.tmp`, arquivo);
+  gravar(arquivo, csv([...colunasStagingSancoes.colunas], linhas));
   const emVigor = vigentes(todas, data), impedem = emVigor.filter(s => s.impedeContratar);
   const resumo = {
     arquivos, data, sancoes: todas.length, emVigor: emVigor.length,
@@ -69,7 +73,7 @@ export async function coletar({ data, destino }: { data: string; destino: string
 
 async function main(args: string[]) {
   const flag = (nome: string) => { const i = args.indexOf(nome); return i >= 0 ? args[i + 1] : undefined; };
-  const data = flag('--data') ?? new Date().toISOString().slice(0, 10);
+  const data = flag('--data') ?? hojeEmBrasilia();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) throw new Error('Uso: [--data AAAA-MM-DD] [--destino pasta]');
   await coletar({ data, destino: resolve(flag('--destino') ?? join(RAIZ, 'var/sancoes')) });
 }

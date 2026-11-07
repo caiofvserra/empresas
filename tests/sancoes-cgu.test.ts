@@ -30,13 +30,19 @@ test('lê o CEIS e o CNEP pelo nome das colunas: só pessoa jurídica, datas em 
   assert.throws(() => lerSancoes('"CADASTRO";"NOME"\n"CEIS";"X"'), /CPF OU CNPJ DO SANCIONADO/);
 });
 
-test('o que impede contratar e onde: inidoneidade vale em todas as esferas, mesmo quando a abrangência veio sem informação', () => {
+test('o que impede contratar e onde: vale o alcance que o órgão informou, e a inidoneidade sem alcance informado vale em todas as esferas', () => {
   const linha = (categoria: string, abrangencia: string) => lerSancoes(`${cabecalhoCeis}\n${ceis('J', '01234567000189', categoria, '01/01/2026', '', abrangencia)}`)[0];
-  assert.deepEqual([linha('Declaração de Inidoneidade sem prazo determinado', 'Sem Informação')].map(s => [s.impedeContratar, s.alcance]), [[true, 'Todas as esferas']]);
+  assert.deepEqual([linha('Declaração de Inidoneidade sem prazo determinado', 'Sem Informação')].map(s => [s.impedeContratar, s.alcance]), [[true, 'Todas as esferas']], 'sem alcance informado, a inidoneidade vale em todas as esferas');
   assert.deepEqual([linha('Suspensão', 'No órgão sancionador')].map(s => [s.impedeContratar, s.alcance]), [[true, 'Só o órgão']]);
   assert.deepEqual([linha('Suspensão/Interdição das atividades com prazo determinado', 'Sem Informação')].map(s => [s.impedeContratar, s.alcance]), [[false, 'Sem informação']]);
   assert.deepEqual([linha('Impedimento/proibição de contratar sem prazo determinado', 'Todas as Esferas em todos os Poderes')].map(s => [s.impedeContratar, s.alcance]), [[true, 'Todas as esferas']]);
-  assert.deepEqual([linha('Impedimento/proibição de contratar com prazo determinado', 'Na Esfera e no Poder do órgão sancionador')].map(s => s.alcance), ['Esfera do órgão']);
+  assert.deepEqual(['Na Esfera e no Poder do órgão sancionador', 'Em outro órgão'].map(a => linha('Impedimento/proibição de contratar com prazo determinado', a).alcance), ['Esfera e poder do órgão', 'Outro órgão']);
+  assert.equal(linha('Declaração de Inidoneidade com prazo determinado', 'No órgão sancionador').alcance, 'Só o órgão', 'o alcance que o órgão informou vale mais que a regra geral da lei');
+});
+
+test('CNPJ com 14 dígitos e tipo de pessoa vazio é empresa; CPF nunca entra', () => {
+  const texto = [cabecalhoCeis, ceis('', '01234567000189', 'Suspensão', '01/01/2026', '', 'No órgão sancionador'), ceis('', '12345678901', 'Suspensão', '01/01/2026', '', 'No órgão sancionador')].join('\n');
+  assert.deepEqual(lerSancoes(texto).map(s => s.cnpj), ['01234567000189']);
 });
 
 test('vigente na data: começou até a data e não terminou antes dela; sem data final, segue vigente', () => {
@@ -59,7 +65,7 @@ test('o contrato SQL do cruzamento descreve as colunas e os valores que o coleto
   const trecho = sql.match(/stg\.cgu_sancao\s+<- sancoes-pj\.csv[^\n]*\n--\s+\(([^)]*)\)/);
   assert.ok(trecho, 'o SQL descreve a carga de stg.cgu_sancao');
   assert.deepEqual(trecho[1].split(',').map(c => c.trim()), [...colunasStagingSancoes.colunas]);
-  const gravados = new Set(['Sim', 'Não', 'Todas as esferas', 'Esfera do órgão', 'Só o órgão', 'Sem informação', 'CEIS', 'CNEP', 'Federal', 'Estadual', 'Municipal']);
+  const gravados = new Set(['Sim', 'Não', 'Todas as esferas', 'Esfera do órgão', 'Esfera e poder do órgão', 'Só o órgão', 'Outro órgão', 'Sem informação', 'CEIS', 'CNEP', 'Federal', 'Estadual', 'Municipal']);
   const filtrados = [...sql.replace(/^--.*$/gm, '').matchAll(/(?:impede_contratar|alcance|cadastro|esfera)\s*(?:=|<>|IN\s*\()\s*'([^']*)'/g)].map(m => m[1]);
   assert.ok(filtrados.length >= 2, 'o SQL filtra por algum valor gravado');
   for (const v of filtrados) assert.ok(gravados.has(v), `valor filtrado no SQL que o coletor não grava: ${v}`);
