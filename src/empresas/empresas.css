@@ -122,7 +122,6 @@
 .geo-layout.is-compacto .geo-rank em { bottom: 1px; }
 .geo-layout.is-compacto .geo-legend { font-size: 11px; gap: 2px 8px; }
 @media (max-width: 1100px) {
-  .ck-rail-painel { flex: none; min-width: 72px; margin: 0; border: 0; }
   .ck-header.is-enxuto { grid-template-columns: minmax(0, 1fr); }
   .ck-filters.is-inline { justify-content: flex-start; }
   .geo-layout.is-compacto { min-height: 360px; }

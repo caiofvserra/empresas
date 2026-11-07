@@ -5,5 +5,4 @@
 .ck-rail .ck-voltar:focus-visible { outline: 2px solid #FABD07; outline-offset: 2px; }
 /* Tela baixa (até 760px): como os botões de baixo do menu lateral, o Voltar fica só com o ícone, para o menu lateral não rolar. */
 @media (max-height: 760px) and (min-width: 1101px) { .ck-rail .ck-voltar { margin-bottom: 2px; } .ck-rail .ck-voltar span { display: none; } }
-@media (max-width: 1100px) { .ck-rail .ck-voltar { flex: none; min-width: 64px; margin: 0 4px 0 0; } }
 @media (prefers-reduced-motion: reduce) { .ck-rail .ck-voltar { transition: none; } }

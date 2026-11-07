@@ -36,7 +36,7 @@
 .ck[data-painel="fiscalizacao"] .ck-header select option, .ck[data-painel="presidencia"] .ck-header select option { background: #1A202C; color: #F8F8F8; }
 
 /* ---------- Empresas: azul primário ---------- */
-.ck[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #082D74, #163E8C); --head-filete: linear-gradient(90deg, #082D74, #3182CE); --head-filete-h: 3px; }
+.ck[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #082D74, #163E8C 55%, #3182CE); --rail-ink: rgba(255,255,255,.84); --head-filete: linear-gradient(90deg, #082D74, #3182CE); --head-filete-h: 3px; }
 .ck[data-painel="empresas"] .ck-eyebrow { color: #082D74; }
 .ck.is-dark[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #01224D, #082D74); --head-filete: linear-gradient(90deg, #163E8C, #639CE0); }
 .ck.is-dark[data-painel="empresas"] .ck-eyebrow { color: #9CC3EE; }
@@ -116,3 +116,11 @@
 .ck-rail .ck-voltar { color: var(--rail-ink); }
 .ck-rail .ck-voltar:hover { color: var(--rail-hover-ink); background: var(--rail-hover-bg); }
 .ck-rail .ck-voltar:focus-visible { outline-color: var(--rail-foco); }
+
+/* Presidência (07/11/2026, depois da primeira olhada do Caio): o menu ganha uma base amarela embaixo, onde ficam Metas, Fontes e
+   o tema, para não confundir com o azul de hoje dos outros painéis. */
+.ck[data-painel="presidencia"] .ck-rail-bottom { margin: auto -6px -8px; padding: 8px 6px 10px; background: linear-gradient(180deg, #FFD148, #FABD07 40%, #E0AB0C); border-top: 0; }
+.ck[data-painel="presidencia"] .ck-rail-bottom button { color: #01224D; font-weight: 700; }
+.ck[data-painel="presidencia"] .ck-rail-bottom button:hover { color: #01224D; background: rgba(1,34,77,.1); }
+.ck[data-painel="presidencia"] .ck-rail-bottom :focus-visible { outline-color: #01224D; }
+.ck[data-painel="presidencia"] .ck-rail button.on { background: #FFFFFF; color: #01224D; }
