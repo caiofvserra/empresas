@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import type { ComponentType, ReactNode } from 'react';
-import { AlarmClock, ArrowUpRight, BadgeCheck, Briefcase, Building2, CalendarClock, ChartPie, ChevronDown, Construction, Database, FileSignature, Gavel, Globe2, GraduationCap, Handshake, HardHat, Headset, Landmark, Map as MapIcon, Moon, Network, RotateCcw, Scale, ScanSearch, ScrollText, Search, ShieldCheck, SlidersHorizontal, Sun, Target, TrendingUp, Users, Wallet, X } from 'lucide-react';
+import { AlarmClock, ArrowLeft, ArrowUpRight, BadgeCheck, Briefcase, Building2, CalendarClock, ChartPie, ChevronDown, Construction, Database, FileSignature, Gavel, Globe2, GraduationCap, Handshake, HardHat, Headset, Landmark, Map as MapIcon, Moon, Network, RotateCcw, Scale, ScanSearch, ScrollText, Search, ShieldCheck, SlidersHorizontal, Sun, Target, TrendingUp, Users, Wallet, X } from 'lucide-react';
 import { dataset } from '../domain/dataset';
 import { datasReferencia as datasReferenciaDe, datasetAt, fiscalizacaoAt } from '../domain/tempo';
 import { defaultFilters } from '../domain/types';
@@ -92,6 +92,7 @@ import '../fiscalizacao/fiscalizacao.css';
 import '../gestao/gestao.css';
 import '../painel/painel.css';
 import './cockpit.css';
+import './voltar.css';
 
 /**
  * V21 · Inteligência Estratégica Crea-SP (nome escolhido em 01/11/2026; antes Prumo, antes Observatório). Protótipo completo, revisado: 11 assuntos, data de referência (o painel como
@@ -179,7 +180,7 @@ const paineis: Record<PainelId, Painel> = {
   atendimento: { id: 'atendimento', nome: 'Inteligência Estratégica · Atendimento', paginas: paginasAtendimento, periodos: [3, 6, 12, 24], storage: 'crea-atendimento-v2', filtro: 'atendimento' },
   conselho: { id: 'conselho', nome: 'Inteligência Estratégica · Gestão do Conselho', paginas: paginasConselho, periodos: [3, 6, 12, 24], storage: 'crea-conselho-v3', filtro: 'colegiado' },
 };
-/** Atalhos do menu lateral, só no painel da Presidência. Os painéis temáticos são entregues sozinhos e não têm caminho de volta (pedido do Caio, 03/11/2026). */
+/** Atalhos do menu lateral, só no painel da Presidência. Nenhum painel tem atalho para a Presidência (pedido do Caio, 03/11/2026); no site, todos têm o botão Voltar para o menu inicial (07/11/2026). */
 const atalhos: { id: PainelId; label: string; title: string; icon: ComponentType<{ size?: number }> }[] = [
   { id: 'empresas', label: 'Empresas', title: 'Abrir o painel de Empresas', icon: Building2 },
   { id: 'profissionais', label: 'Profissionais', title: 'Abrir o painel de Profissionais', icon: HardHat },
@@ -188,9 +189,13 @@ const atalhos: { id: PainelId; label: string; title: string; icon: ComponentType
   { id: 'atendimento', label: 'Atendimento', title: 'Abrir o painel de Atendimento', icon: Headset },
   { id: 'conselho', label: 'Conselho', title: 'Abrir o painel de Gestão do Conselho', icon: Scale },
 ];
-/** Endereço de outro painel: no site, o HTML de cada painel (index.html, empresas.html...); na entrega em arquivo único, os HTML lado a lado na pasta entrega. */
+/** Endereço de outro painel: no site, o HTML de cada painel (presidencia.html, empresas.html...), e index.html é o menu que lista todos; na entrega em arquivo único, os HTML lado a lado na pasta entrega. */
+const naEntrega = /painel-[a-z-]+\.html$/.test(window.location.pathname);
+/** Verdadeiro só no site (vite.config.ts, `define`): o botão Voltar leva ao menu index.html, que não existe na entrega em arquivo único nem na página publicada do painel de Empresas. */
+declare const __SITE__: boolean | undefined;
+const noSite = typeof __SITE__ !== 'undefined' && __SITE__;
 const arquivos: Record<PainelId, { site: string; entrega: string }> = {
-  presidencia: { site: 'index.html', entrega: 'painel-presidencia-creasp.html' },
+  presidencia: { site: 'presidencia.html', entrega: 'painel-presidencia-creasp.html' },
   empresas: { site: 'empresas.html', entrega: 'painel-empresas-creasp.html' },
   profissionais: { site: 'profissionais.html', entrega: 'painel-profissionais-creasp.html' },
   fiscalizacao: { site: 'fiscalizacao.html', entrega: 'painel-fiscalizacao-creasp.html' },
@@ -199,7 +204,7 @@ const arquivos: Record<PainelId, { site: string; entrega: string }> = {
   conselho: { site: 'conselho.html', entrega: 'painel-conselho-creasp.html' },
 };
 export function enderecoPainel(id: PainelId, pagina?: PageId) {
-  const entrega = /painel-[a-z-]+\.html$/.test(window.location.pathname), arquivo = entrega ? arquivos[id].entrega : arquivos[id].site;
+  const arquivo = naEntrega ? arquivos[id].entrega : arquivos[id].site;
   return pagina ? `${arquivo}#${pagina}` : arquivo;
 }
 let STORAGE = 'crea-observatorio-v20';
@@ -430,6 +435,7 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
   return <div className={`ck ${dark ? 'is-dark' : ''} ${emD ? 'is-passado' : ''}`} aria-busy={pending}>
     <nav className="ck-rail" aria-label="Assuntos do painel">
       <div className="ck-logo" title="CREA-SP"><EngineeringEmblem /></div>
+      {noSite && <a className="ck-voltar" href="index.html" title="Voltar ao menu dos painéis"><ArrowLeft size={17} /><span>Voltar</span></a>}
       {pages.map((item, index) => <button key={item.id} className={page === item.id ? 'on' : ''} aria-current={page === item.id ? 'page' : undefined} onClick={() => setPage(item.id)} title={`${item.title} (tecla ${(index + 1) % 10})`}><item.icon size={18} /><span>{item.label}</span></button>)}
       {dePresidencia && <div className="ck-rail-paineis">{atalhos.map(item => <a key={item.id} className="ck-rail-painel" href={enderecoPainel(item.id)} title={item.title}><item.icon size={17} /><span>{item.label}<ArrowUpRight size={10} /></span></a>)}</div>}
       <div className="ck-rail-bottom">
