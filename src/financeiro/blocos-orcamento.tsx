@@ -1,210 +1,182 @@
 import { useMemo } from 'react';
 import { Chart } from '../painel/chart';
-import { brl, int, mes, money, pct } from '../painel/ui';
+import { brl, int, mes as rotuloMes, money, pct } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
 import type { Exportavel } from '../cockpit/ui';
-import { vencimentoContratos } from '../domain/gestao';
+import { cnpjComMascara } from '../cockpit/formatos';
 import { despesaPublicada, ufs } from '../cockpit/publico';
-import { abrirPessoaDiarias, change, compacto, eixoCategoria, eixoValor, g, legenda } from '../gestao/comum';
+import { concentracao, execucaoDoAno } from '../domain/financeiro';
+import type { DiariasPessoa, FornecedorNoPeriodo } from '../domain/financeiro';
+import { compacto, eixoCategoria, eixoValor, legenda } from '../gestao/comum';
+import { anosReais, contratosQueTerminam, despesaDoMes, diariasNoPeriodo, fin, fornecedoresNoPeriodo, gruposDespesa, nomesMes, nomesMesLongo, receitaDoMes } from './dados';
 
 /**
- * Blocos da página Orçamento e despesa (06/11/2026). Vêm da antiga aba Controle interno do painel geral, organizada como no QUEDA
- * (atividade-fim e meio, natureza, sede e território, diárias, fornecedores e contratos, pessoal), mais a execução acumulada do ano,
- * o calendário de vencimento dos contratos e a despesa publicada por profissional ativo. Nenhum bloco emite juízo sobre o gasto.
+ * Blocos da página Orçamento e despesa do painel Financeiro (07/11/2026), com a despesa, o orçamento, as diárias, os
+ * fornecedores e os contratos REAIS da Transparência do Crea-SP. Nenhum bloco emite juízo sobre o gasto: mostram quanto, em
+ * quê e para quem, e o (i) diz o cuidado de leitura.
  */
-const nomesMes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const dois = (n: number) => String(n).padStart(2, '0');
 
 /* ---------- Execução acumulada do ano ---------- */
-export const exportarExecucao = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Mês', 'Orçado acumulado', 'Realizado acumulado', 'Realizado acumulado no ano anterior'], linhas: () => g(ctx).despesaAcumulada.map(row => [nomesMes[row.mes - 1], row.previsto, row.realizado, row.realizadoAntes]) });
-export function ExecucaoAno({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = g(ctx).despesaAcumulada, ano = ctx.anchor.slice(0, 4), ultimo = rows.filter(row => row.realizado !== null).at(-1);
+export const exportarExecucao = (mes: string): Exportavel => ({ cabecalho: ['Mês', 'Realizado acumulado (R$)', 'Realizado acumulado no ano anterior (R$)', 'Orçado do ano (R$)'],
+  linhas: () => { const e = execucaoDoAno(fin, 'despesa', mes); return e.acumulado.map((row, i) => [nomesMes[i], row.realizado === null ? null : Math.round(row.realizado), Math.round(row.antes), Math.round(e.orcado)]); } });
+export function ExecucaoAno({ ctx, mes }: { ctx: CockpitCtx; mes: string }) {
+  const { tokens } = ctx, e = execucaoDoAno(fin, 'despesa', mes), ano = Number(mes.slice(0, 4));
   const option = useMemo(() => ({
-    grid: { top: 26, right: 8, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>Janeiro a ${nomesMes[row.mes - 1]}</b><br/>${row.realizado === null ? '' : `Realizado em ${ano}: ${money(row.realizado)} (${pct(row.realizado / Math.max(1, row.previsto!) * 100)} do orçado)<br/>Orçado: ${money(row.previsto!)}<br/>`}Realizado em ${Number(ano) - 1}: ${money(row.realizadoAntes)}`; } },
+    grid: { top: 30, right: 8, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens),
+    tooltip: { trigger: 'axis', formatter: (items: any[]) => { const i = items[0].dataIndex, row = e.acumulado[i]; return `<b>Janeiro a ${nomesMesLongo[i]}</b><br/>${row.realizado === null ? '' : `Realizado em ${ano}: <b>${money(row.realizado)}</b> (${pct(e.orcado ? row.realizado / e.orcado * 100 : 0)} do orçado do ano)<br/>`}Ritmo do orçado: ${money(e.orcado * (i + 1) / 12)}<br/>Realizado em ${ano - 1}: ${money(row.antes)}`; } },
     xAxis: eixoCategoria(tokens, nomesMes), yAxis: eixoValor(tokens),
     series: [
-      { name: `Orçado ${ano}`, type: 'bar', barWidth: '62%', barGap: '-100%', data: rows.map(row => row.previsto), itemStyle: { color: tokens.soft, borderColor: tokens.heat[1], borderWidth: 1, borderRadius: [3, 3, 0, 0] }, z: 1 },
-      { name: `Realizado ${ano}`, type: 'bar', barWidth: '34%', data: rows.map(row => row.realizado), itemStyle: { color: tokens.brand, borderRadius: [3, 3, 0, 0] }, z: 2,
-        label: { show: true, position: 'top', color: tokens.ink, fontSize: 9, formatter: (params: any) => { const row = rows[params.dataIndex]; return row.realizado === null || !row.previsto ? '' : pct(row.realizado / row.previsto * 100); } } },
-      { name: `Realizado ${Number(ano) - 1}`, type: 'line', data: rows.map(row => row.realizadoAntes), symbol: 'circle', symbolSize: 4, lineStyle: { color: tokens.accent, width: 1.6, type: [4, 4] }, itemStyle: { color: tokens.accent } },
+      { name: `Realizado ${ano}`, type: 'bar', barMaxWidth: 26, data: e.acumulado.map(row => row.realizado), itemStyle: { color: tokens.brand, borderRadius: [3, 3, 0, 0] },
+        label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, formatter: (params: any) => { const row = e.acumulado[params.dataIndex]; return row.realizado === null || !e.orcado ? '' : pct(row.realizado / e.orcado * 100); } } },
+      { name: 'Ritmo do orçado', type: 'line', data: e.acumulado.map((_, i) => e.orcado * (i + 1) / 12), symbol: 'none', lineStyle: { color: tokens.muted, width: 1.5, type: [5, 4] } },
+      { name: `Realizado ${ano - 1}`, type: 'line', data: e.acumulado.map(row => row.antes), symbol: 'circle', symbolSize: 3, lineStyle: { color: tokens.accent, width: 1.5 }, itemStyle: { color: tokens.accent } },
     ],
-  }), [rows, tokens, ano]);
-  return <div className="cs-com-nota">
-    <Chart option={option} tokens={tokens} label="Despesa orçada e realizada acumulada no ano" />
-    {ultimo?.previsto ? <p className="cs-nota"><b>{pct(ultimo.realizado! / ultimo.previsto * 100)}</b> do orçado até {nomesMes[ultimo.mes - 1]}</p> : null}
-  </div>;
+  }), [e, tokens, ano]);
+  return <div className="cs-com-nota"><Chart option={option} tokens={tokens} label="Despesa realizada acumulada no ano contra o orçado e o ano anterior" />
+    <p className="cs-nota"><b>{e.orcado ? pct(e.realizado / e.orcado * 100) : '—'}</b> do orçamento de {brl(e.orcado)} realizado até {nomesMesLongo[Number(mes.slice(5, 7)) - 1]}</p></div>;
 }
 
-/* ---------- Atividade-fim e atividade-meio por ano ---------- */
-export const exportarFimMeio = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Ano', 'Atividade-fim (R$)', 'Atividade-meio (R$)', 'Atividade-fim (%)'], linhas: () => ctx.conselho.fimMeio.map(row => [row.ano, Math.round(row.fim), Math.round(row.meio), Math.round(row.fim / Math.max(1, row.fim + row.meio) * 1000) / 10]) });
-export function FimMeio({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = ctx.conselho.fimMeio;
+/* ---------- Despesa por grupo: orçado do ano e realizado até o mês ---------- */
+const linhasGrupo = (mes: string) => { const ano = mes.slice(0, 4), ate = Number(mes.slice(5, 7));
+  return gruposDespesa.map(grupo => ({ grupo, orcado: fin.orcamento.find(row => row.ano === ano && row.tipo === 'despesa' && row.grupo === grupo)?.atual ?? 0,
+    realizado: Array.from({ length: ate }, (_, i) => despesaDoMes(`${ano}-${dois(i + 1)}`, grupo)).reduce((a, b) => a + b, 0),
+    antes: Array.from({ length: ate }, (_, i) => despesaDoMes(`${Number(ano) - 1}-${dois(i + 1)}`, grupo)).reduce((a, b) => a + b, 0) })).filter(row => row.orcado || row.realizado).sort((a, b) => b.realizado - a.realizado); };
+export const exportarGrupos = (mes: string): Exportavel => ({ cabecalho: ['Grupo', 'Orçado do ano (R$)', 'Realizado até o mês (R$)', 'Mesmo período do ano anterior (R$)', '% do orçado'], linhas: () => linhasGrupo(mes).map(row => [row.grupo, Math.round(row.orcado), Math.round(row.realizado), Math.round(row.antes), row.orcado ? Math.round(row.realizado / row.orcado * 1000) / 10 : null]) });
+export function Grupos({ ctx, mes }: { ctx: CockpitCtx; mes: string }) {
+  const { tokens } = ctx, rows = linhasGrupo(mes);
   const option = useMemo(() => ({
-    grid: { top: 30, right: 4, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex], total = row.fim + row.meio; return `<b>${row.ano}</b>${row.ano === rows.at(-1)?.ano ? ' · até a data de referência' : ''}<br/>Fim: ${money(row.fim)} (${pct(row.fim / Math.max(1, total) * 100)})<br/>Meio: ${money(row.meio)}`; } },
-    xAxis: eixoCategoria(tokens, rows.map(row => row.ano)), yAxis: eixoValor(tokens, { show: false }),
+    grid: { top: 26, right: 112, bottom: 2, left: 2, containLabel: true }, legend: legenda(tokens),
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.grupo}</b><br/>Orçado para ${mes.slice(0, 4)}: ${money(row.orcado)}<br/>Realizado até ${nomesMes[Number(mes.slice(5, 7)) - 1]}: <b>${money(row.realizado)}</b><br/>Mesmo período de ${Number(mes.slice(0, 4)) - 1}: ${money(row.antes)}`; } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.grupo), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 176, overflow: 'truncate', interval: 0 } },
     series: [
-      { name: 'Atividade-fim', type: 'bar', stack: 'd', barWidth: '58%', data: rows.map(row => row.fim), itemStyle: { color: tokens.brand } },
-      { name: 'Atividade-meio', type: 'bar', stack: 'd', data: rows.map(row => row.meio), itemStyle: { color: tokens.heat[1], borderRadius: [3, 3, 0, 0] }, label: { show: true, position: 'top', color: tokens.ink, fontSize: 10, fontWeight: 700, formatter: (params: any) => { const row = rows[params.dataIndex]; return `${pct(row.fim / Math.max(1, row.fim + row.meio) * 100)} fim`; } } },
+      { name: 'Orçado do ano', type: 'bar', barMaxWidth: 16, barGap: '-100%', data: rows.map(row => row.orcado), itemStyle: { color: tokens.soft, borderColor: tokens.heat[1], borderWidth: 1, borderRadius: [0, 4, 4, 0] },
+        // O rótulo fica depois da barra do orçado, a mais comprida das duas, para não cobrir o realizado.
+        label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (params: any) => { const row = rows[params.dataIndex]; return `${brl(row.realizado)}${row.orcado ? ` · ${pct(row.realizado / row.orcado * 100)}` : ''}`; } } },
+      { name: 'Realizado até o mês', type: 'bar', barMaxWidth: 8, data: rows.map(row => row.realizado), itemStyle: { color: tokens.brand, borderRadius: [0, 3, 3, 0] }, z: 3 },
+    ],
+  }), [rows, tokens, mes]);
+  return <Chart option={option} tokens={tokens} label="Despesa por grupo: orçado do ano e realizado até o mês" />;
+}
+
+/* ---------- Receita, despesa e resultado de cada ano desde 2013 ---------- */
+const linhasAno = (mes: string) => anosReais.filter(ano => ano <= mes.slice(0, 4)).map(ano => { const ate = ano === mes.slice(0, 4) ? Number(mes.slice(5, 7)) : 12, meses = Array.from({ length: ate }, (_, i) => `${ano}-${dois(i + 1)}`);
+  const receita = meses.reduce((s, m) => s + receitaDoMes(m), 0), despesa = meses.reduce((s, m) => s + despesaDoMes(m), 0); return { ano, ate, receita, despesa, resultado: receita - despesa }; });
+export const exportarResultado = (mes: string): Exportavel => ({ cabecalho: ['Ano', 'Receita (R$)', 'Despesa (R$)', 'Resultado (R$)'], linhas: () => linhasAno(mes).map(row => [row.ate < 12 ? `${row.ano} (até ${nomesMes[row.ate - 1]})` : row.ano, Math.round(row.receita), Math.round(row.despesa), Math.round(row.resultado)]) });
+export function Resultado({ ctx, mes }: { ctx: CockpitCtx; mes: string }) {
+  const { tokens } = ctx, rows = linhasAno(mes);
+  const option = useMemo(() => ({
+    grid: { top: 30, right: 8, bottom: 2, left: 4, containLabel: true }, legend: legenda(tokens),
+    tooltip: { trigger: 'axis', formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.ano}${row.ate < 12 ? ` (janeiro a ${nomesMesLongo[row.ate - 1]})` : ''}</b><br/>Receita: ${money(row.receita)}<br/>Despesa: ${money(row.despesa)}<br/>Resultado: <b>${money(row.resultado)}</b>`; } },
+    xAxis: eixoCategoria(tokens, rows.map(row => row.ate < 12 ? `${row.ano.slice(2)}*` : row.ano.slice(2))), yAxis: eixoValor(tokens),
+    series: [
+      { name: 'Resultado', type: 'bar', barMaxWidth: 26, data: rows.map(row => ({ value: row.resultado, itemStyle: { color: row.resultado >= 0 ? tokens.good : tokens.bad, borderRadius: 3 } })),
+        label: { show: true, position: 'top', fontSize: 11, fontWeight: 700, color: tokens.ink, formatter: (params: any) => compacto(params.value / 1e6) }, labelLayout: { hideOverlap: true } },
+      { name: 'Receita', type: 'line', data: rows.map(row => row.receita), symbol: 'circle', symbolSize: 3, lineStyle: { color: tokens.brand, width: 2 }, itemStyle: { color: tokens.brand } },
+      { name: 'Despesa', type: 'line', data: rows.map(row => row.despesa), symbol: 'circle', symbolSize: 3, lineStyle: { color: tokens.accent, width: 2 }, itemStyle: { color: tokens.accent } },
     ],
   }), [rows, tokens]);
-  return <Chart option={option} tokens={tokens} label="Despesa em atividades-fim e atividades-meio por ano" />;
-}
-
-/* ---------- Despesa por natureza ---------- */
-const naturezas = (ctx: CockpitCtx) => [...ctx.conselho.porNatureza].sort((a, b) => b.realizado - a.realizado);
-export const exportarNaturezas = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Natureza', 'Orçado 12 meses (R$)', 'Realizado 12 meses (R$)', 'Realizado nos 12 meses anteriores (R$)'], linhas: () => naturezas(ctx).map(row => [row.natureza, Math.round(row.orcado), Math.round(row.realizado), Math.round(row.antes)]) });
-export function Naturezas({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => naturezas(ctx), [ctx.conselho]); // eslint-disable-line react-hooks/exhaustive-deps
-  const option = useMemo(() => ({
-    grid: { top: 24, right: 96, bottom: 2, left: 2, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex], delta = change(row.realizado, row.antes); return `<b>${row.natureza}</b><br/>Orçado: ${money(row.orcado)}<br/>Realizado: ${money(row.realizado)} (${pct(row.realizado / Math.max(1, row.orcado) * 100)} do orçado)${delta === null ? '' : `<br/>${delta >= 0 ? '+' : ''}${pct(delta)} em relação aos 12 meses anteriores`}`; } },
-    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.natureza), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10.5, width: 130, overflow: 'truncate' } },
-    series: [
-      { name: 'Orçado', type: 'bar', barWidth: 15, barGap: '-100%', data: rows.map(row => row.orcado), itemStyle: { color: tokens.soft, borderColor: tokens.heat[1], borderWidth: 1, borderRadius: 4 }, z: 1 },
-      { name: 'Realizado', type: 'bar', barWidth: 7, data: rows.map(row => row.realizado), itemStyle: { color: tokens.brand, borderRadius: 3 }, z: 2,
-        label: { show: true, position: 'right', distance: 24, fontSize: 10, formatter: (params: any) => { const row = rows[params.dataIndex], delta = change(row.realizado, row.antes); return `{n|${brl(row.realizado)}} {${delta === null || Math.abs(delta) < 0.5 ? 'n' : delta > 0 ? 'r' : 'g'}|${delta === null ? '' : `${delta >= 0 ? '+' : ''}${pct(delta)}`}}`; },
-          rich: { n: { color: tokens.ink, fontWeight: 700, fontSize: 10 }, g: { color: tokens.good, fontWeight: 700, fontSize: 9.5 }, r: { color: tokens.bad, fontWeight: 700, fontSize: 9.5 } } } },
-    ],
-  }), [rows, tokens]);
-  return <Chart option={option} tokens={tokens} label="Despesa por natureza: orçado e realizado nos últimos 12 meses" />;
-}
-
-/* ---------- Sede e regionais, e a despesa de fiscalização de cada GRE ---------- */
-const porGre = (ctx: CockpitCtx) => [...ctx.conselho.sedeTerritorio.porGre].sort((a, b) => b.valor - a.valor);
-export const exportarSede = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['GRE', 'Despesa de fiscalização em 12 meses (R$)'], linhas: () => [['Sede (toda a despesa)', Math.round(ctx.conselho.sedeTerritorio.sede)], ['Regionais (toda a despesa)', Math.round(ctx.conselho.sedeTerritorio.territorio)], ...porGre(ctx).map(row => [ctx.dataset.gres.find(item => item.id === row.greId)?.name ?? row.greId, Math.round(row.valor)])] });
-export function SedeTerritorio({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, s = ctx.conselho.sedeTerritorio, gres = new Map(ctx.dataset.gres.map(row => [row.id, row.name]));
-  const rows = useMemo(() => porGre(ctx), [s]); // eslint-disable-line react-hooks/exhaustive-deps
-  const total = s.sede + s.territorio;
-  const option = useMemo(() => ({
-    grid: { top: 4, right: 58, bottom: 2, left: 2, containLabel: true },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${gres.get(row.greId) ?? row.greId}</b><br/>${money(row.valor)} de despesa de fiscalização em 12 meses<br/><span style="opacity:.7">clique para filtrar a página pela GRE</span>`; } },
-    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => gres.get(row.greId) ?? row.greId), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 9.5, interval: 0 } },
-    series: [{ type: 'bar', barWidth: 7, data: rows.map(row => row.valor), itemStyle: { color: tokens.blue, borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5, formatter: (params: any) => brl(params.value) } }],
-  }), [rows, tokens, gres]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <div className="cs-sede">
-    <div className="cs-barra-sede" aria-label="Despesa da sede e das regionais">
-      <span style={{ flex: s.sede }}><b>Sede {pct(s.sede / Math.max(1, total) * 100)}</b><small>{brl(s.sede)}</small></span>
-      <span style={{ flex: s.territorio }}><b>Regionais {pct(s.territorio / Math.max(1, total) * 100)}</b><small>{brl(s.territorio)}</small></span>
-    </div>
-    <Chart option={option} tokens={tokens} label="Despesa de fiscalização em cada GRE" onPick={params => { const row = rows[params.dataIndex]; if (row) ctx.filtrar({ gre: row.greId }); }} />
-  </div>;
+  return <div className="cs-com-nota"><Chart option={option} tokens={tokens} label="Receita, despesa e resultado de cada ano desde 2013" />
+    <p className="cs-nota">Resultado em R$ milhões. A despesa é a empenhada. O ano com * vai até o mês da data.</p></div>;
 }
 
 /* ---------- Diárias por categoria e por pessoa ---------- */
-const diarias = (ctx: CockpitCtx) => [...ctx.conselho.diarias].sort((a, b) => b.valor - a.valor);
-const coresDiarias = (ctx: CockpitCtx) => [ctx.tokens.brand, ctx.tokens.blue, '#4A72AD', '#B7791F'];
-/** Nome curto para caber no retângulo: primeiro nome e último sobrenome, mantendo o título do conselheiro. */
-const nomeCurto = (nome: string) => { const partes = nome.split(' '), titulo = partes[0].startsWith('Eng') ? partes.slice(0, partes[1] === 'agr.' ? 2 : 1) : [], resto = partes.slice(titulo.length); return [...titulo, resto[0], resto.at(-1)].join(' '); };
-export function abrirDiarias(ctx: CockpitCtx, categoria: string | null) {
-  const pessoas = g(ctx).diariasPessoas.filter(row => !categoria || row.categoria === categoria), nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name]));
-  if (!pessoas.length) return;
-  ctx.open({ kind: 'linhas', title: categoria ? `Diárias de ${categoria.toLowerCase()}` : 'Diárias por beneficiário', what: 'Quem recebeu diárias nos 12 meses até a data de referência, com o cargo, a lotação, o número de diárias e o valor.', use: 'Diária paga não é irregularidade: compare com a função de cada um (fiscal de campo viaja mais que quem atende na sede).',
-    listTitle: 'Pessoas, maior valor primeiro', summary: [['Pessoas', int(pessoas.length)], ['Diárias', int(pessoas.reduce((n, row) => n + row.quantidade, 0))], ['Valor', brl(pessoas.reduce((n, row) => n + row.valor, 0))]],
-    rows: pessoas.map(row => ({ key: `${row.categoria}:${row.id}`, title: row.nome, subtitle: `${row.cargo} · ${row.greId ? nomeGre.get(row.greId) ?? row.greId : 'sede'}${categoria ? '' : ` · ${row.categoria}`}`, value: money(row.valor),
-      note: `${int(row.quantidade)} diárias em ${int(row.meses)} ${row.meses === 1 ? 'mês' : 'meses'}${row.km ? ` · ${int(row.km)} km` : ''}`, sortValue: row.valor })) });
+export const categoriasDiarias = ['Conselheiros', 'Empregados', 'Inspetores', 'Colaboradores', 'Jetons'];
+const nomeCategoria: Record<string, string> = { Conselheiros: 'Conselheiros', Empregados: 'Empregados', Inspetores: 'Inspetores', Colaboradores: 'Colaboradores', Jetons: 'Jetons de conselheiros' };
+const coresDiarias = (tokens: CockpitCtx['tokens']): Record<string, string> => ({ Conselheiros: tokens.brand, Empregados: tokens.blue, Inspetores: '#4A72AD', Colaboradores: '#B7791F', Jetons: tokens.heat[1] });
+/** Nome em caixa alta, como a Transparência publica, escrito com as iniciais maiúsculas. */
+export const nomeProprio = (nome: string) => nome.toLocaleLowerCase('pt-BR').replace(/(^|\s)(\p{L})/gu, (_, espaco, letra) => espaco + letra.toLocaleUpperCase('pt-BR')).replace(/\s(D[aeo]s?|E)\s/g, m => m.toLocaleLowerCase('pt-BR'));
+export function abrirPessoa(ctx: CockpitCtx, p: DiariasPessoa) {
+  ctx.open({ kind: 'linhas', eyebrow: nomeCategoria[p.categoria] ?? p.categoria, title: nomeProprio(p.nome), what: 'Diárias pagas a esta pessoa em cada mês do período, como a Transparência do Crea-SP publica (nome e valor; o CPF não é usado).', use: 'Diária paga não é irregularidade: compare com a função da pessoa e com as outras da mesma categoria.',
+    listTitle: 'Meses com diária', summary: [['Valor', money(p.valor)], ['Pagamentos', int(p.pagamentos)], ['Meses', int(p.meses)]],
+    rows: p.porMes.map(([m, valor, n]) => ({ key: m, title: rotuloMes(m), subtitle: `${int(n)} ${n === 1 ? 'pagamento' : 'pagamentos'}`, value: money(valor), note: '', sortValue: -Number(m.replace('-', '')) })) });
 }
-export const exportarDiarias = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Nome', 'Categoria', 'Cargo', 'Lotação', 'Diárias em 12 meses', 'Meses com diária', 'Valor (R$)', 'Quilômetros'],
-  linhas: () => { const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name])); return g(ctx).diariasPessoas.map(row => [row.nome, row.categoria, row.cargo, row.greId ? nomeGre.get(row.greId) ?? row.greId : 'sede', row.quantidade, row.meses, Math.round(row.valor), row.km]); } });
-export function Diarias({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => diarias(ctx), [ctx.conselho]); // eslint-disable-line react-hooks/exhaustive-deps
-  const pessoas = g(ctx).diariasPessoas, top = pessoas.slice(0, 10), cores = coresDiarias(ctx), total = rows.reduce((n, row) => n + row.valor, 0);
-  const corDe = (categoria: string) => cores[rows.findIndex(row => row.categoria === categoria)] ?? tokens.blue;
-  const option = useMemo(() => {
-    const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name]));
-    return {
-      grid: { top: 2, right: 64, bottom: 0, left: 2, containLabel: true },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const p = top[items[0].dataIndex]; return p ? `<b>${p.nome}</b><br/>${p.categoria} · ${p.cargo} · ${p.greId ? nomeGre.get(p.greId) ?? p.greId : 'sede'}<br/>${money(p.valor)} · ${int(p.quantidade)} diárias em ${int(p.meses)} meses${p.km ? ` · ${int(p.km)} km` : ''}<br/><span style="opacity:.7">clique para ver as diárias mês a mês</span>` : ''; } },
-      xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: top.map(p => nomeCurto(p.nome)), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10, width: 130, overflow: 'truncate' } },
-      series: [{ type: 'bar', barWidth: 9, data: top.map(p => ({ value: p.valor, itemStyle: { color: corDe(p.categoria), borderRadius: 3 } })),
-        label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5, formatter: (params: any) => `${brl(params.value)} em ${int(top[params.dataIndex].quantidade)} diárias` } }],
-    };
-  }, [top, tokens, rows, ctx.dataset]); // eslint-disable-line react-hooks/exhaustive-deps
+export function abrirCategoria(ctx: CockpitCtx, pessoas: DiariasPessoa[], categoria: string | null) {
+  const lista = pessoas.filter(row => !categoria || row.categoria === categoria); if (!lista.length) return;
+  ctx.open({ kind: 'linhas', title: categoria ? `Diárias: ${nomeCategoria[categoria] ?? categoria}` : 'Diárias por beneficiário', what: 'Quem recebeu diárias no período, com o valor e o número de pagamentos, pelo nome publicado na Transparência do Crea-SP.', use: 'Fiscal de campo e conselheiro do interior viajam mais que quem trabalha na sede. Compare dentro da mesma categoria.',
+    listTitle: 'Pessoas, maior valor primeiro', summary: [['Pessoas', int(lista.length)], ['Pagamentos', int(lista.reduce((n, row) => n + row.pagamentos, 0))], ['Valor', brl(lista.reduce((n, row) => n + row.valor, 0))]],
+    rows: lista.map(row => ({ key: `${row.categoria}:${row.nome}`, title: nomeProprio(row.nome), subtitle: `${nomeCategoria[row.categoria] ?? row.categoria}`, value: money(row.valor), note: `${int(row.pagamentos)} pagamentos em ${int(row.meses)} ${row.meses === 1 ? 'mês' : 'meses'}`, sortValue: row.valor })) });
+}
+export const exportarDiarias = (meses: string[]): Exportavel => ({ cabecalho: ['Nome', 'Categoria', 'Pagamentos', 'Meses com diária', 'Valor (R$)'], linhas: () => diariasNoPeriodo(fin, meses).map(row => [nomeProprio(row.nome), nomeCategoria[row.categoria] ?? row.categoria, row.pagamentos, row.meses, Math.round(row.valor)]) });
+export function Diarias({ ctx, meses }: { ctx: CockpitCtx; meses: string[] }) {
+  const { tokens } = ctx, pessoas = useMemo(() => diariasNoPeriodo(fin, meses), [meses]), cores = coresDiarias(tokens), top = pessoas.slice(0, 10);
+  const porCategoria = categoriasDiarias.map(categoria => ({ categoria, valor: pessoas.filter(p => p.categoria === categoria).reduce((s, p) => s + p.valor, 0), n: pessoas.filter(p => p.categoria === categoria).length })).filter(row => row.valor > 0);
+  const total = porCategoria.reduce((s, row) => s + row.valor, 0);
+  const option = useMemo(() => ({
+    grid: { top: 2, right: 70, bottom: 0, left: 2, containLabel: true },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const p = top[items[0].dataIndex]; return p ? `<b>${nomeProprio(p.nome)}</b><br/>${nomeCategoria[p.categoria]}<br/>${money(p.valor)} em ${int(p.pagamentos)} pagamentos, ${int(p.meses)} ${p.meses === 1 ? 'mês' : 'meses'}<br/><span style="opacity:.7">clique para ver mês a mês</span>` : ''; } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: top.map(p => nomeProprio(p.nome)), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 190, overflow: 'truncate' } },
+    series: [{ type: 'bar', barMaxWidth: 12, data: top.map(p => ({ value: p.valor, itemStyle: { color: cores[p.categoria] ?? tokens.blue, borderRadius: 3 } })),
+      label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, formatter: (params: any) => brl(params.value) } }],
+  }), [top, tokens, cores]);
+  if (!pessoas.length) return <p className="tile-vazio" role="status">Nenhuma diária no período.</p>;
   return <div className="cs-sede">
     <div className="cs-barra-sede cs-barra-diarias" aria-label="Diárias por categoria de beneficiário">
-      {rows.map(row => <button type="button" key={row.categoria} style={{ flex: row.valor, background: corDe(row.categoria) }} title={`${row.categoria}: ${brl(row.valor)} em ${int(row.quantidade)} diárias. Clique para ver a lista.`} onClick={() => abrirDiarias(ctx, row.categoria)}>
-        <b>{row.valor / Math.max(1, total) >= 0.14 ? row.categoria.replace(' e agentes de campo', ' e agentes') : ''}</b><small>{row.valor / Math.max(1, total) >= 0.08 ? brl(row.valor) : ''}</small></button>)}
+      {porCategoria.map(row => <button type="button" key={row.categoria} style={{ flex: row.valor, background: cores[row.categoria] }} title={`${nomeCategoria[row.categoria]}: ${brl(row.valor)} para ${int(row.n)} pessoas. Clique para ver a lista.`} onClick={() => abrirCategoria(ctx, pessoas, row.categoria)}>
+        <b>{row.valor / Math.max(1, total) >= 0.14 ? row.categoria : ''}</b><small>{row.valor / Math.max(1, total) >= 0.08 ? brl(row.valor) : ''}</small></button>)}
     </div>
-    <Chart option={option} tokens={tokens} label="As dez pessoas que mais receberam diárias em 12 meses" onPick={params => { const p = top[params.dataIndex]; if (p) abrirPessoaDiarias(ctx, p); }} />
+    <Chart option={option} tokens={tokens} label="As dez pessoas que mais receberam diárias no período" onPick={params => { const p = top[params.dataIndex]; if (p) abrirPessoa(ctx, p); }} />
   </div>;
 }
 
-/* ---------- Calendário de vencimento dos contratos ---------- */
-export const exportarVencimentos = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Mês', 'Contratos que terminam', 'Valor (R$)'], linhas: () => vencimentoContratos(g(ctx).contas, ctx.anchor).map(row => [mes(row.month), row.n, row.valor]) });
-export function Vencimentos({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, rows = useMemo(() => vencimentoContratos(g(ctx).contas, ctx.anchor), [ctx.gestao, ctx.anchor]) // eslint-disable-line react-hooks/exhaustive-deps;
+/* ---------- Maiores fornecedores ---------- */
+export function abrirFornecedor(ctx: CockpitCtx, f: FornecedorNoPeriodo) {
+  ctx.open({ kind: 'linhas', eyebrow: 'Fornecedor', title: nomeProprio(f.nome), what: `CNPJ ${cnpjComMascara(f.cnpj)}. Pagamentos do Crea-SP a este fornecedor em cada mês do período, pela Transparência. Conta principal: ${f.objeto}.`, use: 'Pagamento alto e regular costuma ser contrato contínuo (tecnologia, limpeza, locação). Confira o contrato antes de concluir.',
+    listTitle: 'Meses com pagamento', summary: [['Pago no período', money(f.pago)], ['Meses', int(f.porMes.length)]],
+    rows: f.porMes.map(([m, valor]) => ({ key: m, title: rotuloMes(m), subtitle: '', value: money(valor), note: '', sortValue: -Number(m.replace('-', '')) })) });
+}
+export const exportarFornecedores = (meses: string[]): Exportavel => ({ cabecalho: ['Fornecedor', 'CNPJ', 'Conta principal', 'Pago no período (R$)'], linhas: () => fornecedoresNoPeriodo(fin, meses).map(row => [row.nome, cnpjComMascara(row.cnpj), row.objeto, Math.round(row.pago)]) });
+export function Fornecedores({ ctx, meses }: { ctx: CockpitCtx; meses: string[] }) {
+  const { tokens } = ctx, todos = useMemo(() => fornecedoresNoPeriodo(fin, meses), [meses]), top = todos.slice(0, 10);
+  const total = todos.reduce((s, f) => s + f.pago, 0), cinco = todos.slice(0, 5).reduce((s, f) => s + f.pago, 0), hhi = concentracao(todos.map(f => f.pago));
   const option = useMemo(() => ({
-    grid: { top: 22, right: 4, bottom: 2, left: 4, containLabel: true },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${mes(row.month)}</b><br/>${int(row.n)} contratos terminam · ${money(row.valor)}${row.contratos.length ? `<br/>${row.contratos.slice(0, 4).map(c => `${c.objeto} (${c.modalidade.toLowerCase()})`).join('<br/>')}` : ''}<br/><span style="opacity:.7">clique para ver os contratos</span>`; } },
-    xAxis: eixoCategoria(tokens, rows.map(row => mes(row.month)), { axisLabel: { color: tokens.muted, fontSize: 9.5, interval: 0 } }), yAxis: eixoValor(tokens, { show: false }),
-    series: [{ type: 'bar', barWidth: '60%', data: rows.map((row, index) => ({ value: row.valor, itemStyle: { color: index < 3 ? tokens.bad : index < 6 ? tokens.accent : tokens.heat[1], borderRadius: [3, 3, 0, 0] } })),
-      label: { show: true, position: 'top', fontSize: 9.5, formatter: (params: any) => { const row = rows[params.dataIndex]; return row.n ? `{n|${int(row.n)}}\n{v|${compacto(row.valor)}}` : ''; }, rich: { n: { color: tokens.ink, fontWeight: 800, fontSize: 10.5 }, v: { color: tokens.muted, fontSize: 9 } } } }],
+    grid: { top: 2, right: 64, bottom: 0, left: 2, containLabel: true },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const f = top[items[0].dataIndex]; return f ? `<b>${nomeProprio(f.nome)}</b><br/>CNPJ ${cnpjComMascara(f.cnpj)}<br/>${f.objeto}<br/>Pago: <b>${money(f.pago)}</b> (${pct(total ? f.pago / total * 100 : 0, 1)} do pago a empresas)` : ''; } },
+    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: top.map(f => nomeProprio(f.nome)), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 200, overflow: 'truncate' } },
+    series: [{ type: 'bar', barMaxWidth: 12, data: top.map(f => f.pago), itemStyle: { color: tokens.blue, borderRadius: 3 }, label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, formatter: (params: any) => brl(params.value) } }],
+  }), [top, tokens, total]);
+  if (!top.length) return <p className="tile-vazio" role="status">Nenhum pagamento a empresas no período.</p>;
+  return <div className="cs-com-nota"><Chart option={option} tokens={tokens} label="Os dez fornecedores que mais receberam no período" onPick={params => { const f = top[params.dataIndex]; if (f) abrirFornecedor(ctx, f); }} />
+    <p className="cs-nota">Os cinco maiores ficam com <b>{total ? pct(cinco / total * 100) : '—'}</b> do pago a empresas. Concentração (HHI): <b>{hhi === null ? '—' : hhi.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}</b>{hhi !== null && hhi > 0.15 ? ', alta' : ''}.</p></div>;
+}
+
+/* ---------- Contratos que terminam nos próximos 12 meses ---------- */
+const porMesDeFim = (data: string) => { const lista = contratosQueTerminam(fin, data, 12), meses = Array.from({ length: 12 }, (_, i) => { const d = new Date(`${data.slice(0, 7)}-01T00:00:00Z`); d.setUTCMonth(d.getUTCMonth() + i); return d.toISOString().slice(0, 7); });
+  return meses.map(m => { const doMes = lista.filter(row => row.fim.slice(0, 7) === m); return { mes: m, contratos: doMes, valor: doMes.reduce((s, row) => s + row.valor, 0) }; }); };
+export const exportarContratos = (data: string): Exportavel => ({ cabecalho: ['Contrato', 'Contratada', 'CNPJ', 'Valor (R$)', 'Início', 'Fim'], linhas: () => contratosQueTerminam(fin, data, 12).map(row => [row.numero, row.contratada, cnpjComMascara(row.cnpj), Math.round(row.valor), row.inicio.split('-').reverse().join('/'), row.fim.split('-').reverse().join('/')]) });
+export function abrirContratos(ctx: CockpitCtx, titulo: string, lista: ReturnType<typeof contratosQueTerminam>) {
+  if (!lista.length) return;
+  ctx.open({ kind: 'linhas', title: titulo, what: 'Contratos do Crea-SP vigentes na data que terminam no intervalo, pela Transparência: número, contratada, valor e vigência.', use: 'Comece a renovação ou a nova licitação pelo menos três meses antes do fim.',
+    listTitle: 'Contratos, o fim mais próximo primeiro', summary: [['Contratos', int(lista.length)], ['Valor', brl(lista.reduce((s, row) => s + row.valor, 0))]],
+    rows: lista.map(row => ({ key: row.numero, title: nomeProprio(row.contratada), subtitle: `${row.numero} · CNPJ ${cnpjComMascara(row.cnpj)}`, value: money(row.valor), note: `termina em ${row.fim.split('-').reverse().join('/')}`, sortValue: -Date.parse(row.fim) })) });
+}
+export function Contratos({ ctx }: { ctx: CockpitCtx }) {
+  const { tokens } = ctx, rows = porMesDeFim(ctx.anchor);
+  const option = useMemo(() => ({
+    grid: { top: 18, right: 4, bottom: 2, left: 4, containLabel: true },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${nomesMesLongo[Number(row.mes.slice(5, 7)) - 1]} de ${row.mes.slice(0, 4)}</b><br/>${int(row.contratos.length)} contratos terminam<br/>${money(row.valor)}`; } },
+    xAxis: eixoCategoria(tokens, rows.map((row, i) => i === 0 || row.mes.endsWith('-01') ? `${nomesMes[Number(row.mes.slice(5, 7)) - 1]}\n${row.mes.slice(0, 4)}` : nomesMes[Number(row.mes.slice(5, 7)) - 1]), { axisLabel: { color: tokens.muted, fontSize: 11, interval: 0, rotate: 0, lineHeight: 14 } }), yAxis: eixoValor(tokens, { show: false, minInterval: 1 }),
+    series: [{ type: 'bar', barMaxWidth: 26, data: rows.map((row, i) => ({ value: row.contratos.length, itemStyle: { color: i < 3 ? tokens.bad : tokens.blue, borderRadius: [3, 3, 0, 0] } })),
+      label: { show: true, position: 'top', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (params: any) => params.value ? String(params.value) : '' } }],
   }), [rows, tokens]);
-  return <Chart option={option} tokens={tokens} label="Contratos vigentes que terminam em cada um dos próximos 12 meses" onPick={params => { const row = rows[params.dataIndex]; if (!row?.n) return;
-    ctx.open({ kind: 'linhas', title: `Contratos que terminam em ${mes(row.month)}`, what: 'Contratos vigentes na data escolhida cujo prazo termina neste mês.', use: 'Abra a renovação ou a nova licitação com pelo menos três meses de antecedência.', listTitle: 'Contratos',
-      summary: [['Contratos', int(row.n)], ['Valor', brl(row.valor)], ['Com aditivo', int(row.contratos.filter(c => c.aditivos > 0).length)]],
-      rows: row.contratos.map(c => ({ key: c.id, title: `${c.id} · ${c.objeto}`, subtitle: `${c.fornecedor} · ${c.modalidade}`, value: money(c.valor), note: `termina em ${c.fim.split('-').reverse().join('/')} · ${int(c.aditivos)} ${c.aditivos === 1 ? 'aditivo' : 'aditivos'}`, sortValue: Date.parse(c.fim) })) }); }} />;
+  return <Chart option={option} tokens={tokens} label="Contratos vigentes que terminam em cada um dos próximos 12 meses" onPick={params => { const row = rows[params.dataIndex]; if (row) abrirContratos(ctx, `Contratos que terminam em ${nomesMesLongo[Number(row.mes.slice(5, 7)) - 1]} de ${row.mes.slice(0, 4)}`, row.contratos); }} />;
 }
 
-/* ---------- Fornecedores ---------- */
-export const exportarFornecedores = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Fornecedor', 'Objeto', 'Empenhado 12 meses (R$)', 'Pago 12 meses (R$)', 'Contratos vigentes'], linhas: () => ctx.conselho.fornecedores.map(row => [row.fornecedor.nome, row.fornecedor.objeto, Math.round(row.empenhado), Math.round(row.pago), row.contratos]) });
-function abrirFornecedor(ctx: CockpitCtx, row: (typeof ctx.conselho.fornecedores)[number]) {
-  const contas = g(ctx).contas, meses = new Set(contas.months.filter(month => `${month}-01` <= ctx.anchor).slice(-12)), contratos = new Map(contas.contratos.map(c => [c.id, c]));
-  const empenhos = contas.empenhos.filter(e => e.fornecedorId === row.fornecedor.id && meses.has(e.month));
-  ctx.open({ kind: 'linhas', title: row.fornecedor.nome, eyebrow: row.fornecedor.objeto, what: 'Empenhos dos 12 meses até a data de referência para este fornecedor, com o contrato a que cada um se refere e quanto já foi pago.', use: 'Na Transparência do Conselho, cada empenho e contrato tem o processo de compra e os aditivos.',
-    listTitle: 'Empenhos, maior valor primeiro', summary: [['Empenhado', brl(row.empenhado)], ['Pago', brl(row.pago)], ['Contratos vigentes', int(row.contratos)]],
-    rows: empenhos.map(e => { const c = e.contratoId ? contratos.get(e.contratoId) : undefined;
-      return { key: e.id, title: e.id, subtitle: `${mes(e.month)} · ${c ? `contrato ${c.id} (${c.modalidade.toLowerCase()}, até ${c.fim.split('-').reverse().join('/')})` : 'sem contrato'}`, value: money(e.valor), note: `pago ${money(e.pago)}`, sortValue: e.valor }; }) });
-}
-export function Fornecedores({ ctx }: { ctx: CockpitCtx }) {
-  const { tokens } = ctx, c = ctx.conselho, rows = c.fornecedores.slice(0, 8), total = c.fornecedores.reduce((sum, row) => sum + row.empenhado, 0);
-  const option = useMemo(() => ({
-    grid: { top: 24, right: 92, bottom: 2, left: 2, containLabel: true }, legend: legenda(tokens),
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const row = rows[items[0].dataIndex]; return `<b>${row.fornecedor.nome}</b><br/>${row.fornecedor.objeto} · ${row.fornecedor.natureza.toLowerCase()}<br/>Empenhado: ${money(row.empenhado)} (${pct(row.empenhado / Math.max(1, total) * 100)}) · Pago: ${money(row.pago)}<br/>${int(row.contratos)} contrato${row.contratos === 1 ? '' : 's'} vigente${row.contratos === 1 ? '' : 's'}<br/><span style="opacity:.7">clique para ver os empenhos</span>`; } },
-    xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: rows.map(row => row.fornecedor.nome.replace(' (demonstrativo)', '')), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 10, width: 170, overflow: 'truncate' } },
-    series: [
-      { name: 'Empenhado', type: 'bar', barWidth: 12, barGap: '-100%', data: rows.map(row => row.empenhado), itemStyle: { color: tokens.soft, borderColor: tokens.heat[1], borderWidth: 1, borderRadius: 3 }, z: 1, label: { show: true, position: 'right', color: tokens.ink, fontSize: 9.5, formatter: (params: any) => `${brl(params.value)} (${pct(params.value / Math.max(1, total) * 100)})` } },
-      { name: 'Pago', type: 'bar', barWidth: 6, data: rows.map(row => row.pago), itemStyle: { color: tokens.brand, borderRadius: 3 }, z: 2 },
-    ],
-  }), [rows, tokens, total]);
-  return <div className="cs-com-nota">
-    <Chart option={option} tokens={tokens} label="Oito maiores fornecedores por valor empenhado em 12 meses" onPick={params => { const row = rows[params.dataIndex]; if (row) abrirFornecedor(ctx, row); }} />
-    <p className="cs-nota">Cinco maiores: <b>{c.concentracao === null ? '—' : pct(c.concentracao)}</b> do empenhado · HHI {int(c.hhi)}</p>
-  </div>;
-}
-
-/* ---------- Pessoal por função, com a lista nominal ao clicar ---------- */
-function abrirPessoal(ctx: CockpitCtx, funcao: string | null) {
-  const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name])), rows = g(ctx).equipe.filter(s => (!funcao || s.funcao === funcao) && (!ctx.greId || s.greId === ctx.greId));
-  if (!rows.length) return;
-  ctx.open({ kind: 'linhas', title: funcao ? `Pessoal de ${funcao.toLowerCase()}` : 'Quadro de pessoal', what: `Servidores${ctx.greId ? ` lotados em ${nomeGre.get(ctx.greId) ?? ctx.greId}` : ''}, com cargo, vínculo, lotação e custo mensal do posto (salário e encargos).`, use: 'Os nomes e as remunerações dos servidores são públicos na Transparência do Conselho.',
-    listTitle: 'Servidores, maior custo primeiro', summary: [['Servidores', int(rows.length)], ['Comissionados', int(rows.filter(s => s.vinculo === 'Comissionado').length)], ['Custo mensal', brl(rows.reduce((n, s) => n + s.remuneracao, 0))]],
-    rows: rows.map(s => ({ key: s.id, title: s.nome, subtitle: `${s.cargo} · ${s.vinculo.toLowerCase()} · ${s.greId ? nomeGre.get(s.greId) ?? s.greId : 'sede'}${funcao ? '' : ` · ${s.funcao}`}`, value: `${money(s.remuneracao)}/mês`, note: s.id, sortValue: s.remuneracao })) });
-}
-export const exportarPessoal = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Nome', 'Função', 'Cargo', 'Vínculo', 'Lotação', 'Custo mensal (R$)'],
-  linhas: () => { const nomeGre = new Map(ctx.dataset.gres.map(row => [row.id, row.name])); return g(ctx).equipe.filter(s => !ctx.greId || s.greId === ctx.greId).map(s => [s.nome, s.funcao, s.cargo, s.vinculo, s.greId ? nomeGre.get(s.greId) ?? s.greId : 'sede', s.remuneracao]); } });
-export function Pessoal({ ctx }: { ctx: CockpitCtx }) {
-  // Com uma regional escolhida, conta só quem está lotado nela, como a lista que abre ao clicar.
-  const equipe = g(ctx).equipe.filter(s => !ctx.greId || s.greId === ctx.greId);
-  const rows = ctx.conselho.pessoal.map(row => { const da = equipe.filter(s => s.funcao === row.funcao); return { funcao: row.funcao, efetivos: da.filter(s => s.vinculo === 'Efetivo').length, comissionados: da.filter(s => s.vinculo === 'Comissionado').length, custoMes: da.reduce((n, s) => n + s.remuneracao, 0) }; });
-  const total = rows.reduce((sum, row) => sum + row.efetivos + row.comissionados, 0), custo = rows.reduce((sum, row) => sum + row.custoMes, 0), maior = Math.max(...rows.map(row => row.efetivos + row.comissionados), 1);
-  const tecla = (funcao: string | null) => (event: React.KeyboardEvent) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); abrirPessoal(ctx, funcao); } };
-  return <ul className="cs-pessoal" aria-label="Pessoal por função">
-    {rows.map(row => { const n = row.efetivos + row.comissionados; return <li key={row.funcao} role="button" tabIndex={0} title={`Ver os servidores de ${row.funcao.toLowerCase()}`} onClick={() => abrirPessoal(ctx, row.funcao)} onKeyDown={tecla(row.funcao)}><span>{row.funcao}</span><b>{int(n)}</b><i aria-hidden="true"><em style={{ width: `${row.efetivos / maior * 100}%` }} /><em className="is-comissionado" style={{ width: `${row.comissionados / maior * 100}%` }} /></i><small>{brl(row.custoMes)}/mês</small></li>; })}
-    <li className="is-total" role="button" tabIndex={0} title="Ver todos os servidores" onClick={() => abrirPessoal(ctx, null)} onKeyDown={tecla(null)}><span>Total</span><b>{int(total)}</b><i aria-hidden="true" /><small>{brl(custo)}/mês</small></li>
-    <li className="cs-legenda-pessoal"><span><em /> efetivos</span><span><em className="is-comissionado" /> comissionados</span></li>
-  </ul>;
-}
-
-/* ---------- Despesa publicada por profissional ativo (dados reais) e os outros Creas ---------- */
+/* ---------- Despesa e receita por profissional ativo ---------- */
+/**
+ * O ano fechado mais recente, dividido pelos profissionais ativos de SP no Confea. Os outros Creas publicam no mesmo sistema
+ * (crea-XX.implanta.net.br), mas a rede deste ambiente ainda não chega a eles: a comparação entra quando essa coleta for liberada.
+ */
 export function DespesaPorAtivo({ ctx }: { ctx: CockpitCtx }) {
-  const ultimo = despesaPublicada.exercicios.at(-1)!, sp = ufs.find(row => row.uf === 'SP'), porAtivo = sp?.ativos ? ultimo.valor / sp.ativos : null;
-  const outros = [...ufs].filter(row => row.uf !== 'SP').sort((a, b) => b.ativos - a.ativos).slice(0, 6);
   void ctx;
-  return <div className="cs-benchmark">
-    <div className="cs-bench-sp"><span>Crea-SP · {ultimo.ano}</span><strong>{porAtivo === null ? '—' : money(porAtivo)}</strong><small>de despesa publicada por profissional ativo: {brl(ultimo.valor)} para {int(sp?.ativos ?? 0)} ativos</small></div>
-    <table className="metodo is-dense"><thead><tr><th>Crea</th><th className="num">Ativos</th><th className="num">Despesa por ativo</th></tr></thead>
-      <tbody>{outros.map(row => <tr key={row.uf}><td><b>Crea-{row.uf}</b></td><td className="num">{int(row.ativos)}</td><td className="num cs-a-ligar">coleta a ligar</td></tr>)}</tbody></table>
+  const ultimo = despesaPublicada.exercicios.at(-1)!, sp = ufs.find(row => row.uf === 'SP'), ativos = sp?.ativos ?? 0;
+  const receita = Array.from({ length: 12 }, (_, i) => receitaDoMes(`${ultimo.ano}-${dois(i + 1)}`)).reduce((a, b) => a + b, 0);
+  const porAtivo = (valor: number) => ativos ? money(valor / ativos) : '—';
+  return <div className="fin-por-ativo">
+    <div className="fin-por-ativo-par">
+      <div className="cs-bench-sp"><span>Despesa por ativo em {ultimo.ano}</span><strong>{porAtivo(ultimo.valor)}</strong><small>{brl(ultimo.valor)} de despesa</small></div>
+      <div className="cs-bench-sp"><span>Receita por ativo em {ultimo.ano}</span><strong>{porAtivo(receita)}</strong><small>{brl(receita)} de receita</small></div>
+    </div>
+    <p className="cs-nota">Para {int(ativos)} profissionais ativos em SP no Confea. A comparação com outros Creas entra quando a coleta deles for liberada.</p>
   </div>;
 }

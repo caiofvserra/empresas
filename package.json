@@ -11,7 +11,8 @@
     "sources:refresh": "node --import tsx scripts/refresh-sources.ts",
     "test:integrations": "node --import tsx --test tests/integrations.test.ts",
     "build:painel": "node scripts/build-painel.mjs",
-    "build:powerbi": "node --import tsx scripts/build-powerbi.ts"
+    "build:powerbi": "node --import tsx scripts/build-powerbi.ts",
+    "coletar:financeiro": "node --import tsx scripts/coletar-financeiro.ts"
   },
   "dependencies": {
     "echarts": "^6.1.0",

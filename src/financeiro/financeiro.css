@@ -1,0 +1,94 @@
+/*
+ * Painel Financeiro (07/11/2026): quatro páginas, cada uma numa tela de computador sem rolagem, com blocos de larguras
+ * diferentes. As peças comuns (.cs-com-nota, .cs-sede, .cs-benchmark) vêm de src/gestao/gestao.css.
+ */
+.fin-grid-arrecadacao, .fin-grid-receita, .fin-grid-divida, .fin-grid-orcamento { grid-template-rows: auto repeat(3, minmax(0, 1fr)); align-content: stretch; }
+.fin-grid-arrecadacao { grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "dd dd dd dd dd mr mr mr mr mp mp mp"
+  "dd dd dd dd dd mr mr mr mr mp mp mp"
+  "cl cl cl cl tp tp tp tp tp mp mp mp"; }
+.fin-grid-receita { grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "hi hi hi hi hi sz sz sz sz sz sz sz"
+  "hi hi hi hi hi sz sz sz sz sz sz sz"
+  "rm rm rm rm rm rm rm rm or or or or"; }
+.fin-grid-divida { grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "mp mp mp mp di di di di ca ca ca ca"
+  "mp mp mp mp co co co co pt pt pt pt"
+  "mp mp mp mp ad ad ad ad cn cn cn cn"; }
+.fin-grid-orcamento { grid-template-areas:
+  "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+  "ex ex ex ex gr gr gr gr rd rd rd rd"
+  "dr dr dr dr fo fo fo fo fo vc vc vc"
+  "dr dr dr dr fo fo fo fo fo bc bc bc"; }
+/* Em telas baixas (1366 × 768), o orçamento dá mais altura à primeira linha de gráficos e a arrecadação põe o calendário e a tabela em duas linhas. */
+.fin-grid-orcamento { grid-template-rows: auto minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, .9fr); }
+@media (max-height: 820px) and (min-width: 1101px) {
+  .fin-grid-arrecadacao { grid-template-areas:
+    "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
+    "dd dd dd dd dd dd mr mr mr mr mr mr"
+    "cl cl cl cl tp tp tp tp tp mp mp mp"
+    "cl cl cl cl tp tp tp tp tp mp mp mp"; }
+  .fin-grid-orcamento { grid-template-rows: auto minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr); }
+  .fin-por-ativo .cs-nota { display: none; }
+  .fin-por-ativo .cs-bench-sp { padding: 6px 10px; }
+  .fin-por-ativo .cs-bench-sp strong { font-size: 18px; }
+}
+@media (max-height: 699px) and (min-width: 1101px) {
+  .fin-grid-arrecadacao, .fin-grid-receita, .fin-grid-divida, .fin-grid-orcamento { grid-template-rows: auto repeat(3, 230px); }
+}
+@media (max-width: 1100px) {
+  .fin-grid-arrecadacao, .fin-grid-receita, .fin-grid-divida, .fin-grid-orcamento { grid-template-rows: auto; grid-auto-rows: 340px; }
+}
+
+/* Tabela tipo a tipo: este ano contra o anterior, no mês e no acumulado. */
+.fin-tabela { width: 100%; border-collapse: collapse; font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fin-tabela th, .fin-tabela td { padding: 3px 6px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.fin-tabela thead th { font-size: 11px; font-weight: 700; color: var(--muted); border-bottom: 0; padding-bottom: 1px; }
+.fin-tabela thead tr:first-child th { color: var(--ink); text-align: center; }
+.fin-tabela thead tr:first-child th:first-child { text-align: left; vertical-align: bottom; }
+.fin-tabela tbody th { text-align: left; font-weight: 600; }
+.fin-tabela tbody th, .fin-tabela tbody td { vertical-align: top; }
+.fin-tabela tbody th i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: 1px; }
+.fin-tabela tr.is-total th, .fin-tabela tr.is-total td { font-weight: 800; border-bottom: 0; border-top: 1.5px solid var(--ink); }
+.fin-tabela td:nth-child(3), .fin-tabela td:nth-child(6) { border-right: 1px solid var(--line); }
+.fin-var { font-style: normal; font-weight: 700; color: var(--muted); }
+.fin-var.is-up { color: var(--good); } .fin-var.is-down { color: var(--bad); }
+.fin-barra { display: block; position: relative; height: 4px; margin-top: 2px; }
+.fin-barra span { position: absolute; left: 0; height: 4px; border-radius: 2px; }
+.fin-barra span.is-antes { top: 0; height: 4px; background: var(--line); }
+
+/* Orçado e realizado: uma trilha por origem, com o traço da parte do ano que passou. */
+.fin-bullets { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: space-around; gap: 4px; }
+.fin-bullet { display: grid; grid-template-columns: 128px minmax(0, 1fr) 128px; align-items: center; gap: 8px; font-size: 12px; color: var(--ink); }
+.fin-bullet-nome { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.fin-bullet-nome i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+.fin-bullet-trilho { position: relative; height: 12px; border-radius: 6px; background: var(--soft); }
+.fin-bullet-trilho span { position: absolute; inset: 0 auto 0 0; border-radius: 6px; }
+.fin-bullet-trilho b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+.fin-bullet-valor { font-size: 11px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.fin-bullet-valor b { color: var(--ink); font-size: 12.5px; }
+
+/* Quem está em dia: profissionais e empresas lado a lado, como os cartões do painel de arrecadação. */
+.fin-adim-par { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fin-adim { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.fin-adim h4 { margin: 0; font-size: 12px; color: var(--ink); }
+.fin-adim dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; }
+.fin-adim dl div { display: flex; flex-direction: column; }
+.fin-adim dt { font-size: 11px; color: var(--muted); }
+.fin-adim dd { margin: 0; font: 800 15px/1.2 Raleway, Lato, sans-serif; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fin-adim .is-ruim dd, .fin-adim .is-ruim .fin-link { color: var(--bad); }
+.fin-adim-barra { display: block; height: 6px; border-radius: 3px; background: var(--bad); overflow: hidden; }
+.fin-adim-barra span { display: block; height: 100%; background: var(--good); }
+.fin-adim p { margin: 0; font-size: 11px; color: var(--muted); }
+.fin-adim p b { color: var(--ink); font-size: 12.5px; }
+.fin-link { padding: 0; border: 0; background: none; font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.fin-link:hover, .fin-link:focus-visible { outline: none; filter: brightness(1.2); }
+
+/* Por profissional ativo: despesa e receita do último ano fechado, lado a lado. */
+.fin-por-ativo { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: safe center; gap: 8px; overflow: hidden; }
+.fin-por-ativo-par { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fin-por-ativo .cs-bench-sp span, .fin-por-ativo .cs-bench-sp small { font-size: 11px; }
+.fin-por-ativo .cs-bench-sp strong { font-size: 22px; }
