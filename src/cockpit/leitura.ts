@@ -16,7 +16,7 @@ import type { ResultadoFt } from '../painel/forcas';
  */
 /** Painel da Presidência (07/11/2026): substitui o painel geral, com o resumo dos outros painéis. O Método virou documento (docs/METODO.md). */
 export type PaginaPresidencia = 'resumo' | 'regionais' | 'riscos' | 'pais';
-export type PaginaEmpresas = 'mercado' | 'evolucao' | 'rt' | 'vinculos';
+export type PaginaEmpresas = 'mercado' | 'evolucao' | 'rt' | 'vinculos' | 'cnpj';
 export type PaginaProfissionais = 'profissionais' | 'fluxo' | 'atuacao' | 'formacao' | 'trabalho';
 export type PaginaFiscalizacao = 'fiscalizacao' | 'resultado' | 'malha' | 'contratos' | 'obras';
 export type PaginaFinanceiro = 'arrecadacao' | 'receita' | 'divida' | 'orcamento';
@@ -24,7 +24,7 @@ export type PaginaAtendimento = 'protocolos' | 'equipe' | 'demanda';
 export type PaginaConselho = 'colegiado' | 'processos' | 'conselheiros' | 'decisoes' | 'representacao';
 export type PageId = PaginaPresidencia | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaFinanceiro | PaginaAtendimento | PaginaConselho;
 export const pageIdsPresidencia: PaginaPresidencia[] = ['resumo', 'regionais', 'riscos', 'pais'];
-export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos'];
+export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos', 'cnpj'];
 export const pageIdsProfissionais: PaginaProfissionais[] = ['profissionais', 'fluxo', 'atuacao', 'formacao', 'trabalho'];
 export const pageIdsFiscalizacao: PaginaFiscalizacao[] = ['fiscalizacao', 'resultado', 'malha', 'contratos', 'obras'];
 export const pageIdsFinanceiro: PaginaFinanceiro[] = ['arrecadacao', 'receita', 'divida', 'orcamento'];

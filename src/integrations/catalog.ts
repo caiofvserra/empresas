@@ -56,9 +56,10 @@ export const automatedSourceCatalog: AutomatedSource[] = [
   {
     id: 'rfb-cnpj', title: 'Receita Federal — CNPJ e QSA em staging', access: 'staged-database',
     status: 'blocked-unconfigured', schedule: 'Mensal, conforme disponibilização oficial e homologação da carga',
-    endpoint: 'Dados abertos oficiais → ingestão institucional homologada → SQL Server/Db2 → gateway', fixture: false,
+    endpoint: 'https://arquivos.receitafederal.gov.br/public.php/webdav/<AAAA-MM>/ → scripts/receita-cnpj.ts → staging (CSV) → SQL Server/Db2 → gateway', fixture: false,
     factTables: ['empresa-externa', 'estabelecimento-externo', 'cnae-estabelecimento', 'qsa-com-governanca'],
-    missingRequirements: ['Coletor de arquivos oficiais e validação de completude', 'Reconciliação determinística por CNPJ e raiz', 'Regras de finalidade, minimização e acesso ao QSA', 'Competência e staging homologados'],
+    // 07/11/2026: o coletor (scripts/receita-cnpj.ts) baixa o mês, confere se os 30 zip estão completos, grava o agregado por município do painel e os CSV de staging; o cruzamento está em integrations/sql/receita-x-cadastro.sql.
+    missingRequirements: ['Agendador mensal do coletor', 'Carga homologada dos CSV de staging com a competência', 'Views bi.vw_registro_empresa e bi.vw_profissional homologadas', 'Regras de finalidade, minimização e acesso ao QSA'],
     limitations: ['Não há API de consulta em massa ativa nesta entrega.', 'Presença de CNAE não define automaticamente obrigação de registro.', 'CPF parcial ou nome de sócio não comprova identidade de profissional.', 'Dados reais não são conciliados com empresas fictícias.'],
   },
 ];

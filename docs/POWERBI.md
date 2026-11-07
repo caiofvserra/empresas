@@ -53,3 +53,4 @@ Toda mudança num cartão ou gráfico de um painel com pacote leva a mudança ao
 - Os coworkings se ligam às regionais, e não aos municípios, como o painel faz: escolher um município mostra os da regional dele.
 - Os usuários dos coworkings só se conferem na data de hoje: o cenário sorteia de novo quem usou cada mesa a cada data lida, e as horas não mudam. Na base real, o uso é um fato.
 - Ficam só no HTML, no Financeiro: as curvas de recebimento por safra e a adimplência das empresas. Os dois mapas por município são caixas "A montar", com o passo no LEIA-ME.
+- Fica só no HTML, no painel de Empresas: a página CNPJ, com os dados abertos da Receita (07/11/2026). No Power BI ela entra quando o agregado por município (`src/domain/receita-mercado-sp.json`) for carregado como tabela do modelo.

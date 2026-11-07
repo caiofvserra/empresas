@@ -26,6 +26,7 @@ Desde 01/11/2026 (segundo retorno do Caio) cada página cabe numa tela de comput
 - **Evolução.** Entradas (pela primeira vez e retornos), saídas, aberturas na Receita, permanência e emprego formal. Economia (emprego formal e crédito "!") comparada com as empresas abertas na Receita e as que se registraram no Crea-SP, com o primeiro mês igual a 100; a série das abertas termina no último mês com arquivo da Receita. Calor dos novos registros por câmara e mês. Entradas e saídas mês a mês. Aberturas na Receita com a permanência das registradas.
 - **RT e ART.** Responsável técnico, RT que saiu sem substituto, ARTs, valor declarado e registradas sem ART. ARTs mês a mês com o mesmo mês do ano anterior, ARTs por modalidade a cada 100 profissionais ativos da mesma modalidade, com a média, responsáveis técnicos e barras de 100% com a parte das registradas sem ART em cada câmara.
 - **Vínculos.** Nome com "engenharia" e diretoria ("!", novo), sócios que são profissionais ("!"), usinas, postos, minas e financiamentos, empregados técnicos por empresa ("!"), credenciadas no DETRAN-SP e no INMETRO ("!") e engenharia incluída no contrato social pela Junta Comercial ("!").
+- **CNPJ (07/11/2026, dado real).** O mercado de engenharia nos dados abertos do CNPJ da Receita, sem nada do cenário demonstrativo. Cinco indicadores (ativos com atividade de registro obrigatório, ativos com atividade a analisar, abertos, baixados e saldo do período), mapa por município (ativos, abertos ou baixados), as atividades da lista com mais estabelecimentos, a situação na Receita e o porte, e abertos e baixados mês a mês. Os números são agregados por município; nenhum nome nem CNPJ entra no painel. Veja "Dados abertos do CNPJ" abaixo.
 
 Regional, município, câmara, período (3, 6, 12 ou 24 meses, ou qualquer número de meses digitado no campo "outro", até o início do histórico) e data de referência ficam numa única linha no alto da tela e valem para todas as páginas. O botão "Mais" abre o porte da empresa e a situação do CNPJ na Receita (05/11/2026). Os filtros em uso aparecem no rodapé, cada um com o seu "x", e ficam no endereço da página, para um link levar à mesma tela. Escolher um município leva o painel inteiro para ele e aproxima o mapa. O emprego formal sai em totais por regional, por isso, com um município escolhido, a série de emprego é a da regional dele. Clicar num elemento abre as empresas daquele elemento; nenhum clique abre o resumo genérico da regional. A barra de destaques que passava rolando no alto da tela saiu dos dois painéis.
 
@@ -189,3 +190,28 @@ Pedido do Caio: tirar o botão Imprimir, pensar em quais indicadores vale ver a 
 - **Abertas na Receita** passa a contar o período escolhido no alto da tela, como os demais cartões (antes contava a janela de 24 meses do bloco). A série termina no último mês com arquivo da Receita, e as comparações são feitas nele.
 - **Gaveta.** Todo cartão abre o painel lateral. Os que não têm lista (parte do mercado, emprego formal, valor em ART) abrem só com a evolução; "Continuam registradas depois de 12 meses" ganhou a lista das que saíram no primeiro ano. Nenhum bloco deixa de abrir a gaveta de propósito: todos os blocos das quatro abas têm clique.
 - **Cenário.** Duas tendências irreais apareceram com as séries e foram corrigidas na base de demonstração: o RT entrava em qualquer ponto do histórico (a parte com RT "subia" de 59% para 81% em dois anos) e agora entra até seis meses depois do registro, com reposição de 20 dias a um ano depois da saída (o estoque de "RT que saiu" oscila em vez de só subir); e os boletos venciam até agosto, o que fazia a anuidade em dia "saltar" em setembro, e agora vencem até a data de hoje. A parte com RT passou de 81% para 90%, e as ações de fiscalização por RT caíram, porque a maioria das saídas é reposta.
+
+## Dados abertos do CNPJ (07/11/2026)
+
+A página CNPJ é a primeira do painel de Empresas com dado real. O coletor `scripts/receita-cnpj.ts` lê o arquivo mensal da Receita e grava duas coisas:
+
+1. `src/domain/receita-mercado-sp.json`, a contagem por município do IBGE que a página lê: estabelecimentos ativos com atividade da lista (registro obrigatório e a analisar), por atividade, por porte, por situação, e as aberturas e baixas por mês dos 36 meses até a competência (o mês da competência sai pela metade, porque a Receita gera o arquivo nos primeiros dias dele, e fica fora dos gráficos). Atividades: todas no estado e em cada GRE, e as 20 maiores em cada município. Só números, cerca de 600 KB.
+2. Na pasta indicada, `staging/`, quatro CSV para a base interna, todos com a competência na primeira coluna: a situação de todos os estabelecimentos paulistas, os que têm atividade da lista (com o município do IBGE), as empresas deles e os sócios (CPF mascarado como a Receita publica, e o nome normalizado para o casamento com o cadastro). Ficam fora do Git (`.gitignore`).
+
+Para atualizar, todo mês:
+
+```bash
+node --import tsx scripts/receita-cnpj.ts --pasta var/receita/2026-10 --competencia 2026-10 --baixar
+```
+
+O `--baixar` lê a lista do mês no compartilhamento público da Receita (arquivos.receitafederal.gov.br) e baixa só o que falta, retomando downloads interrompidos. São cerca de 7,5 GB por mês; os zip são lidos sem descompactar no disco.
+
+Regras:
+
+- O estabelecimento entra quando a atividade principal está na lista de CNAEs do Crea-SP; se não estiver, quando uma secundária está (primeiro as de registro obrigatório, depois as a analisar). Atividade "relacionada" na lista conta como registro obrigatório, e "depende de análise" como a analisar.
+- Abertura é a data de início de atividade; baixa é a data da situação cadastral de quem está baixado (suspensos e inaptos não contam, porque podem voltar). A Receita guarda só a situação atual.
+- Registro com quebra de linha dentro de um campo é remendado antes da leitura. Falta de qualquer um dos 30 zip de Estabelecimentos, Empresas e Sócios interrompe a coleta, para não gravar contagem parcial.
+- O município da Receita tem código próprio. O coletor liga ao código do IBGE pelo nome, com os nomes antigos conhecidos (Embu, Moji Mirim e outros); o que sobrar sem par aparece no log e em `naoLocalizados` no JSON.
+
+O cruzamento com o cadastro do Crea-SP fica na base interna, pelas consultas de `integrations/sql/receita-x-cadastro.sql`: estabelecimentos sem registro (registro obrigatório e, à parte, a analisar), parte do mercado registrada por município, registros por câmara, registradas com CNPJ baixado ou inapto, registradas fora da lista ou fora de SP, sócios que podem ser profissionais e sócio que é responsável técnico da própria empresa. A parte do mercado por câmara depende de uma tabela oficial que ligue cada atividade a uma câmara, que ainda não existe. No painel, o cadastro ainda é o cenário demonstrativo, e misturar o real com o fictício daria número sem sentido. A regra do sócio (nome igual e os seis dígitos visíveis do CPF iguais; com mais de um profissional no par, é homônimo) está em `scripts/integrations/receita.ts`, com teste.
+
