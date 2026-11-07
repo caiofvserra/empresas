@@ -31,9 +31,10 @@ export const paginasFinanceiro: Pagina[] = [
     // Matriz: a semana do mês nas linhas e o dia da semana nas colunas; formate os valores com escala de cores.
     { id: 'arrecadacao-calendario', tipo: 'pivotTable', ...caixa(lugar(0, 1, 4)), titulo: 'Calendário do mês',
       papeis: { Rows: [campoColuna('Dias', 'Semana do mês')], Columns: [campoColuna('Dias', 'Dia da semana')], Values: [campoMedida('Arrecadado no dia do calendário', 'Arrecadado')] } },
-    { id: 'arrecadacao-tipos', tipo: 'pivotTable', ...caixa(lugar(4, 1, 5)), titulo: 'Cada tipo, este ano e o anterior', papeis: { Rows: [TIPO], Values: [
+    { id: 'arrecadacao-tipos', tipo: 'pivotTable', ...caixa(lugar(4, 1, 5)), titulo: 'Cada tipo contra o ano anterior e a meta', papeis: { Rows: [TIPO], Values: [
       campoMedida('Tipo no mês do ano anterior', 'No mês, um ano antes'), campoMedida('Tipo no mês', 'No mês'), campoMedida('Variação no mês', 'Variação'),
-      campoMedida('Tipo no ano anterior', 'No ano, um ano antes'), campoMedida('Tipo no ano', 'No ano'), campoMedida('Variação no ano', 'Variação no ano')] } },
+      campoMedida('Tipo no ano anterior', 'No ano, um ano antes'), campoMedida('Tipo no ano', 'No ano'), campoMedida('Variação no ano', 'Variação no ano'),
+      campoMedida('Meta até o mês', 'Meta até o mês'), campoMedida('Tipo no ano na meta', 'Da meta')] } },
   ] },
   { id: 'receita', nome: 'Receita', visuais: [
     ...cabecalho('receita', 'De onde vem a receita'),

@@ -48,7 +48,7 @@ export default function PaginaArrecadacao({ ctx }: { ctx: CockpitCtx }) {
     <Bloco ctx={ctx} id="dd" area="dd" title={`${nomeMes[0].toUpperCase()}${nomeMes.slice(1)} de ${q.ano}, dia a dia`} actions={seletorDia} exportar={exportarDiaADia(q, mes, dia)}><DiaADia ctx={ctx} q={q} mes={mes} dia={dia} /></Bloco>
     <Bloco ctx={ctx} id="mr" area="mr" title={`Meta e realizado em ${q.ano}`} exportar={exportarMetaRealizado(q)}><MetaRealizado ctx={ctx} q={q} /></Bloco>
     <Bloco ctx={ctx} id="cl" area="cl" title="Calendário do mês"><Calendario ctx={ctx} q={q} mes={mes} dia={dia} /></Bloco>
-    <Bloco ctx={ctx} id="tp" area="tp" title={`Cada tipo em ${q.ano} e em ${q.ano - 1}`} exportar={exportarPorTipo(q, mes)}><PorTipo ctx={ctx} q={q} mes={mes} /></Bloco>
+    <Bloco ctx={ctx} id="tp" area="tp" title={`Cada tipo contra ${q.ano - 1} e a meta`} exportar={exportarPorTipo(q, mes)}><PorTipo ctx={ctx} q={q} mes={mes} /></Bloco>
     <Bloco ctx={ctx} id="mp" area="mp" title="Arrecadação por município"
       exportar={{ cabecalho: ['Município', medida.label], linhas: () => [...medida.cidade].map(([id, value]) => [cidades.get(id)?.nome ?? id, value === null ? null : Math.round(value)]) }}
       actions={<label className="ck-select is-compact"><span className="sr-only">Indicador do mapa</span><select value={metrica} onChange={event => setMetrica(event.target.value as MetricaArrecadacao)}>{(Object.keys(metricasArrecadacao) as MetricaArrecadacao[]).map(id => <option key={id} value={id}>{metricasArrecadacao[id]}</option>)}</select><ChevronDown size={14} /></label>}>

@@ -3,7 +3,7 @@ import { datasReferencia, datasetAt, fiscalizacaoAt } from '../../domain/tempo';
 import { municipiosSp } from '../../domain/municipios';
 import { buildProfissionais } from '../../domain/profissionais';
 import { adimplenciaPorMunicipio, buildCarteira, faixaIdadeDivida, faixasIdadeDivida, pisoExecucao, vencidoEm } from '../../domain/gestao';
-import { arrecadacaoDoMes, diasUteis, metaMensal, pesosDaArrecadacao, tiposReceita } from '../../domain/financeiro';
+import { PROTESTOS, arrecadacaoDoMes, diasUteis, metaMensal, pesosDaArrecadacao, tiposReceita } from '../../domain/financeiro';
 import { buildFiscalizacao } from '../../painel/fiscalizacao';
 import { mainEstablishments } from '../../gestao-v14/metrics';
 import bruto from '../../../public/data/transparencia/financeiro-crea-sp.json';
@@ -14,9 +14,8 @@ import type { Financeiro } from '../../domain/financeiro';
 
 const fin = bruto as unknown as Financeiro;
 
-/** Os grupos de despesa na ordem do painel, e as categorias do protesto com o fator sobre a anuidade protestável (`protestos` do painel). */
+/** Os grupos de despesa na ordem do painel. */
 export const GRUPOS = ['Pessoal e encargos', 'Benefícios ao pessoal', 'Serviços e materiais', 'Cota-parte ao Confea e à Mútua', 'Tributos', 'Convênios e parcerias', 'Diárias e deslocamento', 'Sentenças e honorários', 'Investimentos', 'Outras despesas'];
-export const PROTESTOS: [string, number][] = [['Parcelamento em atraso', 1.66], ['Anuidade', 1], ['Multa', 0.45], ['Honorários advocatícios', 0.31], ['Multa de auto de infração', 0.00035], ['Juros e correção de auto de infração', 0.000005]];
 const DIAS_DA_SEMANA = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 
 /**

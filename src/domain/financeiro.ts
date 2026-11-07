@@ -186,6 +186,13 @@ export function execucaoDoAno(fin: Financeiro, tipo: 'receita' | 'despesa', mes:
   const acumulado = meses12(ano).map((m, i) => { antes += porMes.get(meses12(ano - 1)[i]) ?? 0; if (m <= mes) atual += porMes.get(m) ?? 0; return { mes: m, realizado: m <= mes ? atual : null, antes }; });
   return { orcado, realizado: atual, acumulado };
 }
+/**
+ * As categorias que vão a protesto e quanto cada uma soma sobre a anuidade protestável, na proporção que o painel de arrecadação
+ * em uso no Crea-SP mostra (parcelamento, multa, honorários e os acréscimos do auto de infração). DEMONSTRATIVO: em produção, vem
+ * do sistema de cobrança.
+ */
+export const PROTESTOS: [string, number][] = [['Parcelamento em atraso', 1.66], ['Anuidade', 1], ['Multa', 0.45], ['Honorários advocatícios', 0.31], ['Multa de auto de infração', 0.00035], ['Juros e correção de auto de infração', 0.000005]];
+
 /** Parte do recorte (municípios escolhidos) no peso do estado; sem recorte, 1. */
 export function parteDoRecorte(pesos: Map<string, number>, cidades: Set<string> | null): number {
   if (!cidades) return 1;

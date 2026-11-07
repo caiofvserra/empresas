@@ -6,12 +6,13 @@ import { addDays } from '../src/domain/hash.ts';
 import { municipiosSp } from '../src/domain/municipios.ts';
 import { buildProfissionais, resumoProfissionais } from '../src/domain/profissionais.ts';
 import { adimplenciaPorMunicipio, buildCarteira, mesesAteData, quadroDivida } from '../src/domain/gestao.ts';
-import { contratosQueTerminam, diariasNoPeriodo, execucaoDoAno, fornecedoresNoPeriodo, metaMensal, parteDoRecorte, pesosDaArrecadacao, tiposReceita } from '../src/domain/financeiro.ts';
+import { arrecadacaoDoMes, contratosQueTerminam, diariasNoPeriodo, execucaoDoAno, fornecedoresNoPeriodo, metaMensal, parteDoRecorte, PROTESTOS, pesosDaArrecadacao, ritmoDoMes, tiposReceita } from '../src/domain/financeiro.ts';
+import ativosUf from '../public/data/engineer-statistics/confea-uf.json' with { type: 'json' };
 import { mesesDaSerie } from '../src/domain/series-mensais.ts';
 import { buildFiscalizacao } from '../src/painel/fiscalizacao.ts';
 import { janela } from '../src/painel/analise.ts';
 import { despesaDoMes, fin, mesDaData, mesesAte, receitaDoMes } from '../src/financeiro/dados.ts';
-import { CARTOES } from '../src/powerbi/financeiro/modelo.ts';
+import { ATIVOS_SP, CARTOES } from '../src/powerbi/financeiro/modelo.ts';
 import { modeloPowerBi, pacotePowerBi } from '../src/powerbi/pacote.ts';
 import { arquivoDe, conferirCamposDosVisuais, conferirChavesUnicas, conferirNomesDePasta, conferirReferenciasDax, conferirSchemas, daxDe, fimDoMesUmAnoAntes, inicio, leitorCsv, noPeriodo, numero, soma } from './powerbi-pacote.ts';
 
@@ -77,6 +78,8 @@ test('gastos com nome: diárias por pessoa e fornecedores pela razão social, e 
     assert.doesNotMatch(texto, /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/, `${caminho}: CPF formatado`);
   }
   for (const caminho of ['dados/pessoas.csv', 'dados/diarias.csv']) assert.doesNotMatch(arquivo(caminho), /\b\d{11}\b/, `${caminho}: CPF sem pontuação`);
+  // O CNPJ de contratada e fornecedor tem 14 dígitos ou fica vazio (pessoa física): nenhum pedaço de CPF mascarado entra.
+  for (const caminho of ['dados/contratos.csv', 'dados/fornecedores.csv']) for (const row of lerCsv(caminho)) assert.match(row.CNPJ, /^(\d{14})?$/, `${caminho}: ${row.CNPJ}`);
 });
 
 /* ---------- os dados reais: o que o CSV leva é o que a Transparência publica e o painel lê ---------- */
@@ -142,6 +145,8 @@ test('recorte: a parte de cada regional e de um município no peso do estado é 
 });
 
 /* ---------- os cartões, pela regra da medida DAX sobre os CSV, contra o painel ---------- */
+/** O protestado do painel: a anuidade protestável vezes o fator de cada categoria (`protestos` em blocos-divida.tsx). */
+const protestos = (anuidade: number) => PROTESTOS.reduce((n, [, fator]) => n + anuidade * fator, 0);
 const carteira = buildCarteira(dataset, buildProfissionais(dataset)), semRecorte = { greId: null, cityId: null, camara: null };
 const DATAS = [['2026-09-30', 12], ['2026-03-31', 12], ['2025-09-30', 6], ['2026-06-30', 3]] as const;
 
@@ -152,11 +157,19 @@ function cartoesDoPacote(d: string, meses: number) {
   // Dívida: a foto da data e os títulos para a cascata do período.
   const divida = fotoDivida.filter(row => row.Data === d), x = addDays(ini, -1), emAberto = (row: Record<string, string>, dia: string) => !row['Pago em'] || row['Pago em'] > dia;
   const adim = fotoAdimplencia.filter(row => row.Data === d), fatores = soma(protestosCsv, 'Fator por milhão') / 1e6;
+  // O ritmo do mês: os dias úteis da tabela Dias, até a data e no mês inteiro.
+  const uteisDoMes = dias.filter(row => row.Mês === mes && row.Útil === '1'), passados = uteisDoMes.filter(row => row.Dia <= d).length, faltam = uteisDoMes.length - passados;
+  const noMes = soma(arrecadacao.filter(row => row.Dia >= mes && row.Dia <= d), 'Valor'), metaMes = soma(metas.filter(row => row.Mês === mes), 'Meta'), falta = Math.max(0, metaMes - noMes);
+  const fim12 = new Date(`${mes}T00:00:00Z`); fim12.setUTCMonth(fim12.getUTCMonth() - 11); const de12 = fim12.toISOString().slice(0, 10);
+  const receita = soma(receitas.filter(noP), 'Valor'), despesa = soma(despesas.filter(noP), 'Valor');
   return {
+    falta, mediaNecessaria: faltam > 0 && falta > 0 ? falta / faltam : 0, ritmo: passados ? noMes / passados * uteisDoMes.length : 0,
+    dividaAtiva: soma(receitas.filter(noP).filter(row => row.Tipo === 'Dívida ativa'), 'Valor'), porAtivo: soma(receitas.filter(row => row.Mês >= de12 && row.Mês <= mes), 'Valor') / ATIVOS_SP,
+    resultado: receita - despesa, deslocamento: soma(despesas.filter(noP).filter(row => row.Grupo === 'Diárias e deslocamento'), 'Valor'),
     arrecadadoNoMes: soma(arrecadacao.filter(row => row.Dia >= mes && row.Dia <= d), 'Valor'), metaDoMes: soma(metas.filter(row => row.Mês === mes), 'Meta'),
     arrecadadoNoAno: soma(arrecadacao.filter(row => row.Dia >= ano && row.Dia <= d), 'Valor'), metaAteOMes: soma(metas.filter(row => row.Mês >= ano && row.Mês <= mes), 'Meta'),
-    receita: soma(receitas.filter(noP), 'Valor'), art: soma(receitas.filter(noP).filter(row => row.Tipo === 'ART'), 'Valor'), anuidades: soma(receitas.filter(noP).filter(row => row.Tipo === 'Anuidades'), 'Valor'),
-    despesa: soma(despesas.filter(noP), 'Valor'), execucao: despAno / orcadaAno,
+    receita, art: soma(receitas.filter(noP).filter(row => row.Tipo === 'ART'), 'Valor'), anuidades: soma(receitas.filter(noP).filter(row => row.Tipo === 'Anuidades'), 'Valor'),
+    despesa, execucao: despAno / orcadaAno,
     diarias: soma(diarias.filter(noP), 'Valor'), pago: soma(pagamentos.filter(noP), 'Valor'),
     contratos: vigentes.length, valorContratos: soma(vigentes, 'Valor'), terminam90: vigentes.filter(row => row.Fim <= limite90.toISOString().slice(0, 10)).length,
     divida: soma(divida, 'Valor'), devedores: new Set(divida.map(row => row.Devedor)).size, abaixoDoPiso: soma(divida.filter(row => row['Acima do piso'] === '0'), 'Valor'), perto: soma(divida, 'Perto de prescrever'),
@@ -175,15 +188,21 @@ function cartoesDoPainel(d: string, meses: number) {
   const w = janela(d, meses), dv = quadroDivida(carteira, d, semRecorte, w.start, w.prevEnd, mesesAteData(d, mesesDaSerie(meses)));
   const umAno = `${Number(d.slice(0, 4)) - 1}${d.slice(4)}`, protestavel = dv.devedores.filter(row => row.acimaDoPiso && row.maisAntigo <= umAno).reduce((n, row) => n + row.valor, 0);
   const view = datasetAt(dataset, d), r = resumoProfissionais(buildProfissionais(view), view, null, meses);
+  const porDia = new Map([...arrecadacaoDoMes(fin, mes)].map(([dia, linha]) => [dia, Object.values(linha).reduce((a, b) => a + b, 0)]));
+  const rm = ritmoDoMes(mes, porDia, tiposReceita.reduce((n, t) => n + (metaAno.get(t)?.[indice] ?? 0), 0), Number(d.slice(8, 10)));
+  const receita = somaMeses(periodo, m => receitaDoMes(m)), despesa = somaMeses(periodo, m => despesaDoMes(m));
   return {
+    falta: rm.falta, mediaNecessaria: rm.mediaNecessaria, ritmo: rm.projecao,
+    dividaAtiva: somaMeses(periodo, m => receitaDoMes(m, 'Dívida ativa')), porAtivo: somaMeses(mesesAte(mes, 12), m => receitaDoMes(m)) / ativosUf.data.valores.find(row => row.ufCodigo === '35')!.valor,
+    resultado: receita - despesa, deslocamento: somaMeses(periodo, m => despesaDoMes(m, 'Diárias e deslocamento')),
     arrecadadoNoMes: receitaDoMes(mes), metaDoMes: tiposReceita.reduce((n, t) => n + (metaAno.get(t)?.[indice] ?? 0), 0),
     arrecadadoNoAno: somaMeses(mesesDoAno, m => receitaDoMes(m)), metaAteOMes: tiposReceita.reduce((n, t) => n + (metaAno.get(t) ?? []).slice(0, indice + 1).reduce((a, b) => a + b, 0), 0),
-    receita: somaMeses(periodo, m => receitaDoMes(m)), art: somaMeses(periodo, m => receitaDoMes(m, 'ART')), anuidades: somaMeses(periodo, m => receitaDoMes(m, 'Anuidades')),
-    despesa: somaMeses(periodo, m => despesaDoMes(m)), execucao: exec.realizado / exec.orcado,
+    receita, art: somaMeses(periodo, m => receitaDoMes(m, 'ART')), anuidades: somaMeses(periodo, m => receitaDoMes(m, 'Anuidades')),
+    despesa, execucao: exec.realizado / exec.orcado,
     diarias: diariasNoPeriodo(fin, periodo).reduce((n, p) => n + p.valor, 0), pago: fornecedoresNoPeriodo(fin, periodo).reduce((n, f) => n + f.pago, 0),
     contratos: fin.contratos.filter(row => row.inicio <= d && row.fim > d).length, valorContratos: fin.contratos.filter(row => row.inicio <= d && row.fim > d).reduce((n, row) => n + row.valor, 0), terminam90: terminam.length,
     divida: dv.total, devedores: dv.devedores.length, abaixoDoPiso: dv.abaixoDoPiso, perto: dv.pertoDePrescrever, inicioDivida: dv.cascata.inicio, recebidos: dv.cascata.recebidos,
-    protestado: protestavel * (1.66 + 1 + 0.45 + 0.31 + 0.00035 + 0.000005),
+    protestado: protestos(protestavel),
     ativos: r.ativos.length, atraso: r.inadimplentes.length,
   };
 }
@@ -202,6 +221,11 @@ test('cartões: a comparação com um ano antes lê a mesma regra em EOMONTH(d, 
   const d = '2026-09-30', meses = 12, antes = cartoesDoPacote(fimDoMesUmAnoAntes(d), meses), mes = mesDaData(d), periodoAntes = mesesAte(`${Number(mes.slice(0, 4)) - 1}${mes.slice(4)}`, meses);
   igual(antes.receita, periodoAntes.reduce((n, m) => n + receitaDoMes(m), 0), 'receita um ano antes');
   igual(antes.despesa, periodoAntes.reduce((n, m) => n + despesaDoMes(m), 0), 'despesa um ano antes');
+  igual(antes.dividaAtiva, periodoAntes.reduce((n, m) => n + receitaDoMes(m, 'Dívida ativa'), 0), 'dívida ativa um ano antes');
+  igual(antes.deslocamento, periodoAntes.reduce((n, m) => n + despesaDoMes(m, 'Diárias e deslocamento'), 0), 'deslocamento um ano antes');
+  // O estoque da dívida um ano antes é a foto de um ano antes, como o painel compara.
+  const w = janela(d, meses), dv = quadroDivida(carteira, d, semRecorte, w.start, w.prevEnd, mesesAteData(d, mesesDaSerie(meses)));
+  igual(antes.divida, dv.totalAntes, 'anuidades vencidas um ano antes');
 });
 
 /* ---------- os gráficos e as tabelas, contra o painel ---------- */

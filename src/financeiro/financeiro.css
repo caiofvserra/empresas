@@ -29,8 +29,8 @@
   .fin-grid-arrecadacao { grid-template-areas:
     "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
     "dd dd dd dd dd dd mr mr mr mr mr mr"
-    "cl cl cl cl tp tp tp tp tp mp mp mp"
-    "cl cl cl cl tp tp tp tp tp mp mp mp"; }
+    "cl cl cl tp tp tp tp tp tp mp mp mp"
+    "cl cl cl tp tp tp tp tp tp mp mp mp"; }
   .fin-grid-orcamento { grid-template-rows: auto minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr); }
   .fin-por-ativo .cs-nota { display: none; }
   .fin-por-ativo .cs-bench-sp { padding: 6px 10px; }
@@ -56,9 +56,12 @@
 .fin-tabela td:nth-child(3), .fin-tabela td:nth-child(6) { border-right: 1px solid var(--line); }
 .fin-var { font-style: normal; font-weight: 700; color: var(--muted); }
 .fin-var.is-up { color: var(--good); } .fin-var.is-down { color: var(--bad); }
+/* Em telas estreitas, a tabela de nove colunas aperta o espaço entre as colunas para caber sem cortar. */
+@media (max-width: 1500px) { .fin-tabela { font-size: 11px; } .fin-tabela th, .fin-tabela td { padding: 3px 4px; } }
 .fin-barra { display: block; position: relative; height: 4px; margin-top: 2px; }
 .fin-barra span { position: absolute; left: 0; height: 4px; border-radius: 2px; }
 .fin-barra span.is-antes { top: 0; height: 4px; background: var(--line); }
+.fin-barra b { position: absolute; top: -2px; width: 2px; height: 8px; margin-left: -1px; background: var(--ink); }
 
 /* Orçado e realizado: uma trilha por origem, com o traço da parte do ano que passou. */
 .fin-bullets { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: space-around; gap: 4px; }

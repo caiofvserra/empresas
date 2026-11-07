@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Projeção do mês"
+                  "Property": "O mês no ritmo atual"
                 }
               },
-              "queryRef": "Medidas.Projeção do mês",
-              "nativeQueryRef": "Projeção do mês"
+              "queryRef": "Medidas.O mês no ritmo atual",
+              "nativeQueryRef": "O mês no ritmo atual"
             },
             {
               "field": {
@@ -37,11 +37,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Projeção do mês"
+                  "Property": "Detalhe: O mês no ritmo atual"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Projeção do mês",
-              "nativeQueryRef": "Detalhe: Projeção do mês"
+              "queryRef": "Medidas.Detalhe: O mês no ritmo atual",
+              "nativeQueryRef": "Detalhe: O mês no ritmo atual"
             }
           ]
         }
@@ -76,7 +76,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Projeção do mês'"
+                  "Value": "'O mês no ritmo atual'"
                 }
               }
             }

@@ -112,8 +112,9 @@ async function main() {
 
   console.log('Contratos');
   const contratos = await obter<Contrato[]>('Contratos', { vigenciaInicio: mmaaaa(recentes[0]), vigenciaTermino: mmaaaa(ate) }).catch(() => [] as Contrato[]);
-  const saidaContratos = contratos.map(row => { const [cnpj, ...nome] = row.CONTRATADA.split(' - ');
-    return { numero: row.NUMERO_CONTRATO, processo: row.NUMERO_PROCESSO_COMPRA, cnpj: cnpj.replace(/\D/g, ''), contratada: nome.join(' - ').replace(/\s+/g, ' ').trim(), valor: centavos(row.VALOR), inicio: row.DATA_INICIO_VIGENCIA?.slice(0, 10), fim: row.DATA_FINAL_VIGENCIA?.slice(0, 10) }; });
+  // A contratada vem como "CNPJ - nome"; quando é pessoa física, o começo é um pedaço do CPF mascarado e não é gravado.
+  const saidaContratos = contratos.map(row => { const [documento, ...nome] = row.CONTRATADA.split(' - '), cnpj = documento.replace(/\D/g, '');
+    return { numero: row.NUMERO_CONTRATO, processo: row.NUMERO_PROCESSO_COMPRA, cnpj: cnpj.length === 14 ? cnpj : '', contratada: nome.join(' - ').replace(/\s+/g, ' ').trim(), valor: centavos(row.VALOR), inicio: row.DATA_INICIO_VIGENCIA?.slice(0, 10), fim: row.DATA_FINAL_VIGENCIA?.slice(0, 10) }; });
 
   const saida = {
     meta: { fonte: 'Portal da Transparência do Crea-SP (API do Implanta)', url: 'https://crea-sp.implanta.net.br/transparencia/', capturadoEm: new Date().toISOString().slice(0, 10), ate,

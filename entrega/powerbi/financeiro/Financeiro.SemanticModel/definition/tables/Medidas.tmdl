@@ -106,10 +106,10 @@ table Medidas
 		lineageTag: 8fd2bfca-8515-5b4c-85fe-e1923b52a94b
 
 	/// Repete a média dos dias úteis já passados até o fim do mês.
-	measure 'Projeção do mês' = DIVIDE([Arrecadado no mês], [Dias úteis passados]) * [Dias úteis do mês]
+	measure 'O mês no ritmo atual' = DIVIDE([Arrecadado no mês], [Dias úteis passados]) * [Dias úteis do mês]
 		formatString: R$ #,##0
 		displayFolder: Arrecadação
-		lineageTag: fd272540-e4a5-5cbe-82ef-9558e5e4b8d9
+		lineageTag: e0220398-6d4f-57fa-88a1-0a3083a2bb77
 
 	/// Soma a arrecadação do recorte de 1º de janeiro até a data escolhida.
 	measure 'Arrecadado no ano' = ```
@@ -262,6 +262,12 @@ table Medidas
 		displayFolder: Arrecadação
 		lineageTag: 3ec8b239-6396-5883-93d6-3bb176285972
 
+	/// Divide o arrecadado de janeiro até o mês pela meta do mesmo intervalo, por tipo.
+	measure 'Tipo no ano na meta' = DIVIDE([Tipo no ano], [Meta até o mês])
+		formatString: 0.0%
+		displayFolder: Arrecadação
+		lineageTag: a09cb191-7a4a-556b-ad91-51c970ad5e58
+
 	/// Compara o acumulado do ano com o mesmo intervalo do ano anterior.
 	measure 'Variação no ano' = IF([Tipo no ano anterior] > 0, DIVIDE([Tipo no ano], [Tipo no ano anterior]) - 1)
 		formatString: +0.0%;-0.0%;0.0%
@@ -317,7 +323,7 @@ table Medidas
 		lineageTag: ce0a21dd-b7cb-575f-8da6-2835c3cf6276
 
 	/// Soma o recebido da dívida ativa no período.
-	measure 'Dívida ativa recebida no período' = ```
+	measure 'Recebido da dívida ativa' = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]
 			VAR fim = DATE(YEAR(d), MONTH(d), 1)
@@ -325,7 +331,7 @@ table Medidas
 			```
 		formatString: R$ #,##0
 		displayFolder: Receita
-		lineageTag: ade4227a-d809-5408-babb-84922e303dc9
+		lineageTag: 3c14bb7a-a693-5e20-bd53-2bb25738a1e1
 
 	/// Soma a receita dos 12 meses terminados no mês da data.
 	measure 'Receita em 12 meses' = ```
@@ -616,6 +622,17 @@ table Medidas
 		displayFolder: Orçamento e despesa
 		lineageTag: a146a275-9e93-5aab-9cc2-d2ed1ad5e642
 
+	/// Compara o resultado com os mesmos meses um ano antes, sobre o valor absoluto de um ano antes, porque o resultado pode ser negativo.
+	measure 'Variação em um ano: Receita menos despesa no período' = ```
+			VAR alvo = EOMONTH([Data escolhida], -12)
+			VAR agora = [Receita menos despesa no período]
+			VAR antes = CALCULATE([Receita menos despesa no período], 'Datas das fotos'[Data] = alvo)
+			RETURN IF(antes <> 0, DIVIDE(agora - antes, ABS(antes)))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Orçamento e despesa
+		lineageTag: 1382cfc9-0113-5fdf-a906-e6d1dc0a02e2
+
 	/// Soma a despesa de diárias, passagens e deslocamento empenhada no período.
 	measure 'Diárias e deslocamento no período' = ```
 			VAR d = [Data escolhida]
@@ -871,9 +888,9 @@ table Medidas
 		lineageTag: 5af3ef8a-1180-5544-86e7-1cd2a013f901
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Projeção do mês' = IF([Dias úteis que faltam] = 0, "mês fechado em " & FORMAT(DIVIDE([Arrecadado no mês], [Meta do mês]), "0.0%") & " da meta", "no ritmo dos dias úteis já passados: " & FORMAT(DIVIDE([Projeção do mês], [Meta do mês]), "0.0%") & " da meta")
+	measure 'Detalhe: O mês no ritmo atual' = IF([Dias úteis que faltam] = 0, "mês fechado em " & FORMAT(DIVIDE([Arrecadado no mês], [Meta do mês]), "0.0%") & " da meta", "no ritmo dos dias úteis já passados: " & FORMAT(DIVIDE([O mês no ritmo atual], [Meta do mês]), "0.0%") & " da meta")
 		displayFolder: Arrecadação
-		lineageTag: 18ad6ae3-67d9-5419-8acf-d2db04749b58
+		lineageTag: 44441435-6a55-5fb7-aedd-4a6dff9e9c30
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
 	measure 'Variação em um ano: Receita no período' = ```
@@ -948,28 +965,28 @@ table Medidas
 		lineageTag: 776be53c-43eb-5eb6-8eaa-f734c4a3ba35
 
 	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Dívida ativa recebida no período' = ```
+	measure 'Variação em um ano: Recebido da dívida ativa' = ```
 			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Dívida ativa recebida no período]
-			VAR antes = CALCULATE([Dívida ativa recebida no período], 'Datas das fotos'[Data] = alvo)
+			VAR agora = [Recebido da dívida ativa]
+			VAR antes = CALCULATE([Recebido da dívida ativa], 'Datas das fotos'[Data] = alvo)
 			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
 			```
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Receita
-		lineageTag: cd51f366-e840-5014-aa25-b60e8ca4b469
+		lineageTag: 79ad2f4e-0521-5624-9f90-dcf6bacde801
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
-	measure 'Comparação: Dívida ativa recebida no período' = ```
-			VAR v = [Variação em um ano: Dívida ativa recebida no período]
+	measure 'Comparação: Recebido da dívida ativa' = ```
+			VAR v = [Variação em um ano: Recebido da dívida ativa]
 			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação a um ano antes")
 			```
 		displayFolder: Receita
-		lineageTag: bdf94a82-c280-51b4-be3e-87ba47ea6cd1
+		lineageTag: d314d5a2-278c-52c4-88af-0b3a8e25e6e9
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
-	measure 'Detalhe: Dívida ativa recebida no período' = FORMAT(DIVIDE([Dívida ativa recebida no período], [Receita no período]), "0.0%") & " da receita do período"
+	measure 'Detalhe: Recebido da dívida ativa' = FORMAT(DIVIDE([Recebido da dívida ativa], [Receita no período]), "0.0%") & " da receita do período"
 		displayFolder: Receita
-		lineageTag: 9dd69703-818c-5e09-b34b-47fbc9247692
+		lineageTag: d1e18f53-8ecd-5ea1-8831-f34ba317ddb2
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Receita por profissional ativo' = "receita de 12 meses dividida pelos " & FORMAT([Profissionais ativos em SP], "#,##0") & " ativos de SP no Confea"
@@ -1048,17 +1065,6 @@ table Medidas
 	measure 'Detalhe: Execução do orçamento no ano' = FORMAT([Despesa realizada no ano], "R$ #,##0") & " de " & FORMAT([Despesa orçada no ano], "R$ #,##0") & "; até o mês passaram " & FORMAT(MONTH([Data escolhida]) / 12, "0%") & " do ano"
 		displayFolder: Orçamento e despesa
 		lineageTag: 18b39d96-468b-5b1c-963c-37ae91429b4b
-
-	/// Compara o cartão com o mesmo número de meses terminados no fim do mesmo mês um ano antes.
-	measure 'Variação em um ano: Receita menos despesa no período' = ```
-			VAR alvo = EOMONTH([Data escolhida], -12)
-			VAR agora = [Receita menos despesa no período]
-			VAR antes = CALCULATE([Receita menos despesa no período], 'Datas das fotos'[Data] = alvo)
-			RETURN IF(antes > 0, DIVIDE(agora - antes, antes))
-			```
-		formatString: +0.0%;-0.0%;0.0%
-		displayFolder: Orçamento e despesa
-		lineageTag: 1382cfc9-0113-5fdf-a906-e6d1dc0a02e2
 
 	/// Escreve a comparação que o cartão mostra embaixo do número.
 	measure 'Comparação: Receita menos despesa no período' = ```

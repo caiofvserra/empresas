@@ -79,21 +79,25 @@ export function MetaRealizado({ ctx, q }: { ctx: CockpitCtx; q: QuadroFinanceiro
 }
 
 /* ---------- Tipo a tipo: este ano e o anterior ---------- */
-export const exportarPorTipo = (q: QuadroFinanceiro, mes: string): Exportavel => ({ cabecalho: ['Tipo', `Mês ${q.ano - 1} (R$)`, `Mês ${q.ano} (R$)`, 'Variação do mês (%)', `Acumulado ${q.ano - 1} (R$)`, `Acumulado ${q.ano} (R$)`, 'Variação do acumulado (%)'],
-  linhas: () => comparativo(q, mes).map(row => [row.tipo, Math.round(row.mes.antes), Math.round(row.mes.atual), variacao(row.mes.atual, row.mes.antes), Math.round(row.acumulado.antes), Math.round(row.acumulado.atual), variacao(row.acumulado.atual, row.acumulado.antes)]) });
+/** A meta de um tipo de janeiro até o mês, no recorte. */
+const metaAteOMes = (q: QuadroFinanceiro, mes: string, tipo: TipoReceita) => Array.from({ length: Number(mes.slice(5, 7)) }, (_, i) => metaDoMes(q, i, tipo)).reduce((a, b) => a + b, 0);
+export const exportarPorTipo = (q: QuadroFinanceiro, mes: string): Exportavel => ({ cabecalho: ['Tipo', `Mês ${q.ano - 1} (R$)`, `Mês ${q.ano} (R$)`, 'Variação do mês (%)', `Acumulado ${q.ano - 1} (R$)`, `Acumulado ${q.ano} (R$)`, 'Variação do acumulado (%)', `Meta até o mês ${q.ano} (R$)`, 'Acumulado na meta (%)'],
+  linhas: () => comparativo(q, mes).map(row => { const meta = metaAteOMes(q, mes, row.tipo as TipoReceita);
+    return [row.tipo, Math.round(row.mes.antes), Math.round(row.mes.atual), variacao(row.mes.atual, row.mes.antes), Math.round(row.acumulado.antes), Math.round(row.acumulado.atual), variacao(row.acumulado.atual, row.acumulado.antes), Math.round(meta), meta ? Math.round(row.acumulado.atual / meta * 1000) / 10 : null]; }) });
 export function PorTipo({ ctx, q, mes }: { ctx: CockpitCtx; q: QuadroFinanceiro; mes: string }) {
   const rows = comparativo(q, mes), cores = coresTipo(ctx.tokens), nome = nomesMes[Number(mes.slice(5, 7)) - 1];
   const total = rows.reduce((t, row) => ({ mes: { atual: t.mes.atual + row.mes.atual, antes: t.mes.antes + row.mes.antes }, acumulado: { atual: t.acumulado.atual + row.acumulado.atual, antes: t.acumulado.antes + row.acumulado.antes } }), { mes: { atual: 0, antes: 0 }, acumulado: { atual: 0, antes: 0 } });
-  const maximo = Math.max(...rows.map(row => Math.max(row.acumulado.atual, row.acumulado.antes)), 1);
+  const metas = new Map(rows.map(row => [row.tipo, metaAteOMes(q, mes, row.tipo as TipoReceita)])), metaTotal = [...metas.values()].reduce((a, b) => a + b, 0);
+  const maximo = Math.max(...rows.map(row => Math.max(row.acumulado.atual, row.acumulado.antes, metas.get(row.tipo) ?? 0)), 1);
   const chip = (value: number | null) => <em className={`fin-var ${value === null || Math.abs(value) < 0.5 ? '' : value > 0 ? 'is-up' : 'is-down'}`}>{seta(value)}</em>;
-  const linha = (tipo: string, item: typeof total, cor?: string, forte?: boolean) => <tr key={tipo} className={forte ? 'is-total' : ''}>
+  const linha = (tipo: string, item: typeof total, meta: number, cor?: string, forte?: boolean) => <tr key={tipo} className={forte ? 'is-total' : ''}>
     <th scope="row">{cor && <i style={{ background: cor }} />}{tipo}</th>
     <td>{brl(item.mes.antes)}</td><td><b>{brl(item.mes.atual)}</b></td><td>{chip(variacao(item.mes.atual, item.mes.antes))}</td>
-    <td>{brl(item.acumulado.antes)}</td><td><b>{brl(item.acumulado.atual)}</b>{!forte && <span className="fin-barra"><span style={{ width: `${item.acumulado.antes / maximo * 100}%` }} className="is-antes" /><span style={{ width: `${item.acumulado.atual / maximo * 100}%`, background: cor }} /></span>}</td><td>{chip(variacao(item.acumulado.atual, item.acumulado.antes))}</td></tr>;
+    <td>{brl(item.acumulado.antes)}</td><td><b>{brl(item.acumulado.atual)}</b>{!forte && <span className="fin-barra"><span style={{ width: `${item.acumulado.antes / maximo * 100}%` }} className="is-antes" /><span style={{ width: `${item.acumulado.atual / maximo * 100}%`, background: cor }} />{meta > 0 && <b style={{ left: `${meta / maximo * 100}%` }} />}</span>}</td><td>{chip(variacao(item.acumulado.atual, item.acumulado.antes))}</td><td>{meta ? pct(item.acumulado.atual / meta * 100) : '—'}</td></tr>;
   return <table className="fin-tabela">
-    <thead><tr><th rowSpan={2}>Tipo</th><th colSpan={3}>Em {nome}</th><th colSpan={3}>De janeiro a {nome}</th></tr>
-      <tr><th>{q.ano - 1}</th><th>{q.ano}</th><th>variação</th><th>{q.ano - 1}</th><th>{q.ano}</th><th>variação</th></tr></thead>
-    <tbody>{rows.map(row => linha(row.tipo, row, cores[row.tipo]))}{linha('Total', total, undefined, true)}</tbody>
+    <thead><tr><th rowSpan={2}>Tipo</th><th colSpan={3}>Em {nome}</th><th colSpan={4}>De janeiro a {nome}</th></tr>
+      <tr><th>{q.ano - 1}</th><th>{q.ano}</th><th>variação</th><th>{q.ano - 1}</th><th>{q.ano}</th><th>variação</th><th>da meta</th></tr></thead>
+    <tbody>{rows.map(row => linha(row.tipo, row, metas.get(row.tipo) ?? 0, cores[row.tipo]))}{linha('Total', total, metaTotal, undefined, true)}</tbody>
   </table>;
 }
 

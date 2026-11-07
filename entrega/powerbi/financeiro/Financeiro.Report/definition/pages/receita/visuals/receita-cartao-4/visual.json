@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Dívida ativa recebida no período"
+                  "Property": "Recebido da dívida ativa"
                 }
               },
-              "queryRef": "Medidas.Dívida ativa recebida no período",
-              "nativeQueryRef": "Dívida ativa recebida no período"
+              "queryRef": "Medidas.Recebido da dívida ativa",
+              "nativeQueryRef": "Recebido da dívida ativa"
             },
             {
               "field": {
@@ -37,11 +37,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Comparação: Dívida ativa recebida no período"
+                  "Property": "Comparação: Recebido da dívida ativa"
                 }
               },
-              "queryRef": "Medidas.Comparação: Dívida ativa recebida no período",
-              "nativeQueryRef": "Comparação: Dívida ativa recebida no período"
+              "queryRef": "Medidas.Comparação: Recebido da dívida ativa",
+              "nativeQueryRef": "Comparação: Recebido da dívida ativa"
             },
             {
               "field": {
@@ -51,11 +51,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Dívida ativa recebida no período"
+                  "Property": "Detalhe: Recebido da dívida ativa"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Dívida ativa recebida no período",
-              "nativeQueryRef": "Detalhe: Dívida ativa recebida no período"
+              "queryRef": "Medidas.Detalhe: Recebido da dívida ativa",
+              "nativeQueryRef": "Detalhe: Recebido da dívida ativa"
             }
           ]
         }
@@ -90,7 +90,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Dívida ativa recebida no período'"
+                  "Value": "'Recebido da dívida ativa'"
                 }
               }
             }

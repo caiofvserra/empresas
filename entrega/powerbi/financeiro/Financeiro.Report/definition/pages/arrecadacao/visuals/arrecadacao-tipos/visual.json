@@ -123,6 +123,36 @@
               "queryRef": "Medidas.Variação no ano",
               "nativeQueryRef": "Variação no ano",
               "displayName": "Variação no ano"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Meta até o mês"
+                }
+              },
+              "queryRef": "Medidas.Meta até o mês",
+              "nativeQueryRef": "Meta até o mês",
+              "displayName": "Meta até o mês"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Tipo no ano na meta"
+                }
+              },
+              "queryRef": "Medidas.Tipo no ano na meta",
+              "nativeQueryRef": "Tipo no ano na meta",
+              "displayName": "Da meta"
             }
           ]
         }
@@ -142,7 +172,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Cada tipo, este ano e o anterior'"
+                  "Value": "'Cada tipo contra o ano anterior e a meta'"
                 }
               }
             }

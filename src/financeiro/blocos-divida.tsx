@@ -8,6 +8,8 @@ import { municipiosSp } from '../domain/municipios';
 import { dividaPorSituacao, faixaIdadeDivida, vencidoEm } from '../domain/gestao';
 import { abrirDevedores, compacto, eixoCategoria, eixoValor, g, legenda, ultimoIndice } from '../gestao/comum';
 import type { Medida } from '../gestao/comum';
+import { mainEstablishments } from '../gestao-v14/metrics';
+import { PROTESTOS } from '../domain/financeiro';
 
 /** Blocos da página Dívida e cobrança do painel Financeiro (vieram da página Receita e dívida do antigo painel de Gestão, 06/11/2026). */
 const nomesMes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -107,8 +109,7 @@ export function protestos(ctx: CockpitCtx) {
   const d = g(ctx).divida, umAno = new Date(`${ctx.anchor}T00:00:00Z`); umAno.setUTCFullYear(umAno.getUTCFullYear() - 1);
   const limite = umAno.toISOString().slice(0, 10), alvo = d.devedores.filter(row => row.acimaDoPiso && row.maisAntigo <= limite);
   const anuidade = alvo.reduce((s, row) => s + row.valor, 0);
-  const rows = [{ nome: 'Parcelamento em atraso', valor: anuidade * 1.66 }, { nome: 'Anuidade', valor: anuidade }, { nome: 'Multa', valor: anuidade * 0.45 }, { nome: 'Honorários advocatícios', valor: anuidade * 0.31 },
-    { nome: 'Multa de auto de infração', valor: anuidade * 0.00035 }, { nome: 'Juros e correção de auto de infração', valor: anuidade * 0.000005 }];
+  const rows = PROTESTOS.map(([nome, fator]) => ({ nome, valor: anuidade * fator }));
   return { rows, total: rows.reduce((s, row) => s + row.valor, 0), devedores: alvo };
 }
 export const exportarProtestos = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Categoria', 'Valor protestado (R$)'], linhas: () => protestos(ctx).rows.map(row => [row.nome, Math.round(row.valor)]) });
@@ -128,7 +129,9 @@ export function Protestos({ ctx }: { ctx: CockpitCtx }) {
 /* ---------- Adimplência de profissionais e empresas ---------- */
 export function adimplencia(ctx: CockpitCtx) {
   const r = ctx.profissionais.resumo, linhas = ctx.linhas.filter(row => !ctx.greId || row.id === ctx.greId);
-  const ativas = linhas.reduce((s, row) => s + row.ativas.length, 0), devedoras = linhas.reduce((s, row) => s + row.devedoras.length, 0);
+  // Com um município escolhido, só as empresas com a matriz nele, como os profissionais.
+  const matriz = mainEstablishments(ctx.dataset), noRecorte = (id: string) => !ctx.cidadeId || matriz.get(id)?.cityId === ctx.cidadeId;
+  const ativas = linhas.reduce((s, row) => s + row.ativas.filter(noRecorte).length, 0), devedoras = linhas.reduce((s, row) => s + row.devedoras.filter(noRecorte).length, 0);
   return { profissionais: { registros: r.registrados.length, ativos: r.ativos.length, inadimplentes: r.inadimplentes.length }, empresas: { registros: ativas, ativos: ativas, inadimplentes: devedoras } };
 }
 export const exportarAdimplencia = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Quem', 'Registros', 'Ativos', 'Adimplentes', 'Inadimplentes', 'Inadimplentes (%)'], linhas: () => { const a = adimplencia(ctx);

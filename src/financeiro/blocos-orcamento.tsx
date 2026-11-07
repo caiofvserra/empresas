@@ -137,7 +137,7 @@ export function Fornecedores({ ctx, meses }: { ctx: CockpitCtx; meses: string[] 
   }), [top, tokens, total]);
   if (!top.length) return <p className="tile-vazio" role="status">Nenhum pagamento a empresas no período.</p>;
   return <div className="cs-com-nota"><Chart option={option} tokens={tokens} label="Os dez fornecedores que mais receberam no período" onPick={params => { const f = top[params.dataIndex]; if (f) abrirFornecedor(ctx, f); }} />
-    <p className="cs-nota">Os cinco maiores ficam com <b>{total ? pct(cinco / total * 100) : '—'}</b> do pago a empresas. Concentração (HHI): <b>{hhi === null ? '—' : hhi.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}</b>{hhi !== null && hhi > 0.15 ? ', alta' : ''}.</p></div>;
+    <p className="cs-nota">Os cinco maiores ficam com <b>{total ? pct(cinco / total * 100) : '—'}</b> do pago a empresas. Índice de concentração: <b>{hhi === null ? '—' : hhi.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}</b>{hhi !== null && hhi > 0.15 ? ', alta' : ''}.</p></div>;
 }
 
 /* ---------- Contratos que terminam nos próximos 12 meses ---------- */
@@ -148,7 +148,7 @@ export function abrirContratos(ctx: CockpitCtx, titulo: string, lista: ReturnTyp
   if (!lista.length) return;
   ctx.open({ kind: 'linhas', title: titulo, what: 'Contratos do Crea-SP vigentes na data que terminam no intervalo, pela Transparência: número, contratada, valor e vigência.', use: 'Comece a renovação ou a nova licitação pelo menos três meses antes do fim.',
     listTitle: 'Contratos, o fim mais próximo primeiro', summary: [['Contratos', int(lista.length)], ['Valor', brl(lista.reduce((s, row) => s + row.valor, 0))]],
-    rows: lista.map(row => ({ key: row.numero, title: nomeProprio(row.contratada), subtitle: `${row.numero} · CNPJ ${cnpjComMascara(row.cnpj)}`, value: money(row.valor), note: `termina em ${row.fim.split('-').reverse().join('/')}`, sortValue: -Date.parse(row.fim) })) });
+    rows: lista.map(row => ({ key: row.numero, title: nomeProprio(row.contratada), subtitle: `${row.numero} · ${row.cnpj ? `CNPJ ${cnpjComMascara(row.cnpj)}` : 'pessoa física'}`, value: money(row.valor), note: `termina em ${row.fim.split('-').reverse().join('/')}`, sortValue: -Date.parse(row.fim) })) });
 }
 export function Contratos({ ctx }: { ctx: CockpitCtx }) {
   const { tokens } = ctx, rows = porMesDeFim(ctx.anchor);
