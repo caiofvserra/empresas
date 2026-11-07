@@ -83,11 +83,11 @@
                       "Entity": "Deliberações"
                     }
                   },
-                  "Property": "Conflito de interesse"
+                  "Property": "Quem propôs é da organização"
                 }
               },
-              "queryRef": "Deliberações.Conflito de interesse",
-              "nativeQueryRef": "Conflito de interesse",
+              "queryRef": "Deliberações.Quem propôs é da organização",
+              "nativeQueryRef": "Quem propôs é da organização",
               "active": true
             },
             {

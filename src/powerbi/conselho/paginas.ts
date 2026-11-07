@@ -77,6 +77,6 @@ export const paginasConselho: Pagina[] = [
     { id: 'representacao-organizacoes', tipo: 'barChart', ...caixa(lugar(0, 1, 6)), titulo: 'Organizações com cadeira e o que receberam',
       papeis: { Category: [campoColuna('Organizações', 'Sigla')], Series: [campoColuna('Pagamentos dos repasses', 'Canal')], Y: [campoMedida('Repassado em 12 meses a quem tem cadeira', 'Recebido em 12 meses')] } },
     { id: 'representacao-deliberacoes', tipo: 'tableEx', ...caixa(lugar(6, 1, 6)), titulo: 'Deliberações das atas', papeis: { Values: [campoColuna('Deliberações', 'Data'), campoColuna('Deliberações', 'Nome da organização'), campoColuna('Deliberações', 'Canal'),
-      campoColuna('Deliberações', 'Proposta por'), campoColuna('Deliberações', 'Conflito de interesse'), campoMedida('Valor das deliberações', 'Valor')] } },
+      campoColuna('Deliberações', 'Proposta por'), campoColuna('Deliberações', 'Quem propôs é da organização'), campoMedida('Valor das deliberações', 'Valor')] } },
   ] },
 ];

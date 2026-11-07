@@ -1,5 +1,5 @@
 import type { Medida, Modelo, Tabela } from '../modelo';
-import { COM_DATA, COM_PERIODO, FORMATO, MESES_NA_BASE, PASTA_PARAMETRO, cartao, data, inicioDe, inteiro, medida, medidasDeApoio, medidasDosCartoes, n, noMes, parte, reais, sinal, texto } from '../comum';
+import { COM_DATA, COM_PERIODO, FORMATO, MESES_NA_BASE, PASTA_PARAMETRO, cartao, data, filtrosExtras, inicioDe, inteiro, medida, medidasDeApoio, medidasDosCartoes, n, noMes, parte, reais, sinal, texto } from '../comum';
 import type { Cartao } from '../comum';
 
 /*
@@ -9,15 +9,16 @@ import type { Cartao } from '../comum';
  * (votados, relatos, sessões, autos, repasses, deliberações) somam o período (ADR 0002). `tests/powerbi-conselho.test.ts`
  * reproduz estas regras sobre os CSV e confere com `quadroColegiado`, a função das páginas.
  *
- * O colegiado escolhido chega aos processos pela relação com as tramitações. Nos conselheiros, nos autos e nas deliberações, a
- * medida lê a escolha (`VAR c`): no Plenário estão todos os conselheiros e só os autos que chegaram a ele em recurso.
+ * O colegiado escolhido chega aos processos pela relação com as tramitações. Nos conselheiros, nas diárias, nos autos, nas câmaras,
+ * nos repasses e nas deliberações, a medida lê a escolha (`VAR c`): no Plenário estão todos os conselheiros e só os autos que
+ * chegaram a ele em recurso. A regional e o município chegam aos processos e aos autos pelo lugar do processo.
  */
 const PASTA = { apoio: 'Apoio', colegiado: 'Colegiado', processos: 'Processos', conselheiros: 'Conselheiros', decisoes: 'Decisões', representacao: 'Representação' } as const;
 
 const tabelas: Tabela[] = [
   // Dimensões.
   { nome: 'Regionais', arquivo: 'regionais.csv', descricao: 'Tem uma linha para cada uma das 16 gerências regionais do Crea-SP.', colunas: [texto('GRE', { ordenarPor: 'Ordem' }), inteiro('Ordem', { oculta: true })] },
-  { nome: 'Municípios', arquivo: 'municipios.csv', descricao: 'Tem os 645 municípios de SP e a GRE de cada um pela tabela oficial. A regional e o município recortam só os processos, pelo lugar do processo.',
+  { nome: 'Municípios', arquivo: 'municipios.csv', descricao: 'Tem os 645 municípios de SP e a GRE de cada um pela tabela oficial. A regional e o município recortam só os processos (e os autos, que são processos), pelo lugar do processo.',
     colunas: [texto('Código IBGE'), texto('Município'), texto('GRE')] },
   { nome: 'Colegiados', arquivo: 'colegiados.csv', descricao: 'Tem o Plenário e as nove câmaras especializadas, com os nomes do sistema do Conselho. Escolha um por vez.',
     colunas: [texto('Colegiado', { oculta: true }), texto('Nome', { ordenarPor: 'Ordem' }), inteiro('Ordem', { oculta: true })] },
@@ -59,13 +60,13 @@ const tabelas: Tabela[] = [
   { nome: 'Pagamentos dos repasses', arquivo: 'pagamentos-repasses.csv', descricao: 'Guarda cada pagamento de convênio, contrato ou patrocínio às organizações, com o canal e o início do instrumento.',
     colunas: [texto('Repasse', { oculta: true }), texto('Organização', { oculta: true }), texto('Canal'), data('Início do repasse', { oculta: true }), data('Data', { oculta: true }), reais('Valor')] },
   { nome: 'Deliberações', arquivo: 'deliberacoes.csv', descricao: 'Guarda cada deliberação de repasse aprovada pelo Plenário, pela ata: a organização, o valor, o objeto, quem propôs e se quem propôs foi indicado pela própria organização.',
-    colunas: [texto('Deliberação', { oculta: true }), data('Data'), texto('Canal'), texto('Organização', { oculta: true }), texto('Nome da organização'), reais('Valor'), texto('Objeto'), texto('Proposta por'), sinal('Proposta pela própria organização'), texto('Conflito de interesse')] },
+    colunas: [texto('Deliberação', { oculta: true }), data('Data'), texto('Canal'), texto('Organização', { oculta: true }), texto('Nome da organização'), reais('Valor'), texto('Objeto'), texto('Proposta por'), sinal('Proposta pela própria organização'), texto('Quem propôs é da organização')] },
 ];
 
 /* ---------- Pedaços de DAX ---------- */
 const dias = '#,##0" dias"';
 const rs = (expressao: string) => `FORMAT(${expressao}, "R$ #,##0")`;
-const extras = (lista: string[]) => lista.map(filtro => `, KEEPFILTERS(${filtro})`).join('');
+const extras = (lista: string[]) => filtrosExtras(lista.map(filtro => `KEEPFILTERS(${filtro})`));
 /** O colegiado escolhido (vazio sem escolha). */
 const COM_COLEGIADO = "VAR c = SELECTEDVALUE('Colegiados'[Colegiado])";
 /** A fila do Votenet na data escolhida. */
@@ -251,7 +252,7 @@ const medidas: Medida[] = [
   medida(P.representacao, 'Organizações com cadeira que receberam', `${repassesComCadeira("DISTINCTCOUNT('Pagamentos dos repasses'[Organização])")} + 0`, FORMATO.inteiro, 'Conta as organizações com cadeira que receberam algum pagamento nos 365 dias.'),
   medida(P.representacao, 'Valor das deliberações', `${deliberacoes("SUM('Deliberações'[Valor])")}`, FORMATO.reais, 'Soma o valor das deliberações de repasse aprovadas pelo Plenário no período; na tabela, o valor de cada uma.'),
   medida(P.representacao, 'Deliberações de repasse', `${deliberacoes("COUNTROWS('Deliberações')")} + 0`, FORMATO.inteiro, 'Conta as deliberações de repasse aprovadas pelo Plenário no período, pelas atas. Com uma câmara escolhida, as de organizações com cadeira nela.'),
-  medida(P.representacao, 'Propostos pela própria organização', `${deliberacoes("COUNTROWS('Deliberações')", "'Deliberações'[Proposta pela própria organização] = 1")} + 0`, FORMATO.inteiro, 'Conta as deliberações em que quem propôs o repasse é conselheiro indicado pela organização que recebe: o conflito de interesse.'),
+  medida(P.representacao, 'Propostos pela própria organização', `${deliberacoes("COUNTROWS('Deliberações')", "'Deliberações'[Proposta pela própria organização] = 1")} + 0`, FORMATO.inteiro, 'Conta as deliberações em que quem propôs o repasse é conselheiro indicado pela organização que recebe.'),
 
   ...medidasDosCartoes(CARTOES),
 ];

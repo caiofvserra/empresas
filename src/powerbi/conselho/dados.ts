@@ -115,7 +115,7 @@ function montar(dataset: Dataset): Dados[] {
       linhas: entidades.organizacoes.map(org => [org.id, org.sigla, org.nome, org.grupo === 'IES' ? 'Instituição de ensino' : 'Entidade de classe']) },
     { arquivo: 'pagamentos-repasses.csv', cabecalho: ['Repasse', 'Organização', 'Canal', 'Início do repasse', 'Data', 'Valor'],
       linhas: entidades.repasses.flatMap(r => r.pagamentos.filter(pg => pg.data <= hoje).map(pg => [r.id, r.orgId, r.canal, r.inicio, pg.data, centavos(pg.valor)])) },
-    { arquivo: 'deliberacoes.csv', cabecalho: ['Deliberação', 'Data', 'Canal', 'Organização', 'Nome da organização', 'Valor', 'Objeto', 'Proposta por', 'Proposta pela própria organização', 'Conflito de interesse'],
+    { arquivo: 'deliberacoes.csv', cabecalho: ['Deliberação', 'Data', 'Canal', 'Organização', 'Nome da organização', 'Valor', 'Objeto', 'Proposta por', 'Proposta pela própria organização', 'Quem propôs é da organização'],
       linhas: base.deliberacoes.filter(d => d.data <= hoje).map(d => [d.id, d.data, d.canal, d.orgId, d.organizacao, d.valor, d.objeto, nomeDe(d.proponente), d.conflito, d.conflito ? 'Sim' : 'Não']) },
   ];
 }

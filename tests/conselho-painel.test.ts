@@ -10,12 +10,12 @@ import { buildEntidades } from '../src/domain/entidades.ts';
 import { buildConselho } from '../src/domain/conselho.ts';
 import { buildInstitutionalModel } from '../src/domain/institutional.ts';
 import { janela } from '../src/painel/analise.ts';
-import { abertoEm, buildCarteira, buildProcessos, camarasConselho, canalPorDistancia, distanciaUnidade, dividaPorSituacao, faixasIdadeProcesso, fases, mesesAteData, municipioDoSolicitante, pisoExecucao, plenario, quadroCamaras, quadroDivida, receitaAcumulada, vencimentoContratos } from '../src/domain/gestao.ts';
+import { buildCarteira, buildProcessos, camarasConselho, canalPorDistancia, distanciaUnidade, dividaPorSituacao, mesesAteData, municipioDoSolicitante, pisoExecucao, plenario, quadroDivida, receitaAcumulada, vencimentoContratos } from '../src/domain/gestao.ts';
 import { fichas, parceriasDe } from '../src/cockpit/fichas.ts';
 import { pageIdsAtendimento, pageIdsConselho, pageIdsFinanceiro, pageIdsGeral, painelDaPagina } from '../src/cockpit/leitura.ts';
 
 /**
- * Painel de Gestão do Conselho (06/11/2026). Seams testados: as leituras do domínio que os blocos usam (quadroCamaras, quadroDivida,
+ * Painel de Gestão do Conselho (06/11/2026). Seams testados: as leituras do domínio que os blocos usam (buildProcessos, quadroDivida,
  * plenario, distanciaUnidade, canalPorDistancia, receitaAcumulada, vencimentoContratos) e a estrutura do painel (páginas, fichas, Cockpit).
  */
 const hoje = dataset.snapshotDate, w = janela(hoje, 12), meses = mesesAteData(hoje, 24), todos = { greId: null, cityId: null, camara: null };
@@ -44,41 +44,9 @@ test('Financeiro, Atendimento e Conselho: o antigo painel de Gestão do Conselho
   assert.ok(!Object.keys(fichas).some(key => key.startsWith('controle.')), 'a aba Controle virou Orçamento');
 });
 
-test('câmaras: o estoque se divide pelas fases e pela idade, e ninguém julgado ou que ainda não entrou fica no estoque', () => {
-  const q = quadroCamaras(processos, hoje, 12, todos, w.start, w.prevStart, w.prevEnd, meses);
-  assert.equal(q.linhas.length, 9);
-  assert.equal(sum(q.linhas.map(row => row.estoque.length)), q.estoque.length);
-  for (const row of q.linhas) {
-    assert.equal(sum(fases.map(fase => row.porFase[fase].length)), row.estoque.length, `${row.camara}: fases somam o estoque`);
-    assert.equal(sum(row.idade.map(faixa => faixa.length)), row.estoque.length, `${row.camara}: idades somam o estoque`);
-    assert.equal(row.idade.length, faixasIdadeProcesso.length);
-  }
-  assert.ok(q.estoque.every(row => row.entrada <= hoje && row.julgadoEm > hoje));
-  assert.ok(q.julgados.every(row => row.julgadoEm >= w.start && row.julgadoEm <= hoje));
-  assert.equal(q.mensal.at(-1)!.estoque, q.estoque.length, 'o último mês da série é a data de referência');
-  // A Civil é a maior câmara, como no Crea-SP.
-  assert.equal([...q.linhas].sort((a, b) => b.estoque.length - a.estoque.length)[0].camara, 'Civil');
-});
-
-test('câmaras: autos em risco estão a até 12 meses da prescrição de cinco anos, e os prescritos foram arquivados por ela', () => {
-  const q = quadroCamaras(processos, hoje, 12, todos, w.start, w.prevStart, w.prevEnd, meses);
-  assert.ok(q.emRisco.every(row => row.tipo === 'Auto de infração' && abertoEm(row, hoje) && row.prescreveEm! >= hoje));
-  const umAno = new Date(Date.parse(`${hoje}T00:00:00Z`) + 366 * 86400000).toISOString().slice(0, 10);
-  assert.ok(q.emRisco.every(row => row.prescreveEm! <= umAno));
-  assert.ok(q.prescritos.every(row => row.decisao === 'Arquivado pela prescrição' && row.julgadoEm === row.prescreveEm));
+test('processos do cenário: o auto prescreve cinco anos depois do fato, e o arquivado pela prescrição foi julgado nesse dia', () => {
   assert.ok(processos.filter(row => row.prescreveEm).every(row => Date.parse(row.prescreveEm!) - Date.parse(row.fatoEm!) === 1826 * 86400000));
-});
-
-test('câmaras: o filtro de câmara e de regional só reduz, e o cenário fica estável de um ano para o outro', () => {
-  const q = quadroCamaras(processos, hoje, 12, todos, w.start, w.prevStart, w.prevEnd, meses);
-  const civil = quadroCamaras(processos, hoje, 12, { ...todos, camara: 'Civil' }, w.start, w.prevStart, w.prevEnd, meses);
-  assert.equal(civil.linhas.length, 1); assert.ok(civil.estoque.every(row => row.camara === 'Civil') && civil.estoque.length < q.estoque.length);
-  const gre = dataset.gres[0].id, local = quadroCamaras(processos, hoje, 12, { ...todos, greId: gre }, w.start, w.prevStart, w.prevEnd, meses);
-  assert.ok(local.estoque.every(row => row.greId === gre) && local.estoque.length < q.estoque.length);
-  assert.ok(Math.abs(q.julgados.length - q.julgadosAntes) / q.julgadosAntes < 0.2, `julgados ${q.julgadosAntes} e ${q.julgados.length}`);
-  // Em D passado, nada do que aconteceu depois de D aparece.
-  const d = '2025-06-30', passado = quadroCamaras(processos, d, 12, todos, janela(d, 12).start, janela(d, 12).prevStart, janela(d, 12).prevEnd, mesesAteData(d, 24));
-  assert.ok(passado.estoque.every(row => row.entrada <= d) && passado.julgados.every(row => row.julgadoEm <= d));
+  assert.ok(processos.filter(row => row.decisao === 'Arquivado pela prescrição').every(row => row.julgadoEm === row.prescreveEm));
 });
 
 test('plenário: as cadeiras das organizações se dividem pelas nove câmaras, e a Civil tem menos cadeiras do que a parte dela nos profissionais', () => {

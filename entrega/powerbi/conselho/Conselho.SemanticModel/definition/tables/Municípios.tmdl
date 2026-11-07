@@ -1,4 +1,4 @@
-/// Tem os 645 municípios de SP e a GRE de cada um pela tabela oficial. A regional e o município recortam só os processos, pelo lugar do processo.
+/// Tem os 645 municípios de SP e a GRE de cada um pela tabela oficial. A regional e o município recortam só os processos (e os autos, que são processos), pelo lugar do processo.
 table 'Municípios'
 	lineageTag: 8c7ac691-40b4-500b-a920-83c9c5cb29e6
 

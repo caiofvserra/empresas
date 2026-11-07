@@ -830,7 +830,7 @@ table Medidas
 		displayFolder: Representação
 		lineageTag: 709d8e5f-278d-56f9-b47e-7397cf6f94ba
 
-	/// Conta as deliberações em que quem propôs o repasse é conselheiro indicado pela organização que recebe: o conflito de interesse.
+	/// Conta as deliberações em que quem propôs o repasse é conselheiro indicado pela organização que recebe.
 	measure 'Propostos pela própria organização' = ```
 			VAR d = [Data escolhida]
 			VAR inicio = [Início do período]

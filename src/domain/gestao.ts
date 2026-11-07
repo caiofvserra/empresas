@@ -43,10 +43,7 @@ const camaraDaModalidade = new Map(Object.entries(modalidadeDaCamara).filter(([,
 /* ---------- Processos nas câmaras e no plenário ---------- */
 export type TipoProcesso = 'Auto de infração' | 'Registro e atribuição' | 'Acervo técnico' | 'Ética profissional';
 export const tiposProcesso: TipoProcesso[] = ['Auto de infração', 'Registro e atribuição', 'Acervo técnico', 'Ética profissional'];
-export type Fase = 'Aguardando relator' | 'Com o relator' | 'Pautado';
-export const fases: Fase[] = ['Aguardando relator', 'Com o relator', 'Pautado'];
 export type Decisao = 'Auto mantido' | 'Multa reduzida' | 'Auto anulado' | 'Arquivado pela prescrição' | 'Deferido' | 'Indeferido' | 'Arquivado';
-export const decisoesAuto: Decisao[] = ['Auto mantido', 'Multa reduzida', 'Auto anulado', 'Arquivado pela prescrição'];
 export interface Processo {
   id: string; camara: CamaraConselho; tipo: TipoProcesso; greId: string; cityId: string; companyId?: string;
   entrada: string; relatorEm: string; pautaEm: string; julgadoEm: string; decisao: Decisao;
@@ -116,64 +113,11 @@ export function buildProcessos(dataset: Dataset): Processo[] {
   cacheProcessos.set(dataset, out); return out;
 }
 
-/** Fase do processo na data de referência; nulo quando já foi julgado (ou ainda não tinha entrado). */
-export function faseEm(row: Processo, anchor: string): Fase | null {
-  if (row.entrada > anchor || row.julgadoEm <= anchor) return null;
-  return row.relatorEm > anchor ? 'Aguardando relator' : row.pautaEm > anchor ? 'Com o relator' : 'Pautado';
-}
-export const abertoEm = (row: Processo, anchor: string) => faseEm(row, anchor) !== null;
-/** Recurso esperando o plenário na data de referência. */
-export const recursoPendente = (row: Processo, anchor: string) => Boolean(row.recursoEm && row.recursoEm <= anchor && (!row.plenarioEm || row.plenarioEm > anchor));
-/** Meses até a prescrição de um auto ainda em julgamento (negativo se já passou). */
-export const mesesAtePrescrever = (row: Processo, anchor: string) => row.prescreveEm ? diasEntre(anchor, row.prescreveEm) / 30.44 : null;
-export const faixasIdadeProcesso = ['até 6 meses', '6 a 12 meses', '1 a 2 anos', '2 a 3 anos', 'mais de 3 anos'];
-export const faixaIdadeProcesso = (dias: number) => dias <= 182 ? 0 : dias <= 365 ? 1 : dias <= 730 ? 2 : dias <= 1095 ? 3 : 4;
-export const faixasPrescricao = ['até 3 meses', '3 a 6 meses', '6 a 12 meses'];
 /** Sessões ordinárias por mês: a Civil se reúne duas vezes, as demais uma; em janeiro não há sessão. */
 export const sessoesNoMes = (camara: CamaraConselho, month: string) => month.endsWith('-01') ? 0 : camara === 'Civil' ? 2 : 1;
 
 export interface RecorteGestao { greId: string | null; cityId: string | null; camara: string | null }
 const noRecorte = (row: { greId: string; cityId: string }, r: RecorteGestao) => (!r.greId || row.greId === r.greId) && (!r.cityId || row.cityId === r.cityId);
-
-export interface LinhaCamara {
-  camara: CamaraConselho; estoque: Processo[]; porFase: Record<Fase, Processo[]>; julgados: Processo[]; julgadosAntes: number; entradas: number;
-  idade: Processo[][]; medianaDias: number | null; decisoes: Record<string, Processo[]>; prescricao: Processo[][]; sessoes: number;
-}
-export interface QuadroCamaras {
-  linhas: LinhaCamara[]; estoque: Processo[]; julgados: Processo[]; julgadosAntes: number; entradas: number; entradasAntes: number;
-  medianaDias: number | null; medianaDiasAntes: number | null; emRisco: Processo[]; prescritos: Processo[]; recursos: Processo[]; recursosAntes: number;
-  /** 24 meses (ou o período, se maior) até o mês da data de referência. */
-  mensal: { month: string; entradas: number; julgados: number; estoque: number; recursos: number }[];
-}
-const cacheQuadro = new Map<string, QuadroCamaras>();
-export function quadroCamaras(processos: Processo[], anchor: string, period: number, r: RecorteGestao, start: string, prevStart: string, prevEnd: string, meses: string[]): QuadroCamaras {
-  const key = `${anchor}|${period}|${r.greId}|${r.cityId}|${r.camara}|${processos.length}`, saved = cacheQuadro.get(key); if (saved) return saved;
-  const mine = processos.filter(row => row.entrada <= anchor && noRecorte(row, r) && (!r.camara || row.camara === r.camara));
-  const noPeriodo = (date: string | undefined) => Boolean(date && date >= start && date <= anchor), noAnterior = (date: string | undefined) => Boolean(date && date >= prevStart && date <= prevEnd);
-  const julgadoNo = (row: Processo, f: (d: string) => boolean) => row.julgadoEm <= anchor && f(row.julgadoEm);
-  const estoque = mine.filter(row => abertoEm(row, anchor));
-  const linhas: LinhaCamara[] = camarasConselho.filter(camara => !r.camara || camara === r.camara).map(camara => {
-    const daCamara = mine.filter(row => row.camara === camara), aberto = estoque.filter(row => row.camara === camara);
-    const porFase = Object.fromEntries(fases.map(fase => [fase, aberto.filter(row => faseEm(row, anchor) === fase)])) as Record<Fase, Processo[]>;
-    const julgados = daCamara.filter(row => julgadoNo(row, noPeriodo));
-    const idade = faixasIdadeProcesso.map((_, index) => aberto.filter(row => faixaIdadeProcesso(diasEntre(row.entrada, anchor)) === index));
-    const decisoes: Record<string, Processo[]> = Object.fromEntries(decisoesAuto.map(decisao => [decisao, julgados.filter(row => row.decisao === decisao)]));
-    const autosAbertos = aberto.filter(row => row.prescreveEm), prescricao = faixasPrescricao.map((_, index) => autosAbertos.filter(row => { const m = mesesAtePrescrever(row, anchor)!; return index === 0 ? m >= 0 && m <= 3 : index === 1 ? m > 3 && m <= 6 : m > 6 && m <= 12; }));
-    const mesesPeriodo = meses.filter(month => `${month}-01` >= `${start.slice(0, 7)}-01`);
-    return { camara, estoque: aberto, porFase, julgados, julgadosAntes: daCamara.filter(row => julgadoNo(row, noAnterior)).length, entradas: daCamara.filter(row => noPeriodo(row.entrada)).length,
-      idade, medianaDias: mediana(julgados.map(row => diasEntre(row.entrada, row.julgadoEm))), decisoes, prescricao, sessoes: sum(mesesPeriodo.map(month => sessoesNoMes(camara, month))) };
-  });
-  const julgados = mine.filter(row => julgadoNo(row, noPeriodo)), anteriores = mine.filter(row => julgadoNo(row, noAnterior));
-  const mensal = meses.map(month => { const fim = fimDoMes(month) > anchor ? anchor : fimDoMes(month);
-    return { month, entradas: mine.filter(row => row.entrada.startsWith(month)).length, julgados: mine.filter(row => row.julgadoEm <= anchor && row.julgadoEm.startsWith(month)).length,
-      estoque: mine.filter(row => abertoEm(row, fim)).length, recursos: mine.filter(row => recursoPendente(row, fim)).length }; });
-  const value: QuadroCamaras = { linhas, estoque, julgados, julgadosAntes: anteriores.length, entradas: mine.filter(row => noPeriodo(row.entrada)).length, entradasAntes: mine.filter(row => noAnterior(row.entrada)).length,
-    medianaDias: mediana(julgados.map(row => diasEntre(row.entrada, row.julgadoEm))), medianaDiasAntes: mediana(anteriores.map(row => diasEntre(row.entrada, row.julgadoEm))),
-    emRisco: estoque.filter(row => { const m = mesesAtePrescrever(row, anchor); return m !== null && m >= 0 && m <= 12; }), prescritos: julgados.filter(row => row.decisao === 'Arquivado pela prescrição'),
-    recursos: mine.filter(row => recursoPendente(row, anchor)), recursosAntes: mine.filter(row => recursoPendente(row, prevEnd)).length, mensal };
-  cacheQuadro.set(key, value); if (cacheQuadro.size > 24) cacheQuadro.delete(cacheQuadro.keys().next().value!);
-  return value;
-}
 
 /* ---------- Plenário: cadeiras por câmara e base de profissionais ---------- */
 /** A câmara da cadeira `index` de uma organização: as cadeiras se dividem, uma a uma, entre as modalidades que ela representa (entidades) ou os cursos que oferece (IES); uma parte das organizações com mais de uma cadeira cede a última à câmara Ambiental e Sanitária. */
@@ -183,7 +127,7 @@ export function camaraDaCadeira(org: Organizacao, index: number): CamaraConselho
   return ambiental && index === org.cadeiras - 1 ? 'Ambiental e Sanitária' : destinos[(index + Math.floor(chance(`cad:${org.id}`) * destinos.length)) % Math.max(1, destinos.length)] ?? 'Civil';
 }
 export interface LinhaPlenario { camara: CamaraConselho; cadeiras: number; parteCadeiras: number | null; profissionais: number; parteProfissionais: number | null; organizacoes: string[] }
-/** As cadeiras de cada organização se dividem, uma a uma, entre as modalidades que ela representa (entidades) ou os cursos que oferece (IES); uma parte das IES com mais de uma cadeira cede uma à câmara Ambiental e Sanitária. Os profissionais são os ativos na data. */
+/** As cadeiras de cada organização se dividem, uma a uma, entre as modalidades que ela representa (entidades) ou os cursos que oferece (IES); uma parte das organizações com mais de uma cadeira cede a última à câmara Ambiental e Sanitária. Os profissionais são os ativos na data. */
 export function plenario(entidades: Entidades, modelo: ModeloProfissionais, anchor: string): LinhaPlenario[] {
   const cadeiras = new Map<CamaraConselho, { n: number; orgs: string[] }>();
   const soma = (camara: CamaraConselho, sigla: string) => { const item = cadeiras.get(camara) ?? { n: 0, orgs: [] }; item.n += 1; if (!item.orgs.includes(sigla)) item.orgs.push(sigla); cadeiras.set(camara, item); };

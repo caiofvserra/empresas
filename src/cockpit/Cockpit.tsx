@@ -331,7 +331,7 @@ export default function Cockpit({ painel: painelId = 'geral' }: { painel?: Paine
     const equipe = servidores(base.conselho, dataset), plenarioNomes = conselheiros(base.entidades);
     return { contas: base.conselho, carteira, meses, divida: quadroDivida(carteira, anchor, recorte, w.start, w.prevEnd, meses), receitaMensal: receitaMensal(base.conselho, meses), receitaAcumulada: receitaAcumulada(base.conselho, anchor),
       despesaAcumulada: despesaAcumulada(base.conselho, anchor, gre || null), despesaMensal: despesaMensal(base.conselho, meses, gre || null), diariasMensais: diariasMensais(base.conselho, meses, gre || null),
-      adimplencia: adimplenciaPorMunicipio(base.profissionais, anchor), equipe, conselheiros: plenarioNomes, diariasPessoas: diariasPorPessoa(base.conselho, equipe, plenarioNomes, anchor, gre || null), distancia: distanciaUnidade(dataset), origem: municipioDoSolicitante(dataset),
+      adimplencia: adimplenciaPorMunicipio(base.profissionais, anchor), equipe, conselheiros: plenarioNomes, diariasPessoas: diariasPorPessoa(base.conselho, equipe, plenarioNomes, anchor, painel.id === 'conselho' ? null : gre || null), distancia: distanciaUnidade(dataset), origem: municipioDoSolicitante(dataset),
       colegiado: painel.id === 'conselho' ? quadroColegiado(buildColegiado(dataset), base.profissionais, anchor, w.start, w.prevStart, w.prevEnd, { colegiado: colegiado || null, greId: gre || null, cityId: cidade || null }) : null };
   }, [deGestao, painel.id, anchor, period, gre, cidade, colegiado, base]);
   const insights = useMemo(() => leitura({ metas, ponte: derived.ponte, cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo: derived.resumo, rec: derived.rec, saldo: model.metrics.overdue.value ?? 0,

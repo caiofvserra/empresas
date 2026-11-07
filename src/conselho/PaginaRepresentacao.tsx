@@ -22,7 +22,7 @@ export default function PaginaRepresentacao({ ctx }: { ctx: CockpitCtx }) {
         onOpen={() => abrirMembros(ctx, 'Cadeiras ocupadas', [...c.membros].sort((a, b) => a.sigla.localeCompare(b.sigla) || a.nome.localeCompare(b.nome)), 'Conselheiros em exercício na data, pela organização que indicou.')} />
       <Indicador ficha="k-mulheres" ctx={ctx} label="Conselheiras" value={parte(c.parteMulheres)} sub={`${int(conselheiras.length)} mulheres; no registro, elas são ${parte(c.parteMulheresRegistro)}`}
         onOpen={() => abrirMembros(ctx, 'Conselheiras', [...conselheiras].sort((a, b) => a.nome.localeCompare(b.nome)), 'Mulheres com mandato de conselheira na data escolhida.')} />
-      <Indicador ficha="k-repasses" ctx={ctx} label="Repasses a quem tem cadeira" value={brl(repassado)} sub={`em 12 meses, a ${int(receberam)} das ${int(c.organizacoesComCadeira.length)} organizações`} />
+      <Indicador ficha="k-repasses" ctx={ctx} label="Repasses a quem tem cadeira" value={brl(repassado)} sub={`em 12 meses, a ${int(receberam)} das ${int(c.organizacoesComCadeira.length)} organizações`} onOpen={() => abrirOrganizacoes(ctx)} />
       <Indicador ficha="k-deliberacoes" ctx={ctx} label="Deliberações de repasse" value={int(c.deliberacoes.length)} variacao={{ value: change(c.deliberacoes.length, c.deliberacoesAntes) }} sub={`${brl(aprovado)} aprovados pelo Plenário no período`}
         onOpen={() => abrirDeliberacoes(ctx, 'Deliberações de repasse no período', c.deliberacoes, 'Convênios, contratos e patrocínios com organizações aprovados pelo Plenário no período, lidos das atas.')} />
       <Indicador ficha="k-conflitos" ctx={ctx} label="Propostos pela própria organização" value={int(c.conflitos.length)} sub="o conselheiro propôs repasse à organização que o indicou"
@@ -69,6 +69,14 @@ function Mulheres({ ctx }: { ctx: CockpitCtx }) {
 }
 
 /* ---------- Organizações com cadeira e repasses ---------- */
+/** A lista de todas as organizações com cadeira, pelo que receberam do Conselho em 12 meses, com os conselheiros de cada uma. */
+function abrirOrganizacoes(ctx: CockpitCtx) {
+  const rows = q(ctx).organizacoesComCadeira; if (!rows.length) return;
+  ctx.open({ kind: 'linhas', title: 'Organizações com cadeira e o que receberam', what: 'Cada organização com conselheiro em exercício no recorte, pelo que recebeu do Conselho nos 12 meses até a data, por convênio, contrato ou patrocínio.', listTitle: 'Organizações, quem mais recebeu primeiro',
+    summary: [['Organizações', int(rows.length)], ['Receberam', int(rows.filter(row => row.repassado > 0).length)], ['Em 12 meses', brl(rows.reduce((n, row) => n + row.repassado, 0))]],
+    rows: rows.map(row => ({ key: row.orgId, title: `${row.sigla} · ${row.nome}`, subtitle: `${row.natureza} · ${int(row.cadeiras)} ${row.cadeiras === 1 ? 'cadeira' : 'cadeiras'}: ${row.membros.map(m => m.nome).join(', ')}`,
+      value: brl(row.repassado), note: canais.map(canal => `${canal.toLowerCase()}: ${brl(row.porCanal[canal])}`).join('; '), sortValue: row.repassado })) });
+}
 const exportarOrganizacoes = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Sigla', 'Organização', 'Natureza', 'Cadeiras', 'Conselheiros', ...canais.map(canal => `${canal} em 12 meses (R$)`), 'Total em 12 meses (R$)'],
   linhas: () => q(ctx).organizacoesComCadeira.map(row => [row.sigla, row.nome, row.natureza, row.cadeiras, row.membros.map(m => m.nome).join('; '), ...canais.map(canal => Math.round(row.porCanal[canal])), Math.round(row.repassado)]) });
 function Organizacoes({ ctx }: { ctx: CockpitCtx }) {
@@ -84,7 +92,7 @@ function Organizacoes({ ctx }: { ctx: CockpitCtx }) {
   if (!rows.length) return <div className="empty-note">Nenhuma organização com cadeira neste recorte.</div>;
   return <div className="cs-com-nota">
     <Chart option={option} tokens={tokens} label="Organizações com cadeira no Conselho pelo valor recebido em 12 meses, por canal" onPick={params => { const row = rows[params.dataIndex]; if (row) abrirMembros(ctx, `${row.sigla} · ${row.nome}`, row.membros, `Conselheiros indicados pela organização. Em 12 meses ela recebeu ${brl(row.repassado)} do Conselho (${canais.map(canal => `${canal.toLowerCase()}: ${brl(row.porCanal[canal])}`).join('; ')}).`); }} />
-    <p className="cs-nota">{todas.length > rows.length ? `As ${int(rows.length)} que mais receberam, de ${int(todas.length)} organizações com cadeira. ` : ''}A tabela completa sai pela exportação.</p>
+    <p className="cs-nota"><button className="cs-link" onClick={() => abrirOrganizacoes(ctx)}>Ver as {int(todas.length)} organizações com cadeira</button>{todas.length > rows.length ? ` · no gráfico, as ${int(rows.length)} que mais receberam` : ''}</p>
   </div>;
 }
 

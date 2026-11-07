@@ -18,7 +18,7 @@ Gerado a partir do protótipo em HTML (repositório caiofvserra/empresas, `npm r
 - Os nomes: com quem está cada processo, o relator dos autos perto da prescrição, quem recebeu diária e quem propôs cada repasse. No cenário, os nomes são fictícios.
 - O período é um parâmetro do tipo "Intervalo numérico", de 1 a 36 meses, com controle deslizante. As diárias e os repasses usam sempre os 12 meses até a data, como no painel.
 
-O colegiado escolhido recorta os processos e os conselheiros; a regional e o município recortam só os processos, pelo lugar do processo, porque o conselheiro representa uma modalidade, e não uma regional. Com o Plenário escolhido, os processos são os recursos, estão todos os conselheiros e as decisões são as dos autos que chegaram a ele.
+O colegiado escolhido recorta os processos e os conselheiros; a regional e o município recortam só os processos (e os autos, que também são processos), pelo lugar do processo, porque o conselheiro representa uma modalidade, e não uma regional. Com o Plenário escolhido, os processos são os recursos, estão todos os conselheiros e as decisões são as dos autos que chegaram a ele.
 
 A fila, os conselheiros em exercício e as cadeiras vêm da data escolhida; os votados, os relatos, as sessões, os autos e as deliberações são somados no período. Na base real, a carga precisa gravar a foto todo fim de mês sem reescrever as anteriores.
 

@@ -115,6 +115,7 @@ function cartoesDoPacote(d: string, meses: number, { colegiado: c, gre }: Recort
     membros: membros.length, entidades: distintos(membros.filter(row => row.Natureza === 'Entidade de classe'), 'Organização'), escolas: distintos(membros.filter(row => row.Natureza === 'Instituição de ensino'), 'Organização'),
     pendentes: naFila.length, aguardando: naFila.filter(row => row.Status === 'Aguardando distribuição').length,
     comConselheiro: naFila.filter(row => papelDe.get(row.Pessoa) === 'Conselheiro').length,
+    porConselheiro: membros.length ? naFila.filter(row => papelDe.get(row.Pessoa) === 'Conselheiro').length / membros.length : null,
     votados: votados.length, votadosPlenario: plenario.length, tempoDecisao: medianaDe(votados, 'Dias da abertura ao voto'), anteriores: conta('De exercício anterior'),
     vermelho: naFila.filter(row => row.Alerta === 'Vermelho').length, amarelo: naFila.filter(row => row.Alerta === 'Amarelo').length, ano: conta('Mais de um ano'),
     perto: conta('Perto da prescrição'), multasPerto: soma(naFila.filter(row => row['Perto da prescrição'] === '1'), 'Multa'), intercorrente: conta('Pela intercorrente'), parados: conta('Parado há mais de dois anos'),
@@ -147,6 +148,7 @@ function cartoesDoPainel(d: string, meses: number, recorte: Recorte) {
     agora: {
       membros: q.membros.length, entidades: q.organizacoes.entidades, escolas: q.organizacoes.escolas,
       pendentes: q.pendentes.length, aguardando: q.porStatus['Aguardando distribuição'].length, comConselheiro: q.pendentes.filter(row => pessoa(row.evento.com)?.papel === 'Conselheiro').length,
+      porConselheiro: q.membros.length ? q.pendentes.filter(row => pessoa(row.evento.com)?.papel === 'Conselheiro').length / q.membros.length : null,
       votados: q.votados.length, votadosPlenario: q.votados.filter(t => t.instancia === 'Plenário').length, tempoDecisao: q.tempoDecisao, anteriores: q.deExerciciosAnteriores.length,
       vermelho: q.pendentes.filter(row => row.diasNoStatus > 120).length, amarelo: q.pendentes.filter(row => row.diasNoStatus >= 90 && row.diasNoStatus <= 120).length, ano: q.pendentes.filter(row => row.diasTotais > 365).length,
       perto: q.pertoDePrescrever.length, multasPerto: q.pertoDePrescrever.reduce((n, row) => n + (row.t.processo.multa ?? 0), 0), intercorrente: q.pertoDePrescrever.filter(row => prescricaoDe(row)?.motivo === 'três anos parado').length,

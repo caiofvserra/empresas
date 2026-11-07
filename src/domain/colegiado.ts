@@ -194,8 +194,9 @@ export function statusEm(t: Tramitacao, data: string): Evento | null {
 /* ---------- Leitura na data, com o recorte ---------- */
 export interface RecorteColegiado { colegiado: Colegiado | null; greId: string | null; cityId: string | null }
 export interface Pendente { t: Tramitacao; evento: Evento; diasNoStatus: number; diasTotais: number }
-export const faixasNoStatus = ['até 30 dias', '31 a 90 dias', '91 a 120 dias', '121 dias a 1 ano', 'mais de 1 ano'];
-export const faixaNoStatus = (n: number) => n <= 30 ? 0 : n <= 90 ? 1 : n <= 120 ? 2 : n <= 365 ? 3 : 4;
+/** As faixas seguem o alerta: a terceira é a amarela (90 a 120 dias) e as duas últimas são vermelhas. */
+export const faixasNoStatus = ['até 30 dias', '31 a 89 dias', '90 a 120 dias', '121 dias a 1 ano', 'mais de 1 ano'];
+export const faixaNoStatus = (n: number) => n <= 30 ? 0 : n < 90 ? 1 : n <= 120 ? 2 : n <= 365 ? 3 : 4;
 /** O alerta da fila (decisão do Caio, 07/11/2026): amarelo de 90 a 120 dias no status, vermelho acima de 120; o total acende acima de um ano. */
 export const alertaNoStatus = (n: number): 'vermelho' | 'amarelo' | null => n > 120 ? 'vermelho' : n >= 90 ? 'amarelo' : null;
 export const faixasCadastro = ['no mesmo dia', '1 a 3 dias', '4 a 7 dias', '8 a 15 dias', '16 a 30 dias', 'mais de 30 dias'];

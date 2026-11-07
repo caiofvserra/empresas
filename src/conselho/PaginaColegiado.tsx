@@ -47,7 +47,7 @@ export default function PaginaColegiado({ ctx }: { ctx: CockpitCtx }) {
 }
 
 /* ---------- Com quem estão os processos: as dez pessoas com mais processos, pelo alerta ---------- */
-const faixasAlerta = ['até 90 dias no status', '90 a 120 dias', 'mais de 120 dias'] as const;
+const faixasAlerta = ['até 89 dias no status', '90 a 120 dias', 'mais de 120 dias'] as const;
 const porAlerta = (rows: Pendente[]) => [rows.filter(row => !alertaNoStatus(row.diasNoStatus)), rows.filter(row => alertaNoStatus(row.diasNoStatus) === 'amarelo'), rows.filter(row => alertaNoStatus(row.diasNoStatus) === 'vermelho')];
 const exportarPosse = (ctx: CockpitCtx): Exportavel => ({ cabecalho: ['Pessoa', 'Papel', 'Onde', 'Processos', ...faixasAlerta, 'Há mais de 1 ano no total'], linhas: () => q(ctx).posse.map(row => [row.pessoa.nome, row.pessoa.papel, row.pessoa.detalhe, row.pendentes.length, ...porAlerta(row.pendentes).map(rows => rows.length), row.pendentes.filter(p => p.diasTotais > 365).length]) });
 function Posse({ ctx }: { ctx: CockpitCtx }) {
