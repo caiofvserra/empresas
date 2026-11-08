@@ -115,7 +115,7 @@ const exportarCalor = (ctx: CockpitCtx, atual: Linhas | null, antes: Linhas | nu
 function Calor({ ctx, atual, antes }: { ctx: CockpitCtx; atual: Linhas; antes: Linhas }) {
   const { tokens, dark } = ctx, gres = ctx.dataset.gres;
   const option = useMemo(() => {
-    const neutro = dark ? '#15294F' : '#F4F6F9';
+    const neutro = dark ? '#15265C' : '#F4F6F9';
     const dados = doCalor.flatMap((id, y) => { const ind = indicador(id), valores = gres.map(gre => variacao(ind, atual.get(gre.id)![id], antes.get(gre.id)![id])), max = Math.max(1, ...valores.map(value => Math.abs(value ?? 0)));
       return gres.map((gre, x) => { const value = valores[x], s = sentido(ind, value), cor = value === null || s === 'flat' ? neutro : misturar(neutro, s === 'good' ? tokens.good : tokens.bad, 0.2 + Math.abs(value) / max * 0.8);
         return { value: [x, y, value ?? 0], greId: gre.id, id, texto: curta(ind, value), itemStyle: { color: cor, borderColor: tokens.surface, borderWidth: 2, borderRadius: 3 }, label: { color: corDoTexto(cor) } }; }); });

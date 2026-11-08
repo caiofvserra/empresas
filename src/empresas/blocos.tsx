@@ -52,7 +52,7 @@ export function Situacoes({ ctx, flow }: { ctx: CockpitCtx; flow: ReturnType<typ
     title: { text: int(total), subtext: 'empresas', left: 'center', top: 'center', itemGap: 2, textStyle: { color: tokens.ink, fontSize: 16, fontWeight: 800, fontFamily: 'Raleway, Lato, sans-serif' }, subtextStyle: { color: tokens.muted, fontSize: 11 } },
     series: [
       { type: 'pie', radius: ['30%', '60%'], padAngle: 1.5, itemStyle: { borderRadius: 3, borderColor: tokens.surface, borderWidth: 1 }, labelLine: { show: false },
-        label: { show: true, position: 'inside', color: '#FFFFFF', fontSize: 11, lineHeight: 11, fontWeight: 700, textBorderColor: 'rgba(1,34,77,.85)', textBorderWidth: 2, formatter: (item: any) => item.value ? `${nomeCurtoSituacao[item.name] ?? item.name}\n${pct(item.value / Math.max(1, total) * 100)}` : '' },
+        label: { show: true, position: 'inside', color: '#FFFFFF', fontSize: 11, lineHeight: 11, fontWeight: 700, textBorderColor: 'rgba(13,23,50,.85)', textBorderWidth: 2, formatter: (item: any) => item.value ? `${nomeCurtoSituacao[item.name] ?? item.name}\n${pct(item.value / Math.max(1, total) * 100)}` : '' },
         data: dentro.map(part => ({ name: part.name, value: part.ids.length, itemStyle: { color: part.color } })) },
       { type: 'pie', radius: ['64%', '80%'], padAngle: 1.5, itemStyle: { borderRadius: 3, borderColor: tokens.surface, borderWidth: 1 }, label: { show: true, position: 'outside', fontSize: 11.5, color: tokens.muted, formatter: (item: any) => item.data.vazio || !item.value ? '' : `${item.name}\n${pct(item.value / Math.max(1, ativa.length) * 100)}` }, labelLine: { length: 4, length2: 4 },
         data: [...fora.map(part => ({ name: part.name, value: part.ids.length, itemStyle: { color: part.color } })), ...dentro.slice(1).map(part => ({ name: '', value: part.ids.length, vazio: true, itemStyle: { color: 'transparent' }, tooltip: { show: false }, emphasis: { disabled: true }, labelLine: { show: false } }))] },
@@ -343,7 +343,7 @@ export const metricasMapa: Record<MetricaMapa, { label: string; curto: string; b
 };
 const rampaMapa = (alerta: boolean, dark: boolean) => alerta
   ? (dark ? ['#3A2E22', '#7A5A10', '#C9851F', '#E5703B', '#FF7B7B'] : ['#FFF4D6', '#FFD98A', '#F6AD55', '#E5703B', '#C53030'])
-  : (dark ? ['#2A4A7F', '#3B67A8', '#5B8FD0', '#8DBCEB', '#D4EDFF'] : ['#C3D9F2', '#93BCEA', '#5E9BDD', '#2B6CB0', '#082D74']);
+  : (dark ? ['#24366E', '#3662E2', '#6077B6', '#AFBBDB', '#DFE4F2'] : ['#DFE4F2', '#AFBBDB', '#6077B6', '#3662E2', '#15265C']);
 /** Município sem valor: cinza neutro, para não se confundir com a faixa mais clara do azul. */
 const semDados = (dark: boolean) => dark ? '#3A4250' : '#E3E6EA';
 
@@ -414,8 +414,8 @@ const atividadesNoBloco = (parte: number) => Math.max(2, Math.round(parte * 14))
 /** Três faixas ancoradas na meta de cobertura do painel (05/11/2026): abaixo da meta em laranja-vermelho, da meta até 15 pontos acima em azul, e mais que isso em azul-escuro. Antes a rampa ia do mínimo ao máximo do recorte, e o mesmo 70% mudava de cor conforme o filtro. */
 const faixasMeta = (meta: number, dark: boolean) => [
   { nome: `abaixo de ${meta}%`, cor: dark ? '#E5703B' : '#C9512F', ate: meta },
-  { nome: `${meta}% a ${meta + 15}%`, cor: dark ? '#4A7FC1' : '#3182CE', ate: meta + 15 },
-  { nome: `acima de ${meta + 15}%`, cor: dark ? '#7FB0E6' : '#082D74', ate: Number.POSITIVE_INFINITY },
+  { nome: `${meta}% a ${meta + 15}%`, cor: dark ? '#3662E2' : '#3662E2', ate: meta + 15 },
+  { nome: `acima de ${meta + 15}%`, cor: dark ? '#6077B6' : '#15265C', ate: Number.POSITIVE_INFINITY },
 ];
 const corMeta = (taxa: number | null, faixas: ReturnType<typeof faixasMeta>, dark: boolean) => taxa === null ? (dark ? '#2D3748' : '#E2E8F0') : faixas.find(faixa => taxa < faixa.ate)!.cor;
 const ramosDe = (ctx: CockpitCtx, ampliado: boolean) => mercadoEmArvore(ctx.scope, ctx.model, camaraPorCnae, { camaras, resto: 0.1, maxPorCamara: ampliado ? Number.POSITIVE_INFINITY : atividadesNoBloco });
@@ -432,10 +432,10 @@ export function ArvoreMercado({ ctx }: { ctx: CockpitCtx }) {
       return `<b>${row.code}</b> ${row.label}<br/>${int(row.total)} estabelecimentos com esta atividade como principal · ${row.cobertura === null ? '—' : pct(row.cobertura)} registrados<br/>${int(row.semRegistro.length)} sem registro${row.secundaria ? `<br/>Outros ${int(row.secundaria)} têm esta atividade como secundária (contados na principal)` : ''}<br/><span style="opacity:.75">clique para ver os CNPJs sem registro</span>`; } },
     series: [{ type: 'treemap', roam: false, nodeClick: false, breadcrumb: { show: false }, left: 0, right: 0, top: 0, bottom: 0, squareRatio: 1.2, leafDepth: 2, sort: false,
       upperLabel: { show: true, height: 18, color: '#FFFFFF', fontSize: 11.5, fontWeight: 700, overflow: 'truncate', formatter: (item: any) => { const ramo = item.data?.ramo as RamoMercado | undefined; return ramo ? `${ramo.total ? pct(ramo.registrados / ramo.total * 100) : '—'} · ${item.name}` : item.name; } },
-      levels: [{ itemStyle: { borderColor: tokens.surface, borderWidth: 0, gapWidth: 3 } }, { itemStyle: { borderColor: dark ? '#1A2D52' : '#01224D', borderWidth: 2, gapWidth: 1 }, upperLabel: { show: true } }, { itemStyle: { borderColor: tokens.surface, borderWidth: 1, gapWidth: 1 } }],
+      levels: [{ itemStyle: { borderColor: tokens.surface, borderWidth: 0, gapWidth: 3 } }, { itemStyle: { borderColor: dark ? '#15265C' : '#0D1732', borderWidth: 2, gapWidth: 1 }, upperLabel: { show: true } }, { itemStyle: { borderColor: tokens.surface, borderWidth: 1, gapWidth: 1 } }],
       label: { show: true, fontSize: 11.5, color: '#FFFFFF', overflow: 'truncate', lineHeight: 12, formatter: (item: any) => { const row = item.data?.linha as LinhaCnae | undefined; if (!row) return item.data?.ramo && !item.data.ramo.total ? 'sem estabelecimentos' : '';
         return `{p|${row.cobertura === null ? '' : pct(row.cobertura)}}\n${row.label}\n{c|${`${int(row.total)} estabelecimentos`}}`; }, rich: { p: { fontSize: 12, fontWeight: 800, color: '#FFFFFF' }, c: { fontSize: 11, color: 'rgba(255,255,255,.75)' } } },
-      data: ramos.map(ramo => ({ name: ramo.camara, ramo, itemStyle: { color: dark ? '#1A2D52' : '#01224D' },
+      data: ramos.map(ramo => ({ name: ramo.camara, ramo, itemStyle: { color: dark ? '#15265C' : '#0D1732' },
         ...(ramo.total ? { value: ramo.total, children: ramo.atividades.map(linha => ({ name: linha.code, value: linha.total, linha, camara: ramo.camara, itemStyle: { color: linha.agrupadas ? (dark ? '#4A5568' : '#718096') : corMeta(linha.cobertura, faixas, dark), ...(linha.agrupadas ? { decal: undefined } : {}) } })) }
           : { value: geral * 0.012 }) })) }],
   }), [ramos, tokens, dark, faixas, geral]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -459,7 +459,7 @@ export function IdadeCapital({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { formatter: (item: any) => { const cel = m.celulas[item.dataIndex]; return `Registradas há <b>${curtoIdade[cel.idade]}</b><br/>Capital social <b>${curtoCapital[cel.capital]}</b><br/>${int(cel.ids.length)} empresas`; } },
     xAxis: { type: 'category', data: curtoCapital, splitArea: { show: false }, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 11.5, interval: 0, formatter: (value: string) => value === '200 mil a 1 mi' ? '200 mil\na 1 mi' : value }, name: 'capital social (R$)', nameLocation: 'middle', nameGap: 32, nameTextStyle: { color: tokens.muted, fontSize: 11.5 } },
     yAxis: { type: 'category', data: curtoIdade, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 11.5 } },
-    visualMap: { show: false, min: 0, max: maior, inRange: { color: dark ? ['#13233F', '#2F548C', '#7FB0E6'] : ['#EAF1FA', '#7FB0E6', '#082D74'] } },
+    visualMap: { show: false, min: 0, max: maior, inRange: { color: dark ? ['#15265C', '#24366E', '#6077B6'] : ['#ECEFF7', '#6077B6', '#15265C'] } },
     series: [{ type: 'heatmap', data: m.celulas.map(cel => ({ value: [cel.capital, cel.idade, cel.ids.length], label: { color: !dark && cel.ids.length > maior * 0.55 ? '#FFFFFF' : tokens.ink } })), itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 4 },
       label: { show: true, fontSize: 11, fontWeight: 700, formatter: (item: any) => item.value[2] ? int(item.value[2]) : '' } }],
   }), [m, maior, tokens, dark]);
@@ -483,7 +483,7 @@ export function RegistrosCalor({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { formatter: (item: any) => { const cel = celulas[item.dataIndex]; return `<b>${r.linhas[cel.y].camara}</b>, ${trimestres[cel.x].rotulo}<br/>${int(cel.ids.length)} empresas fizeram o primeiro registro`; } },
     xAxis: { type: 'category', data: trimestres.map(tri => tri.rotulo), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 11.5, interval: 0 } },
     yAxis: { type: 'category', inverse: true, data: r.linhas.map(row => `${row.camara}\n${int(row.total)} empresas`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, lineHeight: 13 } },
-    visualMap: { show: false, min: 0, max: 1, inRange: { color: dark ? ['#13233F', '#2F548C', '#FABD07'] : ['#F1F5FA', '#7FB0E6', '#082D74'] } },
+    visualMap: { show: false, min: 0, max: 1, inRange: { color: dark ? ['#15265C', '#24366E', '#FFB000'] : ['#F1F3F8', '#6077B6', '#15265C'] } },
     series: [{ type: 'heatmap', data: celulas.map(cel => ({ value: [cel.x, cel.y, cel.forca], label: { color: dark ? (cel.forca > 0.7 ? '#1A202C' : tokens.ink) : cel.forca > 0.55 ? '#FFFFFF' : tokens.ink } })), itemStyle: { borderColor: tokens.surface, borderWidth: 1.5, borderRadius: 3 },
       label: { show: true, fontSize: 11, fontWeight: 700, formatter: (item: any) => { const cel = celulas[item.dataIndex]; return cel.ids.length ? int(cel.ids.length) : ''; } } }],
   }), [r, trimestres, celulas, tokens, dark]); // eslint-disable-line react-hooks/exhaustive-deps

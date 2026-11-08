@@ -54,7 +54,7 @@ export function Chart({ option, tokens, onPick, label }: { option: Record<string
     const value = comEixosPtBr(raw), tooltip = (value.tooltip ?? {}) as Record<string, unknown>;
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     return { backgroundColor: 'transparent', animation: !reduced, animationDuration: 400, textStyle: { fontFamily: 'Lato, "Segoe UI", system-ui, sans-serif', color: tokens.muted, fontSize: 11 }, aria: { enabled: true, description: label }, ...value,
-      tooltip: { backgroundColor: '#01224D', borderColor: '#FABD07', borderWidth: 1, padding: [8, 12], textStyle: { color: '#FFFFFF', fontSize: 12 }, extraCssText: 'border-radius:8px;box-shadow:0 10px 28px rgba(1,34,77,.3);line-height:1.5;', confine: true, ...tooltip } } as EChartsOption;
+      tooltip: { backgroundColor: '#0D1732', borderColor: '#FFB000', borderWidth: 1, padding: [8, 12], textStyle: { color: '#FFFFFF', fontSize: 12 }, extraCssText: 'border-radius:8px;box-shadow:0 10px 28px rgba(13,23,50,.3);line-height:1.5;', confine: true, ...tooltip } } as EChartsOption;
   };
   useEffect(() => {
     let alive = true, observer: ResizeObserver | undefined;

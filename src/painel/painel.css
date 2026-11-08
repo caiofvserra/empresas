@@ -3,28 +3,28 @@
 @font-face { font-family: Lato; font-weight: 700; font-display: swap; src: url('../../public/fonts/Lato-Bold.woff') format('woff'); }
 @font-face { font-family: Raleway; font-weight: 100 900; font-display: swap; src: url('../../public/fonts/Raleway-Variable.woff') format('woff'); }
 :root {
-  --bg: #F1F4F8; --surface: #FFFFFF; --ink: #1A202C; --muted: #4A5568; --line: #DCE3EC; --soft: #EAF1FA;
-  --brand: #082D74; --band: #01224D; --band-ink: #FFFFFF; --accent: #FABD07; --accent-ink: #1A202C; --blue: #3182CE;
+  --bg: #F1F3F8; --surface: #FFFFFF; --ink: #1A202C; --muted: #4A5568; --line: #DCE3EC; --soft: #ECEFF7;
+  --brand: #15265C; --band: #0D1732; --band-ink: #FFFFFF; --accent: #FFB000; --accent-ink: #1A202C; --blue: #3662E2;
   --good: #007061; --bad: #B02525; --warn: #DD8A0B; --good-bg: #DDF3EA; --bad-bg: #FBE3E3; --neutral-bg: #EDF2F7;
-  --heat-0: #EAF1FA; --heat-1: #A9C9EE; --heat-2: #3182CE; --heat-3: #082D74;
-  --cat-1: #3182CE; --cat-2: #FABD07; --cat-3: #805AD5; --cat-4: #2D3748; --cat-5: #2C9C8F;
+  --heat-0: #ECEFF7; --heat-1: #AFBBDB; --heat-2: #3662E2; --heat-3: #15265C;
+  --cat-1: #3662E2; --cat-2: #FFB000; --cat-3: #6077B6; --cat-4: #0D1732; --cat-5: #AFBBDB;
   --display: 'Raleway', 'Segoe UI', system-ui, sans-serif; --body: 'Lato', 'Segoe UI', system-ui, sans-serif;
-  --shadow: 0 1px 2px rgba(1,34,77,.06), 0 6px 18px rgba(1,34,77,.06); --radius: 12px;
+  --shadow: 0 1px 2px rgba(13,23,50,.06), 0 6px 18px rgba(13,23,50,.06); --radius: 12px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #07132A; --surface: #0E1D3A; --ink: #EDF2F7; --muted: #A9B6CC; --line: #22375F; --soft: #15294F;
-  --brand: #9CC3EE; --band: #01183A; --band-ink: #FFFFFF; --accent: #FABD07; --accent-ink: #1A202C; --blue: #63A4E8;
-  --good: #3DD6A9; --bad: #FF7B7B; --warn: #F6AD55; --good-bg: #0E3B33; --bad-bg: #44191F; --neutral-bg: #1A2D52;
-  --heat-0: #15294F; --heat-1: #3A6AA8; --heat-2: #63A4E8; --heat-3: #D4EDFF;
-  --cat-1: #63A4E8; --cat-2: #FABD07; --cat-3: #B794F4; --cat-4: #CBD5E0; --cat-5: #4FD1C5;
+  --bg: #070C1A; --surface: #0D1732; --ink: #EDF2F7; --muted: #A9B6CC; --line: #24366E; --soft: #15265C;
+  --brand: #AFBBDB; --band: #0D1732; --band-ink: #FFFFFF; --accent: #FFB000; --accent-ink: #1A202C; --blue: #7B95E8;
+  --good: #3DD6A9; --bad: #FF7B7B; --warn: #F6AD55; --good-bg: #0E3B33; --bad-bg: #44191F; --neutral-bg: #15265C;
+  --heat-0: #15265C; --heat-1: #4E68C4; --heat-2: #7B95E8; --heat-3: #DFE4F2;
+  --cat-1: #7B95E8; --cat-2: #FFB000; --cat-3: #AFBBDB; --cat-4: #CBD5E0; --cat-5: #6077B6;
   --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.25); color-scheme: dark;
 } }
 :root[data-theme="dark"] {
-  --bg: #07132A; --surface: #0E1D3A; --ink: #EDF2F7; --muted: #A9B6CC; --line: #22375F; --soft: #15294F;
-  --brand: #9CC3EE; --band: #01183A; --band-ink: #FFFFFF; --accent: #FABD07; --accent-ink: #1A202C; --blue: #63A4E8;
-  --good: #3DD6A9; --bad: #FF7B7B; --warn: #F6AD55; --good-bg: #0E3B33; --bad-bg: #44191F; --neutral-bg: #1A2D52;
-  --heat-0: #15294F; --heat-1: #3A6AA8; --heat-2: #63A4E8; --heat-3: #D4EDFF;
-  --cat-1: #63A4E8; --cat-2: #FABD07; --cat-3: #B794F4; --cat-4: #CBD5E0; --cat-5: #4FD1C5;
+  --bg: #070C1A; --surface: #0D1732; --ink: #EDF2F7; --muted: #A9B6CC; --line: #24366E; --soft: #15265C;
+  --brand: #AFBBDB; --band: #0D1732; --band-ink: #FFFFFF; --accent: #FFB000; --accent-ink: #1A202C; --blue: #7B95E8;
+  --good: #3DD6A9; --bad: #FF7B7B; --warn: #F6AD55; --good-bg: #0E3B33; --bad-bg: #44191F; --neutral-bg: #15265C;
+  --heat-0: #15265C; --heat-1: #4E68C4; --heat-2: #7B95E8; --heat-3: #DFE4F2;
+  --cat-1: #7B95E8; --cat-2: #FFB000; --cat-3: #AFBBDB; --cat-4: #CBD5E0; --cat-5: #6077B6;
   --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.25); color-scheme: dark;
 }
 *, *::before, *::after { box-sizing: border-box; }
@@ -46,7 +46,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 .tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 10px; background: rgba(255,255,255,.08); }
 .tabs button { height: 32px; padding: 0 16px; border: 0; border-radius: 7px; background: transparent; color: rgba(255,255,255,.8); font-weight: 700; font-size: 13px; }
 .tabs button:hover { color: #fff; background: rgba(255,255,255,.08); }
-.tabs button.on { background: #fff; color: #01224D; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+.tabs button.on { background: #fff; color: #0D1732; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
 .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-left: auto; }
 .select { position: relative; display: flex; align-items: center; gap: 6px; font-size: 11.5px; }
 .select span { opacity: .8; }
@@ -56,7 +56,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 .chips { display: inline-flex; padding: 3px; gap: 2px; border-radius: 9px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); }
 .chips button { height: 24px; padding: 0 9px; border: 0; border-radius: 6px; background: transparent; color: rgba(255,255,255,.85); font-size: 12px; font-weight: 700; white-space: nowrap; }
 .chips button[aria-checked="true"] { background: var(--accent); color: var(--accent-ink); }
-.demo { height: 24px; display: inline-flex; align-items: center; padding: 0 9px; border-radius: 999px; border: 1px dashed rgba(250,189,7,.75); color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.demo { height: 24px; display: inline-flex; align-items: center; padding: 0 9px; border-radius: 999px; border: 1px dashed rgba(255,176,0,.75); color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 .icon-btn { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--ink); }
 .icon-btn.on-band { border-color: rgba(255,255,255,.25); color: #fff; }
 .icon-btn:hover { background: var(--soft); } .icon-btn.on-band:hover { background: rgba(255,255,255,.1); }

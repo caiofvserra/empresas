@@ -42,7 +42,7 @@ export function Sazonalidade({ ctx, mes }: { ctx: CockpitCtx; mes: string }) {
   const { tokens, dark } = ctx;
   const option = useMemo(() => {
     const anos = anosReais.filter(ano => ano <= mes.slice(0, 4)), dados: { value: [number, number, number]; itemStyle: { color: string }; label: { color: string } }[] = [];
-    const cortes = [0.8, 0.95, 1.15, 1.5], cores = dark ? ['#1B2A44', '#1E3A5F', '#2B6CB0', '#5E9BDD', '#A9C9EE'] : ['#EEF3FA', '#C3D9F2', '#5E9BDD', '#2B6CB0', '#082D74'];
+    const cortes = [0.8, 0.95, 1.15, 1.5], cores = dark ? ['#15265C', '#24366E', '#3662E2', '#6077B6', '#AFBBDB'] : ['#ECEFF7', '#DFE4F2', '#6077B6', '#3662E2', '#15265C'];
     const mediaDoAno = new Map(anos.map(ano => { const doAno = nomesMes.map((_, i) => `${ano}-${String(i + 1).padStart(2, '0')}`).filter(m => m <= mes); return [ano, doAno.reduce((s, m) => s + receitaDoMes(m), 0) / Math.max(1, doAno.length)]; }));
     anos.forEach((ano, y) => nomesMes.forEach((_, x) => { const m = `${ano}-${String(x + 1).padStart(2, '0')}`; if (m > mes) return; const v = receitaDoMes(m), razao = v / Math.max(1, mediaDoAno.get(ano)!), cor = cores[cortes.filter(c => razao > c).length];
       dados.push({ value: [x, y, v], itemStyle: { color: cor }, label: { color: corDoTexto(cor) } }); }));

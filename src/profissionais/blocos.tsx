@@ -44,7 +44,7 @@ export const metricasMapa: Record<MetricaMapa, { label: string; get: (row: Medid
 };
 const rampaMapa = (alerta: boolean, dark: boolean) => alerta
   ? (dark ? ['#3A2E22', '#7A5A10', '#C9851F', '#E5703B', '#FF7B7B'] : ['#FFF4D6', '#FFD98A', '#F6AD55', '#E5703B', '#C53030'])
-  : (dark ? ['#2A4A7F', '#3B67A8', '#5B8FD0', '#8DBCEB', '#D4EDFF'] : ['#C3D9F2', '#93BCEA', '#5E9BDD', '#2B6CB0', '#082D74']);
+  : (dark ? ['#24366E', '#3662E2', '#6077B6', '#AFBBDB', '#DFE4F2'] : ['#DFE4F2', '#AFBBDB', '#6077B6', '#3662E2', '#15265C']);
 /** Município sem valor: cinza neutro, para não se confundir com a faixa mais clara do azul. */
 const semDados = (dark: boolean) => dark ? '#3A4250' : '#E3E6EA';
 
@@ -107,7 +107,7 @@ export function MapaProfissionais({ ctx, metrica }: { ctx: CockpitCtx; metrica: 
 /** Rótulo de célula do mapa de árvore escrito na cor que mais contrasta com o fundo (07/11/2026). */
 const rotuloSobre = (fundo: string) => { const color = corDoTexto(fundo); return { color, rich: { n: { fontSize: 12.5, fontWeight: 800, color }, v: { fontSize: 11, color } } }; };
 // Tecnólogo em âmbar escuro, e não no amarelo da marca, que some sobre o fundo claro.
-const corNivel = (nivel: string, tokens: CockpitCtx['tokens']) => nivel === 'Engenheiro' ? tokens.blue : nivel === 'Técnico' ? tokens.good : '#B7791F';
+const corNivel = (nivel: string, tokens: CockpitCtx['tokens']) => nivel === 'Engenheiro' ? tokens.blue : nivel === 'Técnico' ? tokens.good : '#E19B01';
 /**
  * Mapa de árvore: cada retângulo grande é uma modalidade, e os de dentro são os níveis (uma cor por nível). Tamanho = ativos.
  * A variação em um ano vai escrita. Clicar num nível (ou no nome da modalidade) abre os títulos profissionais dele, pelo código do
@@ -123,7 +123,7 @@ function titulosGrandes(celula: CelulaNivel, tokens: CockpitCtx['tokens']) {
   const total = celula.ativos.length, grandes = celula.titulos.filter((t, index) => index < 2 && t.ativos.length >= total * 0.15), resto = celula.titulos.slice(grandes.length);
   const filhos: any[] = grandes.map(titulo => ({ name: titulo.titulo, value: titulo.ativos.length, titulo, itemStyle: { color: corNivel(celula.nivel, tokens) }, label: rotuloSobre(corNivel(celula.nivel, tokens)) }));
   const ativos = resto.reduce((n, t) => n + t.ativos.length, 0), antes = resto.reduce((n, t) => n + t.antes, 0);
-  if (ativos) filhos.push({ name: 'Outros títulos', value: ativos, outros: { modalidade: celula.modalidade, n: resto.length, ativos, variacao: antes ? (ativos - antes) / antes * 100 : null }, itemStyle: { color: '#4A72AD' }, label: rotuloSobre('#4A72AD') });
+  if (ativos) filhos.push({ name: 'Outros títulos', value: ativos, outros: { modalidade: celula.modalidade, n: resto.length, ativos, variacao: antes ? (ativos - antes) / antes * 100 : null }, itemStyle: { color: '#6077B6' }, label: rotuloSobre('#6077B6') });
   return filhos;
 }
 export function ArvoreModalidade({ ctx }: { ctx: CockpitCtx }) {
@@ -132,7 +132,7 @@ export function ArvoreModalidade({ ctx }: { ctx: CockpitCtx }) {
   const ramo = aberto ? ramos.find(row => row.modalidade === aberto.modalidade) : undefined;
   const celulas = ramo ? ramo.niveis.filter(row => !aberto?.nivel || row.nivel === aberto.nivel) : [];
   const emTitulos = Boolean(ramo && celulas.length);
-  const marinho = dark ? '#1A2D52' : '#01224D';
+  const marinho = dark ? '#15265C' : '#0D1732';
   const option = useMemo(() => {
     const legenda = { text: emTitulos ? 'tamanho = ativos   ·   clique num título para ver os profissionais' : '{a|■} títulos de graduação plena   {c|■} tecnólogos e {b|■} técnicos, só em segurança do trabalho   ·   tamanho = ativos',
       ...(emTitulos ? { right: 0 } : { left: 0 }), top: 0, textStyle: { fontSize: 11, fontWeight: 400, color: tokens.muted, rich: { a: { color: corNivel('Engenheiro', tokens), fontSize: 12 }, b: { color: corNivel('Técnico', tokens), fontSize: 12 }, c: { color: corNivel('Tecnólogo', tokens), fontSize: 12 } } } };
@@ -235,7 +235,7 @@ export function IdadeModalidade({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { formatter: (item: any) => { const cel = m.celulas[item.dataIndex]; return `<b>${cel.modalidade}</b>, ${cel.faixa} anos<br/>${int(cel.rows.length)} ativos · ${pct(cel.parte)} da modalidade<br/><span style="opacity:.75">clique para ver</span>`; } },
     xAxis: { type: 'category', position: 'bottom', data: faixasIdade.map(faixa => `${faixa} anos`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 11, interval: 0 } },
     yAxis: { type: 'category', inverse: true, data: m.linhas, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
-    visualMap: { show: false, min: 0, max: 40, inRange: { color: dark ? ['#13233F', '#2F548C', '#7FB0E6'] : ['#EAF1FA', '#7FB0E6', '#082D74'] } },
+    visualMap: { show: false, min: 0, max: 40, inRange: { color: dark ? ['#15265C', '#24366E', '#6077B6'] : ['#ECEFF7', '#6077B6', '#15265C'] } },
     series: [{ type: 'heatmap', data: m.celulas.map(cel => ({ value: [cel.x, cel.y, cel.parte], label: { color: dark ? (cel.parte > 30 ? ESCURO : tokens.ink) : cel.parte > 30 ? '#FFFFFF' : tokens.ink } })), // acima de 30%, a célula fica escura no claro e clara no escuro, itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 4 },
       label: { show: true, fontSize: 11, fontWeight: 700, formatter: (item: any) => item.value[2] ? pct(item.value[2]) : '' } }],
   }), [m, tokens, dark]);
@@ -418,7 +418,7 @@ export function ArtIdade({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { formatter: (item: any) => { const cel = a.celulas[item.dataIndex]; return `<b>${cel.modalidade}</b>, ${faixasIdade[cel.faixa]} anos<br/>${int(cel.comArt.length)} de ${int(cel.ativos.length)} ativos registraram ART (${cel.parte === null ? '—' : pct(cel.parte)})<br/><span style="opacity:.75">clique para ver os que registraram</span>`; } },
     xAxis: { type: 'category', position: 'top', data: faixasIdade.map(faixa => `${faixa} anos`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.muted, fontSize: 11, interval: 0 } },
     yAxis: { type: 'category', inverse: true, data: a.linhas, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
-    visualMap: { show: false, min: 0, max: 80, inRange: { color: dark ? ['#13233F', '#7A5A10', '#FABD07'] : ['#FFF8E6', '#F6AD55', '#C05621'] } },
+    visualMap: { show: false, min: 0, max: 80, inRange: { color: dark ? ['#15265C', '#7A5A10', '#FFB000'] : ['#FFF8E6', '#F6AD55', '#C05621'] } },
     series: [{ type: 'heatmap', data: a.celulas.map((cel, index) => ({ value: [cel.faixa, a.linhas.indexOf(cel.modalidade), cel.parte ?? 0], index, label: { color: dark ? ((cel.parte ?? 0) > 50 ? ESCURO : tokens.ink) : (cel.parte ?? 0) > 76 ? '#FFFFFF' : ESCURO } })), // o laranja só escurece o bastante para o branco perto do máximo (80%), itemStyle: { borderColor: tokens.surface, borderWidth: 2, borderRadius: 4 },
       label: { show: true, fontSize: 11, fontWeight: 700, formatter: (item: any) => a.celulas[item.dataIndex].parte === null ? '' : pct(item.value[2]) } }],
   }), [a, tokens, dark]);

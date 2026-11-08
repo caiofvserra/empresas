@@ -79,7 +79,7 @@ const exportarCalendario = (cal: Mes[]): Exportavel => ({ cabecalho: ['Mês', 'A
 function Calendario({ ctx, cal }: { ctx: CockpitCtx; cal: Mes[] }) {
   const { tokens, dark } = ctx;
   const option = useMemo(() => {
-    const neutro = dark ? '#15294F' : '#F4F6F9', cores = [tokens.bad, tokens.bad, tokens.warn, tokens.heat[2]];
+    const neutro = dark ? '#15265C' : '#F4F6F9', cores = [tokens.bad, tokens.bad, tokens.warn, tokens.heat[2]];
     const dados = linhasCalendario.flatMap((_, y) => { const max = Math.max(1, ...cal.map(row => valorDoMes(row, y)));
       return cal.map((row, x) => { const value = valorDoMes(row, y), cor = value ? misturar(neutro, cores[y], 0.18 + value / max * 0.82) : neutro;
         return { value: [x, y, value], itemStyle: { color: cor, borderColor: tokens.surface, borderWidth: 2, borderRadius: 3 }, label: { color: value ? corDoTexto(cor) : tokens.muted } }; }); });

@@ -2,39 +2,39 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/powerbi-desktop-samples/main/Report%20Theme%20JSON%20Schema/reportThemeSchema-2.159.json",
   "name": "Inteligência Estratégica Crea-SP",
   "dataColors": [
-    "#3182CE",
-    "#FABD07",
-    "#805AD5",
-    "#2D3748",
-    "#2C9C8F",
-    "#082D74",
-    "#DD8A0B",
-    "#A9C9EE"
+    "#3662E2",
+    "#FFB000",
+    "#6077B6",
+    "#0D1732",
+    "#AFBBDB",
+    "#15265C",
+    "#E19B01",
+    "#DFE4F2"
   ],
   "good": "#007061",
   "neutral": "#DD8A0B",
   "bad": "#B02525",
-  "maximum": "#082D74",
-  "center": "#A9C9EE",
-  "minimum": "#EAF1FA",
+  "maximum": "#15265C",
+  "center": "#AFBBDB",
+  "minimum": "#ECEFF7",
   "null": "#DCE3EC",
   "firstLevelElements": "#1A202C",
   "secondLevelElements": "#4A5568",
   "thirdLevelElements": "#DCE3EC",
   "fourthLevelElements": "#4A5568",
   "background": "#FFFFFF",
-  "secondaryBackground": "#EAF1FA",
-  "tableAccent": "#082D74",
+  "secondaryBackground": "#ECEFF7",
+  "tableAccent": "#15265C",
   "textClasses": {
     "callout": {
       "fontFace": "Lato",
       "fontSize": 26,
-      "color": "#082D74"
+      "color": "#15265C"
     },
     "title": {
       "fontFace": "Raleway",
       "fontSize": 12,
-      "color": "#01224D"
+      "color": "#0D1732"
     },
     "header": {
       "fontFace": "Lato",
@@ -54,7 +54,7 @@
           {
             "color": {
               "solid": {
-                "color": "#F1F4F8"
+                "color": "#F1F3F8"
               }
             },
             "transparency": 0
@@ -91,7 +91,7 @@
             "show": true,
             "fontColor": {
               "solid": {
-                "color": "#01224D"
+                "color": "#0D1732"
               }
             },
             "fontSize": 12,

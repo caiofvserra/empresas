@@ -13,10 +13,10 @@ function gearOutline(cx: number, cy: number, root: number, tip: number, teeth = 
 
 export function EngineeringEmblem() {
   return <svg className="r9-brand-emblem" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-    <polygon className="r9-engineering-gear" points={gearOutline(32, 32, 23, 29)} fill="#FABD07" />
-    <circle cx="32" cy="32" r="18" fill="#01224D" />
-    <circle cx="32" cy="32" r="15" fill="none" stroke="#3182CE" strokeWidth=".8" />
-    <path d="M21 44 32 19 43 44M25 35h14M19 44h26" fill="none" stroke="#FABD07" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    <polygon className="r9-engineering-gear" points={gearOutline(32, 32, 23, 29)} fill="#FFB000" />
+    <circle cx="32" cy="32" r="18" fill="#0D1732" />
+    <circle cx="32" cy="32" r="15" fill="none" stroke="#3662E2" strokeWidth=".8" />
+    <path d="M21 44 32 19 43 44M25 35h14M19 44h26" fill="none" stroke="#FFB000" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M32 19v-4M21 44l-3 3M43 44l3 3" fill="none" stroke="#fff" strokeWidth="1" />
   </svg>;
 }
@@ -31,8 +31,8 @@ export function EngineeringBlueprint() {
       <path d="M12 26h65l18 19M27 67h54l17-17M168 45h40M132 9h54M132 81h54M181 9v72M177 13l4-4 4 4M177 77l4 4 4-4" />
       <path d="M7 23v6M22 64v6M205 42v6M86 21h5M87 70h5" />
     </g>
-    <circle cx="95" cy="45" r="2.5" fill="#FABD07" />
-    <circle cx="168" cy="45" r="2.5" fill="#FABD07" />
-    <circle cx="132" cy="28" r="1.8" fill="#3182CE" />
+    <circle cx="95" cy="45" r="2.5" fill="#FFB000" />
+    <circle cx="168" cy="45" r="2.5" fill="#FFB000" />
+    <circle cx="132" cy="28" r="1.8" fill="#3662E2" />
   </svg>;
 }

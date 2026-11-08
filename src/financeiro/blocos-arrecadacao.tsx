@@ -107,7 +107,7 @@ export function Calendario({ ctx, q, mes, dia }: { ctx: CockpitCtx; q: QuadroFin
   const option = useMemo(() => {
     const dias = diasDoMes(q, mes), uteis = new Set(diasUteis(mes)), valores = dias.filter(row => row.dia <= dia).map(row => row.total);
     const min = Math.min(...valores, 0), max = Math.max(...valores, 1), ultimoDia = new Date(Date.UTC(Number(mes.slice(0, 4)), Number(mes.slice(5, 7)), 0)).getUTCDate();
-    const cores = dark ? ['#1E3A5F', '#2B6CB0', '#5E9BDD', '#A9C9EE'] : ['#DCE8F7', '#93BCEA', '#2B6CB0', '#082D74'];
+    const cores = dark ? ['#24366E', '#3662E2', '#6077B6', '#AFBBDB'] : ['#DFE4F2', '#AFBBDB', '#3662E2', '#15265C'];
     const porDia = new Map(dias.map(row => [row.dia, row.total]));
     const data = Array.from({ length: ultimoDia }, (_, i) => { const d = i + 1, valor = d <= dia ? porDia.get(d) ?? null : null; return [`${mes}-${dia2(d)}`, valor === null ? (uteis.has(d) && d > dia ? -1 : -2) : valor]; });
     const corDe = (value: number) => { if (value < 0) return value === -1 ? tokens.soft : 'transparent'; const t = (value - min) / Math.max(1, max - min); return cores[Math.min(cores.length - 1, Math.floor(t * cores.length))]; };
