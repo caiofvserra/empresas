@@ -1,13 +1,16 @@
 /*
- * Identidade de cada painel (07/11/2026). O menu lateral e o cabeçalho têm o mesmo formato nos sete painéis; muda só a cor,
- * sempre da paleta do Crea-SP (docs/DESIGN_SYSTEM_V13.md), com degradê entre cores dela. A diferença entre os painéis vem
- * da cor e de poucos detalhes nos blocos: a faixa zebrada e o título em etiqueta da Fiscalização, a senha do Atendimento e
- * a barra amarela de cada painel no Resumo da Presidência.
+ * Identidade de cada painel (07/11/2026, refeita em 08/11/2026). O menu lateral e o cabeçalho têm o mesmo formato nos sete
+ * painéis; muda só a cor, sempre da paleta do Crea-SP (docs/DESIGN_SYSTEM_V13.md), com degradê entre cores dela. Cada painel
+ * tem uma cor só dele no menu e o fundo da página tingido da mesma cor, no tema claro e no escuro, para que dois painéis
+ * nunca pareçam o mesmo. Os detalhes nos blocos ficam: a faixa zebrada e o título em etiqueta da Fiscalização, a senha do
+ * Atendimento e a barra amarela de cada painel no Resumo da Presidência.
  *
- * Lógica das cores: a Presidência fica no azul mais escuro, com o cabeçalho azul e o filete amarelo; os dois cadastros vão
- * nos azuis (Empresas no azul primário, Profissionais no terciário); a Fiscalização no grafite com amarelo de obra; os
- * Colegiados no amarelo; o Financeiro no verde da paleta descendo para o azul; o Atendimento, que é o balcão, no único menu
- * claro, do azul-claro ao creme.
+ * As sete cores: Empresas no azul primário; Profissionais no azul terciário; Fiscalização no grafite com amarelo de obra;
+ * Colegiados no amarelo; Financeiro no verde (o verde de status declarado na V13, success-dark); Atendimento no azul-claro;
+ * Presidência no menu marfim com borda dourada e cabeçalho azul-escuro.
+ *
+ * O fundo da página (--bg), os blocos no escuro (--surface) e as linhas (--line, --soft) ficam na raiz da página, marcada com
+ * data-painel no <html>, porque os gráficos leem as cores dali (src/painel/chart.tsx).
  */
 
 /* ---------- Valores comuns: o painel de hoje ---------- */
@@ -35,23 +38,48 @@
 .ck[data-painel="presidencia"] .ck-header { --surface: #01224D; --brand: #FABD07; }
 .ck[data-painel="fiscalizacao"] .ck-header select option, .ck[data-painel="presidencia"] .ck-header select option { background: #1A202C; color: #F8F8F8; }
 
+/* ---------- Fundo da página de cada painel ---------- */
+:root[data-painel="empresas"] { --bg: #E8EDF6; --soft: #E3EAF5; --line: #D2DBEA; }
+:root[data-painel="profissionais"] { --bg: #E1EFFC; --soft: #DCEBFA; --line: #C3DAF1; }
+:root[data-painel="fiscalizacao"] { --bg: #E2E6EB; --soft: #E2E8F0; --line: #CBD2DC; }
+:root[data-painel="conselho"] { --bg: #FFF5D6; --soft: #FFF0C4; --line: #EEDC9E; }
+:root[data-painel="financeiro"] { --bg: #E2F0EC; --soft: #DAEBE6; --line: #C0DBD3; }
+:root[data-painel="atendimento"] { --bg: #F7FAFD; --soft: #EAF3FC; --line: #DAE5F0; }
+:root[data-painel="presidencia"] { --bg: #F4F1E7; --soft: #EFE9D6; --line: #DFD7BF; }
+:root[data-painel="empresas"][data-theme="dark"] { --bg: #0A101C; --surface: #121A2A; --soft: #1A2438; --line: #26324A; }
+:root[data-painel="profissionais"][data-theme="dark"] { --bg: #031B37; --surface: #082A50; --soft: #0E3562; --line: #1B4A7E; }
+:root[data-painel="fiscalizacao"][data-theme="dark"] { --bg: #0E1115; --surface: #1A202C; --soft: #232A36; --line: #2F3949; }
+:root[data-painel="conselho"][data-theme="dark"] { --bg: #13110A; --surface: #1F1B11; --soft: #2A2617; --line: #3D3521; }
+:root[data-painel="financeiro"][data-theme="dark"] { --bg: #021614; --surface: #0A2724; --soft: #0F332F; --line: #1B4842; }
+:root[data-painel="atendimento"][data-theme="dark"] { --bg: #07132A; --surface: #0E1D3A; --soft: #15294F; --line: #22375F; }
+:root[data-painel="presidencia"][data-theme="dark"] { --bg: #000E22; --surface: #01224D; --soft: #082D74; --line: #163E8C; }
+@media (prefers-color-scheme: dark) {
+  :root[data-painel="empresas"]:not([data-theme="light"]) { --bg: #0A101C; --surface: #121A2A; --soft: #1A2438; --line: #26324A; }
+  :root[data-painel="profissionais"]:not([data-theme="light"]) { --bg: #031B37; --surface: #082A50; --soft: #0E3562; --line: #1B4A7E; }
+  :root[data-painel="fiscalizacao"]:not([data-theme="light"]) { --bg: #0E1115; --surface: #1A202C; --soft: #232A36; --line: #2F3949; }
+  :root[data-painel="conselho"]:not([data-theme="light"]) { --bg: #13110A; --surface: #1F1B11; --soft: #2A2617; --line: #3D3521; }
+  :root[data-painel="financeiro"]:not([data-theme="light"]) { --bg: #021614; --surface: #0A2724; --soft: #0F332F; --line: #1B4842; }
+  :root[data-painel="atendimento"]:not([data-theme="light"]) { --bg: #07132A; --surface: #0E1D3A; --soft: #15294F; --line: #22375F; }
+  :root[data-painel="presidencia"]:not([data-theme="light"]) { --bg: #000E22; --surface: #01224D; --soft: #082D74; --line: #163E8C; }
+}
+
 /* ---------- Empresas: azul primário ---------- */
-.ck[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #082D74, #163E8C 55%, #3182CE); --rail-ink: rgba(255,255,255,.84); --head-filete: linear-gradient(90deg, #082D74, #3182CE); --head-filete-h: 3px; }
+.ck[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #082D74, #163E8C); --rail-ink: rgba(255,255,255,.84); --head-filete: linear-gradient(90deg, #082D74, #3182CE); --head-filete-h: 3px; }
 .ck[data-painel="empresas"] .ck-eyebrow { color: #082D74; }
-.ck.is-dark[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #01224D, #082D74); --head-filete: linear-gradient(90deg, #163E8C, #639CE0); }
+.ck.is-dark[data-painel="empresas"] { --head-filete: linear-gradient(90deg, #163E8C, #639CE0); }
 .ck.is-dark[data-painel="empresas"] .ck-eyebrow { color: #9CC3EE; }
 
 /* ---------- Profissionais: azul terciário ---------- */
 .ck[data-painel="profissionais"] {
-  --rail-bg: linear-gradient(180deg, #3182CE, #246FB5 55%, #163E8C); --rail-ink: rgba(255,255,255,.9); --rail-hover-bg: rgba(255,255,255,.14);
+  --rail-bg: linear-gradient(180deg, #3182CE, #246FB5); --rail-ink: rgba(255,255,255,.92); --rail-hover-bg: rgba(255,255,255,.14);
   --rail-on-bg: #FFFFFF; --rail-on-ink: #082D74; --rail-line: rgba(255,255,255,.24); --rail-borda: #639CE0; --rail-foco: #FFFFFF;
   --head-bg: linear-gradient(90deg, #D4EDFF, #FFFFFF 70%); --head-linha: #A9C9EE;
 }
 .ck[data-painel="profissionais"] .ck-header { --soft: #FFFFFF; --line: #A9C9EE; }
 .ck[data-painel="profissionais"] .ck-eyebrow { color: #246FB5; }
-.ck.is-dark[data-painel="profissionais"] { --rail-bg: linear-gradient(180deg, #246FB5, #163E8C 60%, #082D74); --rail-on-bg: #D4EDFF; --rail-on-ink: #01224D; --head-bg: linear-gradient(90deg, #163E8C, #0E1D3A 70%); --head-linha: #246FB5; }
-.ck.is-dark[data-painel="profissionais"] .ck-header { --soft: #0E1D3A; --line: #246FB5; }
-.ck.is-dark[data-painel="profissionais"] .ck-eyebrow { color: #A9C9EE; }
+.ck.is-dark[data-painel="profissionais"] { --rail-on-bg: #D4EDFF; --rail-on-ink: #01224D; --head-bg: linear-gradient(90deg, #246FB5, #082A50 70%); --head-linha: #246FB5; }
+.ck.is-dark[data-painel="profissionais"] .ck-header { --soft: #082A50; --line: #3182CE; }
+.ck.is-dark[data-painel="profissionais"] .ck-eyebrow { color: #D4EDFF; }
 
 /* ---------- Fiscalização: grafite e amarelo de obra ---------- */
 .ck[data-painel="fiscalizacao"] {
@@ -63,7 +91,7 @@
 .ck[data-painel="fiscalizacao"] .ck-page { padding-top: 18px; }
 .ck[data-painel="fiscalizacao"] .tile > header h3 { display: inline-block; max-width: calc(100% + 14px); margin-left: -14px; padding: 4px 10px 3px 14px; background: #FABD07; color: #1A202C; line-height: 1.15; vertical-align: top; }
 .ck[data-painel="fiscalizacao"] .tile > header h3 .selo-parceria { background: #1A202C; color: #FABD07; }
-.ck.is-dark[data-painel="fiscalizacao"] { --rail-bg: linear-gradient(180deg, #1A202C, #11151C); }
+.ck.is-dark[data-painel="fiscalizacao"] { --rail-bg: linear-gradient(180deg, #1A202C, #11151C); --head-bg: #11151C; --head-linha: #11151C; }
 
 /* ---------- Colegiados: amarelo ---------- */
 .ck[data-painel="conselho"] {
@@ -73,25 +101,25 @@
 }
 .ck[data-painel="conselho"] .ck-header { --soft: #FFFFFF; --line: #F2DC8C; }
 .ck[data-painel="conselho"] .ck-eyebrow { color: #082D74; }
-.ck.is-dark[data-painel="conselho"] { --rail-bg: linear-gradient(180deg, #E0AB0C, #FABD07); --head-bg: #01224D; --head-linha: #01224D; --head-filete: #FABD07; }
-.ck.is-dark[data-painel="conselho"] .ck-header { --soft: #082D74; --line: #163E8C; }
+.ck.is-dark[data-painel="conselho"] { --head-bg: #1F1B11; --head-linha: #3D3521; --head-filete: #FABD07; }
+.ck.is-dark[data-painel="conselho"] .ck-header { --soft: #2A2617; --line: #3D3521; }
 .ck.is-dark[data-painel="conselho"] .ck-eyebrow { color: #FFD148; }
 
-/* ---------- Financeiro: verde da paleta descendo para o azul ---------- */
-.ck[data-painel="financeiro"] { --rail-bg: linear-gradient(180deg, #007061, #01224D); --rail-ink: rgba(255,255,255,.82); --rail-line: rgba(255,255,255,.16); --rail-borda: #007061; --head-filete: linear-gradient(90deg, #007061, #082D74); --head-filete-h: 3px; }
+/* ---------- Financeiro: verde ---------- */
+.ck[data-painel="financeiro"] { --rail-bg: linear-gradient(180deg, #007061, #007061 55%, #01224D); --rail-ink: rgba(255,255,255,.86); --rail-hover-bg: rgba(255,255,255,.1); --rail-line: rgba(255,255,255,.18); --rail-borda: #007061; --head-filete: #007061; --head-filete-h: 3px; }
 .ck[data-painel="financeiro"] .ck-eyebrow { color: #007061; }
-.ck.is-dark[data-painel="financeiro"] { --rail-bg: linear-gradient(180deg, #007061, #01224D 75%); --head-filete: linear-gradient(90deg, #3DD6A9, #639CE0); }
+.ck.is-dark[data-painel="financeiro"] { --head-filete: #3DD6A9; }
 .ck.is-dark[data-painel="financeiro"] .ck-eyebrow { color: #3DD6A9; }
 
-/* ---------- Atendimento: o único menu claro, do azul-claro ao creme ---------- */
+/* ---------- Atendimento: azul-claro, o menu claro do balcão ---------- */
 .ck[data-painel="atendimento"] {
-  --rail-bg: linear-gradient(180deg, #D4EDFF, #FFFEDB); --rail-ink: #01224D; --rail-hover-ink: #01224D; --rail-hover-bg: rgba(1,34,77,.08);
-  --rail-on-bg: #246FB5; --rail-on-ink: #FFFFFF; --rail-line: rgba(1,34,77,.14); --rail-borda: #A9C9EE; --rail-foco: #082D74;
-  --head-filete: linear-gradient(90deg, #639CE0, #FFD148); --head-filete-h: 3px;
+  --rail-bg: linear-gradient(180deg, #D4EDFF, #D4EDFF 45%, #639CE0); --rail-ink: #01224D; --rail-hover-ink: #01224D; --rail-hover-bg: rgba(1,34,77,.08);
+  --rail-on-bg: #082D74; --rail-on-ink: #FFFFFF; --rail-line: rgba(1,34,77,.14); --rail-borda: #639CE0; --rail-foco: #082D74;
+  --head-filete: linear-gradient(90deg, #639CE0, #D4EDFF); --head-filete-h: 3px;
 }
 .ck[data-painel="atendimento"] .ck-eyebrow { color: #246FB5; }
-.ck.is-dark[data-painel="atendimento"] { --rail-bg: linear-gradient(180deg, #163E8C, #082D74); --rail-ink: #D4EDFF; --rail-hover-ink: #FFFFFF; --rail-hover-bg: rgba(255,255,255,.1); --rail-on-bg: #639CE0; --rail-on-ink: #01224D; --rail-line: rgba(255,255,255,.16); --rail-borda: #246FB5; --rail-foco: #FFD148; }
-.ck.is-dark[data-painel="atendimento"] .ck-eyebrow { color: #9CC3EE; }
+.ck.is-dark[data-painel="atendimento"] { --rail-on-bg: #01224D; --rail-borda: #639CE0; --head-filete: linear-gradient(90deg, #639CE0, #D4EDFF); }
+.ck.is-dark[data-painel="atendimento"] .ck-eyebrow { color: #D4EDFF; }
 
 /* Senha do balcão: os cartões de indicador têm o recorte de senha nas laterais e o picote à esquerda. */
 .ck[data-painel="atendimento"] .ind {
@@ -104,10 +132,17 @@
 .ck[data-painel="atendimento"] button.ind:hover { transform: none; }
 .ck[data-painel="atendimento"] .ind-shell > .ficha-pop { right: 14px; }
 
-/* ---------- Presidência: azul escuro, cabeçalho azul com filete amarelo ---------- */
-.ck[data-painel="presidencia"] { --rail-bg: linear-gradient(180deg, #01224D, #082D74); --head-bg: linear-gradient(90deg, #082D74, #01224D); --head-linha: #01224D; --head-filete: #FABD07; --head-filete-h: 3px; }
+/* ---------- Presidência: menu marfim com borda dourada, cabeçalho azul-escuro com filete amarelo ---------- */
+.ck[data-painel="presidencia"] {
+  --rail-bg: linear-gradient(180deg, #FFFFFF, #FFFEDB); --rail-ink: #01224D; --rail-hover-ink: #01224D; --rail-hover-bg: rgba(1,34,77,.08);
+  --rail-on-bg: #01224D; --rail-on-ink: #FFD148; --rail-line: rgba(1,34,77,.14); --rail-borda: #FABD07; --rail-foco: #01224D; --logo-engrenagem: #E0AB0C;
+  --head-bg: linear-gradient(90deg, #082D74, #01224D); --head-linha: #01224D; --head-filete: #FABD07; --head-filete-h: 3px;
+}
+.ck[data-painel="presidencia"] .ck-rail { border-right-width: 4px; }
+.ck[data-painel="presidencia"] .ck-rail-painel { color: #082D74; }
+.ck[data-painel="presidencia"] .ck-rail-painel:hover { color: #01224D; background: rgba(250,189,7,.28); }
 .ck[data-painel="presidencia"] .ck-eyebrow { color: #FFD148; }
-.ck.is-dark[data-painel="presidencia"] { --head-bg: linear-gradient(90deg, #01224D, #082D74); }
+.ck.is-dark[data-painel="presidencia"] { --head-bg: linear-gradient(90deg, #01224D, #000E22); }
 /* Cada painel do Resumo leva a barra amarela à esquerda. */
 .ck[data-painel="presidencia"] .ck-grid-pr-resumo > .tile:has(.pr-painel) { position: relative; padding-left: 22px; }
 .ck[data-painel="presidencia"] .ck-grid-pr-resumo > .tile:has(.pr-painel)::before { content: ''; position: absolute; left: 8px; top: 11px; bottom: 10px; width: 6px; border-radius: 3px; background: #FABD07; }
@@ -116,11 +151,3 @@
 .ck-rail .ck-voltar { color: var(--rail-ink); }
 .ck-rail .ck-voltar:hover { color: var(--rail-hover-ink); background: var(--rail-hover-bg); }
 .ck-rail .ck-voltar:focus-visible { outline-color: var(--rail-foco); }
-
-/* Presidência (07/11/2026, depois da primeira olhada do Caio): o menu ganha uma base amarela embaixo, onde ficam Metas, Fontes e
-   o tema, para não confundir com o azul de hoje dos outros painéis. */
-.ck[data-painel="presidencia"] .ck-rail-bottom { margin: auto -6px -8px; padding: 8px 6px 10px; background: linear-gradient(180deg, #FFD148, #FABD07 40%, #E0AB0C); border-top: 0; }
-.ck[data-painel="presidencia"] .ck-rail-bottom button { color: #01224D; font-weight: 700; }
-.ck[data-painel="presidencia"] .ck-rail-bottom button:hover { color: #01224D; background: rgba(1,34,77,.1); }
-.ck[data-painel="presidencia"] .ck-rail-bottom :focus-visible { outline-color: #01224D; }
-.ck[data-painel="presidencia"] .ck-rail button.on { background: #FFFFFF; color: #01224D; }
