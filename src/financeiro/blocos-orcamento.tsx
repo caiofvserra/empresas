@@ -83,7 +83,7 @@ export function Resultado({ ctx, mes }: { ctx: CockpitCtx; mes: string }) {
 /* ---------- Diárias por categoria e por pessoa ---------- */
 export const categoriasDiarias = ['Conselheiros', 'Empregados', 'Inspetores', 'Colaboradores', 'Jetons'];
 const nomeCategoria: Record<string, string> = { Conselheiros: 'Conselheiros', Empregados: 'Empregados', Inspetores: 'Inspetores', Colaboradores: 'Colaboradores', Jetons: 'Jetons de conselheiros' };
-const coresDiarias = (tokens: CockpitCtx['tokens']): Record<string, string> => ({ Conselheiros: tokens.brand, Empregados: tokens.blue, Inspetores: '#4A72AD', Colaboradores: '#B7791F', Jetons: tokens.heat[1] });
+const coresDiarias = (tokens: CockpitCtx['tokens']): Record<string, string> => ({ Conselheiros: tokens.brand, Empregados: tokens.blue, Inspetores: '#6077B6', Colaboradores: '#E19B01', Jetons: tokens.heat[1] });
 /** Nome em caixa alta, como a Transparência publica, escrito com as iniciais maiúsculas. */
 export const nomeProprio = (nome: string) => nome.toLocaleLowerCase('pt-BR').replace(/(^|\s)(\p{L})/gu, (_, espaco, letra) => espaco + letra.toLocaleUpperCase('pt-BR')).replace(/\s(D[aeo]s?|E)\s/g, m => m.toLocaleLowerCase('pt-BR'));
 export function abrirPessoa(ctx: CockpitCtx, p: DiariasPessoa) {

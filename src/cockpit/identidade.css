@@ -1,22 +1,21 @@
 /*
- * Identidade de cada painel (07/11/2026, refeita em 08/11/2026). O menu lateral e o cabeçalho têm o mesmo formato nos sete
- * painéis; muda só a cor, sempre da paleta do Crea-SP (docs/DESIGN_SYSTEM_V13.md), com degradê entre cores dela. Cada painel
- * tem uma cor só dele no menu e o fundo da página tingido da mesma cor, no tema claro e no escuro, para que dois painéis
- * nunca pareçam o mesmo. Os detalhes nos blocos ficam: a faixa zebrada e o título em etiqueta da Fiscalização, a senha do
- * Atendimento e a barra amarela de cada painel no Resumo da Presidência.
+ * Identidade de cada painel (07/11/2026, cores do Manual do CreaOne desde 08/11/2026). O menu lateral e o cabeçalho têm o
+ * mesmo formato nos sete painéis; muda só a cor, sempre da paleta do Manual do CreaOne (docs/PALETA_CREAONE.md): Azul 800
+ * #0D1732, Amarelo #FFB000, Azul 700 #15265C, Azul 500 #3662E2, Azul #6077B6 e Preto #000000, com degradês e tons claros
+ * delas. Cada painel tem uma cor só dele no menu e o fundo da página tingido da mesma cor, no claro e no escuro.
  *
- * As sete cores: Empresas no azul primário; Profissionais no azul terciário; Fiscalização no grafite com amarelo de obra;
- * Colegiados no amarelo; Financeiro no verde (o verde de status declarado na V13, success-dark); Atendimento no azul-claro;
- * Presidência no menu marfim com borda dourada e cabeçalho azul-escuro.
+ * As sete cores: Empresas no Azul 700; Profissionais no Azul 500; Atendimento no Azul (#6077B6); Fiscalização no Preto com
+ * a faixa amarela de obra; Colegiados no Amarelo; Financeiro no Azul 800 com o cabeçalho amarelo; Presidência no menu
+ * branco com borda amarela e cabeçalho Azul 800.
  *
  * O fundo da página (--bg), os blocos no escuro (--surface) e as linhas (--line, --soft) ficam na raiz da página, marcada com
  * data-painel no <html>, porque os gráficos leem as cores dali (src/painel/chart.tsx).
  */
 
-/* ---------- Valores comuns: o painel de hoje ---------- */
+/* ---------- Valores comuns ---------- */
 .ck {
-  --rail-bg: linear-gradient(180deg, #01224D, #082D74 70%, #163E8C); --rail-ink: rgba(255,255,255,.76); --rail-hover-ink: #FFFFFF; --rail-hover-bg: rgba(255,255,255,.09);
-  --rail-on-bg: #FABD07; --rail-on-ink: #01224D; --rail-line: rgba(255,255,255,.14); --rail-borda: rgba(250,189,7,.35); --rail-foco: #FABD07; --logo-engrenagem: #FABD07;
+  --rail-bg: linear-gradient(180deg, #0D1732, #15265C); --rail-ink: rgba(255,255,255,.8); --rail-hover-ink: #FFFFFF; --rail-hover-bg: rgba(255,255,255,.1);
+  --rail-on-bg: #FFB000; --rail-on-ink: #0D1732; --rail-line: rgba(255,255,255,.16); --rail-borda: rgba(255,176,0,.4); --rail-foco: #FFB000; --logo-engrenagem: #FFB000;
   --head-bg: var(--surface); --head-linha: var(--line); --head-filete: none; --head-filete-h: 0px;
 }
 .ck-rail { background: var(--rail-bg); border-right-color: var(--rail-borda); }
@@ -26,100 +25,68 @@
 .ck-rail-bottom, .ck-rail-paineis, .ck-rail-painel { border-top-color: var(--rail-line); }
 .ck-rail :focus-visible { outline-color: var(--rail-foco); }
 .ck-logo .r9-engineering-gear { fill: var(--logo-engrenagem); }
-.ck-logo path[stroke="#FABD07"] { fill: none; stroke: var(--logo-engrenagem); }
+.ck-logo path[stroke="#FFB000"] { fill: none; stroke: var(--logo-engrenagem); }
 .ck-header { position: relative; background: var(--head-bg); border-bottom-color: var(--head-linha); }
 .ck-header::before { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: var(--head-filete-h); background: var(--head-filete); pointer-events: none; }
 
 /* Cabeçalho escuro (Fiscalização e Presidência): os controles leem as cores do próprio cabeçalho. */
 .ck[data-painel="fiscalizacao"] .ck-header, .ck[data-painel="presidencia"] .ck-header {
-  --ink: #F8F8F8; --muted: #CBD5E0; --line: rgba(255,255,255,.24); --soft: rgba(255,255,255,.08); --blue: #FFD148; color: var(--ink); color-scheme: dark;
+  --ink: #F8F8F8; --muted: #CBD5E0; --line: rgba(255,255,255,.24); --soft: rgba(255,255,255,.08); --blue: #FFC640; color: var(--ink); color-scheme: dark;
 }
-.ck[data-painel="fiscalizacao"] .ck-header { --surface: #1A202C; --brand: #FABD07; }
-.ck[data-painel="presidencia"] .ck-header { --surface: #01224D; --brand: #FABD07; }
-.ck[data-painel="fiscalizacao"] .ck-header select option, .ck[data-painel="presidencia"] .ck-header select option { background: #1A202C; color: #F8F8F8; }
+.ck[data-painel="fiscalizacao"] .ck-header { --surface: #121212; --brand: #FFB000; }
+.ck[data-painel="presidencia"] .ck-header { --surface: #0D1732; --brand: #FFB000; }
+.ck[data-painel="fiscalizacao"] .ck-header select option, .ck[data-painel="presidencia"] .ck-header select option { background: #0D1732; color: #F8F8F8; }
 
 /* ---------- Fundo da página de cada painel ---------- */
-:root[data-painel="empresas"] { --bg: #E8EDF6; --soft: #E3EAF5; --line: #D2DBEA; }
-:root[data-painel="profissionais"] { --bg: #E1EFFC; --soft: #DCEBFA; --line: #C3DAF1; }
-:root[data-painel="fiscalizacao"] { --bg: #E2E6EB; --soft: #E2E8F0; --line: #CBD2DC; }
-:root[data-painel="conselho"] { --bg: #FFF5D6; --soft: #FFF0C4; --line: #EEDC9E; }
-:root[data-painel="financeiro"] { --bg: #E2F0EC; --soft: #DAEBE6; --line: #C0DBD3; }
-:root[data-painel="atendimento"] { --bg: #F7FAFD; --soft: #EAF3FC; --line: #DAE5F0; }
-:root[data-painel="presidencia"] { --bg: #F4F1E7; --soft: #EFE9D6; --line: #DFD7BF; }
-:root[data-painel="empresas"][data-theme="dark"] { --bg: #0A101C; --surface: #121A2A; --soft: #1A2438; --line: #26324A; }
-:root[data-painel="profissionais"][data-theme="dark"] { --bg: #031B37; --surface: #082A50; --soft: #0E3562; --line: #1B4A7E; }
-:root[data-painel="fiscalizacao"][data-theme="dark"] { --bg: #0E1115; --surface: #1A202C; --soft: #232A36; --line: #2F3949; }
-:root[data-painel="conselho"][data-theme="dark"] { --bg: #13110A; --surface: #1F1B11; --soft: #2A2617; --line: #3D3521; }
-:root[data-painel="financeiro"][data-theme="dark"] { --bg: #021614; --surface: #0A2724; --soft: #0F332F; --line: #1B4842; }
-:root[data-painel="atendimento"][data-theme="dark"] { --bg: #07132A; --surface: #0E1D3A; --soft: #15294F; --line: #22375F; }
-:root[data-painel="presidencia"][data-theme="dark"] { --bg: #000E22; --surface: #01224D; --soft: #082D74; --line: #163E8C; }
+:root[data-painel="empresas"] { --bg: #E9ECF4; --soft: #E1E6F2; --line: #D0D7E8; }
+:root[data-painel="profissionais"] { --bg: #E4EAFB; --soft: #DCE4FA; --line: #C3D0F3; }
+:root[data-painel="fiscalizacao"] { --bg: #E4E6E9; --soft: #E2E5EA; --line: #CBCFD6; }
+:root[data-painel="conselho"] { --bg: #FFF4D6; --soft: #FFEDC2; --line: #EED9A0; }
+:root[data-painel="financeiro"] { --bg: #EDEEF2; --soft: #E4E6EC; --line: #D2D5DE; }
+:root[data-painel="atendimento"] { --bg: #EEF0F6; --soft: #E3E7F2; --line: #D1D7E8; }
+:root[data-painel="presidencia"] { --bg: #F3F1EA; --soft: #EEE9DA; --line: #DDD6C2; }
+:root[data-painel="empresas"][data-theme="dark"] { --bg: #090D18; --surface: #111A33; --soft: #182447; --line: #24366E; }
+:root[data-painel="profissionais"][data-theme="dark"] { --bg: #081236; --surface: #0F1E57; --soft: #172A70; --line: #2A44A0; }
+:root[data-painel="fiscalizacao"][data-theme="dark"] { --bg: #000000; --surface: #121212; --soft: #1C1C1C; --line: #2E2E2E; }
+:root[data-painel="conselho"][data-theme="dark"] { --bg: #130F05; --surface: #1F190A; --soft: #2B230F; --line: #46391A; }
+:root[data-painel="financeiro"][data-theme="dark"] { --bg: #05070D; --surface: #0E1220; --soft: #161B2E; --line: #262D45; }
+:root[data-painel="atendimento"][data-theme="dark"] { --bg: #10142A; --surface: #1A2140; --soft: #232C52; --line: #36437A; }
+:root[data-painel="presidencia"][data-theme="dark"] { --bg: #0D1732; --surface: #15265C; --soft: #1D3070; --line: #2E4382; }
 @media (prefers-color-scheme: dark) {
-  :root[data-painel="empresas"]:not([data-theme="light"]) { --bg: #0A101C; --surface: #121A2A; --soft: #1A2438; --line: #26324A; }
-  :root[data-painel="profissionais"]:not([data-theme="light"]) { --bg: #031B37; --surface: #082A50; --soft: #0E3562; --line: #1B4A7E; }
-  :root[data-painel="fiscalizacao"]:not([data-theme="light"]) { --bg: #0E1115; --surface: #1A202C; --soft: #232A36; --line: #2F3949; }
-  :root[data-painel="conselho"]:not([data-theme="light"]) { --bg: #13110A; --surface: #1F1B11; --soft: #2A2617; --line: #3D3521; }
-  :root[data-painel="financeiro"]:not([data-theme="light"]) { --bg: #021614; --surface: #0A2724; --soft: #0F332F; --line: #1B4842; }
-  :root[data-painel="atendimento"]:not([data-theme="light"]) { --bg: #07132A; --surface: #0E1D3A; --soft: #15294F; --line: #22375F; }
-  :root[data-painel="presidencia"]:not([data-theme="light"]) { --bg: #000E22; --surface: #01224D; --soft: #082D74; --line: #163E8C; }
+  :root[data-painel="empresas"]:not([data-theme="light"]) { --bg: #090D18; --surface: #111A33; --soft: #182447; --line: #24366E; }
+  :root[data-painel="profissionais"]:not([data-theme="light"]) { --bg: #081236; --surface: #0F1E57; --soft: #172A70; --line: #2A44A0; }
+  :root[data-painel="fiscalizacao"]:not([data-theme="light"]) { --bg: #000000; --surface: #121212; --soft: #1C1C1C; --line: #2E2E2E; }
+  :root[data-painel="conselho"]:not([data-theme="light"]) { --bg: #130F05; --surface: #1F190A; --soft: #2B230F; --line: #46391A; }
+  :root[data-painel="financeiro"]:not([data-theme="light"]) { --bg: #05070D; --surface: #0E1220; --soft: #161B2E; --line: #262D45; }
+  :root[data-painel="atendimento"]:not([data-theme="light"]) { --bg: #10142A; --surface: #1A2140; --soft: #232C52; --line: #36437A; }
+  :root[data-painel="presidencia"]:not([data-theme="light"]) { --bg: #0D1732; --surface: #15265C; --soft: #1D3070; --line: #2E4382; }
 }
 
-/* ---------- Empresas: azul primário ---------- */
-.ck[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #082D74, #163E8C); --rail-ink: rgba(255,255,255,.84); --head-filete: linear-gradient(90deg, #082D74, #3182CE); --head-filete-h: 3px; }
-.ck[data-painel="empresas"] .ck-eyebrow { color: #082D74; }
-.ck.is-dark[data-painel="empresas"] { --head-filete: linear-gradient(90deg, #163E8C, #639CE0); }
-.ck.is-dark[data-painel="empresas"] .ck-eyebrow { color: #9CC3EE; }
+/* ---------- Empresas: Azul 700 ---------- */
+.ck[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #15265C, #0D1732); --head-filete: linear-gradient(90deg, #15265C, #3662E2); --head-filete-h: 3px; }
+.ck[data-painel="empresas"] .ck-eyebrow { color: #15265C; }
+.ck.is-dark[data-painel="empresas"] .ck-eyebrow { color: #AFBBDB; }
 
-/* ---------- Profissionais: azul terciário ---------- */
+/* ---------- Profissionais: Azul 500 ---------- */
 .ck[data-painel="profissionais"] {
-  --rail-bg: linear-gradient(180deg, #3182CE, #246FB5); --rail-ink: rgba(255,255,255,.92); --rail-hover-bg: rgba(255,255,255,.14);
-  --rail-on-bg: #FFFFFF; --rail-on-ink: #082D74; --rail-line: rgba(255,255,255,.24); --rail-borda: #639CE0; --rail-foco: #FFFFFF;
-  --head-bg: linear-gradient(90deg, #D4EDFF, #FFFFFF 70%); --head-linha: #A9C9EE;
+  --rail-bg: linear-gradient(180deg, #3662E2, #3662E2 60%, #15265C); --rail-ink: rgba(255,255,255,.94); --rail-hover-bg: rgba(255,255,255,.16);
+  --rail-on-bg: #FFFFFF; --rail-on-ink: #15265C; --rail-line: rgba(255,255,255,.26); --rail-borda: #3662E2; --rail-foco: #FFFFFF; --logo-engrenagem: #FFFFFF;
+  --head-bg: linear-gradient(90deg, #DFE4F2, #FFFFFF 70%); --head-linha: #AFBBDB;
 }
-.ck[data-painel="profissionais"] .ck-header { --soft: #FFFFFF; --line: #A9C9EE; }
-.ck[data-painel="profissionais"] .ck-eyebrow { color: #246FB5; }
-.ck.is-dark[data-painel="profissionais"] { --rail-on-bg: #D4EDFF; --rail-on-ink: #01224D; --head-bg: linear-gradient(90deg, #246FB5, #082A50 70%); --head-linha: #246FB5; }
-.ck.is-dark[data-painel="profissionais"] .ck-header { --soft: #082A50; --line: #3182CE; }
-.ck.is-dark[data-painel="profissionais"] .ck-eyebrow { color: #D4EDFF; }
+.ck[data-painel="profissionais"] .ck-header { --soft: #FFFFFF; --line: #AFBBDB; }
+.ck[data-painel="profissionais"] .ck-eyebrow { color: #3662E2; }
+.ck.is-dark[data-painel="profissionais"] { --head-bg: linear-gradient(90deg, #3662E2, #0F1E57 70%); --head-linha: #3662E2; }
+.ck.is-dark[data-painel="profissionais"] .ck-header { --soft: #0F1E57; --line: #3662E2; }
+.ck.is-dark[data-painel="profissionais"] .ck-eyebrow { color: #DFE4F2; }
 
-/* ---------- Fiscalização: grafite e amarelo de obra ---------- */
-.ck[data-painel="fiscalizacao"] {
-  --rail-bg: linear-gradient(180deg, #1A202C, #2D3748); --rail-ink: #CBD5E0; --rail-hover-bg: rgba(255,255,255,.08); --rail-line: rgba(255,255,255,.12); --rail-borda: #FABD07;
-  --head-bg: #1A202C; --head-linha: #1A202C;
-}
-.ck[data-painel="fiscalizacao"] .ck-eyebrow { color: #FABD07; }
-.ck[data-painel="fiscalizacao"] .ck-header::after { content: ''; position: absolute; z-index: 3; left: 0; right: 0; bottom: -8px; height: 7px; background: repeating-linear-gradient(-45deg, #FABD07 0 10px, #1A202C 10px 20px); pointer-events: none; }
-.ck[data-painel="fiscalizacao"] .ck-page { padding-top: 18px; }
-.ck[data-painel="fiscalizacao"] .tile > header h3 { display: inline-block; max-width: calc(100% + 14px); margin-left: -14px; padding: 4px 10px 3px 14px; background: #FABD07; color: #1A202C; line-height: 1.15; vertical-align: top; }
-.ck[data-painel="fiscalizacao"] .tile > header h3 .selo-parceria { background: #1A202C; color: #FABD07; }
-.ck.is-dark[data-painel="fiscalizacao"] { --rail-bg: linear-gradient(180deg, #1A202C, #11151C); --head-bg: #11151C; --head-linha: #11151C; }
-
-/* ---------- Colegiados: amarelo ---------- */
-.ck[data-painel="conselho"] {
-  --rail-bg: linear-gradient(180deg, #FABD07, #E0AB0C); --rail-ink: #01224D; --rail-hover-ink: #01224D; --rail-hover-bg: rgba(1,34,77,.1);
-  --rail-on-bg: #01224D; --rail-on-ink: #FFD148; --rail-line: rgba(1,34,77,.2); --rail-borda: #E0AB0C; --rail-foco: #01224D; --logo-engrenagem: #01224D;
-  --head-bg: #FFFEDB; --head-linha: #F2DC8C; --head-filete: #E0AB0C; --head-filete-h: 3px;
-}
-.ck[data-painel="conselho"] .ck-header { --soft: #FFFFFF; --line: #F2DC8C; }
-.ck[data-painel="conselho"] .ck-eyebrow { color: #082D74; }
-.ck.is-dark[data-painel="conselho"] { --head-bg: #1F1B11; --head-linha: #3D3521; --head-filete: #FABD07; }
-.ck.is-dark[data-painel="conselho"] .ck-header { --soft: #2A2617; --line: #3D3521; }
-.ck.is-dark[data-painel="conselho"] .ck-eyebrow { color: #FFD148; }
-
-/* ---------- Financeiro: verde ---------- */
-.ck[data-painel="financeiro"] { --rail-bg: linear-gradient(180deg, #007061, #007061 55%, #01224D); --rail-ink: rgba(255,255,255,.86); --rail-hover-bg: rgba(255,255,255,.1); --rail-line: rgba(255,255,255,.18); --rail-borda: #007061; --head-filete: #007061; --head-filete-h: 3px; }
-.ck[data-painel="financeiro"] .ck-eyebrow { color: #007061; }
-.ck.is-dark[data-painel="financeiro"] { --head-filete: #3DD6A9; }
-.ck.is-dark[data-painel="financeiro"] .ck-eyebrow { color: #3DD6A9; }
-
-/* ---------- Atendimento: azul-claro, o menu claro do balcão ---------- */
+/* ---------- Atendimento: Azul ---------- */
 .ck[data-painel="atendimento"] {
-  --rail-bg: linear-gradient(180deg, #D4EDFF, #D4EDFF 45%, #639CE0); --rail-ink: #01224D; --rail-hover-ink: #01224D; --rail-hover-bg: rgba(1,34,77,.08);
-  --rail-on-bg: #082D74; --rail-on-ink: #FFFFFF; --rail-line: rgba(1,34,77,.14); --rail-borda: #639CE0; --rail-foco: #082D74;
-  --head-filete: linear-gradient(90deg, #639CE0, #D4EDFF); --head-filete-h: 3px;
+  --rail-bg: linear-gradient(180deg, #6077B6, #6077B6 60%, #15265C); --rail-ink: #FFFFFF; --rail-hover-bg: rgba(255,255,255,.16);
+  --rail-on-bg: #FFFFFF; --rail-on-ink: #15265C; --rail-line: rgba(255,255,255,.26); --rail-borda: #6077B6; --rail-foco: #FFFFFF;
+  --head-filete: linear-gradient(90deg, #6077B6, #AFBBDB); --head-filete-h: 3px;
 }
-.ck[data-painel="atendimento"] .ck-eyebrow { color: #246FB5; }
-.ck.is-dark[data-painel="atendimento"] { --rail-on-bg: #01224D; --rail-borda: #639CE0; --head-filete: linear-gradient(90deg, #639CE0, #D4EDFF); }
-.ck.is-dark[data-painel="atendimento"] .ck-eyebrow { color: #D4EDFF; }
+.ck[data-painel="atendimento"] .ck-eyebrow { color: #6077B6; }
+.ck.is-dark[data-painel="atendimento"] .ck-eyebrow { color: #AFBBDB; }
 
 /* Senha do balcão: os cartões de indicador têm o recorte de senha nas laterais e o picote à esquerda. */
 .ck[data-painel="atendimento"] .ind {
@@ -128,24 +95,55 @@
   mask: radial-gradient(circle 8px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 8px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
   background-image: repeating-linear-gradient(180deg, var(--line) 0 5px, transparent 5px 10px); background-size: 2px 100%; background-position: 12px 0; background-repeat: no-repeat;
 }
-.ck[data-painel="atendimento"] .ind.is-destaque { background-image: repeating-linear-gradient(180deg, rgba(255,255,255,.35) 0 5px, transparent 5px 10px), linear-gradient(135deg, #01224D, #082D74); background-size: 2px 100%, 100% 100%; background-position: 12px 0, 0 0; }
+.ck[data-painel="atendimento"] .ind.is-destaque { background-image: repeating-linear-gradient(180deg, rgba(255,255,255,.35) 0 5px, transparent 5px 10px), linear-gradient(135deg, #0D1732, #15265C); background-size: 2px 100%, 100% 100%; background-position: 12px 0, 0 0; }
 .ck[data-painel="atendimento"] button.ind:hover { transform: none; }
 .ck[data-painel="atendimento"] .ind-shell > .ficha-pop { right: 14px; }
 
-/* ---------- Presidência: menu marfim com borda dourada, cabeçalho azul-escuro com filete amarelo ---------- */
+/* ---------- Fiscalização: Preto e a faixa amarela de obra ---------- */
+.ck[data-painel="fiscalizacao"] {
+  --rail-bg: #000000; --rail-ink: #E2E8F0; --rail-hover-bg: rgba(255,255,255,.1); --rail-line: rgba(255,255,255,.14); --rail-borda: #FFB000;
+  --head-bg: #000000; --head-linha: #000000;
+}
+.ck[data-painel="fiscalizacao"] .ck-eyebrow { color: #FFB000; }
+.ck[data-painel="fiscalizacao"] .ck-header::after { content: ''; position: absolute; z-index: 3; left: 0; right: 0; bottom: -8px; height: 7px; background: repeating-linear-gradient(-45deg, #FFB000 0 10px, #000000 10px 20px); pointer-events: none; }
+.ck[data-painel="fiscalizacao"] .ck-page { padding-top: 18px; }
+.ck[data-painel="fiscalizacao"] .tile > header h3 { display: inline-block; max-width: calc(100% + 14px); margin-left: -14px; padding: 4px 10px 3px 14px; background: #FFB000; color: #000000; line-height: 1.15; vertical-align: top; }
+.ck[data-painel="fiscalizacao"] .tile > header h3 .selo-parceria { background: #000000; color: #FFB000; }
+
+/* ---------- Colegiados: Amarelo ---------- */
+.ck[data-painel="conselho"] {
+  --rail-bg: linear-gradient(180deg, #FFB000, #E19B01); --rail-ink: #0D1732; --rail-hover-ink: #0D1732; --rail-hover-bg: rgba(13,23,50,.1);
+  --rail-on-bg: #0D1732; --rail-on-ink: #FFC640; --rail-line: rgba(13,23,50,.2); --rail-borda: #E19B01; --rail-foco: #0D1732; --logo-engrenagem: #0D1732;
+  --head-bg: #FFF6DC; --head-linha: #EED9A0; --head-filete: #E19B01; --head-filete-h: 3px;
+}
+.ck[data-painel="conselho"] .ck-header { --soft: #FFFFFF; --line: #EED9A0; }
+.ck[data-painel="conselho"] .ck-eyebrow { color: #15265C; }
+.ck.is-dark[data-painel="conselho"] { --head-bg: #1F190A; --head-linha: #46391A; --head-filete: #FFB000; }
+.ck.is-dark[data-painel="conselho"] .ck-header { --soft: #2B230F; --line: #46391A; }
+.ck.is-dark[data-painel="conselho"] .ck-eyebrow { color: #FFC640; }
+
+/* ---------- Financeiro: Azul 800 no menu, cabeçalho amarelo ---------- */
+.ck[data-painel="financeiro"] {
+  --rail-bg: #0D1732; --rail-ink: rgba(255,255,255,.84); --rail-borda: #FFB000;
+  --head-bg: linear-gradient(90deg, #FFB000, #FFC640 45%, #FFF6DC); --head-linha: #E19B01;
+}
+.ck[data-painel="financeiro"] .ck-header { --ink: #0D1732; --muted: #2D3748; --surface: #FFFFFF; --soft: #FFF6DC; --line: rgba(13,23,50,.22); --brand: #15265C; --blue: #15265C; color: var(--ink); color-scheme: light; }
+.ck[data-painel="financeiro"] .ck-eyebrow { color: #0D1732; }
+
+/* ---------- Presidência: menu branco com borda amarela, cabeçalho Azul 800 ---------- */
 .ck[data-painel="presidencia"] {
-  --rail-bg: linear-gradient(180deg, #FFFFFF, #FFFEDB); --rail-ink: #01224D; --rail-hover-ink: #01224D; --rail-hover-bg: rgba(1,34,77,.08);
-  --rail-on-bg: #01224D; --rail-on-ink: #FFD148; --rail-line: rgba(1,34,77,.14); --rail-borda: #FABD07; --rail-foco: #01224D; --logo-engrenagem: #E0AB0C;
-  --head-bg: linear-gradient(90deg, #082D74, #01224D); --head-linha: #01224D; --head-filete: #FABD07; --head-filete-h: 3px;
+  --rail-bg: linear-gradient(180deg, #FFFFFF, #FFF6DC); --rail-ink: #0D1732; --rail-hover-ink: #0D1732; --rail-hover-bg: rgba(13,23,50,.08);
+  --rail-on-bg: #0D1732; --rail-on-ink: #FFC640; --rail-line: rgba(13,23,50,.14); --rail-borda: #FFB000; --rail-foco: #0D1732; --logo-engrenagem: #E19B01;
+  --head-bg: linear-gradient(90deg, #15265C, #0D1732); --head-linha: #0D1732; --head-filete: #FFB000; --head-filete-h: 3px;
 }
 .ck[data-painel="presidencia"] .ck-rail { border-right-width: 4px; }
-.ck[data-painel="presidencia"] .ck-rail-painel { color: #082D74; }
-.ck[data-painel="presidencia"] .ck-rail-painel:hover { color: #01224D; background: rgba(250,189,7,.28); }
-.ck[data-painel="presidencia"] .ck-eyebrow { color: #FFD148; }
-.ck.is-dark[data-painel="presidencia"] { --head-bg: linear-gradient(90deg, #01224D, #000E22); }
+.ck[data-painel="presidencia"] .ck-rail-painel { color: #15265C; }
+.ck[data-painel="presidencia"] .ck-rail-painel:hover { color: #0D1732; background: rgba(255,176,0,.28); }
+.ck[data-painel="presidencia"] .ck-eyebrow { color: #FFC640; }
+.ck.is-dark[data-painel="presidencia"] { --head-bg: linear-gradient(90deg, #0D1732, #070C1A); }
 /* Cada painel do Resumo leva a barra amarela à esquerda. */
 .ck[data-painel="presidencia"] .ck-grid-pr-resumo > .tile:has(.pr-painel) { position: relative; padding-left: 22px; }
-.ck[data-painel="presidencia"] .ck-grid-pr-resumo > .tile:has(.pr-painel)::before { content: ''; position: absolute; left: 8px; top: 11px; bottom: 10px; width: 6px; border-radius: 3px; background: #FABD07; }
+.ck[data-painel="presidencia"] .ck-grid-pr-resumo > .tile:has(.pr-painel)::before { content: ''; position: absolute; left: 8px; top: 11px; bottom: 10px; width: 6px; border-radius: 3px; background: #FFB000; }
 
 /* O botão Voltar do site (voltar.css) segue a cor do menu de cada painel. */
 .ck-rail .ck-voltar { color: var(--rail-ink); }

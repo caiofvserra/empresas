@@ -75,7 +75,7 @@ export const metricasMapa: Record<MetricaMapa, { label: string; get: (row: Regio
 };
 const rampaMapa = (alerta: boolean, dark: boolean) => alerta
   ? (dark ? ['#3A2E22', '#7A5A10', '#C9851F', '#E5703B', '#FF7B7B'] : ['#FFF4D6', '#FFD98A', '#F6AD55', '#E5703B', '#C53030'])
-  : (dark ? ['#1A2D52', '#2F548C', '#4A7FC1', '#7FB0E6', '#D4EDFF'] : ['#EAF1FA', '#BBD5F2', '#7FB0E6', '#3182CE', '#082D74']);
+  : (dark ? ['#15265C', '#24366E', '#3662E2', '#6077B6', '#DFE4F2'] : ['#ECEFF7', '#AFBBDB', '#6077B6', '#3662E2', '#15265C']);
 
 /** Mapa do estado com o limite de cada município, pintado pela regional no indicador escolhido, e as regionais em ordem ao lado. */
 export function MapaFiscalizacao({ ctx, metrica }: { ctx: CockpitCtx; metrica: MetricaMapa }) {

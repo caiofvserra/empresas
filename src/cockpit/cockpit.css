@@ -3,12 +3,12 @@
 .ck[aria-busy="true"] .ck-page { opacity: .7; transition: opacity .2s; }
 
 /* ---------- Trilho de assuntos ---------- */
-.ck-rail { display: flex; flex-direction: column; gap: 2px; padding: 8px 6px; background: linear-gradient(180deg, #01224D, #082D74 70%, #163E8C); border-right: 1px solid rgba(250,189,7,.35); overflow-y: auto; }
+.ck-rail { display: flex; flex-direction: column; gap: 2px; padding: 8px 6px; background: linear-gradient(180deg, #0D1732, #15265C); border-right: 1px solid rgba(255,176,0,.35); overflow-y: auto; }
 .ck-logo { display: grid; place-items: center; height: 44px; margin-bottom: 4px; }
 .ck-logo svg { width: 36px; height: 36px; }
 .ck-rail button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px 5px; border: 0; border-radius: 12px; background: transparent; color: rgba(255,255,255,.76); font-size: 12px; font-weight: 700; line-height: 1.15; text-align: center; transition: background .15s, color .15s; }
 .ck-rail button:hover { color: #FFFFFF; background: rgba(255,255,255,.09); }
-.ck-rail button.on { color: #01224D; background: #FABD07; }
+.ck-rail button.on { color: #0D1732; background: #FFB000; }
 .ck-rail-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 1px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,.14); }
 .ck-rail-bottom button { font-weight: 400; }
 
@@ -18,7 +18,7 @@
 .ck-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); }
 .ck-title h1 { margin: 1px 0 0; font: 700 21px/1.15 var(--display); letter-spacing: -.01em; }
 .ck-title p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
-@keyframes ck-ping { 0% { box-shadow: 0 0 0 0 rgba(250,189,7,.55); } 70% { box-shadow: 0 0 0 9px rgba(250,189,7,0); } 100% { box-shadow: 0 0 0 0 rgba(250,189,7,0); } }
+@keyframes ck-ping { 0% { box-shadow: 0 0 0 0 rgba(255,176,0,.55); } 70% { box-shadow: 0 0 0 9px rgba(255,176,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,176,0,0); } }
 .ck-meta { display: flex; align-items: center; gap: 10px; }
 .ck-header > .ck-meta { grid-column: -2; justify-self: end; } /* a barra de destaques rolante saiu em 01/11/2026; a data continua à direita */
 .ck-meta .demo { color: var(--ink); background: color-mix(in srgb, var(--accent) 22%, transparent); border: 1px dashed var(--accent); }
@@ -65,7 +65,7 @@
 .ghost-icon { width: 26px; height: 26px; border-color: transparent; color: var(--muted); }
 .ghost-icon:hover { border-color: var(--line); color: var(--ink); }
 .help { position: relative; display: grid; place-items: center; width: 26px; height: 26px; color: var(--muted); cursor: help; }
-.help::after { content: attr(data-tip); position: absolute; z-index: 30; right: 0; top: 28px; width: 300px; padding: 10px 12px; border-radius: 10px; background: #01224D; color: #FFFFFF; font-size: 11.5px; font-weight: 400; line-height: 1.5; text-transform: none; letter-spacing: 0; box-shadow: 0 12px 30px rgba(1,34,77,.35); opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity .15s, transform .15s; }
+.help::after { content: attr(data-tip); position: absolute; z-index: 30; right: 0; top: 28px; width: 300px; padding: 10px 12px; border-radius: 10px; background: #0D1732; color: #FFFFFF; font-size: 11.5px; font-weight: 400; line-height: 1.5; text-transform: none; letter-spacing: 0; box-shadow: 0 12px 30px rgba(13,23,50,.35); opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity .15s, transform .15s; }
 .help:hover::after, .help:focus::after { opacity: 1; transform: none; }
 .selo { display: inline-flex; align-items: center; height: 18px; padding: 0 7px; border-radius: 999px; background: var(--good-bg); color: var(--good); font: 700 11px/1 var(--body); letter-spacing: .03em; white-space: nowrap; vertical-align: middle; }
 .selo.selo-parceria { background: var(--warn); color: #1A202C; width: 18px; padding: 0; justify-content: center; font-size: 12px; font-weight: 900; margin-left: 8px; cursor: help; }
@@ -106,7 +106,7 @@ button.link { padding: 0; border: 0; background: none; color: var(--blue); font-
 .ind-shell > .ficha-pop { position: absolute; top: 7px; right: 8px; }
 .ind.is-destaque + .ficha-pop > summary { color: rgba(255,255,255,.8); }
 .ind { position: relative; display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 10px 12px; text-align: left; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); box-shadow: var(--shadow); transition: transform .15s, border-color .15s, box-shadow .15s; }
-button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-shadow: 0 10px 24px rgba(1,34,77,.12); }
+button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-shadow: 0 10px 24px rgba(13,23,50,.12); }
 .ind-aspecto { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: color-mix(in srgb, var(--blue) 78%, var(--ink)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ind-label { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ind-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; min-width: 0; }
@@ -118,9 +118,9 @@ button.ind:hover { border-color: var(--blue); transform: translateY(-1px); box-s
 .ind-meta { position: relative; height: 8px; margin: 4px 0 2px; border-radius: 5px; background: var(--soft); border: 1px solid var(--line); }
 .ind-meta i { position: absolute; inset: 1px auto 1px 1px; border-radius: 4px; background: var(--blue); }
 .ind-meta b { position: absolute; top: -4px; bottom: -4px; width: 3px; margin-left: -1px; border-radius: 2px; background: var(--accent); }
-.ind.is-destaque { background: linear-gradient(135deg, #01224D, #082D74); border-color: transparent; color: #FFFFFF; }
+.ind.is-destaque { background: linear-gradient(135deg, #0D1732, #15265C); border-color: transparent; color: #FFFFFF; }
 .ind.is-destaque .ind-aspecto, .ind.is-destaque .ind-label, .ind.is-destaque .ind-sub { color: rgba(255,255,255,.84); }
-.ind.is-destaque .ind-row strong { color: #FABD07; }
+.ind.is-destaque .ind-row strong { color: #FFB000; }
 .ind.is-destaque .delta.is-none { background: rgba(255,255,255,.12); color: rgba(255,255,255,.84); }
 .ind.is-destaque .ind-meta { background: rgba(255,255,255,.12); border-color: transparent; }
 
@@ -375,4 +375,4 @@ th[aria-sort="ascending"] .th-sort, th[aria-sort="descending"] .th-sort { color:
 .ck-header.is-enxuto .ck-filters .ck-limpar-texto { display: none; }
 /* Anel de foco do teclado com a cor da marca (07/11/2026): o anel padrão do navegador some sobre o azul e o amarelo do painel. */
 .ck :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
-.ck-rail :focus-visible { outline-color: #FABD07; }
+.ck-rail :focus-visible { outline-color: #FFB000; }

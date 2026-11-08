@@ -1,5 +1,7 @@
 # Identidade e acessibilidade do canvas empresarial — V13
 
+> Substituída em 08/11/2026 pela paleta do Manual do CreaOne: ver `docs/PALETA_CREAONE.md`.
+
 A aplicação usa as cores, famílias tipográficas e papéis informados pelo usuário. A origem é a transcrição fornecida de outro sistema CREA; não houve leitura de um arquivo Figma nem validação da biblioteca original. A referência foi reaproveitada para um relatório de inteligência empresarial do CREA-SP.
 
 ## Fonte única de tokens

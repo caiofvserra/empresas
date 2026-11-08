@@ -2,7 +2,7 @@
    lateral (.ck-rail button em cockpit.css), com peso de texto dos botões de baixo, e fica num arquivo próprio para não mexer no cockpit.css. */
 .ck-rail .ck-voltar { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-bottom: 6px; padding: 6px 2px 5px; border-radius: 12px; color: rgba(255,255,255,.76); font-size: 12px; font-weight: 400; line-height: 1.15; text-align: center; text-decoration: none; transition: background .15s, color .15s; }
 .ck-rail .ck-voltar:hover { color: #FFFFFF; background: rgba(255,255,255,.09); }
-.ck-rail .ck-voltar:focus-visible { outline: 2px solid #FABD07; outline-offset: 2px; }
+.ck-rail .ck-voltar:focus-visible { outline: 2px solid #FFB000; outline-offset: 2px; }
 /* Tela baixa (até 760px): como os botões de baixo do menu lateral, o Voltar fica só com o ícone, para o menu lateral não rolar. */
 @media (max-height: 760px) and (min-width: 1101px) { .ck-rail .ck-voltar { margin-bottom: 2px; } .ck-rail .ck-voltar span { display: none; } }
 @media (prefers-reduced-motion: reduce) { .ck-rail .ck-voltar { transition: none; } }

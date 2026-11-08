@@ -10,8 +10,8 @@ import { abrirMembros, q } from './comum';
  * fatia, para ver de relance o tamanho de cada uma. A legenda dá as cadeiras e a parte dos profissionais ativos da câmara, que
  * era o que o gráfico de halteres comparava. Com uma câmara escolhida no alto, as outras ficam apagadas.
  */
-const CORES_CLARO = ['#01224D', '#FABD07', '#3182CE', '#718096', '#163E8C', '#E0AB0C', '#639CE0', '#082D74', '#FFD148'];
-const CORES_ESCURO = ['#639CE0', '#FABD07', '#D4EDFF', '#A0AEC0', '#3182CE', '#FFD148', '#FFFEDB', '#246FB5', '#E0AB0C'];
+const CORES_CLARO = ['#0D1732', '#FFB000', '#3662E2', '#718096', '#6077B6', '#E19B01', '#AFBBDB', '#000000', '#FFC640'];
+const CORES_ESCURO = ['#6077B6', '#FFB000', '#DFE4F2', '#A0AEC0', '#3662E2', '#E19B01', '#FFF6DC', '#7B95E8', '#FFC640'];
 
 /**
  * As cadeiras de um hemiciclo dividido em fatias: cada grupo ganha um ângulo proporcional às suas cadeiras, com uma folga entre

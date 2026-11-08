@@ -44,7 +44,7 @@ export function abrirDevedores(ctx: CockpitCtx, title: string, rows: DevedorLinh
 
 const rampa = (alerta: boolean, dark: boolean) => alerta
   ? (dark ? ['#3A2E22', '#7A5A10', '#C9851F', '#E5703B', '#FF7B7B'] : ['#FFF4D6', '#FFD98A', '#F6AD55', '#E5703B', '#C53030'])
-  : (dark ? ['#2A4A7F', '#3B67A8', '#5B8FD0', '#8DBCEB', '#D4EDFF'] : ['#C3D9F2', '#93BCEA', '#5E9BDD', '#2B6CB0', '#082D74']);
+  : (dark ? ['#24366E', '#3662E2', '#6077B6', '#AFBBDB', '#DFE4F2'] : ['#DFE4F2', '#AFBBDB', '#6077B6', '#3662E2', '#15265C']);
 const semDados = (dark: boolean) => dark ? '#3A4250' : '#E3E6EA';
 
 export interface Medida { label: string; curto: string; fmt: (value: number) => string; alerta?: boolean; menorPrimeiro?: boolean;
