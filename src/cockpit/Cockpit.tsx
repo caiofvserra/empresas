@@ -290,6 +290,8 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
   const [porte, setPorte] = useState(() => (portes as string[]).includes(inicial.porte) ? inicial.porte : '');
   const [situacao, setSituacao] = useState(() => (situacoes as string[]).includes(inicial.situacao) ? inicial.situacao : '');
   const [detail, setDetail] = useState<Detail | null>(null);
+  // As cores de fundo de cada painel ficam na raiz da página (identidade.css), para os gráficos lerem as mesmas cores dos blocos.
+  useState(() => { document.documentElement.dataset.painel = painel.id; return null; });
   const [theme, setTheme] = useState<'light' | 'dark' | null>(() => { const salvo = ler<'light' | 'dark' | null>('tema', null); if (salvo) document.documentElement.dataset.theme = salvo; return salvo; }); // o tema salvo entra antes da primeira leitura das cores dos gráficos
   const [metas, setMetas] = useState<Metas>(() => ({ ...metasPadrao, ...ler<Partial<Metas>>('metas', {}) }));
   const [focus, setFocus] = useState<string | null>(null);
