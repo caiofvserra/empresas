@@ -25,14 +25,14 @@ Verde (#007061), vermelho (#B02525) e laranja (#DD8A0B) continuam só como cores
 
 ## Uma cor por painel
 
-Definida em `src/cockpit/identidade.css`:
+Escolhida pelo Caio em 08/11/2026 na folha de códigos (project-files/design/paleta-creaone/paleta-creaone.png) e definida em `src/cockpit/identidade.css`:
 
 | Painel | Menu | Cabeçalho |
 |---|---|---|
-| Presidência | branco, borda amarela | Azul 800, filete amarelo |
+| Presidência | Amarelo escurecido AM+20 (#CC8D00) | Mescla M09 (#805800), filete amarelo |
+| Colegiados | branco, borda amarela | Azul 700 ao Azul 800, filete amarelo |
 | Empresas | Azul 700 | branco, filete Azul 700 a Azul 500 |
-| Profissionais | Azul 500 | azul claro |
-| Atendimento | Azul | branco, filete Azul |
+| Profissionais | Degradê D10 (Azul 500 ao Azul 700) | Mescla M14 (#1B3171) à M13 (#4B6CCC) |
+| Atendimento | Degradê D25 (Azul ao AZ-90) | Azul escurecido AZ+40 (#3A476D) |
 | Fiscalização | Preto | Preto, faixa zebrada amarela |
-| Colegiados | Amarelo | creme |
-| Financeiro | Azul 800 | Amarelo |
+| Financeiro | Degradê D17 (Azul 800 ao A8-90) | A8-95 (#F3F3F5), filete Azul 800 |
