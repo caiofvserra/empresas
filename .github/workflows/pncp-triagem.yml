@@ -80,8 +80,11 @@ jobs:
           echo "de=$de" >> "$GITHUB_OUTPUT"; echo "ate=$ate" >> "$GITHUB_OUTPUT"
           echo "Período: $de a $ate"
 
+      # Um mês leva perto de uma hora (coleta 10 min, embeddings em CPU 25 min, documentos 25 min). O prazo só impede começar
+      # mês, página ou compra nova; com 270 min, o que já começou termina antes dos 350 do job.
       - name: Triagem
-        run: python3 scripts/pncp-triagem.py --pacote var/modelo/pacote_reuso.joblib --de ${{ steps.periodo.outputs.de }} --ate ${{ steps.periodo.outputs.ate }} --minutos 290
+        id: triagem
+        run: python3 scripts/pncp-triagem.py --pacote var/modelo/pacote_reuso.joblib --de ${{ steps.periodo.outputs.de }} --ate ${{ steps.periodo.outputs.ate }} --minutos 270
 
       - name: Guardar o staging (fora do Git)
         if: always()
@@ -103,21 +106,30 @@ jobs:
           node-version: '22'
           cache: npm
 
+      # Em cinco horas a main recebe outros commits, e o HTML de entrega gerado conflita com o deles. Por isso o painel é
+      # refeito em cima da main mais nova, só com o JSON desta rodada trazido de fora, e de novo se o push perder a corrida.
       - name: Painel com a rodada nova
         run: |
-          git diff --quiet -- src/domain/pncp-triagem-sp.json && { echo "Nada mudou no painel."; exit 0; }
-          npm ci --no-audit --no-fund
-          npm test
-          npm run build:painel
+          cp src/domain/pncp-triagem-sp.json "$RUNNER_TEMP/pncp-triagem-sp.json"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/domain/pncp-triagem-sp.json entrega/
-          git commit -m "Triagem do PNCP: rodada de $(date -u +%F) (${{ steps.periodo.outputs.de }} a ${{ steps.periodo.outputs.ate }})"
-          git pull --rebase -q origin main
-          git push
+          for tentativa in 1 2 3; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            cp "$RUNNER_TEMP/pncp-triagem-sp.json" src/domain/pncp-triagem-sp.json
+            git diff --quiet -- src/domain/pncp-triagem-sp.json && { echo "Nada mudou no painel."; exit 0; }
+            npm ci --no-audit --no-fund
+            npm test
+            npm run build:painel
+            git add src/domain/pncp-triagem-sp.json entrega/
+            git commit -q -m "Triagem do PNCP: rodada de $(date -u +%F) (${{ steps.periodo.outputs.de }} a ${{ steps.periodo.outputs.ate }})"
+            git push origin HEAD:main && exit 0
+            echo "A main mudou durante o build; refazendo (tentativa $tentativa)."
+          done
+          exit 1
 
+      # Depende só da triagem: uma falha no painel não interrompe a sequência, e a próxima parte refaz o painel.
       - name: Continuar o que sobrou
-        if: success()
+        if: always() && steps.triagem.outcome == 'success'
         run: |
           [ -f var/pncp/pendente ] || { echo "Nada pendente."; exit 0; }
           cat var/pncp/pendente
