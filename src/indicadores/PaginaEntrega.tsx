@@ -4,7 +4,7 @@ import { data, int } from '../painel/ui';
 import type { CockpitCtx } from '../cockpit/contexto';
 import { Bloco, Indicador } from '../cockpit/ui';
 import type { Exportavel } from '../cockpit/ui';
-import { TOTAL_METRICAS, indicadoresDoCrea, metricas, notasCaderno2021, subprogramas } from '../domain/sistema-confea';
+import { TOTAL_METRICAS, calendarioEntregas, indicadoresDoCrea, metricas, notasCaderno2021, subprogramas } from '../domain/sistema-confea';
 import type { Conferencia, SituacaoMetrica } from '../domain/sistema-confea';
 import { abrirIndicador, abrirMetricas, nomeCurto, s } from './comum';
 
@@ -29,7 +29,7 @@ export default function PaginaEntrega({ ctx }: { ctx: CockpitCtx }) {
       <Indicador ctx={ctx} ficha="k-calculaveis" label="Indicadores que saem" value={`${int(calculaveis)} de ${int(indicadoresDoCrea.length)}`} meta={{ atual: calculaveis / indicadoresDoCrea.length * 100, alvo: 100 }}
         sub="os seis da 3ª instância são do Confea" onOpen={() => abrirIndicadores(ctx)} />
       <Indicador ctx={ctx} ficha="k-proxima" label="Próxima entrega" value={proxima ? data(proxima.data) : '—'} sub={proxima ? `${proxima.ritmo.toLowerCase()}, em ${int(dias(ctx.anchor, proxima.data))} dias` : undefined} />
-      <Indicador ctx={ctx} ficha="k-processo" label="Processo de contas" value={(() => { const e = q.calendario.find(c => c.data.endsWith('-04-01')); return e ? data(e.data) : '—'; })()} sub="peça III: esta planilha preenchida" />
+      <Indicador ctx={ctx} ficha="k-processo" label="Processo de contas" value={(() => { const e = calendarioEntregas(ctx.anchor, 40).find(c => c.data.endsWith('-04-01')); return e ? data(e.data) : '—'; })()} sub="peça III: esta planilha preenchida" />
     </section>
     <Bloco ctx={ctx} id="sp" area="sp" title="As 161 métricas por subprograma" exportar={exportarSubprogramas(ctx)}><Subprogramas ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="co" area="co" title="Conferências antes do envio" exportar={{ cabecalho: ['Tipo', 'Conferência', 'Métricas', 'Situação', 'Diferença'], linhas: () => s(ctx).conferencias.map(c => [c.tipo === 'soma' ? 'Fórmula de verificação' : 'Coerência', c.texto, c.metricas.join(' '), c.situacao, c.diferenca]) }}><Conferencias ctx={ctx} /></Bloco>
@@ -58,11 +58,11 @@ function Subprogramas({ ctx }: { ctx: CockpitCtx }) {
     grid: { top: 26, right: 130, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 11 }, data: [...SITUACOES] },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: subprogramas, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11 } },
-    // Um rótulo só no fim da barra junta o que não está preenchido ("1 não fecha · 1 vazia"), para os rótulos não se sobreporem.
+    // Um rótulo só no fim da barra junta o que não está preenchido ("1 não fecha e 1 vazia"), para os rótulos não se sobreporem.
     series: [...SITUACOES.map((st, i) => ({ name: st, type: 'bar', stack: 's', barMaxWidth: 18, data: subprogramas.map(sp => lista(sp, st).length), itemStyle: { color: cores[i], borderColor: tokens.surface, borderWidth: 1 },
       label: { show: !i, position: 'inside', color: '#FFFFFF', fontSize: 11, fontWeight: 700, formatter: (p: any) => p.value ? int(p.value) : '' } })),
       { name: 'rótulo', type: 'bar', stack: 's', data: subprogramas.map(() => 0), itemStyle: { color: 'transparent' }, tooltip: { show: false },
-        label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (p: any) => SITUACOES.slice(1).map(st => [lista(subprogramas[p.dataIndex], st).length, st.toLowerCase()] as const).filter(([n]) => n).map(([n, st]) => `${int(n)} ${st}`).join(' · ') } }],
+        label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (p: any) => SITUACOES.slice(1).map(st => [lista(subprogramas[p.dataIndex], st).length, st.toLowerCase()] as const).filter(([n]) => n).map(([n, st]) => `${int(n)} ${st}`).join(' e ') } }],
   }), [q, tokens]); // eslint-disable-line react-hooks/exhaustive-deps
   return <Chart option={option} tokens={tokens} label="Métricas de cada subprograma: preenchidas, que não fecham com a soma das partes e vazias"
     onPick={p => { const sp = subprogramas[p.dataIndex], st = SITUACOES[p.seriesIndex]; if (sp && st) abrirMetricas(ctx, `${sp}: ${st.toLowerCase()}`, lista(sp, st).map(m => m.codigo), `Métricas do subprograma ${sp} na situação "${st}".`); }} />;
@@ -73,11 +73,11 @@ function Conferencias({ ctx }: { ctx: CockpitCtx }) {
   const q = s(ctx), ordem = { 'Não fecha': 0, 'Falta métrica': 1, Fecha: 2 } as const, lista = [...q.conferencias].sort((a, b) => ordem[a.situacao] - ordem[b.situacao]);
   return <div className="table-wrap"><table className="metodo is-dense cf-conferencias">
     <thead><tr><th scope="col">Conferência</th><th scope="col" className="num">Situação</th></tr></thead>
-    <tbody>{lista.map((c, i) => <tr key={i} className={`is-clicavel ${c.situacao === 'Não fecha' ? 'is-erro' : c.situacao === 'Falta métrica' ? 'is-vazia' : ''}`} tabIndex={0}
-      onClick={() => abrirMetricas(ctx, c.texto, c.metricas, c.tipo === 'soma' ? 'Fórmula de verificação da planilha: o total menos a soma das partes tem de dar zero.' : 'Coerência que o Confea usa para descartar um número.')}
-      onKeyDown={event => { if (event.key === 'Enter') abrirMetricas(ctx, c.texto, c.metricas, ''); }}>
+    <tbody>{lista.map((c, i) => { const abrir = () => abrirMetricas(ctx, c.texto, c.metricas, c.tipo === 'soma' ? 'Fórmula de verificação da planilha: o total menos a soma das partes tem de dar zero.' : 'Coerência que o Confea usa para descartar um número.');
+      return <tr key={i} className={`is-clicavel ${c.situacao === 'Não fecha' ? 'is-erro' : c.situacao === 'Falta métrica' ? 'is-vazia' : ''}`} tabIndex={0}
+      onClick={abrir} onKeyDown={event => { if (event.key === 'Enter') abrir(); }}>
       <td>{c.tipo === 'soma' ? <span className="cf-codigo">soma</span> : <span className="cf-codigo is-meta">coerência</span>} {c.texto}</td>
-      <td className="num">{c.situacao === 'Fecha' ? 'fecha' : <b className="cf-alerta">{c.situacao === 'Não fecha' ? `não fecha${c.diferenca ? ` (${c.diferenca > 0 ? '+' : ''}${int(c.diferenca)})` : ''}` : 'falta métrica'}</b>}</td></tr>)}</tbody></table></div>;
+      <td className="num">{c.situacao === 'Fecha' ? 'fecha' : <b className="cf-alerta">{c.situacao === 'Não fecha' ? `não fecha${c.diferenca ? ` (${c.diferenca > 0 ? '+' : ''}${int(c.diferenca)})` : ''}` : 'falta métrica'}</b>}</td></tr>; })}</tbody></table></div>;
 }
 
 /* ---------- Calendário ---------- */
@@ -99,7 +99,8 @@ function Notas({ ctx }: { ctx: CockpitCtx }) {
   return <div className="table-wrap"><table className="metodo is-dense cf-notas">
     <thead><tr><th scope="col">Nota</th><th scope="col">Em 2021</th><th scope="col">Hoje</th></tr></thead>
     <tbody>{notasCaderno2021.map(n => { const h = hoje(ctx, n);
-      return <tr key={n.nota} className="is-clicavel" tabIndex={0} onClick={() => n.indicadores.length === 1 ? abrirIndicador(ctx, n.indicadores[0]) : abrirMetricas(ctx, `Nota ${n.nota}: ${n.assunto}`, n.metricas, `${n.houve} no Caderno de 2021.`)}
-        onKeyDown={event => { if (event.key === 'Enter') abrirMetricas(ctx, `Nota ${n.nota}`, n.metricas, n.houve); }}>
+      const abrir = () => n.indicadores.length === 1 ? abrirIndicador(ctx, n.indicadores[0]) : abrirMetricas(ctx, `Nota ${n.nota}: ${n.assunto}`, n.metricas, `${n.houve} no Caderno de 2021.`);
+      return <tr key={n.nota} className="is-clicavel" tabIndex={0} onClick={abrir}
+        onKeyDown={event => { if (event.key === 'Enter') abrir(); }}>
         <th scope="row">{n.nota}</th><td><b>{n.houve}</b><br /><small>{n.assunto}</small></td><td>{h === 'Resolvido' ? 'resolvido' : <b className="cf-alerta">{h.toLowerCase()}</b>}</td></tr>; })}</tbody></table></div>;
 }

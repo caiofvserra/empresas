@@ -41,7 +41,7 @@ npm run dev            # menu dos painéis em http://localhost:5173/; Presidênc
 npm test               # testes de domínio, painéis, fiscalização, V20, V21, V22, Empresas, Profissionais, Fiscalização e coletor
 npm run build          # TypeScript e build do site
 npm run build:painel   # gera os painéis em entrega/
-npm run build:powerbi  # gera os pacotes Power BI em entrega/powerbi/<painel>/ (presidencia, empresas, financeiro, atendimento e conselho)
+npm run build:powerbi  # gera os pacotes Power BI em entrega/powerbi/<painel>/ (presidencia, empresas, financeiro, atendimento, conselho e indicadores)
 npm run sources:refresh -- --config integrations/refresh-sources.example.json
 ```
 

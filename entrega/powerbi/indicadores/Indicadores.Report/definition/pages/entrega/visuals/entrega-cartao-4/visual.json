@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "entrega-cartao-4",
   "position": {
-    "x": 958,
+    "x": 770,
     "y": 68,
     "z": 6000,
-    "width": 306,
+    "width": 243,
     "height": 84,
     "tabOrder": 6000
   },
@@ -23,11 +23,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Próxima entrega"
+                  "Property": "Processo de contas"
                 }
               },
-              "queryRef": "Medidas.Próxima entrega",
-              "nativeQueryRef": "Próxima entrega"
+              "queryRef": "Medidas.Processo de contas",
+              "nativeQueryRef": "Processo de contas"
             },
             {
               "field": {
@@ -37,11 +37,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Detalhe: Próxima entrega"
+                  "Property": "Detalhe: Processo de contas"
                 }
               },
-              "queryRef": "Medidas.Detalhe: Próxima entrega",
-              "nativeQueryRef": "Detalhe: Próxima entrega"
+              "queryRef": "Medidas.Detalhe: Processo de contas",
+              "nativeQueryRef": "Detalhe: Processo de contas"
             }
           ]
         }
@@ -76,7 +76,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Próxima entrega'"
+                  "Value": "'Processo de contas'"
                 }
               }
             }

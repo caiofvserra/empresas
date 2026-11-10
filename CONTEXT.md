@@ -5,7 +5,7 @@ Painéis de dados estratégicos do Crea-SP, prototipados aqui e implementados de
 ## Painéis e telas
 
 **Painel**:
-Conjunto de páginas para um público e uma regra de acesso (Empresas, Profissionais e formação, Fiscalização e malha fina, Financeiro, Atendimento, Colegiados, Presidência). O de Colegiados (até 07/11/2026, Gestão do Conselho) é só do colegiado: conselheiros, câmaras, Plenário e processos. No Power BI, cada painel é um relatório com o seu próprio modelo.
+Conjunto de páginas para um público e uma regra de acesso (Empresas, Profissionais e formação, Fiscalização e malha fina, Financeiro, Atendimento, Colegiados, Presidência, Indicadores do Sistema). O de Colegiados (até 07/11/2026, Gestão do Conselho) é só do colegiado: conselheiros, câmaras, Plenário e processos. No Power BI, cada painel é um relatório com o seu próprio modelo.
 _Avoid_: dashboard, aba, relatório (quando se fala do protótipo)
 
 **Página**:
@@ -109,6 +109,32 @@ _Avoid_: mock, dados de teste, fake
 **Parceria ("!")**:
 Fonte que depende de acordo com outro órgão. O bloco que a usa entra demonstrativo e com o marcador "!", e tem um plano B sem acordo.
 _Avoid_: convênio (quando ainda não existe), fonte externa
+
+## Indicadores do Sistema
+
+**Planilha do Confea**:
+A planilha anual de dados e indicadores que o Crea-SP manda ao Confea: 161 métricas e 35 indicadores, divididos em cinco subprogramas.
+_Avoid_: formulário, relatório do Confea
+
+**Métrica**:
+Um número que o Crea-SP preenche na planilha do Confea, com código (M 1 a M 161), definição e orientação. Fica vazia quando não há valor, que não é zero.
+_Avoid_: campo, dado, item
+
+**Indicador do Confea**:
+Conta que o Confea faz com as métricas (I 1 a I 35). O Crea-SP calcula 29; os seis da 3ª instância são do Confea.
+_Avoid_: KPI, cartão (quando se fala da conta)
+
+**Subprograma**:
+Grupo da planilha do Confea: Registro, Fiscalização, Julgamento, Suporte e Liderança. Cada um é uma página do painel.
+_Avoid_: módulo, área
+
+**Exercício**:
+O ano da planilha, de 1º de janeiro a 31 de dezembro. O do ano da data de referência vai até ela e é parcial. É o filtro do alto do painel de Indicadores do Sistema, no lugar do período.
+_Avoid_: ano fiscal, competência
+
+**Conferência**:
+Checagem antes do envio: as 17 somas da planilha (o total menos a soma das partes dá zero), as coerências que o Confea usa para descartar um número e o passivo que passa de um exercício para o outro.
+_Avoid_: validação, auditoria
 
 ## Colegiados
 

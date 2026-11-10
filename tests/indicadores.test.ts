@@ -46,7 +46,7 @@ test('cenário: em 2025, os números reais do Sumário, as duas conferências qu
   assert.equal(q.estado.get(37), reais[37].valor);
   assert.equal(q.estado.get(25), reais[25].valor);
   assert.equal(q.estado.get(2)! + q.estado.get(7)!, reais[2].valor);
-  assert.deepEqual(q.conferencias.filter(c => c.situacao === 'Não fecha').map(c => c.metricas[0]).sort((a, b) => a - b), [38, 98]);
+  assert.deepEqual(q.conferencias.filter(c => c.situacao === 'Não fecha').map(c => c.metricas[0]).sort((a, b) => a - b), [60, 98]);
   assert.deepEqual([...q.situacao].filter(([, st]) => st === 'Vazia').map(([c]) => c), [111, 156, 157]);
   assert.equal(q.indicadores.get(16)!.valor, null, 'sem as métricas 156 e 157, o indicador 16 não sai');
   assert.ok(q.real(37) && !q.real(1));

@@ -68,7 +68,7 @@ function Fila({ ctx }: { ctx: CockpitCtx }) {
     grid: { top: 26, right: 4, bottom: 2, left: 2, containLabel: true }, legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, textStyle: { color: tokens.muted, fontSize: 11 }, data: partes.map(p => p.nome) },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const l = linhas[items[0].dataIndex]; return `<b>${l.nome}</b><br/>Pendentes de anos anteriores: ${int(l.p)}<br/>Recebidos: ${int(l.r)}<br/>Julgados: ${int(l.j)}<br/>Ficam para o próximo: ${int(l.sobra)}`; } },
     xAxis: { type: 'value', show: false, max: 100 },
-    yAxis: { type: 'category', inverse: true, data: linhas.map(l => `${l.nome}\n${int(l.p + l.r)} na fila · ${pct(l.j / carga(l) * 100)} julgados`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, lineHeight: 16 } },
+    yAxis: { type: 'category', inverse: true, data: linhas.map(l => `${l.nome}\n${int(l.p + l.r)} na fila, ${pct(l.j / carga(l) * 100)} julgados`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, lineHeight: 16 } },
     series: partes.map(parte => ({ name: parte.nome, type: 'bar', stack: 'f', barMaxWidth: 34, data: linhas.map(l => parte.v(l) / carga(l) * 100), itemStyle: { color: parte.cor, borderColor: tokens.surface, borderWidth: 1 },
       label: { show: true, position: 'inside', color: '#FFFFFF', fontSize: 11, fontWeight: 700, formatter: (p: any) => int(parte.v(linhas[p.dataIndex])) } })),
   }), [linhas, tokens]); // eslint-disable-line react-hooks/exhaustive-deps

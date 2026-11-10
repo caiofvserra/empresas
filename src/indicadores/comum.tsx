@@ -44,7 +44,7 @@ export function abrirMetricas(ctx: CockpitCtx, title: string, codigos: number[],
     summary: [['Métricas', int(codigos.length)], ['Vazias', int(codigos.filter(c => q.metricas.get(c) === null).length)], ['Que não fecham', int(codigos.filter(c => q.situacao.get(c) === 'Não fecha').length)]],
     rows: codigos.map(c => { const m = metricaPorCodigo.get(c)!, v = q.metricas.get(c) ?? null, antes = q.metricasAntes.get(c);
       return { key: String(c), title: `${c}. ${m.nome}`, subtitle: [m.definicao, q.doEstado(c) ? 'Do Conselho inteiro.' : ''].filter(Boolean).join(' '), value: fmtMetrica(c, v),
-        note: [q.situacao.get(c) === 'Não fecha' && !q.greId ? 'não fecha com a soma das partes' : '', q.anterior && antes !== undefined ? `${q.anterior.rotulo}: ${fmtMetrica(c, antes)}` : '', q.real(c) ? reais[c].texto : ''].filter(Boolean).join(' · '), sortValue: c }; }) });
+        note: [q.situacao.get(c) === 'Não fecha' && !q.greId ? 'não fecha com a soma das partes' : '', q.anterior && antes !== undefined ? `${q.anterior.rotulo}: ${fmtMetrica(c, antes)}` : '', q.real(c) ? reais[c].texto : ''].filter(Boolean).join('; '), sortValue: c }; }) });
 }
 /** O indicador no painel lateral: a fórmula oficial e as métricas que ele usa, com os valores do exercício. */
 export function abrirIndicador(ctx: CockpitCtx, codigo: number) {
@@ -56,7 +56,7 @@ export function abrirIndicador(ctx: CockpitCtx, codigo: number) {
 /* ---------- Cartão de indicador ---------- */
 export function CartaoIndicador({ ctx, codigo, ficha, destaque, sobeEBom = true, sub }: { ctx: CockpitCtx; codigo: number; ficha: string; destaque?: boolean; sobeEBom?: boolean; sub?: ReactNode }) {
   const q = s(ctx), v = q.indicadores.get(codigo)!, regional = Boolean(q.greId) && !v.terceira && !indicadorRegional(codigo);
-  const linha = sub ?? (v.falta.length ? `Faltam as métricas ${v.falta.join(', ')}` : [referencia(codigo), regional ? 'do Conselho inteiro' : ''].filter(Boolean).join(' · ') || undefined);
+  const linha = sub ?? (v.falta.length ? `Faltam as métricas ${v.falta.join(', ')}` : [referencia(codigo), regional ? 'do Conselho inteiro' : ''].filter(Boolean).join('; ') || undefined);
   return <Indicador ctx={ctx} ficha={ficha} destaque={destaque} aspecto={`Indicador ${codigo}`} label={nomeCurto[codigo]} value={fmtIndicador(codigo, v.valor)} variacao={variacao(q, codigo, sobeEBom)}
     sub={linha} onOpen={() => abrirIndicador(ctx, codigo)} />;
 }
@@ -73,7 +73,7 @@ export function ListaMetricas({ ctx, subs }: { ctx: CockpitCtx; subs: Subprogram
     <tbody>{linhas.map(m => { const sit = situacaoTexto(q, m.codigo);
       return <tr key={m.codigo} className={`is-clicavel ${sit === 'Vazia' ? 'is-vazia' : sit === 'Não fecha' ? 'is-erro' : ''}`} tabIndex={0} onClick={() => abrirMetricas(ctx, `Métrica ${m.codigo}`, [m.codigo], m.orientacao || m.definicao)}
         onKeyDown={event => { if (event.key === 'Enter') abrirMetricas(ctx, `Métrica ${m.codigo}`, [m.codigo], m.orientacao || m.definicao); }}>
-        <td><Codigo tipo="M" codigo={m.codigo} /></td><td className="cf-nome" title={m.nome}>{m.nome}{q.doEstado(m.codigo) && <em> · Conselho inteiro</em>}</td>
+        <td><Codigo tipo="M" codigo={m.codigo} /></td><td className="cf-nome" title={m.nome}>{m.nome}{q.doEstado(m.codigo) && <em> (Conselho inteiro)</em>}</td>
         <td className="num">{sit === 'Vazia' ? <b className="cf-alerta">vazia</b> : <>{fmtMetrica(m.codigo, q.metricas.get(m.codigo))}{sit === 'Não fecha' && <b className="cf-alerta" title="A soma das partes não dá o total"> ≠</b>}{q.real(m.codigo) && <span className="cf-real" title={`${reais[m.codigo].texto}. ${fonteSumario.nome}`}> R</span>}</>}</td>
         <td className="num cf-antes">{fmtMetrica(m.codigo, q.metricasAntes.get(m.codigo))}</td></tr>; })}</tbody></table></div>;
 }

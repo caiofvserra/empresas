@@ -23,7 +23,7 @@ table Medidas
 		displayFolder: Apoio
 		lineageTag: c81b61dd-e64d-5f77-9c11-6f95bab3e53c
 
-	/// A mesma soma no exercício anterior.
+	/// Soma as mesmas métricas no exercício anterior.
 	measure 'Valor da métrica no exercício anterior' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -47,7 +47,7 @@ table Medidas
 		displayFolder: Apoio
 		lineageTag: 9616b031-0d34-56b7-8907-c4e9b03f1410
 
-	/// Indicador 1 da planilha do Confea: [Nº de profissionais com registro ativo no Crea (nível superior + nível médio) - Nº de profissionais com registro ativo no exercício anterior (nível superior + nível médio)] / Nº de profissionais com registro ativo no exercício anterior (nível superior + nível médio). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 1 da planilha do Confea, já calculado no CSV pela fórmula: [Nº de profissionais com registro ativo no Crea (nível superior + nível médio) - Nº de profissionais com registro ativo no exercício anterior (nível superior + nível médio)] / Nº de profissionais com registro ativo no exercício anterior (nível superior + nível médio). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Crescimento dos profissionais' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -59,7 +59,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: d202fe34-6f53-5906-b160-491cda77b253
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Crescimento dos profissionais' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Crescimento dos profissionais]
@@ -73,7 +73,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 772bae4c-1fdb-5516-8d0a-9174fa08ca8b
 
-	/// Indicador 2 da planilha do Confea: (Nº de empresas com registro ativo no Crea - Nº de empresas com registro ativo no exercício anterior) / Nº de empresas com registro ativo no exercício anterior. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 2 da planilha do Confea, já calculado no CSV pela fórmula: (Nº de empresas com registro ativo no Crea - Nº de empresas com registro ativo no exercício anterior) / Nº de empresas com registro ativo no exercício anterior. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Crescimento das empresas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -85,7 +85,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 5da61e1d-b022-5693-929d-5375649c6128
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Crescimento das empresas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Crescimento das empresas]
@@ -99,7 +99,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 50f87a65-6274-58e3-bfbf-f35d521f9370
 
-	/// Indicador 3 da planilha do Confea: (Nº de profissionais que compõe o QT da empresa) / (Nº de empresas com registro ativo + Nº de empresas com visto ativo). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 3 da planilha do Confea, já calculado no CSV pela fórmula: (Nº de profissionais que compõe o QT da empresa) / (Nº de empresas com registro ativo + Nº de empresas com visto ativo). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Quadro técnico por empresa' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -111,7 +111,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: d8a99062-a503-5a40-8b72-2c3adfbb9457
 
-	/// Variação, em %, sobre o exercício anterior.
+	/// Mostra a variação, em %, sobre o exercício anterior.
 	measure 'Em relação ao exercício anterior: Quadro técnico por empresa' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Quadro técnico por empresa]
@@ -125,7 +125,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 34844f8a-6a75-5ef0-bd8c-b222dcf6c5df
 
-	/// Indicador 4 da planilha do Confea: Nº de profissionais que registraram ART / [Nº de profissionais com registro ativo (nível superior + nível médio) + Nº de profissionais com visto ativo (nível superior + nível médio)]. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 4 da planilha do Confea, já calculado no CSV pela fórmula: Nº de profissionais que registraram ART / [Nº de profissionais com registro ativo (nível superior + nível médio) + Nº de profissionais com visto ativo (nível superior + nível médio)]. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Profissionais que registram ART' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -137,7 +137,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: bd6a7042-12ec-50f0-9220-79ba15041fc9
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Profissionais que registram ART' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Profissionais que registram ART]
@@ -151,7 +151,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 810c732a-12cc-5140-a6cb-240213dd1791
 
-	/// Indicador 5 da planilha do Confea: Nº total de ARTs iniciais registradas / Nº de profissionais que registraram ART. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 5 da planilha do Confea, já calculado no CSV pela fórmula: Nº total de ARTs iniciais registradas / Nº de profissionais que registraram ART. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'ARTs por profissional' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -163,7 +163,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: aa6e7c8f-3564-517d-b3a6-9877491cb3b0
 
-	/// Variação, em %, sobre o exercício anterior.
+	/// Mostra a variação, em %, sobre o exercício anterior.
 	measure 'Em relação ao exercício anterior: ARTs por profissional' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [ARTs por profissional]
@@ -177,7 +177,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: ab392e67-54ad-570d-947a-b6cf9bdcdf68
 
-	/// Indicador 6 da planilha do Confea: Nº de profissionais cujo acervo técnico foi certificado por meio de CAT / Nº de profissionais que registraram ART. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 6 da planilha do Confea, já calculado no CSV pela fórmula: Nº de profissionais cujo acervo técnico foi certificado por meio de CAT / Nº de profissionais que registraram ART. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Profissionais com CAT' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -189,7 +189,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 469be831-1b06-5c47-b965-fa89e3cba19a
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Profissionais com CAT' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Profissionais com CAT]
@@ -203,7 +203,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: e92017d9-f724-5237-9844-09715fafa3e2
 
-	/// Indicador 7 da planilha do Confea: Nº de CATs emitidas com registro de atestado / Nº de profissionais cujo acervo técnico foi certificado por meio de CAT. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 7 da planilha do Confea, já calculado no CSV pela fórmula: Nº de CATs emitidas com registro de atestado / Nº de profissionais cujo acervo técnico foi certificado por meio de CAT. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'CATs com atestado por profissional' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -215,7 +215,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 169a2a4e-a32a-5860-9e24-0bd64319e9a3
 
-	/// Variação, em %, sobre o exercício anterior.
+	/// Mostra a variação, em %, sobre o exercício anterior.
 	measure 'Em relação ao exercício anterior: CATs com atestado por profissional' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [CATs com atestado por profissional]
@@ -229,7 +229,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 7b0f8766-788b-5e10-82bf-f48ee94471fb
 
-	/// Indicador 8 da planilha do Confea: Nº de profissionais com registro ativo inadimplentes (nível superior + nível médio) / Nº de profissionais com registro ativo (nível superior + nível médio). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 8 da planilha do Confea, já calculado no CSV pela fórmula: Nº de profissionais com registro ativo inadimplentes (nível superior + nível médio) / Nº de profissionais com registro ativo (nível superior + nível médio). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Inadimplência dos profissionais' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -241,7 +241,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 46d13085-18ac-5e37-b9b7-600d3da879fa
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Inadimplência dos profissionais' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Inadimplência dos profissionais]
@@ -255,7 +255,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 1a6f4b7d-11e5-5107-9209-3ac510fb3b12
 
-	/// Indicador 9 da planilha do Confea: Nº de empresas com registro ativo inadimplentes / Nº de empresas com registro ativo. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 9 da planilha do Confea, já calculado no CSV pela fórmula: Nº de empresas com registro ativo inadimplentes / Nº de empresas com registro ativo. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Inadimplência das empresas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -267,7 +267,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 6d28dc9e-c1cf-59d4-ab21-bc96c15ec3ff
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Inadimplência das empresas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Inadimplência das empresas]
@@ -281,7 +281,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 10e42786-69dc-5aa4-81da-b3de373033e7
 
-	/// Indicador 10 da planilha do Confea: [(Nº de anuidades de profissionais de quaisquer exercícios não pagas - Nº de anuidades de profissionais de quaisquer exercícios não pagas no exercício anterior ao de referência) + (Nº de anuidades de empresas de quaisquer exercícios não pagas - Nº de anuidades de empresas de quaisquer exercícios não pagas no exercício anterior ao de referência)] / (Nº de anuidades de profissionais de quaisquer exercícios não pagas no exercício anterior ao de referência + Nº de anuidades de empresas de quaisquer exercícios não pagas no exercício anterior ao de referência). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 10 da planilha do Confea, já calculado no CSV pela fórmula: [(Nº de anuidades de profissionais de quaisquer exercícios não pagas - Nº de anuidades de profissionais de quaisquer exercícios não pagas no exercício anterior ao de referência) + (Nº de anuidades de empresas de quaisquer exercícios não pagas - Nº de anuidades de empresas de quaisquer exercícios não pagas no exercício anterior ao de referência)] / (Nº de anuidades de profissionais de quaisquer exercícios não pagas no exercício anterior ao de referência + Nº de anuidades de empresas de quaisquer exercícios não pagas no exercício anterior ao de referência). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Crescimento das anuidades não pagas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -293,7 +293,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 03760f65-a717-516f-8b84-f83df5a6c58e
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Crescimento das anuidades não pagas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Crescimento das anuidades não pagas]
@@ -307,7 +307,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: f0df998d-11c0-51df-93e1-9da519d51596
 
-	/// Indicador 11 da planilha do Confea: Nº de agentes fiscais / Nº total de empregados. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 11 da planilha do Confea, já calculado no CSV pela fórmula: Nº de agentes fiscais / Nº total de empregados. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Agentes fiscais no quadro' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -319,7 +319,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 96ff868f-08be-5075-a36c-4cc714ac00bc
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Agentes fiscais no quadro' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Agentes fiscais no quadro]
@@ -333,7 +333,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: a235c637-64a2-5005-8f80-8e4f4410de84
 
-	/// Indicador 12 da planilha do Confea: Nº total de autos de infração lavrados / Nº total de ações de fiscalização realizadas. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 12 da planilha do Confea, já calculado no CSV pela fórmula: Nº total de autos de infração lavrados / Nº total de ações de fiscalização realizadas. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Índice de autuação' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -345,7 +345,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 995f4cf1-4cd6-571b-b078-ad79ca380de8
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Índice de autuação' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Índice de autuação]
@@ -359,7 +359,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 6a12a749-d7c5-594b-bc5b-0e317fb85520
 
-	/// Indicador 13 da planilha do Confea: Nº de ações de fiscalização realizadas / (Nº de fiscais x Nº de dias úteis). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 13 da planilha do Confea, já calculado no CSV pela fórmula: Nº de ações de fiscalização realizadas / (Nº de fiscais x Nº de dias úteis). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Fiscalizações por fiscal por dia' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -371,7 +371,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: dce71341-6ec7-554b-baa0-32d95ca2121c
 
-	/// Variação, em %, sobre o exercício anterior.
+	/// Mostra a variação, em %, sobre o exercício anterior.
 	measure 'Em relação ao exercício anterior: Fiscalizações por fiscal por dia' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Fiscalizações por fiscal por dia]
@@ -385,7 +385,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 77fc8529-448d-5b3b-b4cc-91814ad11824
 
-	/// Indicador 14 da planilha do Confea: Nº de municípios fiscalizados / Nº de municípios do estado. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 14 da planilha do Confea, já calculado no CSV pela fórmula: Nº de municípios fiscalizados / Nº de municípios do estado. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Municípios fiscalizados' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -397,7 +397,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 3af47c4d-e085-5827-80f0-9215e5006b46
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Municípios fiscalizados' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Municípios fiscalizados]
@@ -411,7 +411,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: bee46765-3f64-56d7-b682-3a0d3761b55e
 
-	/// Indicador 15 da planilha do Confea: Nº de denúncias de infração à legislação profissional apuradas pela fiscalização / Nº de denúncias de infração à legislação profissional recebidas pelo Crea no exercício de referência. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 15 da planilha do Confea, já calculado no CSV pela fórmula: Nº de denúncias de infração à legislação profissional apuradas pela fiscalização / Nº de denúncias de infração à legislação profissional recebidas pelo Crea no exercício de referência. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Denúncias apuradas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -423,7 +423,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 07127ad5-2d69-585f-b15a-977d76ccd9d0
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Denúncias apuradas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Denúncias apuradas]
@@ -437,7 +437,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 6b0de7ed-3fc2-522f-ae99-9e95c8cfbd88
 
-	/// Indicador 16 da planilha do Confea: (Valor gasto com salário, encargos e benefícios a empregados lotados na área de fiscalização (incluindo agentes fiscais) + Valor gasto com verbas indenizatórias a empregados lotados na área de fiscalização (incluindo agentes fiscais) + Valor gasto com capacitação de empregados lotados na área de fiscalização (incluindo agentes fiscais) + Valor gasto com seguro, calibração e manutenção de equipamentos utilizados na fiscalização + Valor gasto com telefonia móvel institucional utilizada pelos agentes fiscais + Valor gasto com manutenção, seguro, estacionamento e pedágio dos veículos utilizados na fiscalização + Valor gasto com combustível de veículos utilizados na fiscalização + Valor gasto com aluguel de veículos utilizados na fiscalização ) / Despesa corrente empenhada. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 16 da planilha do Confea, já calculado no CSV pela fórmula: (Valor gasto com salário, encargos e benefícios a empregados lotados na área de fiscalização (incluindo agentes fiscais) + Valor gasto com verbas indenizatórias a empregados lotados na área de fiscalização (incluindo agentes fiscais) + Valor gasto com capacitação de empregados lotados na área de fiscalização (incluindo agentes fiscais) + Valor gasto com seguro, calibração e manutenção de equipamentos utilizados na fiscalização + Valor gasto com telefonia móvel institucional utilizada pelos agentes fiscais + Valor gasto com manutenção, seguro, estacionamento e pedágio dos veículos utilizados na fiscalização + Valor gasto com combustível de veículos utilizados na fiscalização + Valor gasto com aluguel de veículos utilizados na fiscalização ) / Despesa corrente empenhada. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Despesa com fiscalização' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -449,7 +449,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: fd5d233a-5d31-54fc-9b25-6d92602e7173
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Despesa com fiscalização' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Despesa com fiscalização]
@@ -463,7 +463,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 922cc622-724f-5f2c-a0cf-aa7a810ec11b
 
-	/// Indicador 17 da planilha do Confea: Nº total de processos de infração à legislação julgados na 1ª instância / Nº total de processos de infração à legislação recebidos na 1ª instância + Nº total de processos de infração à legislação de exercícios anteriores pendentes de julgamento na 1ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 17 da planilha do Confea, já calculado no CSV pela fórmula: Nº total de processos de infração à legislação julgados na 1ª instância / Nº total de processos de infração à legislação recebidos na 1ª instância + Nº total de processos de infração à legislação de exercícios anteriores pendentes de julgamento na 1ª instância). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficiência na 1ª instância: infração' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -475,7 +475,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 443af332-005e-54d4-97ea-802a8d73185f
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficiência na 1ª instância: infração' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficiência na 1ª instância: infração]
@@ -489,7 +489,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: e7cb26fa-8cb9-5084-94ed-bbf2a3eb7ea7
 
-	/// Indicador 18 da planilha do Confea: Nº total de processos de denúncias de conduta incompatível com a profissão julgados na 1ª instância / (Nº de denúncias de conduta incompatível com a profissão instruídas pela comissão de ética e apreciadas quanto ao mérito e aplicação de penalidade pelas câmaras especializadas + Nº total de processos de denúncias de conduta incompatível com a profissão de exercícios anteriores pendentes de julgamento na 1ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 18 da planilha do Confea, já calculado no CSV pela fórmula: Nº total de processos de denúncias de conduta incompatível com a profissão julgados na 1ª instância / (Nº de denúncias de conduta incompatível com a profissão instruídas pela comissão de ética e apreciadas quanto ao mérito e aplicação de penalidade pelas câmaras especializadas + Nº total de processos de denúncias de conduta incompatível com a profissão de exercícios anteriores pendentes de julgamento na 1ª instância). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficiência na 1ª instância: conduta' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -501,7 +501,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 87ea3a51-1a68-542b-965e-9f89a5ded06a
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficiência na 1ª instância: conduta' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficiência na 1ª instância: conduta]
@@ -515,7 +515,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 94be18d9-00f1-591b-a353-76115267abf2
 
-	/// Indicador 19 da planilha do Confea: Nº total de processos de denúncias éticas julgados na 1ª instância) / (Nº de denúncias éticas instruídas pela comissão de ética e apreciadas quanto ao mérito e aplicação de penalidade pelas câmaras especializadas + Nº total de processos de denúncias éticas de exercícios anteriores pendentes de julgamento na 1ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 19 da planilha do Confea, já calculado no CSV pela fórmula: Nº total de processos de denúncias éticas julgados na 1ª instância) / (Nº de denúncias éticas instruídas pela comissão de ética e apreciadas quanto ao mérito e aplicação de penalidade pelas câmaras especializadas + Nº total de processos de denúncias éticas de exercícios anteriores pendentes de julgamento na 1ª instância). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficiência na 1ª instância: ética' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -527,7 +527,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 95cc5985-567d-5017-8f1b-6e9db17eae46
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficiência na 1ª instância: ética' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficiência na 1ª instância: ética]
@@ -541,7 +541,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 42e4454d-1445-5267-a028-8d4508ff43ee
 
-	/// Indicador 20 da planilha do Confea: Nº total de processos de infração à legislação julgados na 2ª instância / (Nº total de processos de infração à legislação recebidos na 2ª instância + Nº total de processos de infração à legislação de exercícios anteriores pendentes de julgamento na 2ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 20 da planilha do Confea, já calculado no CSV pela fórmula: Nº total de processos de infração à legislação julgados na 2ª instância / (Nº total de processos de infração à legislação recebidos na 2ª instância + Nº total de processos de infração à legislação de exercícios anteriores pendentes de julgamento na 2ª instância). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficiência na 2ª instância: infração' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -553,7 +553,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 437ac1b9-2ca3-5c47-8dbd-fdf1c07fc72c
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficiência na 2ª instância: infração' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficiência na 2ª instância: infração]
@@ -567,7 +567,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 9cca67c1-f788-5277-8942-49793cecfd34
 
-	/// Indicador 21 da planilha do Confea: Nº total de processos de denúncia de conduta incompatível com a profissão julgados na 2ª instância / (Nº total de processos de denúncia de conduta incompatível com a profissão recebidos na 2ª instância + Nº total de processos de denúncia de conduta incompatível com a profissão de exercícios anteriores pendentes de julgamento na 2ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 21 da planilha do Confea, já calculado no CSV pela fórmula: Nº total de processos de denúncia de conduta incompatível com a profissão julgados na 2ª instância / (Nº total de processos de denúncia de conduta incompatível com a profissão recebidos na 2ª instância + Nº total de processos de denúncia de conduta incompatível com a profissão de exercícios anteriores pendentes de julgamento na 2ª instância). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficiência na 2ª instância: conduta' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -579,7 +579,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 867f8f14-6ca5-5c12-9561-7e4cdc4fa683
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficiência na 2ª instância: conduta' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficiência na 2ª instância: conduta]
@@ -593,7 +593,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 47de1fdc-e239-5302-8d58-cdd4ff3bc00b
 
-	/// Indicador 22 da planilha do Confea: Nº total de processos de denúncias éticas julgados na 2ª instância / Nº total de processos de denúncias éticas recebidos na 2ª instância + Nº de processos de denúncias éticas de exercícios anteriores pendentes de julgamento na 2ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 22 da planilha do Confea, já calculado no CSV pela fórmula: Nº total de processos de denúncias éticas julgados na 2ª instância / Nº total de processos de denúncias éticas recebidos na 2ª instância + Nº de processos de denúncias éticas de exercícios anteriores pendentes de julgamento na 2ª instância). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficiência na 2ª instância: ética' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -605,7 +605,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: ee444628-9566-520e-bdf9-9ae03629130f
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficiência na 2ª instância: ética' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficiência na 2ª instância: ética]
@@ -619,7 +619,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 698c0310-9b4a-505e-926d-abe8f08ab4f7
 
-	/// Indicador 26 da planilha do Confea: Nº de decisões relativas a processos de infração à legislação transitadas em julgado na 1ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de infração à legislação transitadas em julgado na 1ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 26 da planilha do Confea, já calculado no CSV pela fórmula: Nº de decisões relativas a processos de infração à legislação transitadas em julgado na 1ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de infração à legislação transitadas em julgado na 1ª instância. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficácia na 1ª instância: infração' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -631,7 +631,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 87b906c6-1ee4-5f60-9f0b-498ecaf76117
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficácia na 1ª instância: infração' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficácia na 1ª instância: infração]
@@ -645,7 +645,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: eed1cf1e-a80b-54d0-b484-9886aba15baf
 
-	/// Indicador 27 da planilha do Confea: Nº de decisões transitadas em julgado na 1ª instância cujo resultado foi pelo cancelamento de registro de profissionais / Nº total de decisões relativas a processos de denúncia de conduta incompatível com a profissão transitadas em julgado na 1ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 27 da planilha do Confea, já calculado no CSV pela fórmula: Nº de decisões transitadas em julgado na 1ª instância cujo resultado foi pelo cancelamento de registro de profissionais / Nº total de decisões relativas a processos de denúncia de conduta incompatível com a profissão transitadas em julgado na 1ª instância. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficácia na 1ª instância: conduta' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -657,7 +657,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 1c4575a5-c659-5d17-8cca-04cd6effb122
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficácia na 1ª instância: conduta' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficácia na 1ª instância: conduta]
@@ -671,7 +671,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 3e75f7dd-192b-5b87-88ad-3565a29f4a7a
 
-	/// Indicador 28 da planilha do Confea: Nº de decisões relativas a processos de denúncia ética transitadas em julgado na 1ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de denúncia ética transitadas em julgado na 1ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 28 da planilha do Confea, já calculado no CSV pela fórmula: Nº de decisões relativas a processos de denúncia ética transitadas em julgado na 1ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de denúncia ética transitadas em julgado na 1ª instância. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficácia na 1ª instância: ética' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -683,7 +683,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 96e742e9-6fb3-5763-8d89-9411e8fe017e
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficácia na 1ª instância: ética' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficácia na 1ª instância: ética]
@@ -697,7 +697,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 9d8f0141-bb49-58b3-bfc7-53a92c714ff6
 
-	/// Indicador 29 da planilha do Confea: Nº de decisões relativas a processos de infração à legislação transitadas em julgado na 2ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de infração à legislação transitadas em julgado na 2ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 29 da planilha do Confea, já calculado no CSV pela fórmula: Nº de decisões relativas a processos de infração à legislação transitadas em julgado na 2ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de infração à legislação transitadas em julgado na 2ª instância. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficácia na 2ª instância: infração' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -709,7 +709,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: cc54a04d-f87b-58e3-8d01-9335bac678a4
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficácia na 2ª instância: infração' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficácia na 2ª instância: infração]
@@ -723,7 +723,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 8d26e9c5-2305-5c93-8be1-b10d49965afc
 
-	/// Indicador 30 da planilha do Confea: Nº de decisões transitadas em julgado na 2ª instância cujo resultado foi pelo cancelamento de registro de profissionais / Nº total de decisões relativas a processos de denúncia de conduta incompatível com a profissão transitadas em julgado na 2ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 30 da planilha do Confea, já calculado no CSV pela fórmula: Nº de decisões transitadas em julgado na 2ª instância cujo resultado foi pelo cancelamento de registro de profissionais / Nº total de decisões relativas a processos de denúncia de conduta incompatível com a profissão transitadas em julgado na 2ª instância. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficácia na 2ª instância: conduta' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -735,7 +735,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: aa23c588-337a-531e-9062-8d50fc833bbb
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficácia na 2ª instância: conduta' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficácia na 2ª instância: conduta]
@@ -749,7 +749,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: bdcadde0-d08d-580e-8f3e-124837e7b613
 
-	/// Indicador 31 da planilha do Confea: Nº de decisões relativas a processos de denúncia ética transitadas em julgado na 2ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de denúncia ética transitadas em julgado na 2ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 31 da planilha do Confea, já calculado no CSV pela fórmula: Nº de decisões relativas a processos de denúncia ética transitadas em julgado na 2ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de denúncia ética transitadas em julgado na 2ª instância. Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Eficácia na 2ª instância: ética' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -761,7 +761,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 5da7253c-1484-501a-8a75-88447acf7a07
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Eficácia na 2ª instância: ética' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Eficácia na 2ª instância: ética]
@@ -775,7 +775,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: b9f42234-ac55-522a-934f-d9fc3c90ab3f
 
-	/// Indicador 35 da planilha do Confea: (Nº de multas de quaisquer exercícios não pagas - Nº de multas de quaisquer exercícios não pagas no exercício anterior ao de referência) / (Nº de multas de quaisquer exercícios não pagas no exercício anterior ao de referência). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	/// Lê o indicador 35 da planilha do Confea, já calculado no CSV pela fórmula: (Nº de multas de quaisquer exercícios não pagas - Nº de multas de quaisquer exercícios não pagas no exercício anterior ao de referência) / (Nº de multas de quaisquer exercícios não pagas no exercício anterior ao de referência). Com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
 	measure 'Crescimento das multas não pagas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -787,7 +787,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: 0d64e7d7-30a5-5721-aeb4-381fbc203afa
 
-	/// Diferença, em pontos percentuais, para o exercício anterior.
+	/// Mostra, em pontos percentuais, a diferença para o exercício anterior.
 	measure 'Em relação ao exercício anterior: Crescimento das multas não pagas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR agora = [Crescimento das multas não pagas]
@@ -801,7 +801,7 @@ table Medidas
 		displayFolder: Indicadores
 		lineageTag: c262b4ef-9de9-52d1-a8fc-3c170c06a612
 
-	/// Métrica 3 da planilha no exercício escolhido.
+	/// Lê a métrica 3 da planilha no exercício escolhido.
 	measure 'Profissionais de nível superior ativos' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -813,7 +813,19 @@ table Medidas
 		displayFolder: Registro
 		lineageTag: 5b452dca-9022-5744-a2f4-c9c2431ecd2f
 
-	/// Métrica 21 da planilha no exercício escolhido.
+	/// Lê a métrica 8 da planilha no exercício escolhido.
+	measure 'Técnicos de Segurança do Trabalho ativos' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 8, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 8, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Registro
+		lineageTag: 3949ebeb-faa9-581d-ac72-b50317df9716
+
+	/// Lê a métrica 21 da planilha no exercício escolhido.
 	measure 'Empresas ativas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -825,7 +837,7 @@ table Medidas
 		displayFolder: Registro
 		lineageTag: b913521b-a71a-51d1-b15a-50b396694310
 
-	/// Métrica 25 da planilha no exercício escolhido.
+	/// Lê a métrica 25 da planilha no exercício escolhido.
 	measure 'ARTs registradas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -837,7 +849,7 @@ table Medidas
 		displayFolder: Registro
 		lineageTag: 14942c6c-56ef-568e-99d5-ef6440d9d845
 
-	/// Métrica 37 da planilha no exercício escolhido.
+	/// Lê a métrica 37 da planilha no exercício escolhido.
 	measure 'Ações de fiscalização' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -849,7 +861,7 @@ table Medidas
 		displayFolder: Fiscalização
 		lineageTag: 8a95a110-f9d3-55de-a452-4ab8ddf024ef
 
-	/// Métrica 38 da planilha no exercício escolhido.
+	/// Lê a métrica 38 da planilha no exercício escolhido.
 	measure 'Autos de infração' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -861,7 +873,7 @@ table Medidas
 		displayFolder: Fiscalização
 		lineageTag: e2bf9501-61c9-5ac3-ae8e-fb798b74b8ae
 
-	/// Métrica 142 da planilha no exercício escolhido.
+	/// Lê a métrica 142 da planilha no exercício escolhido.
 	measure 'Agentes fiscais' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -873,7 +885,7 @@ table Medidas
 		displayFolder: Suporte e Liderança
 		lineageTag: 8aee4d1e-6ae7-5a94-84bc-802675c29a8d
 
-	/// Métrica 149 da planilha no exercício escolhido.
+	/// Lê a métrica 149 da planilha no exercício escolhido.
 	measure 'Multas não pagas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -885,7 +897,7 @@ table Medidas
 		displayFolder: Suporte e Liderança
 		lineageTag: 67dbbe45-b421-5633-a691-6a2d9b74d1b0
 
-	/// Métrica 150 da planilha no exercício escolhido.
+	/// Lê a métrica 150 da planilha no exercício escolhido.
 	measure 'Despesa corrente empenhada' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -897,7 +909,7 @@ table Medidas
 		displayFolder: Suporte e Liderança
 		lineageTag: 456d2159-6c94-5e8f-ac23-b0f1dc8f6644
 
-	/// Métrica 56 da planilha no exercício escolhido.
+	/// Lê a métrica 56 da planilha no exercício escolhido.
 	measure 'Pendentes de anos anteriores na 1ª instância' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -909,7 +921,7 @@ table Medidas
 		displayFolder: Julgamento
 		lineageTag: b4cb5e8e-32e2-5c54-aeb8-36e63f04af23
 
-	/// Métrica 57 da planilha no exercício escolhido.
+	/// Lê a métrica 57 da planilha no exercício escolhido.
 	measure 'Recebidos na 1ª instância' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -921,7 +933,7 @@ table Medidas
 		displayFolder: Julgamento
 		lineageTag: f6715ac0-2c1a-5b12-85ae-a97885ad867f
 
-	/// Métrica 58 da planilha no exercício escolhido.
+	/// Lê a métrica 58 da planilha no exercício escolhido.
 	measure 'Julgados na 1ª instância' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -933,7 +945,7 @@ table Medidas
 		displayFolder: Julgamento
 		lineageTag: 2192496f-f2f6-5489-9442-e9a78771a5ca
 
-	/// Métrica 94 da planilha no exercício escolhido.
+	/// Lê a métrica 94 da planilha no exercício escolhido.
 	measure 'Pendentes de anos anteriores na 2ª instância' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -945,7 +957,7 @@ table Medidas
 		displayFolder: Julgamento
 		lineageTag: 750ae2ad-69c6-56a7-8d49-6d257729d190
 
-	/// Métrica 95 da planilha no exercício escolhido.
+	/// Lê a métrica 95 da planilha no exercício escolhido.
 	measure 'Recebidos na 2ª instância' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -957,7 +969,7 @@ table Medidas
 		displayFolder: Julgamento
 		lineageTag: c27c6993-b02c-5571-973e-226b3da0670c
 
-	/// Métrica 96 da planilha no exercício escolhido.
+	/// Lê a métrica 96 da planilha no exercício escolhido.
 	measure 'Julgados na 2ª instância' = ```
 			VAR ano = [Exercício escolhido]
 			VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -969,87 +981,93 @@ table Medidas
 		displayFolder: Julgamento
 		lineageTag: 4ea0133c-2311-5c2a-9d5f-6f5413a76ca9
 
-	/// A métrica da linha no exercício escolhido, só nas do subprograma (Registro).
+	/// Lê a métrica da linha no exercício escolhido, só nas do subprograma (Registro).
 	measure 'Métrica: Registro' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Registro"}, [Valor da métrica])
 		formatString: #,##0
 		displayFolder: Registro
 		lineageTag: d115be91-9914-555b-af10-0cc95fbaa88e
 
-	/// A mesma métrica no exercício anterior.
+	/// Lê a mesma métrica no exercício anterior.
 	measure 'No exercício anterior: Registro' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Registro"}, [Valor da métrica no exercício anterior])
 		formatString: #,##0
 		displayFolder: Registro
 		lineageTag: c2efdb8e-6a99-50e8-a0e4-ddc6dae55171
 
-	/// O indicador da linha, só nos do subprograma.
+	/// Escreve o indicador da linha, só nos do subprograma.
 	measure 'Indicador: Registro' = IF(SELECTEDVALUE('Indicadores'[Subprograma]) IN {"Registro"}, [Valor do indicador])
 		displayFolder: Registro
 		lineageTag: d68b8dd3-3b88-56cd-8071-d77bde216bdc
 
-	/// A métrica da linha no exercício escolhido, só nas do subprograma (Fiscalização).
+	/// Lê a métrica da linha no exercício escolhido, só nas do subprograma (Fiscalização).
 	measure 'Métrica: Fiscalização' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Fiscalização"}, [Valor da métrica])
 		formatString: #,##0
 		displayFolder: Fiscalização
 		lineageTag: 3f834367-c303-5a19-8b09-952fbfa7cebc
 
-	/// A mesma métrica no exercício anterior.
+	/// Lê a mesma métrica no exercício anterior.
 	measure 'No exercício anterior: Fiscalização' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Fiscalização"}, [Valor da métrica no exercício anterior])
 		formatString: #,##0
 		displayFolder: Fiscalização
 		lineageTag: 31bd31bc-25d7-53b6-96c7-0d24ef7bc547
 
-	/// O indicador da linha, só nos do subprograma.
+	/// Escreve o indicador da linha, só nos do subprograma.
 	measure 'Indicador: Fiscalização' = IF(SELECTEDVALUE('Indicadores'[Subprograma]) IN {"Fiscalização"}, [Valor do indicador])
 		displayFolder: Fiscalização
 		lineageTag: 46edbea1-3b06-5a13-a763-2e3971b86e5a
 
-	/// A métrica da linha no exercício escolhido, só nas do subprograma (Julgamento).
+	/// Lê a métrica da linha no exercício escolhido, só nas do subprograma (Julgamento).
 	measure 'Métrica: Julgamento' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Julgamento"}, [Valor da métrica])
 		formatString: #,##0
 		displayFolder: Julgamento
 		lineageTag: a89bb048-2c78-5086-b3b8-2dd08fa92dbf
 
-	/// A mesma métrica no exercício anterior.
+	/// Lê a mesma métrica no exercício anterior.
 	measure 'No exercício anterior: Julgamento' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Julgamento"}, [Valor da métrica no exercício anterior])
 		formatString: #,##0
 		displayFolder: Julgamento
 		lineageTag: 00c918bf-6f02-57f5-8c6f-2ba7b875c928
 
-	/// O indicador da linha, só nos do subprograma.
+	/// Escreve o indicador da linha, só nos do subprograma.
 	measure 'Indicador: Julgamento' = IF(SELECTEDVALUE('Indicadores'[Subprograma]) IN {"Julgamento"}, [Valor do indicador])
 		displayFolder: Julgamento
 		lineageTag: ae492b2e-1ba0-5af4-9286-37a668cb8069
 
-	/// A métrica da linha no exercício escolhido, só nas do subprograma (Suporte e Liderança).
+	/// Lê a métrica da linha no exercício escolhido, só nas do subprograma (Suporte e Liderança).
 	measure 'Métrica: Suporte e Liderança' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Suporte", "Liderança"}, [Valor da métrica])
 		formatString: #,##0
 		displayFolder: Suporte e Liderança
 		lineageTag: df55d954-9def-5266-88ef-241c949acd45
 
-	/// A mesma métrica no exercício anterior.
+	/// Lê a mesma métrica no exercício anterior.
 	measure 'No exercício anterior: Suporte e Liderança' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Suporte", "Liderança"}, [Valor da métrica no exercício anterior])
 		formatString: #,##0
 		displayFolder: Suporte e Liderança
 		lineageTag: fe26de45-6f6f-5277-af8e-af4dad2352f4
 
-	/// O indicador da linha, só nos do subprograma.
+	/// Escreve o indicador da linha, só nos do subprograma.
 	measure 'Indicador: Suporte e Liderança' = IF(SELECTEDVALUE('Indicadores'[Subprograma]) IN {"Suporte", "Liderança"}, [Valor do indicador])
 		displayFolder: Suporte e Liderança
 		lineageTag: add284ce-363a-5d28-9381-79c6476b3053
 
-	/// Métricas 11 a 18: profissionais ativos de nível superior e médio em cada modalidade.
+	/// Soma os profissionais de nível superior (métrica 3) e os técnicos de nível médio (métrica 8), que no Crea são só os de Segurança do Trabalho.
+	measure 'Profissionais ativos' = [Profissionais de nível superior ativos] + [Técnicos de Segurança do Trabalho ativos]
+		formatString: #,##0
+		displayFolder: Registro
+		lineageTag: 8b341a00-87b9-5b12-955b-8de8ccf2e29d
+
+	/// Soma as métricas 11 a 18: profissionais ativos em cada modalidade (os técnicos de Segurança do Trabalho na Especial).
 	measure 'Profissionais na modalidade' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {11, 12, 13, 14, 15, 16, 17, 18}))
 		formatString: #,##0
 		displayFolder: Registro
 		lineageTag: 61f3324b-c823-56cd-b836-7eb376a67138
 
-	/// Métricas 39 a 50: os autos de infração do exercício por capitulação.
+	/// Soma as métricas 39 a 50: os autos de infração do exercício por capitulação.
 	measure 'Autos na capitulação' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50}))
 		formatString: #,##0
 		displayFolder: Fiscalização
 		lineageTag: d1414898-ef5f-5a5a-8f05-2d306d66c855
 
-	/// Ações de fiscalização de cada município no exercício, para o mapa (a soma dá a métrica 37).
+	/// Soma as ações de fiscalização de cada município no exercício, para o mapa (a soma dá a métrica 37).
 	measure 'Ações no município' = ```
 			VAR ano = [Exercício escolhido]
 			RETURN CALCULATE(SUM('Ações nos municípios'[Ações]), 'Ações nos municípios'[Ano] = ano)
@@ -1058,7 +1076,7 @@ table Medidas
 		displayFolder: Fiscalização
 		lineageTag: 690200e0-1d3a-5632-93c2-d848c3046e41
 
-	/// Meta 2.3 do PMF: ações do exercício (métrica 37) sobre as de 2024, menos 1. Só em exercício completo depois de 2024 e do Conselho inteiro.
+	/// Divide as ações do exercício (métrica 37) pelas de 2024, menos 1 (meta 2.3 do PMF). Só em exercício completo depois de 2024 e do Conselho inteiro.
 	measure 'Ações contra 2024' = ```
 			VAR ano = [Exercício escolhido]
 			VAR parcial = CALCULATE(MAX('Exercícios'[Parcial]), ALL('Exercícios'), 'Exercícios'[Ano] = ano)
@@ -1070,7 +1088,7 @@ table Medidas
 		displayFolder: Fiscalização
 		lineageTag: 5db1e129-6e47-5fb3-af0d-0cc1e0e7d492
 
-	/// Meta 5.1 do PMF: parte dos processos de infração julgados em até 180 dias (GovAdm, fora da planilha). Do Conselho inteiro.
+	/// Lê a parte dos processos de infração julgados em até 180 dias (meta 5.1 do PMF; GovAdm, fora da planilha). Do Conselho inteiro.
 	measure 'Infrações julgadas em até 180 dias' = ```
 			VAR ano = [Exercício escolhido]
 			RETURN IF(ISBLANK(SELECTEDVALUE('Regionais'[GRE])), DIVIDE(CALCULATE(MAX('Exercícios'[Infrações julgadas em 180 dias]), ALL('Exercícios'), 'Exercícios'[Ano] = ano), 100))
@@ -1079,7 +1097,7 @@ table Medidas
 		displayFolder: Julgamento
 		lineageTag: 60a5671c-9f2b-589e-814f-aa64847343d9
 
-	/// Meta 5.2 do PMF: parte dos processos éticos julgados em até 360 dias (GovAdm, fora da planilha). Do Conselho inteiro.
+	/// Lê a parte dos processos éticos julgados em até 360 dias (meta 5.2 do PMF; GovAdm, fora da planilha). Do Conselho inteiro.
 	measure 'Éticos julgados em até 360 dias' = ```
 			VAR ano = [Exercício escolhido]
 			RETURN IF(ISBLANK(SELECTEDVALUE('Regionais'[GRE])), DIVIDE(CALCULATE(MAX('Exercícios'[Éticos julgados em 360 dias]), ALL('Exercícios'), 'Exercícios'[Ano] = ano), 100))
@@ -1088,37 +1106,37 @@ table Medidas
 		displayFolder: Julgamento
 		lineageTag: b736cdab-2539-5d05-bfd1-ecd38a6f70dc
 
-	/// Pendentes mais recebidos menos julgados na 1ª instância (métricas 56, 57 e 58).
+	/// Soma pendentes e recebidos e tira os julgados na 1ª instância (métricas 56, 57 e 58).
 	measure 'Ficam para o próximo na 1ª instância' = MAX(0, [Pendentes de anos anteriores na 1ª instância] + [Recebidos na 1ª instância] - [Julgados na 1ª instância])
 		formatString: #,##0
 		displayFolder: Julgamento
 		lineageTag: c810d4af-6a41-558d-9202-4087d6dd5c62
 
-	/// Pendentes mais recebidos menos julgados na 2ª instância (métricas 94, 95 e 96).
+	/// Soma pendentes e recebidos e tira os julgados na 2ª instância (métricas 94, 95 e 96).
 	measure 'Ficam para o próximo na 2ª instância' = MAX(0, [Pendentes de anos anteriores na 2ª instância] + [Recebidos na 2ª instância] - [Julgados na 2ª instância])
 		formatString: #,##0
 		displayFolder: Julgamento
 		lineageTag: 95fec97c-65db-5eee-a7f7-7fb4fd064741
 
-	/// Métricas 67 a 72: decisões da 1ª instância arquivadas sem êxito, por motivo.
+	/// Soma as métricas 67 a 72: decisões da 1ª instância arquivadas sem êxito, por motivo.
 	measure 'Sem êxito na 1ª instância' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {67, 68, 69, 70, 71, 72}))
 		formatString: #,##0
 		displayFolder: Julgamento
 		lineageTag: 5b940f9d-c2d5-5477-9a3f-0f455bf3a1be
 
-	/// Métricas 105 a 110: decisões da 2ª instância arquivadas sem êxito, por motivo.
+	/// Soma as métricas 105 a 110: decisões da 2ª instância arquivadas sem êxito, por motivo.
 	measure 'Sem êxito na 2ª instância' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {105, 106, 107, 108, 109, 110}))
 		formatString: #,##0
 		displayFolder: Julgamento
 		lineageTag: a1a15cfe-403b-59e4-a15e-ea06dc8dff5d
 
-	/// As contas da despesa com fiscalização (indicador 16). Conta vazia fica em branco: sem ela, o indicador 16 não sai.
+	/// Soma as contas da despesa com fiscalização (indicador 16). Conta vazia fica em branco: sem ela, o indicador 16 não sai.
 	measure 'Despesa na conta' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {153, 155, 156, 157, 158, 159, 160, 161}))
 		formatString: R$ #,##0
 		displayFolder: Suporte e Liderança
 		lineageTag: 49f49298-3f8f-53ce-88f3-da1030a375dd
 
-	/// Métricas 145 e 147: anuidades de profissionais e de empresas não pagas em 31/12.
+	/// Soma as métricas 145 e 147: anuidades de profissionais e de empresas não pagas em 31/12.
 	measure 'Anuidades não pagas' = ```
 			VAR ano = [Exercício escolhido]
 			VAR p = VAR gre = SELECTEDVALUE('Regionais'[GRE])
@@ -1197,7 +1215,7 @@ table Medidas
 		displayFolder: Entrega ao Confea
 		lineageTag: d49067ed-9f77-51ff-a16c-2255c3ec95e6
 
-	/// O total menos a soma das partes, na conferência da linha; zero quando fecha.
+	/// Mostra o total menos a soma das partes, na conferência da linha; zero quando fecha.
 	measure 'Diferença da conferência' = ```
 			VAR ano = [Exercício escolhido]
 			RETURN CALCULATE(SUM('Conferências'[Diferença]), 'Conferências'[Ano] = ano)
@@ -1215,7 +1233,12 @@ table Medidas
 		displayFolder: Entrega ao Confea
 		lineageTag: d20a4f31-ec58-5577-9063-4a8904041be8
 
-	/// A data da próxima entrega ao Confea a partir da data do pacote.
+	/// Escreve a data de entrega do próximo processo de prestação de contas ao Confea (1º de abril), que leva esta planilha como peça III.
+	measure 'Processo de contas' = FORMAT(CALCULATE(MIN('Calendário de entregas'[Data]), CONTAINSSTRING('Calendário de entregas'[Entrega], "Processo de prestação de contas")), "dd/mm/yyyy")
+		displayFolder: Entrega ao Confea
+		lineageTag: 2c667ff8-1a6b-5176-b481-3c608491de61
+
+	/// Escreve a data da próxima entrega ao Confea a partir da data do pacote.
 	measure 'Próxima entrega' = FORMAT(MIN('Calendário de entregas'[Data]), "dd/mm/yyyy")
 		displayFolder: Entrega ao Confea
 		lineageTag: 8f73adc7-78b1-56c5-b648-953f7fc30ec0
@@ -1606,6 +1629,11 @@ table Medidas
 	measure 'Detalhe: Indicadores que saem' = "de 29; os seis da 3ª instância são do Confea"
 		displayFolder: Entrega ao Confea
 		lineageTag: 81788b82-53c3-58f0-b146-e41aabff53f1
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Processo de contas' = "peça III: esta planilha preenchida"
+		displayFolder: Entrega ao Confea
+		lineageTag: dda7b333-5084-5159-9529-e75bf9c401b8
 
 	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
 	measure 'Detalhe: Próxima entrega' = ```

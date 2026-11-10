@@ -13,7 +13,7 @@ import { diasUteis } from './atendimento';
  *
  * Os números são de um cenário de demonstração, menos os quatro publicados no Sumário Executivo do Relatório de Gestão 2025 do
  * Crea-SP (novos profissionais, novas empresas, ARTs, ações de fiscalização e autos), que entram exatos no exercício de 2025 e
- * levam o selo Real. O cenário planta de propósito duas conferências que não fecham e três métricas vazias, para mostrar o que a
+ * levam o selo Real. O cenário planta de propósito duas conferências que não fecham (60 e 98 em 2025) e três métricas vazias, para mostrar o que a
  * página Entrega ao Confea aponta antes do envio.
  */
 
@@ -120,12 +120,30 @@ const BASE = {
 const grandeza = (nome: keyof typeof BASE, ano: number) => { const [v, g] = BASE[nome]; return v * (1 + g) ** (ano - ANO_BASE) * (ano === ANO_BASE ? 1 : ruido(`${nome}|${ano}`)); };
 /** Parte de cada capitulação nos autos (métricas 39 a 50): o art. 1º da Lei 6.496/77 (falta de ART) e o art. 59 (empresa sem registro) somam 60%. */
 const CAPITULACOES = [14, 2, 1, 0.5, 0.5, 8, 9, 1.5, 22, 1, 38, 2.5];
-/** Parte de cada modalidade nos profissionais ativos (métricas 11 a 18); a Especial leva os técnicos de Segurança do Trabalho. */
-const MODALIDADES = [1.8, 7.5, 47, 21, 1.2, 14, 3, 4.5];
-/** Motivos de arquivamento sem êxito: erro de capitulação, descrição insuficiente, excesso de exação, falta de motivo, prescrição, outros. */
-// Motivos de arquivamento sem êxito: na 2ª instância pesam mais a prescrição e a falta de motivação, menos o erro de capitulação.
+/**
+ * Parte de cada modalidade nos profissionais de nível superior ativos (métricas 11 a 18). Os técnicos de nível médio no Crea são só os
+ * de Segurança do Trabalho: entram todos na Especial (métrica 18).
+ */
+const MODALIDADES = [1.8, 7.5, 47, 21, 1.2, 14, 3, 2];
+/** Ritmo anual de cada modalidade: Segurança do Trabalho e Eletricista crescem mais; Agrimensura e Geologia e Minas, menos. */
 const RITMO_MODALIDADE = [-0.012, 0.014, 0.022, 0.034, -0.006, 0.026, 0.004, 0.052];
+/**
+ * Motivos de arquivamento sem êxito: erro de capitulação, descrição insuficiente, excesso de exação, falta de motivo, prescrição, outros.
+ * Na 2ª instância pesam mais a prescrição e a falta de motivação, menos o erro de capitulação.
+ */
 const SEM_EXITO = [34, 18, 3, 25, 8, 12], SEM_EXITO_2 = [22, 14, 4, 31, 17, 12];
+/**
+ * A fila de uma instância, ano a ano desde 2021: os pendentes de anos anteriores de um exercício são o que ficou do anterior
+ * (pendentes mais recebidos menos julgados), como a planilha pede.
+ */
+function fila(nome: 'recebidos1' | 'recebidos2', pendentesEm2021: number, eficiencia: number, ano: number) {
+  let pendentes = pendentesEm2021;
+  for (let a = PRIMEIRO_EXERCICIO - 1; ; a++) {
+    const recebidos = grandeza(nome, a), julgados = r((recebidos + pendentes) * eficiencia * ruido(`fila|${nome}|${a}`, 0.05));
+    if (a === ano) return { pendentes, recebidos, julgados };
+    pendentes = r(pendentes + recebidos - julgados);
+  }
+}
 
 /** As 161 métricas do Conselho inteiro num exercício completo, pelo cenário. */
 function cenarioDoAno(ano: number): Valores {
@@ -137,8 +155,8 @@ function cenarioDoAno(ano: number): Valores {
   put(6, tec(ano - 1)); put(8, tec(ano)); put(9, grandeza('visTecnicos', ano)); put(10, tec(ano) * 0.33 * k(10));
   const novosTec = r(1_475 * ruido(`novos-tec|${ano}`, 0.05));
   put(7, novosTec); put(2, ano === ANO_REAL ? reais[2].valor - novosTec : r(24_100 * (1.03 ** (ano - ANO_BASE)) * ruido(`novos-sup|${ano}`, 0.04)));
-  // Cada modalidade tem o seu ritmo: Segurança do Trabalho e Eletricista crescem mais; Agrimensura e Geologia e Minas, menos.
-  dividir(prof(ano) + tec(ano), MODALIDADES.map((p, i) => p * (1 + RITMO_MODALIDADE[i]) ** (ano - ANO_BASE) * ruido(`mod${i}|${ano}`, 0.004))).forEach((v, i) => put(11 + i, v));
+  dividir(prof(ano), MODALIDADES.map((p, i) => p * (1 + RITMO_MODALIDADE[i]) ** (ano - ANO_BASE) * ruido(`mod${i}|${ano}`, 0.004))).forEach((v, i) => put(11 + i, v));
+  put(18, m.get(18)! + tec(ano));
   const emp = (a: number) => r(grandeza('empresas', a));
   put(19, emp(ano - 1)); put(21, emp(ano)); put(22, grandeza('visEmpresas', ano)); put(23, emp(ano) * 0.31 * k(23));
   put(20, ano === ANO_REAL ? reais[20].valor : 26_800 * 1.035 ** (ano - ANO_BASE) * ruido(`novas-emp|${ano}`, 0.04));
@@ -150,20 +168,21 @@ function cenarioDoAno(ano: number): Valores {
   put(31, 180 + (ano - ANO_BASE) * 4); put(32, 160 + (ano - ANO_BASE) * 6); put(34, 645); put(35, 129); put(36, 41);
   const acoes = ano === ANO_REAL ? reais[37].valor : grandeza('acoes', ano), autos = ano === ANO_REAL ? reais[38].valor : grandeza('autos', ano);
   put(37, acoes); put(38, autos);
-  // A soma das capitulações fica um pouco abaixo do total: os autos e as capitulações saem de sistemas diferentes (conferência plantada).
-  dividir(r(autos) - (ano >= 2024 ? 100 + Math.floor(chance(`cap|${ano}`) * 60) : 0), CAPITULACOES).forEach((v, i) => put(39 + i, v));
+  dividir(r(autos), CAPITULACOES).forEach((v, i) => put(39 + i, v));
   const den = grandeza('denuncias', ano); put(51, den); put(52, den * 0.865 * ruido(`m52|${ano}`, 0.03)); put(53, 46 * k(53)); put(54, 210 * k(54));
   // Julgamento, 1ª instância (câmaras especializadas)
-  const rec1 = grandeza('recebidos1', ano), pend1 = 21_400 * ruido(`p1|${ano}`, 0.06);
-  put(55, 312 * ruido(`t55|${ano}`, 0.06)); put(56, pend1); put(57, rec1); put(58, (rec1 + pend1) * 0.52 * ruido(`e1|${ano}`, 0.05)); put(59, 140 * k(59));
+  const f1 = fila('recebidos1', 21_400, 0.52, ano);
+  put(55, 312 * ruido(`t55|${ano}`, 0.06)); put(56, f1.pendentes); put(57, f1.recebidos); put(58, f1.julgados); put(59, 140 * k(59));
   julgados(m, 60, ano, 26_800 * 1.04 ** (ano - ANO_BASE), 0.817, [42, 51, 6, 1], 67, SEM_EXITO);
+  // O total de transitados da 1ª instância não fecha com com êxito mais sem êxito em 2025 (conferência plantada).
+  if (ano === ANO_BASE) m.set(60, m.get(60)! + 37);
   put(73, ano <= 2023 ? null : 420 * ruido(`t73|${ano}`, 0.08)); put(74, 38 * k(74)); put(75, 31 * k(75));
   const t76 = r(24 * k(76)), c77 = r(t76 * 0.25); put(76, t76); put(77, c77); put(78, t76 - c77); dividir(t76 - c77, [45, 20, 35]).forEach((v, i) => put(79 + i, v));
   put(82, 388 * ruido(`t82|${ano}`, 0.06)); put(83, 260 * k(83)); put(84, 170 * k(84));
   etica(m, 85, ano, 140 * k(85), 0.6);
   // 2ª instância (Plenário)
-  const rec2 = grandeza('recebidos2', ano), pend2 = 1_900 * ruido(`p2|${ano}`, 0.06);
-  put(93, 205 * ruido(`t93|${ano}`, 0.06)); put(94, pend2); put(95, rec2); put(96, (rec2 + pend2) * 0.64 * ruido(`e2|${ano}`, 0.05)); put(97, 30 * k(97));
+  const f2 = fila('recebidos2', 1_900, 0.64, ano);
+  put(93, 205 * ruido(`t93|${ano}`, 0.06)); put(94, f2.pendentes); put(95, f2.recebidos); put(96, f2.julgados); put(97, 30 * k(97));
   julgados(m, 98, ano, 3_400 * 1.05 ** (ano - ANO_BASE), 0.78, [40, 54, 5, 1], 105, SEM_EXITO_2);
   // A soma dos resultados da 2ª instância não fecha com o total em 2025 (conferência plantada).
   if (ano === ANO_BASE) m.set(98, m.get(98)! + 12);
@@ -227,7 +246,7 @@ export function metricasDoEstado(ex: Exercicio): Valores {
   for (const m of metricas) {
     const v = cheio.get(m.codigo) ?? null, a = antes.get(m.codigo) ?? null;
     if (v === null) out.set(m.codigo, null);
-    else if (emDias(m.codigo) || m.recorte === 'publicacao' || [1, 6, 19, 144, 146, 148].includes(m.codigo) || m.subprograma === 'Liderança' || [31, 32, 35, 36].includes(m.codigo)) out.set(m.codigo, v);
+    else if (emDias(m.codigo) || m.recorte === 'publicacao' || NO_INICIO_DO_EXERCICIO.has(m.codigo) || m.subprograma === 'Liderança' || [31, 32, 35, 36].includes(m.codigo)) out.set(m.codigo, v);
     else if (m.recorte === 'fim') out.set(m.codigo, a === null ? v : Math.round(a + (v - a) * p));
     else out.set(m.codigo, m.codigo >= 150 ? Math.round(v * p * 100) / 100 : Math.round(v * p));
   }
@@ -249,6 +268,8 @@ const FAMILIA_REGIONAL = new Map<number, string>([
 ]);
 const ANTERIOR = new Set([1, 6, 19, 144, 146, 148]);
 const ESTOQUE = new Set([3, 8, 21, 145, 147, 149]);
+/** Estoques lidos no começo do exercício: no exercício em curso, valem inteiros desde 1º de janeiro (os do ano anterior e os pendentes de anos anteriores). */
+const NO_INICIO_DO_EXERCICIO = new Set([...ANTERIOR, 56, 94]);
 /** As métricas de cada regional: as que se dividem por regional repartem o valor do estado sem perder unidade; as outras ficam nulas. */
 function metricasDasRegionais(dataset: Dataset, ex: Exercicio, estado: Valores, municipios: Map<string, { acoes: number; autos: number }>) {
   const gres = pesosDasRegionais(dataset), porGre = new Map(gres.map(g => [g.greId, new Map<number, number | null>()]));
@@ -345,7 +366,8 @@ export const SOMAS: [number, number[]][] = [
 ];
 /** Coerências que a planilha não escreve, mas que o Confea usa para descartar um número: parte maior que o todo, por exemplo. */
 const COERENCIAS: { texto: string; usa: number[]; ok: (v: (c: number) => number) => boolean }[] = [
-  { texto: 'Profissionais por modalidade (11 a 18) somam os ativos de nível superior e médio (3 + 8)', usa: [3, 8, ...range(11, 18)], ok: v => range(11, 18).reduce((s, c) => s + v(c), 0) === v(3) + v(8) },
+  // Quem tem título em mais de uma modalidade conta em cada uma (orientação da planilha): a soma pode passar dos ativos, nunca ficar abaixo.
+  { texto: 'Profissionais por modalidade (11 a 18) somam ao menos os ativos de nível superior e médio (3 + 8)', usa: [3, 8, ...range(11, 18)], ok: v => range(11, 18).reduce((s, c) => s + v(c), 0) >= v(3) + v(8) },
   { texto: 'Quem registrou ART (27) não passa dos ativos com registro ou visto (3 + 4 + 8 + 9)', usa: [3, 4, 8, 9, 27], ok: v => v(27) <= v(3) + v(4) + v(8) + v(9) },
   { texto: 'Municípios fiscalizados (33) não passam dos municípios do estado (34)', usa: [33, 34], ok: v => v(33) <= v(34) },
   { texto: 'Denúncias apuradas (52) não passam das recebidas (51)', usa: [51, 52], ok: v => v(52) <= v(51) },
@@ -356,7 +378,10 @@ const COERENCIAS: { texto: string; usa: number[]; ok: (v: (c: number) => number)
 ];
 export type SituacaoMetrica = 'Preenchida' | 'Vazia' | 'Não fecha';
 export interface Conferencia { tipo: 'soma' | 'coerencia'; texto: string; metricas: number[]; situacao: 'Fecha' | 'Não fecha' | 'Falta métrica'; diferenca: number | null }
-export function conferir(valores: Valores): { conferencias: Conferencia[]; situacao: Map<number, SituacaoMetrica> } {
+/** Fila entre exercícios: os pendentes de anos anteriores (56, 94) são o que ficou do exercício anterior (pendentes + recebidos - julgados). */
+const PASSIVO: [number, number, number, string][] = [[56, 57, 58, '1ª instância'], [94, 95, 96, '2ª instância']];
+/** As conferências de um exercício. Com o exercício anterior completo, confere também o passivo que passa de um ano para o outro. */
+export function conferir(valores: Valores, anterior: Valores | null = null): { conferencias: Conferencia[]; situacao: Map<number, SituacaoMetrica> } {
   const conferencias: Conferencia[] = [], situacao = new Map<number, SituacaoMetrica>(metricas.map(m => [m.codigo, valores.get(m.codigo) === null || valores.get(m.codigo) === undefined ? 'Vazia' : 'Preenchida']));
   const v = (c: number) => valores.get(c) ?? 0, faltam = (usa: number[]) => usa.some(c => valores.get(c) === null || valores.get(c) === undefined);
   for (const [total, partes] of SOMAS) {
@@ -369,6 +394,12 @@ export function conferir(valores: Valores): { conferencias: Conferencia[]; situa
   for (const c of COERENCIAS) {
     if (faltam(c.usa)) { conferencias.push({ tipo: 'coerencia', texto: c.texto, metricas: c.usa, situacao: 'Falta métrica', diferenca: null }); continue; }
     const ok = c.ok(v); conferencias.push({ tipo: 'coerencia', texto: c.texto, metricas: c.usa, situacao: ok ? 'Fecha' : 'Não fecha', diferenca: null });
+  }
+  if (anterior) for (const [p, rc, j, instancia] of PASSIVO) {
+    const texto = `Pendentes na ${instancia} (${p}) = o que ficou do exercício anterior (${p} + ${rc} - ${j})`, a = (c: number) => anterior.get(c);
+    if (faltam([p]) || [p, rc, j].some(c => a(c) === null || a(c) === undefined)) { conferencias.push({ tipo: 'coerencia', texto, metricas: [p, rc, j], situacao: 'Falta métrica', diferenca: null }); continue; }
+    const diferenca = v(p) - (a(p)! + a(rc)! - a(j)!);
+    conferencias.push({ tipo: 'coerencia', texto, metricas: [p, rc, j], situacao: diferenca === 0 ? 'Fecha' : 'Não fecha', diferenca });
   }
   return { conferencias, situacao };
 }
@@ -430,7 +461,7 @@ export function quadroSistema(dataset: Dataset, anchor: string, ano: number, gre
     const daRegional = calcularIndicadores(valores, ex), doConselho = calcularIndicadores(estado, ex);
     return new Map([...doConselho].map(([c, v]) => [c, greId && indicadorRegional(c) ? daRegional.get(c)! : v]));
   };
-  const { conferencias, situacao } = conferir(atual.estado);
+  const { conferencias, situacao } = conferir(atual.estado, antes && !anterior!.parcial && !exercicio.parcial ? antes.estado : null);
   const porExercicio = exercicios.map(ex => { const lido = ex.ano === exercicio.ano ? atual : ler(ex); return { exercicio: ex, indicadores: calcularIndicadores(lido.estado, ex), metricas: lido.estado }; });
   const f = (chave: string, base: number) => Math.round(base * ruido(`${chave}|${exercicio.ano}|${greId ?? ''}`, 0.05) * 10) / 10;
   return {

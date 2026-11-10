@@ -31,7 +31,7 @@ export const paginasIndicadores: Pagina[] = [
     emCadaExercicio('registro', 'Os indicadores do Registro em cada exercício', lugar(0, 0, 7)),
     { id: 'registro-modalidades', tipo: 'barChart', ...caixa(lugar(7, 0, 5)), titulo: 'Profissionais ativos por modalidade', papeis: { Category: [CURTO], Y: [campoMedida('Profissionais na modalidade', 'Profissionais')] } },
     { id: 'registro-regionais', tipo: 'pivotTable', ...caixa(lugar(0, 1, 7)), titulo: 'O registro em cada regional',
-      papeis: { Rows: [GRE], Values: [campoMedida('Profissionais de nível superior ativos', 'Profissionais'), ind(1, 'Crescimento'), campoMedida('Empresas ativas', 'Empresas'), ind(2, 'Crescimento'), ind(4, 'Registram ART'), ind(5, 'ARTs por profissional')] } },
+      papeis: { Rows: [GRE], Values: [campoMedida('Profissionais ativos', 'Profissionais'), ind(1, 'Crescimento'), campoMedida('Empresas ativas', 'Empresas'), ind(2, 'Crescimento'), ind(4, 'Registram ART'), ind(5, 'ARTs por profissional')] } },
     lista('registro', 'As 30 métricas do Registro', lugar(7, 1, 5)),
   ] },
   { id: 'fiscalizacao', nome: 'Fiscalização', visuais: [

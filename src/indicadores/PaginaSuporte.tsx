@@ -40,14 +40,14 @@ function Custo({ ctx }: { ctx: CockpitCtx }) {
   const q = s(ctx), { tokens } = ctx, total = q.metricas.get(150) ?? 0, linhas = CONTAS.map(([c, nome]) => ({ c, nome, v: q.metricas.get(c) ?? null }));
   const option = useMemo(() => ({
     grid: { top: 4, right: 96, bottom: 2, left: 2, containLabel: true },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const l = linhas[items[0].dataIndex]; return `<b>${metricaPorCodigo.get(l.c)!.nome}</b> (métrica ${l.c})<br/>${l.v === null ? 'Métrica vazia: o Confea não calcula o indicador 16 sem ela' : `${brl(l.v)} · ${pct(l.v / Math.max(1, total) * 100, 1)} da despesa corrente`}`; } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const l = linhas[items[0].dataIndex]; return `<b>${metricaPorCodigo.get(l.c)!.nome}</b> (métrica ${l.c})<br/>${l.v === null ? 'Métrica vazia: o Confea não calcula o indicador 16 sem ela' : `${brl(l.v)}, ${pct(l.v / Math.max(1, total) * 100, 1)} da despesa corrente`}`; } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: linhas.map(l => `${l.nome} (${l.c})`), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 210, overflow: 'truncate' } },
     series: [{ type: 'bar', barMaxWidth: 14, data: linhas.map(l => ({ value: l.v ?? 0, itemStyle: { color: l.v === null ? tokens.bad : tokens.brand } })), itemStyle: { borderRadius: [0, 3, 3, 0] },
-      label: { show: true, position: 'right', fontSize: 11, fontWeight: 700, color: tokens.ink, formatter: (p: any) => linhas[p.dataIndex].v === null ? 'vazia' : `${brl(p.value)} · ${pct(p.value / Math.max(1, total) * 100, 1)}` } }],
+      label: { show: true, position: 'right', fontSize: 11, fontWeight: 700, color: tokens.ink, formatter: (p: any) => linhas[p.dataIndex].v === null ? 'vazia' : `${brl(p.value)} (${pct(p.value / Math.max(1, total) * 100, 1)})` } }],
   }), [linhas, tokens, total]); // eslint-disable-line react-hooks/exhaustive-deps
   const vazias = linhas.filter(l => l.v === null);
   return <div className="cf-custo">
-    <p className="cf-total">Despesa corrente empenhada (métrica 150): <b>{brl(total)}</b>{q.greId ? ' · do Conselho inteiro' : ''}. {vazias.length ? <span className="cf-alerta">Faltam {vazias.map(l => l.c).join(' e ')}: sem elas, o indicador 16 não sai.</span> : <>A fiscalização leva <b>{fmtIndicador(16, q.indicadores.get(16)?.valor)}</b>.</>}</p>
+    <p className="cf-total">Despesa corrente empenhada (métrica 150): <b>{brl(total)}</b>{q.greId ? ' (do Conselho inteiro)' : ''}. {vazias.length ? <span className="cf-alerta">Faltam {vazias.map(l => l.c).join(' e ')}: sem elas, o indicador 16 não sai.</span> : <>A fiscalização leva <b>{fmtIndicador(16, q.indicadores.get(16)?.valor)}</b>.</>}</p>
     <div className="cf-custo-grafico"><Chart option={option} tokens={tokens} label="Despesa da fiscalização por conta, em reais e em parte da despesa corrente" onPick={p => { const l = linhas[p.dataIndex]; if (l) abrirMetricas(ctx, l.nome, [l.c, 150], metricaPorCodigo.get(l.c)!.definicao); }} /></div>
   </div>;
 }
@@ -71,6 +71,6 @@ function Pessoas({ ctx }: { ctx: CockpitCtx }) {
   const q = s(ctx);
   return <ul className="cf-pessoas">{PESSOAS.map(([c, nome], i) => { const v = q.metricas.get(c) ?? null, antes = q.metricasAntes.get(c) ?? null;
     return <li key={c} className={i === 4 ? 'is-grupo' : ''}><button onClick={() => abrirMetricas(ctx, nome, [c], metricaPorCodigo.get(c)!.definicao)}>
-      <span className="cf-codigo">M{' '}{c}</span><span className="cf-pessoa-nome">{nome}{q.doEstado(c) && <em> · Conselho inteiro</em>}</span><b>{v === null ? '—' : int(v)}</b>
+      <span className="cf-codigo">M{' '}{c}</span><span className="cf-pessoa-nome">{nome}{q.doEstado(c) && <em> (Conselho inteiro)</em>}</span><b>{v === null ? '—' : int(v)}</b>
       <small>{antes === null || v === null || antes === v ? '' : `${v > antes ? '+' : ''}${int(v - antes)}`}</small></button></li>; })}</ul>;
 }

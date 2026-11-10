@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "entrega-cartao-2",
   "position": {
-    "x": 330,
+    "x": 267,
     "y": 68,
     "z": 4000,
-    "width": 306,
+    "width": 243,
     "height": 84,
     "tabOrder": 4000
   },

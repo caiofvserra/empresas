@@ -32,7 +32,7 @@ export default function PaginaFiscalizacao({ ctx }: { ctx: CockpitCtx }) {
     </section>
     <Bloco ctx={ctx} id="mp" area="mp" title="Ações de fiscalização em cada município" badge={<SeloReal ctx={ctx} parte="no total" />} exportar={exportarMunicipios(ctx)}><Mapa ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="ca" area="ca" title="Autos por capitulação da Lei 5.194/1966" exportar={exportarCapitulacoes(ctx)}><Capitulacoes ctx={ctx} /></Bloco>
-    <Bloco ctx={ctx} id="ac" area="ac" title={`Ações e autos em cada exercício${q.greId ? " · Conselho inteiro" : ""}`} badge={<SeloReal ctx={ctx} parte="em 2025" />} exportar={exportarSerie(ctx)}><Serie ctx={ctx} /></Bloco>
+    <Bloco ctx={ctx} id="ac" area="ac" title={`Ações e autos em cada exercício${q.greId ? " (Conselho inteiro)" : ""}`} badge={<SeloReal ctx={ctx} parte="em 2025" />} exportar={exportarSerie(ctx)}><Serie ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="fo" area="fo" title="As 24 métricas da Fiscalização" exportar={exportarMetricas(ctx, ['Fiscalização'])}><ListaMetricas ctx={ctx} subs={['Fiscalização']} /></Bloco>
   </div>;
 }
@@ -69,7 +69,7 @@ function Capitulacoes({ ctx }: { ctx: CockpitCtx }) {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (items: any[]) => { const l = linhas[items[0].dataIndex]; return `<b>${metricaPorCodigo.get(l.c)!.nome}</b><br/>${int(l.v)} autos (${pct(l.v / Math.max(1, total) * 100)})`; } },
     xAxis: { type: 'value', show: false }, yAxis: { type: 'category', inverse: true, data: linhas.map(l => l.nome), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: tokens.ink, fontSize: 11, width: 190, overflow: 'truncate' } },
     series: [{ type: 'bar', barMaxWidth: 14, data: linhas.map(l => l.v), itemStyle: { color: tokens.brand, borderRadius: [0, 3, 3, 0] },
-      label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (p: any) => `${int(p.value)} · ${pct(p.value / Math.max(1, total) * 100)}` } }],
+      label: { show: true, position: 'right', color: tokens.ink, fontSize: 11, fontWeight: 700, formatter: (p: any) => `${int(p.value)} (${pct(p.value / Math.max(1, total) * 100)})` } }],
   }), [linhas, tokens, total]);
   return <Chart option={option} tokens={tokens} label="Autos de infração do exercício por capitulação" onPick={p => { const l = linhas[p.dataIndex]; if (l) abrirMetricas(ctx, l.nome, [l.c], metricaPorCodigo.get(l.c)!.definicao); }} />;
 }

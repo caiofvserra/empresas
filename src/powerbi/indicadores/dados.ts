@@ -66,7 +66,7 @@ function montar(dataset: Dataset): Dados[] {
     { arquivo: 'exercicios.csv', cabecalho: ['Ano', 'Rótulo', 'Parcial', 'Padrão', 'Infrações julgadas em 180 dias', 'Éticos julgados em 360 dias', 'Registro em 30 dias'],
       linhas: quadros.map(q => [q.exercicio.ano, q.exercicio.parcial ? `${q.exercicio.ano}*` : String(q.exercicio.ano), q.exercicio.parcial, q.exercicio.ano === padrao, q.fora.julgados180, q.fora.etica360, q.fora.registro30]) },
     { arquivo: 'exercicios-da-serie.csv', cabecalho: ['Ano', 'Rótulo'], linhas: quadros.map(q => [q.exercicio.ano, q.exercicio.parcial ? `${q.exercicio.ano}*` : String(q.exercicio.ano)]) },
-    { arquivo: 'metricas.csv', cabecalho: ['Código', 'Rótulo', 'Nome', 'Nome curto', 'Subprograma', 'Ordem do subprograma', 'Tema', 'Recorte', 'Por regional', 'Definição', 'Orientação'],
+    { arquivo: 'metricas.csv', cabecalho: ['Código', 'Rótulo', 'Nome', 'Nome curto', 'Subprograma', 'Ordem do subprograma', 'Tema', 'Período', 'Por regional', 'Definição', 'Orientação'],
       linhas: metricas.map(m => [m.codigo, `M ${m.codigo}`, m.nome, nomeCurtoMetrica(m.codigo), m.subprograma, ordemSub(m.subprograma), m.tema, m.recorte === 'exercicio' ? 'Somado no exercício' : m.recorte === 'fim' ? 'Em 31/12' : 'Na publicação', porRegional(m.codigo), m.definicao, m.orientacao]) },
     { arquivo: 'indicadores.csv', cabecalho: ['Indicador', 'Rótulo', 'Nome curto', 'Nome', 'Subprograma', 'Ordem do subprograma', 'Objetivo', 'Fórmula', 'Unidade', 'Por regional', 'Sistema em 2021', 'Sudeste em 2021'],
       linhas: indicadoresDoCrea.map(c => { const ind = indicadorPorCodigo.get(c)!, ref = referencias2021[c];
@@ -77,6 +77,6 @@ function montar(dataset: Dataset): Dados[] {
     { arquivo: 'situacao-metricas.csv', cabecalho: ['Ano', 'Código', 'Situação'], linhas: situacao },
     { arquivo: 'conferencias.csv', cabecalho: ['Ano', 'Tipo', 'Conferência', 'Métricas', 'Situação', 'Diferença', 'Ordem'], linhas: conferencias },
     { arquivo: 'acoes-municipios.csv', cabecalho: ['Ano', 'Código IBGE', 'Ações', 'Autos'], linhas: acoes },
-    { arquivo: 'calendario-entregas.csv', cabecalho: ['Data', 'Ritmo', 'Entrega', 'Consequência'], linhas: calendarioEntregas(hoje).map(e => [e.data, e.ritmo, e.o_que, e.consequencia]) },
+    { arquivo: 'calendario-entregas.csv', cabecalho: ['Data', 'Ritmo', 'Entrega', 'Consequência'], linhas: calendarioEntregas(hoje, 24).map(e => [e.data, e.ritmo, e.o_que, e.consequencia]) },
   ];
 }

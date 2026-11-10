@@ -42,11 +42,11 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Profissionais de nível superior ativos"
+                  "Property": "Profissionais ativos"
                 }
               },
-              "queryRef": "Medidas.Profissionais de nível superior ativos",
-              "nativeQueryRef": "Profissionais de nível superior ativos",
+              "queryRef": "Medidas.Profissionais ativos",
+              "nativeQueryRef": "Profissionais ativos",
               "displayName": "Profissionais"
             },
             {

@@ -90,8 +90,31 @@ test('indicadores: os 29 do Crea, iguais aos do HTML no Conselho e numa regional
 
 test('entrega: as conferências plantadas no cenário não fecham em 2025, e as métricas vazias são as três do cenário', () => {
   const conferencias = lerCsv('dados/conferencias.csv').filter(row => row.Ano === '2025' && row['Situação'] === 'Não fecha');
-  assert.deepEqual(conferencias.map(row => row['Conferência'].split(' ')[0]).sort(), ['38', '98']);
+  assert.deepEqual(conferencias.map(row => row['Conferência'].split(' ')[0]).sort(), ['60', '98']);
   const vazias = lerCsv('dados/situacao-metricas.csv').filter(row => row.Ano === '2025' && row['Situação'] === 'Vazia').map(row => Number(row['Código']));
   assert.deepEqual(vazias, [111, 156, 157]);
   assert.ok(lerCsv('dados/calendario-entregas.csv').every(row => row.Data > hoje));
+});
+
+test('comparações: a diferença para o exercício anterior e as ações contra 2024 refeitas dos CSV pela regra do DAX, contra o HTML', () => {
+  const linhas = lerCsv('dados/valores-indicadores.csv'), valores = lerCsv('dados/valores.csv'), q = quadroSistema(dataset, hoje, padrao, null);
+  const ind = (ano: number, c: number) => numero(linhas.find(row => Number(row.Ano) === ano && row['Nível'] === 'Conselho' && Number(row.Indicador) === c)!.Valor);
+  // Taxa: (agora - antes) em pontos percentuais; média: (agora - antes) / antes.
+  assert.match(dax('Em relação ao exercício anterior: Crescimento dos profissionais'), /\(agora - antes\) \* 100/);
+  assert.match(dax('Em relação ao exercício anterior: Quadro técnico por empresa'), /DIVIDE\(agora - antes, antes\)/);
+  for (const c of [1, 12, 17]) assert.ok(Math.abs((ind(padrao, c) - ind(padrao - 1, c)) - (q.indicadores.get(c)!.valor! - q.indicadoresAntes!.get(c)!.valor!)) < 0.02, `I${c}`);
+  const r3 = (ind(padrao, 3) - ind(padrao - 1, 3)) / ind(padrao - 1, 3), h3 = (q.indicadores.get(3)!.valor! - q.indicadoresAntes!.get(3)!.valor!) / q.indicadoresAntes!.get(3)!.valor!;
+  assert.ok(Math.abs(r3 - h3) < 0.01, 'I3');
+  // Meta 2.3: as ações do exercício sobre as de 2024, menos 1, como o cartão do HTML.
+  const acoes = (ano: number) => numero(valores.find(row => Number(row.Ano) === ano && row['Nível'] === 'Conselho' && row['Código'] === '37')!.Valor);
+  const html = (q.estado.get(37)! / q.porExercicio.find(e => e.exercicio.ano === 2024)!.metricas.get(37)! - 1);
+  assert.ok(Math.abs((acoes(padrao) / acoes(2024) - 1) - html) < 1e-9);
+  assert.match(dax('Ações contra 2024'), /parcial = 0 && ano > 2024/);
+  assert.equal(CARTOES.entrega.length, 5);
+});
+
+test('fila: os pendentes de anos anteriores são o que ficou do exercício anterior, e a conferência do passivo fecha', () => {
+  const valores = lerCsv('dados/valores.csv'), v = (ano: number, c: number) => numero(valores.find(row => Number(row.Ano) === ano && row['Nível'] === 'Conselho' && Number(row['Código']) === c)!.Valor);
+  for (const ano of [2023, 2024, 2025]) for (const [p, r, j] of [[56, 57, 58], [94, 95, 96]]) assert.equal(v(ano, p), v(ano - 1, p) + v(ano - 1, r) - v(ano - 1, j), `${ano} M${p}`);
+  assert.ok(lerCsv('dados/conferencias.csv').filter(row => row.Ano === '2025' && row['Conferência'].startsWith('Pendentes')).every(row => row['Situação'] === 'Fecha'));
 });

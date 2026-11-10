@@ -1,4 +1,4 @@
-/// Tem as 161 métricas que o Crea-SP manda ao Confea: código, nome da planilha, nome curto (para os gráficos), subprograma, tema, recorte (somada no exercício ou em 31/12), se divide por regional, a definição e a orientação do Confea.
+/// Tem as 161 métricas que o Crea-SP manda ao Confea: código, nome da planilha, nome curto (para os gráficos), subprograma, tema, período (somada no exercício ou em 31/12), se divide por regional, a definição e a orientação do Confea.
 table 'Métricas'
 	lineageTag: 169764c1-4ec6-5c83-aa6e-a369ce34d9d0
 
@@ -49,11 +49,11 @@ table 'Métricas'
 		sourceColumn: Tema
 		lineageTag: 89fe269b-9a9e-5b69-b439-a903bf476a34
 
-	column Recorte
+	column 'Período'
 		dataType: string
 		summarizeBy: none
-		sourceColumn: Recorte
-		lineageTag: 71f3c316-bb5f-5540-bef0-366e43be7fab
+		sourceColumn: Período
+		lineageTag: 96afd640-7f9f-502e-9fd6-d798b4965365
 
 	column 'Por regional'
 		dataType: int64
@@ -81,6 +81,6 @@ table 'Métricas'
 				let
 				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "metricas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
-				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Código", Int64.Type}, {"Rótulo", type text}, {"Nome", type text}, {"Nome curto", type text}, {"Subprograma", type text}, {"Ordem do subprograma", Int64.Type}, {"Tema", type text}, {"Recorte", type text}, {"Por regional", Int64.Type}, {"Definição", type text}, {"Orientação", type text}}, "pt-BR")
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Código", Int64.Type}, {"Rótulo", type text}, {"Nome", type text}, {"Nome curto", type text}, {"Subprograma", type text}, {"Ordem do subprograma", Int64.Type}, {"Tema", type text}, {"Período", type text}, {"Por regional", Int64.Type}, {"Definição", type text}, {"Orientação", type text}}, "pt-BR")
 				in
 				    Tipos

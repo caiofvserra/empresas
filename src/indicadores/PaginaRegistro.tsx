@@ -24,7 +24,7 @@ export default function PaginaRegistro({ ctx }: { ctx: CockpitCtx }) {
       <CartaoIndicador ctx={ctx} codigo={6} ficha="k-6" />
       <CartaoIndicador ctx={ctx} codigo={7} ficha="k-7" />
     </section>
-    <Bloco ctx={ctx} id="ex" area="ex" title={`Os indicadores do Registro em cada exercício${s(ctx).greId ? " · Conselho inteiro" : ""}`} exportar={exportarExercicios(ctx, DO_REGISTRO)}><TabelaExercicios ctx={ctx} codigos={DO_REGISTRO} meta="registro" /></Bloco>
+    <Bloco ctx={ctx} id="ex" area="ex" title={`Os indicadores do Registro em cada exercício${s(ctx).greId ? " (Conselho inteiro)" : ""}`} exportar={exportarExercicios(ctx, DO_REGISTRO)}><TabelaExercicios ctx={ctx} codigos={DO_REGISTRO} meta="registro" /></Bloco>
     <Bloco ctx={ctx} id="mo" area="mo" title="Profissionais ativos por modalidade" exportar={exportarModalidades(ctx)}><Modalidades ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="gr" area="gr" title="O registro em cada regional" exportar={exportarRegionais(ctx)}><Regionais ctx={ctx} /></Bloco>
     <Bloco ctx={ctx} id="fo" area="fo" title="As 30 métricas do Registro" exportar={exportarMetricas(ctx, ['Registro'])}><ListaMetricas ctx={ctx} subs={['Registro']} /></Bloco>
