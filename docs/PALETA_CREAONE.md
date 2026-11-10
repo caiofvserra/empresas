@@ -27,14 +27,14 @@ Verde (#007061), vermelho (#B02525) e laranja (#DD8A0B) continuam só como cores
 
 Escolhida pelo Caio em 08/11/2026 na folha de códigos (project-files/design/paleta-creaone/paleta-creaone.png) e definida em `src/cockpit/identidade.css`:
 
-O canto onde o menu encontra o cabeçalho tem a mesma cor nos dois; dali cada um segue no seu degradê ou fica numa cor só. Nenhum cabeçalho fica branco.
+O cabeçalho tem uma cor só, sem degradê, a mesma do canto onde encontra o menu; o menu pode seguir num degradê. Nenhum cabeçalho fica branco.
 
 | Painel | Canto | Menu | Cabeçalho |
 |---|---|---|---|
-| Presidência | Amarelo | Amarelo ao AM+15 | Amarelo ao creme (D19) |
-| Colegiados | M09 (#805800) | M09 ao Preto (D09) | M09, filete amarelo |
-| Empresas | Azul 700 | Azul 700 ao Azul 800 | Azul 700 ao Azul 500 (D10) |
-| Profissionais | Azul 500 | Azul 500 ao Azul 700 (D10) | Azul 500 à M14 (#1B3171) |
-| Atendimento | Azul | Azul ao AZ-90 (D25) | Azul ao AZ+40 (#3A476D) |
+| Presidência | Amarelo | Amarelo ao AM+15 | Amarelo |
+| Colegiados | M15 (#303C5B) | M15, item ativo amarelo | M15, filete amarelo |
+| Empresas | Azul 700 | Azul 700 ao Azul 800 | Azul 700 |
+| Profissionais | Azul 500 | Azul 500 ao Azul 700 (D10) | Azul 500 |
+| Atendimento | Azul | Azul ao AZ-90 (D25) | Azul |
 | Fiscalização | Preto | Preto | Preto, faixa zebrada amarela |
 | Financeiro | Azul 800 | Azul 800 ao A8-90 (D17) | Azul 800 |

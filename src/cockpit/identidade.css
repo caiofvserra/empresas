@@ -6,8 +6,8 @@
  *
  * As sete cores, escolhidas pelo Caio em 08/11/2026 na folha de project-files/design/paleta-creaone/ (códigos dela entre
  * parênteses): Empresas no Azul 700; Fiscalização no Preto com a faixa amarela; Presidência no Amarelo; Colegiados na mescla
- * M09 descendo ao Preto (D09); Profissionais no degradê D10 com cabeçalho até M14; Atendimento no degradê D25 com cabeçalho
- * até AZ+40; Financeiro no degradê D17 com cabeçalho Azul 800. O canto onde o menu encontra o cabeçalho tem a mesma cor.
+ * M15, com detalhes amarelos; Profissionais no degradê D10; Atendimento no degradê D25;
+ * Financeiro no degradê D17 com cabeçalho Azul 800. O cabeçalho tem uma cor só, a do canto onde encontra o menu.
  *
  * O fundo da página (--bg), os blocos no escuro (--surface) e as linhas (--line, --soft) ficam na raiz da página, marcada com
  * data-painel no <html>, porque os gráficos leem as cores dali (src/painel/chart.tsx).
@@ -36,9 +36,9 @@
 }
 .ck[data-painel="empresas"] .ck-header { --surface: #15265C; }
 .ck[data-painel="fiscalizacao"] .ck-header { --surface: #121212; }
-.ck[data-painel="conselho"] .ck-header { --surface: #4D3500; }
-.ck[data-painel="profissionais"] .ck-header { --surface: #15265C; }
-.ck[data-painel="atendimento"] .ck-header { --surface: #262E48; }
+.ck[data-painel="conselho"] .ck-header { --surface: #1F2738; }
+.ck[data-painel="profissionais"] .ck-header { --surface: #15265C; --muted: #EEF1FA; }
+.ck[data-painel="atendimento"] .ck-header { --surface: #3A476D; --muted: #FFFFFF; }
 .ck[data-painel="financeiro"] .ck-header { --surface: #15265C; }
 .ck:not([data-painel="presidencia"]) .ck-header select option { background: #0D1732; color: #F8F8F8; }
 /* Cabeçalho amarelo da Presidência: texto escuro também no tema escuro. */
@@ -51,14 +51,14 @@
 :root[data-painel="presidencia"] { --bg: #FFF4D6; --soft: #FFEDC2; --line: #EED9A0; }
 :root[data-painel="financeiro"] { --bg: #EDEEF2; --soft: #E4E6EC; --line: #D2D5DE; }
 :root[data-painel="atendimento"] { --bg: #EEF0F6; --soft: #E3E7F2; --line: #D1D7E8; }
-:root[data-painel="conselho"] { --bg: #F1EDE4; --soft: #EAE3D3; --line: #D9CFB8; }
+:root[data-painel="conselho"] { --bg: #ECEEF2; --soft: #E2E5EB; --line: #CDD2DC; }
 :root[data-painel="empresas"][data-theme="dark"] { --bg: #090D18; --surface: #111A33; --soft: #182447; --line: #24366E; }
 :root[data-painel="profissionais"][data-theme="dark"] { --bg: #081236; --surface: #0F1E57; --soft: #172A70; --line: #2A44A0; }
 :root[data-painel="fiscalizacao"][data-theme="dark"] { --bg: #000000; --surface: #121212; --soft: #1C1C1C; --line: #2E2E2E; }
 :root[data-painel="presidencia"][data-theme="dark"] { --bg: #0D1732; --surface: #15265C; --soft: #1D3070; --line: #2E4382; }
 :root[data-painel="financeiro"][data-theme="dark"] { --bg: #05070D; --surface: #0E1220; --soft: #161B2E; --line: #262D45; }
 :root[data-painel="atendimento"][data-theme="dark"] { --bg: #10142A; --surface: #1A2140; --soft: #232C52; --line: #36437A; }
-:root[data-painel="conselho"][data-theme="dark"] { --bg: #0F0B03; --surface: #1D1607; --soft: #2A200B; --line: #45351A; }
+:root[data-painel="conselho"][data-theme="dark"] { --bg: #0B0E16; --surface: #161C2B; --soft: #1F2738; --line: #303C5B; }
 @media (prefers-color-scheme: dark) {
   :root[data-painel="empresas"]:not([data-theme="light"]) { --bg: #090D18; --surface: #111A33; --soft: #182447; --line: #24366E; }
   :root[data-painel="profissionais"]:not([data-theme="light"]) { --bg: #081236; --surface: #0F1E57; --soft: #172A70; --line: #2A44A0; }
@@ -66,29 +66,29 @@
   :root[data-painel="presidencia"]:not([data-theme="light"]) { --bg: #0D1732; --surface: #15265C; --soft: #1D3070; --line: #2E4382; }
   :root[data-painel="financeiro"]:not([data-theme="light"]) { --bg: #05070D; --surface: #0E1220; --soft: #161B2E; --line: #262D45; }
   :root[data-painel="atendimento"]:not([data-theme="light"]) { --bg: #10142A; --surface: #1A2140; --soft: #232C52; --line: #36437A; }
-  :root[data-painel="conselho"]:not([data-theme="light"]) { --bg: #0F0B03; --surface: #1D1607; --soft: #2A200B; --line: #45351A; }
+  :root[data-painel="conselho"]:not([data-theme="light"]) { --bg: #0B0E16; --surface: #161C2B; --soft: #1F2738; --line: #303C5B; }
 }
 
-/* Regra do Caio (08/11/2026): o canto onde o menu encontra o cabeçalho tem a mesma cor nos dois; dali cada um segue no seu
-   degradê ou fica numa cor só. Nenhum cabeçalho branco. */
+/* Regra do Caio (08/11/2026): o cabeçalho tem uma cor só, sem degradê, a mesma do canto onde encontra o menu; o menu pode
+   seguir num degradê. Nenhum cabeçalho branco. */
 
-/* ---------- Empresas: Azul 700; o cabeçalho segue no degradê D10 até o Azul 500 ---------- */
-.ck[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #15265C, #0D1732); --head-bg: linear-gradient(90deg, #15265C, #3662E2); --head-linha: #15265C; }
+/* ---------- Empresas: Azul 700; cabeçalho Azul 700 ---------- */
+.ck[data-painel="empresas"] { --rail-bg: linear-gradient(180deg, #15265C, #0D1732); --head-bg: #15265C; --head-linha: #15265C; }
 .ck[data-painel="empresas"] .ck-eyebrow { color: #FFC640; }
 
-/* ---------- Profissionais: Azul 500 no canto; menu desce ao Azul 700 (D10), cabeçalho vai à mescla M14 ---------- */
+/* ---------- Profissionais: Azul 500; menu desce ao Azul 700 (D10), cabeçalho Azul 500 ---------- */
 .ck[data-painel="profissionais"] {
   --rail-bg: linear-gradient(180deg, #3662E2, #15265C); --rail-ink: rgba(255,255,255,.94); --rail-hover-bg: rgba(255,255,255,.16);
   --rail-on-bg: #FFFFFF; --rail-on-ink: #15265C; --rail-line: rgba(255,255,255,.26); --rail-borda: #15265C; --rail-foco: #FFFFFF; --logo-engrenagem: #FFFFFF;
-  --head-bg: linear-gradient(90deg, #3662E2, #1B3171); --head-linha: #1B3171;
+  --head-bg: #3662E2; --head-linha: #3662E2;
 }
 .ck[data-painel="profissionais"] .ck-eyebrow { color: #DFE4F2; }
 
-/* ---------- Atendimento: Azul no canto; menu clareia (D25), cabeçalho escurece até AZ+40 ---------- */
+/* ---------- Atendimento: Azul; menu clareia (D25), cabeçalho Azul ---------- */
 .ck[data-painel="atendimento"] {
   --rail-bg: linear-gradient(180deg, #6077B6, #6077B6 40%, #EFF1F8); --rail-ink: #FFFFFF; --rail-hover-bg: rgba(255,255,255,.18);
   --rail-on-bg: #3A476D; --rail-on-ink: #FFFFFF; --rail-line: rgba(58,71,109,.2); --rail-borda: #C7CFE5; --rail-foco: #3A476D;
-  --head-bg: linear-gradient(90deg, #6077B6, #3A476D 45%); --head-linha: #3A476D;
+  --head-bg: #6077B6; --head-linha: #6077B6;
 }
 .ck[data-painel="atendimento"] .ck-rail-bottom button { color: #3A476D; }
 .ck[data-painel="atendimento"] .ck-rail-bottom button:hover { color: #0D1732; background: rgba(58,71,109,.1); }
@@ -116,13 +116,13 @@
 .ck[data-painel="fiscalizacao"] .tile > header h3 { display: inline-block; max-width: calc(100% + 14px); margin-left: -14px; padding: 4px 10px 3px 14px; background: #FFB000; color: #000000; line-height: 1.15; vertical-align: top; }
 .ck[data-painel="fiscalizacao"] .tile > header h3 .selo-parceria { background: #000000; color: #FFB000; }
 
-/* ---------- Colegiados: mescla M09 no canto; menu escurece até o Preto (D09), cabeçalho fica no M09 ---------- */
+/* ---------- Colegiados: mescla M15 (entre cinza e azul), detalhes em amarelo ---------- */
 .ck[data-painel="conselho"] {
-  --rail-bg: linear-gradient(180deg, #805800, #000000); --rail-ink: rgba(255,255,255,.9); --rail-hover-bg: rgba(255,255,255,.12);
-  --rail-on-bg: #FFB000; --rail-on-ink: #0D1732; --rail-line: rgba(255,255,255,.18); --rail-borda: #805800; --rail-foco: #FFB000; --logo-engrenagem: #FFB000;
-  --head-bg: #805800; --head-linha: #805800; --head-filete: #FFB000; --head-filete-h: 3px;
+  --rail-bg: #303C5B; --rail-ink: rgba(255,255,255,.9); --rail-hover-bg: rgba(255,255,255,.12);
+  --rail-on-bg: #FFB000; --rail-on-ink: #0D1732; --rail-line: rgba(255,255,255,.18); --rail-borda: #FFB000; --rail-foco: #FFB000; --logo-engrenagem: #FFB000;
+  --head-bg: #303C5B; --head-linha: #303C5B; --head-filete: #FFB000; --head-filete-h: 3px;
 }
-.ck[data-painel="conselho"] .ck-eyebrow { color: #FFE3A6; }
+.ck[data-painel="conselho"] .ck-eyebrow { color: #FFC640; }
 
 /* ---------- Financeiro: Azul 800 no canto; menu clareia (D17), cabeçalho fica no Azul 800 ---------- */
 .ck[data-painel="financeiro"] {
@@ -133,11 +133,11 @@
 .ck[data-painel="financeiro"] .ck-rail-bottom button:hover { color: #0D1732; background: rgba(13,23,50,.08); }
 .ck[data-painel="financeiro"] .ck-eyebrow { color: #CFD1D6; }
 
-/* ---------- Presidência: Amarelo (as cores que eram dos Colegiados); o cabeçalho clareia até o creme (D19) ---------- */
+/* ---------- Presidência: Amarelo (as cores que eram dos Colegiados); cabeçalho Amarelo ---------- */
 .ck[data-painel="presidencia"] {
   --rail-bg: linear-gradient(180deg, #FFB000, #E19B01); --rail-ink: #0D1732; --rail-hover-ink: #0D1732; --rail-hover-bg: rgba(13,23,50,.1);
   --rail-on-bg: #0D1732; --rail-on-ink: #FFC640; --rail-line: rgba(13,23,50,.2); --rail-borda: #E19B01; --rail-foco: #0D1732; --logo-engrenagem: #0D1732;
-  --head-bg: linear-gradient(90deg, #FFB000, #FFF6DC 55%); --head-linha: #EED9A0;
+  --head-bg: #FFB000; --head-linha: #E19B01;
 }
 .ck[data-painel="presidencia"] .ck-rail-painel { color: #0D1732; }
 .ck[data-painel="presidencia"] .ck-rail-painel:hover { color: #0D1732; background: rgba(13,23,50,.12); }
