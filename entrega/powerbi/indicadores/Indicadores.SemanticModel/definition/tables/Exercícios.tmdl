@@ -1,0 +1,68 @@
+/// Tem os exercícios desde 2022; o do ano da data vai até ela (asterisco no rótulo). É a tabela da segmentação "Exercício". Traz também as metas 5.1 a 5.3 do PMF, que vêm de fora da planilha (GovAdm e atendimento), do Conselho inteiro, em %.
+table 'Exercícios'
+	lineageTag: ee9731d9-8122-595b-8010-49b1641590ec
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: d8dbfc12-64e6-561c-8ccb-c4eaa0840de3
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		sortByColumn: Ano
+		lineageTag: 09e35a5f-21ca-5399-a23b-0767dfc0fe34
+
+	column Parcial
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Parcial
+		lineageTag: de8bee10-dd21-5d62-936d-23e853fc4abd
+
+	column 'Padrão'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Padrão
+		lineageTag: 48805129-020f-5f33-ae12-3e81ec8e7692
+
+	column 'Infrações julgadas em 180 dias'
+		dataType: double
+		formatString: #,##0.##
+		isHidden
+		summarizeBy: none
+		sourceColumn: Infrações julgadas em 180 dias
+		lineageTag: e73de989-d356-5663-9ad7-41e15d03ab62
+
+	column 'Éticos julgados em 360 dias'
+		dataType: double
+		formatString: #,##0.##
+		isHidden
+		summarizeBy: none
+		sourceColumn: Éticos julgados em 360 dias
+		lineageTag: 10711084-3b75-539e-9a60-aa3cff7cca11
+
+	column 'Registro em 30 dias'
+		dataType: double
+		formatString: #,##0.##
+		isHidden
+		summarizeBy: none
+		sourceColumn: Registro em 30 dias
+		lineageTag: 23d1132d-f25b-5b4b-9259-fba5447a6b88
+
+	partition 'Exercícios' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "exercicios.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Rótulo", type text}, {"Parcial", Int64.Type}, {"Padrão", Int64.Type}, {"Infrações julgadas em 180 dias", type number}, {"Éticos julgados em 360 dias", type number}, {"Registro em 30 dias", type number}}, "pt-BR")
+				in
+				    Tipos

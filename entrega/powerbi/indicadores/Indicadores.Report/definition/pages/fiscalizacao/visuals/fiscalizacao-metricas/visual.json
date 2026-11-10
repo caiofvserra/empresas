@@ -1,0 +1,106 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "fiscalizacao-metricas",
+  "position": {
+    "x": 853,
+    "y": 160,
+    "z": 12000,
+    "width": 411,
+    "height": 544,
+    "tabOrder": 12000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Métricas"
+                    }
+                  },
+                  "Property": "Rótulo"
+                }
+              },
+              "queryRef": "Métricas.Rótulo",
+              "nativeQueryRef": "Rótulo",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Métricas"
+                    }
+                  },
+                  "Property": "Nome"
+                }
+              },
+              "queryRef": "Métricas.Nome",
+              "nativeQueryRef": "Nome",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Métrica: Fiscalização"
+                }
+              },
+              "queryRef": "Medidas.Métrica: Fiscalização",
+              "nativeQueryRef": "Métrica: Fiscalização",
+              "displayName": "Exercício"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "No exercício anterior: Fiscalização"
+                }
+              },
+              "queryRef": "Medidas.No exercício anterior: Fiscalização",
+              "nativeQueryRef": "No exercício anterior: Fiscalização",
+              "displayName": "Anterior"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'As 24 métricas da Fiscalização'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

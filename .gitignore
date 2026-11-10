@@ -21,6 +21,7 @@ dist-fiscalizacao/
 dist-financeiro/
 dist-atendimento/
 dist-conselho/
+dist-indicadores/
 .claude/worktrees/
 dist-painel/
 # Triagem do PNCP com número de controle, CNPJ e objeto (scripts/pncp-triagem.py).

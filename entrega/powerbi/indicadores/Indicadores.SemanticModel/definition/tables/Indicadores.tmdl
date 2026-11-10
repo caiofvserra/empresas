@@ -1,0 +1,97 @@
+/// Tem os 29 indicadores que o Confea calcula com as métricas do Crea-SP (os seis da 3ª instância são do Confea e ficam de fora): nome curto, nome oficial, objetivo, fórmula, unidade e a referência do Sistema e do Sudeste em 2021 (Caderno de Resultados), em %, nas taxas.
+table Indicadores
+	lineageTag: 0bb4af9a-bffc-57f0-a787-cc2293539b5d
+
+	column Indicador
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Indicador
+		lineageTag: a33b5ab4-7b8f-5682-96a8-357cd2b9fbd3
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		sortByColumn: Indicador
+		lineageTag: e4583882-23fc-58d8-9bbc-de5aa758ee87
+
+	column 'Nome curto'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome curto
+		sortByColumn: Indicador
+		lineageTag: 2ae774cd-c7a2-556b-a684-0d652fd19a74
+
+	column Nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome
+		lineageTag: fe42f282-880d-5d5c-a3aa-e66a421b8d67
+
+	column Subprograma
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Subprograma
+		sortByColumn: 'Ordem do subprograma'
+		lineageTag: 90e6d664-ba27-50c2-bd6c-c30c0c535113
+
+	column 'Ordem do subprograma'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do subprograma
+		lineageTag: 640d342c-d1d7-502a-a779-8054453b4055
+
+	column Objetivo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Objetivo
+		lineageTag: 6e34aab3-ea61-5e91-9f06-66ab8908168e
+
+	column 'Fórmula'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Fórmula
+		lineageTag: c72f52e3-03c4-5d0d-b88d-3dab54e2a084
+
+	column Unidade
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Unidade
+		lineageTag: 2b9f5217-9581-52c1-9496-a67fd0cf3400
+
+	column 'Por regional'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Por regional
+		lineageTag: ad8e529d-7b4d-541f-8c6f-b425f0cde300
+
+	column 'Sistema em 2021'
+		dataType: double
+		formatString: #,##0.##
+		isHidden
+		summarizeBy: none
+		sourceColumn: Sistema em 2021
+		lineageTag: 6f935e38-fca0-5ffe-b8d4-5c903ea16dc7
+
+	column 'Sudeste em 2021'
+		dataType: double
+		formatString: #,##0.##
+		isHidden
+		summarizeBy: none
+		sourceColumn: Sudeste em 2021
+		lineageTag: c2256103-560a-5941-b38c-273b2ab68c4c
+
+	partition Indicadores = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "indicadores.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Indicador", Int64.Type}, {"Rótulo", type text}, {"Nome curto", type text}, {"Nome", type text}, {"Subprograma", type text}, {"Ordem do subprograma", Int64.Type}, {"Objetivo", type text}, {"Fórmula", type text}, {"Unidade", type text}, {"Por regional", Int64.Type}, {"Sistema em 2021", type number}, {"Sudeste em 2021", type number}}, "pt-BR")
+				in
+				    Tipos

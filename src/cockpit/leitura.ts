@@ -22,7 +22,9 @@ export type PaginaFiscalizacao = 'fiscalizacao' | 'resultado' | 'malha' | 'contr
 export type PaginaFinanceiro = 'arrecadacao' | 'receita' | 'divida' | 'orcamento';
 export type PaginaAtendimento = 'protocolos' | 'equipe' | 'demanda';
 export type PaginaConselho = 'colegiado' | 'processos' | 'conselheiros' | 'decisoes' | 'representacao';
-export type PageId = PaginaPresidencia | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaFinanceiro | PaginaAtendimento | PaginaConselho;
+/** Painel de Indicadores do Sistema (10/11/2026): a planilha do Confea por subprograma e a entrega. */
+export type PaginaIndicadores = 'confea-registro' | 'confea-fiscalizacao' | 'confea-julgamento' | 'confea-suporte' | 'confea-entrega';
+export type PageId = PaginaPresidencia | PaginaEmpresas | PaginaProfissionais | PaginaFiscalizacao | PaginaFinanceiro | PaginaAtendimento | PaginaConselho | PaginaIndicadores;
 export const pageIdsPresidencia: PaginaPresidencia[] = ['resumo', 'regionais', 'riscos', 'pais'];
 export const pageIdsEmpresas: PaginaEmpresas[] = ['mercado', 'evolucao', 'rt', 'vinculos'];
 export const pageIdsProfissionais: PaginaProfissionais[] = ['profissionais', 'fluxo', 'atuacao', 'formacao', 'trabalho'];
@@ -30,11 +32,12 @@ export const pageIdsFiscalizacao: PaginaFiscalizacao[] = ['fiscalizacao', 'resul
 export const pageIdsFinanceiro: PaginaFinanceiro[] = ['arrecadacao', 'receita', 'divida', 'orcamento'];
 export const pageIdsAtendimento: PaginaAtendimento[] = ['protocolos', 'equipe', 'demanda'];
 export const pageIdsConselho: PaginaConselho[] = ['colegiado', 'processos', 'conselheiros', 'decisoes', 'representacao'];
-export const pageIds: PageId[] = [...pageIdsPresidencia, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao, ...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho];
+export const pageIdsIndicadores: PaginaIndicadores[] = ['confea-registro', 'confea-fiscalizacao', 'confea-julgamento', 'confea-suporte', 'confea-entrega'];
+export const pageIds: PageId[] = [...pageIdsPresidencia, ...pageIdsEmpresas, ...pageIdsProfissionais, ...pageIdsFiscalizacao, ...pageIdsFinanceiro, ...pageIdsAtendimento, ...pageIdsConselho, ...pageIdsIndicadores];
 /** Painel em que cada página está: um destaque de outro painel abre aquele painel. */
-export type PainelDaPagina = 'presidencia' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho';
+export type PainelDaPagina = 'presidencia' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho' | 'indicadores';
 const paginasDosPaineis: [Exclude<PainelDaPagina, 'presidencia'>, PageId[]][] = [['empresas', pageIdsEmpresas], ['profissionais', pageIdsProfissionais], ['fiscalizacao', pageIdsFiscalizacao],
-  ['financeiro', pageIdsFinanceiro], ['atendimento', pageIdsAtendimento], ['conselho', pageIdsConselho]];
+  ['financeiro', pageIdsFinanceiro], ['atendimento', pageIdsAtendimento], ['conselho', pageIdsConselho], ['indicadores', pageIdsIndicadores]];
 export const painelDaPagina = (page: PageId): PainelDaPagina => paginasDosPaineis.find(([, paginas]) => paginas.includes(page))?.[0] ?? 'presidencia';
 export interface Metas { cobertura: number; rt: number; adimplencia: number; recuperacao: number; regularizacao: number; atendimento: number }
 /** Meta de RT em 95% (05/11/2026): o responsável técnico é condição do registro (Lei 5.194/66, art. 8º), então 40% fazia 78% parecer vitória. */

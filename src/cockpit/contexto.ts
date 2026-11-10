@@ -21,6 +21,7 @@ import type { Concentracao, Permanencia, QuadroDemanda } from '../domain/mercado
 import type { Acumulado, Carteira, QuadroDivida, ReceitaMensal } from '../domain/gestao';
 import type { QuadroColegiado } from '../domain/colegiado';
 import type { Presidencia } from '../presidencia/fotos';
+import type { QuadroSistema } from '../domain/sistema-confea';
 import type { BaseAtendimento, MesAtendimento, QuadroAtendimento, QuadroDemandaAtendimento } from '../domain/atendimento';
 import type { Profissional } from '../domain/profissionais';
 import type { InstitutionalServiceRequest } from '../domain/institutional';
@@ -63,6 +64,8 @@ export interface CockpitCtx extends Ctx {
   gestao: Gestao | null;
   /** Painel da Presidência (07/11/2026): as fotos dos indicadores de todos os painéis nos 13 fins de mês até a data. Nulo nos outros painéis. */
   presidencia: Presidencia | null;
+  /** Painel de Indicadores do Sistema (10/11/2026): as métricas e os indicadores da planilha do Confea no exercício escolhido. Nulo nos outros painéis. */
+  sistema: QuadroSistema | null;
 }
 export interface Gestao {
   /** Lançamentos de receita, despesa, diárias, contratos e pessoal do Conselho, lidos na data de referência. */

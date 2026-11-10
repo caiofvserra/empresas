@@ -12,8 +12,8 @@ const rotulos = (lista: string) => {
   return [...cockpit.slice(inicio, cockpit.indexOf('\n];', inicio)).matchAll(/label: '([^']+)'/g)].map(m => m[1]);
 };
 
-test('o menu do site lista os sete painéis, cada um com o seu HTML', () => {
-  assert.deepEqual(paineisDoMenu.map(p => p.id), ['presidencia', 'empresas', 'profissionais', 'fiscalizacao', 'conselho', 'financeiro', 'atendimento']);
+test('o menu do site lista os oito painéis, cada um com o seu HTML', () => {
+  assert.deepEqual(paineisDoMenu.map(p => p.id), ['presidencia', 'empresas', 'profissionais', 'fiscalizacao', 'conselho', 'financeiro', 'atendimento', 'indicadores']);
   const vite = readFileSync(join(raiz, 'vite.config.ts'), 'utf8');
   for (const painel of paineisDoMenu) {
     assert.ok(existsSync(join(raiz, painel.arquivo)), `${painel.arquivo} não existe`);
@@ -24,7 +24,7 @@ test('o menu do site lista os sete painéis, cada um com o seu HTML', () => {
 });
 
 test('as páginas de cada painel no menu são as mesmas do menu lateral do painel', () => {
-  const listas: Record<string, string> = { presidencia: 'paginasPresidencia', empresas: 'paginasEmpresas', profissionais: 'paginasProfissionais', fiscalizacao: 'paginasFiscalizacao', conselho: 'paginasConselho', financeiro: 'paginasFinanceiro', atendimento: 'paginasAtendimento' };
+  const listas: Record<string, string> = { presidencia: 'paginasPresidencia', empresas: 'paginasEmpresas', profissionais: 'paginasProfissionais', fiscalizacao: 'paginasFiscalizacao', conselho: 'paginasConselho', financeiro: 'paginasFinanceiro', atendimento: 'paginasAtendimento', indicadores: 'paginasIndicadores' };
   for (const painel of paineisDoMenu) assert.deepEqual(painel.paginas, rotulos(listas[painel.id]), `páginas de ${painel.nome}`);
 });
 

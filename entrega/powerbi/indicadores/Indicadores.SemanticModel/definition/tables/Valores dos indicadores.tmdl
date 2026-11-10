@@ -1,0 +1,61 @@
+/// Guarda cada indicador já calculado pela fórmula da planilha, em cada exercício, do Conselho inteiro e de cada regional (só nos indicadores cujas métricas se dividem por regional). As taxas em %. Sai é 0 quando falta métrica; Faltam lista quais.
+table 'Valores dos indicadores'
+	isHidden
+	lineageTag: 446d09ae-adf8-543c-a8ad-668694612929
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 4dc86145-2587-5663-bdce-2b7d76b924e6
+
+	column 'Nível'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nível
+		lineageTag: 27542d31-81b9-5ff7-83cf-96b9d4227206
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: 511e467d-426c-5ab3-90ad-689599e82d0e
+
+	column Indicador
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Indicador
+		lineageTag: 92bd64d8-714f-5786-9d17-7d700e77faff
+
+	column Valor
+		dataType: double
+		formatString: #,##0.##
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: 8bd5c4bf-1968-58b9-9583-da774c721570
+
+	column Sai
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Sai
+		lineageTag: c4ca8cae-a8f0-5cd8-b31c-611671316865
+
+	column Faltam
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Faltam
+		lineageTag: 6f38e70c-aa16-571a-931e-c1540d93b16d
+
+	partition 'Valores dos indicadores' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "valores-indicadores.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Nível", type text}, {"GRE", type text}, {"Indicador", Int64.Type}, {"Valor", type number}, {"Sai", Int64.Type}, {"Faltam", type text}}, "pt-BR")
+				in
+				    Tipos

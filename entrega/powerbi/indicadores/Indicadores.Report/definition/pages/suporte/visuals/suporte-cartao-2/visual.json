@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "suporte-cartao-2",
+  "position": {
+    "x": 225,
+    "y": 68,
+    "z": 4000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Inadimplência dos profissionais"
+                }
+              },
+              "queryRef": "Medidas.Inadimplência dos profissionais",
+              "nativeQueryRef": "Inadimplência dos profissionais"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Inadimplência dos profissionais"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Inadimplência dos profissionais",
+              "nativeQueryRef": "Comparação: Inadimplência dos profissionais"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Inadimplência dos profissionais"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Inadimplência dos profissionais",
+              "nativeQueryRef": "Detalhe: Inadimplência dos profissionais"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Inadimplência dos profissionais'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

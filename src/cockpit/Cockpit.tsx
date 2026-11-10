@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import type { ComponentType, ReactNode } from 'react';
-import { AlarmClock, ArrowLeft, ArrowUpRight, BadgeCheck, Briefcase, Building2, CalendarClock, ChartPie, ChevronDown, Construction, Database, FileSignature, Gavel, Globe2, GraduationCap, Handshake, HardHat, Headset, Landmark, Map as MapIcon, Moon, Network, RotateCcw, Scale, ScanSearch, ScrollText, Search, ShieldCheck, SlidersHorizontal, Sun, Target, TrendingUp, Users, Wallet, X } from 'lucide-react';
+import { AlarmClock, ArrowLeft, ArrowUpRight, BadgeCheck, Briefcase, ClipboardCheck, ListChecks, Building2, CalendarClock, ChartPie, ChevronDown, Construction, Database, FileSignature, Gavel, Globe2, GraduationCap, Handshake, HardHat, Headset, Landmark, Map as MapIcon, Moon, Network, RotateCcw, Scale, ScanSearch, ScrollText, Search, ShieldCheck, SlidersHorizontal, Sun, Target, TrendingUp, Users, Wallet, X } from 'lucide-react';
 import { dataset } from '../domain/dataset';
 import { datasReferencia as datasReferenciaDe, datasetAt, fiscalizacaoAt } from '../domain/tempo';
 import { defaultFilters } from '../domain/types';
@@ -79,6 +79,13 @@ import PaginaProtocolos from '../atendimento/PaginaProtocolos';
 import PaginaEquipe from '../atendimento/PaginaEquipe';
 import PaginaDemanda from '../atendimento/PaginaDemanda';
 import '../atendimento/atendimento.css';
+import PaginaRegistroConfea from '../indicadores/PaginaRegistro';
+import PaginaFiscalizacaoConfea from '../indicadores/PaginaFiscalizacao';
+import PaginaJulgamentoConfea from '../indicadores/PaginaJulgamento';
+import PaginaSuporteConfea from '../indicadores/PaginaSuporte';
+import PaginaEntregaConfea from '../indicadores/PaginaEntrega';
+import '../indicadores/indicadores.css';
+import { exercicioPadrao, exerciciosNaData, quadroSistema } from '../domain/sistema-confea';
 import { buildAtendimento, quadroAtendimento, demandaAtendimento, serieMensal, tiposServico } from '../domain/atendimento';
 import type { RecorteAtendimento, TipoServico } from '../domain/atendimento';
 import { adimplenciaPorMunicipio, modalidadeDaCamara, buildCarteira, despesaAcumulada, despesaMensal, diariasMensais, distanciaUnidade, mesesAteData, municipioDoSolicitante, quadroDivida, receitaAcumulada, receitaMensal, unidadesAtendimento } from '../domain/gestao';
@@ -169,9 +176,20 @@ const paginasConselho: PaginaDef[] = [
   { id: 'decisoes', label: 'Decisões', title: 'As decisões', subtitle: 'O que as câmaras decidem nos autos de infração, as multas por infração, o que o Plenário mantém ou reforma e o que acontece com as multas depois', icon: Gavel, Page: PaginaDecisoes },
   { id: 'representacao', label: 'Representação', title: 'A representação', subtitle: 'Como as cadeiras se dividem entre as câmaras, as mulheres no Conselho e no registro, o que as organizações com cadeira recebem e as deliberações das atas', icon: Handshake, Page: PaginaRepresentacao },
 ];
-export type PainelId = 'presidencia' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho';
+/**
+ * Painel de Indicadores do Sistema (10/11/2026): a planilha de dados e indicadores que o Confea pede ao Crea-SP (Anexo IV da
+ * PL-2260/2023), por subprograma, com o exercício no alto no lugar do período, e a página que confere a entrega antes do envio.
+ */
+const paginasIndicadores: PaginaDef[] = [
+  { id: 'confea-registro', label: 'Registro', title: 'Registro', subtitle: 'Os indicadores 1 a 7 da planilha do Confea: crescimento de profissionais e empresas, quadro técnico, ART e CAT, em cada exercício e contra o Sistema', icon: FileSignature, Page: PaginaRegistroConfea },
+  { id: 'confea-fiscalizacao', label: 'Fiscalização', title: 'Fiscalização', subtitle: 'Os indicadores 11 a 15 e a meta 2.3 do PMF: autuação, fiscalizações por fiscal por dia, municípios fiscalizados e denúncias apuradas', icon: ShieldCheck, Page: PaginaFiscalizacaoConfea },
+  { id: 'confea-julgamento', label: 'Julgamento', title: 'Julgamento', subtitle: 'A eficiência e a eficácia do julgamento em cada instância e tipo de processo, a fila e as metas 5.1 e 5.2 do PMF', icon: Gavel, Page: PaginaJulgamentoConfea },
+  { id: 'confea-suporte', label: 'Suporte e Liderança', title: 'Suporte e Liderança', subtitle: 'Inadimplência, anuidades e multas não pagas, o custo da fiscalização conta a conta, o quadro de pessoal e a representação', icon: Users, Page: PaginaSuporteConfea },
+  { id: 'confea-entrega', label: 'Entrega ao Confea', title: 'Entrega ao Confea', subtitle: 'O que falta antes de mandar a planilha: métricas vazias, conferências que não fecham, o calendário de entregas e as notas do Caderno de 2021', icon: ClipboardCheck, Page: PaginaEntregaConfea },
+];
+export type PainelId = 'presidencia' | 'empresas' | 'profissionais' | 'fiscalizacao' | 'financeiro' | 'atendimento' | 'conselho' | 'indicadores';
 /** `filtro`: o terceiro filtro do alto, a câmara, a modalidade (com o gênero), o colegiado ou, no Atendimento, o tipo de serviço e a unidade; no Financeiro não há terceiro filtro. */
-interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; filtro: 'camara' | 'modalidade' | 'colegiado' | 'atendimento' | 'nenhum' }
+interface Painel { id: PainelId; nome: string; paginas: PaginaDef[]; periodos: number[]; storage: string; filtro: 'camara' | 'modalidade' | 'colegiado' | 'atendimento' | 'exercicio' | 'nenhum' }
 const paineis: Record<PainelId, Painel> = {
   presidencia: { id: 'presidencia', nome: 'Inteligência Estratégica · Presidência', paginas: paginasPresidencia, periodos: [3, 6, 12, 24], storage: 'crea-presidencia-v1', filtro: 'camara' },
   empresas: { id: 'empresas', nome: 'Inteligência Estratégica · Empresas', paginas: paginasEmpresas, periodos: [3, 6, 12, 24], storage: 'crea-empresas-v1', filtro: 'camara' },
@@ -180,6 +198,7 @@ const paineis: Record<PainelId, Painel> = {
   financeiro: { id: 'financeiro', nome: 'Inteligência Estratégica · Financeiro', paginas: paginasFinanceiro, periodos: [3, 6, 12, 24], storage: 'crea-financeiro-v1', filtro: 'nenhum' },
   atendimento: { id: 'atendimento', nome: 'Inteligência Estratégica · Atendimento', paginas: paginasAtendimento, periodos: [3, 6, 12, 24], storage: 'crea-atendimento-v2', filtro: 'atendimento' },
   conselho: { id: 'conselho', nome: 'Inteligência Estratégica · Colegiados', paginas: paginasConselho, periodos: [3, 6, 12, 24], storage: 'crea-conselho-v3', filtro: 'colegiado' },
+  indicadores: { id: 'indicadores', nome: 'Inteligência Estratégica · Indicadores do Sistema', paginas: paginasIndicadores, periodos: [], storage: 'crea-indicadores-v1', filtro: 'exercicio' },
 };
 /** Atalhos do menu lateral, só no painel da Presidência. Nenhum painel tem atalho para a Presidência (pedido do Caio, 03/11/2026); no site, todos têm o botão Voltar para o menu inicial (07/11/2026). */
 const atalhos: { id: PainelId; label: string; title: string; icon: ComponentType<{ size?: number }> }[] = [
@@ -189,6 +208,7 @@ const atalhos: { id: PainelId; label: string; title: string; icon: ComponentType
   { id: 'financeiro', label: 'Financeiro', title: 'Abrir o painel Financeiro', icon: Wallet },
   { id: 'atendimento', label: 'Atendimento', title: 'Abrir o painel de Atendimento', icon: Headset },
   { id: 'conselho', label: 'Colegiados', title: 'Abrir o painel de Colegiados', icon: Scale },
+  { id: 'indicadores', label: 'Indicadores', title: 'Abrir o painel de Indicadores do Sistema Confea/Crea', icon: ListChecks },
 ];
 /** Endereço de outro painel: no site, o HTML de cada painel (presidencia.html, empresas.html...), e index.html é o menu que lista todos; na entrega em arquivo único, os HTML lado a lado na pasta entrega. */
 const naEntrega = /painel-[a-z-]+\.html$/.test(window.location.pathname);
@@ -203,6 +223,7 @@ const arquivos: Record<PainelId, { site: string; entrega: string }> = {
   financeiro: { site: 'financeiro.html', entrega: 'painel-financeiro-creasp.html' },
   atendimento: { site: 'atendimento.html', entrega: 'painel-atendimento-creasp.html' },
   conselho: { site: 'conselho.html', entrega: 'painel-conselho-creasp.html' },
+  indicadores: { site: 'indicadores.html', entrega: 'painel-indicadores-creasp.html' },
 };
 export function enderecoPainel(id: PainelId, pagina?: PageId) {
   const arquivo = naEntrega ? arquivos[id].entrega : arquivos[id].site;
@@ -222,11 +243,11 @@ const filtros = (greIds: string[], period: number, cityId = '', extra: { porte?:
 const portes: CompanySize[] = ['Microempresa', 'Pequena empresa', 'Média empresa', 'Grande empresa'];
 const situacoes: Establishment['rfbStatus'][] = ['Ativa', 'Baixada', 'Suspensa', 'Inapta'];
 /** Página e filtros no endereço: `#registro?gre=GRE5&cidade=3550308&camara=Civil&meses=24&data=2026-06-30`. */
-type Endereco = Record<'gre' | 'cidade' | 'camara' | 'colegiado' | 'modalidade' | 'genero' | 'meses' | 'data' | 'porte' | 'situacao' | 'servico' | 'unidade', string>;
+type Endereco = Record<'gre' | 'cidade' | 'camara' | 'colegiado' | 'modalidade' | 'genero' | 'meses' | 'data' | 'porte' | 'situacao' | 'servico' | 'unidade' | 'exercicio', string>;
 function lerEndereco(): Endereco & { pagina: string } {
   const [pagina, consulta = ''] = window.location.hash.slice(1).split('?'), params = new URLSearchParams(consulta);
   const chave = (name: keyof Endereco) => params.get(name) ?? '';
-  return { pagina, gre: chave('gre'), cidade: chave('cidade'), camara: chave('camara'), colegiado: chave('colegiado'), modalidade: chave('modalidade'), genero: chave('genero'), meses: chave('meses'), data: chave('data'), porte: chave('porte'), situacao: chave('situacao'), servico: chave('servico'), unidade: chave('unidade') };
+  return { pagina, gre: chave('gre'), cidade: chave('cidade'), camara: chave('camara'), colegiado: chave('colegiado'), modalidade: chave('modalidade'), genero: chave('genero'), meses: chave('meses'), data: chave('data'), porte: chave('porte'), situacao: chave('situacao'), servico: chave('servico'), unidade: chave('unidade'), exercicio: chave('exercicio') };
 }
 function gravarEndereco(pagina: string, valores: Endereco) {
   const params = new URLSearchParams(); for (const [name, value] of Object.entries(valores)) if (value) params.set(name, value);
@@ -285,6 +306,9 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
   const [period, setPeriod] = useState(() => { const value = Number(inicial.meses); return Number.isInteger(value) && value >= 1 && value <= dataset.months.length ? value : 12; });
   const dePresidencia = painel.id === 'presidencia', deProfissionais = painel.id === 'profissionais', deFiscalizacao = painel.id === 'fiscalizacao', deGestao = painel.id === 'conselho' || painel.id === 'financeiro' || painel.id === 'atendimento';
   const [anchorSel, setAnchorSel] = useState<string | null>(() => datasReferencia.includes(inicial.data) ? inicial.data : null);
+  // Indicadores do Sistema (10/11/2026): o exercício da planilha no lugar do período; vazio é o último completo na data.
+  const [exercicio, setExercicio] = useState(() => /^\d{4}$/.test(inicial.exercicio) ? inicial.exercicio : '');
+  const deIndicadores = painel.id === 'indicadores';
   const [avisoPeriodo, setAvisoPeriodo] = useState('');
   // Mais filtros (05/11/2026): porte e situação do CNPJ na Receita, que o motor já aceitava e o cabeçalho não oferecia.
   const [porte, setPorte] = useState(() => (portes as string[]).includes(inicial.porte) ? inicial.porte : '');
@@ -308,7 +332,7 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
   useEffect(() => { const media = window.matchMedia('(prefers-color-scheme: dark)'), update = () => setSystemDark(media.matches); media.addEventListener('change', update); return () => media.removeEventListener('change', update); }, []);
   useEffect(() => { if (theme) document.documentElement.dataset.theme = theme; else delete document.documentElement.dataset.theme; gravar('tema', theme); }, [theme]);
   useEffect(() => { gravar('pagina', page); setFocus(null); }, [page]);
-  useEffect(() => { gravarEndereco(page, { gre, cidade, camara, colegiado, modalidade, genero, meses: period === 12 ? '' : String(period), data: anchorSel ?? '', porte, situacao, servico, unidade }); }, [page, gre, cidade, camara, colegiado, modalidade, genero, period, anchorSel, porte, situacao, servico, unidade]);
+  useEffect(() => { gravarEndereco(page, { gre, cidade, camara, colegiado, modalidade, genero, meses: period === 12 ? '' : String(period), data: anchorSel ?? '', porte, situacao, servico, unidade, exercicio }); }, [page, gre, cidade, camara, colegiado, modalidade, genero, period, anchorSel, porte, situacao, servico, unidade, exercicio]);
   useEffect(() => { gravar('metas', metas); }, [metas]);
   // Atendimento, estrutura e orçamento vêm do modelo institucional (cerca de 1 s na primeira vez): calculado depois da primeira pintura.
   useEffect(() => { if (!deGestao && !dePresidencia) return; let alive = true; setEstrutura(null); const id = window.setTimeout(() => { const value = estruturaDe(view, gre || null, period); if (alive) setEstrutura(value); }, 30); return () => { alive = false; window.clearTimeout(id); }; }, [view, gre, period, deGestao, dePresidencia]);
@@ -328,11 +352,11 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
       if (event.key === 'Escape') { const balao = document.querySelector<HTMLDetailsElement>('details.ficha-pop[open], details.exporta-pop[open], details.ck-mais[open]');
         if (balao) { balao.open = false; balao.querySelector('summary')?.focus(); } else if (detail) setDetail(null); else if (modal) setModal(null); else setFocus(null); return; }
       if (event.ctrlKey || event.metaKey || event.altKey || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName) || modal || detail) return;
-      if (event.key === '/' && !dePresidencia && !deProfissionais && !deGestao) { event.preventDefault(); buscarRef.current(); return; }
+      if (event.key === '/' && !dePresidencia && !deProfissionais && !deGestao && !deIndicadores) { event.preventDefault(); buscarRef.current(); return; }
       if (/^[0-9]$/.test(event.key)) { const index = event.key === '0' ? 9 : Number(event.key) - 1; if (pages[index]) setPage(pages[index].id); }
     };
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key);
-  }, [detail, modal, pages, dePresidencia, deProfissionais, deGestao]);
+  }, [detail, modal, pages, dePresidencia, deProfissionais, deGestao, deIndicadores]);
   const buscarRef = useRef<() => void>(() => {});
 
   const subset = useMemo(() => camara ? view.companies.filter(row => camaraMap.get(row.id) === camara).map(row => row.id) : undefined, [view, camara]);
@@ -393,6 +417,10 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
       atendimento: painel.id === 'atendimento' ? lerAtendimento(anchor, period, { greId: gre || null, cityId: cidade || null, tipo: servico || null, unidade: unidade || null }) : null,
       colegiado: painel.id === 'conselho' || dePresidencia ? quadroColegiado(buildColegiado(dataset), base.profissionais, anchor, w.start, w.prevStart, w.prevEnd, { colegiado: (dePresidencia ? camara as Colegiado : colegiado) || null, greId: gre || null, cityId: cidade || null }) : null };
   }, [deGestao, dePresidencia, painel.id, anchor, period, gre, cidade, colegiado, camara, servico, unidade, base, view]);
+  // Indicadores do Sistema: as métricas e os indicadores do exercício escolhido, lidos na data, no recorte da regional.
+  const exerciciosDaData = useMemo(() => exerciciosNaData(anchor), [anchor]);
+  const anoExercicio = exerciciosDaData.some(e => String(e.ano) === exercicio) ? Number(exercicio) : exercicioPadrao(anchor);
+  const sistema = useMemo(() => deIndicadores ? quadroSistema(dataset, anchor, anoExercicio, gre || null) : null, [deIndicadores, anchor, anoExercicio, gre]);
   // Painel da Presidência: a foto dos indicadores de todos os painéis no fim de cada um dos 13 meses até a data, calculada aos poucos.
   const presidencia = usePresidencia(dePresidencia, anchor, period);
   const insights = useMemo(() => leitura({ metas, ponte: derived.ponte, cobertura: model.metrics.coverage.value, rt: model.metrics.rtCoverage.value, resumo: derived.resumo, rec: derived.rec, saldo: model.metrics.overdue.value ?? 0,
@@ -411,7 +439,7 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
     filtrar: recorte => change(() => { if (recorte.cidade) { setCidade(recorte.cidade); setGre(municipiosDe('').find(row => row.id === recorte.cidade)?.greId ?? ''); } else if (recorte.gre) { setGre(recorte.gre); setCidade(''); } if (recorte.camara) setCamara(recorte.camara); }), dark, cidadeId: cidade || null, enxuto: true, camaraDe: camaraMap, modalidade: modalidade || null, genero: genero || null,
     anchor, hoje, datasReferencia, setAnchor: value => change(() => setAnchorSel(value && value < hoje ? value : null)),
     historyScope, stateScope, stateModel, stateHistory, linhas: derived.linhas, ponte: derived.ponte, rec: derived.rec, contratos: derived.contratos, malha: derived.malha, estrutura, arts: derived.arts,
-    metas, insights, focus, toggleFocus: id => setFocus(previous => previous === id ? null : id), norte: derived.norte, mercado: derived.mercado, ...extra, gestao, presidencia,
+    metas, insights, focus, toggleFocus: id => setFocus(previous => previous === id ? null : id), norte: derived.norte, mercado: derived.mercado, ...extra, gestao, presidencia, sistema,
     historico: { pontos: historico.chave === `${view.snapshotDate}|${gre}` ? historico.pontos : [], datas: datasHistorico(view), completo: historico.chave === `${view.snapshotDate}|${gre}` && historico.pontos.length === datasHistorico(view).length } };
   const current = pages.find(item => item.id === page)!;
   const emD = anchor !== hoje;
@@ -428,7 +456,8 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
     ...(genero ? [{ chave: 'genero', rotulo: genero === 'Feminino' ? 'Mulheres' : 'Homens', tirar: () => setGenero('') }] : []),
     ...(porte ? [{ chave: 'porte', rotulo: porte, tirar: () => setPorte('') }] : []),
     ...(situacao ? [{ chave: 'situacao', rotulo: `CNPJ ${situacao.toLowerCase()} na Receita`, tirar: () => setSituacao('') }] : []),
-    ...(period !== 12 ? [{ chave: 'meses', rotulo: `${period} meses (${data(ctx.janela.start)} a ${data(ctx.janela.end)})`, tirar: () => { setPeriod(12); setAvisoPeriodo(''); } }] : []),
+    ...(deIndicadores && exercicio ? [{ chave: 'exercicio', rotulo: `Exercício ${exerciciosDaData.find(e => e.ano === anoExercicio)?.rotulo ?? exercicio}`, tirar: () => setExercicio('') }] : []),
+    ...(period !== 12 && !deIndicadores ? [{ chave: 'meses', rotulo: `${period} meses (${data(ctx.janela.start)} a ${data(ctx.janela.end)})`, tirar: () => { setPeriod(12); setAvisoPeriodo(''); } }] : []),
     ...(emD ? [{ chave: 'data', rotulo: `situação em ${data(anchor)}`, tirar: () => setAnchorSel(null) }] : []),
   ];
   // Busca de empresa (05/11/2026): abre a gaveta com todas as empresas do recorte e o campo de busca em foco; a tecla / faz o mesmo.
@@ -442,7 +471,7 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
       {pages.map((item, index) => <button key={item.id} className={page === item.id ? 'on' : ''} aria-current={page === item.id ? 'page' : undefined} onClick={() => setPage(item.id)} title={`${item.title} (tecla ${(index + 1) % 10})`}><item.icon size={18} /><span>{item.label}</span></button>)}
       {dePresidencia && <div className="ck-rail-paineis">{atalhos.map(item => <a key={item.id} className="ck-rail-painel" href={enderecoPainel(item.id)} title={item.title}><item.icon size={17} /><span>{item.label}<ArrowUpRight size={10} /></span></a>)}</div>}
       <div className="ck-rail-bottom">
-        {!dePresidencia && !deProfissionais && !deGestao && <button onClick={buscar} title="Buscar uma empresa pelo nome, CNPJ ou município (tecla /)"><Search size={17} /><span>Buscar</span></button>}
+        {!dePresidencia && !deProfissionais && !deGestao && !deIndicadores && <button onClick={buscar} title="Buscar uma empresa pelo nome, CNPJ ou município (tecla /)"><Search size={17} /><span>Buscar</span></button>}
         <button onClick={() => setModal('metas')} title="Metas usadas nos cartões e no quadro das regionais"><Target size={17} /><span>Metas</span></button>
         <button onClick={() => setModal('fontes')} title="Fontes, métodos e limites"><Database size={17} /><span>Fontes</span></button>
         <button onClick={() => setTheme(dark ? 'light' : 'dark')} aria-label={dark ? 'Usar tema claro' : 'Usar tema escuro'} title={dark ? 'Tema claro' : 'Tema escuro'}>{dark ? <Sun size={17} /> : <Moon size={17} />}<span>{dark ? 'Claro' : 'Escuro'}</span></button>
@@ -450,14 +479,16 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
     </nav>
     <div className="ck-main is-enxuto">
       <header className={`ck-header is-enxuto ${painel.filtro === 'modalidade' ? 'tem-genero' : ''}`}>
-        <div className="ck-title" title={current.subtitle}><span className="ck-eyebrow">{painel.nome} {!dePresidencia && <span className="ck-legenda-parceria" title="Os blocos com este sinal mostram o que um acordo com outro órgão permitiria medir. Até o acordo ser fechado, os números são demonstrativos."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span>}</span><h1>{current.title}</h1></div>
+        <div className="ck-title" title={current.subtitle}><span className="ck-eyebrow">{painel.nome} {!dePresidencia && !deIndicadores && <span className="ck-legenda-parceria" title="Os blocos com este sinal mostram o que um acordo com outro órgão permitiria medir. Até o acordo ser fechado, os números são demonstrativos."><span className="selo selo-parceria is-compacto" aria-hidden="true">!</span>depende de parceria</span>}</span><h1>{current.title}</h1></div>
         <section className="ck-filters is-inline" aria-label="Filtros">
           <label className="ck-select"><select aria-label="Regional" value={gre} onChange={event => change(() => { setGre(event.target.value); setCidade(''); })}><option value="">Todas as regionais</option>{dataset.gres.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
-          <label className="ck-select"><select aria-label="Município" value={cidade} onChange={event => change(() => { const id = event.target.value; setCidade(id); if (id) setGre(municipiosDe('').find(row => row.id === id)?.greId ?? ''); })}><option value="">Todos os municípios</option>{municipiosDe(gre).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>
+          {painel.filtro !== 'exercicio' && <label className="ck-select"><select aria-label="Município" value={cidade} onChange={event => change(() => { const id = event.target.value; setCidade(id); if (id) setGre(municipiosDe('').find(row => row.id === id)?.greId ?? ''); })}><option value="">Todos os municípios</option>{municipiosDe(gre).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select><ChevronDown size={14} /></label>}
           {painel.filtro === 'modalidade'
             ? <><label className="ck-select"><select aria-label="Modalidade" value={modalidade} onChange={event => change(() => setModalidade(event.target.value))}><option value="">Todas as modalidades</option>{modalidades.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
               <label className="ck-select"><select aria-label="Gênero" value={genero} onChange={event => change(() => setGenero(event.target.value as '' | Genero))}><option value="">Mulheres e homens</option><option value="Feminino">Mulheres</option><option value="Masculino">Homens</option></select><ChevronDown size={14} /></label></>
-            : painel.filtro === 'nenhum' ? null : painel.filtro === 'atendimento' ? <>
+            : painel.filtro === 'nenhum' ? null : painel.filtro === 'exercicio'
+            ? <label className="ck-select" title="O exercício da planilha do Confea: os completos desde 2022 e o do ano da data, até ela"><select aria-label="Exercício" value={String(anoExercicio)} onChange={event => change(() => setExercicio(event.target.value === String(exercicioPadrao(anchor)) ? '' : event.target.value))}>{[...exerciciosDaData].reverse().map(e => <option key={e.ano} value={e.ano}>Exercício {e.rotulo}</option>)}</select><ChevronDown size={14} /></label>
+            : painel.filtro === 'atendimento' ? <>
               <label className="ck-select"><select aria-label="Tipo de serviço" value={servico} onChange={event => change(() => setServico(event.target.value as '' | TipoServico))}><option value="">Todos os serviços</option>{tiposServico.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
               <label className="ck-select"><select aria-label="Unidade de atendimento" value={unidade} onChange={event => change(() => setUnidade(event.target.value))}><option value="">Todas as unidades</option>{unidadesAtendimento(dataset).map(u => u.nome).sort((a, b) => a.localeCompare(b, 'pt-BR')).map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label></>
             : painel.filtro === 'colegiado' ? <label className="ck-select"><select aria-label="Colegiado" value={colegiado} onChange={event => change(() => setColegiado(event.target.value as '' | Colegiado))}><option value="">Todos os colegiados</option>{colegiados.map(name => <option key={name} value={name}>{name === 'Plenário' ? 'Plenário' : `Câmara ${name}`}</option>)}</select><ChevronDown size={14} /></label> : <><label className="ck-select"><select aria-label="Câmara" value={camara} onChange={event => change(() => setCamara(event.target.value))}><option value="">Todas as câmaras</option>{camaras.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
@@ -467,9 +498,9 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
                   <label className="ck-select"><span>Situação na Receita</span><select aria-label="Situação na Receita" value={situacao} onChange={event => change(() => setSituacao(event.target.value))}><option value="">Todas as situações</option>{situacoes.map(name => <option key={name} value={name}>{name}</option>)}</select><ChevronDown size={14} /></label>
                   <p>O porte é o da empresa na Receita; a situação é a do CNPJ da matriz. Os dois valem para todas as abas.</p>
                 </div></details>}</>}
-          <div className="seg" role="radiogroup" aria-label="Período" title={`De ${data(ctx.janela.start)} a ${data(ctx.janela.end)}, comparado com ${data(ctx.janela.prevStart)} a ${data(ctx.janela.prevEnd)}`}>{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => { setPeriod(value); setAvisoPeriodo(''); })}>{value} meses</button>)}
-            <label className={`seg-livre ${painel.periodos.includes(period) ? '' : 'on'}`} title={`Qualquer número de meses até ${maxMeses}: o histórico começa em ${mes(view.months[0])}`}><input type="number" inputMode="numeric" min={1} max={maxMeses} step={1} aria-label="Outro período, em meses" placeholder="outro" value={painel.periodos.includes(period) ? '' : period} onChange={event => { const pedido = Number(event.target.value); if (!Number.isInteger(pedido) || pedido < 1) return; const value = Math.min(maxMeses, pedido); setAvisoPeriodo(pedido > maxMeses ? `O histórico começa em ${mes(view.months[0])}, por isso o período foi limitado a ${maxMeses} meses.` : value > 24 && `${ctx.janela.prevStart}` < `${view.months[0]}-01` ? `Com ${value} meses não há período anterior completo para comparar; as variações ficam sem base.` : ''); change(() => setPeriod(value)); }} />{!painel.periodos.includes(period) && <span>meses</span>}</label></div>
-          {(gre || cidade || camara || colegiado || servico || unidade || modalidade || genero || porte || situacao || period !== 12 || emD) && <button className="ghost" onClick={() => change(() => { setGre(''); setCidade(''); setCamara(''); setColegiado(''); setServico(''); setUnidade(''); setModalidade(''); setGenero(''); setPorte(''); setSituacao(''); setPeriod(12); setAnchorSel(null); setAvisoPeriodo(''); })} title="Limpar filtros" aria-label="Limpar filtros"><RotateCcw size={14} /><span className="ck-limpar-texto">Limpar</span></button>}
+          {painel.periodos.length > 0 && <div className="seg" role="radiogroup" aria-label="Período" title={`De ${data(ctx.janela.start)} a ${data(ctx.janela.end)}, comparado com ${data(ctx.janela.prevStart)} a ${data(ctx.janela.prevEnd)}`}>{painel.periodos.map(value => <button key={value} role="radio" aria-checked={period === value} className={period === value ? 'on' : ''} onClick={() => change(() => { setPeriod(value); setAvisoPeriodo(''); })}>{value} meses</button>)}
+            <label className={`seg-livre ${painel.periodos.includes(period) ? '' : 'on'}`} title={`Qualquer número de meses até ${maxMeses}: o histórico começa em ${mes(view.months[0])}`}><input type="number" inputMode="numeric" min={1} max={maxMeses} step={1} aria-label="Outro período, em meses" placeholder="outro" value={painel.periodos.includes(period) ? '' : period} onChange={event => { const pedido = Number(event.target.value); if (!Number.isInteger(pedido) || pedido < 1) return; const value = Math.min(maxMeses, pedido); setAvisoPeriodo(pedido > maxMeses ? `O histórico começa em ${mes(view.months[0])}, por isso o período foi limitado a ${maxMeses} meses.` : value > 24 && `${ctx.janela.prevStart}` < `${view.months[0]}-01` ? `Com ${value} meses não há período anterior completo para comparar; as variações ficam sem base.` : ''); change(() => setPeriod(value)); }} />{!painel.periodos.includes(period) && <span>meses</span>}</label></div>}
+          {(gre || cidade || camara || colegiado || servico || unidade || modalidade || genero || porte || situacao || period !== 12 || emD || exercicio) && <button className="ghost" onClick={() => change(() => { setExercicio(''); setGre(''); setCidade(''); setCamara(''); setColegiado(''); setServico(''); setUnidade(''); setModalidade(''); setGenero(''); setPorte(''); setSituacao(''); setPeriod(12); setAnchorSel(null); setAvisoPeriodo(''); })} title="Limpar filtros" aria-label="Limpar filtros"><RotateCcw size={14} /><span className="ck-limpar-texto">Limpar</span></button>}
         </section>
         <div className="ck-meta">
           {dePresidencia && page === 'pais' ? <span className="demo is-real" title="Todos os números desta página são dados públicos reais, com a fonte e a data no selo de cada bloco. Os filtros do alto não mudam esta página.">Dados públicos</span> : <span className="demo" title="Dados internos fictícios, gerados para demonstrar o modelo. Dados públicos reais trazem selo próprio.">Demonstrativo</span>}
@@ -483,9 +514,9 @@ export default function Cockpit({ painel: painelId = 'presidencia' }: { painel?:
         </div>
       </header>
       <main className={`ck-page ck-page-${page} ${focus ? 'has-focus' : ''}`} key={page}><current.Page ctx={ctx} /></main>
-      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{dePresidencia ? (presidencia?.atual ? `Seis painéis resumidos com a base de ${data(presidencia.atual.data)}` : 'Calculando o resumo dos painéis…') : deGestao && gestao ? (painel.id === 'financeiro' ? `${brl(gestao.divida.total)} de anuidades vencidas no recorte` : painel.id === 'atendimento' ? (gestao.atendimento ? `${int(gestao.atendimento.q.linhas.length)} protocolos abertos no período, ${int(gestao.atendimento.q.porSituacao.Aberto.length + gestao.atendimento.q.porSituacao['Exigência'].length)} ainda em andamento` : '') : gestao.colegiado ? `${int(gestao.colegiado.pendentes.length)} processos esperando voto no recorte` : '') : deProfissionais ? `${int(extra.profissionais.resumo.ativos.length)} profissionais ativos no recorte` : deFiscalizacao ? (page === 'contratos' ? `${int(derived.malha.contratos.length)} contratos públicos técnicos no recorte` : page === 'obras' ? `${int(obrasDoRecorte(ctx).length)} obras públicas no recorte` : `${int(derived.resumo.acoes.length)} ações de fiscalização no recorte`) : `${int(model.companyFacts.filter(row => row.active || row.eligibleEstablishments > 0).length)} empresas com atividade de engenharia no recorte` }</strong>
+      <footer className="ck-status"><span className={`ck-live ${pending ? 'is-busy' : ''}`} aria-hidden="true" /><strong>{deIndicadores && sistema ? `Exercício ${sistema.exercicio.rotulo}: ${int([...sistema.situacao.values()].filter(v => v !== 'Vazia').length)} de ${sistema.situacao.size} métricas preenchidas, ${int(sistema.conferencias.filter(c => c.situacao === 'Não fecha').length)} conferências não fecham` : dePresidencia ? (presidencia?.atual ? `Seis painéis resumidos com a base de ${data(presidencia.atual.data)}` : 'Calculando o resumo dos painéis…') : deGestao && gestao ? (painel.id === 'financeiro' ? `${brl(gestao.divida.total)} de anuidades vencidas no recorte` : painel.id === 'atendimento' ? (gestao.atendimento ? `${int(gestao.atendimento.q.linhas.length)} protocolos abertos no período, ${int(gestao.atendimento.q.porSituacao.Aberto.length + gestao.atendimento.q.porSituacao['Exigência'].length)} ainda em andamento` : '') : gestao.colegiado ? `${int(gestao.colegiado.pendentes.length)} processos esperando voto no recorte` : '') : deProfissionais ? `${int(extra.profissionais.resumo.ativos.length)} profissionais ativos no recorte` : deFiscalizacao ? (page === 'contratos' ? `${int(derived.malha.contratos.length)} contratos públicos técnicos no recorte` : page === 'obras' ? `${int(obrasDoRecorte(ctx).length)} obras públicas no recorte` : `${int(derived.resumo.acoes.length)} ações de fiscalização no recorte`) : `${int(model.companyFacts.filter(row => row.active || row.eligibleEstablishments > 0).length)} empresas com atividade de engenharia no recorte` }</strong>
         {recorte.length > 0 && <ul className="ck-chips" aria-label="Filtros em uso">{recorte.map(chip => <li key={chip.chave}><span>{chip.rotulo}</span><button aria-label={`Tirar o filtro ${chip.rotulo}`} title="Tirar este filtro" onClick={() => change(chip.tirar)}><X size={11} /></button></li>)}</ul>}
-        <span className="ck-status-note">{pending ? 'Recalculando…' : avisoPeriodo ? avisoPeriodo : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : dePresidencia ? 'Clique num cartão ou numa linha para abrir o painel do assunto. O (i) explica cada bloco. As teclas 1 a 4 trocam de página.' : deGestao ? `Clique num item para ver ${painel.id === 'financeiro' ? 'os devedores ou os lançamentos' : painel.id === 'atendimento' ? 'os protocolos, com quem está cada um e há quanto tempo' : 'os processos, os conselheiros ou as organizações'}. O (i) explica cada bloco e diz quais filtros valem para ele.` : `Clique num item para ver ${deProfissionais ? 'os profissionais' : deFiscalizacao ? 'as ações, as empresas ou os contratos' : 'as empresas'}. O (i) explica cada bloco.${deProfissionais ? '' : ' A tecla / busca uma empresa.'}`}</span></footer>
+        <span className="ck-status-note">{pending ? 'Recalculando…' : avisoPeriodo ? avisoPeriodo : focus ? 'Bloco ampliado. Aperte Esc para voltar.' : emD ? `O painel mostra a situação em ${data(anchor)}. Escolha “Hoje” na data, no alto da tela, para voltar.` : deIndicadores ? 'Clique num indicador ou numa métrica para ver a fórmula e os valores. O código da planilha do Confea fica na etiqueta; o (i) explica cada bloco.' : dePresidencia ? 'Clique num cartão ou numa linha para abrir o painel do assunto. O (i) explica cada bloco. As teclas 1 a 4 trocam de página.' : deGestao ? `Clique num item para ver ${painel.id === 'financeiro' ? 'os devedores ou os lançamentos' : painel.id === 'atendimento' ? 'os protocolos, com quem está cada um e há quanto tempo' : 'os processos, os conselheiros ou as organizações'}. O (i) explica cada bloco e diz quais filtros valem para ele.` : `Clique num item para ver ${deProfissionais ? 'os profissionais' : deFiscalizacao ? 'as ações, as empresas ou os contratos' : 'as empresas'}. O (i) explica cada bloco.${deProfissionais ? '' : ' A tecla / busca uma empresa.'}`}</span></footer>
     </div>
     {detail && <Drawer ctx={ctx} detail={detail} onClose={() => setDetail(null)} />}
     {modal === 'metas' && <Janela title="Metas do painel" subtitle="As metas usadas nos cartões, no quadro das regionais e nos destaques. Elas ficam salvas neste navegador." onClose={() => setModal(null)}><MetasForm metas={metas} onChange={setMetas} /></Janela>}

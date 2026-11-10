@@ -1,7 +1,7 @@
 /**
  * Os painéis que a página inicial do site lista, na ordem do menu. `paginas` repete os rótulos do menu lateral de cada painel
  * (src/cockpit/Cockpit.tsx); o teste tests/menu.test.ts confere que as duas listas não se separam. O painel de Gestão do Conselho
- * aparece como Colegiados, nome escolhido pelo Caio em 07/11/2026.
+ * aparece como Colegiados, nome escolhido pelo Caio em 07/11/2026. Indicadores do Sistema (10/11/2026) é a planilha do Confea por subprograma.
  */
 import type { PainelId } from '../cockpit/Cockpit';
 
@@ -15,6 +15,7 @@ export const paineisDoMenu: PainelDoMenu[] = [
   { id: 'conselho', nome: 'Colegiados', arquivo: 'conselho.html', paginas: ['Colegiado', 'Processos', 'Conselheiros', 'Decisões', 'Representação'] },
   { id: 'financeiro', nome: 'Financeiro', arquivo: 'financeiro.html', paginas: ['Arrecadação', 'Receita', 'Dívida', 'Orçamento'] },
   { id: 'atendimento', nome: 'Atendimento', arquivo: 'atendimento.html', paginas: ['Protocolos', 'Equipe e território', 'Demanda'] },
+  { id: 'indicadores', nome: 'Indicadores do Sistema', arquivo: 'indicadores.html', paginas: ['Registro', 'Fiscalização', 'Julgamento', 'Suporte e Liderança', 'Entrega ao Confea'] },
 ];
 
 /** "Resumo, Regionais, Riscos e No país". */

@@ -1,0 +1,106 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "entrega-conferencias",
+  "position": {
+    "x": 435,
+    "y": 160,
+    "z": 10000,
+    "width": 411,
+    "height": 544,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Conferências"
+                    }
+                  },
+                  "Property": "Tipo"
+                }
+              },
+              "queryRef": "Conferências.Tipo",
+              "nativeQueryRef": "Tipo",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Conferências"
+                    }
+                  },
+                  "Property": "Conferência"
+                }
+              },
+              "queryRef": "Conferências.Conferência",
+              "nativeQueryRef": "Conferência",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Situação da conferência"
+                }
+              },
+              "queryRef": "Medidas.Situação da conferência",
+              "nativeQueryRef": "Situação da conferência",
+              "displayName": "Situação"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Diferença da conferência"
+                }
+              },
+              "queryRef": "Medidas.Diferença da conferência",
+              "nativeQueryRef": "Diferença da conferência",
+              "displayName": "Diferença"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Conferências antes do envio'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,38 @@
+/// Tem as próximas entregas ao Confea a partir da data do pacote: os demonstrativos mensais, o portal trimestral e o processo de contas anual (PL-2260/2023).
+table 'Calendário de entregas'
+	lineageTag: 65bde29f-f5e5-5f5d-b74d-de87273944ca
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: Data
+		lineageTag: 4fc9302c-7c63-5e56-a827-d94432ff9e47
+
+	column Ritmo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Ritmo
+		lineageTag: a259823b-febe-5481-a2dc-95532e32e21e
+
+	column Entrega
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Entrega
+		lineageTag: 5787b470-c79e-5c4a-94bc-118892340add
+
+	column 'Consequência'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Consequência
+		lineageTag: 1f10ef09-d08d-5e8f-add2-39b1d0a72d52
+
+	partition 'Calendário de entregas' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "calendario-entregas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Data", type date}, {"Ritmo", type text}, {"Entrega", type text}, {"Consequência", type text}}, "pt-BR")
+				in
+				    Tipos

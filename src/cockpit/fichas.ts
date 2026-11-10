@@ -3,6 +3,7 @@ import type { ParceriaId } from '../domain/parcerias';
 import { fichas as fichasNorte } from '../observatorio/norte';
 import type { NorteId } from '../observatorio/norte';
 import { fichasFinanceiro } from '../financeiro/fichas';
+import { fichasIndicadores } from '../indicadores/fichas';
 /** Os indicadores-norte têm uma ficha mais longa (plano rev. 2): os campos a mais entram na mesma ficha (i), sem botão separado. */
 const norte = (id: NorteId): Pick<FichaBloco, 'extra'> => { const f = fichasNorte[id]; return { extra: [['Unidade', `${f.unidade}. ${f.grao}`], ['Datas', f.data], ['O que fica de fora', f.desconhecido], ['No protótipo', f.prototipo]] }; };
 
@@ -132,6 +133,8 @@ export const fichas: Record<string, FichaBloco> = {
   ...fichasPresidencia,
   /* Painel Financeiro (07/11/2026): as fichas ficam em src/financeiro/fichas.ts. */
   ...fichasFinanceiro,
+  /* Painel de Indicadores do Sistema (10/11/2026): as fichas ficam em src/indicadores/fichas.ts. */
+  ...fichasIndicadores,
 
   /* ---------- Empresas ---------- */
   'rt.k-rt': { mede: 'Empresas registradas com responsável técnico de vínculo vigente.', calcula: 'Empresas ativas com ao menos um vínculo de RT vigente na data escolhida dividido por empresas ativas; contra a meta do painel. A meta padrão é 95%, porque o responsável técnico é condição do registro (Lei 5.194/66, art. 8º, parágrafo único): a diferença para 100% é só o prazo de substituição. O complemento mostra quantas registradas estão sem RT vigente.', fontes: INTERNO, regra: V1, limites: 'Vínculo vigente não prova atuação efetiva do RT.', acao: 'Notificar as de RT baixado há mais de 30 dias; conferir o cadastro das sem vínculo carregado.' },

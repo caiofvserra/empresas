@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ArrowRight, Building2, HardHat, LayoutDashboard, Headset, Scale, ShieldCheck, Wallet } from 'lucide-react';
+import { ArrowRight, Building2, HardHat, LayoutDashboard, Headset, ListChecks, Scale, ShieldCheck, Wallet } from 'lucide-react';
 import type { ComponentType } from 'react';
 import { EngineeringBlueprint, EngineeringEmblem } from '../components/EngineeringIdentity';
 import { emFrase, paineisDoMenu, type PainelDoMenu } from './paineis';
@@ -9,10 +9,10 @@ import './menu.css';
 
 /** Ícone de cada painel: os mesmos dos atalhos do menu lateral da Presidência (src/cockpit/Cockpit.tsx). */
 const icones: Record<PainelDoMenu['id'], ComponentType<{ size?: number; 'aria-hidden'?: boolean }>> = {
-  presidencia: LayoutDashboard, empresas: Building2, profissionais: HardHat, fiscalizacao: ShieldCheck, conselho: Scale, financeiro: Wallet, atendimento: Headset,
+  presidencia: LayoutDashboard, empresas: Building2, profissionais: HardHat, fiscalizacao: ShieldCheck, conselho: Scale, financeiro: Wallet, atendimento: Headset, indicadores: ListChecks,
 };
 
-/** Página inicial do site: o nome do programa à esquerda, na faixa azul do menu lateral dos painéis, e a lista dos sete painéis à direita. */
+/** Página inicial do site: o nome do programa à esquerda, na faixa azul do menu lateral dos painéis, e a lista dos oito painéis à direita. */
 function Menu() {
   return <div className="mn">
     <header className="mn-faixa">

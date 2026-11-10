@@ -1,0 +1,34 @@
+/// Guarda a situação de cada métrica em cada exercício: preenchida, vazia ou que não fecha com a soma das partes.
+table 'Situação das métricas'
+	isHidden
+	lineageTag: c555ecd0-6cd9-5502-8689-41c88b9ce517
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 5272c51f-4abe-5421-824c-337704575c88
+
+	column 'Código'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Código
+		lineageTag: 7f6cff16-f144-5ef4-b593-60de317cdb1b
+
+	column 'Situação'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Situação
+		lineageTag: 32919094-0506-5582-a029-8c3cca20bc35
+
+	partition 'Situação das métricas' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "situacao-metricas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Código", Int64.Type}, {"Situação", type text}}, "pt-BR")
+				in
+				    Tipos

@@ -1,0 +1,28 @@
+/// Tem uma linha para cada uma das 16 gerências regionais. Não se liga às métricas: as medidas leem a regional escolhida.
+table Regionais
+	lineageTag: 4264e3e8-dff5-507e-85bf-637077e02183
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		sortByColumn: Ordem
+		lineageTag: 556047d7-c7b6-583d-91e9-647f6d29ef88
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: 2cb075d2-b037-5dd8-bd51-d81aa115b6cd
+
+	partition Regionais = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "regionais.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"GRE", type text}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

@@ -28,6 +28,10 @@ import { dadosPresidencia } from './presidencia/dados';
 import { modeloPresidencia } from './presidencia/modelo';
 import { paginasPresidencia } from './presidencia/paginas';
 import { LEIA_ME_PRESIDENCIA } from './presidencia/leia-me';
+import { dadosIndicadores } from './indicadores/dados';
+import { modeloIndicadores } from './indicadores/modelo';
+import { paginasIndicadores } from './indicadores/paginas';
+import { LEIA_ME_INDICADORES } from './indicadores/leia-me';
 import { recortarModelo } from './recorte';
 import type { Modelo } from './modelo';
 import type { Pagina } from './pbir';
@@ -50,6 +54,7 @@ const PAINEIS = {
   financeiro: { titulo: 'painel Financeiro', modelo: modeloFinanceiro, paginas: paginasFinanceiro, dados: dadosFinanceiro, leiaMe: LEIA_ME_FINANCEIRO, origem: ORIGEM_FINANCEIRO(financeiroReal.meta.capturadoEm) },
   atendimento: daGestao('painel de Atendimento', 'Atendimento', 'atendimento', ['protocolos', 'equipe', 'demanda'], LEIA_ME_ATENDIMENTO),
   conselho: { titulo: 'painel de Colegiados', modelo: modeloConselho, paginas: paginasConselho, dados: dadosConselho, leiaMe: LEIA_ME_CONSELHO },
+  indicadores: { titulo: 'painel de Indicadores do Sistema', modelo: modeloIndicadores, paginas: paginasIndicadores, dados: dadosIndicadores, leiaMe: LEIA_ME_INDICADORES },
 } satisfies Record<string, PainelComPacote>;
 export type PainelPowerBi = keyof typeof PAINEIS;
 /** Os painéis com pacote, na ordem em que o build os grava. */

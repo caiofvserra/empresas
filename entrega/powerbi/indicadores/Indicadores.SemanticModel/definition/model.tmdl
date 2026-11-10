@@ -1,0 +1,23 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table Regionais
+ref table 'Municípios'
+ref table 'Exercícios'
+ref table 'Exercícios da série'
+ref table 'Métricas'
+ref table Indicadores
+ref table Valores
+ref table 'Valores dos indicadores'
+ref table 'Situação das métricas'
+ref table 'Conferências'
+ref table 'Ações nos municípios'
+ref table 'Calendário de entregas'
+ref table Medidas
