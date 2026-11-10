@@ -114,6 +114,44 @@ class RetomadaPorPagina(unittest.TestCase):
             self.assertFalse(parcial.exists())
 
 
+class PaginaQueSumiu(unittest.TestCase):
+    """A API diz o total na primeira página; se o total encolhe no meio da coleta, a página que sumiu responde 400. Como na
+    coleta do caderno do estudo, 400 é fim dos dados, e não falha do mês."""
+
+    def test_400_depois_da_primeira_pagina_e_fim_dos_dados(self):
+        import email.message
+        import io
+        import urllib.error
+        import urllib.parse
+        from unittest import mock
+        from pncp_triagem import coleta
+
+        def falso(url, **_):
+            pagina = int(urllib.parse.parse_qs(urllib.parse.urlparse(url).query)['pagina'][0])
+            if pagina == 4:  # a primeira disse 4 páginas, mas agora são 3
+                raise urllib.error.HTTPError(url, 400, '', email.message.Message(), io.BytesIO())
+            return {'totalPaginas': 4, 'data': [contrato(numeroControlePNCP=f'11111111000100-2-{pagina:06d}/2026')]}
+        with mock.patch.object(coleta, 'pedir_json', falso):
+            contratos = coleta.buscar_contratos('2026-09-01', '2026-09-30', log=lambda *a: None)
+        self.assertEqual(len(contratos), 3)
+
+    def test_400_nao_e_tentado_de_novo(self):
+        import email.message
+        import io
+        import urllib.error
+        from unittest import mock
+        from pncp_triagem import coleta
+        chamadas = []
+
+        def abrir(req, timeout):
+            chamadas.append(1)
+            raise urllib.error.HTTPError('u', 400, '', email.message.Message(), io.BytesIO())
+        with mock.patch.object(coleta.urllib.request, 'urlopen', abrir), mock.patch.object(coleta.time, 'sleep', lambda s: None):
+            with self.assertRaises(urllib.error.HTTPError):
+                coleta.pedir_json('https://pncp.gov.br/api/x')
+        self.assertEqual(len(chamadas), 1)
+
+
 class LimiteDaApi(unittest.TestCase):
     """HTTP 429: a API do PNCP pede calma. Todas as threads esperam juntas, pelo Retry-After ou por 30 s, e tentam de novo."""
 
