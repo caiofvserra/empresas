@@ -19,6 +19,9 @@ OBJETO_MINIMO = 20  # o treino ficou com os textos de mais de 20 caracteres
 CABECALHO = {'User-Agent': 'creasp-inteligencia-estrategica/1.0', 'Accept': 'application/json'}
 
 
+# Erro do pedido, não da API: repetir dá o mesmo erro. 400 também é o que a API responde a uma página além do fim.
+SEM_REPETIR = (400, 404, 422)
+
 # Pausa comum a todas as threads: quando a API responde 429, ninguém pede nada até a hora marcada.
 _pausa = {'ate': 0.0}
 _trava = threading.Lock()
@@ -50,7 +53,7 @@ def pedir_json(url, tentativas=6, espera=2.0):
                 corpo = resposta.read()
                 return json.loads(corpo) if corpo else None
         except urllib.error.HTTPError as erro:
-            if n == tentativas - 1:
+            if n == tentativas - 1 or erro.code in SEM_REPETIR:
                 raise
             if erro.code == 429:
                 pedido = (erro.headers or {}).get('Retry-After') or ''
@@ -97,7 +100,14 @@ def buscar_contratos(de, ate, uf='SP', categoria=CATEGORIA_SERVICOS, log=print, 
     """
     def pedir(pagina):
         parametros = {'dataInicial': de.replace('-', ''), 'dataFinal': ate.replace('-', ''), 'pagina': pagina, 'tamanhoPagina': TAMANHO_PAGINA}
-        return pagina, pedir_json(f'{CONSULTA}?{urllib.parse.urlencode(parametros)}')
+        try:
+            return pagina, pedir_json(f'{CONSULTA}?{urllib.parse.urlencode(parametros)}')
+        except urllib.error.HTTPError as erro:
+            # O total vem da primeira página; se ele encolhe no meio da coleta, a página que sumiu responde 400. É fim dos
+            # dados, como na coleta do caderno do estudo, e não falha do mês.
+            if pagina > 1 and erro.code == 400:
+                return pagina, {'data': []}
+            raise
 
     vistos, contratos = set(), []
 
