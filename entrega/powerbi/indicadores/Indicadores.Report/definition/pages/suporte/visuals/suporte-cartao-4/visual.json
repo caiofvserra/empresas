@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "suporte-cartao-4",
+  "position": {
+    "x": 644,
+    "y": 68,
+    "z": 6000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Crescimento das anuidades não pagas"
+                }
+              },
+              "queryRef": "Medidas.Crescimento das anuidades não pagas",
+              "nativeQueryRef": "Crescimento das anuidades não pagas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Crescimento das anuidades não pagas"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Crescimento das anuidades não pagas",
+              "nativeQueryRef": "Comparação: Crescimento das anuidades não pagas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Crescimento das anuidades não pagas"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Crescimento das anuidades não pagas",
+              "nativeQueryRef": "Detalhe: Crescimento das anuidades não pagas"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Crescimento das anuidades não pagas'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

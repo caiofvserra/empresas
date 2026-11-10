@@ -1,0 +1,28 @@
+/// Os mesmos exercícios, para o eixo dos gráficos e as colunas das tabelas "em cada exercício". Não se liga às outras tabelas.
+table 'Exercícios da série'
+	lineageTag: b64ffc64-df3c-56a2-9825-856cefdaa503
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 73784d57-7b6b-56a5-9041-821f81baa054
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		sortByColumn: Ano
+		lineageTag: 945419d0-6c19-5abe-a19c-dd6892cd9221
+
+	partition 'Exercícios da série' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "exercicios-da-serie.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Rótulo", type text}}, "pt-BR")
+				in
+				    Tipos

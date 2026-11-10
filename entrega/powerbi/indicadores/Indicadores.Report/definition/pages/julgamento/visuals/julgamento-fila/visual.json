@@ -1,0 +1,160 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "julgamento-fila",
+  "position": {
+    "x": 749,
+    "y": 160,
+    "z": 10000,
+    "width": 515,
+    "height": 268,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Exercícios da série"
+                    }
+                  },
+                  "Property": "Rótulo"
+                }
+              },
+              "queryRef": "Exercícios da série.Rótulo",
+              "nativeQueryRef": "Rótulo",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Julgados na 1ª instância"
+                }
+              },
+              "queryRef": "Medidas.Julgados na 1ª instância",
+              "nativeQueryRef": "Julgados na 1ª instância",
+              "displayName": "Julgados na 1ª"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Ficam para o próximo na 1ª instância"
+                }
+              },
+              "queryRef": "Medidas.Ficam para o próximo na 1ª instância",
+              "nativeQueryRef": "Ficam para o próximo na 1ª instância",
+              "displayName": "Ficam na 1ª"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Julgados na 2ª instância"
+                }
+              },
+              "queryRef": "Medidas.Julgados na 2ª instância",
+              "nativeQueryRef": "Julgados na 2ª instância",
+              "displayName": "Julgados na 2ª"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Ficam para o próximo na 2ª instância"
+                }
+              },
+              "queryRef": "Medidas.Ficam para o próximo na 2ª instância",
+              "nativeQueryRef": "Ficam para o próximo na 2ª instância",
+              "displayName": "Ficam na 2ª"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'A fila de processos de infração em cada exercício'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

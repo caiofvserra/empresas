@@ -1,0 +1,19 @@
+relationship a806e5ba-7424-5d88-8fb8-5fd284185b15
+	fromColumn: 'Municípios'.GRE
+	toColumn: Regionais.GRE
+
+relationship 4f03b2a6-b761-5888-998d-d56e935ce1ab
+	fromColumn: 'Ações nos municípios'.'Código IBGE'
+	toColumn: 'Municípios'.'Código IBGE'
+
+relationship ff05f7d5-4d6c-51d3-8e6e-6d7d905ba152
+	fromColumn: Valores.'Código'
+	toColumn: 'Métricas'.'Código'
+
+relationship 10fc703a-227a-5e88-9d4b-deb22916a2bd
+	fromColumn: 'Situação das métricas'.'Código'
+	toColumn: 'Métricas'.'Código'
+
+relationship 475596e1-dd8e-5a07-8773-3d3997a5ab20
+	fromColumn: 'Valores dos indicadores'.Indicador
+	toColumn: Indicadores.Indicador

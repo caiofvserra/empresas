@@ -1,0 +1,41 @@
+/// Guarda as ações e os autos de fiscalização de cada município em cada exercício. A soma dá as métricas 37 e 38; os municípios com ação dão a 33.
+table 'Ações nos municípios'
+	isHidden
+	lineageTag: 3e60d0a6-6a62-53f0-b01c-2e7e7020f593
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 9b312bb3-4a35-5f25-9187-82cb99faa09e
+
+	column 'Código IBGE'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Código IBGE
+		lineageTag: 2e1d3d69-3cb9-599b-803f-a1312e55edf0
+
+	column 'Ações'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ações
+		lineageTag: 091356d0-e780-5d22-9b55-1ba8cbefeb31
+
+	column Autos
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Autos
+		lineageTag: fd098597-6cf0-5de1-a3dd-419f06e49b2a
+
+	partition 'Ações nos municípios' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "acoes-municipios.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Código IBGE", type text}, {"Ações", Int64.Type}, {"Autos", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

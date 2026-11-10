@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "fiscalizacao-cartao-5",
+  "position": {
+    "x": 853,
+    "y": 68,
+    "z": 7000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Agentes fiscais no quadro"
+                }
+              },
+              "queryRef": "Medidas.Agentes fiscais no quadro",
+              "nativeQueryRef": "Agentes fiscais no quadro"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Agentes fiscais no quadro"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Agentes fiscais no quadro",
+              "nativeQueryRef": "Comparação: Agentes fiscais no quadro"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Agentes fiscais no quadro"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Agentes fiscais no quadro",
+              "nativeQueryRef": "Detalhe: Agentes fiscais no quadro"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Agentes fiscais no quadro'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

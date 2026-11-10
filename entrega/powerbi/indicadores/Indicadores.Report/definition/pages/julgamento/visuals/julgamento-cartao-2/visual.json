@@ -1,0 +1,103 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "julgamento-cartao-2",
+  "position": {
+    "x": 225,
+    "y": 68,
+    "z": 4000,
+    "width": 201,
+    "height": 84,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Eficiência na 2ª instância: infração"
+                }
+              },
+              "queryRef": "Medidas.Eficiência na 2ª instância: infração",
+              "nativeQueryRef": "Eficiência na 2ª instância: infração"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Comparação: Eficiência na 2ª instância: infração"
+                }
+              },
+              "queryRef": "Medidas.Comparação: Eficiência na 2ª instância: infração",
+              "nativeQueryRef": "Comparação: Eficiência na 2ª instância: infração"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Detalhe: Eficiência na 2ª instância: infração"
+                }
+              },
+              "queryRef": "Medidas.Detalhe: Eficiência na 2ª instância: infração",
+              "nativeQueryRef": "Detalhe: Eficiência na 2ª instância: infração"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Eficiência na 2ª instância: infração'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

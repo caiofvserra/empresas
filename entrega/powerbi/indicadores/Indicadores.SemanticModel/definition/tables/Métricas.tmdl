@@ -1,0 +1,86 @@
+/// Tem as 161 métricas que o Crea-SP manda ao Confea: código, nome da planilha, nome curto (para os gráficos), subprograma, tema, recorte (somada no exercício ou em 31/12), se divide por regional, a definição e a orientação do Confea.
+table 'Métricas'
+	lineageTag: 169764c1-4ec6-5c83-aa6e-a369ce34d9d0
+
+	column 'Código'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Código
+		lineageTag: 44ec8325-173f-549b-aeb0-065d4dda4a42
+
+	column 'Rótulo'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Rótulo
+		sortByColumn: 'Código'
+		lineageTag: 16103803-b6f9-516d-8785-621b3395095c
+
+	column Nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome
+		lineageTag: 857e8903-c825-5a39-8ba3-8e4bb53e9200
+
+	column 'Nome curto'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nome curto
+		lineageTag: 75cb7f98-f7fc-5d4a-bafb-1110214f8eb7
+
+	column Subprograma
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Subprograma
+		sortByColumn: 'Ordem do subprograma'
+		lineageTag: bb2685e7-1013-5009-af91-ef4f4915ce1e
+
+	column 'Ordem do subprograma'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem do subprograma
+		lineageTag: 28b8bae1-7535-5acb-bfda-2b09a60b625e
+
+	column Tema
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tema
+		lineageTag: 89fe269b-9a9e-5b69-b439-a903bf476a34
+
+	column Recorte
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Recorte
+		lineageTag: 71f3c316-bb5f-5540-bef0-366e43be7fab
+
+	column 'Por regional'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Por regional
+		lineageTag: ca16ae1c-12a8-50f2-89f5-1544aa4a5443
+
+	column 'Definição'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Definição
+		lineageTag: b41fbf9c-896a-525a-9016-0f04ad95ecd5
+
+	column 'Orientação'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Orientação
+		lineageTag: ebadd4d9-be4c-51b7-9e3f-de1198f5a5ba
+
+	partition 'Métricas' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "metricas.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Código", Int64.Type}, {"Rótulo", type text}, {"Nome", type text}, {"Nome curto", type text}, {"Subprograma", type text}, {"Ordem do subprograma", Int64.Type}, {"Tema", type text}, {"Recorte", type text}, {"Por regional", Int64.Type}, {"Definição", type text}, {"Orientação", type text}}, "pt-BR")
+				in
+				    Tipos

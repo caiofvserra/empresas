@@ -38,3 +38,4 @@ O cabeçalho tem uma cor só, sem degradê, a mesma do canto onde encontra o men
 | Atendimento | Azul | Azul ao AZ-90 (D25) | Azul |
 | Fiscalização | Preto | Preto | Preto, faixa zebrada amarela |
 | Financeiro | Azul 800 | Azul 800 ao A8-90 (D17) | Azul 800 |
+| Indicadores do Sistema (provisória) | A5+40 (#203B88) | A5+40 ao Azul 500, item ativo amarelo | A5+40, sobrancelha amarela |

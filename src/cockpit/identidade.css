@@ -52,6 +52,7 @@
 :root[data-painel="financeiro"] { --bg: #EDEEF2; --soft: #E4E6EC; --line: #D2D5DE; }
 :root[data-painel="atendimento"] { --bg: #EEF0F6; --soft: #E3E7F2; --line: #D1D7E8; }
 :root[data-painel="conselho"] { --bg: #ECEEF2; --soft: #E2E5EB; --line: #CDD2DC; }
+:root[data-painel="indicadores"] { --bg: #E7ECFA; --soft: #DFE5F8; --line: #C9D3F0; }
 :root[data-painel="empresas"][data-theme="dark"] { --bg: #090D18; --surface: #111A33; --soft: #182447; --line: #24366E; }
 :root[data-painel="profissionais"][data-theme="dark"] { --bg: #081236; --surface: #0F1E57; --soft: #172A70; --line: #2A44A0; }
 :root[data-painel="fiscalizacao"][data-theme="dark"] { --bg: #000000; --surface: #121212; --soft: #1C1C1C; --line: #2E2E2E; }
@@ -59,6 +60,7 @@
 :root[data-painel="financeiro"][data-theme="dark"] { --bg: #05070D; --surface: #0E1220; --soft: #161B2E; --line: #262D45; }
 :root[data-painel="atendimento"][data-theme="dark"] { --bg: #10142A; --surface: #1A2140; --soft: #232C52; --line: #36437A; }
 :root[data-painel="conselho"][data-theme="dark"] { --bg: #0B0E16; --surface: #161C2B; --soft: #1F2738; --line: #303C5B; }
+:root[data-painel="indicadores"][data-theme="dark"] { --bg: #0A1230; --surface: #13204F; --soft: #1A2B66; --line: #2B3F85; }
 @media (prefers-color-scheme: dark) {
   :root[data-painel="empresas"]:not([data-theme="light"]) { --bg: #090D18; --surface: #111A33; --soft: #182447; --line: #24366E; }
   :root[data-painel="profissionais"]:not([data-theme="light"]) { --bg: #081236; --surface: #0F1E57; --soft: #172A70; --line: #2A44A0; }
@@ -67,6 +69,7 @@
   :root[data-painel="financeiro"]:not([data-theme="light"]) { --bg: #05070D; --surface: #0E1220; --soft: #161B2E; --line: #262D45; }
   :root[data-painel="atendimento"]:not([data-theme="light"]) { --bg: #10142A; --surface: #1A2140; --soft: #232C52; --line: #36437A; }
   :root[data-painel="conselho"]:not([data-theme="light"]) { --bg: #0B0E16; --surface: #161C2B; --soft: #1F2738; --line: #303C5B; }
+  :root[data-painel="indicadores"]:not([data-theme="light"]) { --bg: #0A1230; --surface: #13204F; --soft: #1A2B66; --line: #2B3F85; }
 }
 
 /* Regra do Caio (08/11/2026): o cabeçalho tem uma cor só, sem degradê, a mesma do canto onde encontra o menu; o menu pode
@@ -145,6 +148,18 @@
 /* Cada painel do Resumo leva a barra amarela à esquerda. */
 .ck[data-painel="presidencia"] .ck-grid-pr-resumo > .tile:has(.pr-painel) { position: relative; padding-left: 22px; }
 .ck[data-painel="presidencia"] .ck-grid-pr-resumo > .tile:has(.pr-painel)::before { content: ''; position: absolute; left: 8px; top: 11px; bottom: 10px; width: 6px; border-radius: 3px; background: #FFB000; }
+
+/* ---------- Indicadores do Sistema (10/11/2026): cor PROVISÓRIA, até o Caio escolher na folha da paleta ----------
+   Canto e cabeçalho no A5+40 (#203B88, o Azul 500 com 40% de preto); o menu desce clareando ao Azul 500 (o contrário de
+   Profissionais); item ativo amarelo. As etiquetas com o código da planilha (M 37, I 12) são o detalhe do painel. */
+.ck[data-painel="indicadores"] {
+  --rail-bg: linear-gradient(180deg, #203B88, #203B88 30%, #3662E2); --rail-ink: rgba(255,255,255,.92); --rail-hover-bg: rgba(255,255,255,.14);
+  --rail-on-bg: #FFB000; --rail-on-ink: #0D1732; --rail-line: rgba(255,255,255,.22); --rail-borda: #203B88; --rail-foco: #FFB000; --logo-engrenagem: #FFB000;
+  --head-bg: #203B88; --head-linha: #203B88;
+}
+.ck[data-painel="indicadores"] .ck-header { --surface: #203B88; }
+.ck[data-painel="indicadores"] .ck-eyebrow { color: #FFC640; }
+.ck[data-painel="indicadores"] .ind-aspecto { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
 /* O botão Voltar do site (voltar.css) segue a cor do menu de cada painel. */
 .ck-rail .ck-voltar { color: var(--rail-ink); }

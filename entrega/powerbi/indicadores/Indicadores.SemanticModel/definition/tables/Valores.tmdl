@@ -1,0 +1,55 @@
+/// Guarda o valor de cada métrica em cada exercício: o do Conselho inteiro (nível Conselho, o que vai para o Confea) e o de cada regional (nível Regional, só nas métricas que se dividem por regional). Valor vazio é métrica sem valor, que não é zero. Real marca o número do Sumário Executivo 2025.
+table Valores
+	isHidden
+	lineageTag: c14533b9-86e3-5bf3-b3cb-21615b56e8ae
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: dc5fccd4-3b55-5cc6-903b-1b3c1ab65493
+
+	column 'Nível'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nível
+		lineageTag: 55ce970c-bc9a-5be6-97d9-74a42b5bd4c7
+
+	column GRE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GRE
+		lineageTag: f754912c-1de4-5c6e-9d33-6e14374d1a03
+
+	column 'Código'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Código
+		lineageTag: 16c9a997-8616-5b0d-98fa-ebcf6ece75aa
+
+	column Valor
+		dataType: double
+		formatString: #,##0.##
+		summarizeBy: none
+		sourceColumn: Valor
+		lineageTag: 7a5b65ba-08ab-5e50-91ee-ee022991daa9
+
+	column Real
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Real
+		lineageTag: 2237ed70-b098-5b8a-92da-e818caa01825
+
+	partition Valores = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "valores.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Nível", type text}, {"GRE", type text}, {"Código", Int64.Type}, {"Valor", type number}, {"Real", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

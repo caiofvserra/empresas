@@ -1,0 +1,62 @@
+/// Tem as conferências antes do envio em cada exercício: as 17 somas da planilha (o total menos a soma das partes tem de dar zero) e as coerências que o Confea usa para descartar um número.
+table 'Conferências'
+	lineageTag: a9f85c70-3db3-568a-96a7-9ad8d68c7ef1
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ano
+		lineageTag: 2edf3689-af86-50db-86d0-ff9192914a18
+
+	column Tipo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Tipo
+		lineageTag: 2c61cf05-368f-5c8f-b124-cf3de2be2346
+
+	column 'Conferência'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Conferência
+		sortByColumn: Ordem
+		lineageTag: eced89f5-d502-5e7f-ade9-82cdb1878d98
+
+	column 'Métricas'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Métricas
+		lineageTag: 6f1a97cb-b2fb-5f7d-8f14-5773f10223d0
+
+	column 'Situação'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Situação
+		lineageTag: 5ca0bf7a-f498-5148-bef7-d23237297d85
+
+	column 'Diferença'
+		dataType: double
+		formatString: #,##0.##
+		isHidden
+		summarizeBy: none
+		sourceColumn: Diferença
+		lineageTag: 6b82501a-2e2a-5c8c-8ee2-4b6233584e7f
+
+	column Ordem
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem
+		lineageTag: 6f22dbdc-7a2b-5dc6-ba96-e524269849b5
+
+	partition 'Conferências' = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(#"Pasta dos dados" & "conferencias.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"Ano", Int64.Type}, {"Tipo", type text}, {"Conferência", type text}, {"Métricas", type text}, {"Situação", type text}, {"Diferença", type number}, {"Ordem", Int64.Type}}, "pt-BR")
+				in
+				    Tipos

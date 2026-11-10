@@ -1,0 +1,155 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "registro-regionais",
+  "position": {
+    "x": 16,
+    "y": 436,
+    "z": 12000,
+    "width": 725,
+    "height": 268,
+    "tabOrder": 12000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Regionais"
+                    }
+                  },
+                  "Property": "GRE"
+                }
+              },
+              "queryRef": "Regionais.GRE",
+              "nativeQueryRef": "GRE",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Profissionais de nível superior ativos"
+                }
+              },
+              "queryRef": "Medidas.Profissionais de nível superior ativos",
+              "nativeQueryRef": "Profissionais de nível superior ativos",
+              "displayName": "Profissionais"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Crescimento dos profissionais"
+                }
+              },
+              "queryRef": "Medidas.Crescimento dos profissionais",
+              "nativeQueryRef": "Crescimento dos profissionais",
+              "displayName": "Crescimento"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Empresas ativas"
+                }
+              },
+              "queryRef": "Medidas.Empresas ativas",
+              "nativeQueryRef": "Empresas ativas",
+              "displayName": "Empresas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Crescimento das empresas"
+                }
+              },
+              "queryRef": "Medidas.Crescimento das empresas",
+              "nativeQueryRef": "Crescimento das empresas",
+              "displayName": "Crescimento"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Profissionais que registram ART"
+                }
+              },
+              "queryRef": "Medidas.Profissionais que registram ART",
+              "nativeQueryRef": "Profissionais que registram ART",
+              "displayName": "Registram ART"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "ARTs por profissional"
+                }
+              },
+              "queryRef": "Medidas.ARTs por profissional",
+              "nativeQueryRef": "ARTs por profissional",
+              "displayName": "ARTs por profissional"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'O registro em cada regional'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

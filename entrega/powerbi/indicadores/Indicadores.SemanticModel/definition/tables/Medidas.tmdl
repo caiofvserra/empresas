@@ -1,0 +1,1631 @@
+/// Guarda as medidas do painel, em pastas por página.
+table Medidas
+	lineageTag: c37197f8-e77e-5bae-9c8f-0180bb9018b7
+
+	/// Devolve o exercício do eixo (nos gráficos e tabelas em cada exercício), senão o escolhido no alto; sem escolha, o último exercício completo.
+	measure 'Exercício escolhido' = ```
+			IF(HASONEVALUE('Exercícios da série'[Ano]), VALUES('Exercícios da série'[Ano]),
+			  IF(HASONEVALUE('Exercícios'[Ano]), VALUES('Exercícios'[Ano]), CALCULATE(MAX('Exercícios'[Ano]), ALL('Exercícios'), 'Exercícios'[Padrão] = 1)))
+			```
+		formatString: 0
+		displayFolder: Apoio
+		lineageTag: f531ce6a-1fa6-53bc-8c24-2f127cf85d2d
+
+	/// Soma as métricas do contexto no exercício: a linha da regional escolhida quando a métrica se divide por regional; senão, a do Conselho inteiro. Vazio é métrica sem valor.
+	measure 'Valor da métrica' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Apoio
+		lineageTag: c81b61dd-e64d-5f77-9c11-6f95bab3e53c
+
+	/// A mesma soma no exercício anterior.
+	measure 'Valor da métrica no exercício anterior' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Ano] = ano - 1, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Ano] = ano - 1, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Apoio
+		lineageTag: f4c5ccf9-b97e-52b3-860b-0201c4799af8
+
+	/// Escreve o indicador do contexto no exercício, com o formato da unidade (taxa em %, média com duas casas). Com uma regional, segue a regional quando o indicador se divide por regional.
+	measure 'Valor do indicador' = ```
+			VAR ano = [Exercício escolhido]
+			VAR v = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			RETURN IF(ISBLANK(v), BLANK(), IF(SELECTEDVALUE('Indicadores'[Unidade]) = "%", FORMAT(v / 100, "0.0%"), FORMAT(v, "0.00")))
+			```
+		displayFolder: Apoio
+		lineageTag: 9616b031-0d34-56b7-8907-c4e9b03f1410
+
+	/// Indicador 1 da planilha do Confea: [Nº de profissionais com registro ativo no Crea (nível superior + nível médio) - Nº de profissionais com registro ativo no exercício anterior (nível superior + nível médio)] / Nº de profissionais com registro ativo no exercício anterior (nível superior + nível médio). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Crescimento dos profissionais' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 1, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 1, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: d202fe34-6f53-5906-b160-491cda77b253
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Crescimento dos profissionais' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Crescimento dos profissionais]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 1, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 1, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 772bae4c-1fdb-5516-8d0a-9174fa08ca8b
+
+	/// Indicador 2 da planilha do Confea: (Nº de empresas com registro ativo no Crea - Nº de empresas com registro ativo no exercício anterior) / Nº de empresas com registro ativo no exercício anterior. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Crescimento das empresas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 2, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 2, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 5da61e1d-b022-5693-929d-5375649c6128
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Crescimento das empresas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Crescimento das empresas]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 2, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 2, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 50f87a65-6274-58e3-bfbf-f35d521f9370
+
+	/// Indicador 3 da planilha do Confea: (Nº de profissionais que compõe o QT da empresa) / (Nº de empresas com registro ativo + Nº de empresas com visto ativo). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Quadro técnico por empresa' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 3, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 3, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: 0.00
+		displayFolder: Indicadores
+		lineageTag: d8a99062-a503-5a40-8b72-2c3adfbb9457
+
+	/// Variação, em %, sobre o exercício anterior.
+	measure 'Em relação ao exercício anterior: Quadro técnico por empresa' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Quadro técnico por empresa]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 3, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 3, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Indicadores
+		lineageTag: 34844f8a-6a75-5ef0-bd8c-b222dcf6c5df
+
+	/// Indicador 4 da planilha do Confea: Nº de profissionais que registraram ART / [Nº de profissionais com registro ativo (nível superior + nível médio) + Nº de profissionais com visto ativo (nível superior + nível médio)]. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Profissionais que registram ART' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 4, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 4, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: bd6a7042-12ec-50f0-9220-79ba15041fc9
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Profissionais que registram ART' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Profissionais que registram ART]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 4, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 4, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 810c732a-12cc-5140-a6cb-240213dd1791
+
+	/// Indicador 5 da planilha do Confea: Nº total de ARTs iniciais registradas / Nº de profissionais que registraram ART. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'ARTs por profissional' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 5, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 5, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: 0.00
+		displayFolder: Indicadores
+		lineageTag: aa6e7c8f-3564-517d-b3a6-9877491cb3b0
+
+	/// Variação, em %, sobre o exercício anterior.
+	measure 'Em relação ao exercício anterior: ARTs por profissional' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [ARTs por profissional]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 5, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 5, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Indicadores
+		lineageTag: ab392e67-54ad-570d-947a-b6cf9bdcdf68
+
+	/// Indicador 6 da planilha do Confea: Nº de profissionais cujo acervo técnico foi certificado por meio de CAT / Nº de profissionais que registraram ART. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Profissionais com CAT' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 6, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 6, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 469be831-1b06-5c47-b965-fa89e3cba19a
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Profissionais com CAT' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Profissionais com CAT]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 6, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 6, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: e92017d9-f724-5237-9844-09715fafa3e2
+
+	/// Indicador 7 da planilha do Confea: Nº de CATs emitidas com registro de atestado / Nº de profissionais cujo acervo técnico foi certificado por meio de CAT. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'CATs com atestado por profissional' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 7, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 7, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: 0.00
+		displayFolder: Indicadores
+		lineageTag: 169a2a4e-a32a-5860-9e24-0bd64319e9a3
+
+	/// Variação, em %, sobre o exercício anterior.
+	measure 'Em relação ao exercício anterior: CATs com atestado por profissional' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [CATs com atestado por profissional]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 7, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 7, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Indicadores
+		lineageTag: 7b0f8766-788b-5e10-82bf-f48ee94471fb
+
+	/// Indicador 8 da planilha do Confea: Nº de profissionais com registro ativo inadimplentes (nível superior + nível médio) / Nº de profissionais com registro ativo (nível superior + nível médio). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Inadimplência dos profissionais' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 8, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 8, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 46d13085-18ac-5e37-b9b7-600d3da879fa
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Inadimplência dos profissionais' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Inadimplência dos profissionais]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 8, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 8, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 1a6f4b7d-11e5-5107-9209-3ac510fb3b12
+
+	/// Indicador 9 da planilha do Confea: Nº de empresas com registro ativo inadimplentes / Nº de empresas com registro ativo. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Inadimplência das empresas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 9, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 9, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 6d28dc9e-c1cf-59d4-ab21-bc96c15ec3ff
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Inadimplência das empresas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Inadimplência das empresas]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 9, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 9, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 10e42786-69dc-5aa4-81da-b3de373033e7
+
+	/// Indicador 10 da planilha do Confea: [(Nº de anuidades de profissionais de quaisquer exercícios não pagas - Nº de anuidades de profissionais de quaisquer exercícios não pagas no exercício anterior ao de referência) + (Nº de anuidades de empresas de quaisquer exercícios não pagas - Nº de anuidades de empresas de quaisquer exercícios não pagas no exercício anterior ao de referência)] / (Nº de anuidades de profissionais de quaisquer exercícios não pagas no exercício anterior ao de referência + Nº de anuidades de empresas de quaisquer exercícios não pagas no exercício anterior ao de referência). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Crescimento das anuidades não pagas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 10, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 10, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 03760f65-a717-516f-8b84-f83df5a6c58e
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Crescimento das anuidades não pagas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Crescimento das anuidades não pagas]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 10, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 10, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: f0df998d-11c0-51df-93e1-9da519d51596
+
+	/// Indicador 11 da planilha do Confea: Nº de agentes fiscais / Nº total de empregados. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Agentes fiscais no quadro' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 11, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 11, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 96ff868f-08be-5075-a36c-4cc714ac00bc
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Agentes fiscais no quadro' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Agentes fiscais no quadro]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 11, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 11, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: a235c637-64a2-5005-8f80-8e4f4410de84
+
+	/// Indicador 12 da planilha do Confea: Nº total de autos de infração lavrados / Nº total de ações de fiscalização realizadas. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Índice de autuação' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 12, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 12, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 995f4cf1-4cd6-571b-b078-ad79ca380de8
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Índice de autuação' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Índice de autuação]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 12, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 12, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 6a12a749-d7c5-594b-bc5b-0e317fb85520
+
+	/// Indicador 13 da planilha do Confea: Nº de ações de fiscalização realizadas / (Nº de fiscais x Nº de dias úteis). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Fiscalizações por fiscal por dia' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 13, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 13, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: 0.00
+		displayFolder: Indicadores
+		lineageTag: dce71341-6ec7-554b-baa0-32d95ca2121c
+
+	/// Variação, em %, sobre o exercício anterior.
+	measure 'Em relação ao exercício anterior: Fiscalizações por fiscal por dia' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Fiscalizações por fiscal por dia]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 13, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 13, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), DIVIDE(agora - antes, antes))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Indicadores
+		lineageTag: 77fc8529-448d-5b3b-b4cc-91814ad11824
+
+	/// Indicador 14 da planilha do Confea: Nº de municípios fiscalizados / Nº de municípios do estado. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Municípios fiscalizados' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 14, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 14, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 3af47c4d-e085-5827-80f0-9215e5006b46
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Municípios fiscalizados' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Municípios fiscalizados]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 14, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 14, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: bee46765-3f64-56d7-b682-3a0d3761b55e
+
+	/// Indicador 15 da planilha do Confea: Nº de denúncias de infração à legislação profissional apuradas pela fiscalização / Nº de denúncias de infração à legislação profissional recebidas pelo Crea no exercício de referência. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Denúncias apuradas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 15, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 15, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 07127ad5-2d69-585f-b15a-977d76ccd9d0
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Denúncias apuradas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Denúncias apuradas]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 15, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 15, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 6b0de7ed-3fc2-522f-ae99-9e95c8cfbd88
+
+	/// Indicador 16 da planilha do Confea: (Valor gasto com salário, encargos e benefícios a empregados lotados na área de fiscalização (incluindo agentes fiscais) + Valor gasto com verbas indenizatórias a empregados lotados na área de fiscalização (incluindo agentes fiscais) + Valor gasto com capacitação de empregados lotados na área de fiscalização (incluindo agentes fiscais) + Valor gasto com seguro, calibração e manutenção de equipamentos utilizados na fiscalização + Valor gasto com telefonia móvel institucional utilizada pelos agentes fiscais + Valor gasto com manutenção, seguro, estacionamento e pedágio dos veículos utilizados na fiscalização + Valor gasto com combustível de veículos utilizados na fiscalização + Valor gasto com aluguel de veículos utilizados na fiscalização ) / Despesa corrente empenhada. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Despesa com fiscalização' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 16, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 16, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: fd5d233a-5d31-54fc-9b25-6d92602e7173
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Despesa com fiscalização' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Despesa com fiscalização]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 16, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 16, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 922cc622-724f-5f2c-a0cf-aa7a810ec11b
+
+	/// Indicador 17 da planilha do Confea: Nº total de processos de infração à legislação julgados na 1ª instância / Nº total de processos de infração à legislação recebidos na 1ª instância + Nº total de processos de infração à legislação de exercícios anteriores pendentes de julgamento na 1ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficiência na 1ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 17, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 17, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 443af332-005e-54d4-97ea-802a8d73185f
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficiência na 1ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficiência na 1ª instância: infração]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 17, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 17, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: e7cb26fa-8cb9-5084-94ed-bbf2a3eb7ea7
+
+	/// Indicador 18 da planilha do Confea: Nº total de processos de denúncias de conduta incompatível com a profissão julgados na 1ª instância / (Nº de denúncias de conduta incompatível com a profissão instruídas pela comissão de ética e apreciadas quanto ao mérito e aplicação de penalidade pelas câmaras especializadas + Nº total de processos de denúncias de conduta incompatível com a profissão de exercícios anteriores pendentes de julgamento na 1ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficiência na 1ª instância: conduta' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 18, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 18, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 87ea3a51-1a68-542b-965e-9f89a5ded06a
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficiência na 1ª instância: conduta' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficiência na 1ª instância: conduta]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 18, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 18, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 94be18d9-00f1-591b-a353-76115267abf2
+
+	/// Indicador 19 da planilha do Confea: Nº total de processos de denúncias éticas julgados na 1ª instância) / (Nº de denúncias éticas instruídas pela comissão de ética e apreciadas quanto ao mérito e aplicação de penalidade pelas câmaras especializadas + Nº total de processos de denúncias éticas de exercícios anteriores pendentes de julgamento na 1ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficiência na 1ª instância: ética' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 19, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 19, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 95cc5985-567d-5017-8f1b-6e9db17eae46
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficiência na 1ª instância: ética' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficiência na 1ª instância: ética]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 19, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 19, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 42e4454d-1445-5267-a028-8d4508ff43ee
+
+	/// Indicador 20 da planilha do Confea: Nº total de processos de infração à legislação julgados na 2ª instância / (Nº total de processos de infração à legislação recebidos na 2ª instância + Nº total de processos de infração à legislação de exercícios anteriores pendentes de julgamento na 2ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficiência na 2ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 20, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 20, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 437ac1b9-2ca3-5c47-8dbd-fdf1c07fc72c
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficiência na 2ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficiência na 2ª instância: infração]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 20, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 20, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 9cca67c1-f788-5277-8942-49793cecfd34
+
+	/// Indicador 21 da planilha do Confea: Nº total de processos de denúncia de conduta incompatível com a profissão julgados na 2ª instância / (Nº total de processos de denúncia de conduta incompatível com a profissão recebidos na 2ª instância + Nº total de processos de denúncia de conduta incompatível com a profissão de exercícios anteriores pendentes de julgamento na 2ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficiência na 2ª instância: conduta' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 21, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 21, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 867f8f14-6ca5-5c12-9561-7e4cdc4fa683
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficiência na 2ª instância: conduta' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficiência na 2ª instância: conduta]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 21, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 21, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 47de1fdc-e239-5302-8d58-cdd4ff3bc00b
+
+	/// Indicador 22 da planilha do Confea: Nº total de processos de denúncias éticas julgados na 2ª instância / Nº total de processos de denúncias éticas recebidos na 2ª instância + Nº de processos de denúncias éticas de exercícios anteriores pendentes de julgamento na 2ª instância). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficiência na 2ª instância: ética' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 22, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 22, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: ee444628-9566-520e-bdf9-9ae03629130f
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficiência na 2ª instância: ética' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficiência na 2ª instância: ética]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 22, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 22, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 698c0310-9b4a-505e-926d-abe8f08ab4f7
+
+	/// Indicador 26 da planilha do Confea: Nº de decisões relativas a processos de infração à legislação transitadas em julgado na 1ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de infração à legislação transitadas em julgado na 1ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficácia na 1ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 26, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 26, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 87b906c6-1ee4-5f60-9f0b-498ecaf76117
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficácia na 1ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficácia na 1ª instância: infração]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 26, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 26, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: eed1cf1e-a80b-54d0-b484-9886aba15baf
+
+	/// Indicador 27 da planilha do Confea: Nº de decisões transitadas em julgado na 1ª instância cujo resultado foi pelo cancelamento de registro de profissionais / Nº total de decisões relativas a processos de denúncia de conduta incompatível com a profissão transitadas em julgado na 1ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficácia na 1ª instância: conduta' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 27, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 27, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 1c4575a5-c659-5d17-8cca-04cd6effb122
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficácia na 1ª instância: conduta' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficácia na 1ª instância: conduta]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 27, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 27, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 3e75f7dd-192b-5b87-88ad-3565a29f4a7a
+
+	/// Indicador 28 da planilha do Confea: Nº de decisões relativas a processos de denúncia ética transitadas em julgado na 1ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de denúncia ética transitadas em julgado na 1ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficácia na 1ª instância: ética' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 28, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 28, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 96e742e9-6fb3-5763-8d89-9411e8fe017e
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficácia na 1ª instância: ética' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficácia na 1ª instância: ética]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 28, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 28, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 9d8f0141-bb49-58b3-bfc7-53a92c714ff6
+
+	/// Indicador 29 da planilha do Confea: Nº de decisões relativas a processos de infração à legislação transitadas em julgado na 2ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de infração à legislação transitadas em julgado na 2ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficácia na 2ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 29, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 29, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: cc54a04d-f87b-58e3-8d01-9335bac678a4
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficácia na 2ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficácia na 2ª instância: infração]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 29, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 29, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: 8d26e9c5-2305-5c93-8be1-b10d49965afc
+
+	/// Indicador 30 da planilha do Confea: Nº de decisões transitadas em julgado na 2ª instância cujo resultado foi pelo cancelamento de registro de profissionais / Nº total de decisões relativas a processos de denúncia de conduta incompatível com a profissão transitadas em julgado na 2ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficácia na 2ª instância: conduta' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 30, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 30, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: aa23c588-337a-531e-9062-8d50fc833bbb
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficácia na 2ª instância: conduta' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficácia na 2ª instância: conduta]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 30, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 30, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: bdcadde0-d08d-580e-8f3e-124837e7b613
+
+	/// Indicador 31 da planilha do Confea: Nº de decisões relativas a processos de denúncia ética transitadas em julgado na 2ª instância cujo resultado foi com êxito na execução da autuação / Nº total de decisões relativas a processos de denúncia ética transitadas em julgado na 2ª instância. Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Eficácia na 2ª instância: ética' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 31, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 31, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 5da7253c-1484-501a-8a75-88447acf7a07
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Eficácia na 2ª instância: ética' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Eficácia na 2ª instância: ética]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 31, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 31, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: b9f42234-ac55-522a-934f-d9fc3c90ab3f
+
+	/// Indicador 35 da planilha do Confea: (Nº de multas de quaisquer exercícios não pagas - Nº de multas de quaisquer exercícios não pagas no exercício anterior ao de referência) / (Nº de multas de quaisquer exercícios não pagas no exercício anterior ao de referência). Lido do CSV, já calculado; com uma regional, segue a regional quando todas as métricas dele se dividem por regional.
+	measure 'Crescimento das multas não pagas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 35, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 35, 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho")
+			RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			```
+		formatString: 0.0%
+		displayFolder: Indicadores
+		lineageTag: 0d64e7d7-30a5-5721-aeb4-381fbc203afa
+
+	/// Diferença, em pontos percentuais, para o exercício anterior.
+	measure 'Em relação ao exercício anterior: Crescimento das multas não pagas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR agora = [Crescimento das multas não pagas]
+			VAR antes = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 35, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Regional", 'Valores dos indicadores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores dos indicadores'[Valor]), 'Valores dos indicadores'[Indicador] = 35, 'Valores dos indicadores'[Ano] = ano - 1, 'Valores dos indicadores'[Nível] = "Conselho")
+			  RETURN DIVIDE(IF(NOT ISBLANK(regional), regional, conselho), 100)
+			RETURN IF(NOT ISBLANK(agora) && NOT ISBLANK(antes), (agora - antes) * 100)
+			```
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Indicadores
+		lineageTag: c262b4ef-9de9-52d1-a8fc-3c170c06a612
+
+	/// Métrica 3 da planilha no exercício escolhido.
+	measure 'Profissionais de nível superior ativos' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 3, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 3, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Registro
+		lineageTag: 5b452dca-9022-5744-a2f4-c9c2431ecd2f
+
+	/// Métrica 21 da planilha no exercício escolhido.
+	measure 'Empresas ativas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 21, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 21, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Registro
+		lineageTag: b913521b-a71a-51d1-b15a-50b396694310
+
+	/// Métrica 25 da planilha no exercício escolhido.
+	measure 'ARTs registradas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 25, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 25, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Registro
+		lineageTag: 14942c6c-56ef-568e-99d5-ef6440d9d845
+
+	/// Métrica 37 da planilha no exercício escolhido.
+	measure 'Ações de fiscalização' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 37, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 37, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Fiscalização
+		lineageTag: 8a95a110-f9d3-55de-a452-4ab8ddf024ef
+
+	/// Métrica 38 da planilha no exercício escolhido.
+	measure 'Autos de infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 38, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 38, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Fiscalização
+		lineageTag: e2bf9501-61c9-5ac3-ae8e-fb798b74b8ae
+
+	/// Métrica 142 da planilha no exercício escolhido.
+	measure 'Agentes fiscais' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 142, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 142, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Suporte e Liderança
+		lineageTag: 8aee4d1e-6ae7-5a94-84bc-802675c29a8d
+
+	/// Métrica 149 da planilha no exercício escolhido.
+	measure 'Multas não pagas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 149, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 149, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Suporte e Liderança
+		lineageTag: 67dbbe45-b421-5633-a691-6a2d9b74d1b0
+
+	/// Métrica 150 da planilha no exercício escolhido.
+	measure 'Despesa corrente empenhada' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 150, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 150, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: R$ #,##0
+		displayFolder: Suporte e Liderança
+		lineageTag: 456d2159-6c94-5e8f-ac23-b0f1dc8f6644
+
+	/// Métrica 56 da planilha no exercício escolhido.
+	measure 'Pendentes de anos anteriores na 1ª instância' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 56, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 56, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: b4cb5e8e-32e2-5c54-aeb8-36e63f04af23
+
+	/// Métrica 57 da planilha no exercício escolhido.
+	measure 'Recebidos na 1ª instância' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 57, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 57, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: f6715ac0-2c1a-5b12-85ae-a97885ad867f
+
+	/// Métrica 58 da planilha no exercício escolhido.
+	measure 'Julgados na 1ª instância' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 58, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 58, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: 2192496f-f2f6-5489-9442-e9a78771a5ca
+
+	/// Métrica 94 da planilha no exercício escolhido.
+	measure 'Pendentes de anos anteriores na 2ª instância' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 94, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 94, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: 750ae2ad-69c6-56a7-8d49-6d257729d190
+
+	/// Métrica 95 da planilha no exercício escolhido.
+	measure 'Recebidos na 2ª instância' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 95, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 95, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: c27c6993-b02c-5571-973e-226b3da0670c
+
+	/// Métrica 96 da planilha no exercício escolhido.
+	measure 'Julgados na 2ª instância' = ```
+			VAR ano = [Exercício escolhido]
+			VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 96, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 96, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			```
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: 4ea0133c-2311-5c2a-9d5f-6f5413a76ca9
+
+	/// A métrica da linha no exercício escolhido, só nas do subprograma (Registro).
+	measure 'Métrica: Registro' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Registro"}, [Valor da métrica])
+		formatString: #,##0
+		displayFolder: Registro
+		lineageTag: d115be91-9914-555b-af10-0cc95fbaa88e
+
+	/// A mesma métrica no exercício anterior.
+	measure 'No exercício anterior: Registro' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Registro"}, [Valor da métrica no exercício anterior])
+		formatString: #,##0
+		displayFolder: Registro
+		lineageTag: c2efdb8e-6a99-50e8-a0e4-ddc6dae55171
+
+	/// O indicador da linha, só nos do subprograma.
+	measure 'Indicador: Registro' = IF(SELECTEDVALUE('Indicadores'[Subprograma]) IN {"Registro"}, [Valor do indicador])
+		displayFolder: Registro
+		lineageTag: d68b8dd3-3b88-56cd-8071-d77bde216bdc
+
+	/// A métrica da linha no exercício escolhido, só nas do subprograma (Fiscalização).
+	measure 'Métrica: Fiscalização' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Fiscalização"}, [Valor da métrica])
+		formatString: #,##0
+		displayFolder: Fiscalização
+		lineageTag: 3f834367-c303-5a19-8b09-952fbfa7cebc
+
+	/// A mesma métrica no exercício anterior.
+	measure 'No exercício anterior: Fiscalização' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Fiscalização"}, [Valor da métrica no exercício anterior])
+		formatString: #,##0
+		displayFolder: Fiscalização
+		lineageTag: 31bd31bc-25d7-53b6-96c7-0d24ef7bc547
+
+	/// O indicador da linha, só nos do subprograma.
+	measure 'Indicador: Fiscalização' = IF(SELECTEDVALUE('Indicadores'[Subprograma]) IN {"Fiscalização"}, [Valor do indicador])
+		displayFolder: Fiscalização
+		lineageTag: 46edbea1-3b06-5a13-a763-2e3971b86e5a
+
+	/// A métrica da linha no exercício escolhido, só nas do subprograma (Julgamento).
+	measure 'Métrica: Julgamento' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Julgamento"}, [Valor da métrica])
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: a89bb048-2c78-5086-b3b8-2dd08fa92dbf
+
+	/// A mesma métrica no exercício anterior.
+	measure 'No exercício anterior: Julgamento' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Julgamento"}, [Valor da métrica no exercício anterior])
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: 00c918bf-6f02-57f5-8c6f-2ba7b875c928
+
+	/// O indicador da linha, só nos do subprograma.
+	measure 'Indicador: Julgamento' = IF(SELECTEDVALUE('Indicadores'[Subprograma]) IN {"Julgamento"}, [Valor do indicador])
+		displayFolder: Julgamento
+		lineageTag: ae492b2e-1ba0-5af4-9286-37a668cb8069
+
+	/// A métrica da linha no exercício escolhido, só nas do subprograma (Suporte e Liderança).
+	measure 'Métrica: Suporte e Liderança' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Suporte", "Liderança"}, [Valor da métrica])
+		formatString: #,##0
+		displayFolder: Suporte e Liderança
+		lineageTag: df55d954-9def-5266-88ef-241c949acd45
+
+	/// A mesma métrica no exercício anterior.
+	measure 'No exercício anterior: Suporte e Liderança' = IF(SELECTEDVALUE('Métricas'[Subprograma]) IN {"Suporte", "Liderança"}, [Valor da métrica no exercício anterior])
+		formatString: #,##0
+		displayFolder: Suporte e Liderança
+		lineageTag: fe26de45-6f6f-5277-af8e-af4dad2352f4
+
+	/// O indicador da linha, só nos do subprograma.
+	measure 'Indicador: Suporte e Liderança' = IF(SELECTEDVALUE('Indicadores'[Subprograma]) IN {"Suporte", "Liderança"}, [Valor do indicador])
+		displayFolder: Suporte e Liderança
+		lineageTag: add284ce-363a-5d28-9381-79c6476b3053
+
+	/// Métricas 11 a 18: profissionais ativos de nível superior e médio em cada modalidade.
+	measure 'Profissionais na modalidade' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {11, 12, 13, 14, 15, 16, 17, 18}))
+		formatString: #,##0
+		displayFolder: Registro
+		lineageTag: 61f3324b-c823-56cd-b836-7eb376a67138
+
+	/// Métricas 39 a 50: os autos de infração do exercício por capitulação.
+	measure 'Autos na capitulação' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50}))
+		formatString: #,##0
+		displayFolder: Fiscalização
+		lineageTag: d1414898-ef5f-5a5a-8f05-2d306d66c855
+
+	/// Ações de fiscalização de cada município no exercício, para o mapa (a soma dá a métrica 37).
+	measure 'Ações no município' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN CALCULATE(SUM('Ações nos municípios'[Ações]), 'Ações nos municípios'[Ano] = ano)
+			```
+		formatString: #,##0
+		displayFolder: Fiscalização
+		lineageTag: 690200e0-1d3a-5632-93c2-d848c3046e41
+
+	/// Meta 2.3 do PMF: ações do exercício (métrica 37) sobre as de 2024, menos 1. Só em exercício completo depois de 2024 e do Conselho inteiro.
+	measure 'Ações contra 2024' = ```
+			VAR ano = [Exercício escolhido]
+			VAR parcial = CALCULATE(MAX('Exercícios'[Parcial]), ALL('Exercícios'), 'Exercícios'[Ano] = ano)
+			VAR agora = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 37, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			VAR base = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 37, 'Valores'[Ano] = 2024, 'Valores'[Nível] = "Conselho")
+			RETURN IF(ISBLANK(SELECTEDVALUE('Regionais'[GRE])) && parcial = 0 && ano > 2024 && base > 0, DIVIDE(agora, base) - 1)
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Fiscalização
+		lineageTag: 5db1e129-6e47-5fb3-af0d-0cc1e0e7d492
+
+	/// Meta 5.1 do PMF: parte dos processos de infração julgados em até 180 dias (GovAdm, fora da planilha). Do Conselho inteiro.
+	measure 'Infrações julgadas em até 180 dias' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN IF(ISBLANK(SELECTEDVALUE('Regionais'[GRE])), DIVIDE(CALCULATE(MAX('Exercícios'[Infrações julgadas em 180 dias]), ALL('Exercícios'), 'Exercícios'[Ano] = ano), 100))
+			```
+		formatString: 0.0%
+		displayFolder: Julgamento
+		lineageTag: 60a5671c-9f2b-589e-814f-aa64847343d9
+
+	/// Meta 5.2 do PMF: parte dos processos éticos julgados em até 360 dias (GovAdm, fora da planilha). Do Conselho inteiro.
+	measure 'Éticos julgados em até 360 dias' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN IF(ISBLANK(SELECTEDVALUE('Regionais'[GRE])), DIVIDE(CALCULATE(MAX('Exercícios'[Éticos julgados em 360 dias]), ALL('Exercícios'), 'Exercícios'[Ano] = ano), 100))
+			```
+		formatString: 0.0%
+		displayFolder: Julgamento
+		lineageTag: b736cdab-2539-5d05-bfd1-ecd38a6f70dc
+
+	/// Pendentes mais recebidos menos julgados na 1ª instância (métricas 56, 57 e 58).
+	measure 'Ficam para o próximo na 1ª instância' = MAX(0, [Pendentes de anos anteriores na 1ª instância] + [Recebidos na 1ª instância] - [Julgados na 1ª instância])
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: c810d4af-6a41-558d-9202-4087d6dd5c62
+
+	/// Pendentes mais recebidos menos julgados na 2ª instância (métricas 94, 95 e 96).
+	measure 'Ficam para o próximo na 2ª instância' = MAX(0, [Pendentes de anos anteriores na 2ª instância] + [Recebidos na 2ª instância] - [Julgados na 2ª instância])
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: 95fec97c-65db-5eee-a7f7-7fb4fd064741
+
+	/// Métricas 67 a 72: decisões da 1ª instância arquivadas sem êxito, por motivo.
+	measure 'Sem êxito na 1ª instância' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {67, 68, 69, 70, 71, 72}))
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: 5b940f9d-c2d5-5477-9a3f-0f455bf3a1be
+
+	/// Métricas 105 a 110: decisões da 2ª instância arquivadas sem êxito, por motivo.
+	measure 'Sem êxito na 2ª instância' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {105, 106, 107, 108, 109, 110}))
+		formatString: #,##0
+		displayFolder: Julgamento
+		lineageTag: a1a15cfe-403b-59e4-a15e-ea06dc8dff5d
+
+	/// As contas da despesa com fiscalização (indicador 16). Conta vazia fica em branco: sem ela, o indicador 16 não sai.
+	measure 'Despesa na conta' = CALCULATE([Valor da métrica], KEEPFILTERS('Métricas'[Código] IN {153, 155, 156, 157, 158, 159, 160, 161}))
+		formatString: R$ #,##0
+		displayFolder: Suporte e Liderança
+		lineageTag: 49f49298-3f8f-53ce-88f3-da1030a375dd
+
+	/// Métricas 145 e 147: anuidades de profissionais e de empresas não pagas em 31/12.
+	measure 'Anuidades não pagas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR p = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 145, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 145, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			  RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			VAR e = VAR gre = SELECTEDVALUE('Regionais'[GRE])
+			  VAR regional = IF(NOT ISBLANK(gre), CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 147, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Regional", 'Valores'[GRE] = gre))
+			  VAR conselho = CALCULATE(SUM('Valores'[Valor]), 'Valores'[Código] = 147, 'Valores'[Ano] = ano, 'Valores'[Nível] = "Conselho")
+			  RETURN IF(NOT ISBLANK(regional), regional, conselho)
+			RETURN p + e
+			```
+		formatString: #,##0
+		displayFolder: Suporte e Liderança
+		lineageTag: be851ab3-006e-58d1-b9ec-288b27ebb0d4
+
+	/// Conta as métricas do exercício na situação "Preenchida", do Conselho inteiro.
+	measure 'Métricas preenchidas' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN CALCULATE(COUNTROWS('Situação das métricas'), 'Situação das métricas'[Ano] = ano, 'Situação das métricas'[Situação] = "Preenchida") + 0
+			```
+		formatString: 0
+		displayFolder: Entrega ao Confea
+		lineageTag: 479b4c23-f6ec-59a5-b48f-91eb3b28094e
+
+	/// Conta as métricas do exercício na situação "Vazia", do Conselho inteiro.
+	measure 'Métricas vazias' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN CALCULATE(COUNTROWS('Situação das métricas'), 'Situação das métricas'[Ano] = ano, 'Situação das métricas'[Situação] = "Vazia") + 0
+			```
+		formatString: 0
+		displayFolder: Entrega ao Confea
+		lineageTag: e9825919-948a-514b-b88b-1e819b1f0516
+
+	/// Conta as métricas do exercício na situação "Não fecha", do Conselho inteiro.
+	measure 'Métricas que não fecham' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN CALCULATE(COUNTROWS('Situação das métricas'), 'Situação das métricas'[Ano] = ano, 'Situação das métricas'[Situação] = "Não fecha") + 0
+			```
+		formatString: 0
+		displayFolder: Entrega ao Confea
+		lineageTag: 25c52d1a-acd1-5614-ab6d-bca2f863838d
+
+	/// Escreve "Vazia" ou "Não fecha" na métrica da linha; a preenchida fica em branco e sai da tabela.
+	measure 'Situação da métrica' = ```
+			VAR ano = [Exercício escolhido]
+			VAR st = CALCULATE(SELECTEDVALUE('Situação das métricas'[Situação]), 'Situação das métricas'[Ano] = ano)
+			RETURN IF(st <> "Preenchida", st)
+			```
+		displayFolder: Entrega ao Confea
+		lineageTag: 52777df2-511c-565c-b675-76fac0695c61
+
+	/// Conta as conferências do exercício.
+	measure 'Conferências do exercício' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN CALCULATE(COUNTROWS('Conferências'), 'Conferências'[Ano] = ano)
+			```
+		formatString: 0
+		displayFolder: Entrega ao Confea
+		lineageTag: f2e9fa48-a318-570a-99aa-da0016492303
+
+	/// Conta as conferências do exercício em que o total não bate com a soma das partes.
+	measure 'Conferências que não fecham' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN CALCULATE(COUNTROWS('Conferências'), 'Conferências'[Ano] = ano, 'Conferências'[Situação] = "Não fecha") + 0
+			```
+		formatString: 0
+		displayFolder: Entrega ao Confea
+		lineageTag: dafbe7a9-7cc5-5453-95e3-4d5168ed8a9e
+
+	/// Escreve a situação da conferência da linha no exercício: fecha, não fecha ou falta métrica.
+	measure 'Situação da conferência' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN CALCULATE(SELECTEDVALUE('Conferências'[Situação]), 'Conferências'[Ano] = ano)
+			```
+		displayFolder: Entrega ao Confea
+		lineageTag: d49067ed-9f77-51ff-a16c-2255c3ec95e6
+
+	/// O total menos a soma das partes, na conferência da linha; zero quando fecha.
+	measure 'Diferença da conferência' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN CALCULATE(SUM('Conferências'[Diferença]), 'Conferências'[Ano] = ano)
+			```
+		formatString: +#,##0;-#,##0;0
+		displayFolder: Entrega ao Confea
+		lineageTag: 7860308d-f808-5d3b-be08-7ea5887334e0
+
+	/// Conta os indicadores do Crea-SP que o Confea consegue calcular no exercício (sem métrica vazia), do Conselho inteiro.
+	measure 'Indicadores que saem' = ```
+			VAR ano = [Exercício escolhido]
+			RETURN CALCULATE(COUNTROWS('Valores dos indicadores'), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Sai] = 1) + 0
+			```
+		formatString: 0
+		displayFolder: Entrega ao Confea
+		lineageTag: d20a4f31-ec58-5577-9063-4a8904041be8
+
+	/// A data da próxima entrega ao Confea a partir da data do pacote.
+	measure 'Próxima entrega' = FORMAT(MIN('Calendário de entregas'[Data]), "dd/mm/yyyy")
+		displayFolder: Entrega ao Confea
+		lineageTag: 8f73adc7-78b1-56c5-b648-953f7fc30ec0
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Crescimento dos profissionais' = ```
+			VAR v = [Em relação ao exercício anterior: Crescimento dos profissionais]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Registro
+		lineageTag: d54e7888-8b90-557e-97ed-a9d0f3d08aab
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Crescimento dos profissionais' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 1)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 8,0%; Sudeste: -3,0%")
+			```
+		displayFolder: Registro
+		lineageTag: 8925f2f1-7182-5aab-b825-fef95c8712f4
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Crescimento das empresas' = ```
+			VAR v = [Em relação ao exercício anterior: Crescimento das empresas]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Registro
+		lineageTag: 901597a9-442c-5d9b-b986-dc8148062010
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Crescimento das empresas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 2)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Registro")
+			```
+		displayFolder: Registro
+		lineageTag: d6cb5912-7689-5010-a0d4-4ceaeb9ad3dd
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Quadro técnico por empresa' = ```
+			VAR v = [Em relação ao exercício anterior: Quadro técnico por empresa]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação ao exercício anterior")
+			```
+		displayFolder: Registro
+		lineageTag: 4f29624e-14ae-51a8-aa70-11463e38f17f
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Quadro técnico por empresa' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 3)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 1,32; Sudeste: 1,48")
+			```
+		displayFolder: Registro
+		lineageTag: 3653bfc1-addb-517f-a8cd-42b927b66fa2
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Profissionais que registram ART' = ```
+			VAR v = [Em relação ao exercício anterior: Profissionais que registram ART]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Registro
+		lineageTag: 48f9374e-687b-5918-9fb1-17a6d6771171
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Profissionais que registram ART' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 4)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 33,0%")
+			```
+		displayFolder: Registro
+		lineageTag: a864d76b-87c6-5171-b1ac-03e359934182
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: ARTs por profissional' = ```
+			VAR v = [Em relação ao exercício anterior: ARTs por profissional]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação ao exercício anterior")
+			```
+		displayFolder: Registro
+		lineageTag: 1c52a7cb-55d2-5df5-8d53-3493991b1d88
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: ARTs por profissional' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 5)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 9,85")
+			```
+		displayFolder: Registro
+		lineageTag: 8c9e4dd2-f729-5d88-9c69-04babf3e884f
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Profissionais com CAT' = ```
+			VAR v = [Em relação ao exercício anterior: Profissionais com CAT]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Registro
+		lineageTag: 5b559d7d-1ab7-5d6f-ae56-90f518b34f42
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Profissionais com CAT' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 6)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Registro")
+			```
+		displayFolder: Registro
+		lineageTag: bad2bed4-76c1-5f42-8df2-3ccc8307daf1
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: CATs com atestado por profissional' = ```
+			VAR v = [Em relação ao exercício anterior: CATs com atestado por profissional]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação ao exercício anterior")
+			```
+		displayFolder: Registro
+		lineageTag: 34c64c4a-64ae-5cf8-9636-25b2c603481b
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: CATs com atestado por profissional' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 7)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Registro")
+			```
+		displayFolder: Registro
+		lineageTag: fefd2e51-cb91-581b-8ab9-aa99d101190e
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Índice de autuação' = ```
+			VAR v = [Em relação ao exercício anterior: Índice de autuação]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Fiscalização
+		lineageTag: 84d672c5-c396-55f3-a5cd-fa0d913c4340
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Índice de autuação' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 12)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 21,0%; Sudeste: 32,0%")
+			```
+		displayFolder: Fiscalização
+		lineageTag: 4391506e-0c72-5340-8a1a-a4560c7db5b1
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Fiscalizações por fiscal por dia' = ```
+			VAR v = [Em relação ao exercício anterior: Fiscalizações por fiscal por dia]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0%;-0.0%;0.0%") & " em relação ao exercício anterior")
+			```
+		displayFolder: Fiscalização
+		lineageTag: ee9f40fd-f6fb-5ed3-b8a6-7cd595ab15c4
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Fiscalizações por fiscal por dia' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 13)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 3,19; Sudeste: 4,27")
+			```
+		displayFolder: Fiscalização
+		lineageTag: be6d3f2a-b53a-55c4-8838-5ca2464cf601
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Municípios fiscalizados' = ```
+			VAR v = [Em relação ao exercício anterior: Municípios fiscalizados]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Fiscalização
+		lineageTag: 0ab10ff9-d73f-557f-a477-9421e041affe
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Municípios fiscalizados' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 14)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 97,0%; Sudeste: 100,0%")
+			```
+		displayFolder: Fiscalização
+		lineageTag: 87713984-6f4c-5ffe-b232-cbac58437e8d
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Denúncias apuradas' = ```
+			VAR v = [Em relação ao exercício anterior: Denúncias apuradas]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Fiscalização
+		lineageTag: a1a4af11-509a-5817-a9ed-f6d99f3d6ba8
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Denúncias apuradas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 15)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 82,0%; Sudeste: 87,0%")
+			```
+		displayFolder: Fiscalização
+		lineageTag: edb9b3ee-1a73-5ba8-bba3-b436e271fe15
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Agentes fiscais no quadro' = ```
+			VAR v = [Em relação ao exercício anterior: Agentes fiscais no quadro]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: ebfedacb-ce6b-555d-9ee8-2483ae1d7724
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Agentes fiscais no quadro' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 11)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 17,0%; Sudeste: 16,0%")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: 3f0b273e-e6ed-5724-9c47-3b56190ff7cf
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Ações contra 2024' = "meta 2.3 do PMF: +12% até 2027; só em exercício completo e do Conselho inteiro"
+		displayFolder: Fiscalização
+		lineageTag: 66e00fd0-1dd7-5b7a-8476-d908e74866e9
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Eficiência na 1ª instância: infração' = ```
+			VAR v = [Em relação ao exercício anterior: Eficiência na 1ª instância: infração]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Julgamento
+		lineageTag: a11e6a16-c878-54dc-b194-94aec3d291c7
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Eficiência na 1ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 17)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 51,0%")
+			```
+		displayFolder: Julgamento
+		lineageTag: ac6324cd-a4f7-51c7-b928-65857bc95b72
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Eficiência na 2ª instância: infração' = ```
+			VAR v = [Em relação ao exercício anterior: Eficiência na 2ª instância: infração]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Julgamento
+		lineageTag: 7f8672dd-0496-5d8f-8738-d6d523c4fe54
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Eficiência na 2ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 20)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 64,0%")
+			```
+		displayFolder: Julgamento
+		lineageTag: e9a13946-04ea-5e54-a06c-11ded9fcd0f9
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Eficácia na 1ª instância: infração' = ```
+			VAR v = [Em relação ao exercício anterior: Eficácia na 1ª instância: infração]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Julgamento
+		lineageTag: 62a973f2-97db-5f98-b710-f41afa33964f
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Eficácia na 1ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 26)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Julgamento")
+			```
+		displayFolder: Julgamento
+		lineageTag: b08c1acd-ffc1-564f-a54c-b3d548c82406
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Eficácia na 2ª instância: infração' = ```
+			VAR v = [Em relação ao exercício anterior: Eficácia na 2ª instância: infração]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Julgamento
+		lineageTag: 56fe0179-4d47-5d7b-b921-9561dab4819c
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Eficácia na 2ª instância: infração' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 29)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Julgamento")
+			```
+		displayFolder: Julgamento
+		lineageTag: edca2f46-e042-519c-8fa8-71ae92bea68d
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Infrações julgadas em até 180 dias' = "meta 5.1 do PMF: 90%; do Conselho inteiro"
+		displayFolder: Julgamento
+		lineageTag: a48f4477-4aab-57b1-959c-73ffaa4735dc
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Éticos julgados em até 360 dias' = "meta 5.2 do PMF: 90%; do Conselho inteiro"
+		displayFolder: Julgamento
+		lineageTag: b82de282-dc00-5b34-b751-44ea995c6c6b
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Despesa com fiscalização' = ```
+			VAR v = [Em relação ao exercício anterior: Despesa com fiscalização]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: f73f0fce-e32d-5084-9c58-08a6cf76183b
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Despesa com fiscalização' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 16)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 15,0%")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: 478ea439-fdf9-583b-ae9b-7e11b5d83efa
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Inadimplência dos profissionais' = ```
+			VAR v = [Em relação ao exercício anterior: Inadimplência dos profissionais]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: d0ced451-e0a2-5bcf-b13f-e6793f29f8b2
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Inadimplência dos profissionais' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 8)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 35,0%; Sudeste: 28,0%")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: 0faec658-f079-58b2-8b56-75c027bf9d45
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Inadimplência das empresas' = ```
+			VAR v = [Em relação ao exercício anterior: Inadimplência das empresas]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: e7be73f2-4a16-50dc-966b-cf6ae03a2687
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Inadimplência das empresas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 9)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Sistema em 2021: 40,0%; Sudeste: 44,0%")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: e28d3379-4fdc-5687-8eb3-dfb171371f5e
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Crescimento das anuidades não pagas' = ```
+			VAR v = [Em relação ao exercício anterior: Crescimento das anuidades não pagas]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: 625ce541-52dd-5417-9fd6-05b962bba436
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Crescimento das anuidades não pagas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 10)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Registro/Financeiro")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: 9d4a556c-21dc-5436-a1d8-6204e5cd3425
+
+	/// Escreve a comparação que o cartão mostra embaixo do número.
+	measure 'Comparação: Crescimento das multas não pagas' = ```
+			VAR v = [Em relação ao exercício anterior: Crescimento das multas não pagas]
+			RETURN IF(ISBLANK(v), "sem comparação", FORMAT(v, "+0.0;-0.0;0.0") & " p.p. em relação ao exercício anterior")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: 9e469ce3-d365-5959-9b20-454be963f4b2
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Crescimento das multas não pagas' = ```
+			VAR ano = [Exercício escolhido]
+			VAR falta = CALCULATE(SELECTEDVALUE('Valores dos indicadores'[Faltam]), 'Valores dos indicadores'[Ano] = ano, 'Valores dos indicadores'[Nível] = "Conselho", 'Valores dos indicadores'[Indicador] = 35)
+			RETURN IF(falta <> "", "Faltam as métricas " & falta, "Julgamento/Financeiro")
+			```
+		displayFolder: Suporte e Liderança
+		lineageTag: 7b7ade18-08f3-54b2-bb3f-83a0b8a38b97
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Métricas preenchidas' = FORMAT([Métricas vazias], "0") & " vazias e " & FORMAT([Métricas que não fecham], "0") & " que não fecham, de 161"
+		displayFolder: Entrega ao Confea
+		lineageTag: e290e004-d569-5a46-b971-50ec5715f063
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Conferências que não fecham' = "de " & FORMAT([Conferências do exercício], "0") & " conferências"
+		displayFolder: Entrega ao Confea
+		lineageTag: a7d0f254-b098-5e76-b505-911c17ce6de9
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Indicadores que saem' = "de 29; os seis da 3ª instância são do Confea"
+		displayFolder: Entrega ao Confea
+		lineageTag: 81788b82-53c3-58f0-b146-e41aabff53f1
+
+	/// Escreve a linha de apoio que o cartão mostra embaixo da comparação, como no painel.
+	measure 'Detalhe: Próxima entrega' = ```
+			VAR d = MIN('Calendário de entregas'[Data])
+			RETURN CALCULATE(SELECTEDVALUE('Calendário de entregas'[Ritmo]), 'Calendário de entregas'[Data] = d)
+			```
+		displayFolder: Entrega ao Confea
+		lineageTag: 7a07a082-0dc8-5768-860b-509a4c77a407
+
+	column Medidas
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Medidas
+		lineageTag: 25d94004-af77-5d7e-ba21-f30c2cae48bf
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = #table(type table [#"Medidas" = type text], {})
+				in
+				    Fonte

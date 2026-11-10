@@ -330,6 +330,8 @@ Cada ideia diz qual indicador do Confea ela usa. Assim o número do painel é o 
 
 ## 8. Proposta de painel novo: Indicadores do Sistema Confea/Crea
 
+> Feito em 10/11/2026, por escolha do Caio: ver [docs/INDICADORES.md](../../INDICADORES.md). O painel calcula os 29 indicadores do Crea-SP (os seis da 3ª instância são do Confea) e segue a proposta abaixo, com o exercício e a regional como filtros.
+
 Um painel com os números que o Crea-SP manda ao Confea, dividido pelos subprogramas da planilha. Ele não repete os outros painéis: os outros acompanham a operação mês a mês; este mostra o fechamento do exercício com a régua do Confea e confere o envio antes de mandar.
 
 ### Para que serve
