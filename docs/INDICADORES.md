@@ -35,7 +35,7 @@ Em produção, cada métrica sai da base interna que os outros painéis já usam
 
 ## Cor
 
-A cor é provisória: A5+40 (#203B88) no canto e no cabeçalho, com o menu em degradê até o Azul 500, item ativo e sobrancelha em amarelo. O Caio escolhe a definitiva na folha da paleta do CreaOne (ver [PALETA_CREAONE.md](PALETA_CREAONE.md)).
+A5+40 (#203B88) no canto e no cabeçalho, com o menu em degradê até o Azul 500, item ativo e sobrancelha em amarelo. Escolhida pelo Caio em 12/11/2026 na folha da paleta do CreaOne (ver [PALETA_CREAONE.md](PALETA_CREAONE.md)).
 
 ## Testes
 
